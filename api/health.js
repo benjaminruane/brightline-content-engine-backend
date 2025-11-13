@@ -1,16 +1,11 @@
-Your file will be created at: api/health.js
-
 export default function handler(req, res) {
-  // Allow cross-origin requests (needed for your frontend)
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    return res.status(200).end();
+  // Very minimal health check to avoid any crashes
+  try {
+    // CORS header is nice to have but optional
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  } catch (e) {
+    // Ignore if setHeader fails for any reason
   }
 
-  // Success response
-  return res.status(200).json({ ok: true });
+  res.status(200).json({ ok: true });
 }
