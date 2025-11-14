@@ -74,7 +74,7 @@ unless the user explicitly asks for a major restructure.
     let messages;
 
     if (mode === "rewrite" && previousContent) {
-      // 🔁 REWRITE PATH – tweak the existing draft
+      // 🔁 REWRITE PATH – tweak the existing draft, not a full rewrite
       messages = [
         {
           role: "system",
@@ -82,17 +82,19 @@ unless the user explicitly asks for a major restructure.
         },
         {
           role: "user",
-          content: `You are revising an existing draft. Make **targeted edits only**, unless the instructions explicitly request broader changes.
+          content: `You are revising an existing draft.
 
-Goals:
-- Preserve overall structure, sections, and key points of the existing draft.
+Rewrite goals (VERY IMPORTANT):
+- Make **targeted edits** to the existing draft.
+- Preserve the overall structure, section order, and key points where possible.
 - Improve clarity, tone, flow, and correctness.
-- Apply the rewrite instructions.
-- Use the source material only to refine details or correct facts, not to rewrite from scratch.
+- **STRICTLY follow the rewrite instructions**, especially any word or length limits.
+- If the instructions specify a hard length (for example "max 100 words"), you MUST keep the final answer within that limit, even if you must aggressively summarize.
 
-Output types: ${typesLabel}
-Title: ${title || "(untitled)"}
-Include public domain search context: ${
+Context:
+- Output types: ${typesLabel}
+- Title: ${title || "(untitled)"}
+- Include public domain search context: ${
             publicSearch
               ? "Yes (already applied on backend if enabled)"
               : "No – rely only on provided sources."
@@ -101,21 +103,23 @@ Include public domain search context: ${
         },
         {
           role: "user",
-          content: `REWRITE INSTRUCTIONS:\n${
+          content: `REWRITE INSTRUCTIONS (APPLY STRICTLY):\n${
             notes || "(no additional instructions provided)"
           }`,
         },
         {
           role: "user",
-          content: `EXISTING DRAFT (KEEP STRUCTURE, TWEAK CONTENT):\n\n${previousContent}`,
+          content: `EXISTING DRAFT (THIS IS THE BASE YOU EDIT):\n\n${previousContent}`,
         },
         {
           role: "user",
-          content: `SOURCE MATERIAL (REFERENCE ONLY, DO NOT REPLACE DRAFT):\n\n${
+          content: `SOURCE MATERIAL (REFERENCE ONLY. Use this to correct or sharpen details, but do NOT replace the structure of the draft):\n\n${
             text || "(no extra source material provided)"
           }`,
         },
       ];
+
+      
     } else {
       // 🆕 GENERATE PATH – fresh draft from sources
       messages = [
