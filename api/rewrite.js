@@ -1,102 +1,107 @@
-// ---------- Output Type Guidelines ----------
-const OUTPUT_TYPE_PROMPTS = {
-  investor_commentary: `Audience: existing investors (LPs). Tone: concise, factual, professional. Avoid hype.
-Include: period performance, drivers, material changes, portfolio actions, risk/mitigants, cautious outlook.`,
+// /api/rewrite.js
+import OpenAI from "openai";
 
-  detailed_investor_note: `Audience: existing investors and internal stakeholders. Tone: thorough, neutral, compliance-safe.
-Include: context, factual analysis, key metrics, caveats, assumptions.`,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-  press_release: `Audience: media & public. Tone: clear, objective, third-person. Avoid forward-looking promises.
-Include: headline, dateline, who/what/when/where/why, quotes, boilerplate.`,
-
-  linkedin_post: `Audience: professional network. Tone: crisp, accessible, compliance-aware.
-Include: short hook, impact bullets, link, hashtags.`
-};
-
-// ---------- Prompt Builder ----------
-function buildPrompt({ title, outputTypes, rewriteNotes, publicSearch, sources }) {
-  const filesText = (sources?.files || [])
-    .map(f => `${f.name}:\n${String(f.text || '').slice(0, 3000)}`).join('\n\n');
-
-  const urlsText = (sources?.urls || [])
-    .map(u => `${u.url}:\n${String(u.text || '').slice(0, 3000)}`).join('\n\n');
-
-  const sections = (outputTypes || []).map(t => {
-    const guide = OUTPUT_TYPE_PROMPTS[t] || '(no guide)';
-    return `### ${t}
-Guidelines:
-${guide}
-Revised draft (from sources + revision notes):`;
-  }).join('\n\n');
-
-  return `Title: ${title || 'Untitled'}
-Public Domain Search: ${publicSearch ? 'ON' : 'OFF'}
-
-Revision notes from user:
-${rewriteNotes || '(none)'}
-
-Sources:
-${filesText}
-${urlsText}
-
-${sections}`;
-}
-
-// ---------- Call OpenAI ----------
-async function callOpenAI({ modelId, temperature, maxTokens, prompt }) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("Missing OPENAI_API_KEY");
-
-  const model = (String(modelId).replace(/^openai:/, '')) || 'gpt-4o-mini';
-
-  const resp = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      temperature: typeof temperature === "number" ? temperature : 0.3,
-      max_tokens: typeof maxTokens === "number" ? maxTokens : 1200,
-      messages: [
-        { role: "system", content: "You are a factual, compliance-safe assistant that only writes from provided sources." },
-        { role: "user", content: prompt }
-      ]
-    })
-  });
-
-  if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    throw new Error(`OpenAI API error: ${resp.status} ${txt}`);
-  }
-
-  const data = await resp.json();
-  return data.choices?.[0]?.message?.content || "";
-}
-
-// ---------- API Route ----------
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-
-  if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    return res.status(200).end();
-  }
-
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { modelId, temperature, maxTokens, publicSearch, outputTypes, title, rewriteNotes, sources } = req.body;
+    const {
+      previousContent,     // the draft to tweak
+      notes,               // rewrite instructions
+      text,                // optional source material
+      selectedTypes,
+      title,
+      publicSearch,
+      modelId = "gpt-4o-mini",
+      temperature = 0.3,
+      maxTokens = 2048,
+    } = req.body;
 
-    const prompt = buildPrompt({ title, outputTypes, rewriteNotes, publicSearch, sources });
-    const output = await callOpenAI({ modelId, temperature, maxTokens, prompt });
+    if (!previousContent || typeof previousContent !== "string") {
+      return res.status(400).json({
+        error: "previousContent is required and must be a string",
+      });
+    }
 
-    return res.status(200).json({ output });
+    const typesLabel =
+      Array.isArray(selectedTypes) && selectedTypes.length
+        ? selectedTypes.join(", ")
+        : "general investment content";
+
+    const baseSystemPrompt = `
+You are a highly skilled investment and private markets content writer.
+
+You produce clear, concise, professional writing suitable for:
+- investor reporting commentary
+- investment notes
+- press releases
+- LinkedIn posts
+
+When rewriting, you **preserve the structure and core points of the previous draft**
+unless the user explicitly asks for major restructuring.
+`.trim();
+
+    const messages = [
+      {
+        role: "system",
+        content: baseSystemPrompt,
+      },
+      {
+        role: "user",
+        content: `You are revising an existing draft. Make **targeted edits only**.
+
+Goals:
+- Preserve the existing section structure and ordering
+- Keep all major points, unless they clearly contradict the source material
+- Improve clarity, tone, grammar, and flow
+- Apply the rewrite instructions
+- Use the source material to refine/correct details, not to rewrite from scratch
+
+Output types: ${typesLabel}
+Title: ${title || "(untitled)"}
+Public domain search: ${publicSearch ? "Enabled" : "Disabled"}
+`,
+      },
+      {
+        role: "user",
+        content: `REWRITE INSTRUCTIONS:\n${notes || "(none provided)"}`,
+      },
+      {
+        role: "user",
+        content: `EXISTING DRAFT (KEEP STRUCTURE, TWEAK CONTENT):\n\n${previousContent}`,
+      },
+      {
+        role: "user",
+        content: `SOURCE MATERIAL (REFERENCE ONLY):\n\n${text || "(none provided)"}`,
+      },
+    ];
+
+    const completion = await openai.chat.completions.create({
+      model: modelId,
+      temperature,
+      max_tokens: maxTokens,
+      messages,
+    });
+
+    const output =
+      completion.choices?.[0]?.message?.content?.trim() ||
+      "[No content generated]";
+
+    return res.status(200).json({
+      mode: "rewrite",
+      output,
+    });
   } catch (err) {
-    return res.status(500).json({ error: String(err.message || err) });
+    console.error("Error in /api/rewrite:", err);
+    return res.status(500).json({
+      error: "Error rewriting content",
+      details: err?.message || String(err),
+    });
   }
 }
