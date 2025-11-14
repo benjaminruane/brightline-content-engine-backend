@@ -5,6 +5,11 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// --- Defensive check: warn if API key is missing ---
+if (!process.env.OPENAI_API_KEY) {
+  console.warn("⚠️ Warning: OPENAI_API_KEY is not set. /api/generate will not work.");
+}
+
 export default async function handler(req, res) {
   // --- CORS headers so the frontend can call us ---
   res.setHeader("Access-Control-Allow-Origin", "*");
