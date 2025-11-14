@@ -1,5 +1,9 @@
 {
-  "name": "ai-content-engine-vercel-api",
+  "name": "content-engine-backend-v2",
   "version": "1.0.0",
-  "private": true
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "openai": "4.52.0"
+  }
 }
