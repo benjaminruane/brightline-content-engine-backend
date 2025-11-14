@@ -1,154 +1,133 @@
-// ---------- Output Type Guidelines ----------
-const OUTPUT_TYPE_PROMPTS = {
-  investor_commentary: `Audience: existing investors (LPs). Tone: concise, factual, professional. Avoid hype.
-Include: period performance, drivers, material changes, portfolio actions, risk/mitigants, cautious outlook.`,
+// backend/routes/generate.js (or wherever your route lives)
+import express from "express";
+import OpenAI from "openai";
 
-  detailed_investor_note: `Audience: existing investors and internal stakeholders. Tone: thorough, neutral, compliance-safe.
-Include: context, factual analysis, key metrics, caveats, assumptions.`,
+const router = express.Router();
 
-  press_release: `Audience: media & public. Tone: clear, objective, third-person. Avoid forward-looking promises.
-Include: headline, dateline, who/what/when/where/why, quotes, boilerplate.`,
+// Make sure OPENAI_API_KEY is set in your environment
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-  linkedin_post: `Audience: professional network. Tone: crisp, accessible, compliance-aware.
-Include: short hook, impact bullets, link, hashtags.`
-};
-
-// ---------- Prompt Builder ----------
-function buildPrompt({ title, outputTypes, notes, publicSearch, sources, text }) {
-  const filesText = (sources?.files || [])
-    .map((f) => `${f.name}:\n${String(f.text || "").slice(0, 3000)}`)
-    .join("\n\n");
-
-  const urlsText = (sources?.urls || [])
-    .map((u) => `${u.url}:\n${String(u.text || "").slice(0, 3000)}`)
-    .join("\n\n");
-
-  const rawCombinedText = text
-    ? `\n\nRaw combined source text (may include all uploaded files and URLs):\n${String(
-        text
-      ).slice(0, 8000)}`
-    : "";
-
-  const sections = (outputTypes || [])
-    .map((t) => {
-      const guide = OUTPUT_TYPE_PROMPTS[t] || "(no guide)";
-      return `### ${t}
-Guidelines:
-${guide}
-Draft (from sources):`;
-    })
-    .join("\n\n");
-
-  return `Title: ${title || "Untitled"}
-Public Domain Search: ${publicSearch ? "ON" : "OFF"}
-
-User notes:
-${notes || "(none)"}
-
-Sources (structured):
-${filesText}
-${urlsText}
-
-${rawCombinedText}
-
-${sections}`;
-}
-
-// ---------- Call OpenAI ----------
-async function callOpenAI({ modelId, temperature, maxTokens, prompt }) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("Missing OPENAI_API_KEY");
-
-  // Strip "openai:" prefix if present
-  const model = (String(modelId || "").replace(/^openai:/, "")) || "gpt-4o-mini";
-
-  const resp = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model,
-      temperature: typeof temperature === "number" ? temperature : 0.3,
-      max_tokens: typeof maxTokens === "number" ? maxTokens : 1200,
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a factual, compliance-safe assistant. " +
-            "When Public Domain Search is OFF, you must base your answer only on the sources and raw combined source text provided by the user. " +
-            "When it is ON, you may also draw on your general knowledge."
-        },
-        { role: "user", content: prompt }
-      ]
-    })
-  });
-
-  if (!resp.ok) {
-    const txt = await resp.text().catch(() => "");
-    throw new Error(`OpenAI API error: ${resp.status} ${txt}`);
-  }
-
-  const data = await resp.json();
-  return data.choices?.[0]?.message?.content || "";
-}
-
-// ---------- API Route ----------
-export default async function handler(req, res) {
-  // CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
-
-  if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
+router.post("/generate", async (req, res) => {
   try {
     const {
-      modelId,
-      temperature,
-      maxTokens,
-      publicSearch,
-      // old name, for compatibility if ever used:
-      outputTypes,
-      // new name from frontend:
+      mode = "generate", // "generate" | "rewrite"
+      title,
+      notes,
       selectedTypes,
-      title,
-      notes,
-      sources,
-      text
-    } = req.body || {};
-
-    // Prefer selectedTypes from the frontend, fall back to outputTypes if present
-    const effectiveOutputTypes = Array.isArray(selectedTypes) && selectedTypes.length > 0
-      ? selectedTypes
-      : Array.isArray(outputTypes)
-      ? outputTypes
-      : [];
-
-    // Optional: light debug log in server logs
-    console.log("[/api/generate] body keys:", Object.keys(req.body || {}));
-
-    const prompt = buildPrompt({
-      title,
-      outputTypes: effectiveOutputTypes,
-      notes,
       publicSearch,
-      sources,
-      text
+      text,
+      previousContent,
+      modelId = "gpt-4o-mini",
+      temperature = 0.3,
+      maxTokens = 2048,
+    } = req.body;
+
+    const typesLabel =
+      Array.isArray(selectedTypes) && selectedTypes.length
+        ? selectedTypes.join(", ")
+        : "general investment content";
+
+    const baseSystemPrompt = `
+You are a highly skilled investment and private markets content writer.
+
+You produce clear, concise, professional writing suitable for:
+- investor reporting commentary
+- investment notes
+- press releases
+- LinkedIn posts
+
+You follow the user's notes and respect the chosen output types.
+When rewriting, you **preserve the structure and core points of the previous draft**
+unless the user explicitly asks for a major restructure.
+`.trim();
+
+    let messages;
+
+    if (mode === "rewrite" && previousContent) {
+      // 🔁 REWRITE PATH – treat previousContent as the base to tweak
+      messages = [
+        {
+          role: "system",
+          content: baseSystemPrompt,
+        },
+        {
+          role: "user",
+          content: `You are revising an existing draft. Make **targeted edits only**, unless the instructions explicitly request broader changes.
+
+Goals:
+- Preserve overall structure, sections, and key points of the existing draft.
+- Improve clarity, tone, flow, and correctness.
+- Apply the rewrite instructions.
+- Use the source material only to refine details or correct facts, not to rewrite from scratch.
+
+Output types: ${typesLabel}
+Title: ${title || "(untitled)"}
+Include public domain search context: ${publicSearch ? "Yes (already applied on backend if enabled)" : "No – rely only on provided sources."}
+`,
+        },
+        {
+          role: "user",
+          content: `REWRITE INSTRUCTIONS:\n${notes || "(no additional instructions provided)"}`,
+        },
+        {
+          role: "user",
+          content: `EXISTING DRAFT (KEEP STRUCTURE, TWEAK CONTENT):\n\n${previousContent}`,
+        },
+        {
+          role: "user",
+          content: `SOURCE MATERIAL (REFERENCE ONLY, DO NOT REPLACE DRAFT):\n\n${text || "(no extra source material provided)"}`,
+        },
+      ];
+    } else {
+      // 🆕 GENERATE PATH – fresh draft from sources
+      messages = [
+        {
+          role: "system",
+          content: baseSystemPrompt,
+        },
+        {
+          role: "user",
+          content: `You are creating a **new draft**.
+
+Output types: ${typesLabel}
+Title: ${title || "(untitled)"}
+Include public domain search context: ${publicSearch ? "Yes (already applied on backend if enabled)" : "No – rely only on provided sources."}
+
+Notes / constraints:
+${notes || "(none provided)"}
+`,
+        },
+        {
+          role: "user",
+          content: `SOURCE MATERIAL (PRIMARY BASIS FOR THE DRAFT):\n\n${text || "(no source text provided)"}`,
+        },
+      ];
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: modelId,
+      temperature,
+      max_tokens: maxTokens,
+      messages,
     });
 
-    const output = await callOpenAI({ modelId, temperature, maxTokens, prompt });
+    const output =
+      completion.choices?.[0]?.message?.content?.trim() ||
+      "[No content generated]";
 
-    return res.status(200).json({ output });
+    res.json({
+      mode,
+      output,
+    });
   } catch (err) {
-    console.error("[/api/generate] error:", err);
-    return res.status(500).json({ error: String(err.message || err) });
+    console.error("Error in /api/generate:", err);
+    res.status(500).json({
+      error: "Error generating content",
+      details: err?.message ?? String(err),
+    });
   }
-}
+});
+
+export default router;
