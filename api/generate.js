@@ -52,6 +52,24 @@ export default async function handler(req, res) {
       maxTokens = 2048,
     } = body;
 
+    // -----------------------------
+    // 1) Detect explicit word limit in notes
+    //    e.g. "max 30 words", "maximum 50 words", "up to 75 words"
+    // -----------------------------
+    let wordLimit = null;
+    if (typeof notes === "string") {
+      const match = notes.match(
+        /\b(?:max(?:imum)?|up to)\s+(\d+)\s+words?\b/i
+      );
+      if (match) {
+        const parsed = parseInt(match[1], 10);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          wordLimit = parsed;
+          console.log("Detected word limit from notes:", wordLimit);
+        }
+      }
+    }
+
     const typesLabel =
       Array.isArray(selectedTypes) && selectedTypes.length
         ? selectedTypes.join(", ")
@@ -73,8 +91,10 @@ unless the user explicitly asks for a major restructure.
 
     let messages;
 
+    // -----------------------------
+    // 2) Rewrite path – targeted edits, not full rewrite
+    // -----------------------------
     if (mode === "rewrite" && previousContent) {
-      // 🔁 REWRITE PATH – tweak the existing draft, not a full rewrite
       messages = [
         {
           role: "system",
@@ -118,10 +138,10 @@ Context:
           }`,
         },
       ];
-
-      
     } else {
-      // 🆕 GENERATE PATH – fresh draft from sources
+      // -----------------------------
+      // 3) Generate path – fresh draft from sources
+      // -----------------------------
       messages = [
         {
           role: "system",
@@ -152,6 +172,9 @@ ${notes || "(none provided)"}
       ];
     }
 
+    // -----------------------------
+    // 4) Call OpenAI
+    // -----------------------------
     const completion = await openai.chat.completions.create({
       model: modelId,
       temperature,
@@ -159,9 +182,27 @@ ${notes || "(none provided)"}
       messages,
     });
 
-    const output =
+    let output =
       completion.choices?.[0]?.message?.content?.trim() ||
       "[No content generated]";
+
+    // -----------------------------
+    // 5) Enforce word limit (if detected)
+    // -----------------------------
+    if (
+      wordLimit &&
+      typeof output === "string" &&
+      Number.isFinite(wordLimit) &&
+      wordLimit > 0
+    ) {
+      const words = output.split(/\s+/).filter(Boolean);
+      if (words.length > wordLimit) {
+        output = words.slice(0, wordLimit).join(" ");
+        console.log(
+          `Applied hard word limit (${wordLimit}), original length was ${words.length} words.`
+        );
+      }
+    }
 
     res.status(200).json({
       mode,
