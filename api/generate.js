@@ -1,3 +1,4 @@
+// api/generate.js
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -5,13 +6,24 @@ const openai = new OpenAI({
 });
 
 export default async function handler(req, res) {
+  // --- CORS headers (allow frontend on a different domain) ---
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    res.status(405).json({ error: "Method not allowed" });
+    return;
   }
 
   try {
     const {
-      mode = "generate",
+      mode = "generate", // "generate" | "rewrite"
       title,
       notes,
       selectedTypes,
@@ -21,7 +33,7 @@ export default async function handler(req, res) {
       modelId = "gpt-4o-mini",
       temperature = 0.3,
       maxTokens = 2048,
-    } = req.body;
+    } = req.body || {};
 
     const typesLabel =
       Array.isArray(selectedTypes) && selectedTypes.length
@@ -39,13 +51,13 @@ You produce clear, concise, professional writing suitable for:
 
 You follow the user's notes and respect the chosen output types.
 When rewriting, you **preserve the structure and core points of the previous draft**
-unless the user explicitly asks for major restructuring.
+unless the user explicitly asks for a major restructure.
 `.trim();
 
-    let messages = [];
+    let messages;
 
     if (mode === "rewrite" && previousContent) {
-      // --- REWRITE PATH ---
+      // 🔁 REWRITE PATH – treat previousContent as the base to tweak
       messages = [
         {
           role: "system",
@@ -53,36 +65,42 @@ unless the user explicitly asks for major restructuring.
         },
         {
           role: "user",
-          content: `You are revising an existing draft. Make targeted edits only.
+          content: `You are revising an existing draft. Make **targeted edits only**, unless the instructions explicitly request broader changes.
 
 Goals:
-- Preserve the existing structure
-- Keep the major points and order
-- Improve clarity, accuracy, tone, and flow
-- Apply the rewrite instructions
-- Use source material only to refine details, not to replace the draft
+- Preserve overall structure, sections, and key points of the existing draft.
+- Improve clarity, tone, flow, and correctness.
+- Apply the rewrite instructions.
+- Use the source material only to refine details or correct facts, not to rewrite from scratch.
 
 Output types: ${typesLabel}
 Title: ${title || "(untitled)"}
-Public domain search: ${publicSearch ? "Enabled" : "Disabled"}
+Include public domain search context: ${
+            publicSearch
+              ? "Yes (already applied on backend if enabled)"
+              : "No – rely only on provided sources."
+          }
 `,
         },
         {
           role: "user",
-          content: `REWRITE INSTRUCTIONS:\n${notes || "(none provided)"}`,
+          content: `REWRITE INSTRUCTIONS:\n${
+            notes || "(no additional instructions provided)"
+          }`,
         },
         {
           role: "user",
-          content: `EXISTING DRAFT:\n\n${previousContent}`,
+          content: `EXISTING DRAFT (KEEP STRUCTURE, TWEAK CONTENT):\n\n${previousContent}`,
         },
         {
           role: "user",
-          content: `SOURCE MATERIAL (REFERENCE ONLY):\n\n${text || "(none)"}`
-        }
+          content: `SOURCE MATERIAL (REFERENCE ONLY, DO NOT REPLACE DRAFT):\n\n${
+            text || "(no extra source material provided)"
+          }`,
+        },
       ];
-
     } else {
-      // --- GENERATE PATH ---
+      // 🆕 GENERATE PATH – fresh draft from sources
       messages = [
         {
           role: "system",
@@ -90,20 +108,26 @@ Public domain search: ${publicSearch ? "Enabled" : "Disabled"}
         },
         {
           role: "user",
-          content: `Create a new draft.
+          content: `You are creating a **new draft**.
 
 Output types: ${typesLabel}
 Title: ${title || "(untitled)"}
-Public domain search: ${publicSearch ? "Enabled" : "Disabled"}
+Include public domain search context: ${
+            publicSearch
+              ? "Yes (already applied on backend if enabled)"
+              : "No – rely only on provided sources."
+          }
 
-Notes:
-${notes || "(none)"}
+Notes / constraints:
+${notes || "(none provided)"}
 `,
         },
         {
           role: "user",
-          content: `SOURCE MATERIAL:\n\n${text || "(none provided)"}`
-        }
+          content: `SOURCE MATERIAL (PRIMARY BASIS FOR THE DRAFT):\n\n${
+            text || "(no source text provided)"
+          }`,
+        },
       ];
     }
 
@@ -118,13 +142,15 @@ ${notes || "(none)"}
       completion.choices?.[0]?.message?.content?.trim() ||
       "[No content generated]";
 
-    return res.status(200).json({ mode, output });
-
+    res.status(200).json({
+      mode,
+      output,
+    });
   } catch (err) {
     console.error("Error in /api/generate:", err);
-    return res.status(500).json({
+    res.status(500).json({
       error: "Error generating content",
-      details: err?.message || String(err),
+      details: err?.message ?? String(err),
     });
   }
 }
