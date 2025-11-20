@@ -5,21 +5,16 @@ import {
   PROMPT_RECIPES,
   SCENARIO_INSTRUCTIONS,
 } from "../helpers/promptRecipes.js";
-
 import { fillTemplate } from "../helpers/template.js";
-import {
-  DEFAULT_STYLE_GUIDE,
-  SAMPLE_CLIENT_STYLE_GUIDE,
-} from "../helpers/styleGuides.js";
+import { BASE_STYLE_GUIDE } from "../helpers/styleGuides.js";
 import { scoreOutput } from "../helpers/scoring.js";
-
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export default async function handler(req, res) {
-  // --- CORS headers ---
+  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
@@ -27,12 +22,10 @@ export default async function handler(req, res) {
   );
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-  // Handle preflight OPTIONS request
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // Only allow POST for /generate
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -43,7 +36,6 @@ export default async function handler(req, res) {
       notes,
       text,
       selectedTypes = [],
-      workspaceMode = "generic",
       scenario = "default",
       modelId = "gpt-4o-mini",
       temperature = 0.3,
@@ -58,13 +50,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "No output types selected" });
     }
 
-    const styleGuide =
-      workspaceMode === "client"
-        ? SAMPLE_CLIENT_STYLE_GUIDE
-        : DEFAULT_STYLE_GUIDE;
-
-    const promptPack =
-      PROMPT_RECIPES[workspaceMode] || PROMPT_RECIPES.generic;
+    const styleGuide = BASE_STYLE_GUIDE;
+    const promptPack = PROMPT_RECIPES.default;
 
     const outputs = [];
 
@@ -73,7 +60,7 @@ export default async function handler(req, res) {
         promptPack.templates[outputType] ||
         promptPack.templates.press_release;
 
-            const userPromptBase = fillTemplate(template, {
+      const userPromptBase = fillTemplate(template, {
         title,
         notes,
         text,
@@ -102,17 +89,14 @@ export default async function handler(req, res) {
         ],
       });
 
-
-            const output =
+      const output =
         completion.choices?.[0]?.message?.content?.trim() ||
         "[No content returned]";
 
-      // --- New: score the output using the scoring helper ---
       const scoring = await scoreOutput({
         outputText: output,
         scenario,
         outputType,
-        workspaceMode,
       });
 
       outputs.push({
@@ -126,12 +110,10 @@ export default async function handler(req, res) {
           structure: scoring.structure,
         },
       });
-
     }
 
     return res.status(200).json({
       outputs,
-      workspaceMode,
       scenario,
     });
   } catch (err) {
