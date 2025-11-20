@@ -1,5 +1,5 @@
 // helpers/promptRecipes.js
-
+ 
 import { fillTemplate } from "./template.js";
 
 // A generic template used for most outputs.
