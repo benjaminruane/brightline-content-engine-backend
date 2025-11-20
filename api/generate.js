@@ -40,6 +40,7 @@ export default async function handler(req, res) {
       modelId = "gpt-4o-mini",
       temperature = 0.3,
       maxTokens = 2048,
+      maxWords,
     } = req.body || {};
 
     if (!text) {
@@ -49,6 +50,11 @@ export default async function handler(req, res) {
     if (!Array.isArray(selectedTypes) || selectedTypes.length === 0) {
       return res.status(400).json({ error: "No output types selected" });
     }
+
+    const numericMaxWords =
+      typeof maxWords === "number"
+        ? maxWords
+        : parseInt(maxWords, 10) || 0;
 
     const styleGuide = BASE_STYLE_GUIDE;
     const promptPack = PROMPT_RECIPES.default;
@@ -70,11 +76,17 @@ export default async function handler(req, res) {
       const scenarioExtra =
         SCENARIO_INSTRUCTIONS[scenario] || SCENARIO_INSTRUCTIONS.default;
 
+      const lengthGuidance =
+        numericMaxWords > 0
+          ? `\nLength guidance:\n- Aim for no more than approximately ${numericMaxWords} words.\n`
+          : "";
+
       const userPrompt =
         userPromptBase +
         "\n\nScenario-specific guidance:\n" +
         scenarioExtra.trim() +
-        "\n";
+        "\n" +
+        lengthGuidance;
 
       const systemPrompt =
         promptPack.systemPrompt + "\n\nSTYLE GUIDE:\n" + styleGuide;
@@ -89,9 +101,17 @@ export default async function handler(req, res) {
         ],
       });
 
-      const output =
+      let output =
         completion.choices?.[0]?.message?.content?.trim() ||
         "[No content returned]";
+
+      // Hard cap the length if maxWords is set
+      if (numericMaxWords > 0) {
+        const words = output.split(/\s+/);
+        if (words.length > numericMaxWords) {
+          output = words.slice(0, numericMaxWords).join(" ");
+        }
+      }
 
       const scoring = await scoreOutput({
         outputText: output,
