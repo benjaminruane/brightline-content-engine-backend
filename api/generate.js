@@ -76,7 +76,8 @@ export default async function handler(req, res) {
         : parseInt(maxWords, 10) || 0;
 
     const styleGuide = BASE_STYLE_GUIDE;
-    const promptPack = PROMPT_RECIPES.default;
+const promptPack = PROMPT_RECIPES.generic;
+
 
     const outputs = [];
 
