@@ -64,7 +64,7 @@ function setCorsHeaders(req, res) {
 }
 // -----------------------------------------------------------------
 
-// Temporary scoring stub – matches shape expected by the frontend.
+// Prototype scoring stub – same as generate.js
 async function scoreOutput() {
   return {
     overall: 85,
@@ -75,15 +75,41 @@ async function scoreOutput() {
   };
 }
 
-export default async function handler(req, res) {
-  // Set CORS headers on every request
-  setCorsHeaders(req, res);
+function normalizeCurrencies(text) {
+  if (!text) return text;
+  return text
+    .replace(/\$([0-9])/g, "USD $1")
+    .replace(/€([0-9])/g, "EUR $1")
+    .replace(/£([0-9])/g, "GBP $1");
+}
 
-  // Handle preflight OPTIONS
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
+function enforceWordLimit(text, maxWords) {
+  if (!maxWords || maxWords <= 0 || !text) return text;
+
+  const words = text.split(/\s+/);
+  if (words.length <= maxWords) return text;
+
+  // Prefer trimming at sentence boundaries
+  const sentences = text.match(/[^.!?]+[.!?]+/g);
+  if (!sentences) return words.slice(0, maxWords).join(" ");
+
+  let rebuilt = "";
+  for (const s of sentences) {
+    const countSoFar = rebuilt.split(/\s+/).filter(Boolean).length;
+    const sentenceCount = s.split(/\s+/).filter(Boolean).length;
+    if (countSoFar + sentenceCount > maxWords) break;
+    rebuilt += s.trim() + " ";
   }
 
+  const trimmed = rebuilt.trim();
+  return trimmed || words.slice(0, maxWords).join(" ");
+}
+
+export default async function handler(req, res) {
+  // Set CORS headers
+  setCorsHeaders(req, res);
+
+  if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -107,19 +133,21 @@ export default async function handler(req, res) {
     const numericMaxWords =
       typeof maxWords === "number"
         ? maxWords
-        : parseInt(maxWords, 10) || 0;
+        : maxWords
+        ? parseInt(maxWords, 10) || 0
+        : 0;
 
     const promptPack = PROMPT_RECIPES.generic;
+
     const template =
       promptPack.templates[outputType] ||
       promptPack.templates.press_release;
 
-    // For rewrite, we treat the existing draft as the "source material"
-    // and layer explicit rewrite instructions on top.
+    // Use the existing draft as the source material during rewrite
     const baseFilled = fillTemplate(template, {
-      title: "", // we don't track per-version titles yet
+      title: "",
       notes,
-      text,      // existing draft text
+      text,
       scenario,
     });
 
@@ -156,13 +184,12 @@ Existing draft to rewrite:
       rewriteFrame;
 
     const systemPrompt =
-  promptPack.systemPrompt +
-  "\n\nYou must follow the STYLE GUIDE strictly. " +
-  "If the source uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
-  "(e.g., USD, EUR, GBP). " +
-  "Apply ALL formatting rules consistently, even when the source does not." +
-  "\n\nSTYLE GUIDE:\n" +
-  styleGuide;
+      promptPack.systemPrompt +
+      "\n\nYou must follow the STYLE GUIDE strictly. " +
+      "If the source uses currency symbols (e.g. $, €, £), rewrite them using the correct three-letter currency code " +
+      "(e.g. USD, EUR, GBP). Apply ALL formatting rules from the STYLE GUIDE consistently, even when the source does not." +
+      "\n\nSTYLE GUIDE:\n" +
+      BASE_STYLE_GUIDE;
 
     const completion = await client.chat.completions.create({
       model: modelId,
@@ -175,41 +202,11 @@ Existing draft to rewrite:
     });
 
     let output =
-  normalizeCurrencies(
-    completion.choices?.[0]?.message?.content?.trim() || "[No content returned]"
-  );
+      completion.choices?.[0]?.message?.content?.trim() ||
+      "[No content returned]";
 
-    function enforceWordLimit(text, maxWords) {
-  if (!maxWords || maxWords <= 0) return text;
-
-  const words = text.split(/\s+/);
-  if (words.length <= maxWords) return text;
-
-  // Soft limit: keep only complete sentences
-  const sentences = text.match(/[^.!?]+[.!?]+/g);
-  if (!sentences) return words.slice(0, maxWords).join(" ");
-
-  let rebuilt = "";
-  for (const s of sentences) {
-    const wCount = rebuilt.split(/\s+/).filter(Boolean).length;
-    if (wCount + s.split(/\s+/).length > maxWords) break;
-    rebuilt += s.trim() + " ";
-  }
-
-  return rebuilt.trim() || words.slice(0, maxWords).join(" ");
-}
-
-
-// Optional hard word cap
-output = enforceWordLimit(output, numericMaxWords);
-
-
-    function normalizeCurrencies(text) {
-  return text
-    .replace(/\$([0-9])/g, "USD $1")
-    .replace(/€([0-9])/g, "EUR $1")
-    .replace(/£([0-9])/g, "GBP $1");
-}
+    output = normalizeCurrencies(output);
+    output = enforceWordLimit(output, numericMaxWords);
 
     const scoring = await scoreOutput({
       outputText: output,
