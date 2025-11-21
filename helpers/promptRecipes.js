@@ -90,6 +90,7 @@ OUTPUT
 `;
 
 // Main recipe pack used by /api/generate
+
 export const PROMPT_RECIPES = {
   generic: {
     systemPrompt: `
@@ -100,8 +101,68 @@ neutral, and fact-based.
 `.trim(),
     templates: {
       // Specialised transaction text prompt (scenario aware)
-      transaction_text: transactionTextTemplate,
+      
+     transaction_text: transactionTextTemplate,
+Write a transaction commentary for the event described.
 
+Base structure:
+- Start with a crisp opening sentence in this structure:
+  "In {{scenario_date}}, Partners Group [ACTION] {{investment}}, a ..."
+- Keep tone factual, concise, and aligned with the STYLE GUIDE.
+- Do not invent any content not supported by the source material.
+
+Scenario expectations:
+- If scenario = "new_investment":
+    - Describe the company clearly (what it does, sector, geography).
+    - Outline operational highlights only if supported by the source.
+    - State the investment thesis using neutral, fact-based phrasing.
+    - Include (if known): lead/joint/co-investment status.
+
+- If scenario = "new_fund_commitment":
+    - Describe the fund, target size, strategy, and planned number of deals.
+    - Summarise target sectors and typical deal size ranges (only if provided).
+    - Describe the manager’s value-creation approach (themes + structure).
+    - Give factual investment merits (team, track record, deal pipeline).
+
+- If scenario = "fund_capital_call":
+    - Emphasise the **largest use of proceeds** that drove the capital call.
+    - Describe the asset acquired or financed, and how the transaction occurred.
+    - Include valuation metrics only if explicitly provided.
+    - Summarise investment thesis + value-creation plan (fact-based only).
+    - If multiple uses exist, describe the largest and note “among others”.
+
+- If scenario = "fund_distribution":
+    - Emphasise the **largest source of funds** behind the distribution.
+    - Describe what was realised/sold and how (full/partial exit, recap etc.).
+    - Note high-level returns only if explicitly supported.
+    - Include supported value-creation actions since investment.
+    - If multiple sources exist, describe the largest and note “among others”.
+
+- If scenario = "exit_realisation":
+    - Describe the realisation event (full exit, partial, recapitalisation).
+    - Provide context on holding period and supported operational progress.
+    - Avoid disclosing confidential valuation or performance metrics.
+
+- If scenario = "revaluation":
+    - Summarise the asset.
+    - Describe the **drivers** of the valuation change (market or operational).
+    - Avoid speculation beyond what is directly supported.
+
+Formatting & tone:
+- Apply all STYLE GUIDE rules strictly.
+- Use short paragraphs, smooth transitions, and natural narrative flow.
+- Avoid jargon or unsupported interpretation.
+- Keep all numbers, percentages, dates, and names consistent with the source.
+
+Inputs:
+- TITLE (if provided)
+- NOTES (must-include points)
+- TEXT (source material)
+
+Now produce a single, cohesive commentary respecting the scenario expectations above.
+`,
+
+     
       // Other output types currently use the generic base template.
       // We can specialise these later (press release, investor letter, LinkedIn post, etc.).
       press_release: baseTemplate,
