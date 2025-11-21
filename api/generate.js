@@ -15,12 +15,37 @@ Treat this as a new direct investment transaction.
 - Mention whether it is a lead, joint, or co-investment if that information is available.
 - Avoid discussing exits or portfolio performance; stay focused on the entry transaction context.
   `,
-  new_fund_commitment: `
-Treat this as a new commitment to a fund or program.
-- Describe the fund’s strategy, target sectors, and stage.
-- Summarise the rationale for committing to this fund (team, track record, access, differentiation).
-- Keep commentary neutral, factual, and aligned with the STYLE GUIDE.
-  `,
+    new_fund_commitment: `
+Treat this as a new commitment by Partners Group to a private markets fund or program.
+
+COMPLETE VERSION (internal / investor commentary):
+- Aim for around 150 words, in two paragraphs:
+  - Paragraph 1: describe the fund
+  - Paragraph 2: explain the investment merits and why Partners Group was attracted to it.
+- Start with a formulation similar to:
+  "In TRANSACTION DATE, Partners Group committed to INVESTMENT, a ..."
+- Where the information is available in the source material, include:
+  - A clear description of the fund and its target size.
+  - The fund's investment strategy and whether this is a new strategy or a continuation of an existing strategy.
+  - How many underlying investments the fund plans to make.
+  - Key sectors the fund targets.
+  - Typical target equity or enterprise value range for each deal.
+  - The manager's value creation approach, described both thematically and structurally
+    (for example: "digital transformation" and "Portfolio Support Group").
+  - The main investment merits, grouped into themes such as track record, entry valuation and operating team.
+  - Why Partners Group was attracted to the commitment, using a narrative tone that remains factual and neutral.
+  - If the fund has already started investing or has seed assets, briefly mention these
+    (e.g. asset name and one-line description) only where supported by the sources.
+- Do not introduce fund terms such as fee levels, carry rates, hurdle rates or GP commitments unless they are clearly
+  and publicly disclosed.
+- Do not invent numerical details (target size, number of investments, valuation ranges, etc.) that are not supported
+  by the source material.
+
+GENERAL:
+- Keep tone factual, concise and professional.
+- Follow the STYLE GUIDE strictly for language, number formatting and terminology.
+`,
+  
   exit_realisation: `
 Treat this as a realisation or exit of an existing investment.
 - Describe what happened in the transaction (e.g., full exit, partial sale, recapitalisation).
@@ -34,6 +59,59 @@ Treat this as a valuation update for an existing investment.
 - Focus on operational or market factors mentioned in the source material.
 - Avoid speculating about performance or outlook beyond the evidence provided.
   `,
+    fund_distribution: `
+Treat this as a distribution or exit event at fund level, where a fund returns proceeds to investors.
+
+COMPLETE VERSION (internal / investor commentary):
+- Aim for around 140 words in a single paragraph.
+- Focus on the largest component of the distribution, while acknowledging there may be multiple sources.
+- Use a formulation similar to:
+  "In TRANSACTION DATE, INVESTMENT distributed proceeds from ..."
+- Where supported by the sources, include:
+  - The source of the distribution: what was realised or sold, when it occurred and how
+    (for example, full exit, partial sale, recapitalisation or refinancing).
+  - A concise description of the asset or assets sold or realised (or partially realised).
+  - Returns on the investment, if known and clearly supported by the source documents
+    (for example, high-level multiple or performance indicators), keeping in mind sensitivity.
+  - Key transformation or value-creation actions implemented since the original investment
+    (for example, operational improvements, add-on acquisitions, strategic repositioning), only where explicitly supported.
+- If there are multiple sources of distribution, focus on the largest and qualify this with
+  wording such as "among others" to signal that there were additional smaller contributors.
+- Avoid disclosing sensitive or non-public valuation or return metrics; keep performance commentary high-level and
+  consistent with the STYLE GUIDE and source materials.
+
+GENERAL:
+- Keep tone factual, concise and neutral.
+- Follow the STYLE GUIDE strictly, including number formatting and avoidance of speculative language.
+`,
+
+    fund_capital_call: `
+Treat this as a capital call by a fund, focusing on the main use of proceeds.
+
+COMPLETE VERSION (internal / investor commentary):
+- Aim for around 140 words in a single paragraph.
+- Focus on the largest use of funds that gave rise to the capital call, while acknowledging there may be other uses.
+- Use a formulation similar to:
+  "In TRANSACTION DATE, INVESTMENT called capital for ..."
+- Where supported by the sources, include:
+  - The primary purpose of the capital call (for example, funding a new investment, follow-on capital,
+    fees and expenses or other specific uses).
+  - A concise description of the asset acquired or financed and the transaction (what was acquired, when and how).
+  - Any headline valuation metric for the underlying transaction (for example, enterprise value)
+    only if explicitly provided in the source material.
+  - A clear investment thesis: why this use of capital is attractive or strategic for the fund.
+  - A brief value-creation plan (for example, operational improvements, organic growth, M&A),
+    described thematically and only where supported by the sources.
+  - Any latest developments or early results that are clearly value-adding and safe to mention.
+- If there are multiple uses of the called capital, describe the largest explicitly and qualify this with
+  wording such as "among others" to signal that other uses exist.
+- Avoid disclosing sensitive or non-public financial terms beyond what is clearly stated in the sources.
+
+GENERAL:
+- Keep tone factual, concise and professional.
+- Follow the STYLE GUIDE strictly, including number handling and terminology.
+`,
+
   default: `
 Write clear, concise, fact-based commentary aligned with the given scenario.
 - Follow the STYLE GUIDE exactly.
