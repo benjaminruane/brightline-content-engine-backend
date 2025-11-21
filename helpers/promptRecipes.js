@@ -2,8 +2,6 @@
 
 export const PROMPT_RECIPES = {
   generic: {
-    // This gets prepended to the system prompt in generate.js / rewrite.js,
-    // and then the STYLE GUIDE is appended there.
     systemPrompt: `
 You are Brightline, an expert investment writer focused on private markets
 transactions, fund events and portfolio commentary.
@@ -24,10 +22,7 @@ Use the templates below as structural guidance, then adapt to the specific scena
 `,
 
     templates: {
-      // ==========================================================
       // 1. TRANSACTION TEXT
-      // Internal-style transaction paragraph(s) – the main workhorse
-      // ==========================================================
       transaction_text: `
 Write a transaction commentary for the event described.
 
@@ -91,10 +86,7 @@ Inputs:
 Now produce a single, cohesive commentary that respects the scenario expectations above.
 `,
 
-      // ==========================================================
       // 2. PRESS RELEASE
-      // Public-facing paragraph, strictly limited to public-safe info
-      // ==========================================================
       press_release: `
 Write a short, public-facing announcement paragraph about this event.
 
@@ -109,55 +101,46 @@ Content constraints:
 - If something is not clearly public, treat it as non-public and omit it.
 
 Structure:
-- One paragraph, unless the scenario explicitly calls for two, but default to a single paragraph.
-- Maximum length should respect any max word guidance (if maxWords is provided, aim comfortably within it).
+- Default to a single paragraph unless the scenario clearly requires two.
+- Respect any max word guidance (if maxWords is provided, aim comfortably within it).
 - Opening sentence should state:
   - Who (Partners Group and relevant counterparties)
-  - What happened (invested, committed, exited, distributed, called capital, revalued)
-  - The asset or fund name and a brief description (sector, geography) if appropriate.
+  - What happened (invested, committed, exited, distributed, called capital, etc.)
+  - The asset or fund name and a brief description where appropriate.
 - Follow with one or two factual supporting sentences, such as:
   - Strategy or focus of the fund or company.
   - High-level rationale or strategic fit, phrased neutrally.
   - Any publicly disclosed performance highlight (if explicitly allowed).
 
 Scenario hints:
-- For new investments or fund commitments:
-    - Emphasise the strategic rationale and nature of the investment or fund.
-- For exits or distributions:
+- New investments / new fund commitments:
+    - Emphasise the strategic nature and focus of the asset or fund.
+- Exits / distributions:
     - Emphasise the realisation or distribution event, not detailed returns.
-- For capital calls:
-    - Emphasise what the capital will be used for at a high level.
-- For revaluations:
-    - This is usually NOT a typical press release topic; if a revaluation is clearly
-      public-facing, summarise the change at a very high level only if explicitly allowed.
+- Capital calls:
+    - Emphasise at high level what the capital will support.
+- Revaluations:
+    - Only summarise if clearly public and explicitly safe to communicate.
 
 Tone & style:
 - Professional, neutral, and aligned with the STYLE GUIDE.
-- Avoid marketing superlatives ("best-in-class", "world-leading") unless they appear in
-  quoted public material and it is clearly appropriate.
-- Short, readable sentences suitable for a press or website audience.
+- Avoid hype or exaggerated marketing language.
+- Short, readable sentences suitable for external audiences.
 
-Inputs:
-- TITLE (if provided) can inform the angle but does not need to be repeated verbatim.
-- NOTES may highlight what must be emphasised or avoided.
-- TEXT contains the sources; extract only safe, public-facing content.
-
-Produce a single, polished paragraph suitable for external publication.
+Produce a single polished paragraph suitable for external publication.
 `,
 
-      // ==========================================================
-      // 3. INVESTMENT NOTE (Investor letter / commentary paragraph)
-      // ==========================================================
+      // 3. INVESTMENT NOTE
       investment_note: `
 Write a narrative-quality investment update suitable for inclusion in an investor letter
 or quarterly report.
 
 Purpose:
-- Summarise the event in a way that fits into a longer investor letter or commentary section.
+- Summarise the event in a way that fits into a longer investor letter or commentary.
 - Blend factual detail and contextual narrative while staying neutral and aligned with the STYLE GUIDE.
 
 Structure:
-- One or two cohesive paragraphs (not bullet points).
+- One or two cohesive paragraphs (no bullet lists).
 - Logical flow:
   - Brief context and description of the asset or fund.
   - What happened (transaction, capital call, distribution, revaluation, etc.).
@@ -170,8 +153,7 @@ Scenario hints:
     - Provide context on the asset/fund and its strategic role.
     - Explain the high-level thesis in a factual, neutral tone.
 - Exits / distributions:
-    - Provide a concise summary of the realisation.
-    - Highlight drivers of the outcome only where clearly supported.
+    - Summarise the realisation and high-level drivers of the outcome where supported.
 - Capital calls:
     - Explain how the called capital is being used and why it matters for the fund.
 - Revaluations:
@@ -182,18 +164,10 @@ Tone & style:
 - Avoid hype, exaggeration, and unsupported forward-looking statements.
 - Use linking phrases to keep the paragraph flowing naturally.
 
-Inputs:
-- TITLE (if provided) can hint at the theme but does not need to be repeated verbatim.
-- NOTES specify emphasis or constraints (e.g. "focus on operating improvements").
-- TEXT provides factual basis; do not go beyond it.
-
 Produce one or two paragraphs that can slot directly into an investor letter.
 `,
 
-      // ==========================================================
       // 4. LINKEDIN POST
-      // Short, professional social post for a transaction / event
-      // ==========================================================
       linkedin_post: `
 Write a short LinkedIn-style post about the event.
 
@@ -208,28 +182,23 @@ Structure:
   - The asset or fund.
   - What happened and why it matters (in a factual way).
 - Optional closing line that invites readers to learn more (if appropriate),
-  such as referencing a press release or website (only if this is clearly implied).
+  for example by referring to a press release or website (only if clearly implied).
 
 Tone & style:
 - Professional and client-facing; suitable for a firm like Partners Group.
 - Avoid emojis unless the user notes explicitly request them.
-- Avoid personal language ("I am excited") unless clearly allowed; default to institutional voice ("Partners Group is pleased to...") but avoid overused phrases.
+- Avoid personal language ("I am excited") unless clearly allowed; prefer institutional voice.
 - Follow the STYLE GUIDE for language and formatting, including currency and numbers.
 
 Scenario hints:
 - New investments / new fund commitments:
-    - Emphasise strategic fit and the nature of the partnership or opportunity.
+    - Emphasise strategic fit and nature of the partnership or opportunity.
 - Exits / distributions:
-    - Emphasise realisation in a high-level, non-promotional way.
+    - Emphasise the realisation in a high-level, non-promotional way.
 - Capital calls:
-    - Not usually a LinkedIn topic; if described, keep at a very high level.
+    - Only mention at a high level if clearly appropriate.
 - Revaluations:
-    - Generally not a LinkedIn topic; mention only if clearly appropriate and supported.
-
-Inputs:
-- TITLE (if present) may inform the core message or theme.
-- NOTES can include guidance such as "no performance claims" or "focus on sustainability angle".
-- TEXT provides the factual content.
+    - Generally not a LinkedIn topic; mention only if explicitly appropriate.
 
 Produce a concise LinkedIn post draft that a communications team could lightly edit and publish.
 `,
