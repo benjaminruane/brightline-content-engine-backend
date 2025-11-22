@@ -46,23 +46,7 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// --- CORS helper -------------------------------------------------
-
-const ALLOWED_ORIGINS = [
-  "https://content-engine-frontend-gilt.vercel.app",
-  "http://localhost:3000",
-];
-
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
-// -----------------------------------------------------------------
+"https://content-engine-frontend-gilt.vercel.app",
 
 // Temporary scoring stub – matches shape expected by the frontend.
 async function scoreOutput() {
