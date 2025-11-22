@@ -5,12 +5,12 @@ import { PROMPT_RECIPES } from "../helpers/promptRecipes.js";
 import { fillTemplate } from "../helpers/template.js";
 import {
   DEFAULT_STYLE_GUIDE,
-  SAMPLE_CLIENT_STYLE_GUIDE,
+  // SAMPLE_CLIENT_STYLE_GUIDE, // not used yet, but kept for future multi-client support
 } from "../helpers/styleGuides.js";
 
 const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
 
-// Scenario-specific extra guidance
+// --- Scenario-specific guidance -----------------------------------
 const SCENARIO_INSTRUCTIONS = {
   new_investment: `
 Treat this as a new direct investment transaction.
@@ -42,6 +42,20 @@ Treat this as a valuation update for an existing investment.
 - Avoid speculating about performance or outlook beyond the evidence provided.
   `,
 
+  fund_capital_call: `
+Treat this as a capital call at the fund level.
+- Emphasise the main use(s) of proceeds.
+- Describe the key underlying transaction(s) or investments funded.
+- Keep language neutral and aligned with the STYLE GUIDE.
+  `,
+
+  fund_distribution: `
+Treat this as a distribution from a fund.
+- Emphasise the largest source of funds driving the distribution.
+- If there are multiple sources, name the largest and qualify with "among others" when appropriate.
+- Keep language neutral and aligned with the STYLE GUIDE.
+  `,
+
   default: `
 Write clear, concise, fact-based commentary aligned with the given scenario.
 - Follow the STYLE GUIDE exactly.
@@ -50,13 +64,65 @@ Write clear, concise, fact-based commentary aligned with the given scenario.
   `,
 };
 
+// --- OpenAI client ------------------------------------------------
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-"https://content-engine-frontend-gilt.vercel.app",
+// --- CORS helper --------------------------------------------------
+const ALLOWED_ORIGINS = [
+  "https://content-engine-frontend-gilt.vercel.app",
+  "http://localhost:3000",
+];
 
-// Simple scoring stub so the frontend has something to display
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // Credentials not strictly needed, but harmless to include:
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+}
+
+// --- Helpers ------------------------------------------------------
+
+// Enforce currency formatting (very simple normaliser for now)
+function normalizeCurrencies(text) {
+  return text
+    .replace(/\$([0-9])/g, "USD $1")
+    .replace(/€([0-9])/g, "EUR $1")
+    .replace(/£([0-9])/g, "GBP $1");
+}
+
+// Softer word limit: keep whole sentences where possible
+function enforceWordLimit(text, maxWords) {
+  if (!maxWords || maxWords <= 0) return text;
+
+  const words = text.split(/\s+/);
+  if (words.length <= maxWords) return text;
+
+  const sentences = text.match(/[^.!?]+[.!?]+/g);
+  if (!sentences) {
+    // Fall back to a hard cut if we can't detect sentences
+    return words.slice(0, maxWords).join(" ");
+  }
+
+  let rebuilt = "";
+  for (const s of sentences) {
+    const currentWordCount = rebuilt.split(/\s+/).filter(Boolean).length;
+    const sentenceWords = s.split(/\s+/).length;
+    if (currentWordCount + sentenceWords > maxWords) break;
+    rebuilt += s.trim() + " ";
+  }
+
+  const trimmed = rebuilt.trim();
+  return trimmed || words.slice(0, maxWords).join(" ");
+}
+
+// Temporary scoring stub – shape matches what the frontend expects
 async function scoreOutput() {
   return {
     overall: 85,
@@ -67,40 +133,13 @@ async function scoreOutput() {
   };
 }
 
-// Normalise currency symbols → codes (basic pass)
-function normalizeCurrencies(text) {
-  return text
-    .replace(/\$([0-9])/g, "USD $1")
-    .replace(/€([0-9])/g, "EUR $1")
-    .replace(/£([0-9])/g, "GBP $1");
-}
-
-// Soft word limit that keeps whole sentences where possible
-function enforceWordLimit(text, maxWords) {
-  if (!maxWords || maxWords <= 0) return text;
-
-  const words = text.split(/\s+/);
-  if (words.length <= maxWords) return text;
-
-  const sentences = text.match(/[^.!?]+[.!?]+/g);
-  if (!sentences) return words.slice(0, maxWords).join(" ");
-
-  let rebuilt = "";
-  for (const s of sentences) {
-    const currentCount = rebuilt.split(/\s+/).filter(Boolean).length;
-    const sentenceWords = s.split(/\s+/).length;
-    if (currentCount + sentenceWords > maxWords) break;
-    rebuilt += s.trim() + " ";
-  }
-
-  return rebuilt.trim() || words.slice(0, maxWords).join(" ");
-}
+// --- Handler ------------------------------------------------------
 
 export default async function handler(req, res) {
-  // Set CORS headers on every request
+  // Always set CORS headers
   setCorsHeaders(req, res);
 
-  // Handle preflight OPTIONS request
+  // Handle preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -115,14 +154,13 @@ export default async function handler(req, res) {
       notes,
       text,
       selectedTypes = [],
-      workspaceMode = "generic", // reserved for later multi-client support
+      workspaceMode = "generic",
       scenario = "default",
-      versionType = "complete", // "complete" | "public"
+      versionType = "complete", // "complete" or "public"
       modelId = "gpt-4o-mini",
       temperature = 0.3,
       maxTokens = 2048,
       maxWords, // optional soft word limit from the frontend
-      publicSearch, // currently unused but kept for future roadmap
     } = req.body || {};
 
     if (!text) {
@@ -134,22 +172,26 @@ export default async function handler(req, res) {
     }
 
     const numericMaxWords =
-      typeof maxWords === "number" ? maxWords : parseInt(maxWords, 10) || 0;
+      typeof maxWords === "number"
+        ? maxWords
+        : parseInt(maxWords, 10) || 0;
 
     const styleGuide = BASE_STYLE_GUIDE;
-    const promptPack = PROMPT_RECIPES.generic;
+    const promptPack = PROMPT_RECIPES[workspaceMode] || PROMPT_RECIPES.generic;
 
     const outputs = [];
 
     for (const outputType of selectedTypes) {
       const template =
-        promptPack.templates[outputType] || promptPack.templates.press_release;
+        promptPack.templates[outputType] ||
+        promptPack.templates.press_release;
 
       const userPromptBase = fillTemplate(template, {
         title,
         notes,
         text,
         scenario,
+        versionType,
       });
 
       const scenarioExtra =
@@ -160,20 +202,17 @@ export default async function handler(req, res) {
           ? `\nLength guidance:\n- Aim for no more than approximately ${numericMaxWords} words.\n`
           : "";
 
-      // Version-specific guidance (Complete vs Public)
       const versionGuidance =
         versionType === "public"
           ? `
-Public-facing version guidance:
-- Base the draft primarily on information that is clearly public (e.g. official press releases, company websites, widely reported facts).
-- If a fact appears only in internal material, you may include it if it is clearly non-sensitive and high-level, but avoid anything granular, proprietary, or commercially delicate.
-- Prefer qualitative or approximate wording over precise internal figures where there is any doubt.
-- When in doubt, favour brevity and high-level descriptions over detail.`
+This is a PUBLIC-FACING version:
+- Base all statements primarily on information that is publicly available.
+- If some details from internal sources are used, ensure they are not highly sensitive and are phrased at a high, non-specific level.
+- When in doubt, prefer omission or very general wording over specific, non-public metrics.`
           : `
-Internal "complete" version guidance:
-- You may rely fully on the internal source documents.
-- It is acceptable to include internal figures and detail, provided they are aligned with the WRITING GUIDELINES and not unnecessarily sensitive.
-- Write for a sophisticated, client-facing internal audience and prioritise clarity and completeness over brevity.`;
+This is a COMPLETE / INTERNAL version:
+- Follow the full brief, and incorporate all relevant, non-sensitive details from the source material.
+- You may use internal details as long as they are not explicitly flagged as highly sensitive.`;
 
       const userPrompt =
         userPromptBase +
@@ -189,10 +228,8 @@ Internal "complete" version guidance:
         "\n\nYou must follow the STYLE GUIDE strictly. " +
         "If the source uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
         "(e.g., USD, EUR, GBP). " +
-        "Apply ALL formatting rules consistently, even when the source does not.\n" +
-        "Numbers from one to eleven should usually be spelled out; use numerals for twelve and above, " +
-        "unless doing so would clearly reduce clarity in a technical context.\n\n" +
-        "STYLE GUIDE:\n" +
+        "Apply ALL formatting rules consistently, even when the source does not." +
+        "\n\nSTYLE GUIDE:\n" +
         styleGuide;
 
       const completion = await client.chat.completions.create({
@@ -209,7 +246,7 @@ Internal "complete" version guidance:
         completion.choices?.[0]?.message?.content?.trim() ||
         "[No content returned]";
 
-      // Style clean-up passes
+      // Normalise currency formatting and apply word limit
       output = normalizeCurrencies(output);
       output = enforceWordLimit(output, numericMaxWords);
 
@@ -217,7 +254,6 @@ Internal "complete" version guidance:
         outputText: output,
         scenario,
         outputType,
-        versionType,
       });
 
       outputs.push({
