@@ -120,6 +120,33 @@ Write clear, concise, fact-based commentary aligned with the given scenario.
   `,
 };
 
+const VERSION_INSTRUCTIONS = {
+  complete: `
+Treat this as an internal, complete version.
+
+- You may use all information in the uploaded source documents.
+- You may include non-public details where they are relevant and not obviously sensitive,
+  but still avoid anything that looks like detailed deal terms or confidential fund economics.
+- You should follow the WRITING GUIDELINES carefully.
+- Focus on clarity, completeness and accuracy for an internal investor audience.
+  `,
+
+  publimaxWords, // optional soft word limit from the frontendc: `
+Treat this as an external, public-facing version.
+
+- Prefer information that is clearly public (e.g. press releases, official announcements)
+  or clearly non-sensitive (high-level business description, strategy, sector, geography).
+- Avoid or generalise obviously sensitive information, including:
+  detailed transaction terms, non-public valuation metrics, detailed performance numbers,
+  internal process descriptions, and fund economics.
+- You may keep neutral descriptive statements that are not obviously confidential
+  (e.g. "a leading provider of X in Y", "a diversified portfolio of Z"), even if they
+  only appear in internal documents.
+- When in doubt, bias toward caution and higher-level wording.
+- The output should still follow the WRITING GUIDELINES and remain coherent and useful.
+  `,
+};
+
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -199,17 +226,20 @@ export default async function handler(req, res) {
   }
 
   try {
-    const {
-      title,
-      notes,
-      text,
-      selectedTypes = [],
-      scenario = "default",
-      modelId = "gpt-4o-mini",
-      temperature = 0.3,
-      maxTokens = 2048,
-      maxWords, // optional soft word limit from the frontend (string or number)
-    } = req.body || {};
+const {
+  title,
+  notes,
+  text,
+  selectedTypes = [],
+  workspaceMode = "generic",
+  scenario = "default",
+  versionType = "complete",
+  modelId = "gpt-4o-mini",
+  temperature = 0.3,
+  maxTokens = 2048,
+  maxWords, // optional soft word limit from the frontend
+} = req.body || {};
+
 
     if (!text) {
       return res.status(400).json({ error: "Missing text" });
@@ -243,20 +273,26 @@ export default async function handler(req, res) {
         scenario,
       });
 
-      const scenarioExtra =
-        SCENARIO_INSTRUCTIONS[scenario] || SCENARIO_INSTRUCTIONS.default;
+   const scenarioExtra =
+  SCENARIO_INSTRUCTIONS[scenario] || SCENARIO_INSTRUCTIONS.default;
 
-      const lengthGuidance =
-        numericMaxWords > 0
-          ? `\nLength guidance:\n- Aim for no more than approximately ${numericMaxWords} words.\n`
-          : "";
+const versionExtra =
+  VERSION_INSTRUCTIONS[versionType] || VERSION_INSTRUCTIONS.complete;
 
-      const userPrompt =
-        userPromptBase +
-        "\n\nScenario-specific guidance:\n" +
-        scenarioExtra.trim() +
-        "\n" +
-        lengthGuidance;
+const lengthGuidance =
+  numericMaxWords > 0
+    ? `\nLength guidance:\n- Aim for no more than approximately ${numericMaxWords} words.\n`
+    : "";
+
+const userPrompt =
+  userPromptBase +
+  "\n\nScenario-specific guidance:\n" +
+  scenarioExtra.trim() +
+  "\n\nVersion-type guidance:\n" +
+  versionExtra.trim() +
+  "\n" +
+  lengthGuidance;
+
 
       const systemPrompt =
         promptPack.systemPrompt +
