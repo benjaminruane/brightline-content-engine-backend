@@ -240,9 +240,17 @@ This is a COMPLETE / INTERNAL version:
         ],
       });
 
+            const firstChoice =
+        completion && completion.choices && completion.choices.length > 0
+          ? completion.choices[0]
+          : null;
+
       let outputText =
-        completion.choices?.[0]?.message?.content?.trim() ||
-        "[No content returned]";
+        firstChoice &&
+        firstChoice.message &&
+        typeof firstChoice.message.content === "string"
+          ? firstChoice.message.content.trim()
+          : "[No content returned]";
 
       // Normalise currency formatting and apply word limit
       outputText = normalizeCurrencies(outputText);
