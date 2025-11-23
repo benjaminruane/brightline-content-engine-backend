@@ -7,6 +7,20 @@ import { DEFAULT_STYLE_GUIDE } from "../helpers/styleGuides.js";
 
 const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
 
+// --- CORS helper --------------------------------------------------
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin || "*";
+
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    origin === "null" ? "*" : origin
+  );
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+// -----------------------------------------------------------------
+
 const SCENARIO_INSTRUCTIONS = {
   new_investment: `
 Treat this as a new direct investment transaction.
