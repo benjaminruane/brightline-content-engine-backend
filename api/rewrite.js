@@ -21,7 +21,6 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
-
 const SCENARIO_INSTRUCTIONS = {
   new_investment: `
 Treat this as a new direct investment transaction.
@@ -60,8 +59,6 @@ Write clear, concise, fact-based commentary aligned with the given scenario.
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-"https://content-engine-frontend-gilt.vercel.app",
 
 // Temporary scoring stub – matches shape expected by the frontend.
 async function scoreOutput() {
