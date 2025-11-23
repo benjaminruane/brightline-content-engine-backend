@@ -70,21 +70,19 @@ const client = new OpenAI({
 });
 
 // --- CORS helper --------------------------------------------------
-const ALLOWED_ORIGINS = [
-  "https://content-engine-frontend-gilt.vercel.app",
-  "http://localhost:3000",
-];
-
 function setCorsHeaders(req, res) {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
+  const origin = req.headers.origin || "*";
+
+  // For the prototype, be permissive so frontend + localhost both work
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    origin === "null" ? "*" : origin
+  );
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  // Credentials not strictly needed, but harmless to include:
-  res.setHeader("Access-Control-Allow-Credentials", "true");
+  // You can keep credentials if you want, but not strictly needed now:
+  // res.setHeader("Access-Control-Allow-Credentials", "true");
 }
 
 // --- Helpers ------------------------------------------------------
