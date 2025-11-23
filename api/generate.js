@@ -79,10 +79,6 @@ Write clear, concise, fact-based commentary aligned with the given scenario.
   `,
 };
 
-// --- OpenAI client ------------------------------------------------
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 // --- Helpers ------------------------------------------------------
 
@@ -144,7 +140,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  try {
+    try {
     const {
       title,
       notes,
@@ -152,16 +148,22 @@ export default async function handler(req, res) {
       selectedTypes = [],
       workspaceMode = "generic",
       scenario = "default",
-      versionType = "complete", // "complete" or "public"
+      versionType = "complete",
       modelId = "gpt-4o-mini",
       temperature = 0.3,
       maxTokens = 2048,
-      maxWords, // optional soft word limit from the frontend
+      maxWords,
     } = req.body || {};
+
+    // Create OpenAI client lazily, so OPTIONS preflight never touches it
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
     if (!text) {
       return res.status(400).json({ error: "Missing text" });
     }
+
 
     if (!Array.isArray(selectedTypes) || selectedTypes.length === 0) {
       return res.status(400).json({ error: "No output types selected" });
