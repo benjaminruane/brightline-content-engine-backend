@@ -10,6 +10,22 @@ import {
 
 const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
 
+// --- CORS helper --------------------------------------------------
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin || "*";
+
+  // For the prototype, be permissive so frontend + localhost both work
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    origin === "null" ? "*" : origin
+  );
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+// ------------------------------------------------------------------
+
+
 // --- Scenario-specific guidance -----------------------------------
 const SCENARIO_INSTRUCTIONS = {
   new_investment: `
