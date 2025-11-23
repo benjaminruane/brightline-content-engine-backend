@@ -10,21 +10,6 @@ import {
 
 const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
 
-// --- CORS helper --------------------------------------------------
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-
-  // For the prototype, be permissive so frontend + localhost both work
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin === "null" ? "*" : origin
-  );
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
-// ------------------------------------------------------------------
-
 // --- Scenario-specific guidance -----------------------------------
 const SCENARIO_INSTRUCTIONS = {
   new_investment: `
@@ -79,6 +64,21 @@ Write clear, concise, fact-based commentary aligned with the given scenario.
   `,
 };
 
+// --- CORS helper --------------------------------------------------
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin || "*";
+
+  // For the prototype, be permissive so frontend + localhost both work
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    origin === "null" ? "*" : origin
+  );
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // You can keep credentials if you want, but not strictly needed now:
+  // res.setHeader("Access-Control-Allow-Credentials", "true");
+}
 
 // --- Helpers ------------------------------------------------------
 
@@ -127,6 +127,7 @@ async function scoreOutput() {
 }
 
 // --- Handler ------------------------------------------------------
+
 export default async function handler(req, res) {
   // Always set CORS headers
   setCorsHeaders(req, res);
@@ -140,7 +141,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-    try {
+  try {
     const {
       title,
       notes,
@@ -148,14 +149,14 @@ export default async function handler(req, res) {
       selectedTypes = [],
       workspaceMode = "generic",
       scenario = "default",
-      versionType = "complete",
+      versionType = "complete", // "complete" or "public"
       modelId = "gpt-4o-mini",
       temperature = 0.3,
       maxTokens = 2048,
-      maxWords,
+      maxWords, // optional soft word limit from the frontend
     } = req.body || {};
 
-    // Create OpenAI client lazily, so OPTIONS preflight never touches it
+    // OPTIONAL STEP 3: lazy-create OpenAI client inside handler
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -163,7 +164,6 @@ export default async function handler(req, res) {
     if (!text) {
       return res.status(400).json({ error: "Missing text" });
     }
-
 
     if (!Array.isArray(selectedTypes) || selectedTypes.length === 0) {
       return res.status(400).json({ error: "No output types selected" });
