@@ -215,9 +215,17 @@ Existing draft to rewrite:
       ],
     });
 
+        const firstChoice =
+      completion && completion.choices && completion.choices.length > 0
+        ? completion.choices[0]
+        : null;
+
     let output =
-      completion.choices?.[0]?.message?.content?.trim() ||
-      "[No content returned]";
+      firstChoice &&
+      firstChoice.message &&
+      typeof firstChoice.message.content === "string"
+        ? firstChoice.message.content.trim()
+        : "[No content returned]";
 
     output = normalizeCurrencies(output);
     output = enforceWordLimit(output, numericMaxWords);
