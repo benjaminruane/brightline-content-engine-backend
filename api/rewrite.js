@@ -56,10 +56,6 @@ Write clear, concise, fact-based commentary aligned with the given scenario.
   `,
 };
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 // Temporary scoring stub – matches shape expected by the frontend.
 async function scoreOutput() {
   return {
@@ -113,22 +109,28 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  try {
+    try {
     const {
       text,
       notes,
       outputType = "transaction_text",
       scenario = "default",
-      versionType = "complete", // "complete" | "public"
+      versionType = "complete",
       modelId = "gpt-4o-mini",
       temperature = 0.3,
       maxTokens = 2048,
       maxWords,
     } = req.body || {};
 
+    // Lazily create OpenAI client so OPTIONS preflight doesn’t depend on env
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     if (!text || !text.trim()) {
       return res.status(400).json({ error: "Missing text" });
     }
+
 
     const numericMaxWords =
       typeof maxWords === "number" ? maxWords : parseInt(maxWords, 10) || 0;
