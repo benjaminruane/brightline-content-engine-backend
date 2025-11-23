@@ -25,7 +25,6 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
-
 // --- Scenario-specific guidance -----------------------------------
 const SCENARIO_INSTRUCTIONS = {
   new_investment: `
@@ -85,22 +84,6 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// --- CORS helper --------------------------------------------------
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-
-  // For the prototype, be permissive so frontend + localhost both work
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin === "null" ? "*" : origin
-  );
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  // You can keep credentials if you want, but not strictly needed now:
-  // res.setHeader("Access-Control-Allow-Credentials", "true");
-}
-
 // --- Helpers ------------------------------------------------------
 
 // Enforce currency formatting (very simple normaliser for now)
@@ -148,7 +131,6 @@ async function scoreOutput() {
 }
 
 // --- Handler ------------------------------------------------------
-
 export default async function handler(req, res) {
   // Always set CORS headers
   setCorsHeaders(req, res);
@@ -197,15 +179,13 @@ export default async function handler(req, res) {
 
     for (const outputType of selectedTypes) {
       const template =
-        promptPack.templates[outputType] ||
-        promptPack.templates.press_release;
+        promptPack.templates[outputType] || promptPack.templates.press_release;
 
-      const userPromptBase = fillTemplate(template, {
-        title,
+      const baseFilled = fillTemplate(template, {
+        title: title || "",
         notes,
         text,
         scenario,
-        versionType,
       });
 
       const scenarioExtra =
@@ -227,6 +207,8 @@ This is a PUBLIC-FACING version:
 This is a COMPLETE / INTERNAL version:
 - Follow the full brief, and incorporate all relevant, non-sensitive details from the source material.
 - You may use internal details as long as they are not explicitly flagged as highly sensitive.`;
+
+      const userPromptBase = baseFilled;
 
       const userPrompt =
         userPromptBase +
@@ -255,24 +237,25 @@ This is a COMPLETE / INTERNAL version:
           { role: "user", content: userPrompt },
         ],
       });
- 
-      let output =
+
+      let outputText =
         completion.choices?.[0]?.message?.content?.trim() ||
         "[No content returned]";
 
       // Normalise currency formatting and apply word limit
-      output = normalizeCurrencies(output);
-      output = enforceWordLimit(output, numericMaxWords);
+      outputText = normalizeCurrencies(outputText);
+      outputText = enforceWordLimit(outputText, numericMaxWords);
 
       const scoring = await scoreOutput({
-        outputText: output,
+        outputText,
         scenario,
         outputType,
+        versionType,
       });
 
       outputs.push({
         outputType,
-        text: output,
+        text: outputText,
         score: scoring.overall,
         metrics: {
           clarity: scoring.clarity,
