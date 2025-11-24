@@ -3,12 +3,18 @@
 // Very simple token replacement: {{title}}, {{notes}}, {{text}}, {{scenario}}
 export function fillTemplate(template, values) {
   let result = String(template);
-
   const map = values || {};
-  Object.keys(map).forEach(function (key) {
-    const pattern = new RegExp("\\{\\{" + key + "\\}\\}", "g");
-    result = result.replace(pattern, map[key] == null ? "" : String(map[key]));
-  });
+
+  for (const key in map) {
+    if (Object.prototype.hasOwnProperty.call(map, key)) {
+      const value =
+        map[key] === null || map[key] === undefined
+          ? ""
+          : String(map[key]);
+      const pattern = new RegExp("\\{\\{" + key + "\\}\\}", "g");
+      result = result.replace(pattern, value);
+    }
+  }
 
   return result;
 }
