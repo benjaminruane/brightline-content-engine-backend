@@ -21,53 +21,32 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
+// Scenario guidance (same idea as generate)
 const SCENARIO_INSTRUCTIONS = {
-  new_investment: `
-Treat this as a new direct investment transaction.
-- Focus on describing the company, what it does, and key operational highlights.
-- Explain the investment thesis and why Partners Group was attracted to the opportunity.
-- Mention whether it is a lead, joint, or co-investment if that information is available.
-- Avoid discussing exits or portfolio performance; stay focused on the entry transaction context.
-  `,
-  new_fund_commitment: `
-Treat this as a new commitment to a fund or program.
-- Describe the fund’s strategy, target sectors, and stage.
-- Summarise the rationale for committing to this fund (team, track record, access, differentiation).
-- Keep commentary neutral, factual, and aligned with the STYLE GUIDE.
-  `,
-  exit_realisation: `
-Treat this as a realisation or exit of an existing investment.
-- Describe what happened in the transaction (e.g., full exit, partial sale, recapitalisation).
-- Provide concise context on the asset and holding period if available.
-- Focus on drivers of value creation that are explicitly supported by the source material.
-- Avoid disclosing sensitive or non-public valuation or return metrics.
-  `,
-  revaluation: `
-Treat this as a valuation update for an existing investment.
-- Describe the asset briefly and the key drivers of the valuation movement (if given).
-- Focus on operational or market factors mentioned in the source material.
-- Avoid speculating about performance or outlook beyond the evidence provided.
-  `,
-  default: `
-Write clear, concise, fact-based commentary aligned with the given scenario.
-- Follow the STYLE GUIDE exactly.
-- Keep the tone neutral and professional.
-- Do not invent facts or rationales that are not supported by the source material.
-  `,
+  new_investment:
+    "Rewrite as an entry transaction (new investment) with neutral tone and clear statement of thesis.",
+  new_fund_commitment:
+    "Rewrite as a fund commitment summary, explaining strategy and rationale.",
+  exit_realisation:
+    "Rewrite as an exit / realisation note, focusing on what happened and main value drivers mentioned.",
+  revaluation:
+    "Rewrite as a valuation update, keeping explanations tied to the source.",
+  default:
+    "Rewrite for clarity, structure and tone while keeping facts from the original draft."
 };
 
-// Temporary scoring stub – matches shape expected by the frontend.
+// Scoring stub
 async function scoreOutput() {
   return {
     overall: 85,
     clarity: 0.8,
     accuracy: 0.75,
     tone: 0.8,
-    structure: 0.78,
+    structure: 0.78
   };
 }
 
-// Normalise currency symbols → codes (basic pass)
+// Currency normaliser
 function normalizeCurrencies(text) {
   return text
     .replace(/\$([0-9])/g, "USD $1")
@@ -75,7 +54,7 @@ function normalizeCurrencies(text) {
     .replace(/£([0-9])/g, "GBP $1");
 }
 
-// Soft word limit that keeps whole sentences where possible
+// Soft word limit
 function enforceWordLimit(text, maxWords) {
   if (!maxWords || maxWords <= 0) return text;
 
@@ -86,7 +65,8 @@ function enforceWordLimit(text, maxWords) {
   if (!sentences) return words.slice(0, maxWords).join(" ");
 
   let rebuilt = "";
-  for (const s of sentences) {
+  for (let i = 0; i < sentences.length; i += 1) {
+    const s = sentences[i];
     const currentCount = rebuilt.split(/\s+/).filter(Boolean).length;
     const sentenceWords = s.split(/\s+/).length;
     if (currentCount + sentenceWords > maxWords) break;
@@ -97,170 +77,164 @@ function enforceWordLimit(text, maxWords) {
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers on every request
   setCorsHeaders(req, res);
 
-  // Handle preflight OPTIONS
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-   if (req.method !== "POST") {
+  if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-
     const {
       text,
       notes,
-      outputType = "transaction_text",
-      scenario = "default",
-      versionType = "complete",
-      modelId = "gpt-4o-mini",
-      temperature = 0.3,
-      maxTokens = 2048,
-      maxWords,
+      outputType,
+      scenario,
+      versionType,
+      modelId,
+      temperature,
+      maxTokens,
+      maxWords
     } = req.body || {};
-
-    // Lazily create OpenAI client so OPTIONS preflight doesn’t depend on env
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
 
     if (!text || !text.trim()) {
       return res.status(400).json({ error: "Missing text" });
     }
 
-
+    const outType = outputType || "transaction_text";
+    const scenarioKey = scenario || "default";
+    const verType = versionType || "complete";
+    const model = modelId || "gpt-4o-mini";
+    const temp = typeof temperature === "number" ? temperature : 0.3;
+    const maxTok = typeof maxTokens === "number" ? maxTokens : 2048;
     const numericMaxWords =
-      typeof maxWords === "number" ? maxWords : parseInt(maxWords, 10) || 0;
+      typeof maxWords === "number"
+        ? maxWords
+        : parseInt(maxWords, 10) || 0;
 
     const promptPack = PROMPT_RECIPES.generic;
     const template =
-      promptPack.templates[outputType] || promptPack.templates.press_release;
+      promptPack.templates[outType] || promptPack.templates.press_release;
 
     const styleGuide = BASE_STYLE_GUIDE;
 
     const baseFilled = fillTemplate(template, {
       title: "",
       notes,
-      text, // existing draft text
-      scenario,
+      text,
+      scenario: scenarioKey
     });
 
     const scenarioExtra =
-      SCENARIO_INSTRUCTIONS[scenario] || SCENARIO_INSTRUCTIONS.default;
+      SCENARIO_INSTRUCTIONS[scenarioKey] ||
+      SCENARIO_INSTRUCTIONS.default;
 
     const lengthGuidance =
       numericMaxWords > 0
-        ? `\nLength guidance:\n- Aim for no more than approximately ${numericMaxWords} words.\n`
+        ? "Length guidance:\n- Aim for no more than approximately " +
+          numericMaxWords +
+          " words.\n"
         : "";
 
     const versionGuidance =
-      versionType === "public"
-        ? `
-Public-facing version guidance:
-- Treat this as a public summary. Prefer information that is clearly public.
-- If some details in the existing draft look internal or sensitive, you may soften or omit them.
-- Favour high-level, qualitative wording and avoid granular internal metrics where there is any doubt.`
-        : `
-Internal "complete" version guidance:
-- You may preserve or enhance internal detail where it helps clarity.
-- Keep everything aligned with the WRITING GUIDELINES and a professional, client-facing tone.`;
+      verType === "public"
+        ? "Public-facing version. Prefer clearly public information and soften or omit sensitive detail."
+        : "Internal complete version. You may preserve internal detail where appropriate, keeping tone professional.";
 
-    const rewriteFrame = `
-You are rewriting an existing draft for the same scenario and output type.
-
-Rewrite the draft text below to:
-- Apply the user's rewrite instructions.
-- Preserve factual content that is supported by the original draft.
-- Improve clarity, tone, and flow while following the STYLE GUIDE.
-- Keep the structure broadly similar unless the instructions request otherwise.
-
-User rewrite instructions (if any):
-${notes || "(none provided)"}
-
-Existing draft to rewrite:
-"""${text}"""
-`;
+    const rewriteFrame =
+      "You are rewriting an existing draft.\n\n" +
+      "User rewrite instructions (if any):\n" +
+      (notes || "(none provided)") +
+      "\n\nExisting draft:\n\"\"\"" +
+      text +
+      "\"\"\"";
 
     const userPrompt =
       baseFilled +
       "\n\nScenario-specific guidance:\n" +
-      scenarioExtra.trim() +
-      "\n" +
+      scenarioExtra +
+      "\n\n" +
       versionGuidance +
-      "\n" +
+      "\n\n" +
       lengthGuidance +
+      "\n\n" +
       rewriteFrame;
 
     const systemPrompt =
       promptPack.systemPrompt +
-      "\n\nYou must follow the STYLE GUIDE strictly. " +
-      "If the text uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
-      "(e.g., USD, EUR, GBP). " +
-      "Apply ALL formatting rules consistently, even when they were not followed in the original draft.\n" +
-      "Numbers from one to eleven should usually be spelled out; use numerals for twelve and above, " +
-      "unless doing so would clearly reduce clarity in a technical context.\n\n" +
+      "\n\nFollow the STYLE GUIDE strictly.\n" +
+      "Rewrite currency symbols as codes (USD, EUR, GBP).\n\n" +
       "STYLE GUIDE:\n" +
       styleGuide;
 
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+
     const completion = await client.chat.completions.create({
-  model: modelId,
-  temperature,
-  max_tokens: maxTokens,
-  messages: [
-    { role: "system", content: systemPrompt },
-    { role: "user", content: userPrompt }
-  ]
-});
+      model,
+      temperature: temp,
+      max_tokens: maxTok,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ]
+    });
 
+    let firstChoice = null;
+    if (
+      completion &&
+      completion.choices &&
+      Array.isArray(completion.choices) &&
+      completion.choices.length > 0
+    ) {
+      firstChoice = completion.choices[0];
+    }
 
-        const firstChoice =
-      completion && completion.choices && completion.choices.length > 0
-        ? completion.choices[0]
-        : null;
-
-    let output =
+    let output = "[No content returned]";
+    if (
       firstChoice &&
       firstChoice.message &&
       typeof firstChoice.message.content === "string"
-        ? firstChoice.message.content.trim()
-        : "[No content returned]";
+    ) {
+      output = firstChoice.message.content.trim();
+    }
 
     output = normalizeCurrencies(output);
     output = enforceWordLimit(output, numericMaxWords);
 
     const scoring = await scoreOutput({
       outputText: output,
-      scenario,
-      outputType,
-      versionType,
+      scenario: scenarioKey,
+      outputType: outType,
+      versionType: verType
     });
 
     return res.status(200).json({
       outputs: [
         {
-          outputType,
+          outputType: outType,
           text: output,
           score: scoring.overall,
           metrics: {
             clarity: scoring.clarity,
             accuracy: scoring.accuracy,
             tone: scoring.tone,
-            structure: scoring.structure,
-          },
-        },
+            structure: scoring.structure
+          }
+        }
       ],
-      scenario,
-      versionType,
+      scenario: scenarioKey,
+      versionType: verType
     });
   } catch (err) {
     console.error("Error in /api/rewrite:", err);
     return res.status(500).json({
       error: "Internal server error",
-      detail: err.message || String(err),
+      detail: err && err.message ? err.message : String(err)
     });
   }
 }
