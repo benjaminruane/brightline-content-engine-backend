@@ -1,9 +1,12 @@
 {
   "name": "content-engine-backend-v2",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
+  "main": "api/generate.js",
+  "scripts": {
+    "test": "echo \"no tests\""
+  },
   "dependencies": {
-    "openai": "4.52.0"
+    "openai": "^4.0.0"
   }
 }
