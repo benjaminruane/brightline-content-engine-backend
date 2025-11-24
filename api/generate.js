@@ -3,65 +3,26 @@
 import OpenAI from "openai";
 import { PROMPT_RECIPES } from "../helpers/promptRecipes.js";
 import { fillTemplate } from "../helpers/template.js";
-import {
-  DEFAULT_STYLE_GUIDE,
-  // SAMPLE_CLIENT_STYLE_GUIDE,
-} from "../helpers/styleGuides.js";
+import { DEFAULT_STYLE_GUIDE } from "../helpers/styleGuides.js";
 
 const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
 
 // --- Scenario-specific guidance -----------------------------------
 const SCENARIO_INSTRUCTIONS = {
-  new_investment: `
-Treat this as a new direct investment transaction.
-- Focus on describing the company, what it does, and key operational highlights.
-- Explain the investment thesis and why Partners Group was attracted to the opportunity.
-- Mention whether it is a lead, joint, or co-investment if that information is available.
-- Avoid discussing exits or portfolio performance; stay focused on the entry transaction context.
-  `,
-
-  new_fund_commitment: `
-Treat this as a new commitment to a fund or program.
-- Describe the fund’s strategy, target sectors, and stage.
-- Summarise the rationale for committing to this fund (team, track record, access, differentiation).
-- Keep commentary neutral, factual, and aligned with the STYLE GUIDE.
-  `,
-
-  exit_realisation: `
-Treat this as a realisation or exit of an existing investment.
-- Describe what happened in the transaction (e.g., full exit, partial sale, recapitalisation).
-- Provide concise context on the asset and holding period if available.
-- Focus on drivers of value creation that are explicitly supported by the source material.
-- Avoid disclosing sensitive or non-public valuation or return metrics.
-  `,
-
-  revaluation: `
-Treat this as a valuation update for an existing investment.
-- Describe the asset briefly and the key drivers of the valuation movement (if given).
-- Focus on operational or market factors mentioned in the source material.
-- Avoid speculating about performance or outlook beyond the evidence provided.
-  `,
-
-  fund_capital_call: `
-Treat this as a capital call at the fund level.
-- Emphasise the main use(s) of proceeds.
-- Describe the key underlying transaction(s) or investments funded.
-- Keep language neutral and aligned with the STYLE GUIDE.
-  `,
-
-  fund_distribution: `
-Treat this as a distribution from a fund.
-- Emphasise the largest source of funds driving the distribution.
-- If there are multiple sources, name the largest and qualify with "among others" when appropriate.
-- Keep language neutral and aligned with the STYLE GUIDE.
-  `,
-
-  default: `
-Write clear, concise, fact-based commentary aligned with the given scenario.
-- Follow the STYLE GUIDE exactly.
-- Keep the tone neutral and professional.
-- Do not invent facts or rationales that are not supported by the source material.
-  `,
+  new_investment:
+    "Treat this as a new direct investment transaction. Focus on what the company does, key operational highlights and a concise statement of the investment thesis. Avoid exits/performance commentary.",
+  new_fund_commitment:
+    "Treat this as a new commitment to a fund or program. Describe strategy, sectors, stage and why the commitment was made. Keep wording neutral and institutional.",
+  exit_realisation:
+    "Treat this as an exit or realisation. Describe the transaction (full or partial), basic holding context and the main value-creation drivers mentioned in the source. No speculative returns.",
+  revaluation:
+    "Treat this as a valuation update. Briefly describe the asset and the drivers of the valuation movement, based only on the source material.",
+  fund_capital_call:
+    "Treat this as a capital call. Emphasise the uses of proceeds and underlying transactions being funded.",
+  fund_distribution:
+    "Treat this as a distribution. Emphasise the main sources of funds and keep wording neutral and factual.",
+  default:
+    "Write clear, concise, fact-based commentary aligned with the given scenario. Follow the style guide and keep the tone neutral and professional."
 };
 
 // --- CORS helper --------------------------------------------------
@@ -80,7 +41,7 @@ function setCorsHeaders(req, res) {
 
 // --- Helpers ------------------------------------------------------
 
-// Enforce currency formatting (very simple normaliser for now)
+// Currency normaliser (very basic)
 function normalizeCurrencies(text) {
   return text
     .replace(/\$([0-9])/g, "USD $1")
@@ -88,7 +49,7 @@ function normalizeCurrencies(text) {
     .replace(/£([0-9])/g, "GBP $1");
 }
 
-// Softer word limit: keep whole sentences where possible
+// Soft word limit: keep whole sentences where possible
 function enforceWordLimit(text, maxWords) {
   if (!maxWords || maxWords <= 0) return text;
 
@@ -101,11 +62,11 @@ function enforceWordLimit(text, maxWords) {
   }
 
   let rebuilt = "";
-  for (let i = 0; i < sentences.length; i++) {
+  for (let i = 0; i < sentences.length; i += 1) {
     const s = sentences[i];
-    const currentWordCount = rebuilt.split(/\s+/).filter(Boolean).length;
+    const currentCount = rebuilt.split(/\s+/).filter(Boolean).length;
     const sentenceWords = s.split(/\s+/).length;
-    if (currentWordCount + sentenceWords > maxWords) break;
+    if (currentCount + sentenceWords > maxWords) break;
     rebuilt += s.trim() + " ";
   }
 
@@ -113,24 +74,22 @@ function enforceWordLimit(text, maxWords) {
   return trimmed || words.slice(0, maxWords).join(" ");
 }
 
-// Temporary scoring stub – shape matches what the frontend expects
+// Simple scoring stub matching frontend shape
 async function scoreOutput() {
   return {
     overall: 85,
     clarity: 0.8,
     accuracy: 0.75,
     tone: 0.8,
-    structure: 0.78,
+    structure: 0.78
   };
 }
 
 // --- Handler ------------------------------------------------------
 
 export default async function handler(req, res) {
-  // Always set CORS headers
   setCorsHeaders(req, res);
 
-  // Handle preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -144,28 +103,31 @@ export default async function handler(req, res) {
       title,
       notes,
       text,
-      selectedTypes = [],
-      workspaceMode = "generic",
-      scenario = "default",
-      versionType = "complete", // "complete" or "public"
-      modelId = "gpt-4o-mini",
-      temperature = 0.3,
-      maxTokens = 2048,
-      maxWords, // optional soft word limit from the frontend
+      selectedTypes,
+      workspaceMode,
+      scenario,
+      versionType,
+      modelId,
+      temperature,
+      maxTokens,
+      maxWords
     } = req.body || {};
-
-    // Lazily create OpenAI client inside handler
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
 
     if (!text) {
       return res.status(400).json({ error: "Missing text" });
     }
 
-    if (!Array.isArray(selectedTypes) || selectedTypes.length === 0) {
-      return res.status(400).json({ error: "No output types selected" });
-    }
+    const typesArray =
+      Array.isArray(selectedTypes) && selectedTypes.length > 0
+        ? selectedTypes
+        : ["press_release"];
+
+    const wsMode = workspaceMode || "generic";
+    const scenarioKey = scenario || "default";
+    const verType = versionType || "complete";
+    const model = modelId || "gpt-4o-mini";
+    const temp = typeof temperature === "number" ? temperature : 0.3;
+    const maxTok = typeof maxTokens === "number" ? maxTokens : 2048;
 
     const numericMaxWords =
       typeof maxWords === "number"
@@ -173,12 +135,16 @@ export default async function handler(req, res) {
         : parseInt(maxWords, 10) || 0;
 
     const styleGuide = BASE_STYLE_GUIDE;
-    const promptPack = PROMPT_RECIPES[workspaceMode] || PROMPT_RECIPES.generic;
+    const promptPack = PROMPT_RECIPES[wsMode] || PROMPT_RECIPES.generic;
+
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
 
     const outputs = [];
 
-    for (let i = 0; i < selectedTypes.length; i++) {
-      const outputType = selectedTypes[i];
+    for (let i = 0; i < typesArray.length; i += 1) {
+      const outputType = typesArray[i];
 
       const template =
         promptPack.templates[outputType] || promptPack.templates.press_release;
@@ -187,63 +153,51 @@ export default async function handler(req, res) {
         title: title || "",
         notes,
         text,
-        scenario,
+        scenario: scenarioKey
       });
 
       const scenarioExtra =
-        SCENARIO_INSTRUCTIONS[scenario] || SCENARIO_INSTRUCTIONS.default;
+        SCENARIO_INSTRUCTIONS[scenarioKey] ||
+        SCENARIO_INSTRUCTIONS.default;
 
       const lengthGuidance =
         numericMaxWords > 0
-          ? "\nLength guidance:\n- Aim for no more than approximately " +
+          ? "Length guidance:\n- Aim for no more than approximately " +
             numericMaxWords +
             " words.\n"
           : "";
 
       const versionGuidance =
-        versionType === "public"
-          ? `
-This is a PUBLIC-FACING version:
-- Base all statements primarily on information that is publicly available.
-- If some details from internal sources are used, ensure they are not highly sensitive and are phrased at a high, non-specific level.
-- When in doubt, prefer omission or very general wording over specific, non-public metrics.`
-          : `
-This is a COMPLETE / INTERNAL version:
-- Follow the full brief, and incorporate all relevant, non-sensitive details from the source material.
-- You may use internal details as long as they are not explicitly flagged as highly sensitive.`;
-
-      const userPromptBase = baseFilled;
+        verType === "public"
+          ? "This is a PUBLIC-FACING version. Prefer clearly public information and keep sensitive details high-level."
+          : "This is a COMPLETE / INTERNAL version. You may include non-sensitive internal detail where it helps clarity.";
 
       const userPrompt =
-        userPromptBase +
+        baseFilled +
         "\n\nScenario-specific guidance:\n" +
-        scenarioExtra.trim() +
-        "\n" +
+        scenarioExtra +
+        "\n\n" +
         versionGuidance +
-        "\n" +
+        "\n\n" +
         lengthGuidance;
 
       const systemPrompt =
         promptPack.systemPrompt +
-        "\n\nYou must follow the STYLE GUIDE strictly. " +
-        "If the source uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
-        "(e.g., USD, EUR, GBP). " +
-        "Apply ALL formatting rules consistently, even when the source does not." +
-        "\n\nSTYLE GUIDE:\n" +
+        "\n\nYou must follow the STYLE GUIDE strictly.\n" +
+        "Rewrite currency symbols ($, €, £) as proper codes (USD, EUR, GBP).\n\n" +
+        "STYLE GUIDE:\n" +
         styleGuide;
 
       const completion = await client.chat.completions.create({
-  model: modelId,
-  temperature,
-  max_tokens: maxTokens,
-  messages: [
-    { role: "system", content: systemPrompt },
-    { role: "user", content: userPrompt }
-  ]
-});
+        model,
+        temperature: temp,
+        max_tokens: maxTok,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ]
+      });
 
-
-      // --- Safe access, no optional chaining ---
       let firstChoice = null;
       if (
         completion &&
@@ -262,17 +216,15 @@ This is a COMPLETE / INTERNAL version:
       ) {
         outputText = firstChoice.message.content.trim();
       }
-      // ------------------------------------------
 
-      // Normalise currency formatting and apply word limit
       outputText = normalizeCurrencies(outputText);
       outputText = enforceWordLimit(outputText, numericMaxWords);
 
       const scoring = await scoreOutput({
         outputText,
-        scenario,
+        scenario: scenarioKey,
         outputType,
-        versionType,
+        versionType: verType
       });
 
       outputs.push({
@@ -283,21 +235,21 @@ This is a COMPLETE / INTERNAL version:
           clarity: scoring.clarity,
           accuracy: scoring.accuracy,
           tone: scoring.tone,
-          structure: scoring.structure,
-        },
+          structure: scoring.structure
+        }
       });
     }
 
     return res.status(200).json({
       outputs,
-      scenario,
-      versionType,
+      scenario: scenarioKey,
+      versionType: verType
     });
   } catch (err) {
     console.error("Error in /api/generate:", err);
     return res.status(500).json({
       error: "Internal server error",
-      detail: err.message || String(err),
+      detail: err && err.message ? err.message : String(err)
     });
   }
 }
