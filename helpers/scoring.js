@@ -58,14 +58,15 @@ Return ONLY a JSON object following the schema, with no extra text.
 
   try {
     const completion = await scoringClient.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0,
-      max_tokens: 300,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-    });
+  model: "gpt-4o-mini",
+  temperature: 0,
+  max_tokens: 300,
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: userPrompt }
+  ]
+});
+
 
     // ---------- SAFE ACCESS, NO OPTIONAL CHAINING ----------
     let raw = "{}";
