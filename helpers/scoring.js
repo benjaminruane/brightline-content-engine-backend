@@ -67,7 +67,7 @@ Return ONLY a JSON object following the schema, with no extra text.
       ],
     });
 
-    // -------- FIXED: No optional chaining --------
+    // ---------- SAFE ACCESS, NO OPTIONAL CHAINING ----------
     let raw = "{}";
 
     if (
@@ -81,7 +81,7 @@ Return ONLY a JSON object following the schema, with no extra text.
     ) {
       raw = completion.choices[0].message.content.trim();
     }
-    // ---------------------------------------------
+    // -------------------------------------------------------
 
     let parsed;
     try {
