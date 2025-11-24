@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { PROMPT_RECIPES } from "../helpers/promptRecipes.js";
 import { fillTemplate } from "../helpers/template.js";
 import { DEFAULT_STYLE_GUIDE } from "../helpers/styleGuides.js";
+import { scoreOutput } from "../helpers/scoring.js";
 
 const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
 
@@ -21,30 +22,30 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
-// Scenario guidance (same idea as generate)
 const SCENARIO_INSTRUCTIONS = {
-  new_investment:
-    "Rewrite as an entry transaction (new investment) with neutral tone and clear statement of thesis.",
-  new_fund_commitment:
-    "Rewrite as a fund commitment summary, explaining strategy and rationale.",
-  exit_realisation:
-    "Rewrite as an exit / realisation note, focusing on what happened and main value drivers mentioned.",
-  revaluation:
-    "Rewrite as a valuation update, keeping explanations tied to the source.",
-  default:
-    "Rewrite for clarity, structure and tone while keeping facts from the original draft."
+  new_investment: `
+Rewrite as a new direct investment transaction.
+- Preserve factual details but improve clarity and flow.
+- Maintain neutral, institutional tone.
+  `,
+  new_fund_commitment: `
+Rewrite as a fund commitment summary.
+- Clarify strategy, rationale and key differentiators.
+- Keep wording neutral and aligned with STYLE GUIDE.
+  `,
+  exit_realisation: `
+Rewrite as a realisation / exit commentary.
+- Clearly describe what happened and key value drivers stated in the draft.
+  `,
+  revaluation: `
+Rewrite as a valuation update.
+- Preserve factual drivers of valuation movement.
+- Keep speculative language out.
+  `,
+  default: `
+Rewrite for clarity, structure and tone while preserving factual content.
+  `
 };
-
-// Scoring stub
-async function scoreOutput() {
-  return {
-    overall: 85,
-    clarity: 0.8,
-    accuracy: 0.75,
-    tone: 0.8,
-    structure: 0.78
-  };
-}
 
 // Currency normaliser
 function normalizeCurrencies(text) {
@@ -75,6 +76,8 @@ function enforceWordLimit(text, maxWords) {
 
   return rebuilt.trim() || words.slice(0, maxWords).join(" ");
 }
+
+// --- Handler ------------------------------------------------------
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -134,39 +137,58 @@ export default async function handler(req, res) {
 
     const lengthGuidance =
       numericMaxWords > 0
-        ? "Length guidance:\n- Aim for no more than approximately " +
+        ? "\nLength guidance:\n- Aim for no more than approximately " +
           numericMaxWords +
           " words.\n"
         : "";
 
     const versionGuidance =
       verType === "public"
-        ? "Public-facing version. Prefer clearly public information and soften or omit sensitive detail."
-        : "Internal complete version. You may preserve internal detail where appropriate, keeping tone professional.";
+        ? `
+Public-facing version guidance:
+- Treat this as a public summary. Prefer information that is clearly public.
+- If some details in the existing draft look internal or sensitive, you may soften or omit them.
+- Favour high-level, qualitative wording and avoid granular internal metrics where there is any doubt.`
+        : `
+Internal "complete" version guidance:
+- You may preserve or enhance internal detail where it helps clarity.
+- Keep everything aligned with the WRITING GUIDELINES and a professional, client-facing tone.`;
 
-    const rewriteFrame =
-      "You are rewriting an existing draft.\n\n" +
-      "User rewrite instructions (if any):\n" +
-      (notes || "(none provided)") +
-      "\n\nExisting draft:\n\"\"\"" +
-      text +
-      "\"\"\"";
+    const rewriteFrame = `
+You are rewriting an existing draft for the same scenario and output type.
+
+Rewrite the draft text below to:
+- Apply the user's rewrite instructions.
+- Preserve factual content that is supported by the original draft.
+- Improve clarity, tone, and flow while following the STYLE GUIDE.
+- Keep the structure broadly similar unless the instructions request otherwise.
+
+User rewrite instructions (if any):
+${notes || "(none provided)"}
+
+Existing draft to rewrite:
+"""${text}"""
+`;
 
     const userPrompt =
       baseFilled +
       "\n\nScenario-specific guidance:\n" +
-      scenarioExtra +
-      "\n\n" +
+      scenarioExtra.trim() +
+      "\n" +
       versionGuidance +
-      "\n\n" +
+      "\n" +
       lengthGuidance +
-      "\n\n" +
+      "\n" +
       rewriteFrame;
 
     const systemPrompt =
       promptPack.systemPrompt +
-      "\n\nFollow the STYLE GUIDE strictly.\n" +
-      "Rewrite currency symbols as codes (USD, EUR, GBP).\n\n" +
+      "\n\nYou must follow the STYLE GUIDE strictly. " +
+      "If the text uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
+      "(e.g., USD, EUR, GBP). " +
+      "Apply ALL formatting rules consistently, even when they were not followed in the original draft.\n" +
+      "Numbers from one to eleven should usually be spelled out; use numerals for twelve and above, " +
+      "unless doing so would clearly reduce clarity in a technical context.\n\n" +
       "STYLE GUIDE:\n" +
       styleGuide;
 
