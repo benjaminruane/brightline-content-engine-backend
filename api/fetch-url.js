@@ -1,5 +1,5 @@
 // api/fetch-url.js
-
+ 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
