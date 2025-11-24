@@ -1,39 +1,37 @@
 # Content Engine – Backend
 
 This is the backend for the Content Engine prototype.  
-It provides a small set of HTTP endpoints for:
+It provides serverless API endpoints for:
 
-- Generating first-draft investment commentary
-- Rewriting existing drafts
-- Fetching external URLs as sources
-- Health / status checks
-
-It is designed to run as **serverless functions on Vercel**.
+- Generating investment-grade written outputs  
+- Rewriting existing drafts  
+- Fetching external URLs as source material  
+- Reporting basic system health  
 
 ---
 
-## Tech stack
+## 🌐 Tech Stack
 
-- **Runtime:** Node.js (Vercel serverless, ESM modules)
+- **Runtime:** Node.js (Vercel Serverless)
 - **Language:** JavaScript (ES Modules)
 - **AI:** OpenAI Chat Completions API
 - **Hosting:** Vercel
 
 ---
 
-## API endpoints
+## 📡 API Endpoints
 
 ### `POST /api/generate`
 
-Generate one or more outputs from source text.
+Generates one or more outputs based on source text.
 
-**Request body (simplified):**
+**Request body:**
 
 ```json
 {
   "title": "Optional title",
-  "notes": "Optional operator notes or instructions",
-  "text": "Source text to analyse",
+  "notes": "Operator notes",
+  "text": "Source text",
   "selectedTypes": ["press_release", "transaction_text"],
   "workspaceMode": "generic",
   "scenario": "new_investment",
@@ -45,13 +43,11 @@ Generate one or more outputs from source text.
 }
 Response:
 
-json
-Copy code
 {
   "outputs": [
     {
       "outputType": "press_release",
-      "text": "Generated content...",
+      "text": "Generated text…",
       "score": 88,
       "metrics": {
         "clarity": 0.8,
@@ -64,266 +60,244 @@ Copy code
   "scenario": "new_investment",
   "versionType": "complete"
 }
+
 POST /api/rewrite
-Rewrite an existing draft with optional instructions.
 
-Request body (simplified):
+Rewrites an existing draft with optional instructions.
 
-json
-Copy code
+Request body:
+
 {
-  "text": "Existing draft text",
-  "notes": "Rewrite instructions (tone, emphasis, exclusions)",
+  "text": "Existing draft",
+  "notes": "Rewrite instructions",
   "outputType": "transaction_text",
-  "scenario": "new_investment",
-  "versionType": "complete",
-  "modelId": "gpt-4o-mini",
-  "temperature": 0.3,
-  "maxTokens": 2048,
-  "maxWords": 400
+  "scenario": "exit_realisation",
+  "versionType": "public"
 }
-Response:
 
-Same shape as /api/generate, but with a single outputs[0] entry.
+
+Response: Same shape as /api/generate.
 
 POST /api/fetch-url
-Fetch the contents of a URL (used as an ingestion helper).
+
+Fetches URL contents for use as a source.
 
 Body:
 
-json
-Copy code
 { "url": "https://example.com/article" }
-Response (simplified):
 
-json
-Copy code
-{
-  "ok": true,
-  "status": 200,
-  "contentType": "text/html; charset=utf-8",
-  "body": "<!doctype html>..."
-}
 GET /api/health
-Simple health check:
-
-json
-Copy code
 { "ok": true, "status": "healthy" }
-Environment variables
-The backend expects the following env vars:
 
-OPENAI_API_KEY – API key for OpenAI
+🔑 Environment Variables
 
-Set this in Vercel → Project → Settings → Environment Variables.
+Set in Vercel → Project → Settings → Environment Variables:
 
-Development & deployment
-This repo is designed primarily for deployment on Vercel:
+OPENAI_API_KEY
 
-Connect the GitHub repo to a Vercel project.
+🚀 Deployment Workflow
 
-Set the Production branch to main.
+Code lives in GitHub (main branch is production).
 
-Add OPENAI_API_KEY in Vercel’s Project Settings.
+Vercel auto-deploys each new commit to main.
 
-Every push to main triggers a deployment.
+Environment variables stored securely in Vercel.
 
-For local development you can optionally use the Vercel CLI:
+Releases tagged in GitHub (e.g. v3.0.0).
 
-bash
-Copy code
-npm install
-# if you have vercel CLI installed:
-vercel dev
-Versioning
-GitHub Releases are used to mark stable backends.
+🏷 Versioning
 
-Current stable: v3.0.0 – Clean backend with CORS + scoring
+Current stable release: v3.0.0 — Clean backend with CORS + scoring
 
-See CHANGELOG.md and ROADMAP.md for more detail.
+See CHANGELOG.md for history.
 
-yaml
-Copy code
+See ROADMAP.md for future milestones.
+
 
 ---
 
-## 3. Frontend README text
-
-In your **frontend repo**, put something like this in `README.md`:
+# ✅ **Frontend README.md (clean, final)**
 
 ```md
 # Content Engine – Frontend
 
-This is the React frontend for the Content Engine prototype.
-
-It provides a single-page UI where an operator can:
-
-- Paste or upload source text
-- Select scenario and version type (complete / public)
-- Choose one or more output types (press release, transaction text, etc.)
-- Trigger **Generate** and **Rewrite** flows
-- View previous versions and scores
-
-The frontend talks to the backend hosted at:
-
-```text
-https://content-engine-backend-v2.vercel.app
-(We may later move this into an environment variable.)
-
-Tech stack
-UI: React
-
-Styling: Your existing CSS / component setup (Tailwind / custom classes)
-
-Hosting: Vercel (static frontend)
-
-Key behaviours
-Generate: sends a POST /api/generate request with:
-
-source text
-
-selected output types
-
-scenario
-
-version type
-
-model settings (temperature, max tokens, soft word limit)
-
-Rewrite: sends a POST /api/rewrite request with:
-
-existing draft text
-
-operator instructions
-
-scenario + version type
-
-Responses are rendered into a versions list with:
-
-generated text
-
-score pills
-
-metadata (scenario, version type, model)
-
-Local development
-If you want to run the frontend locally:
-
-bash
-Copy code
-npm install
-npm run dev   # or npm start, depending on your setup
-Then open the printed http://localhost:xxxx URL in your browser.
-
-Make sure the backend URL is reachable from your local machine.
-(At the moment it’s hardcoded to the deployed backend; later we can switch this to a config variable.)
-
-Deployment
-The frontend is deployed as a static site on Vercel:
-
-Production branch: main
-
-Each push to main triggers a new deployment
-
-Versioning
-Frontend versions broadly track backend releases but are lighter-weight.
-
-See the main project ROADMAP.md and CHANGELOG.md for overall history and planned work.
-
-yaml
-Copy code
-
-If you’d prefer a shorter frontend README, we can trim this down later.
+The Content Engine frontend provides a clean UI for generating and rewriting investment-grade written outputs using the backend AI engine.
 
 ---
 
-## 4. ROADMAP.md
+## 🧩 Features
 
-You can put **one shared roadmap** in each repo (same content), or just in the backend and link to it from the frontend README.
+- Paste, upload, or fetch source text.
+- Select scenario + version type (complete/public).
+- Select one or more output types.
+- Generate first drafts.
+- Rewrite existing drafts.
+- Compare versions with scoring indicators.
+- Works seamlessly with the backend hosted on Vercel.
 
-Here’s a ROADMAP that matches everything we’ve been working on:
+---
+
+## 🛠 Tech Stack
+
+- **Framework:** React
+- **Styling:** Tailwind / custom CSS
+- **Build:** Vite / CRA (depending on your setup)
+- **Hosting:** Vercel
+
+---
+
+## 🔌 Backend Connection
+
+The frontend communicates with the backend:
+
+
+
+https://content-engine-backend-v2.vercel.app
+
+
+Later this will move to environment variables.
+
+---
+
+## ▶️ Local Development
+
+```bash
+npm install
+npm run dev
+
+
+Then open the printed localhost URL.
+
+Make sure the backend is reachable (Vercel deployment or local proxy).
+
+🚀 Deployment
+
+Hosted on Vercel as a static React SPA.
+
+Production branch: main
+
+Every commit to main triggers a deployment.
+
+🏷 Versioning
+
+The frontend tracks backend releases loosely.
+See:
+
+ROADMAP.md
+
+CHANGELOG.md
+
+for detailed status and upcoming work.
+
+
+---
+
+# ✅ **ROADMAP.md (clean, final)**
 
 ```md
 # Content Engine – Roadmap
 
-This roadmap is intentionally high level. It focuses on the sequence of improvements for the prototype as it evolves towards an “enterprise-portable” product.
+High-level roadmap for the Content Engine prototype as it evolves toward an enterprise-ready workflow tool.
 
 ---
 
-## Now (current focus)
+## 🚦 Current Focus
 
-### 1. Stabilise core flows
-- ✅ Stable `/api/generate` and `/api/rewrite` with OpenAI
-- ✅ Consistent CORS handling across all endpoints
-- ✅ Scenario + version type wiring end-to-end
-- ✅ Model-based scoring returned to the frontend
+### ✔ Stabilise backend (DONE)
+- Clean `/api/generate` and `/api/rewrite`
+- Working scoring model
+- Fixed all CORS and deployment issues
+- Unified helpers & templates
 
-### 2. UX / UI polish
-- Ensure clear feedback for:
-  - loading state while generating / rewriting
-  - error states (network, backend errors, missing fields)
-- Make scenario + version-type selection obvious and hard to misconfigure.
-
----
-
-## Next
-
-### 3. Versioning & history
-- Persist versions (locally for now) with:
-  - timestamp
-  - scenario
-  - version type
-  - model
-  - score
-- Improve the versions list UI:
-  - clear pill styling for scores (green / amber / red / neutral)
-  - ability to select and re-open a previous version
-
-### 4. Prompt & style refinements
-- Iterate on the default style guide to better match target institutional tone.
-- Add at least one additional output template:
-  - e.g. short internal note or one-paragraph summary.
-- Start capturing “prompt packs” for different workspaces / clients.
-
-### 5. Configurability
-- Move backend URL and model defaults into config / environment variables.
-- Allow simple toggling of:
-  - temperature
-  - max tokens
-  - soft word limit
+### ✔ UI stability
+- Ensure clean UX when generating/rewriting
+- Fix score pill styling
+- Improve error handling
 
 ---
 
-## Later
+## 🔜 Next Steps
 
-### 6. Source ingestion improvements
-- Support ingestion of:
-  - PDF
-  - DOCX
-  - HTML pages (with cleaner boilerplate stripping)
-- Design a simple “sources” panel in the UI:
-  - list of ingested documents / URLs
-  - ability to re-run generate against updated sources
+### 1. Versioning and history (High priority)
+- Persist versions in local app state
+- Improve versions list UI
+- Display metadata (scenario, versionType, score, model)
 
-### 7. Multi-workspace & style guides
-- Introduce workspaces with:
-  - separate style guides
-  - separate prompt recipes
-- Allow the user to choose a workspace at the start of a session.
+### 2. Prompt & style guide refinement
+- Add output types (LinkedIn, short summary, email, etc.)
+- Expand scenario definitions
+- Prepare multi-client style-guide support
 
-### 8. Analytics and auditability
-- Track basic usage metrics:
-  - number of generations / rewrites
-  - average score per output type
-- Log enough metadata (without storing raw client text) to:
-  - explain how an output was produced
-  - support simple “show your work” discussions with stakeholders.
+### 3. Configurability
+- Move backend URL to config / env
+- Expose advanced model params in UI (but collapsed)
 
 ---
 
-## Long-term vision
+## 🧭 Medium-Term Goals
 
-- Harden privacy and compliance (no raw client text stored by default).
-- Add authentication and per-user project history.
-- Provide export templates (Word / PowerPoint) suitable for institutional reporting.
-- Position the engine as an internal tool that can sit in front of existing document repositories and workflow systems.
+### 4. Source ingestion improvements
+- DOCX parsing
+- PDF text extraction
+- HTML boilerplate stripping
+- Source summary panel in UI
+
+### 5. Workspace system
+- User-selectable workspace
+- Different style guides per workspace
+- Different prompt packs per workspace
+
+---
+
+## 🛡 Long-Term Vision
+
+- Authentication & user accounts
+- Persistent project history per user
+- Export to Word/PPT templates
+- Audit trail for enterprise compliance
+- Integration into existing client workflow systems
+
+✅ CHANGELOG.md (clean, final)
+# Changelog
+
+Notable changes to the Content Engine project.
+
+Based loosely on Keep a Changelog principles.
+
+---
+
+## [v3.0.0] – Clean backend with CORS + scoring  
+**Date:** 2025-11-23
+
+### Added
+- Full model-based scoring (overall + clarity/accuracy/tone/structure)
+- Expanded scenario guidance
+- Soft word limit + currency normalisation
+- Unified CORS handling
+
+### Changed
+- Completely rebuilt `/api/generate`
+- Completely rebuilt `/api/rewrite`
+- Consistent helper structure (`helpers/`)
+
+### Fixed
+- Vercel "Unexpected token ']'" syntax failures
+- CORS preflight rejections from frontend
+
+---
+
+## [v2.0.0] – Stable backend (Previous release)
+
+- Basic generate + rewrite functionality
+- Early style guide + prompt recipes
+- Initial scoring stub
+- Health endpoint added
+
+---
+
+## [v1.0.0] – Initial prototype
+
+- First working version of the content engine
+- Simple text → output flow
+
+If you want, I can now:
