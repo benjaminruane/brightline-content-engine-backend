@@ -1,7 +1,7 @@
 // helpers/scoring.js
 
 import OpenAI from "openai";
- 
+
 const scoringClient = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -67,10 +67,12 @@ Return ONLY a JSON object following the schema, with no extra text.
       ],
     });
 
-        let raw = "{}";
+    // -------- FIXED: No optional chaining --------
+    let raw = "{}";
 
     if (
       completion &&
+      completion.choices &&
       Array.isArray(completion.choices) &&
       completion.choices.length > 0 &&
       completion.choices[0] &&
@@ -79,6 +81,7 @@ Return ONLY a JSON object following the schema, with no extra text.
     ) {
       raw = completion.choices[0].message.content.trim();
     }
+    // ---------------------------------------------
 
     let parsed;
     try {
@@ -87,7 +90,6 @@ Return ONLY a JSON object following the schema, with no extra text.
       const cleaned = raw.replace(/```json|```/g, "").trim();
       parsed = JSON.parse(cleaned);
     }
-
 
     const overall =
       typeof parsed.overall === "number" ? parsed.overall : 80;
