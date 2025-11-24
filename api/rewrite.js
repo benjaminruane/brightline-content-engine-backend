@@ -207,14 +207,15 @@ Existing draft to rewrite:
       styleGuide;
 
     const completion = await client.chat.completions.create({
-      model: modelId,
-      temperature,
-      max_tokens: maxTokens,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-    });
+  model: modelId,
+  temperature,
+  max_tokens: maxTokens,
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: userPrompt }
+  ]
+});
+
 
         const firstChoice =
       completion && completion.choices && completion.choices.length > 0
