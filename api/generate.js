@@ -233,14 +233,15 @@ This is a COMPLETE / INTERNAL version:
         styleGuide;
 
       const completion = await client.chat.completions.create({
-        model: modelId,
-        temperature,
-        max_tokens: maxTokens,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-      });
+  model: modelId,
+  temperature,
+  max_tokens: maxTokens,
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: userPrompt }
+  ]
+});
+
 
       // --- Safe access, no optional chaining ---
       let firstChoice = null;
