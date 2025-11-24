@@ -67,7 +67,18 @@ Return ONLY a JSON object following the schema, with no extra text.
       ],
     });
 
-    const raw = completion.choices?.[0]?.message?.content?.trim() || "{}";
+        let raw = "{}";
+
+    if (
+      completion &&
+      Array.isArray(completion.choices) &&
+      completion.choices.length > 0 &&
+      completion.choices[0] &&
+      completion.choices[0].message &&
+      typeof completion.choices[0].message.content === "string"
+    ) {
+      raw = completion.choices[0].message.content.trim();
+    }
 
     let parsed;
     try {
@@ -76,6 +87,7 @@ Return ONLY a JSON object following the schema, with no extra text.
       const cleaned = raw.replace(/```json|```/g, "").trim();
       parsed = JSON.parse(cleaned);
     }
+
 
     const overall =
       typeof parsed.overall === "number" ? parsed.overall : 80;
