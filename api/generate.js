@@ -4,25 +4,56 @@ import OpenAI from "openai";
 import { PROMPT_RECIPES } from "../helpers/promptRecipes.js";
 import { fillTemplate } from "../helpers/template.js";
 import { DEFAULT_STYLE_GUIDE } from "../helpers/styleGuides.js";
+import { scoreOutput } from "../helpers/scoring.js";
 
 const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
 
 // --- Scenario-specific guidance -----------------------------------
 const SCENARIO_INSTRUCTIONS = {
-  new_investment:
-    "Treat this as a new direct investment transaction. Focus on what the company does, key operational highlights and a concise statement of the investment thesis. Avoid exits/performance commentary.",
-  new_fund_commitment:
-    "Treat this as a new commitment to a fund or program. Describe strategy, sectors, stage and why the commitment was made. Keep wording neutral and institutional.",
-  exit_realisation:
-    "Treat this as an exit or realisation. Describe the transaction (full or partial), basic holding context and the main value-creation drivers mentioned in the source. No speculative returns.",
-  revaluation:
-    "Treat this as a valuation update. Briefly describe the asset and the drivers of the valuation movement, based only on the source material.",
-  fund_capital_call:
-    "Treat this as a capital call. Emphasise the uses of proceeds and underlying transactions being funded.",
-  fund_distribution:
-    "Treat this as a distribution. Emphasise the main sources of funds and keep wording neutral and factual.",
-  default:
-    "Write clear, concise, fact-based commentary aligned with the given scenario. Follow the style guide and keep the tone neutral and professional."
+  new_investment: `
+Treat this as a new direct investment transaction.
+- Focus on describing the company, what it does, and key operational highlights.
+- Explain the investment thesis and why the investor was attracted to the opportunity.
+- Mention whether it is a lead, joint, or co-investment if that information is available.
+- Avoid discussing exits or portfolio performance; stay focused on the entry transaction context.
+  `,
+  new_fund_commitment: `
+Treat this as a new commitment to a fund or program.
+- Describe the fund’s strategy, target sectors, and stage.
+- Summarise the rationale for committing to this fund (team, track record, access, differentiation).
+- Keep commentary neutral, factual, and aligned with the STYLE GUIDE.
+  `,
+  exit_realisation: `
+Treat this as a realisation or exit of an existing investment.
+- Describe what happened in the transaction (e.g., full exit, partial sale, recapitalisation).
+- Provide concise context on the asset and holding period if available.
+- Focus on drivers of value creation that are explicitly supported by the source material.
+- Avoid disclosing sensitive or non-public valuation or return metrics.
+  `,
+  revaluation: `
+Treat this as a valuation update for an existing investment.
+- Describe the asset briefly and the key drivers of the valuation movement (if given).
+- Focus on operational or market factors mentioned in the source material.
+- Avoid speculating about performance or outlook beyond the evidence provided.
+  `,
+  fund_capital_call: `
+Treat this as a capital call at the fund level.
+- Emphasise the main use(s) of proceeds.
+- Describe the key underlying transaction(s) or investments funded.
+- Keep language neutral and aligned with the STYLE GUIDE.
+  `,
+  fund_distribution: `
+Treat this as a distribution from a fund.
+- Emphasise the largest source of funds driving the distribution.
+- If there are multiple sources, name the largest and qualify with "among others" when appropriate.
+- Keep language neutral and aligned with the STYLE GUIDE.
+  `,
+  default: `
+Write clear, concise, fact-based commentary aligned with the given scenario.
+- Follow the STYLE GUIDE exactly.
+- Keep the tone neutral and professional.
+- Do not invent facts or rationales that are not supported by the source material.
+  `
 };
 
 // --- CORS helper --------------------------------------------------
@@ -41,7 +72,7 @@ function setCorsHeaders(req, res) {
 
 // --- Helpers ------------------------------------------------------
 
-// Currency normaliser (very basic)
+// Basic currency normaliser
 function normalizeCurrencies(text) {
   return text
     .replace(/\$([0-9])/g, "USD $1")
@@ -72,17 +103,6 @@ function enforceWordLimit(text, maxWords) {
 
   const trimmed = rebuilt.trim();
   return trimmed || words.slice(0, maxWords).join(" ");
-}
-
-// Simple scoring stub matching frontend shape
-async function scoreOutput() {
-  return {
-    overall: 85,
-    clarity: 0.8,
-    accuracy: 0.75,
-    tone: 0.8,
-    structure: 0.78
-  };
 }
 
 // --- Handler ------------------------------------------------------
@@ -128,7 +148,6 @@ export default async function handler(req, res) {
     const model = modelId || "gpt-4o-mini";
     const temp = typeof temperature === "number" ? temperature : 0.3;
     const maxTok = typeof maxTokens === "number" ? maxTokens : 2048;
-
     const numericMaxWords =
       typeof maxWords === "number"
         ? maxWords
@@ -162,30 +181,39 @@ export default async function handler(req, res) {
 
       const lengthGuidance =
         numericMaxWords > 0
-          ? "Length guidance:\n- Aim for no more than approximately " +
+          ? "\nLength guidance:\n- Aim for no more than approximately " +
             numericMaxWords +
             " words.\n"
           : "";
 
       const versionGuidance =
         verType === "public"
-          ? "This is a PUBLIC-FACING version. Prefer clearly public information and keep sensitive details high-level."
-          : "This is a COMPLETE / INTERNAL version. You may include non-sensitive internal detail where it helps clarity.";
+          ? `
+This is a PUBLIC-FACING version:
+- Base all statements primarily on information that is publicly available.
+- If some details from internal sources are used, ensure they are not highly sensitive and are phrased at a high, non-specific level.
+- When in doubt, prefer omission or very general wording over specific, non-public metrics.`
+          : `
+This is a COMPLETE / INTERNAL version:
+- Follow the full brief, and incorporate all relevant, non-sensitive details from the source material.
+- You may use internal details as long as they are not explicitly flagged as highly sensitive.`;
 
       const userPrompt =
         baseFilled +
         "\n\nScenario-specific guidance:\n" +
-        scenarioExtra +
-        "\n\n" +
+        scenarioExtra.trim() +
+        "\n" +
         versionGuidance +
-        "\n\n" +
+        "\n" +
         lengthGuidance;
 
       const systemPrompt =
         promptPack.systemPrompt +
-        "\n\nYou must follow the STYLE GUIDE strictly.\n" +
-        "Rewrite currency symbols ($, €, £) as proper codes (USD, EUR, GBP).\n\n" +
-        "STYLE GUIDE:\n" +
+        "\n\nYou must follow the STYLE GUIDE strictly. " +
+        "If the source uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
+        "(e.g., USD, EUR, GBP). " +
+        "Apply ALL formatting rules consistently, even when the source does not." +
+        "\n\nSTYLE GUIDE:\n" +
         styleGuide;
 
       const completion = await client.chat.completions.create({
