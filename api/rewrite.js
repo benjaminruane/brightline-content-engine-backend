@@ -1,5 +1,5 @@
 // api/rewrite.js
-
+ 
 import OpenAI from "openai";
 import { PROMPT_RECIPES } from "../helpers/promptRecipes.js";
 import { fillTemplate } from "../helpers/template.js";
