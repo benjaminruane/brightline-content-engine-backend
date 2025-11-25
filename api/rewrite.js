@@ -181,16 +181,15 @@ Existing draft to rewrite:
       "\n" +
       rewriteFrame;
 
-    const systemPrompt =
+const systemPrompt =
       promptPack.systemPrompt +
       "\n\nYou must follow the STYLE GUIDE strictly. " +
       "If the text uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
       "(e.g., USD, EUR, GBP). " +
-      "Apply ALL formatting rules consistently, even when they were not followed in the original draft.\n" +
-      "Numbers from one to eleven should usually be spelled out; use numerals for twelve and above, " +
-      "unless doing so would clearly reduce clarity in a technical context.\n\n" +
+      "Apply ALL formatting rules consistently, even when they were not followed in the original draft.\n\n" +
       "STYLE GUIDE:\n" +
       styleGuide;
+
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
