@@ -181,7 +181,7 @@ Existing draft to rewrite:
       "\n" +
       rewriteFrame;
 
-const systemPrompt =
+    const systemPrompt =
       promptPack.systemPrompt +
       "\n\nYou must follow the STYLE GUIDE strictly. " +
       "If the text uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
@@ -189,7 +189,6 @@ const systemPrompt =
       "Apply ALL formatting rules consistently, even when they were not followed in the original draft.\n\n" +
       "STYLE GUIDE:\n" +
       styleGuide;
-
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
