@@ -47,7 +47,15 @@ Rewrite for clarity, structure and tone while preserving factual content.
   `
 };
 
-// Currency normaliser
+// Normalise quotes and dashes: no smart quotes, no em dashes.
+function normalizeQuotesAndDashes(text) {
+  return text
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/—/g, "-");
+}
+
+// Normalise currency symbols → codes (basic pass)
 function normalizeCurrencies(text) {
   return text
     .replace(/\$([0-9])/g, "USD $1")
@@ -55,7 +63,16 @@ function normalizeCurrencies(text) {
     .replace(/£([0-9])/g, "GBP $1");
 }
 
-// Soft word limit
+// Format digits with apostrophe thousands separators for 4+ digit numbers
+function formatWithApostrophe(numStr) {
+  return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, "’");
+}
+
+function applyThousandsSeparatorsToDigits(text) {
+  return text.replace(/\b\d{4,}\b/g, (match) => formatWithApostrophe(match));
+}
+
+// Soft word limit that keeps whole sentences where possible
 function enforceWordLimit(text, maxWords) {
   if (!maxWords || maxWords <= 0) return text;
 
@@ -66,8 +83,7 @@ function enforceWordLimit(text, maxWords) {
   if (!sentences) return words.slice(0, maxWords).join(" ");
 
   let rebuilt = "";
-  for (let i = 0; i < sentences.length; i += 1) {
-    const s = sentences[i];
+  for (const s of sentences) {
     const currentCount = rebuilt.split(/\s+/).filter(Boolean).length;
     const sentenceWords = s.split(/\s+/).length;
     if (currentCount + sentenceWords > maxWords) break;
@@ -76,6 +92,60 @@ function enforceWordLimit(text, maxWords) {
 
   return rebuilt.trim() || words.slice(0, maxWords).join(" ");
 }
+
+// Convert simple spelled-out numbers to numerals when followed by a unit.
+function normalizeUnitNumbers(text) {
+  const WORD_TO_NUMBER = {
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+    ten: 10,
+    eleven: 11,
+    twelve: 12,
+    thirteen: 13,
+    fourteen: 14,
+    fifteen: 15,
+    sixteen: 16,
+    seventeen: 17,
+    eighteen: 18,
+    nineteen: 19,
+    twenty: 20,
+    thirty: 30,
+    forty: 40,
+    fifty: 50,
+    sixty: 60,
+    seventy: 70,
+    eighty: 80,
+    ninety: 90,
+  };
+
+  const UNIT_PATTERN =
+    /\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\s+(customers|investors|employees|clients|people|users|companies|deals|transactions|assets|funds|projects|loans|borrowers|partners|years|months|quarters|countries|regions|markets|offices)\b/gi;
+
+  return text.replace(UNIT_PATTERN, (match, word, unit) => {
+    const num = WORD_TO_NUMBER[word.toLowerCase()];
+    if (!num) return match;
+    const formatted = formatWithApostrophe(String(num));
+    return `${formatted} ${unit}`;
+  });
+}
+
+function normalizeFinalText(text, maxWords) {
+  let t = text || "";
+  t = normalizeQuotesAndDashes(t);
+  t = normalizeCurrencies(t);
+  t = applyThousandsSeparatorsToDigits(t);
+  t = normalizeUnitNumbers(t);
+  t = enforceWordLimit(t, maxWords);
+  return t;
+}
+
 
 // --- Handler ------------------------------------------------------
 
@@ -181,14 +251,13 @@ Existing draft to rewrite:
       "\n" +
       rewriteFrame;
 
-    const systemPrompt =
+        const systemPrompt =
       promptPack.systemPrompt +
       "\n\nYou must follow the STYLE GUIDE strictly. " +
-      "If the text uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
-      "(e.g., USD, EUR, GBP). " +
       "Apply ALL formatting rules consistently, even when they were not followed in the original draft.\n\n" +
       "STYLE GUIDE:\n" +
       styleGuide;
+
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
@@ -223,8 +292,7 @@ Existing draft to rewrite:
       output = firstChoice.message.content.trim();
     }
 
-    output = normalizeCurrencies(output);
-    output = enforceWordLimit(output, numericMaxWords);
+        output = normalizeFinalText(output, numericMaxWords);
 
     const scoring = await scoreOutput({
       outputText: output,
