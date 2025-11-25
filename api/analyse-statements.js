@@ -1,4 +1,8 @@
 // api/analyse-statements.js
+//
+// Analyses a draft into atomic statements, assigns a reliability
+// score (0–1) and category to each, and returns a summary object
+// with safe defaults.
 
 import OpenAI from "openai";
 
@@ -16,11 +20,65 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Helper to always return a well-formed empty result
+function emptyResult(extra = {}) {
+  return {
+    statements: [],
+    summary: {
+      totalStatements: 0,
+      lowReliabilityCount: 0,
+      averageReliability: null,
+      reliabilityBand: "unknown",
+      ...extra,
+    },
+  };
+}
+
+function buildSummary(statements) {
+  if (!Array.isArray(statements) || statements.length === 0) {
+    return emptyResult().summary;
+  }
+
+  let total = statements.length;
+  let sum = 0;
+  let counted = 0;
+  let lowCount = 0;
+
+  statements.forEach((st) => {
+    if (typeof st.reliability === "number") {
+      sum += st.reliability;
+      counted += 1;
+      if (st.reliability < 0.6) {
+        lowCount += 1;
+      }
+    }
+  });
+
+  const average = counted > 0 ? sum / counted : null;
+
+  let band = "unknown";
+  if (average != null) {
+    if (average >= 0.8) band = "high";
+    else if (average >= 0.6) band = "medium";
+    else band = "low";
+  }
+
+  return {
+    totalStatements: total,
+    lowReliabilityCount: lowCount,
+    averageReliability: average,
+    reliabilityBand: band,
+  };
+}
+
 export default async function handler(req, res) {
-  // Set CORS headers on every request
   setCorsHeaders(req, res);
 
-  // Handle preflight
+  // Preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -29,43 +87,46 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { text, scenario = "default", versionType = "complete" } = req.body || {};
-
-  if (!text || !text.trim()) {
-    return res.status(400).json({ error: "Missing text" });
-  }
-
   try {
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    const { text, scenario = "default", versionType = "complete" } =
+      req.body || {};
+
+    if (!text || !text.trim()) {
+      return res
+        .status(400)
+        .json({ error: "Missing text", ...emptyResult() });
+    }
 
     const systemPrompt = `
-You are an assistant that analyses investment-related written content.
+You are an assistant that analyses investment-related commentary.
 
-Your task is to:
-1. Break the text into discrete statements (short sentences or clauses that express one main idea).
-2. For each statement, assess its reliability on a 0–1 scale.
-3. Classify each statement into one of the following categories:
-   - "Factual – clearly source-based"
-   - "Factual – plausible but not clearly sourced"
-   - "Interpretive / subjective"
-   - "Speculative / forward-looking"
-4. Return ONLY valid JSON that matches this TypeScript-like shape:
+Your task:
+- Break the text into atomic statements (short, self-contained claims).
+- For each statement, assign:
+  - "reliability": a number between 0 and 1 (1 = fully reliable based on typical sources).
+  - "category": one of:
+      - "source-based factual"
+      - "plausible factual"
+      - "interpretive / analytical"
+      - "speculative / forward-looking".
+
+Rules:
+- Focus on substantive claims, not trivial fragments.
+- If a statement mixes fact and speculation, classify as "speculative / forward-looking".
+- Respond ONLY with valid JSON, with no commentary.
+
+JSON schema:
 
 {
   "statements": [
     {
-      "id": number,
+      "id": string,
       "text": string,
-      "reliability": number,   // between 0 and 1
-      "category": string,      // one of the four categories above
-      "flags": string[]        // optional notes, can be empty
+      "reliability": number between 0 and 1,
+      "category": string
     }
   ]
 }
-
-Do not explain your reasoning outside the JSON. If you are unsure, make a best-effort judgement.
 `;
 
     const userPrompt = `
@@ -74,11 +135,11 @@ Context:
 - Version type: ${versionType}
 
 Text to analyse:
-----------------
+--------------------
 ${text}
-----------------
+--------------------
 
-Return ONLY the JSON object, no extra text.
+Return JSON following the schema exactly. Do not include any extra keys or text.
 `;
 
     const completion = await client.chat.completions.create({
@@ -91,8 +152,10 @@ Return ONLY the JSON object, no extra text.
       ],
     });
 
-    const raw = completion.choices?.[0]?.message?.content?.trim() || "{}";
+    let raw =
+      completion.choices?.[0]?.message?.content?.trim() || '{"statements":[]}';
 
+    // Try to parse directly; if it fails, strip ```json fences and retry.
     let parsed;
     try {
       parsed = JSON.parse(raw);
@@ -102,28 +165,22 @@ Return ONLY the JSON object, no extra text.
     }
 
     const statements = Array.isArray(parsed.statements)
-      ? parsed.statements.map((st, index) => ({
-          id: typeof st.id === "number" ? st.id : index + 1,
-          text: typeof st.text === "string" ? st.text : "",
-          reliability:
-            typeof st.reliability === "number"
-              ? Math.min(1, Math.max(0, st.reliability))
-              : null,
-          category: typeof st.category === "string" ? st.category : "",
-          flags: Array.isArray(st.flags)
-            ? st.flags.map((f) => String(f))
-            : [],
-        }))
+      ? parsed.statements
       : [];
+
+    const summary = buildSummary(statements);
 
     return res.status(200).json({
       statements,
+      summary,
     });
   } catch (err) {
     console.error("Error in /api/analyse-statements:", err);
-    return res.status(500).json({
-      error: "Internal server error",
-      detail: err.message || String(err),
-    });
+    // Return safe, well-formed empty result with error info
+    return res.status(200).json(
+      emptyResult({
+        error: err.message || String(err),
+      })
+    );
   }
 }
