@@ -68,16 +68,33 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
-// ------------------------------------------------------------------
 
 // --- Helpers ------------------------------------------------------
 
-// Basic currency normaliser
+// Normalise quotes and dashes: no smart quotes, no em dashes.
+function normalizeQuotesAndDashes(text) {
+  return text
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/—/g, "-");
+}
+
+// Enforce currency formatting (simple normaliser for now)
 function normalizeCurrencies(text) {
   return text
     .replace(/\$([0-9])/g, "USD $1")
     .replace(/€([0-9])/g, "EUR $1")
     .replace(/£([0-9])/g, "GBP $1");
+}
+
+// Format digits with apostrophe thousands separators for 4+ digit numbers
+function formatWithApostrophe(numStr) {
+  // Insert an apostrophe every 3 digits from the right
+  return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, "’");
+}
+
+function applyThousandsSeparatorsToDigits(text) {
+  return text.replace(/\b\d{4,}\b/g, (match) => formatWithApostrophe(match));
 }
 
 // Soft word limit: keep whole sentences where possible
@@ -89,21 +106,78 @@ function enforceWordLimit(text, maxWords) {
 
   const sentences = text.match(/[^.!?]+[.!?]+/g);
   if (!sentences) {
+    // Fall back to a hard cut if we can't detect sentences
     return words.slice(0, maxWords).join(" ");
   }
 
   let rebuilt = "";
-  for (let i = 0; i < sentences.length; i += 1) {
+  for (let i = 0; i < sentences.length; i++) {
     const s = sentences[i];
-    const currentCount = rebuilt.split(/\s+/).filter(Boolean).length;
+    const currentWordCount = rebuilt.split(/\s+/).filter(Boolean).length;
     const sentenceWords = s.split(/\s+/).length;
-    if (currentCount + sentenceWords > maxWords) break;
+    if (currentWordCount + sentenceWords > maxWords) break;
     rebuilt += s.trim() + " ";
   }
 
   const trimmed = rebuilt.trim();
   return trimmed || words.slice(0, maxWords).join(" ");
 }
+
+// Convert simple spelled-out numbers to numerals when followed by a unit.
+// This is a light heuristic and does NOT cover every possible phrasing.
+function normalizeUnitNumbers(text) {
+  const WORD_TO_NUMBER = {
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+    ten: 10,
+    eleven: 11,
+    twelve: 12,
+    thirteen: 13,
+    fourteen: 14,
+    fifteen: 15,
+    sixteen: 16,
+    seventeen: 17,
+    eighteen: 18,
+    nineteen: 19,
+    twenty: 20,
+    thirty: 30,
+    forty: 40,
+    fifty: 50,
+    sixty: 60,
+    seventy: 70,
+    eighty: 80,
+    ninety: 90,
+  };
+
+  const UNIT_PATTERN =
+    /\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\s+(customers|investors|employees|clients|people|users|companies|deals|transactions|assets|funds|projects|loans|borrowers|partners|years|months|quarters|countries|regions|markets|offices)\b/gi;
+
+  return text.replace(UNIT_PATTERN, (match, word, unit) => {
+    const num = WORD_TO_NUMBER[word.toLowerCase()];
+    if (!num) return match;
+    const formatted = formatWithApostrophe(String(num));
+    return `${formatted} ${unit}`;
+  });
+}
+
+// Apply all normalisation steps in a single pass.
+function normalizeFinalText(text, maxWords) {
+  let t = text || "";
+  t = normalizeQuotesAndDashes(t);
+  t = normalizeCurrencies(t);
+  t = applyThousandsSeparatorsToDigits(t);
+  t = normalizeUnitNumbers(t);
+  t = enforceWordLimit(t, maxWords);
+  return t;
+}
+
 
 // --- Handler ------------------------------------------------------
 
@@ -212,14 +286,13 @@ This is a COMPLETE / INTERNAL version:
         "\n" +
         lengthGuidance;
 
-      const systemPrompt =
+            const systemPrompt =
         promptPack.systemPrompt +
         "\n\nYou must follow the STYLE GUIDE strictly. " +
-        "If the source uses symbols (e.g., $, €, £), rewrite them into the proper currency code " +
-        "(e.g., USD, EUR, GBP). " +
         "Apply ALL formatting rules consistently, even when the source does not." +
         "\n\nSTYLE GUIDE:\n" +
         styleGuide;
+
 
       const completion = await client.chat.completions.create({
         model,
@@ -250,8 +323,9 @@ This is a COMPLETE / INTERNAL version:
         outputText = firstChoice.message.content.trim();
       }
 
-      outputText = normalizeCurrencies(outputText);
-      outputText = enforceWordLimit(outputText, numericMaxWords);
+// Apply full normalisation pipeline (quotes, dashes, currencies, separators, units, length)
+      outputText = normalizeFinalText(outputText, numericMaxWords);
+
 
       const scoring = await scoreOutput({
         outputText,
