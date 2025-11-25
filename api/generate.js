@@ -119,18 +119,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const {
+        const {
       title,
       notes,
       text,
-      selectedTypes,
-      workspaceMode,
-      scenario,
-      versionType,
-      modelId,
-      temperature,
-      maxTokens,
-      maxWords
+      selectedTypes = [],
+      workspaceMode = "generic",
+      scenario = "default",
+      versionType = "complete", // "complete" or "public"
+      modelId = "gpt-4o-mini",
+      temperature = 0.3,
+      maxTokens = 2048,
+      maxWords, // optional soft word limit from the frontend
+      publicSearch = false, // flag from frontend – wired for future use
     } = req.body || {};
 
     if (!text) {
@@ -153,6 +154,10 @@ export default async function handler(req, res) {
         ? maxWords
         : parseInt(maxWords, 10) || 0;
 
+    // Placeholder for future public web / knowledge-base sources.
+    // For now this stays empty, but the frontend is ready to display it.
+    const publicSources = [];
+    
     const styleGuide = BASE_STYLE_GUIDE;
     const promptPack = PROMPT_RECIPES[wsMode] || PROMPT_RECIPES.generic;
 
@@ -268,11 +273,13 @@ This is a COMPLETE / INTERNAL version:
       });
     }
 
-    return res.status(200).json({
+        return res.status(200).json({
       outputs,
-      scenario: scenarioKey,
-      versionType: verType
+      scenario,
+      versionType,
+      publicSources,
     });
+
   } catch (err) {
     console.error("Error in /api/generate:", err);
     return res.status(500).json({
