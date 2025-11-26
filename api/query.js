@@ -49,23 +49,40 @@ export default async function handler(req, res) {
   try {
     const body = normaliseBody(req);
     const {
-  question,
-  draftText,
-  scenario,
-  versionType,
-  sources = [],
-  company,
-  sector,
-  geography,
-  dealType,
-} = body || {};
-
+      question,
+      draftText,
+      scenario,
+      versionType,
+      sources = [],
+      company,
+      sector,
+      geography,
+      dealType,
+    } = body || {};
 
     if (!question || !draftText) {
       return res.status(400).json({
         error: "Both 'question' and 'draftText' are required",
       });
     }
+
+    // Always perform web search for AI Query (stubbed for now)
+    const webResults = await webSearch({
+      company,
+      sector,
+      geography,
+      dealType,
+      maxResults: 4,
+    });
+
+    // Merge as separate "public web sources"
+    const allSources = [
+      ...sources,
+      ...webResults.map((w) => ({
+        ...w,
+        kind: "web",
+      })),
+    ];
 
     const sourceSummaries = Array.isArray(sources)
       ? sources
@@ -83,7 +100,7 @@ export default async function handler(req, res) {
           .join("\n\n")
       : "No structured sources were provided.";
 
-const systemPrompt = `
+    const systemPrompt = `
 You are an analysis assistant responding to user questions using TWO categories of evidence:
 
 1. **Internal sources**
@@ -112,7 +129,6 @@ ${JSON.stringify(allSources, null, 2)}
 Provide a short, direct answer to the user's question in 1–3 concise paragraphs.
 `.trim();
 
-
     const userPrompt = `
 Scenario: ${scenario || "n/a"}
 Version type: ${versionType || "n/a"}
@@ -130,25 +146,6 @@ ${question}
     const modelId = process.env.OPENAI_MODEL_ID || "gpt-4.1-mini";
 
     let answerText = "";
-
-    // Always perform web search for AI Query
-const webResults = await webSearch({
-  company,
-  sector,
-  geography,
-  dealType,
-  maxResults: 4,
-});
-
-// Merge as separate "public web sources"
-const allSources = [
-  ...sources,
-  ...webResults.map((w) => ({
-    ...w,
-    kind: "web",
-  })),
-];
-
 
     // Prefer Responses API if available
     if (client.responses && typeof client.responses.create === "function") {
