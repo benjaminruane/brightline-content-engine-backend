@@ -4,6 +4,8 @@
 // - Always uses OpenAI web_search_preview for public-domain context
 // - GET + mode=web-test: diagnostic mode, testable in browser
 // - POST: main query handler, web-backed but falls back cleanly if web fails
+// - Smarter behaviour: tries to infer "the company", "the fund", etc. from context
+//   and includes that context when performing web search.
 
 import OpenAI from "openai";
 
@@ -131,8 +133,10 @@ export default async function handler(req, res) {
   try {
     const {
       question,
-      context,        // optional extra context (e.g. project info)
-      systemPrompt,   // optional custom system prompt
+      // "context" should include the current draft text and/or source snippets.
+      // e.g. company name, fund name, asset name, key facts, etc.
+      context,
+      systemPrompt, // optional custom system prompt
       model = "gpt-4o-mini",
     } = req.body || {};
 
@@ -143,26 +147,67 @@ export default async function handler(req, res) {
       });
     }
 
-    // 1) Try to get public-domain context for the question
+    // 1) Build a richer web-search query that includes draft/source context
+    //    so the tool can infer which company/fund/asset we're talking about.
     let webSummary = null;
     try {
-      const { summary } = await runWebSearchPreview({ query: question });
+      const webQueryParts = [
+        "Using current public information, answer the following investment-related question.",
+        "",
+        "User question:",
+        question.trim(),
+      ];
+
+      if (context && typeof context === "string" && context.trim().length > 0) {
+        webQueryParts.push(
+          "",
+          "Internal draft and source context (use this to identify the main company, fund, or asset and to disambiguate pronouns like 'the company'):",
+          // Avoid sending an enormous blob; trim if needed.
+          context.slice(0, 2000)
+        );
+      }
+
+      const webQuery = webQueryParts.join("\n");
+
+      const { summary } = await runWebSearchPreview({ query: webQuery });
       webSummary = summary;
     } catch (e) {
       // Fail silently and fall back to no-web
       webSummary = null;
     }
 
-    // 2) Build system prompt
+    // 2) Build system prompt with strong instructions on resolving "the company"
     const baseSystemPrompt =
       systemPrompt ||
       `
 You are an AI assistant specialising in investment, private markets and related institutional topics.
 Provide clear, concise answers suitable for professional investment audiences.
 If you are uncertain, say so explicitly and avoid making up facts.
-`;
 
-    // 3) Build message array, injecting web context if present
+You will often receive internal/project context that mentions specific companies, funds, or assets.
+When the user asks a question that uses vague references like "the company", "the fund", "the asset",
+or pronouns like "it" or "they", you MUST:
+
+1. First, infer which entity they mean from the provided context and public-domain context.
+   - Assume they are referring to the primary company/fund/asset that appears to be the main subject
+     of the draft text or sources.
+   - For example, if the context describes "Acme Holdings Pte Ltd (the 'Company')" and the user asks
+     "when was the company founded?", you should treat this as a question about Acme Holdings.
+
+2. Only ask the user to clarify IF:
+   - There are multiple equally plausible entities AND the question genuinely cannot be answered
+     without knowing which one, OR
+   - No relevant entity appears in the context at all.
+
+3. When you infer the entity, answer directly.
+   - You may briefly state which entity you assumed, e.g. "Assuming you are referring to Acme Holdings Pte Ltd, ..."
+   - Do NOT reflexively ask "which company?" if you can reasonably infer the answer from context.
+
+Use any public-domain context you are given to ground the answer in up-to-date factual information.
+If a fact cannot be established reliably, explain the limitation instead of guessing.
+`.trim();
+
+    // 3) Build message array, injecting web context and internal context
     const messages = [
       { role: "system", content: baseSystemPrompt },
       webSummary
@@ -174,7 +219,7 @@ If you are uncertain, say so explicitly and avoid making up facts.
       context
         ? {
             role: "system",
-            content: `Additional internal/project context from the user (not from the public web):\n\n${context}`,
+            content: `Internal draft/source context from the user (not from the public web). Use this to identify the main company/fund/asset and interpret vague references like "the company":\n\n${context}`,
           }
         : null,
       { role: "user", content: question },
@@ -197,7 +242,7 @@ If you are uncertain, say so explicitly and avoid making up facts.
       question,
       answer,
       webUsed: Boolean(webSummary),
-      webSummary, // useful for debugging / later UI
+      webSummary, // useful for debugging / later UI if you want
     });
   } catch (err) {
     console.error("Error in /api/query:", err);
