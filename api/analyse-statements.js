@@ -3,6 +3,9 @@
 // Analyses a draft into atomic statements, assigns a reliability
 // score (0–1) and category to each, and returns a summary object
 // with safe defaults.
+//
+// Now always uses OpenAI web_search_preview as additional context
+// for the analysis, but falls back cleanly if web retrieval fails.
 
 import OpenAI from "openai";
 
@@ -89,7 +92,7 @@ async function runWebSearchPreview({ query, model = "gpt-4.1" }) {
   const userQuery =
     typeof query === "string" && query.trim().length > 0
       ? query.trim()
-      : "Given an investment commentary draft, identify reliability and potential weak spots.";
+      : "Given an investment commentary draft, identify reliability issues and potential weak spots using current public-domain information.";
 
   const apiResponse = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -150,7 +153,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // --- NEW: GET diagnostic mode for web_search_preview -------------
+  // --- GET diagnostic mode for web_search_preview -----------------
   if (req.method === "GET" && req.query?.mode === "web-test") {
     try {
       const q = req.query.q;
@@ -194,6 +197,28 @@ export default async function handler(req, res) {
         .json({ error: "Missing text", ...emptyResult() });
     }
 
+    // 1) Get public-domain context for this draft text
+    let webSummary = null;
+    try {
+      const webQueryParts = [
+        "Using current public information, help assess the reliability and factual grounding of the following investment-related draft.",
+        "",
+        `Scenario: ${scenario}`,
+        `Version type: ${versionType}`,
+        "",
+        "Draft excerpt (may be truncated):",
+        text.slice(0, 2000), // avoid sending a huge blob
+      ];
+
+      const webQuery = webQueryParts.join("\n");
+
+      const { summary } = await runWebSearchPreview({ query: webQuery });
+      webSummary = summary;
+    } catch (e) {
+      // Fail silently and fall back to no-web analysis
+      webSummary = null;
+    }
+
     const systemPrompt = `
 You are an assistant that analyses investment-related commentary.
 
@@ -211,6 +236,10 @@ Your task:
 Rules:
 - Focus on substantive claims, not trivial fragments.
 - If a statement mixes fact and speculation, classify as "speculative / forward-looking".
+- Use any public-domain context you are given to better judge factual reliability
+  and to distinguish between well-supported and weakly-supported claims.
+- If the public-domain context suggests that a statement conflicts with widely
+  reported facts, reflect that in the reliability score and implication.
 - Respond ONLY with valid JSON, with no commentary.
 
 JSON schema:
@@ -226,7 +255,7 @@ JSON schema:
     }
   ]
 }
-`;
+`.trim();
 
     const userPrompt = `
 Context:
@@ -239,16 +268,25 @@ ${text}
 --------------------
 
 Return JSON following the schema exactly. Do not include any extra keys or text.
-`;
+`.trim();
+
+    // Build messages, injecting web context if available
+    const messages = [
+      { role: "system", content: systemPrompt },
+      webSummary
+        ? {
+            role: "system",
+            content: `Public domain context (for assessing reliability of the statements). Use this to inform reliability scores and implications, but still base your structure on the provided draft:\n\n${webSummary}`,
+          }
+        : null,
+      { role: "user", content: userPrompt },
+    ].filter(Boolean);
 
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: 0,
       max_tokens: 800,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
+      messages,
     });
 
     let raw =
@@ -272,6 +310,7 @@ Return JSON following the schema exactly. Do not include any extra keys or text.
     return res.status(200).json({
       statements,
       summary,
+      webUsed: Boolean(webSummary),
     });
   } catch (err) {
     console.error("Error in /api/analyse-statements:", err);
