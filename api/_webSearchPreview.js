@@ -14,7 +14,7 @@ export async function runWebSearchPreview({
   const userQuery =
     typeof query === "string" && query.trim().length > 0
       ? query.trim()
-      : "Test web search: recent positive news in technology, 2 short bullet points.";
+      : "Using current public information, answer the user's question about investments, private markets, or related topics.";
 
   const apiResponse = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
