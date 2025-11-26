@@ -5,7 +5,6 @@
 // with safe defaults.
 
 import OpenAI from "openai";
-import { runWebSearchPreview } from "./_webSearchPreview";
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -81,10 +80,72 @@ function buildSummary(statements) {
   };
 }
 
+// --- Inline helper: call web_search_preview via Responses API -----
+async function runWebSearchPreview({ query, model = "gpt-4.1" }) {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("Missing OPENAI_API_KEY in environment.");
+  }
+
+  const userQuery =
+    typeof query === "string" && query.trim().length > 0
+      ? query.trim()
+      : "Given an investment commentary draft, identify reliability and potential weak spots.";
+
+  const apiResponse = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      tools: [{ type: "web_search_preview" }],
+      tool_choice: { type: "web_search_preview" },
+      input: userQuery,
+    }),
+  });
+
+  const payload = await apiResponse.json();
+
+  if (!apiResponse.ok) {
+    const message =
+      payload?.error?.message ||
+      `OpenAI API error (status ${apiResponse.status})`;
+
+    const err = new Error(message);
+    err.status = apiResponse.status;
+    err.data = payload;
+    throw err;
+  }
+
+  // Extract assistant text
+  let summary = null;
+
+  if (Array.isArray(payload.output)) {
+    const messageItem = payload.output.find((item) => item.type === "message");
+
+    if (messageItem && Array.isArray(messageItem.content)) {
+      const textBlock = messageItem.content.find(
+        (part) => part.type === "output_text"
+      );
+
+      if (textBlock && typeof textBlock.text === "string") {
+        summary = textBlock.text;
+      }
+    }
+  }
+
+  return {
+    summary,
+    raw: payload,
+  };
+}
+// ------------------------------------------------------------------
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-    // Preflight
+  // Preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -122,7 +183,6 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-
 
   try {
     const { text, scenario = "default", versionType = "complete" } =
