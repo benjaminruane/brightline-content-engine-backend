@@ -1,10 +1,13 @@
+// api/query.js
+//
+// AI Query endpoint
+// - Always uses OpenAI web_search_preview for public-domain context
+// - GET + mode=web-test: diagnostic mode, testable in browser
+// - POST: main query handler, web-backed but falls back cleanly if web fails
+
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// --- CORS helper -----------------------------------------
+// --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
@@ -16,22 +19,75 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
+// ------------------------------------------------------------------
 
-// --- Body normaliser (matches your other routes) ---------
-function normaliseBody(req) {
-  if (!req.body) return {};
-  if (typeof req.body === "string") {
-    try {
-      return JSON.parse(req.body);
-    } catch {
-      return {};
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// --- Inline helper: call web_search_preview via Responses API -----
+async function runWebSearchPreview({ query, model = "gpt-4.1" }) {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("Missing OPENAI_API_KEY in environment.");
+  }
+
+  const userQuery =
+    typeof query === "string" && query.trim().length > 0
+      ? query.trim()
+      : "Using current public information, answer the user's question about investments, private markets, or related topics.";
+
+  const apiResponse = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      tools: [{ type: "web_search_preview" }],
+      tool_choice: { type: "web_search_preview" },
+      input: userQuery,
+    }),
+  });
+
+  const payload = await apiResponse.json();
+
+  if (!apiResponse.ok) {
+    const message =
+      payload?.error?.message ||
+      `OpenAI API error (status ${apiResponse.status})`;
+
+    const err = new Error(message);
+    err.status = apiResponse.status;
+    err.data = payload;
+    throw err;
+  }
+
+  // Extract assistant text
+  let summary = null;
+
+  if (Array.isArray(payload.output)) {
+    const messageItem = payload.output.find((item) => item.type === "message");
+
+    if (messageItem && Array.isArray(messageItem.content)) {
+      const textBlock = messageItem.content.find(
+        (part) => part.type === "output_text"
+      );
+
+      if (textBlock && typeof textBlock.text === "string") {
+        summary = textBlock.text;
+      }
     }
   }
-  return req.body;
+
+  return {
+    summary,
+    raw: payload,
+  };
 }
+// ------------------------------------------------------------------
 
 export default async function handler(req, res) {
-  // Apply CORS headers
   setCorsHeaders(req, res);
 
   // Preflight
@@ -39,135 +95,115 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // --- GET diagnostic mode: test web_search_preview in browser ----
+  if (req.method === "GET" && req.query?.mode === "web-test") {
+    try {
+      const q = req.query.q;
+
+      const { summary, raw } = await runWebSearchPreview({
+        query:
+          typeof q === "string" && q.trim().length > 0
+            ? q.trim()
+            : "Recent developments and trends in private markets and private equity.",
+      });
+
+      return res.status(200).json({
+        ok: true,
+        mode: "web-test",
+        summary,
+        raw,
+      });
+    } catch (err) {
+      return res.status(err.status || 500).json({
+        ok: false,
+        mode: "web-test",
+        error: err.message || "Failed to call web_search_preview.",
+        data: err.data || null,
+      });
+    }
+  }
+  // ----------------------------------------------------------------
+
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const body = normaliseBody(req);
     const {
       question,
-      draftText,
-      scenario,
-      versionType,
-      sources = [],
-    } = body || {};
+      context,        // optional extra context (e.g. project info)
+      systemPrompt,   // optional custom system prompt
+      model = "gpt-4o-mini",
+    } = req.body || {};
 
-    if (!question || !draftText) {
+    if (!question || !question.trim()) {
       return res.status(400).json({
-        error: "Both 'question' and 'draftText' are required",
+        ok: false,
+        error: "Missing question",
       });
     }
 
-    const sourceSummaries = Array.isArray(sources)
-      ? sources
-          .slice(0, 6)
-          .map((s, idx) => {
-            const label =
-              s.name ||
-              s.url ||
-              s.kind ||
-              `Source ${idx + 1}`;
-            const text = (s.text || "").toString();
-            const snippet = text.slice(0, 1200); // keep prompt bounded
-            return `Source ${idx + 1} – ${label}:\n${snippet}`;
-          })
-          .join("\n\n")
-      : "No structured sources were provided.";
-
-    const systemPrompt = `
-You are an AI assistant helping an investment and communications team reason about a draft
-and its supporting sources.
-
-Goals:
-- Answer narrowly and directly the specific question asked by the user.
-- Use the draft and the provided sources as primary context.
-- If asked whether a detail is “public information”, you MUST:
-  - First infer whether it is clearly in the public domain (e.g., in press releases, news articles, company filings).
-  - If uncertain, state that it is unclear and that the user should treat it as internal / non-public.
-- If the question is about meaning or interpretation (e.g. "What is meant by ..."), explain concisely in plain language.
-- If the draft appears to make a claim that is weakly supported by sources, call that out and suggest caution.
-
-Output format:
-- A short, well-structured answer in 1–3 concise paragraphs.
-- Be explicit about uncertainty instead of guessing.
-`.trim();
-
-    const userPrompt = `
-Scenario: ${scenario || "n/a"}
-Version type: ${versionType || "n/a"}
-
-DRAFT TEXT:
-${draftText}
-
-SOURCES:
-${sourceSummaries}
-
-USER QUESTION:
-${question}
-`.trim();
-
-    const modelId = process.env.OPENAI_MODEL_ID || "gpt-4.1-mini";
-
-    let answerText = "";
-
-    // Prefer Responses API if available
-    if (client.responses && typeof client.responses.create === "function") {
-      const response = await client.responses.create({
-        model: modelId,
-        input: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        max_output_tokens: 800,
-      });
-
-      // Try to extract text in a resilient way
-      if (typeof response.output_text === "string") {
-        answerText = response.output_text;
-      } else if (
-        Array.isArray(response.output) &&
-        response.output[0] &&
-        Array.isArray(response.output[0].content) &&
-        response.output[0].content[0] &&
-        typeof response.output[0].content[0].text === "string"
-      ) {
-        answerText = response.output[0].content[0].text;
-      } else {
-        answerText = JSON.stringify(response, null, 2);
-      }
-    }
-    // Fallback to Chat Completions API
-    else if (
-      client.chat &&
-      client.chat.completions &&
-      typeof client.chat.completions.create === "function"
-    ) {
-      const completion = await client.chat.completions.create({
-        model: modelId,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        max_tokens: 800,
-      });
-
-      answerText =
-        completion.choices?.[0]?.message?.content ||
-        JSON.stringify(completion, null, 2);
-    } else {
-      throw new Error(
-        "OpenAI client does not expose 'responses.create' or 'chat.completions.create'"
-      );
+    // 1) Try to get public-domain context for the question
+    let webSummary = null;
+    try {
+      const { summary } = await runWebSearchPreview({ query: question });
+      webSummary = summary;
+    } catch (e) {
+      // Fail silently and fall back to no-web
+      webSummary = null;
     }
 
-    return res.status(200).json({ answer: answerText });
+    // 2) Build system prompt
+    const baseSystemPrompt =
+      systemPrompt ||
+      `
+You are an AI assistant specialising in investment, private markets and related institutional topics.
+Provide clear, concise answers suitable for professional investment audiences.
+If you are uncertain, say so explicitly and avoid making up facts.
+`;
+
+    // 3) Build message array, injecting web context if present
+    const messages = [
+      { role: "system", content: baseSystemPrompt },
+      webSummary
+        ? {
+            role: "system",
+            content: `Public domain context (for answering the user's question). Use this to ground your answer in recent information where appropriate:\n\n${webSummary}`,
+          }
+        : null,
+      context
+        ? {
+            role: "system",
+            content: `Additional internal/project context from the user (not from the public web):\n\n${context}`,
+          }
+        : null,
+      { role: "user", content: question },
+    ].filter(Boolean);
+
+    // 4) Call OpenAI for the actual answer
+    const completion = await client.chat.completions.create({
+      model,
+      temperature: 0.2,
+      max_tokens: 800,
+      messages,
+    });
+
+    const answer =
+      completion.choices?.[0]?.message?.content?.trim() ||
+      "I was unable to generate an answer.";
+
+    return res.status(200).json({
+      ok: true,
+      question,
+      answer,
+      webUsed: Boolean(webSummary),
+      webSummary, // useful for debugging / later UI
+    });
   } catch (err) {
     console.error("Error in /api/query:", err);
     return res.status(500).json({
-      error: "Failed to process query",
-      details: err && err.message ? err.message : String(err),
+      ok: false,
+      error: err.message || String(err),
     });
   }
 }
