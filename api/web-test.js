@@ -110,21 +110,25 @@ export default async function handler(req, res) {
       });
     }
 
-    // Try to extract a human-readable text summary
+        // Try to extract a human-readable text summary
     let summary = null;
 
-    if (payload.output_text) {
-      summary = payload.output_text;
-    } else if (Array.isArray(payload.output) && payload.output.length > 0) {
-      const first = payload.output[0];
-      const content =
-        first &&
-        first.content &&
-        Array.isArray(first.content) &&
-        first.content[0];
-      const text = content && content.text && content.text.value;
-      summary = text || null;
+    if (Array.isArray(payload.output)) {
+      // Find the first "message" item in the output sequence
+      const messageItem = payload.output.find((item) => item.type === "message");
+
+      if (messageItem && Array.isArray(messageItem.content)) {
+        // Within that message, find the "output_text" block
+        const textBlock = messageItem.content.find(
+          (part) => part.type === "output_text"
+        );
+
+        if (textBlock && typeof textBlock.text === "string") {
+          summary = textBlock.text;
+        }
+      }
     }
+
 
     // Extract any search-related items for debugging/inspection
     const webSearchItems = Array.isArray(payload.output)
