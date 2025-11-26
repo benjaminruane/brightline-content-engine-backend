@@ -1,5 +1,3 @@
-import { webSearch } from "./lib/webSearch";
-
 import OpenAI from "openai";
 
 const client = new OpenAI({
@@ -54,10 +52,6 @@ export default async function handler(req, res) {
       scenario,
       versionType,
       sources = [],
-      company,
-      sector,
-      geography,
-      dealType,
     } = body || {};
 
     if (!question || !draftText) {
@@ -65,24 +59,6 @@ export default async function handler(req, res) {
         error: "Both 'question' and 'draftText' are required",
       });
     }
-
-    // Always perform web search for AI Query (stubbed for now)
-    const webResults = await webSearch({
-      company,
-      sector,
-      geography,
-      dealType,
-      maxResults: 4,
-    });
-
-    // Merge as separate "public web sources"
-    const allSources = [
-      ...sources,
-      ...webResults.map((w) => ({
-        ...w,
-        kind: "web",
-      })),
-    ];
 
     const sourceSummaries = Array.isArray(sources)
       ? sources
@@ -101,32 +77,21 @@ export default async function handler(req, res) {
       : "No structured sources were provided.";
 
     const systemPrompt = `
-You are an analysis assistant responding to user questions using TWO categories of evidence:
+You are an AI assistant helping an investment and communications team reason about a draft
+and its supporting sources.
 
-1. **Internal sources**
-   - Uploaded documents (PDF, DOCX, TXT)
-   - URL-extracted text
-   - Manual source text
-   These are private and MUST NEVER be sent to external services.
-   You may use them freely to answer the user's question.
+Goals:
+- Answer narrowly and directly the specific question asked by the user.
+- Use the draft and the provided sources as primary context.
+- If asked whether a detail is “public information”, you MUST:
+  - First infer whether it is clearly in the public domain (e.g., in press releases, news articles, company filings).
+  - If uncertain, state that it is unclear and that the user should treat it as internal / non-public.
+- If the question is about meaning or interpretation (e.g. "What is meant by ..."), explain concisely in plain language.
+- If the draft appears to make a claim that is weakly supported by sources, call that out and suggest caution.
 
-2. **Public web sources**
-   - Retrieved via safe, high-level search queries that reveal no confidential text.
-   - Each item includes: { title, url, domain, snippet }.
-   - You may rely on these for context, factual checks, and enrichment.
-   - You may reference the domain (e.g., "according to ft.com") when helpful.
-
-**Rules:**
-- Never reveal private internal-source text verbatim unless the user explicitly asks for a quote.
-- Never imply that internal documents were found on the public web.
-- If internal and public evidence conflict, prefer internal but note the discrepancy.
-- If something cannot be confirmed, state uncertainty rather than guessing.
-
-Below is your combined evidence set (internal + public web), merged for your use:
-
-${JSON.stringify(allSources, null, 2)}
-
-Provide a short, direct answer to the user's question in 1–3 concise paragraphs.
+Output format:
+- A short, well-structured answer in 1–3 concise paragraphs.
+- Be explicit about uncertainty instead of guessing.
 `.trim();
 
     const userPrompt = `
