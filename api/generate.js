@@ -1,60 +1,14 @@
 // api/generate.js
+//
+// Generates one or more outputs (transaction text, investor letter, etc.)
+// from the provided source text and notes.
+// - Always uses internal sources as the primary basis.
+// - If publicSearch === true, uses OpenAI web_search_preview to pull in
+//   light background context and injects it into the prompt.
+// - Response shape matches the existing frontend expectations:
+//   { outputs: [{ outputType, text, score, metrics }], publicSources: [] }
 
 import OpenAI from "openai";
-import { PROMPT_RECIPES } from "../helpers/promptRecipes.js";
-import { fillTemplate } from "../helpers/template.js";
-import { DEFAULT_STYLE_GUIDE } from "../helpers/styleGuides.js";
-import { scoreOutput } from "../helpers/scoring.js";
-
-const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
-
-// --- Scenario-specific guidance -----------------------------------
-const SCENARIO_INSTRUCTIONS = {
-  new_investment: `
-Treat this as a new direct investment transaction.
-- Focus on describing the company, what it does, and key operational highlights.
-- Explain the investment thesis and why the investor was attracted to the opportunity.
-- Mention whether it is a lead, joint, or co-investment if that information is available.
-- Avoid discussing exits or portfolio performance; stay focused on the entry transaction context.
-  `,
-  new_fund_commitment: `
-Treat this as a new commitment to a fund or program.
-- Describe the fund’s strategy, target sectors, and stage.
-- Summarise the rationale for committing to this fund (team, track record, access, differentiation).
-- Keep commentary neutral, factual, and aligned with the STYLE GUIDE.
-  `,
-  exit_realisation: `
-Treat this as a realisation or exit of an existing investment.
-- Describe what happened in the transaction (e.g., full exit, partial sale, recapitalisation).
-- Provide concise context on the asset and holding period if available.
-- Focus on drivers of value creation that are explicitly supported by the source material.
-- Avoid disclosing sensitive or non-public valuation or return metrics.
-  `,
-  revaluation: `
-Treat this as a valuation update for an existing investment.
-- Describe the asset briefly and the key drivers of the valuation movement (if given).
-- Focus on operational or market factors mentioned in the source material.
-- Avoid speculating about performance or outlook beyond the evidence provided.
-  `,
-  fund_capital_call: `
-Treat this as a capital call at the fund level.
-- Emphasise the main use(s) of proceeds.
-- Describe the key underlying transaction(s) or investments funded.
-- Keep language neutral and aligned with the STYLE GUIDE.
-  `,
-  fund_distribution: `
-Treat this as a distribution from a fund.
-- Emphasise the largest source of funds driving the distribution.
-- If there are multiple sources, name the largest and qualify with "among others" when appropriate.
-- Keep language neutral and aligned with the STYLE GUIDE.
-  `,
-  default: `
-Write clear, concise, fact-based commentary aligned with the given scenario.
-- Follow the STYLE GUIDE exactly.
-- Keep the tone neutral and professional.
-- Do not invent facts or rationales that are not supported by the source material.
-  `
-};
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -68,118 +22,84 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
+// ------------------------------------------------------------------
 
-// --- Helpers ------------------------------------------------------
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-// Normalise quotes and dashes: no smart quotes, no em dashes.
-function normalizeQuotesAndDashes(text) {
-  return text
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/—/g, "-");
-}
-
-// Enforce currency formatting (simple normaliser for now)
-function normalizeCurrencies(text) {
-  return text
-    .replace(/\$([0-9])/g, "USD $1")
-    .replace(/€([0-9])/g, "EUR $1")
-    .replace(/£([0-9])/g, "GBP $1");
-}
-
-// Format digits with apostrophe thousands separators for 4+ digit numbers
-function formatWithApostrophe(numStr) {
-  // Insert an apostrophe every 3 digits from the right
-  return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, "’");
-}
-
-function applyThousandsSeparatorsToDigits(text) {
-  return text.replace(/\b\d{4,}\b/g, (match) => formatWithApostrophe(match));
-}
-
-// Soft word limit: keep whole sentences where possible
-function enforceWordLimit(text, maxWords) {
-  if (!maxWords || maxWords <= 0) return text;
-
-  const words = text.split(/\s+/);
-  if (words.length <= maxWords) return text;
-
-  const sentences = text.match(/[^.!?]+[.!?]+/g);
-  if (!sentences) {
-    // Fall back to a hard cut if we can't detect sentences
-    return words.slice(0, maxWords).join(" ");
+// --- Inline helper: web_search_preview ----------------------------
+async function runWebSearchPreview({ query, model = "gpt-4.1" }) {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("Missing OPENAI_API_KEY in environment.");
   }
 
-  let rebuilt = "";
-  for (let i = 0; i < sentences.length; i++) {
-    const s = sentences[i];
-    const currentWordCount = rebuilt.split(/\s+/).filter(Boolean).length;
-    const sentenceWords = s.split(/\s+/).length;
-    if (currentWordCount + sentenceWords > maxWords) break;
-    rebuilt += s.trim() + " ";
-  }
+  const userQuery =
+    typeof query === "string" && query.trim().length > 0
+      ? query.trim()
+      : "Using current public information, provide concise background context on a private-markets investment transaction.";
 
-  const trimmed = rebuilt.trim();
-  return trimmed || words.slice(0, maxWords).join(" ");
-}
-
-// Convert simple spelled-out numbers to numerals when followed by a unit.
-// This is a light heuristic and does NOT cover every possible phrasing.
-function normalizeUnitNumbers(text) {
-  const WORD_TO_NUMBER = {
-    one: 1,
-    two: 2,
-    three: 3,
-    four: 4,
-    five: 5,
-    six: 6,
-    seven: 7,
-    eight: 8,
-    nine: 9,
-    ten: 10,
-    eleven: 11,
-    twelve: 12,
-    thirteen: 13,
-    fourteen: 14,
-    fifteen: 15,
-    sixteen: 16,
-    seventeen: 17,
-    eighteen: 18,
-    nineteen: 19,
-    twenty: 20,
-    thirty: 30,
-    forty: 40,
-    fifty: 50,
-    sixty: 60,
-    seventy: 70,
-    eighty: 80,
-    ninety: 90,
-  };
-
-  const UNIT_PATTERN =
-    /\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\s+(customers|investors|employees|clients|people|users|companies|deals|transactions|assets|funds|projects|loans|borrowers|partners|years|months|quarters|countries|regions|markets|offices)\b/gi;
-
-  return text.replace(UNIT_PATTERN, (match, word, unit) => {
-    const num = WORD_TO_NUMBER[word.toLowerCase()];
-    if (!num) return match;
-    const formatted = formatWithApostrophe(String(num));
-    return `${formatted} ${unit}`;
+  const apiResponse = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      tools: [{ type: "web_search_preview" }],
+      tool_choice: { type: "web_search_preview" },
+      input: userQuery,
+    }),
   });
+
+  const payload = await apiResponse.json();
+
+  if (!apiResponse.ok) {
+    const message =
+      payload?.error?.message ||
+      `OpenAI API error (status ${apiResponse.status})`;
+
+    const err = new Error(message);
+    err.status = apiResponse.status;
+    err.data = payload;
+    throw err;
+  }
+
+  let summary = null;
+
+  if (Array.isArray(payload.output)) {
+    const messageItem = payload.output.find((item) => item.type === "message");
+
+    if (messageItem && Array.isArray(messageItem.content)) {
+      const textBlock = messageItem.content.find(
+        (part) => part.type === "output_text"
+      );
+
+      if (textBlock && typeof textBlock.text === "string") {
+        summary = textBlock.text;
+      }
+    }
+  }
+
+  return { summary, raw: payload };
 }
+// ------------------------------------------------------------------
 
-// Apply all normalisation steps in a single pass.
-function normalizeFinalText(text, maxWords) {
-  let t = text || "";
-  t = normalizeQuotesAndDashes(t);
-  t = normalizeCurrencies(t);
-  t = applyThousandsSeparatorsToDigits(t);
-  t = normalizeUnitNumbers(t);
-  t = enforceWordLimit(t, maxWords);
-  return t;
+function describeOutputType(outputType) {
+  switch (outputType) {
+    case "transaction_text":
+      return "Concise transaction description suitable for investment reports and internal notes.";
+    case "investment_note":
+      return "Investor letter style commentary explaining the investment, thesis, and outlook in clear professional prose.";
+    case "press_release":
+      return "Public-facing press release suitable for distribution to media and external stakeholders.";
+    case "linkedin_post":
+      return "Professional but approachable LinkedIn post summarising the transaction for a broad audience.";
+    default:
+      return "Professional investment-related written output.";
+  }
 }
-
-
-// --- Handler ------------------------------------------------------
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -193,172 +113,144 @@ export default async function handler(req, res) {
   }
 
   try {
-        const {
+    const {
       title,
       notes,
       text,
-      selectedTypes = [],
-      workspaceMode = "generic",
+      selectedTypes,
       scenario = "default",
-      versionType = "complete", // "complete" or "public"
+      versionType = "complete",
       modelId = "gpt-4o-mini",
       temperature = 0.3,
       maxTokens = 2048,
-      maxWords, // optional soft word limit from the frontend
-      publicSearch = false, // flag from frontend – wired for future use
+      publicSearch = false,
+      maxWords,
     } = req.body || {};
 
-    if (!text) {
+    if (!text || !text.trim()) {
       return res.status(400).json({ error: "Missing text" });
     }
 
-    const typesArray =
-      Array.isArray(selectedTypes) && selectedTypes.length > 0
-        ? selectedTypes
-        : ["press_release"];
+    const types = Array.isArray(selectedTypes) && selectedTypes.length
+      ? selectedTypes
+      : ["transaction_text"];
 
-    const wsMode = workspaceMode || "generic";
-    const scenarioKey = scenario || "default";
-    const verType = versionType || "complete";
-    const model = modelId || "gpt-4o-mini";
-    const temp = typeof temperature === "number" ? temperature : 0.3;
-    const maxTok = typeof maxTokens === "number" ? maxTokens : 2048;
-    const numericMaxWords =
-      typeof maxWords === "number"
-        ? maxWords
-        : parseInt(maxWords, 10) || 0;
+    // Optional public web context (behind the toggle)
+    let webSummary = null;
+    if (publicSearch) {
+      try {
+        const truncated = text.slice(0, 2000);
+        const webQuery = [
+          "Using current public information, provide concise factual background",
+          "that could help inform a professional investment write-up for the following event.",
+          "",
+          title ? `Title / headline: ${title}` : "",
+          "",
+          "Internal description (may be truncated):",
+          "--------------------",
+          truncated,
+          "--------------------",
+        ].join("\n");
 
-    // Placeholder for future public web / knowledge-base sources.
-    // For now this stays empty, but the frontend is ready to display it.
-    const publicSources = [];
-    
-    const styleGuide = BASE_STYLE_GUIDE;
-    const promptPack = PROMPT_RECIPES[wsMode] || PROMPT_RECIPES.generic;
+        const { summary } = await runWebSearchPreview({
+          query: webQuery,
+          model: "gpt-4.1",
+        });
+        webSummary = summary || null;
+      } catch (e) {
+        console.error("web_search_preview in generate failed:", e);
+        webSummary = null;
+      }
+    }
 
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
+    const baseSystem = `
+You are an AI assistant that drafts professional investment-related content
+for private-markets transactions and funds.
+
+You will receive:
+- An internal description of the event and its context,
+- Optional writer's notes,
+- A requested output format (transaction text, investor letter, press release, or LinkedIn post),
+- Optional public-domain context (when available).
+
+Guidelines:
+- Write in clear, professional, concise prose suitable for institutional investors.
+- Do NOT invent specific deal terms, numbers, or counterparties that are not supported by the internal text.
+- Where public-domain context is provided, you may use it to refine the narrative,
+  but avoid quoting URLs or mentioning specific media sources.
+- If you are uncertain about a fact, keep the wording high-level instead of guessing.
+
+You should produce a single piece of text per request (no JSON, no commentary).
+`.trim();
+
+    const internalContext = `
+Scenario: ${scenario}
+Version type: ${versionType}
+${title ? `Proposed title / headline: ${title}\n` : ""}${
+      notes ? `Writer notes / constraints:\n${notes}\n\n` : ""
+    }Internal source material:
+--------------------
+${text}
+--------------------
+`.trim();
+
+    const publicContext = webSummary
+      ? `Public-domain context (for background only, do not cite sources directly):\n\n${webSummary}\n\n`
+      : "";
 
     const outputs = [];
 
-    for (let i = 0; i < typesArray.length; i += 1) {
-      const outputType = typesArray[i];
+    for (const outputType of types) {
+      const outputDescription = describeOutputType(outputType);
 
-      const template =
-        promptPack.templates[outputType] || promptPack.templates.press_release;
+      const userPrompt = `
+Output type: ${outputType}
+Description: ${outputDescription}
+${maxWords ? `Target maximum words: ${maxWords}\n` : ""}
 
-      const baseFilled = fillTemplate(template, {
-        title: title || "",
-        notes,
-        text,
-        scenario: scenarioKey
-      });
+${publicContext}${internalContext}
 
-      const scenarioExtra =
-        SCENARIO_INSTRUCTIONS[scenarioKey] ||
-        SCENARIO_INSTRUCTIONS.default;
-
-      const lengthGuidance =
-        numericMaxWords > 0
-          ? "\nLength guidance:\n- Aim for no more than approximately " +
-            numericMaxWords +
-            " words.\n"
-          : "";
-
-      const versionGuidance =
-        verType === "public"
-          ? `
-This is a PUBLIC-FACING version:
-- Base all statements primarily on information that is publicly available.
-- If some details from internal sources are used, ensure they are not highly sensitive and are phrased at a high, non-specific level.
-- When in doubt, prefer omission or very general wording over specific, non-public metrics.`
-          : `
-This is a COMPLETE / INTERNAL version:
-- Follow the full brief, and incorporate all relevant, non-sensitive details from the source material.
-- You may use internal details as long as they are not explicitly flagged as highly sensitive.`;
-
-      const userPrompt =
-        baseFilled +
-        "\n\nScenario-specific guidance:\n" +
-        scenarioExtra.trim() +
-        "\n" +
-        versionGuidance +
-        "\n" +
-        lengthGuidance;
-
-            const systemPrompt =
-        promptPack.systemPrompt +
-        "\n\nYou must follow the STYLE GUIDE strictly. " +
-        "Apply ALL formatting rules consistently, even when the source does not." +
-        "\n\nSTYLE GUIDE:\n" +
-        styleGuide;
-
+Write the final ${outputType.replace(
+        "_",
+        " "
+      )} now. Do not include any JSON or explanation, only the prose.
+`.trim();
 
       const completion = await client.chat.completions.create({
-        model,
-        temperature: temp,
-        max_tokens: maxTok,
+        model: modelId || "gpt-4o-mini",
+        temperature: typeof temperature === "number" ? temperature : 0.3,
+        max_tokens:
+          typeof maxTokens === "number" && maxTokens > 0
+            ? maxTokens
+            : 2048,
         messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ]
+          { role: "system", content: baseSystem },
+          { role: "user", content: userPrompt },
+        ],
       });
 
-      let firstChoice = null;
-      if (
-        completion &&
-        completion.choices &&
-        Array.isArray(completion.choices) &&
-        completion.choices.length > 0
-      ) {
-        firstChoice = completion.choices[0];
-      }
-
-      let outputText = "[No content returned]";
-      if (
-        firstChoice &&
-        firstChoice.message &&
-        typeof firstChoice.message.content === "string"
-      ) {
-        outputText = firstChoice.message.content.trim();
-      }
-
-// Apply full normalisation pipeline (quotes, dashes, currencies, separators, units, length)
-      outputText = normalizeFinalText(outputText, numericMaxWords);
-
-
-      const scoring = await scoreOutput({
-        outputText,
-        scenario: scenarioKey,
-        outputType,
-        versionType: verType
-      });
+      const textOut =
+        completion.choices?.[0]?.message?.content?.trim() || "";
 
       outputs.push({
         outputType,
-        text: outputText,
-        score: scoring.overall,
-        metrics: {
-          clarity: scoring.clarity,
-          accuracy: scoring.accuracy,
-          tone: scoring.tone,
-          structure: scoring.structure
-        }
+        text: textOut,
+        score: null, // Leave scoring for later refinement
+        metrics: {},
       });
     }
 
-        return res.status(200).json({
+    // For now we don't return structured public sources; just an empty list
+    const publicSources = [];
+
+    return res.status(200).json({
       outputs,
-      scenario,
-      versionType,
       publicSources,
     });
-
   } catch (err) {
     console.error("Error in /api/generate:", err);
     return res.status(500).json({
-      error: "Internal server error",
-      detail: err && err.message ? err.message : String(err)
+      error: err.message || String(err),
     });
   }
 }
