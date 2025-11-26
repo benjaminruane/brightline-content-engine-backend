@@ -17,6 +17,7 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
+// --- Body normaliser (matches your other routes) ---------
 function normaliseBody(req) {
   if (!req.body) return {};
   if (typeof req.body === "string") {
@@ -30,10 +31,10 @@ function normaliseBody(req) {
 }
 
 export default async function handler(req, res) {
-  // Apply CORS headers for this route
+  // Apply CORS headers
   setCorsHeaders(req, res);
 
-  // Handle preflight OPTIONS request
+  // Preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -54,9 +55,9 @@ export default async function handler(req, res) {
     } = body || {};
 
     if (!question || !draftText) {
-      return res
-        .status(400)
-        .json({ error: "Both 'question' and 'draftText' are required" });
+      return res.status(400).json({
+        error: "Both 'question' and 'draftText' are required",
+      });
     }
 
     const sourceSummaries = Array.isArray(sources)
@@ -107,37 +108,58 @@ USER QUESTION:
 ${question}
 `.trim();
 
-    const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL_ID || "gpt-4.1-mini",
-      input: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: userPrompt,
-        },
-      ],
-      max_output_tokens: 800,
-    });
+    const modelId = process.env.OPENAI_MODEL_ID || "gpt-4.1-mini";
 
-    const output = response.output_text || response.output || response;
-
-    // The Responses API surfaces text under a helper; if unavailable, fall back defensively
     let answerText = "";
-    if (typeof response.output_text === "string") {
-      answerText = response.output_text;
-    } else if (
-      Array.isArray(response.output) &&
-      response.output[0] &&
-      Array.isArray(response.output[0].content) &&
-      response.output[0].content[0] &&
-      typeof response.output[0].content[0].text === "string"
+
+    // Prefer Responses API if available
+    if (client.responses && typeof client.responses.create === "function") {
+      const response = await client.responses.create({
+        model: modelId,
+        input: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_output_tokens: 800,
+      });
+
+      // Try to extract text in a resilient way
+      if (typeof response.output_text === "string") {
+        answerText = response.output_text;
+      } else if (
+        Array.isArray(response.output) &&
+        response.output[0] &&
+        Array.isArray(response.output[0].content) &&
+        response.output[0].content[0] &&
+        typeof response.output[0].content[0].text === "string"
+      ) {
+        answerText = response.output[0].content[0].text;
+      } else {
+        answerText = JSON.stringify(response, null, 2);
+      }
+    }
+    // Fallback to Chat Completions API
+    else if (
+      client.chat &&
+      client.chat.completions &&
+      typeof client.chat.completions.create === "function"
     ) {
-      answerText = response.output[0].content[0].text;
+      const completion = await client.chat.completions.create({
+        model: modelId,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_tokens: 800,
+      });
+
+      answerText =
+        completion.choices?.[0]?.message?.content ||
+        JSON.stringify(completion, null, 2);
     } else {
-      answerText = JSON.stringify(output, null, 2);
+      throw new Error(
+        "OpenAI client does not expose 'responses.create' or 'chat.completions.create'"
+      );
     }
 
     return res.status(200).json({ answer: answerText });
