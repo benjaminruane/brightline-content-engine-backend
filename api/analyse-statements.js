@@ -5,6 +5,7 @@
 // with safe defaults.
 
 import OpenAI from "openai";
+import { runWebSearchPreview } from "./_webSearchPreview";
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -83,14 +84,45 @@ function buildSummary(statements) {
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  // Preflight
+    // Preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
+  // --- NEW: GET diagnostic mode for web_search_preview -------------
+  if (req.method === "GET" && req.query?.mode === "web-test") {
+    try {
+      const q = req.query.q;
+
+      const { summary, raw } = await runWebSearchPreview({
+        query:
+          typeof q === "string" && q.trim().length > 0
+            ? q.trim()
+            : "Given an investment commentary draft, identify reliability and potential weak spots.",
+      });
+
+      return res.status(200).json({
+        ok: true,
+        mode: "web-test",
+        summary,
+        raw,
+      });
+    } catch (err) {
+      return res.status(err.status || 500).json({
+        ok: false,
+        mode: "web-test",
+        error: err.message || "Failed to call web_search_preview.",
+        data: err.data || null,
+      });
+    }
+  }
+  // ----------------------------------------------------------------
+
+  // Everything else requires POST as usual
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+
 
   try {
     const { text, scenario = "default", versionType = "complete" } =
