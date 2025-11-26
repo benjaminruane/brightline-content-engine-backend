@@ -1,12 +1,12 @@
 // api/rewrite.js
- 
-import OpenAI from "openai";
-import { PROMPT_RECIPES } from "../helpers/promptRecipes.js";
-import { fillTemplate } from "../helpers/template.js";
-import { DEFAULT_STYLE_GUIDE } from "../helpers/styleGuides.js";
-import { scoreOutput } from "../helpers/scoring.js";
+//
+// Rewrites an existing draft according to user notes,
+// keeping the same scenario + output type.
+// - Uses internal draft as primary source of truth.
+// - If publicSearch === true, adds web_search_preview context
+//   to help sharpen public-facing language and remove factual drift.
 
-const BASE_STYLE_GUIDE = DEFAULT_STYLE_GUIDE;
+import OpenAI from "openai";
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -22,132 +22,85 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
-const SCENARIO_INSTRUCTIONS = {
-  new_investment: `
-Rewrite as a new direct investment transaction.
-- Preserve factual details but improve clarity and flow.
-- Maintain neutral, institutional tone.
-  `,
-  new_fund_commitment: `
-Rewrite as a fund commitment summary.
-- Clarify strategy, rationale and key differentiators.
-- Keep wording neutral and aligned with STYLE GUIDE.
-  `,
-  exit_realisation: `
-Rewrite as a realisation / exit commentary.
-- Clearly describe what happened and key value drivers stated in the draft.
-  `,
-  revaluation: `
-Rewrite as a valuation update.
-- Preserve factual drivers of valuation movement.
-- Keep speculative language out.
-  `,
-  default: `
-Rewrite for clarity, structure and tone while preserving factual content.
-  `
-};
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-// Normalise quotes and dashes: no smart quotes, no em dashes.
-function normalizeQuotesAndDashes(text) {
-  return text
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/—/g, "-");
-}
-
-// Normalise currency symbols → codes (basic pass)
-function normalizeCurrencies(text) {
-  return text
-    .replace(/\$([0-9])/g, "USD $1")
-    .replace(/€([0-9])/g, "EUR $1")
-    .replace(/£([0-9])/g, "GBP $1");
-}
-
-// Format digits with apostrophe thousands separators for 4+ digit numbers
-function formatWithApostrophe(numStr) {
-  return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, "’");
-}
-
-function applyThousandsSeparatorsToDigits(text) {
-  return text.replace(/\b\d{4,}\b/g, (match) => formatWithApostrophe(match));
-}
-
-// Soft word limit that keeps whole sentences where possible
-function enforceWordLimit(text, maxWords) {
-  if (!maxWords || maxWords <= 0) return text;
-
-  const words = text.split(/\s+/);
-  if (words.length <= maxWords) return text;
-
-  const sentences = text.match(/[^.!?]+[.!?]+/g);
-  if (!sentences) return words.slice(0, maxWords).join(" ");
-
-  let rebuilt = "";
-  for (const s of sentences) {
-    const currentCount = rebuilt.split(/\s+/).filter(Boolean).length;
-    const sentenceWords = s.split(/\s+/).length;
-    if (currentCount + sentenceWords > maxWords) break;
-    rebuilt += s.trim() + " ";
+// --- Inline helper: web_search_preview ----------------------------
+async function runWebSearchPreview({ query, model = "gpt-4.1" }) {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("Missing OPENAI_API_KEY in environment.");
   }
 
-  return rebuilt.trim() || words.slice(0, maxWords).join(" ");
-}
+  const userQuery =
+    typeof query === "string" && query.trim().length > 0
+      ? query.trim()
+      : "Using current public information, provide background context relevant to an investment commentary rewrite.";
 
-// Convert simple spelled-out numbers to numerals when followed by a unit.
-function normalizeUnitNumbers(text) {
-  const WORD_TO_NUMBER = {
-    one: 1,
-    two: 2,
-    three: 3,
-    four: 4,
-    five: 5,
-    six: 6,
-    seven: 7,
-    eight: 8,
-    nine: 9,
-    ten: 10,
-    eleven: 11,
-    twelve: 12,
-    thirteen: 13,
-    fourteen: 14,
-    fifteen: 15,
-    sixteen: 16,
-    seventeen: 17,
-    eighteen: 18,
-    nineteen: 19,
-    twenty: 20,
-    thirty: 30,
-    forty: 40,
-    fifty: 50,
-    sixty: 60,
-    seventy: 70,
-    eighty: 80,
-    ninety: 90,
-  };
-
-  const UNIT_PATTERN =
-    /\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\s+(customers|investors|employees|clients|people|users|companies|deals|transactions|assets|funds|projects|loans|borrowers|partners|years|months|quarters|countries|regions|markets|offices)\b/gi;
-
-  return text.replace(UNIT_PATTERN, (match, word, unit) => {
-    const num = WORD_TO_NUMBER[word.toLowerCase()];
-    if (!num) return match;
-    const formatted = formatWithApostrophe(String(num));
-    return `${formatted} ${unit}`;
+  const apiResponse = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      tools: [{ type: "web_search_preview" }],
+      tool_choice: { type: "web_search_preview" },
+      input: userQuery,
+    }),
   });
+
+  const payload = await apiResponse.json();
+
+  if (!apiResponse.ok) {
+    const message =
+      payload?.error?.message ||
+      `OpenAI API error (status ${apiResponse.status})`;
+
+    const err = new Error(message);
+    err.status = apiResponse.status;
+    err.data = payload;
+    throw err;
+  }
+
+  let summary = null;
+
+  if (Array.isArray(payload.output)) {
+    const messageItem = payload.output.find((item) => item.type === "message");
+
+    if (messageItem && Array.isArray(messageItem.content)) {
+      const textBlock = messageItem.content.find(
+        (part) => part.type === "output_text"
+      );
+
+      if (textBlock && typeof textBlock.text === "string") {
+        summary = textBlock.text;
+      }
+    }
+  }
+
+  return { summary, raw: payload };
 }
+// ------------------------------------------------------------------
 
-function normalizeFinalText(text, maxWords) {
-  let t = text || "";
-  t = normalizeQuotesAndDashes(t);
-  t = normalizeCurrencies(t);
-  t = applyThousandsSeparatorsToDigits(t);
-  t = normalizeUnitNumbers(t);
-  t = enforceWordLimit(t, maxWords);
-  return t;
+function describeRewriteContext(outputType, versionType) {
+  const base =
+    outputType === "press_release"
+      ? "public-facing press release"
+      : outputType === "linkedin_post"
+      ? "professional LinkedIn post"
+      : outputType === "investment_note"
+      ? "investor letter"
+      : "transaction description";
+
+  const visibility =
+    versionType === "public"
+      ? "public-facing audiences and external communications"
+      : "internal and investor communications";
+
+  return `${base} aimed at ${visibility}.`;
 }
-
-
-// --- Handler ------------------------------------------------------
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -164,165 +117,114 @@ export default async function handler(req, res) {
     const {
       text,
       notes,
-      outputType,
-      scenario,
-      versionType,
-      modelId,
-      temperature,
-      maxTokens,
-      maxWords
+      outputType = "transaction_text",
+      scenario = "default",
+      versionType = "complete",
+      modelId = "gpt-4o-mini",
+      temperature = 0.3,
+      maxTokens = 2048,
+      maxWords,
+      publicSearch = false,
     } = req.body || {};
 
     if (!text || !text.trim()) {
       return res.status(400).json({ error: "Missing text" });
     }
 
-    const outType = outputType || "transaction_text";
-    const scenarioKey = scenario || "default";
-    const verType = versionType || "complete";
-    const model = modelId || "gpt-4o-mini";
-    const temp = typeof temperature === "number" ? temperature : 0.3;
-    const maxTok = typeof maxTokens === "number" ? maxTokens : 2048;
-    const numericMaxWords =
-      typeof maxWords === "number"
-        ? maxWords
-        : parseInt(maxWords, 10) || 0;
+    // Optional public web context (behind the toggle)
+    let webSummary = null;
+    if (publicSearch) {
+      try {
+        const truncated = text.slice(0, 2000);
+        const webQuery = [
+          "Using current public information, provide concise background context",
+          "that may help refine and sanity-check an investment commentary rewrite.",
+          "",
+          "Existing draft (may be truncated):",
+          "--------------------",
+          truncated,
+          "--------------------",
+        ].join("\n");
 
-    const promptPack = PROMPT_RECIPES.generic;
-    const template =
-      promptPack.templates[outType] || promptPack.templates.press_release;
+        const { summary } = await runWebSearchPreview({
+          query: webQuery,
+          model: "gpt-4.1",
+        });
+        webSummary = summary || null;
+      } catch (e) {
+        console.error("web_search_preview in rewrite failed:", e);
+        webSummary = null;
+      }
+    }
 
-    const styleGuide = BASE_STYLE_GUIDE;
+    const rewriteContext = describeRewriteContext(outputType, versionType);
 
-    const baseFilled = fillTemplate(template, {
-      title: "",
-      notes,
-      text,
-      scenario: scenarioKey
-    });
+    const systemPrompt = `
+You are an AI assistant that rewrites professional investment-related content.
 
-    const scenarioExtra =
-      SCENARIO_INSTRUCTIONS[scenarioKey] ||
-      SCENARIO_INSTRUCTIONS.default;
+You will receive:
+- An existing draft,
+- User rewrite instructions,
+- Scenario and output type,
+- Optional public-domain context (for background only).
 
-    const lengthGuidance =
-      numericMaxWords > 0
-        ? "\nLength guidance:\n- Aim for no more than approximately " +
-          numericMaxWords +
-          " words.\n"
-        : "";
+Your job:
+- Preserve the core facts and deal details in the existing draft.
+- Apply the user's rewrite instructions faithfully.
+- For "public" versions, keep language more high-level, cautious, and suitable for external use,
+  while still being specific enough to be useful.
+- For "complete" versions, you may be more detailed and technical, but still clear and concise.
+- If public-domain context is provided, use it only to improve clarity and remove obvious inaccuracies;
+  do NOT introduce new unsubstantiated details or cite URLs.
 
-    const versionGuidance =
-      verType === "public"
-        ? `
-Public-facing version guidance:
-- Treat this as a public summary. Prefer information that is clearly public.
-- If some details in the existing draft look internal or sensitive, you may soften or omit them.
-- Favour high-level, qualitative wording and avoid granular internal metrics where there is any doubt.`
-        : `
-Internal "complete" version guidance:
-- You may preserve or enhance internal detail where it helps clarity.
-- Keep everything aligned with the WRITING GUIDELINES and a professional, client-facing tone.`;
+Return ONLY the rewritten text (no JSON, no commentary).
+`.trim();
 
-    const rewriteFrame = `
-You are rewriting an existing draft for the same scenario and output type.
+    const userPrompt = `
+Scenario: ${scenario}
+Output type: ${outputType}
+Version type: ${versionType}
+Rewrite context: ${rewriteContext}
 
-Rewrite the draft text below to:
-- Apply the user's rewrite instructions.
-- Preserve factual content that is supported by the original draft.
-- Improve clarity, tone, and flow while following the STYLE GUIDE.
-- Keep the structure broadly similar unless the instructions request otherwise.
+User rewrite instructions:
+${notes && notes.trim() ? notes.trim() : "(none – just clean up and improve the draft)"}
 
-User rewrite instructions (if any):
-${notes || "(none provided)"}
+${webSummary ? `Public-domain background (for your awareness only):\n\n${webSummary}\n\n` : ""}Existing draft:
+--------------------
+${text}
+--------------------
 
-Existing draft to rewrite:
-"""${text}"""
-`;
-
-    const userPrompt =
-      baseFilled +
-      "\n\nScenario-specific guidance:\n" +
-      scenarioExtra.trim() +
-      "\n" +
-      versionGuidance +
-      "\n" +
-      lengthGuidance +
-      "\n" +
-      rewriteFrame;
-
-        const systemPrompt =
-      promptPack.systemPrompt +
-      "\n\nYou must follow the STYLE GUIDE strictly. " +
-      "Apply ALL formatting rules consistently, even when they were not followed in the original draft.\n\n" +
-      "STYLE GUIDE:\n" +
-      styleGuide;
-
-
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
+Now provide the fully rewritten draft.
+${maxWords ? `Aim to stay within approximately ${maxWords} words.` : ""}
+`.trim();
 
     const completion = await client.chat.completions.create({
-      model,
-      temperature: temp,
-      max_tokens: maxTok,
+      model: modelId || "gpt-4o-mini",
+      temperature: typeof temperature === "number" ? temperature : 0.3,
+      max_tokens:
+        typeof maxTokens === "number" && maxTokens > 0 ? maxTokens : 2048,
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ]
-    });
-
-    let firstChoice = null;
-    if (
-      completion &&
-      completion.choices &&
-      Array.isArray(completion.choices) &&
-      completion.choices.length > 0
-    ) {
-      firstChoice = completion.choices[0];
-    }
-
-    let output = "[No content returned]";
-    if (
-      firstChoice &&
-      firstChoice.message &&
-      typeof firstChoice.message.content === "string"
-    ) {
-      output = firstChoice.message.content.trim();
-    }
-
-        output = normalizeFinalText(output, numericMaxWords);
-
-    const scoring = await scoreOutput({
-      outputText: output,
-      scenario: scenarioKey,
-      outputType: outType,
-      versionType: verType
-    });
-
-    return res.status(200).json({
-      outputs: [
-        {
-          outputType: outType,
-          text: output,
-          score: scoring.overall,
-          metrics: {
-            clarity: scoring.clarity,
-            accuracy: scoring.accuracy,
-            tone: scoring.tone,
-            structure: scoring.structure
-          }
-        }
+        { role: "user", content: userPrompt },
       ],
-      scenario: scenarioKey,
-      versionType: verType
     });
+
+    const rewritten =
+      completion.choices?.[0]?.message?.content?.trim() || "";
+
+    const outputs = [
+      {
+        text: rewritten,
+        score: null, // scoring can be added later
+        metrics: {},
+      },
+    ];
+
+    return res.status(200).json({ outputs });
   } catch (err) {
     console.error("Error in /api/rewrite:", err);
     return res.status(500).json({
-      error: "Internal server error",
-      detail: err && err.message ? err.message : String(err)
+      error: err.message || String(err),
     });
   }
 }
