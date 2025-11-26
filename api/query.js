@@ -4,6 +4,19 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// --- CORS helper -----------------------------------------
+function setCorsHeaders(req, res) {
+  const origin = req.headers.origin || "*";
+
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    origin === "null" ? "*" : origin
+  );
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
 function normaliseBody(req) {
   if (!req.body) return {};
   if (typeof req.body === "string") {
@@ -17,6 +30,14 @@ function normaliseBody(req) {
 }
 
 export default async function handler(req, res) {
+  // Apply CORS headers for this route
+  setCorsHeaders(req, res);
+
+  // Handle preflight OPTIONS request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
