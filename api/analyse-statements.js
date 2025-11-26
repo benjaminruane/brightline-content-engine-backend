@@ -114,6 +114,7 @@ Your task:
       - "plausible factual"
       - "interpretive / analytical"
       - "speculative / forward-looking".
+  - "implication": a short explanation of what this reliability level means for how the text should be treated (e.g. well supported, should be softened, needs verification, may be misleading).
 
 Rules:
 - Focus on substantive claims, not trivial fragments.
@@ -128,7 +129,8 @@ JSON schema:
       "id": string,
       "text": string,
       "reliability": number between 0 and 1,
-      "category": string
+      "category": string,
+      "implication": string
     }
   ]
 }
