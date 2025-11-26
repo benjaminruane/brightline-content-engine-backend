@@ -48,22 +48,27 @@ function buildSummary(statements) {
   let counted = 0;
   let lowCount = 0;
 
-  statements.forEach((st) => {
+    statements.forEach((st) => {
     if (typeof st.reliability === "number") {
       sum += st.reliability;
       counted += 1;
-      if (st.reliability < 0.6) {
+      // Flag as low reliability if below 0.75 (75%)
+      if (st.reliability < 0.75) {
         lowCount += 1;
       }
     }
   });
 
-  const average = counted > 0 ? sum / counted : null;
+    const average = counted > 0 ? sum / counted : null;
 
   let band = "unknown";
   if (average != null) {
-    if (average >= 0.8) band = "high";
-    else if (average >= 0.6) band = "medium";
+    // Map to UI colours:
+    // - >= 0.90 (90%+)  => green / "high"
+    // - 0.75–0.89       => yellow / "medium"
+    // - < 0.75          => red / "low"
+    if (average >= 0.9) band = "high";
+    else if (average >= 0.75) band = "medium";
     else band = "low";
   }
 
