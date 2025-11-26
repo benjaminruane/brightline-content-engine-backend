@@ -5,7 +5,6 @@
 // with safe defaults.
 
 import OpenAI from "openai";
-import { webSearch } from "./lib/webSearch";
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -94,16 +93,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const {
-      text,
-      scenario = "default",
-      versionType = "complete",
-      sources = [],
-      company,
-      sector,
-      geography,
-      dealType,
-    } = req.body || {};
+    const { text, scenario = "default", versionType = "complete" } =
+      req.body || {};
 
     if (!text || !text.trim()) {
       return res
@@ -111,69 +102,23 @@ export default async function handler(req, res) {
         .json({ error: "Missing text", ...emptyResult() });
     }
 
-    // --- 1. Fetch public web evidence (safe, high-level) -----------
-    const webResults = await webSearch({
-      company,
-      sector,
-      geography,
-      dealType,
-      maxResults: 6,
-    });
-
-    // Prepare evidence summaries (internal + web)
-    const internalEvidenceSummary = Array.isArray(sources) && sources.length
-      ? sources
-          .slice(0, 6)
-          .map((s, idx) => {
-            const label =
-              s.name ||
-              s.url ||
-              s.kind ||
-              `Source ${idx + 1}`;
-            const textVal = (s.text || "").toString();
-            const snippet = textVal.slice(0, 800);
-            return `Internal ${idx + 1} – ${label}:\n${snippet}`;
-          })
-          .join("\n\n")
-      : "No internal sources provided.";
-
-    const webEvidenceSummary = webResults.length
-      ? webResults
-          .slice(0, 6)
-          .map((w, idx) => {
-            const label = w.title || w.domain || w.url || `Web ${idx + 1}`;
-            const snippet = (w.snippet || "").slice(0, 800);
-            const domain = w.domain || "unknown";
-            return `Web ${idx + 1} – ${label} (domain: ${domain}):\n${snippet}`;
-          })
-          .join("\n\n")
-      : "No public web search results available.";
-
     const systemPrompt = `
 You are an assistant that analyses investment-related commentary.
 
 Your task:
 - Break the text into atomic statements (short, self-contained claims).
 - For each statement, assign:
-  - "reliability": a number between 0 and 1 (1 = fully reliable based on available evidence).
+  - "reliability": a number between 0 and 1 (1 = fully reliable based on typical sources).
   - "category": one of:
       - "source-based factual"
       - "plausible factual"
       - "interpretive / analytical"
       - "speculative / forward-looking".
-  - "implication": a short explanation of what this reliability level means for how the text should be treated
-    (e.g. well supported, should be softened, needs verification, may be misleading).
-
-Evidence you may use:
-1. **Internal sources** (private; do not assume they are public).
-2. **Public web sources** (search snippets with titles, domains, and short excerpts).
+  - "implication": a short explanation of what this reliability level means for how the text should be treated (e.g. well supported, should be softened, needs verification, may be misleading).
 
 Rules:
-- Prefer internal sources when internal and public evidence conflict.
-- NEVER claim that private internal information is public unless it clearly appears in public web evidence.
-- If a statement mixes fact and speculation, classify as "speculative / forward-looking".
-- If evidence is insufficient, assign lower reliability and explain.
 - Focus on substantive claims, not trivial fragments.
+- If a statement mixes fact and speculation, classify as "speculative / forward-looking".
 - Respond ONLY with valid JSON, with no commentary.
 
 JSON schema:
@@ -189,18 +134,12 @@ JSON schema:
     }
   ]
 }
-`.trim();
+`;
 
     const userPrompt = `
 Context:
 - Scenario: ${scenario}
 - Version type: ${versionType}
-
-Evidence (internal sources):
-${internalEvidenceSummary}
-
-Evidence (public web sources):
-${webEvidenceSummary}
 
 Text to analyse:
 --------------------
@@ -208,7 +147,7 @@ ${text}
 --------------------
 
 Return JSON following the schema exactly. Do not include any extra keys or text.
-`.trim();
+`;
 
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
@@ -241,7 +180,6 @@ Return JSON following the schema exactly. Do not include any extra keys or text.
     return res.status(200).json({
       statements,
       summary,
-      webSources: webResults,
     });
   } catch (err) {
     console.error("Error in /api/analyse-statements:", err);
