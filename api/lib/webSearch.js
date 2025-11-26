@@ -1,5 +1,5 @@
 // api/lib/webSearch.js
-// Minimal, safe stub to keep /api/query working.
+// Minimal safe stub so /api/query works without errors.
 
 export async function webSearch({
   company,
@@ -8,8 +8,6 @@ export async function webSearch({
   dealType,
   maxResults = 4,
 }) {
-  // For now, log and return an empty list.
-  // This guarantees no external calls and no build errors.
   console.log("[webSearch] called with:", {
     company,
     sector,
@@ -18,5 +16,7 @@ export async function webSearch({
     maxResults,
   });
 
+  // For now, do NOT call any external APIs.
+  // Just return an empty list so behaviour is unchanged.
   return [];
 }
