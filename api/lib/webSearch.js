@@ -1,5 +1,5 @@
 // api/lib/webSearch.js
-// Minimal safe stub so /api/query works without errors.
+// Minimal safe stub so routes can call webSearch without errors.
 
 export async function webSearch({
   company,
