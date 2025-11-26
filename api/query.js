@@ -9,7 +9,8 @@
 //
 // Behaviour:
 // - Heuristically extracts a primary entity (e.g. "Pinterest, Inc. (the \"Company\")") from context
-// - Forces the model to answer ONLY about that entity if found
+// - If an entity is found, explicitly injects that entity name into the question sent to the model
+//   e.g. "For Pinterest, Inc., when was the company founded..."
 // - Works for generic questions (e.g. "Explain the ARR metric") when no entity is found
 // - Returns a heuristic confidence score and explanation
 
@@ -103,13 +104,13 @@ function extractHeuristicPrimaryEntity(context) {
   // Pattern 1: "Pinterest, Inc. (the "Company")" or "(the "Fund")" / "(the "Asset")"
   let m =
     text.match(
-      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Company['"]\)/
+      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Company['"]\)/,
     ) ||
     text.match(
-      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Fund['"]\)/
+      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Fund['"]\)/,
     ) ||
     text.match(
-      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Asset['"]\)/
+      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Asset['"]\)/,
     );
 
   if (m && m[1]) {
@@ -121,7 +122,7 @@ function extractHeuristicPrimaryEntity(context) {
 
   // Pattern 2: Legal suffixes (Inc., Ltd, Limited, plc, AG, SA)
   m = text.match(
-    /([A-Z][A-Za-z0-9&,'\- ]{1,80}\s(?:Inc\.|Incorporated|Ltd\.|Limited|plc|AG|S\.?A\.?))/
+    /([A-Z][A-Za-z0-9&,'\- ]{1,80}\s(?:Inc\.|Incorporated|Ltd\.|Limited|plc|AG|S\.?A\.?))/,
   );
   if (m && m[1]) {
     return {
@@ -132,7 +133,7 @@ function extractHeuristicPrimaryEntity(context) {
 
   // Pattern 3: fallback – first capitalised phrase with "(Company)"
   m = text.match(
-    /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(Company\)/
+    /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(Company\)/,
   );
   if (m && m[1]) {
     return {
@@ -163,7 +164,9 @@ function estimateConfidence({ question, usedWeb, hasEntity }) {
 
   if (hasEntity) {
     confidence += 0.15;
-    reasons.push("Linked the question to a specific entity from the draft/context.");
+    reasons.push(
+      "Linked the question to a specific entity extracted from the draft/context.",
+    );
   }
 
   if (question && /(?:explain|what is|define|definition)/i.test(question)) {
@@ -174,7 +177,9 @@ function estimateConfidence({ question, usedWeb, hasEntity }) {
   confidence = Math.max(0, Math.min(0.98, confidence));
 
   if (reasons.length === 0) {
-    reasons.push("Heuristic estimate based on question type and available context.");
+    reasons.push(
+      "Heuristic estimate based on question type, web usage and available context.",
+    );
   }
 
   return {
@@ -202,6 +207,12 @@ async function runQueryPipeline({
 
   // 1) Heuristic primary entity directly from context
   const heuristicPrimary = extractHeuristicPrimaryEntity(trimmedContext);
+  const hasEntity = Boolean(heuristicPrimary && heuristicPrimary.name);
+
+  // Build an explicit question for the model if we have an entity
+  const questionForModel = hasEntity
+    ? `For ${heuristicPrimary.name}, ${trimmedQuestion}`
+    : trimmedQuestion;
 
   // 2) Build a web-search query (anchored on entity if present)
   let webSummary = null;
@@ -210,7 +221,7 @@ async function runQueryPipeline({
   try {
     let webQuery;
 
-    if (heuristicPrimary && heuristicPrimary.name) {
+    if (hasEntity) {
       webQuery = [
         `Using current public information, answer the following question strictly about ${heuristicPrimary.name}.`,
         "",
@@ -218,8 +229,8 @@ async function runQueryPipeline({
         `- Treat "${heuristicPrimary.name}" as the only relevant company/fund/asset.`,
         "- If search results mention other companies with similar profiles, ignore them.",
         "",
-        "User question:",
-        trimmedQuestion,
+        "User question (entity already specified):",
+        questionForModel,
         "",
         "Internal draft/source context (may be truncated):",
         trimmedContext.slice(0, 2000) || "(none)",
@@ -254,7 +265,7 @@ Provide clear, concise answers suitable for professional investment audiences.
 If you are uncertain, say so explicitly and avoid making up facts.
 
 You will receive:
-- A user question,
+- A user question (which may already explicitly mention a company/entity),
 - Optional internal draft/source context,
 - Optional public-domain context.
 
@@ -264,11 +275,15 @@ you MUST:
 - Answer ONLY about that entity.
 - If you cannot find reliable information about that entity, state that limitation explicitly
   instead of substituting a different company.
+
+This endpoint may also receive general questions (e.g. "Explain the ARR metric").
+In those cases, interpret the question generically and give a clear, self-contained explanation,
+still grounded in public-domain context where helpful.
 `.trim();
 
   const messages = [
     { role: "system", content: baseSystemPrompt },
-    heuristicPrimary?.name
+    hasEntity
       ? {
           role: "system",
           content: `Primary entity extracted from the draft/source text: ${heuristicPrimary.name} (source: ${heuristicPrimary.source}).\n\nWhen the user refers to "the company", "the fund" or similar, you MUST treat this as referring to ${heuristicPrimary.name} and not any other entity. Do NOT substitute another company, even if the web context mentions other firms.`,
@@ -286,7 +301,10 @@ you MUST:
           content: `Internal draft/source context from the user (not from the public web):\n\n${trimmedContext}`,
         }
       : null,
-    { role: "user", content: trimmedQuestion },
+    {
+      role: "user",
+      content: questionForModel,
+    },
   ].filter(Boolean);
 
   // 4) Call OpenAI for the answer
@@ -305,7 +323,7 @@ you MUST:
   const { confidence, reason: confidenceReason } = estimateConfidence({
     question: trimmedQuestion,
     usedWeb: webUsed,
-    hasEntity: Boolean(heuristicPrimary && heuristicPrimary.name),
+    hasEntity,
   });
 
   return {
@@ -314,6 +332,7 @@ you MUST:
     webUsed,
     webSummary,
     heuristicPrimary,
+    effectiveQuestion: questionForModel,
     confidence,
     confidenceReason,
   };
