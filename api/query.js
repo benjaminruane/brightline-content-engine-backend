@@ -3,13 +3,14 @@
 // AI Query endpoint
 // - Always uses OpenAI web_search_preview for public-domain context
 // - GET + mode=web-test: diagnostic mode, testable in browser
+// - GET + mode=interpret-test: see how the backend interprets question+context
 // - POST: main query handler, web-backed but falls back cleanly if web fails
 // - Rich behaviour:
-//     * Interprets query context: entities, transaction, industry, geography, topics
-//     * Builds smarter web search queries from that interpretation
-//     * Anchors answers on interpreted context (for things like "the company")
-//     * Works fine for generic questions (e.g. "Explain ARR")
-//     * Returns an approximate confidence score for the answer (0–1)
+//     * Heuristically extracts entities (e.g. "Pinterest, Inc. (the \"Company\")")
+//     * Interprets query context (entities, transaction, topics, etc.)
+//     * Builds smarter web search queries using both heuristics + interpretation
+//     * Works for generic questions (e.g. "Explain ARR")
+//     * Returns an approximate confidence score for the answer (0–1) plus reason
 
 import OpenAI from "openai";
 
@@ -93,10 +94,61 @@ async function runWebSearchPreview({ query, model = "gpt-4.1" }) {
 }
 // ------------------------------------------------------------------
 
+// --- Heuristic: extract a likely primary entity from raw context ---
+function extractHeuristicPrimaryEntity(context) {
+  if (!context || typeof context !== "string") return null;
+  const text = context;
+
+  // Pattern 1: "Pinterest, Inc. (the "Company")"
+  let m =
+    text.match(
+      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Company['"]\)/
+    ) ||
+    text.match(
+      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Fund['"]\)/
+    ) ||
+    text.match(
+      /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(the ['"]Asset['"]\)/
+    );
+
+  if (m && m[1]) {
+    return {
+      name: m[1].trim(),
+      source: "alias_pattern",
+    };
+  }
+
+  // Pattern 2: Legal suffixes (Inc., Ltd, Limited, plc, AG, SA)
+  m = text.match(
+    /([A-Z][A-Za-z0-9&,'\- ]{1,80}\s(?:Inc\.|Incorporated|Ltd\.|Limited|plc|AG|S\.?A\.?))/,
+  );
+  if (m && m[1]) {
+    return {
+      name: m[1].trim(),
+      source: "legal_suffix",
+    };
+  }
+
+  // Pattern 3: fallback – first capitalised phrase before "(the \"Company\")" style definitions without quotes
+  m = text.match(
+    /([A-Z][A-Za-z0-9&.,'()\- ]{2,100})\s*\(Company\)/,
+  );
+  if (m && m[1]) {
+    return {
+      name: m[1].trim(),
+      source: "company_parentheses",
+    };
+  }
+
+  return null;
+}
+// ------------------------------------------------------------------
+
 // --- Helper: interpret rich query context -------------------------
 async function interpretQueryContext({
   question,
   context,
+  heuristicPrimary,
   model = "gpt-4o-mini",
 }) {
   try {
@@ -104,6 +156,10 @@ async function interpretQueryContext({
       typeof question === "string" ? question.trim() : "";
     const trimmedContext =
       typeof context === "string" ? context.trim() : "";
+
+    const heuristicHint = heuristicPrimary?.name
+      ? `Heuristic primary entity hint from the internal text: "${heuristicPrimary.name}". Prefer this as the primary_entity.name if it is consistent with the question and context.`
+      : "No heuristic primary entity hint is available.";
 
     const messages = [
       {
@@ -125,7 +181,11 @@ Your job:
       "factual_history", "definition_explanation", "metric_interpretation",
       "risk_analysis", "market_context", "strategic_implications", "other"
 
+Heuristic hint:
+${heuristicHint}
+
 Rules:
+- If the heuristic primary entity hint matches an entity in the context, use that as primary_entity.name with high confidence.
 - If there is no obvious primary entity, set primary_entity.name to null.
 - If there is no transaction, set transaction.description to null.
 - For generic questions (like "Explain the ARR metric"), it's fine for many
@@ -277,7 +337,8 @@ Return ONLY the JSON object, no explanation.
     });
 
     const raw =
-      completion.choices?.[0]?.message?.content?.trim() || '{"confidence":0.5,"reason":"No information."}';
+      completion.choices?.[0]?.message?.content?.trim() ||
+      '{"confidence":0.5,"reason":"No information."}';
 
     let parsed;
     try {
@@ -315,7 +376,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // --- GET diagnostic mode: test web_search_preview in browser ----
+  // --- GET diagnostic: raw web_search_preview ---------------------
   if (req.method === "GET" && req.query?.mode === "web-test") {
     try {
       const q = req.query.q;
@@ -341,6 +402,27 @@ export default async function handler(req, res) {
         data: err.data || null,
       });
     }
+  }
+
+  // --- GET diagnostic: interpretation only ------------------------
+  if (req.method === "GET" && req.query?.mode === "interpret-test") {
+    const question = req.query.question || "";
+    const context = req.query.context || "";
+
+    const heuristicPrimary = extractHeuristicPrimaryEntity(context);
+    const interpretedContext = await interpretQueryContext({
+      question,
+      context,
+      heuristicPrimary,
+      model: "gpt-4o-mini",
+    });
+
+    return res.status(200).json({
+      ok: true,
+      mode: "interpret-test",
+      heuristicPrimary,
+      interpretedContext,
+    });
   }
   // ----------------------------------------------------------------
 
@@ -369,25 +451,40 @@ export default async function handler(req, res) {
     const trimmedContext =
       typeof context === "string" ? context.trim() : "";
 
-    // 1) Interpret query context (entities, transaction, topics, etc.)
+    // 1) Heuristic primary entity directly from context
+    const heuristicPrimary = extractHeuristicPrimaryEntity(trimmedContext);
+
+    // 2) Interpret query context (entities, transaction, topics, etc.)
     const interpretedContext = await interpretQueryContext({
       question: trimmedQuestion,
       context: trimmedContext,
+      heuristicPrimary,
       model,
     });
 
-    // 2) Build a richer web-search query using interpreted context
+    // Determine effective primary entity name (heuristic wins if present)
+    let effectivePrimaryName = null;
+    if (heuristicPrimary?.name) {
+      effectivePrimaryName = heuristicPrimary.name;
+    } else if (
+      interpretedContext &&
+      interpretedContext.primary_entity &&
+      interpretedContext.primary_entity.name
+    ) {
+      effectivePrimaryName = interpretedContext.primary_entity.name;
+    }
+
+    // 3) Build a richer web-search query using interpreted context
     let webSummary = null;
     try {
       const ctx = interpretedContext || {};
-      const primary = ctx.primary_entity || {};
       const tx = ctx.transaction || {};
 
       const parts = [];
 
-      if (primary && primary.name) {
+      if (effectivePrimaryName) {
         parts.push(
-          `Using current public information, answer the user's question about ${primary.name}.`
+          `Using current public information, answer the user's question about ${effectivePrimaryName}.`
         );
       } else {
         parts.push(
@@ -419,10 +516,10 @@ export default async function handler(req, res) {
 
       parts.push("", "User question:", trimmedQuestion);
 
-      if (primary && primary.name) {
+      if (effectivePrimaryName) {
         parts.push(
           "",
-          `Primary entity inferred from internal context: ${primary.name}.`
+          `Primary entity inferred from internal context and heuristics: ${effectivePrimaryName}.`
         );
       }
 
@@ -443,7 +540,7 @@ export default async function handler(req, res) {
       webSummary = null;
     }
 
-    // 3) Build system prompt with strong instructions on using interpreted context
+    // 4) Build system prompt with strong instructions on using context
     const baseSystemPrompt =
       systemPrompt ||
       `
@@ -455,11 +552,13 @@ You will often receive:
 - A structured "query context" describing entities, transactions, industry, geography and topics.
 - Internal/project context that mentions specific companies, funds or assets.
 - Public-domain context.
+- Occasionally, there will be a strong heuristic hint for the primary entity.
 
 When the user asks a question that uses vague references like "the company", "the fund", "the asset",
 "the transaction", or pronouns like "it" or "they", you MUST:
 
 1. First, infer what they mean from:
+   - The heuristic primary entity (if present),
    - The interpreted query context,
    - The internal context, and
    - The public-domain context.
@@ -481,9 +580,15 @@ In those cases, interpret the question generically and give a clear, self-contai
 still grounded in public-domain context where helpful.
 `.trim();
 
-    // 4) Build message array, injecting interpreted context, web context and internal context
+    // 5) Build message array, injecting interpreted context, web context and internal context
     const messages = [
       { role: "system", content: baseSystemPrompt },
+      heuristicPrimary?.name
+        ? {
+            role: "system",
+            content: `Heuristic primary entity extracted directly from the draft/source text: ${heuristicPrimary.name} (source: ${heuristicPrimary.source}). Treat this as the default meaning of "the company" / "the fund" / "the asset" unless the question clearly refers to something else.`,
+          }
+        : null,
       interpretedContext && Object.keys(interpretedContext).length > 0
         ? {
             role: "system",
@@ -509,7 +614,7 @@ still grounded in public-domain context where helpful.
       { role: "user", content: trimmedQuestion },
     ].filter(Boolean);
 
-    // 5) Call OpenAI for the actual answer
+    // 6) Call OpenAI for the actual answer
     const completion = await client.chat.completions.create({
       model,
       temperature: 0.2,
@@ -521,14 +626,22 @@ still grounded in public-domain context where helpful.
       completion.choices?.[0]?.message?.content?.trim() ||
       "I was unable to generate an answer.";
 
-    // 6) Estimate confidence in the answer (secondary call)
-    const { confidence, reason: confidenceReason } =
-      await estimateAnswerConfidence({
+    // 7) Estimate confidence in the answer (secondary call, but guarded)
+    let confidence = null;
+    let confidenceReason = null;
+    try {
+      const confResult = await estimateAnswerConfidence({
         question: trimmedQuestion,
         answer,
         webSummary,
         model,
       });
+      confidence = confResult.confidence;
+      confidenceReason = confResult.reason;
+    } catch (e) {
+      confidence = null;
+      confidenceReason = null;
+    }
 
     return res.status(200).json({
       ok: true,
@@ -537,8 +650,9 @@ still grounded in public-domain context where helpful.
       webUsed: Boolean(webSummary),
       webSummary,
       interpretedContext,
-      confidence,           // 0–1
-      confidenceReason,     // brief explanation
+      heuristicPrimary,
+      confidence,       // 0–1 (you can multiply by 100 in the UI)
+      confidenceReason, // short explanation
     });
   } catch (err) {
     console.error("Error in /api/query:", err);
