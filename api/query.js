@@ -189,6 +189,243 @@ function estimateConfidence({ question, usedWeb, hasEntity }) {
 }
 // ------------------------------------------------------------------
 
+// --- Structured confidence scoring (Ask AI) -----------------------
+// Derive a 0–1 confidence score from discrete labels instead of
+// asking the model to guess a percentage.
+function scoreQueryConfidence(meta) {
+  let score = 0.7; // start moderately positive
+
+  // Grounding – how tied to provided draft/sources the answer is
+  if (
+    meta.grounding_level === "strong_in_draft" ||
+    meta.grounding_level === "strong_in_sources"
+  ) {
+    score += 0.15;
+  } else if (meta.grounding_level === "mixed") {
+    // no change
+  } else if (meta.grounding_level === "weak") {
+    score -= 0.15;
+  }
+
+  // Coverage – how directly the answer addresses the question
+  if (meta.coverage === "direct") {
+    score += 0.1;
+  } else if (meta.coverage === "partial") {
+    // no change
+  } else if (meta.coverage === "indirect") {
+    score -= 0.1;
+  }
+
+  // Hedging – tentativeness of language
+  if (meta.hedging_level === "high") {
+    score -= 0.15;
+  } else if (meta.hedging_level === "medium") {
+    score -= 0.05;
+  }
+
+  // Explicit contradictions or ambiguity in sources
+  if (meta.contradiction_flag) {
+    score -= 0.2;
+  }
+
+  // Clamp to [0, 1]
+  score = Math.max(0, Math.min(1, score));
+  return score;
+}
+
+// Turn the structured meta into a short English reason
+function buildConfidenceReason(meta) {
+  const parts = [];
+
+  if (meta.grounding_level === "strong_in_draft") {
+    parts.push("strongly grounded in the current draft");
+  } else if (meta.grounding_level === "strong_in_sources") {
+    parts.push("strongly grounded in attached sources");
+  } else if (meta.grounding_level === "mixed") {
+    parts.push("partly grounded in the draft and sources");
+  } else if (meta.grounding_level === "weak") {
+    parts.push("weakly grounded in the provided material");
+  }
+
+  if (meta.coverage === "direct") {
+    parts.push("directly answers the question");
+  } else if (meta.coverage === "partial") {
+    parts.push("only partially addresses the question");
+  } else if (meta.coverage === "indirect") {
+    parts.push("addresses the topic only indirectly");
+  }
+
+  if (meta.hedging_level === "high") {
+    parts.push("uses strongly tentative language");
+  } else if (meta.hedging_level === "medium") {
+    parts.push("includes some hedging");
+  }
+
+  if (meta.contradiction_flag) {
+    parts.push("notes conflicting or ambiguous information in the sources");
+  }
+
+  if (!parts.length) {
+    return "No clear confidence signals detected.";
+  }
+
+  let reason = parts[0];
+  for (let i = 1; i < parts.length; i++) {
+    if (i === parts.length - 1) {
+      reason += " and " + parts[i];
+    } else {
+      reason += ", " + parts[i];
+    }
+  }
+  return reason.charAt(0).toUpperCase() + reason.slice(1) + ".";
+}
+
+// Ask the model to classify grounding / coverage / hedging / contradictions
+// and then compute confidence from that. Falls back to estimateConfidence
+// if anything goes wrong (e.g. JSON parse error).
+async function evaluateAnswerConfidence({
+  question,
+  context,
+  answer,
+  model,
+  usedWeb,
+  hasEntity,
+}) {
+  const trimmedQuestion =
+    typeof question === "string" ? question.trim() : "";
+  const trimmedContext =
+    typeof context === "string" ? context.trim() : "";
+  const trimmedAnswer =
+    typeof answer === "string" ? answer.trim() : "";
+
+  if (!trimmedAnswer) {
+    const fallback = estimateConfidence({
+      question: trimmedQuestion,
+      usedWeb,
+      hasEntity,
+    });
+    return {
+      confidence: fallback.confidence,
+      confidenceReason: fallback.reason,
+      meta: null,
+    };
+  }
+
+  const evalPrompt = `
+You are evaluating the reliability of an AI answer to a user's question
+about an investment-related draft and its sources.
+
+QUESTION:
+${trimmedQuestion}
+
+CONTEXT (draft + sources, may be truncated):
+${trimmedContext.slice(0, 4000)}
+
+ANSWER:
+${trimmedAnswer}
+
+Based on the relationship between the QUESTION, CONTEXT, and ANSWER,
+classify the following fields:
+
+- grounding_level: one of:
+  - "strong_in_draft" (answer is clearly grounded in the provided draft text)
+  - "strong_in_sources" (answer is clearly grounded in attached sources)
+  - "mixed" (parts grounded, parts inferred)
+  - "weak" (little or no clear grounding in the provided material)
+
+- coverage: one of:
+  - "direct" (answer clearly and fully addresses the question)
+  - "partial" (answer addresses some but not all key aspects)
+  - "indirect" (answer is loosely related but does not directly answer)
+
+- hedging_level: one of:
+  - "low" (confident, factual tone, minimal hedging)
+  - "medium" (some hedging like "may", "might", "likely")
+  - "high" (frequent hedging or explicit uncertainty)
+
+- contradiction_flag: true or false
+  (true if the answer notes or implies conflicting/ambiguous information in the sources
+   or if the answer conflicts with the context itself).
+
+Return ONLY a valid JSON object with this shape:
+{
+  "grounding_level": "...",
+  "coverage": "...",
+  "hedging_level": "...",
+  "contradiction_flag": true or false
+}
+`.trim();
+
+  let evalText = "";
+  try {
+    const completion = await client.chat.completions.create({
+      model: model || "gpt-4o-mini",
+      temperature: 0,
+      max_tokens: 300,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You classify the reliability of answers. Always return strict JSON with the requested fields.",
+        },
+        {
+          role: "user",
+          content: evalPrompt,
+        },
+      ],
+    });
+
+    evalText =
+      completion.choices?.[0]?.message?.content?.trim() || "{}";
+  } catch (e) {
+    // If the eval call itself fails, fall back to heuristic
+    const fallback = estimateConfidence({
+      question: trimmedQuestion,
+      usedWeb,
+      hasEntity,
+    });
+    return {
+      confidence: fallback.confidence,
+      confidenceReason: fallback.reason,
+      meta: null,
+    };
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(evalText);
+  } catch (e) {
+    const fallback = estimateConfidence({
+      question: trimmedQuestion,
+      usedWeb,
+      hasEntity,
+    });
+    return {
+      confidence: fallback.confidence,
+      confidenceReason: fallback.reason,
+      meta: null,
+    };
+  }
+
+  const meta = {
+    grounding_level: parsed.grounding_level || "mixed",
+    coverage: parsed.coverage || "partial",
+    hedging_level: parsed.hedging_level || "medium",
+    contradiction_flag: Boolean(parsed.contradiction_flag),
+  };
+
+  const confidence = scoreQueryConfidence(meta);
+  const confidenceReason = buildConfidenceReason(meta);
+
+  return {
+    confidence,
+    confidenceReason,
+    meta,
+  };
+}
+// ------------------------------------------------------------------
+
+
 // --- Core query runner (used by POST and GET demo) ----------------
 async function runQueryPipeline({
   question,
@@ -319,12 +556,34 @@ still grounded in public-domain context where helpful.
     completion.choices?.[0]?.message?.content?.trim() ||
     "I was unable to generate an answer.";
 
-  // 5) Heuristic confidence
-  const { confidence, reason: confidenceReason } = estimateConfidence({
-    question: trimmedQuestion,
-    usedWeb: webUsed,
-    hasEntity,
-  });
+  // 5) Structured confidence evaluation (with heuristic fallback)
+  let confidence;
+  let confidenceReason;
+
+  try {
+    const evalResult = await evaluateAnswerConfidence({
+      question: trimmedQuestion,
+      context: trimmedContext,
+      answer,
+      model,
+      usedWeb: webUsed,
+      hasEntity,
+    });
+
+    confidence = evalResult.confidence;
+    confidenceReason = evalResult.confidenceReason;
+    // If you later want to expose meta to the frontend, you can also
+    // return evalResult.meta as part of the response.
+  } catch (e) {
+    console.error("evaluateAnswerConfidence failed, falling back:", e);
+    const fallback = estimateConfidence({
+      question: trimmedQuestion,
+      usedWeb: webUsed,
+      hasEntity,
+    });
+    confidence = fallback.confidence;
+    confidenceReason = fallback.reason;
+  }
 
   return {
     question: trimmedQuestion,
@@ -337,6 +596,7 @@ still grounded in public-domain context where helpful.
     confidenceReason,
   };
 }
+
 // ------------------------------------------------------------------
 
 export default async function handler(req, res) {
