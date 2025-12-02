@@ -241,18 +241,18 @@ Write the final ${outputType.replace(
       )} now. Do not include any JSON or explanation, only the prose.
 `.trim();
 
-      const completion = await client.chat.completions.create({
-        model: modelId || "gpt-4o-mini",
-        temperature: typeof temperature === "number" ? temperature : 0.3,
-        max_tokens:
-          typeof maxTokens === "number" && maxTokens > 0
-            ? maxTokens
-            : 2048,
-        messages: [
-          { role: "system", content: baseSystem },
-          { role: "user", content: userPrompt },
-        ],
-      });
+const completion = await client.chat.completions.create({
+  model: modelId || "gpt-4o-mini",
+  temperature: typeof temperature === "number" ? temperature : 0.3,
+  max_completion_tokens:
+    typeof maxTokens === "number" && maxTokens > 0
+      ? maxTokens
+      : 2048,
+  messages: [
+    { role: "system", content: baseSystem },
+    { role: "user", content: userPrompt },
+  ],
+});
 
       const textOut =
         completion.choices?.[0]?.message?.content?.trim() || "";
