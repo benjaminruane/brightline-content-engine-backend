@@ -223,7 +223,7 @@ Return JSON following the schema exactly. Do not include any extra keys or text.
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: 0,
-      max_completion_tokens: 800,
+      max_completion_tokens: 2048,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
