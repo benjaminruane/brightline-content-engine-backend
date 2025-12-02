@@ -109,7 +109,7 @@ Write a single cohesive draft that fulfils the brief above. Do NOT mention scena
     const completion = await client.chat.completions.create({
       model: model || "gpt-4o-mini",
       temperature: 0.3,
-      max_tokens: 2048,
+      max_completion_tokens: 2048,
       messages: [
         { role: "system", content: baseSystem },
         { role: "user", content: userPrompt },
