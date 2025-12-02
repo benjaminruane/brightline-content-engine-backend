@@ -120,14 +120,39 @@ export default async function handler(req, res) {
       selectedTypes,
       scenario = "default",
       versionType = "complete",
-      modelId = "gpt-4o-mini",
+
+      // Allow both modelId and model for compatibility
+      modelId: rawModelId,
+      model,
+
       temperature = 0.3,
       maxTokens = 2048,
       publicSearch = false,
       maxWords,
+
+      // New: accept sources from frontend
+      sources,
     } = req.body || {};
 
-    if (!text || !text.trim()) {
+    // Resolve modelId: prefer explicit modelId, then model, then default
+    const modelId = rawModelId || model || "gpt-4o-mini";
+
+    // Build an effective text payload:
+    // 1) use text if provided
+    // 2) else fall back to concatenating sources[].text
+    let effectiveText =
+      typeof text === "string" ? text : "";
+
+    if ((!effectiveText || !effectiveText.trim()) && Array.isArray(sources)) {
+      effectiveText = sources
+        .map((s) =>
+          s && typeof s.text === "string" ? s.text.trim() : ""
+        )
+        .filter((t) => t.length > 0)
+        .join("\n\n");
+    }
+
+    if (!effectiveText || !effectiveText.trim()) {
       return res.status(400).json({ error: "Missing text" });
     }
 
@@ -190,7 +215,7 @@ ${title ? `Proposed title / headline: ${title}\n` : ""}${
       notes ? `Writer notes / constraints:\n${notes}\n\n` : ""
     }Internal source material:
 --------------------
-${text}
+${effectiveText}
 --------------------
 `.trim();
 
