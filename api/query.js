@@ -361,7 +361,7 @@ Return ONLY a valid JSON object with this shape:
     const completion = await client.chat.completions.create({
       model: model || "gpt-4o-mini",
       temperature: 0,
-      max_tokens: 300,
+      max_completion_tokens: 300,
       messages: [
         {
           role: "system",
@@ -548,7 +548,7 @@ still grounded in public-domain context where helpful.
   const completion = await client.chat.completions.create({
     model,
     temperature: 0.2,
-    max_tokens: 800,
+    max_completion_tokens: 800,
     messages,
   });
 
