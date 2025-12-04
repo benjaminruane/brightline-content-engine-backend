@@ -1,29 +1,17 @@
-// /api/rewrite.js
+// api/rewrite.js
 //
-// Vercel serverless endpoint
-// Rewrites an existing draft + returns a quality score.
-//
-// IMPORTANT:
-// - Mirrors /api/generate.js response shape exactly.
-// - Returns { draftText, score, model, usage, createdAt }
-// - max_tokens → max_completion_tokens for 2025 OpenAI API compatibility.
+// Rewrites an existing draft AND scores the rewritten version using scoreDraft().
 
 import OpenAI from "openai";
 import { scoreDraft } from "../utils/scoreDraft.js";
 
-// --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
-
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin === "null" ? "*" : origin
-  );
+  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
-// ------------------------------------------------------------------
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -32,85 +20,58 @@ const client = new OpenAI({
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
-  }
 
   try {
-    const {
-      text,
-      notes,
-      scenario,
-      versionType,
-      model,
-      publicSearch,
-      projectId,
-    } = req.body || {};
+    const { text, notes, scenario, versionType, model: modelId, publicSearch } =
+      req.body || {};
 
-    if (!text || typeof text !== "string") {
-      return res
-        .status(400)
-        .json({ error: "Missing or invalid base text to rewrite." });
+    if (!text) {
+      return res.status(400).json({ error: "Missing draft text to rewrite." });
     }
 
-    const modelId = model || "gpt-4o-mini";
+    const system =
+      "You are an expert editing engine. Apply the rewrite instructions carefully.";
 
-    // Build rewrite prompt
     const userPrompt = `
-You are the Content Engine rewriting module.
-Rewrite the provided draft while respecting the scenario, version type, and rewrite notes.
+REWRITE INSTRUCTIONS:
+${notes}
 
-Scenario: ${scenario}
-Version type: ${versionType}
-Public search: ${publicSearch === true ? "on" : "off"}
+SCENARIO: ${scenario}
+VERSION TYPE: ${versionType}
+PUBLIC SEARCH: ${publicSearch}
 
-Rewrite instructions:
-${notes || "(none)"}
-
---- ORIGINAL DRAFT ---
+TEXT TO REWRITE:
+---
 ${text}
-`.trim();
+---
+`;
 
-    // ---- OpenAI Call -------------------------------------------------
     const completion = await client.chat.completions.create({
-      model: modelId,
-      temperature: 0.25,
+      model: modelId || "gpt-4o-mini",
       max_completion_tokens: 2048,
+      temperature: 0.4,
       messages: [
-        {
-          role: "system",
-          content:
-            "You are an expert rewriting engine. Produce clean, internally coherent prose without altering core facts.",
-        },
+        { role: "system", content: system },
         { role: "user", content: userPrompt },
       ],
     });
 
-    const rawContent = completion?.choices?.[0]?.message?.content || "";
-    const rewrittenText =
-      typeof rawContent === "string" ? rawContent.trim() : "";
+    const rewritten = completion?.choices?.[0]?.message?.content?.trim() || "";
 
-    if (!rewrittenText) {
-      console.error("Empty rewrite completion:", completion);
-      return res.status(500).json({
-        error: "Model returned empty rewrite",
-      });
+    if (!rewritten) {
+      return res.status(500).json({ error: "Empty rewritten text returned." });
     }
 
-    // ---- Quality Scoring ----------------------------------------------
-    const score = scoreDraft(rewrittenText, modelId, { publicSearch });
+    // --------- Score rewritten text ---------
+    const score = await scoreDraft(rewritten, modelId);
 
-    // ---- Response ------------------------------------------------------
     return res.status(200).json({
-      draftText: rewrittenText, // keep same key name as generate
+      text: rewritten,
       score,
-      model: modelId,
-      projectId: projectId || null,
-      usage: completion.usage || null,
+      model: completion.model,
       createdAt: new Date().toISOString(),
     });
   } catch (err) {
