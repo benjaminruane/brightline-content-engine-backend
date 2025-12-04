@@ -41,7 +41,7 @@ export default async function handler(req, res) {
       versionType,
     } = req.body || {};
 
-    // --------- Build user prompt ---------
+    // --------- Build user prompt --------------------------------------------
     const baseSystem =
       "You are an expert content-generation engine for investment materials.";
 
@@ -69,7 +69,7 @@ SOURCES:
 ${sourceSection}
 `;
 
-    // --------- Call OpenAI ---------
+    // --------- Call OpenAI ---------------------------------------------------
     const completion = await client.chat.completions.create({
       model: modelId || "gpt-4o-mini",
       max_completion_tokens: maxWords ? Number(maxWords) + 200 : 2048,
@@ -87,12 +87,12 @@ ${sourceSection}
       return res.status(500).json({ error: "Model returned empty content" });
     }
 
-    // --------- Compute score ---------
+    // --------- Compute score (heuristic) ------------------------------------
     const score = await scoreDraft(draftText, modelId);
 
     return res.status(200).json({
       draftText,
-      score,
+      score, // 0–1; frontend converts to % where needed
       model: completion.model,
       createdAt: new Date().toISOString(),
     });
