@@ -21,12 +21,19 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST")
+  if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
-    const { text, notes, scenario, versionType, model: modelId, publicSearch } =
-      req.body || {};
+    const {
+      text,
+      notes,
+      scenario,
+      versionType,
+      model: modelId,
+      publicSearch,
+    } = req.body || {};
 
     if (!text) {
       return res.status(400).json({ error: "Missing draft text to rewrite." });
@@ -37,7 +44,7 @@ export default async function handler(req, res) {
 
     const userPrompt = `
 REWRITE INSTRUCTIONS:
-${notes}
+${notes || "(none)"}
 
 SCENARIO: ${scenario}
 VERSION TYPE: ${versionType}
@@ -65,12 +72,12 @@ ${text}
       return res.status(500).json({ error: "Empty rewritten text returned." });
     }
 
-    // --------- Score rewritten text ---------
+    // --------- Score rewritten text (heuristic) -----------------------------
     const score = await scoreDraft(rewritten, modelId);
 
     return res.status(200).json({
       text: rewritten,
-      score,
+      score, // 0–1; frontend converts to % where needed
       model: completion.model,
       createdAt: new Date().toISOString(),
     });
