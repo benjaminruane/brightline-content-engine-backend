@@ -1,6 +1,17 @@
 // /api/generate.js
-import OpenAI from "openai";
+//
+// Vercel serverless endpoint
+// Produces draft text + quality score + (optional) statement analysis
+//
+// IMPORTANT:
+// - Returns { draftText, score, model, projectId, usage, createdAt }
+// - Uses scoreDraft helper
+// - max_tokens is replaced by max_completion_tokens (OpenAI 2025 requirement)
 
+import OpenAI from "openai";
+import { scoreDraft } from "../utils/scoreDraft.js";
+
+// --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
@@ -12,6 +23,7 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
+// ------------------------------------------------------------------
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -30,110 +42,83 @@ export default async function handler(req, res) {
 
   try {
     const {
+      model,
       title,
       notes,
       scenario,
       selectedTypes,
       versionType,
       maxWords,
-      model,
       publicSearch,
       sources,
       projectId,
     } = req.body || {};
 
-    // --- Build a userPrompt from the structured payload ------------------
+    // Frontend sends `modelId`; backend names arg `model`.
+    const modelId = model || "gpt-4o-mini";
 
-    const safeTitle = (title || "").trim() || "Untitled event";
-    const safeScenario = scenario || "unspecified";
-    const safeTypes =
-      Array.isArray(selectedTypes) && selectedTypes.length
-        ? selectedTypes.join(", ")
-        : "unspecified";
-    const safeVersionType = versionType || "complete";
-
-    const safeMaxWords =
-      typeof maxWords === "number" && maxWords > 0
-        ? maxWords
-        : null;
-
-    const instructionBlock =
-      (notes || "").trim() ||
-      "No special extra instructions. Write in a clear, concise, investor-facing tone suitable for private markets communications.";
-
-    const sourcesArray = Array.isArray(sources) ? sources : [];
-    const sourceBlocks =
-      sourcesArray.length > 0
-        ? sourcesArray
-            .map((s, idx) => {
-              const label = s.name || s.url || `Source ${idx + 1}`;
-              const kind = s.kind || "text";
-              const text = (s.text || "").slice(0, 60000); // avoid huge payloads
-              return `【${idx + 1} – ${kind}: ${label}】\n${text}`;
-            })
-            .join("\n\n")
-        : "(no source text provided – if this happens, create a well-structured placeholder draft based on the context and instructions only).";
+    // Build prompt
+    const sourceText =
+      Array.isArray(sources)
+        ? sources.map((s) => s.text || "").join("\n\n")
+        : "";
 
     const userPrompt = `
-You are assisting with drafting content for a private-markets investor communications tool.
+You are the Content Engine drafting model.
+Follow the scenario, selected output types, internal notes and sources.
 
-Context:
-- Title: ${safeTitle}
-- Scenario id: ${safeScenario}
-- Desired output types (internal ids): ${safeTypes}
-- Version type: ${safeVersionType}
-- Target length: ${
-      safeMaxWords
-        ? `${safeMaxWords} words (approximate; do not exceed this by too much).`
-        : "No strict word limit; be concise but complete."
-    }
-- Public web search allowed flag (for your awareness only): ${
-      publicSearch ? "true" : "false"
-    }
+Title: ${title || "(none)"}
+Scenario: ${scenario}
+Output types: ${JSON.stringify(selectedTypes || [])}
+Version type: ${versionType}
+Max words: ${maxWords || "none"}
+Public search: ${publicSearch === true ? "on" : "off"}
 
-User instructions / notes:
-${instructionBlock}
+NOTES:
+${notes || "(none)"}
 
-Source material (verbatim extracts to rely on for facts):
-${sourceBlocks}
+SOURCE MATERIAL:
+${sourceText}
+    `.trim();
 
-Task:
-Write a single cohesive draft that fulfils the brief above. Do NOT mention scenario ids, internal labels, or that you are an AI. Write directly as the final text, in a professional, investor-facing tone.
-`.trim();
-
-    const baseSystem =
-      "You are a careful, precise financial writer. You specialise in private markets and investment communications. You write in clear, concise English, suitable for sophisticated professional investors, avoiding marketing fluff and exaggeration.";
-
-    // --- Call OpenAI ------------------------------------------------------
+    // ---- OpenAI Call -------------------------------------------------
 
     const completion = await client.chat.completions.create({
-      model: model || "gpt-4o-mini",
+      model: modelId,
       temperature: 0.3,
-      max_completion_tokens: 2048,
+      max_completion_tokens:
+        typeof maxWords === "number" && maxWords > 0
+          ? Math.max(80, maxWords)
+          : 2048,
       messages: [
-        { role: "system", content: baseSystem },
+        {
+          role: "system",
+          content:
+            "You are an expert private-markets drafting engine. Produce clean, internally coherent prose.",
+        },
         { role: "user", content: userPrompt },
       ],
     });
 
-    const rawContent = completion?.choices?.[0]?.message?.content;
+    const rawContent = completion?.choices?.[0]?.message?.content || "";
     const draftText =
       typeof rawContent === "string" ? rawContent.trim() : "";
 
     if (!draftText) {
-      console.error(
-        "No draft text in OpenAI completion:",
-        JSON.stringify(completion, null, 2)
-      );
+      console.error("No draft text in OpenAI completion:", completion);
       return res.status(500).json({
         error: "Model returned empty content",
       });
     }
 
-    // --- Response shape expected by the frontend --------------------------
+    // ---- Quality Scoring ----------------------------------------------
+    const score = scoreDraft(draftText, modelId, { publicSearch });
+
+    // ---- Response ------------------------------------------------------
     return res.status(200).json({
-      draftText, // frontend uses this
-      model: completion.model,
+      draftText,
+      score,
+      model: modelId,
       projectId: projectId || null,
       usage: completion.usage || null,
       createdAt: new Date().toISOString(),
