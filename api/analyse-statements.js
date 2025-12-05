@@ -179,7 +179,7 @@ Your task:
       - "plausible factual"
       - "interpretive / analytical"
       - "speculative / forward-looking".
-  - "implication": a short explanation of what this reliability level means for how the text should be treated (e.g. well supported, should be softened, needs verification, may be misleading).
+  - "implication": a 1–2 sentence explanation of what this reliability level means for how the statement should be interpreted, including why it is or is not well supported and any specific cautions (for example: "well supported because …", "speculative because …", "contradicts publicly available data on …").
 
 Rules:
 - Focus on substantive claims, not trivial fragments.
