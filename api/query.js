@@ -1,9 +1,8 @@
 // /api/query.js
 //
-// Answers a follow-up question using the draft, sources,
-// and (optionally) OpenAI Web Search.
-
-import OpenAI from "openai";
+// Answers a follow-up question about the current draft and sources.
+// Now uses the Responses API + optional web search, but keeps the
+// JSON response shape identical for the frontend.
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -18,10 +17,6 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 // ------------------------------------------------------------------
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -47,9 +42,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing or invalid question" });
     }
 
-    const safeDraft = typeof draft === "string" ? draft.slice(0, 12_000) : "";
+    const safeDraft =
+      typeof draft === "string" ? draft.slice(0, 12_000) : "";
     const safeSources = Array.isArray(sources) ? sources : [];
 
+    // Build a compact context string from draft + first few sources
     const sourceSnippets = safeSources
       .slice(0, 3)
       .map((s, idx) => {
@@ -69,51 +66,115 @@ export default async function handler(req, res) {
         : "SOURCES:\n(None provided)",
     ].join("\n\n-----\n\n");
 
-    // --------------------------
-    // USE RESPONSES API INSTEAD
-    // --------------------------
-    const response = await client.responses.create({
-      model: model || "gpt-4.1",
-      max_output_tokens: 512,
-      temperature: 0.2,
+    // ------------------------------------------------------------------
+    // Call Responses API directly via fetch.
+    // This avoids any SDK "... is not a function" issues while still
+    // letting us use web search tools when publicSearch === true.
+    // ------------------------------------------------------------------
 
-      tools: publicSearch ? [{ type: "web" }] : [],
+    const resolvedModel =
+      typeof model === "string" && model.trim().length > 0
+        ? model.trim()
+        : "gpt-5.1";
 
-      messages: [
+    const body = {
+      model: resolvedModel,
+      input: [
         {
           role: "system",
-          content:
-            "You are an assistant helping to review and explain investment-related drafts.\n" +
-            "- Ground your answer strictly in the provided draft and sources.\n" +
-            "- If the user asks about 'the company', assume they mean the main company described in the draft.\n" +
-            "- If a specific figure or fact is not present in the draft or sources, say so explicitly.\n" +
-            "- If publicSearch is ON, you may also use web search results.\n" +
-            "- Be concise and concrete."
+          content: [
+            {
+              type: "input_text",
+              text:
+                "You are an assistant helping to review and explain investment-related drafts.\n" +
+                "- Ground your answer strictly in the provided draft, sources, and any web results the tools fetch for you.\n" +
+                '- If the user asks about \"the company\", assume they mean the main company described in the draft.\n' +
+                "- If a specific figure or fact is not present in the draft, sources, or web results, say so explicitly.\n" +
+                "- If they ask whether something is public information, look for that item in the draft/sources and answer about THAT item, not generic disclosure rules.\n" +
+                "- Be concise and concrete.",
+            },
+          ],
         },
         {
           role: "user",
-          content:
-            `Here is the current draft and supporting sources:\n\n${context}\n\n` +
-            `User question: ${question}`
-        }
+          content: [
+            {
+              type: "input_text",
+              text:
+                `Here is the current draft and supporting sources:\n\n${context}\n\n` +
+                `User question: ${question}`,
+            },
+          ],
+        },
       ],
+      max_output_tokens: 512,
+      temperature: 0.2,
+    };
+
+    // Only attach web_search_preview tool when explicitly requested
+    if (publicSearch) {
+      body.tools = [
+        {
+          type: "web_search_preview",
+          user_location: { type: "approximate", country: "SG" },
+          search_context_size: "medium",
+        },
+      ];
+    }
+
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
     });
 
-    const answer = response.output_text?.trim?.() || "";
+    if (!response.ok) {
+      const errorPayload = await response.text();
+      console.error("OpenAI /v1/responses error:", errorPayload);
+      return res.status(502).json({
+        error: "Upstream OpenAI responses API error",
+        details: errorPayload,
+      });
+    }
 
-    if (!answer) {
-      return res.status(500).json({ error: "Model returned empty answer" });
+    const payload = await response.json();
+
+    // Prefer the helper field if present
+    let answerText = "";
+    if (payload.output_text && typeof payload.output_text === "string") {
+      answerText = payload.output_text.trim();
+    } else if (Array.isArray(payload.output)) {
+      // Fallback: walk the structured output
+      for (const item of payload.output) {
+        if (item.type === "message" && Array.isArray(item.content)) {
+          for (const block of item.content) {
+            if (block.type === "output_text" && block.text?.length) {
+              answerText = block.text.trim();
+              break;
+            }
+          }
+        }
+        if (answerText) break;
+      }
+    }
+
+    if (!answerText) {
+      console.error("Responses API returned no output_text:", payload);
+      return res.status(500).json({
+        error: "Model returned empty answer",
+      });
     }
 
     return res.status(200).json({
-      answer,
+      answer: answerText,
       confidence: null,
       confidenceReason: null,
-      model: response.model,
+      model: payload.model || resolvedModel,
       createdAt: new Date().toISOString(),
-      usedWeb: !!publicSearch,
     });
-
   } catch (err) {
     console.error("Error in /api/query:", err);
     return res.status(500).json({
