@@ -27,5 +27,5 @@ Manual redeploy via Vercel → Deployments → Redeploy
 
 ---
 
-### 🗺 Roadmap
-See `/docs/roadmap-v6.md`
+## 📍 Product Roadmap
+(See /docs/ROADMAP.md for full details)
