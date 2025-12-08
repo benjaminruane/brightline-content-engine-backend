@@ -1,13 +1,12 @@
-// api/generate.js
+// /api/generate.js
 //
-// Generates a draft AND scores it using the scoreDraft() helper.
-// Updated to use the OpenAI Responses API (with optional web search)
-// while keeping the JSON response shape the same for the frontend.
-
-import { scoreDraft } from "../utils/scoreDraft.js";
+// Generates a draft based on event metadata, sources and options.
+// Uses the Responses API and *respects* an optional maxWords cap
+// without hard-truncating mid-sentence.
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
+
   res.setHeader(
     "Access-Control-Allow-Origin",
     origin === "null" ? "*" : origin
@@ -30,69 +29,84 @@ export default async function handler(req, res) {
 
   try {
     const {
-      model: modelId,
-      temperature,
-      maxWords,
-      publicSearch,
-      scenario,
-      selectedTypes,
-      sources,
       title,
       notes,
+      scenario,
+      selectedTypes,
       versionType,
+      maxWords,
+      model,
+      publicSearch,
+      sources,
     } = req.body || {};
 
-    // --------- Build prompts -------------------------------------------------
-    const baseSystem =
-      "You are an expert investment writer who produces clear, neutral, institutional-grade text. " +
-      "Write in concise, factual, professional language suitable for internal investment committees and sophisticated LPs.";
+    const safeTitle = typeof title === "string" ? title.trim() : "";
+    const safeNotes = typeof notes === "string" ? notes.trim() : "";
+    const safeScenario = typeof scenario === "string" ? scenario : "unspecified";
+    const safeSelectedTypes = Array.isArray(selectedTypes)
+      ? selectedTypes
+      : [];
+    const safeSources = Array.isArray(sources) ? sources : [];
 
-    const sourceSection = Array.isArray(sources)
-      ? sources
-          .map(
-            (s) =>
-              `Source (${s.kind} – ${s.name || s.url || "Untitled"}):\n${
-                s.text || ""
-              }`
-          )
-          .join("\n\n")
-      : "";
+    const numericMaxWords =
+      typeof maxWords === "number" && maxWords > 0
+        ? maxWords
+        : null;
 
-    const userPrompt = `
-TITLE: ${title || "(none)"}
-
-INSTRUCTIONS:
-${notes || "(none)"}
-
-SCENARIO: ${scenario || "(unspecified)"}
-OUTPUT TYPES: ${
-      Array.isArray(selectedTypes) && selectedTypes.length > 0
-        ? selectedTypes.join(", ")
-        : "(none)"
-    }
-
-VERSION TYPE: ${versionType || "complete"}
-PUBLIC SEARCH: ${publicSearch ? "enabled" : "disabled"}
-
-MAX WORDS: ${maxWords || "not specified"}
-
-SOURCES:
-${sourceSection}
-`;
-
-    // --------- Call OpenAI Responses API ------------------------------------
     const resolvedModel =
-      typeof modelId === "string" && modelId.trim().length > 0
-        ? modelId.trim()
-        : "gpt-4o-mini";
+      typeof model === "string" && model.trim().length > 0
+        ? model.trim()
+        : "gpt-5.1";
 
-    const maxOutput =
-      typeof maxWords === "number" ||
-      (typeof maxWords === "string" && maxWords.trim() !== "")
-        ? Number(maxWords) + 200
-        : 2048;
+    // Helper: quick word count
+    const countWords = (text) =>
+      text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
 
-    const body = {
+    // Build compact source snippets
+    const sourceSnippets = safeSources
+      .slice(0, 4)
+      .map((s, idx) => {
+        const name = s.name || s.url || `Source ${idx + 1}`;
+        const text =
+          typeof s.text === "string" ? s.text.slice(0, 4000) : "";
+        return `Source ${idx + 1} – ${name}:\n${text}`;
+      })
+      .join("\n\n");
+
+    const outputTypesLabel =
+      safeSelectedTypes.length > 0
+        ? safeSelectedTypes.join(", ")
+        : "Not specified";
+
+    const versionHint =
+      versionType === "public"
+        ? "Write in a more generic, publicly-safe way, avoiding non-public details."
+        : "You may use the full internal context; assume the reader is an informed LP or internal stakeholder.";
+
+    const maxWordsHint = numericMaxWords
+      ? `Aim for a coherent, complete draft of **no more than ${numericMaxWords} words**. Do NOT just cut the text off to meet the limit; instead, summarise and prioritise. Shorter is fine.`
+      : "Length: use a concise but fully informative length appropriate for the context.";
+
+    const systemPrompt =
+      "You are an assistant that drafts high-quality, investment-style text.\n" +
+      "- Your audience is sophisticated investors or internal stakeholders.\n" +
+      "- Be precise, factual and concrete.\n" +
+      "- Follow the requested output type(s) and scenario.\n" +
+      `- ${versionHint}\n` +
+      `- ${maxWordsHint}\n` +
+      "- Do not include headings like 'Draft:' or meta commentary.";
+
+    const userPrompt =
+      `Event title: ${safeTitle || "(none provided)"}\n` +
+      `Scenario: ${safeScenario}\n` +
+      `Requested output types: ${outputTypesLabel}\n` +
+      (safeNotes ? `Additional instructions:\n${safeNotes}\n\n` : "") +
+      (sourceSnippets
+        ? `Here are the supporting sources and materials:\n\n${sourceSnippets}\n\n`
+        : "No supporting sources were provided.\n\n") +
+      "Now write a single coherent draft that fulfils this brief.";
+
+    const baseBody = {
       model: resolvedModel,
       input: [
         {
@@ -100,7 +114,7 @@ ${sourceSection}
           content: [
             {
               type: "input_text",
-              text: baseSystem,
+              text: systemPrompt,
             },
           ],
         },
@@ -114,73 +128,148 @@ ${sourceSection}
           ],
         },
       ],
-      max_output_tokens: maxOutput,
-      temperature:
-        typeof temperature === "number" && Number.isFinite(temperature)
-          ? temperature
-          : 0.3,
+      // Rough token cap: ~4 tokens/word when a maxWords cap is set
+      max_output_tokens: numericMaxWords ? numericMaxWords * 4 : 1200,
+      temperature: 0.35,
     };
 
-    // Only enrich with web search when explicitly allowed via the toggle
     if (publicSearch) {
-      body.tools = [{ type: "web_search" }];
+      baseBody.tools = [{ type: "web_search" }];
     }
 
-    const apiResponse = await fetch("https://api.openai.com/v1/responses", {
+    const firstResponse = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(baseBody),
     });
 
-    const payload = await apiResponse.json();
-
-    if (!apiResponse.ok) {
-      console.error("OpenAI /v1/responses error in /api/generate:", payload);
+    if (!firstResponse.ok) {
+      const errorPayload = await firstResponse.text();
+      console.error("OpenAI /v1/responses error (generate, first):", errorPayload);
       return res.status(502).json({
-        error: "Failed to generate draft from OpenAI",
-        details: payload,
+        error: "Upstream OpenAI responses API error",
+        details: errorPayload,
       });
     }
 
-    // --------- Extract text from Responses payload --------------------------
-    let draftText = "";
+    const firstPayload = await firstResponse.json();
 
-    if (typeof payload.output_text === "string") {
-      draftText = payload.output_text.trim();
-    } else if (Array.isArray(payload.output)) {
-      for (const item of payload.output) {
-        if (item.type === "message" && Array.isArray(item.content)) {
-          for (const block of item.content) {
-            if (
-              block.type === "output_text" &&
-              typeof block.text === "string"
-            ) {
-              draftText = block.text.trim();
-              break;
+    const extractText = (payload) => {
+      if (payload.output_text && typeof payload.output_text === "string") {
+        return payload.output_text.trim();
+      }
+      if (Array.isArray(payload.output)) {
+        for (const item of payload.output) {
+          if (item.type === "message" && Array.isArray(item.content)) {
+            for (const block of item.content) {
+              if (block.type === "output_text" && block.text?.length) {
+                return block.text.trim();
+              }
             }
           }
         }
-        if (draftText) break;
       }
-    }
+      return "";
+    };
+
+    let draftText = extractText(firstPayload);
 
     if (!draftText) {
-      console.error("Responses API returned empty draftText:", payload);
+      console.error("Responses API returned no output_text (generate, first):", firstPayload);
       return res.status(500).json({
         error: "Model returned empty content",
       });
     }
 
-    // --------- Compute score (heuristic) ------------------------------------
-    const score = await scoreDraft(draftText, resolvedModel);
+    // If we have a maxWords and the draft is clearly over, run a SECOND pass
+    // asking the model to shorten it coherently to <= maxWords words.
+    if (numericMaxWords) {
+      const firstCount = countWords(draftText);
+
+      if (firstCount > numericMaxWords) {
+        const shortenSystem =
+          "You are editing an investment-style draft.\n" +
+          `Your task is to rewrite the draft so that it is **no more than ${numericMaxWords} words**, while keeping it coherent and not cutting sentences mid-way.\n` +
+          "Prioritise the most important points and remove repetition.";
+
+        const shortenUser =
+          "Here is the current draft. Rewrite it as a single coherent piece that meets the word limit described by the system message above:\n\n" +
+          draftText;
+
+        const shortenBody = {
+          model: resolvedModel,
+          input: [
+            {
+              role: "system",
+              content: [
+                {
+                  type: "input_text",
+                  text: shortenSystem,
+                },
+              ],
+            },
+            {
+              role: "user",
+              content: [
+                {
+                  type: "input_text",
+                  text: shortenUser,
+                },
+              ],
+            },
+          ],
+          max_output_tokens: numericMaxWords * 4,
+          temperature: 0.3,
+        };
+
+        const shortenResponse = await fetch(
+          "https://api.openai.com/v1/responses",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(shortenBody),
+          }
+        );
+
+        if (shortenResponse.ok) {
+          const shortenPayload = await shortenResponse.json();
+          const shortened = extractText(shortenPayload);
+          if (shortened) {
+            draftText = shortened;
+          }
+        } else {
+          const errorPayload = await shortenResponse.text();
+          console.error(
+            "OpenAI /v1/responses error (generate, shorten):",
+            errorPayload
+          );
+          // If shortening fails, we just keep the original draftText.
+        }
+      }
+    }
+
+    // Simple length-based score (same spirit as frontend fallback)
+    let score = null;
+    const len = draftText.length;
+    if (len > 0) {
+      if (len < 400) score = 60;
+      else if (len < 800) score = 70;
+      else if (len < 1200) score = 80;
+      else if (len < 2000) score = 90;
+      else score = 95;
+    }
 
     return res.status(200).json({
       draftText,
-      score, // 0–1; frontend converts to % where needed
-      model: payload.model || resolvedModel,
+      score,
+      label: null, // frontend falls back to "Version N"
+      model: firstPayload.model || resolvedModel,
       createdAt: new Date().toISOString(),
     });
   } catch (err) {
