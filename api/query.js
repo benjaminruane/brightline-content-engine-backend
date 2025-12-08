@@ -87,10 +87,11 @@ export default async function handler(req, res) {
               type: "input_text",
               text:
                 "You are an assistant helping to review and explain investment-related drafts.\n" +
-                '- Ground your answer strictly in the provided draft, sources, and any web results the tools fetch for you.\n' +
-                '- If the user asks about "the company", assume they mean the main company described in the draft.\n' +
-                "- If a specific figure or fact is not present in the draft, sources, or web results, say so explicitly.\n" +
-                "- If they ask whether something is public information, look for that item in the draft/sources and answer about THAT item, not generic disclosure rules.\n" +
+                "- Always call the web_search tool at least once before answering.\n" +
+                "- Use the draft and sources as your primary context, but you may also use web search results to add up-to-date, relevant public information about the same company or topic.\n" +
+                '- If the user asks about \"the company\", assume they mean the main company described in the draft.\n' +
+                "- If a specific figure or fact is not present in the draft or sources but appears clearly in trustworthy web results, you may answer using those web results and say so.\n" +
+                "- If neither the draft/sources nor web results provide the answer, say that the information is not available.\n" +
                 "- Be concise and concrete.",
             },
           ],
