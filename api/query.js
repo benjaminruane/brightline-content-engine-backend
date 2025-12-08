@@ -69,13 +69,13 @@ export default async function handler(req, res) {
     // ------------------------------------------------------------------
     // Call Responses API directly via fetch.
     // This avoids any SDK "... is not a function" issues while still
-    // letting us use web search tools when publicSearch === true.
+    // letting us always use web search tools for Ask AI.
     // ------------------------------------------------------------------
 
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
-        : "gpt-5.1";
+        : "gpt-4o-mini";
 
     const body = {
       model: resolvedModel,
@@ -87,8 +87,8 @@ export default async function handler(req, res) {
               type: "input_text",
               text:
                 "You are an assistant helping to review and explain investment-related drafts.\n" +
-                "- Ground your answer strictly in the provided draft, sources, and any web results the tools fetch for you.\n" +
-                '- If the user asks about \"the company\", assume they mean the main company described in the draft.\n' +
+                '- Ground your answer strictly in the provided draft, sources, and any web results the tools fetch for you.\n' +
+                '- If the user asks about "the company", assume they mean the main company described in the draft.\n' +
                 "- If a specific figure or fact is not present in the draft, sources, or web results, say so explicitly.\n" +
                 "- If they ask whether something is public information, look for that item in the draft/sources and answer about THAT item, not generic disclosure rules.\n" +
                 "- Be concise and concrete.",
@@ -111,16 +111,13 @@ export default async function handler(req, res) {
       temperature: 0.2,
     };
 
-    // Only attach web_search_preview tool when explicitly requested
-    if (publicSearch) {
-      body.tools = [
-        {
-          type: "web_search_preview",
-          user_location: { type: "approximate", country: "SG" },
-          search_context_size: "medium",
-        },
-      ];
-    }
+    // Always allow Ask AI to use web search, regardless of UI toggles
+    body.tools = [
+      {
+        type: "web_search",
+      },
+    ];
+
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
