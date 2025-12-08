@@ -1,8 +1,10 @@
 // /api/query.js
 //
 // Answers a follow-up question about the current draft and sources.
-// Now uses the Responses API + optional web search, but keeps the
+// Uses the Responses API + web search, but keeps the
 // JSON response shape identical for the frontend.
+
+import "isomorphic-fetch"; // if you don't already have global fetch; if fetch works already, you can delete this line
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -30,13 +32,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const {
-      question,
-      draft,
-      sources,
-      model,
-      publicSearch,
-    } = req.body || {};
+    const { question, draft, sources, model, publicSearch } = req.body || {};
 
     if (!question || typeof question !== "string") {
       return res.status(400).json({ error: "Missing or invalid question" });
@@ -68,14 +64,13 @@ export default async function handler(req, res) {
 
     // ------------------------------------------------------------------
     // Call Responses API directly via fetch.
-    // This avoids any SDK "... is not a function" issues while still
-    // letting us always use web search tools for Ask AI.
+    // This avoids SDK issues and always lets Ask AI use web search.
     // ------------------------------------------------------------------
 
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
-        : "gpt-4o-mini";
+        : "gpt-4o-mini"; // keep whatever you were using before
 
     const body = {
       model: resolvedModel,
@@ -110,15 +105,12 @@ export default async function handler(req, res) {
       ],
       max_output_tokens: 512,
       temperature: 0.2,
+      tools: [
+        {
+          type: "web_search",
+        },
+      ],
     };
-
-    // Always allow Ask AI to use web search, regardless of UI toggles
-    body.tools = [
-      {
-        type: "web_search",
-      },
-    ];
-
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -166,8 +158,14 @@ export default async function handler(req, res) {
       });
     }
 
+    // 🔧 NEW: strip simple markdown for cleaner UI
+    const cleanAnswer = answerText
+      .replace(/\*\*(.*?)\*\*/g, "$1") // **bold**
+      .replace(/\*(.*?)\*/g, "$1") // *italic*
+      .trim();
+
     return res.status(200).json({
-      answer: answerText,
+      answer: cleanAnswer,
       confidence: null,
       confidenceReason: null,
       model: payload.model || resolvedModel,
