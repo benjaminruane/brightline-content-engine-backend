@@ -1,213 +1,212 @@
-✅ Updated Content Engine Roadmap (2025 Edition)
+# 🚀 **CONTENT ENGINE – MASTER ROADMAP**
 
-(Clean, structured, and aligned with the modular architecture we just agreed on.)
+A unified roadmap covering UI/UX, core generation workflows, grounding, scoring, Ask AI, reliability, and future architectural enhancements.
 
-🟢 Completed
+---
 
- First-pass UI overhaul (header, sidebar, layout reflow)
+# **PHASE 1 — FOUNDATIONS & STABILITY (Completed / Ongoing Polishing)**
 
- Versions timeline with score/model/metadata
+Core stabilisation of the new frontend and backend.
 
- Quality pill colouring (green ≥90%, amber 75–90%, red <75)
+### ✅ 1.1 Port & stabilise major modules
 
- Basic source ingestion (URLs + pasted text)
+* Modularised UI: Versions Panel, Ask AI Panel, Rewrite Panel, Draft Output, Sources Panel
+* Core hooks: `useDraftState` rewrite
+* Improved state management, removal of legacy bugs
+* Clean separation between Generate / Rewrite / Ask AI flows
 
- Statement analysis (atomic statements, reliability scoring, category tagging)
+### ✅ 1.2 Generating clean drafts
 
- Ask-AI module (with session history, disabling button after click)
+* Stable API integration (`/api/generate`)
+* Draft text updates + version creation
+* Score fallback when backend scoring unavailable
+* Auto-scroll to top after generate
 
- Collapsible sections (Future Roadmap, Statement Analysis, Ask-AI)
+### ✅ 1.3 Rewrite flow upgrade
 
- Vercel backend v2 with robust CORS and error handling
+* Create new version on rewrite
+* Auto-reset analysis
+* Auto-scroll
+* Muting/unmuting inputs correctly
+* Rewrite polish (loading state, dim, fade-in animation)
 
- Style guide improvements (no thousand separators for years, normal English commas)
+### 🔧 1.4 UI polish pass (in progress)
 
- Drafting workflow fully stable
+* Loading dimming + pointer-block across all panels
+* Fade-in animations for Versions, Ask AI, Rewrite
+* Consistent cursor-wait states
+* More premium interactions across the app
+* Stable version card behaviour
+* Fixing template literal instability in classNames
+* Basic top bar & spacing improvements
 
-🚧 In Progress Now
-Phase 1 — Frontend Migration to Modular Architecture
+---
 
- Introduce new folder structure (modules/, components/, hooks/, utils/ingest)
+# **PHASE 2 — ANALYSIS & RELIABILITY SYSTEMS (Completed / Ongoing Enhancements)**
 
- Split the monolithic App.jsx into:
+### ✅ 2.1 Automatic Statement Analysis
 
- UI primitives (Button, Input, Card, TextArea, Pill)
+* Auto-run after generate and rewrite
+* Reliability scoring
+* Explanation categorisation
+* Color coding thresholds:
 
- Layout components (TwoColumn, MainColumn, SideColumn, Header)
+  * Green ≥ 90
+  * Yellow ≥ 75
+  * Red < 75
 
- Drafting module panels (Draft Output, Sources, Output Types, Generation Controls)
+### 🔧 2.2 Improved scoring (completed)
 
- Statement Analysis panel
+* Replace client-side fallbacks when backend scoring exists
+* More consistent version scoring
+* Normalised scores across generate & rewrite flows
 
- Ask-AI panel
+### 🔧 2.3 Enhancements (future small tasks)
 
- Versions Timeline
+* More descriptive implications (“speculative because…” etc.)
+* Analysis toggle behaviour improvements
+* Optional manual rerun with clearer UI
 
- History Sidebar
+---
 
- Add core hooks (useDraftState, useApi, useToggle)
+# **PHASE 3 — UI/UX NORMALISATION & PANEL RESTRUCTURE (Upcoming)**
 
- Preserve all existing behaviour exactly while modularizing
+### 🎯 3.1 Panel Layout Redesign
 
- Prepare structure for future modules (reviewing, export, ingestion)
+Goal: Make the interface elegant, compress vertical bloat, improve scanning.
 
-🟡 Next Up (Near-Term, high priority)
+Planned approach (your selected option):
 
-These are features tightly tied to the new architecture that should follow immediately after migration.
+* Collapsed/expandable sections
+* First 5 lines preview for long sections
+* Statement analysis visible by default
+* Reduce vertical stacking in right panel
 
-A. Advanced Source Ingestion (PDF/DOC/XLSX/PPTX)
+### 🎯 3.2 Top Bar improvements
 
- Add SourceIngestion panel with file-drop + browse uploader
+* Premium look & feel
+* Include version number
+* Remove "Brightline" branding (use “Content Engine” consistently)
 
- Support ingestion types:
+### 🎯 3.3 Input behaviour
 
- PDF → text extraction + page-level metadata
+* Grey-out Ask AI input after submission
+* Enter-key behaviour across panels
+* More graceful empty states
 
- DOCX → using docx parser
+---
 
- XLSX → cell/column extraction
+# **PHASE 4 — END-TO-END GENERATION WORKFLOW MATURITY (Upcoming)**
 
- PPTX → slide text extraction
+### 🎯 4.1 Advanced Settings Refinement
 
- Add backend endpoints (/api/ingest, /api/extract-pdf, etc.)
+* Temperature + max tokens inside collapsible advanced settings
+* Cleaner model selector
+* Public Search toggle grouped logically
 
- Add UI preview + confirmation before adding to Sources table
+### 🎯 4.2 Source management improvements
 
- Add progress indicators + error fallback
+* Proper “nice URL” display in the Sources table
+* Scrollable source list
+* Better handling of large pasted sources
+* Improved URL fetch messaging
 
- Store extracted text as structured Source objects:
+### 🎯 4.3 Versioning Enhancements
 
-{
-  id,
-  type,
-  name,
-  text,
-  metadata: { pages, mime, sizeKB }
-}
+* Version comparison mode (future)
+* Better timestamp formatting
+* Metadata hover tooltips
 
-B. Project Metadata Panel
+---
 
- New panel for:
+# **PHASE 5 — ASK AI EVOLUTION (Future Enhancements)**
 
- Investment name
+*(You specifically asked to defer these, so they live here.)*
 
- Transaction date
+### ⭐ 5.1 Improved Grounding Quality
 
- Reference texts (style/substance guide)
+Structure grounding information (draft, sources, metadata) in clearer formats to improve reliability.
 
- Auto-inject metadata into /generate and /rewrite prompts
+### ⭐ 5.2 Structured Citations from Web Search
 
- Display metadata within the UI top bar or sidebar
+Return URLs + snippets used by the model for transparency.
 
-C. Auto-Analysis & Auto-Run Logic
+### ⭐ 5.3 Intelligent Blending of Draft + Sources + Web
 
- Automatically run statement analysis after every Generate/Rewrite
+Introduce explicit prioritisation rules:
 
- Auto-update version metadata
+* Draft first
+* Sources second
+* Web last
+  This prevents contradictions.
 
- New toggle: “Auto-run analysis”
+### ⭐ 5.4 Fallback Answer Logic
 
-🔵 Medium-Term (Major Features)
-D. Export System (multi-format bundler)
+When web search fails, provide a clean fallback + disclosure.
 
-A full export module allowing the user to select which elements to export:
+### ⭐ 5.5 Debug Mode for Web Search
 
- Draft text
+Developer-only view of:
 
- Source table (URLs uploaded files, extracted metadata)
+* Search queries
+* Returned URLs
+* Extracted snippets
+* Model decision steps (when possible)
 
- Statement reliability table
+---
 
- Ask-AI Q&A log
+# **PHASE 6 — ARCHITECTURAL & CORE ENGINE IMPROVEMENTS (Future / Optional)**
 
- Model settings
+### 🔮 6.1 Multi-model orchestration
 
- Metadata (investment name, transaction date, reference texts)
+Use large models for reasoning, cheap models for summarising.
 
-Supported output formats:
+### 🔮 6.2 Caching & document embedding prep
 
- PDF export pack
+Ability to store source embeddings for long-term projects.
 
- DOCX report
+### 🔮 6.3 Style Guide Engine (later major release)
 
- HTML export
+Persistent investment-writing style rules (Partners Group-quality):
 
- JSON archive
+* Tone constraints
+* Macro wording rules
+* Forbidden phrases
+* Preferred language patterns
 
- ZIP bundle containing multiple exports
+### 🔮 6.4 Export formats
 
-Selectable, e.g.:
+* Word
+* PDF
+* Markdown with citations
 
-☑ Draft text
-☑ Reliability table
-☐ Ask AI
-☑ Sources
-Export as: PDF / DOCX / ZIP / JSON
+---
 
-Everything pulls cleanly from modular components.
+# **PHASE 7 — ENTERPRISE READINESS (Long-term Vision)**
 
-🔴 Longer-Term (Major Modules & Intelligence Upgrades)
-E. Reviewing Module
+### 🏢 7.1 Single Workspace → Multi-Workspace support
 
-A second standalone workflow in the app:
+Multi-client mode.
 
-Review Mode Steps:
+### 🏢 7.2 Document traceability & audit logs
 
-Upload draft text
+* Each version logged with metadata
+* Full source-trace summaries
 
-Upload sources (PDF/URLs/DOCX/text)
+### 🏢 7.3 Full data privacy & “on-prem” pathways
 
-Run evaluation:
+Enterprise-grade compliance.
 
-correctness vs sources
+---
 
-reliability statements
+# **ROADMAP SUMMARY**
 
-drafting style vs reference texts
-
-Receive revision suggestions:
-
-contradicting statements
-
-unclear logic
-
-weak evidence
-
-style inconsistencies
-
-Auto-rewrite options
-
-Export review report (ties into Export System)
-
-This will reuse:
-
-Statement analysis
-
-Source ingestion
-
-Style guide rules
-
-Ask-AI Q&A
-
-Versions timeline
-
-Architecture:
-src/modules/reviewing/
-    ReviewInput.jsx
-    ReviewSources.jsx
-    ReviewAnalysis.jsx
-    ReviewSuggestions.jsx
-
-🔮 Future R&D Items (not urgent, but valuable)
-
-Live collaboration mode (multi-user projects)
-
-In-app PDF viewer with highlight → extract → send to model
-
-Style guide builder UI
-
-Model benchmarking viewer
-
-On-device caching for low-latency rewriting
-
-“Assistant personas” that alter the prompting style (professional, concise, aggressive editing, etc.)
+| Phase | Status            | Focus                                           |
+| ----- | ----------------- | ----------------------------------------------- |
+| **1** | ✓ Mostly Complete | Stability, state management, polishing          |
+| **2** | ✓ Mostly Complete | Auto-analysis & scoring                         |
+| **3** | 🔜                | UI/UX redesign                                  |
+| **4** | 🔜                | Generation workflow maturity                    |
+| **5** | 🕒 Deferred       | Ask AI evolution (citations, search, grounding) |
+| **6** | 🕒 Future         | Core engine enhancement                         |
+| **7** | 🕒 Vision         | Enterprise readiness                            |
