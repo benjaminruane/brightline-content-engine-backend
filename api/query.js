@@ -4,6 +4,8 @@
 // Uses the Responses API + web search, but keeps the
 // JSON response shape identical for the frontend.
 
+import "isomorphic-fetch"; // safe no-op on modern Node, but fine on Vercel
+
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -70,7 +72,7 @@ export default async function handler(req, res) {
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
-        : "gpt-4o-mini"; // or gpt-5.1 if you prefer
+        : "gpt-4o-mini";
 
     const body = {
       model: resolvedModel,
@@ -158,10 +160,39 @@ export default async function handler(req, res) {
       });
     }
 
-    // Strip simple markdown for cleaner UI
-    const cleanAnswer = answerText
-      .replace(/\*\*(.*?)\*\*/g, "$1") // **bold**
-      .replace(/\*(.*?)\*/g, "$1") // *italic*
+    // ------------------------------------------------------------------
+    // Turn markdown links into footnote-style citations:
+    //   [Pinterest](https://...) -> "Pinterest (1)"
+    // and append a Sources section:
+    //   (1) [Pinterest](https://...)
+    // ------------------------------------------------------------------
+    const footnotes = [];
+    const withMarkers = answerText.replace(
+      /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+      (match, label, url) => {
+        let index = footnotes.findIndex((f) => f.url === url);
+        if (index === -1) {
+          footnotes.push({ label: label.trim() || url, url });
+          index = footnotes.length - 1;
+        }
+        // Inline: keep the plain label and add "(n)".
+        return `${label} (${index + 1})`;
+      }
+    );
+
+    let withFootnotes = withMarkers;
+    if (footnotes.length > 0) {
+      const footerLines = footnotes.map(
+        (f, idx) => `(${idx + 1}) [${f.label}](${f.url})`
+      );
+      withFootnotes =
+        withMarkers + "\n\nSources:\n" + footerLines.join("\n");
+    }
+
+    // Strip simple markdown bold/italics for cleaner UI
+    const cleanAnswer = withFootnotes
+      .replace(/\*\*(.*?)\*\*/g, "$1")   // **bold**
+      .replace(/\*(.*?)\*/g, "$1")       // *italic*
       .trim();
 
     return res.status(200).json({
