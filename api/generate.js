@@ -18,20 +18,9 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
-
-export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-  
 // ------------------------------------------------------------------
 
+// OpenAI client
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -70,7 +59,7 @@ export default async function handler(req, res) {
       versionType,
       maxWords,
       model,
-      publicSearch,
+      publicSearch, // currently unused, but kept for future use
       sources,
     } = req.body || {};
 
@@ -83,7 +72,6 @@ export default async function handler(req, res) {
     const safeScenario = typeof scenario === "string" ? scenario : "generic";
     const safeTitle = typeof title === "string" ? title.trim() : "";
     const safeNotes = typeof notes === "string" ? notes.trim() : "";
-
     const safeSources = Array.isArray(sources) ? sources : [];
 
     if (safeSources.length === 0) {
@@ -258,7 +246,9 @@ export default async function handler(req, res) {
     // Respond with the same shape the frontend expects
     return res.status(200).json({
       draftText,
-      label: `Version ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
+      label: `Version ${new Date().toISOString()
+        .slice(0, 16)
+        .replace("T", " ")}`,
       model: resolvedModel,
       scenario: safeScenario,
       scenarioLabel,
