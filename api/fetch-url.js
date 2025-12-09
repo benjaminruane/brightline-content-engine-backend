@@ -1,11 +1,7 @@
-// api/fetch-url.js
+// /api/fetch-url.js
 //
-// Fetches a URL and tries to extract readable article-like text
-// using Mozilla Readability + jsdom. Falls back to basic body
-// text if needed.
-
-import { JSDOM } from "jsdom";
-import { Readability } from "@mozilla/readability";
+// Fetches a public URL and returns a readable text blob + a sensible title.
+// Also sets CORS headers so it works from your Vercel frontend.
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -24,8 +20,8 @@ function setCorsHeaders(req, res) {
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  // Handle preflight
   if (req.method === "OPTIONS") {
+    // Preflight – no body needed, just CORS headers
     return res.status(200).end();
   }
 
@@ -37,96 +33,71 @@ export default async function handler(req, res) {
     const { url } = req.body || {};
 
     if (!url || typeof url !== "string") {
-      return res.status(400).json({ error: "Missing or invalid 'url' field" });
+      return res.status(400).json({ error: "Missing or invalid url" });
     }
 
-    let parsedUrl;
+    let response;
     try {
-      parsedUrl = new URL(url);
-    } catch {
-      return res.status(400).json({ error: "Invalid URL" });
+      response = await fetch(url, {
+        method: "GET",
+        redirect: "follow",
+      });
+    } catch (err) {
+      console.error("Error fetching remote URL:", url, err);
+      return res
+        .status(502)
+        .json({ error: "Failed to fetch remote URL", details: String(err) });
     }
-
-    // Fetch the raw HTML. Node 18+ / Vercel have global fetch.
-    const response = await fetch(parsedUrl.toString(), {
-      method: "GET",
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (compatible; Content-Engine/1.0; +https://example.com)",
-        "Accept-Language": "en-US,en;q=0.9",
-      },
-    });
 
     if (!response.ok) {
-      console.error("fetch-url: HTTP error", response.status, url);
+      const text = await response.text().catch(() => "");
+      console.error(
+        "Remote URL returned non-OK status:",
+        url,
+        response.status,
+        text.slice(0, 500)
+      );
       return res.status(502).json({
-        error: `Failed to fetch URL (status ${response.status})`,
+        error: "Remote URL returned an error status",
+        status: response.status,
       });
     }
 
-    let html = await response.text();
-    if (!html || !html.trim()) {
-      return res
-        .status(400)
-        .json({ error: "No HTML content returned from URL" });
-    }
+    const html = await response.text();
 
-    // Guard against extremely large pages – truncate to ~500k chars
-    const MAX_HTML_CHARS = 500_000;
-    if (html.length > MAX_HTML_CHARS) {
-      html = html.slice(0, MAX_HTML_CHARS);
-    }
+    // Very simple title extraction
+    const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+    const title = titleMatch ? titleMatch[1].trim() : url;
 
-    // Create a DOM and use Mozilla Readability to extract article text
-    const dom = new JSDOM(html, { url: parsedUrl.toString() });
-    const reader = new Readability(dom.window.document);
-    const article = reader.parse();
-
-    let text = "";
-    let title = null;
-
-    if (article && article.textContent) {
-      text = article.textContent;
-      title = article.title || dom.window.document.title || null;
-    } else {
-      // Fallback: basic body text
-      const bodyText = dom.window.document.body
-        ? dom.window.document.body.textContent || ""
-        : "";
-      text = bodyText;
-      title = dom.window.document.title || null;
-    }
-
-    // Normalise whitespace – collapse big gaps, keep paragraphs
-    text = text
-      .replace(/\r/g, "")
-      .replace(/\s+\n/g, "\n")
-      .replace(/\n{3,}/g, "\n\n")
+    // Naive "readable text": strip scripts/styles/tags and compress whitespace
+    const text = html
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<!--[\s\S]*?-->/g, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
       .trim();
 
-    // If after parsing we still have almost nothing, treat as no content
-    const wordCount = text ? text.split(/\s+/).filter(Boolean).length : 0;
-    if (!text || wordCount < 30) {
-      return res.status(200).json({
-        text: "",
-        title,
-        wordCount,
-        message:
-          "Fetched page but could not find enough readable article-style text.",
+    if (!text) {
+      return res.status(500).json({
+        error: "Could not extract readable text from URL",
       });
     }
 
+    // Keep it bounded so we don’t blow up token counts downstream
+    const maxChars = 20000;
+    const clipped = text.length > maxChars ? text.slice(0, maxChars) : text;
+
     return res.status(200).json({
-      text,
       title,
-      wordCount,
-      url: parsedUrl.toString(),
+      text: clipped,
+      sourceUrl: url,
     });
   } catch (err) {
     console.error("Error in /api/fetch-url:", err);
     return res.status(500).json({
-      error: "Internal server error",
-      detail: err.message || String(err),
+      error: "Failed to process URL",
+      details: err.message || String(err),
     });
   }
 }
