@@ -1,9 +1,8 @@
-// api/analyse-statements.js
+// /api/analyse-statements.js
 //
 // Analyses a draft into atomic statements, assigns a reliability
 // score (0–1) and category to each, and returns a summary object
-// with safe defaults. Now enhanced with OpenAI web_search_preview
-// as additional public-domain context (always on).
+// with safe defaults.
 
 import OpenAI from "openai";
 
@@ -19,141 +18,184 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
-
-export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-  
 // ------------------------------------------------------------------
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Helper to always return a well-formed empty result
-function emptyResult(extra = {}) {
-  return {
-    statements: [],
-    summary: {
-      totalStatements: 0,
-      lowReliabilityCount: 0,
-      averageReliability: null,
-      reliabilityBand: "unknown",
-      ...extra,
-    },
-  };
+// Small helper to cap how much text we send to the model
+function truncateText(text, maxChars = 8000) {
+  if (!text || typeof text !== "string") return "";
+  if (text.length <= maxChars) return text;
+  return text.slice(0, maxChars);
 }
 
-function buildSummary(statements) {
-  if (!Array.isArray(statements) || statements.length === 0) {
-    return emptyResult().summary;
-  }
+// --- Web search helper ---------------------------------------------
+// Uses the Responses API + web_search tool to get a short public summary
+// that can enrich statement analysis, but does NOT change your draft text.
+// --------------------------------------------------------------------
+async function getWebSummaryForText(text) {
+  const query = text.slice(0, 300);
 
-  let total = statements.length;
-  let sum = 0;
-  let counted = 0;
-  let lowCount = 0;
+  const body = {
+    model: "gpt-4.1-mini",
+    tools: [
+      {
+        type: "web_search", // 🔄 modern tool name
+      },
+    ],
+    tool_choice: {
+      type: "web_search",
+    },
+    input: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text:
+              "Use web search to provide a short, factual summary of this content " +
+              "and any clearly related, up-to-date information that would help a " +
+              "compliance- or risk-focused reviewer:\n\n" +
+              query,
+          },
+        ],
+      },
+    ],
+    max_output_tokens: 256,
+    temperature: 0.1,
+  };
 
-  statements.forEach((st) => {
-    if (typeof st.reliability === "number") {
-      sum += st.reliability;
-      counted += 1;
-      // Flag as low reliability if below 0.75 (75%)
-      if (st.reliability < 0.75) {
-        lowCount += 1;
-      }
-    }
+  const response = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
   });
 
-  const average = counted > 0 ? sum / counted : null;
-
-  let band = "unknown";
-  if (average != null) {
-    // Map to UI colours:
-    // - >= 0.90 (90%+)  => green / "high"
-    // - 0.75–0.89       => yellow / "medium"
-    // - < 0.75          => red / "low"
-    if (average >= 0.9) band = "high";
-    else if (average >= 0.75) band = "medium";
-    else band = "low";
-  }
-
-  return {
-    totalStatements: total,
-    lowReliabilityCount: lowCount,
-    averageReliability: average,
-    reliabilityBand: band,
-  };
-}
-
-// --- Web search helper using Responses API ------------------------
-async function getWebSummaryForText(text) {
-  if (!process.env.OPENAI_API_KEY) {
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    console.error("web_search in analyse-statements failed:", errorText);
     return null;
   }
 
-  const truncated = (text || "").slice(0, 4000);
+  const payload = await response.json();
 
-  const webQuery = [
-    "Using current public information, provide concise factual and contextual information",
-    "that could help assess the reliability, plausibility, and potential weak spots of",
-    "the following investment-related commentary. Focus on:",
-    "- whether key factual claims are broadly consistent with public sources,",
-    "- where there may be uncertainty, speculation, or outdated assumptions,",
-    "- any major external factors that could materially affect the statements.",
-    "",
-    "Commentary (may be truncated):",
-    "--------------------",
-    truncated,
-    "--------------------",
-  ].join("\n");
+  // Try helper field if present
+  if (typeof payload.output_text === "string") {
+    return payload.output_text.trim();
+  }
 
-  const resp = await client.responses.create({
-    model: "gpt-4.1",
-    tools: [{ type: "web_search_preview" }],
-    tool_choice: { type: "web_search_preview" },
-    input: webQuery,
-  });
-
-  let summary = null;
-
-  if (Array.isArray(resp.output)) {
-    const messageItem = resp.output.find((item) => item.type === "message");
-    if (messageItem && Array.isArray(messageItem.content)) {
-      const textBlock = messageItem.content.find(
-        (part) => part.type === "output_text"
-      );
-      if (textBlock && typeof textBlock.text === "string") {
-        summary = textBlock.text;
+  // Fallback: walk structured output
+  if (Array.isArray(payload.output)) {
+    for (const item of payload.output) {
+      if (item.type === "message" && Array.isArray(item.content)) {
+        for (const block of item.content) {
+          if (block.type === "output_text" && block.text?.length) {
+            return block.text.trim();
+          }
+        }
       }
     }
   }
 
-  return summary;
+  return null;
 }
-// ------------------------------------------------------------------
 
+// --- Core scoring --------------------------------------------------
+// Very simple heuristics as a baseline. Backend can be made smarter later.
+// --------------------------------------------------------------------
+function scoreStatement(text) {
+  if (!text || typeof text !== "string") {
+    return {
+      reliability: 0.6,
+      category: "unclear",
+      reasons: ["No text provided."],
+      complianceFlags: [],
+    };
+  }
+
+  const len = text.length;
+  const hasPercent = /%/.test(text);
+  const hasForecastWords = /\b(expect|forecast|project|anticipate|target)\b/i.test(
+    text
+  );
+  const hasHypeWords = /\b(best-in-class|world-class|unique|game-changing)\b/i.test(
+    text
+  );
+
+  let reliability = 0.85;
+  const reasons = [];
+  const complianceFlags = [];
+
+  if (len < 40) {
+    reliability -= 0.1;
+    reasons.push("Very short statement; limited context.");
+  } else if (len > 500) {
+    reliability -= 0.05;
+    reasons.push("Very long statement; risk of multiple claims mixed together.");
+  }
+
+  if (hasPercent) {
+    reasons.push("Contains specific numerical or percentage claims.");
+  }
+
+  if (hasForecastWords) {
+    reliability -= 0.15;
+    reasons.push("Includes forward-looking or predictive language.");
+    complianceFlags.push("forward_looking");
+  }
+
+  if (hasHypeWords) {
+    reliability -= 0.1;
+    reasons.push("Marketing-style or promotional language detected.");
+    complianceFlags.push("promotional_tone");
+  }
+
+  reliability = Math.max(0.3, Math.min(0.98, reliability));
+
+  let category = "neutral";
+  if (reliability >= 0.9) category = "strongly_supported";
+  else if (reliability >= 0.75) category = "supported";
+  else if (reliability >= 0.6) category = "uncertain";
+  else category = "weak_or_speculative";
+
+  return {
+    reliability,
+    category,
+    reasons,
+    complianceFlags,
+  };
+}
+
+// -------------------------------------------------------------------
+// Split text into "statements" – simple heuristic based on punctuation
+// -------------------------------------------------------------------
+function splitIntoStatements(text) {
+  if (!text || typeof text !== "string") return [];
+
+  const chunks = text
+    .split(/(?<=[.!?])\s+(?=[A-Z0-9])/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+
+  return chunks.map((s, idx) => ({
+    id: `stmt_${idx + 1}`,
+    text: s,
+  }));
+}
+
+// -------------------------------------------------------------------
+// Handler
+// -------------------------------------------------------------------
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  // Preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
-  }
-
-  // Simple ping for browser testing
-  if (req.method === "GET") {
-    return res.status(200).json({
-      ok: true,
-      message: "analyse-statements endpoint is reachable.",
-    });
   }
 
   if (req.method !== "POST") {
@@ -161,116 +203,102 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { text, scenario = "default", versionType = "complete" } =
-      req.body || {};
+    const { text, model, publicSearch } = req.body || {};
 
-    if (!text || !text.trim()) {
-      return res
-        .status(400)
-        .json({ error: "Missing text", ...emptyResult() });
+    const safeText = truncateText(
+      typeof text === "string" ? text : "",
+      16_000
+    );
+
+    if (!safeText.trim()) {
+      return res.status(400).json({
+        error: "No draft text provided for analysis.",
+      });
     }
 
-    // NEW: try to get public-domain context. If it fails, we quietly ignore.
-    let webSummary = null;
-    try {
-      webSummary = await getWebSummaryForText(text);
-    } catch (e) {
-      console.error("web_search_preview in analyse-statements failed:", e);
-      webSummary = null;
+    const statements = splitIntoStatements(safeText);
+
+    if (statements.length === 0) {
+      return res.status(200).json({
+        statements: [],
+        summary: {
+          averageReliability: null,
+          categories: {},
+          complianceFlags: [],
+          notes: ["No clearly separable statements were detected."],
+          modelUsed: model || "gpt-4.1-mini",
+          usedWebSearch: false,
+        },
+      });
     }
 
-    const systemPrompt = `
-You are an assistant that analyses investment-related commentary.
-
-Your task:
-- Break the text into atomic statements (short, self-contained claims).
-- For each statement, assign:
-  - "reliability": a number between 0 and 1 (1 = fully reliable based on typical sources).
-  - "category": one of:
-      - "source-based factual"
-      - "plausible factual"
-      - "interpretive / analytical"
-      - "speculative / forward-looking".
-  - "implication": a 1–2 sentence explanation of what this reliability level means for how the statement should be interpreted, including why it is or is not well supported and any specific cautions (for example: "well supported because …", "speculative because …", "contradicts publicly available data on …").
-
-Rules:
-- Focus on substantive claims, not trivial fragments.
-- If a statement mixes fact and speculation, classify as "speculative / forward-looking".
-- Use any public-domain context provided to you to better judge plausibility and potential weak spots,
-  but do NOT quote URLs or external sources in the output.
-- Respond ONLY with valid JSON, with no commentary.
-
-JSON schema:
-
-{
-  "statements": [
-    {
-      "id": string,
-      "text": string,
-      "reliability": number between 0 and 1,
-      "category": string,
-      "implication": string
-    }
-  ]
-}
-`.trim();
-
-    const userPrompt = `
-Context:
-- Scenario: ${scenario}
-- Version type: ${versionType}
-
-${
-  webSummary
-    ? `Public-domain context that may help you assess reliability:\n\n${webSummary}\n\n`
-    : ""
-}Text to analyse:
---------------------
-${text}
---------------------
-
-Return JSON following the schema exactly. Do not include any extra keys or text.
-`.trim();
-
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0,
-      max_completion_tokens: 2048,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
+    // Baseline scores
+    const scoredStatements = statements.map((stmt) => {
+      const base = scoreStatement(stmt.text);
+      return {
+        id: stmt.id,
+        text: stmt.text,
+        reliability: base.reliability,
+        category: base.category,
+        reasons: base.reasons,
+        complianceFlags: base.complianceFlags,
+        webContext: null,
+      };
     });
 
-    let raw =
-      completion.choices?.[0]?.message?.content?.trim() || '{"statements":[]}';
+    let webSummary = null;
+    let usedWebSearch = false;
 
-    // Try to parse directly; if it fails, strip ```json fences and retry.
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      const cleaned = raw.replace(/```json|```/g, "").trim();
-      parsed = JSON.parse(cleaned);
+    if (publicSearch) {
+      try {
+        webSummary = await getWebSummaryForText(safeText);
+        usedWebSearch = !!webSummary;
+
+        if (webSummary) {
+          scoredStatements[0].webContext = webSummary;
+        }
+      } catch (err) {
+        console.error("web_search in analyse-statements errored:", err);
+      }
     }
 
-    const statements = Array.isArray(parsed.statements)
-      ? parsed.statements
-      : [];
+    // Aggregate summary
+    const categoriesCount = {};
+    let reliabilitySum = 0;
 
-    const summary = buildSummary(statements);
+    for (const stmt of scoredStatements) {
+      reliabilitySum += stmt.reliability;
+      categoriesCount[stmt.category] =
+        (categoriesCount[stmt.category] || 0) + 1;
+    }
+
+    const avgReliability = reliabilitySum / scoredStatements.length;
+
+    const summary = {
+      averageReliability: avgReliability,
+      categories: categoriesCount,
+      complianceFlags: Array.from(
+        new Set(scoredStatements.flatMap((s) => s.complianceFlags))
+      ),
+      notes: [
+        "Heuristic reliability scores – use as a guide, not as absolute truth.",
+        publicSearch && usedWebSearch
+          ? "Web search was used to provide additional context for at least one statement."
+          : "Web search was not used or did not return useful context.",
+      ],
+      modelUsed: model || "gpt-4.1-mini",
+      usedWebSearch,
+    };
 
     return res.status(200).json({
-      statements,
+      statements: scoredStatements,
       summary,
     });
   } catch (err) {
     console.error("Error in /api/analyse-statements:", err);
-    // Return safe, well-formed empty result with error info
-    return res.status(200).json(
-      emptyResult({
-        error: err.message || String(err),
-      })
-    );
+    return res.status(500).json({
+      error: "Failed to analyse statements",
+      details: err?.response?.data || err?.message || String(err),
+    });
   }
 }
