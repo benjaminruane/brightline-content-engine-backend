@@ -1,10 +1,14 @@
 // /api/generate.js
 //
-// Generates a draft based on title, notes, scenario and sources.
-// Uses OpenAI's chat completions API and returns:
-//   { draftText, score, label }
-//
-// Also includes full CORS handling so it works from the Vercel frontend.
+// Generates a draft based on scenario, output types, notes, and sources.
+// Returns { draftText, label, score } where score may be null and the
+// frontend's local scoreDraft() will act as fallback.
+
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -20,33 +24,16 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
-function simpleScore(text) {
-  if (!text || typeof text !== "string") return null;
-  const len = text.length;
-  if (len < 400) return 60;
-  if (len < 800) return 70;
-  if (len < 1200) return 80;
-  if (len < 2000) return 90;
-  return 95;
-}
-
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
+  // Handle preflight
   if (req.method === "OPTIONS") {
-    // Preflight – no body, just headers
     return res.status(200).end();
   }
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return res
-      .status(500)
-      .json({ error: "OPENAI_API_KEY is not configured on the backend." });
   }
 
   try {
@@ -58,7 +45,7 @@ export default async function handler(req, res) {
       versionType,
       maxWords,
       model,
-      publicSearch, // currently unused here but kept for future
+      publicSearch,
       sources,
     } = req.body || {};
 
@@ -68,130 +55,117 @@ export default async function handler(req, res) {
         .json({ error: "At least one output type must be selected." });
     }
 
-    if (!Array.isArray(sources) || sources.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "At least one source must be provided." });
-    }
+    const safeSources = Array.isArray(sources) ? sources : [];
+
+    // Build a concise source summary (no need to send full docs to the model)
+    const sourceSummaries = safeSources
+      .slice(0, 6)
+      .map((s, idx) => {
+        const name = s.name || s.url || `Source ${idx + 1}`;
+        const text =
+          typeof s.text === "string" ? s.text.slice(0, 3000) : "";
+        return `Source ${idx + 1} – ${name}:\n${text}`;
+      })
+      .join("\n\n");
+
+    const safeMaxWords =
+      typeof maxWords === "number" && maxWords > 0 ? maxWords : null;
 
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
         : "gpt-4o-mini";
 
-    // Build a compact context from sources (truncate for safety)
-    const sourceSnippets = sources
-      .slice(0, 6)
-      .map((s, idx) => {
-        const name = s.name || s.url || `Source ${idx + 1}`;
-        const text =
-          typeof s.text === "string" ? s.text.slice(0, 6000) : "";
-        return `Source ${idx + 1} – ${name}:\n${text}`;
-      })
-      .join("\n\n-----\n\n");
+    // System prompt – includes soft guidance on length instead of truncation
+    const systemParts = [
+      "You are an assistant that writes high-quality, investment-related draft texts.",
+      "Follow the user's scenario, selected output types, and notes carefully.",
+      "Write in a clear, concise, professional tone suitable for institutional investors.",
+    ];
 
-    const safeTitle = (title || "").toString();
-    const safeNotes = (notes || "").toString();
-    const safeScenario = (scenario || "").toString();
+    if (safeMaxWords) {
+      systemParts.push(
+        `Aim for no more than approximately ${safeMaxWords} words. It is fine to be slightly shorter if that reads better, but do not exceed this target by more than ~10%.`
+      );
+    }
 
-    const safeMaxWords =
-      typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0
-        ? Math.round(maxWords)
-        : null;
+    const systemPrompt = systemParts.join("\n");
 
-    const scenarioLine = safeScenario
-      ? `Scenario: ${safeScenario}.`
-      : "Scenario: new direct investment or similar private-markets event.";
+    // User prompt
+    const userLines = [];
 
-    const outputTypesLine = `Requested output types: ${selectedTypes.join(
-      ", "
-    )}. (Focus on drafting one primary transaction text in clear, neutral, professional tone.)`;
+    if (title) {
+      userLines.push(`Title: ${title}`);
+    }
 
-    const wordLimitInstruction = safeMaxWords
-      ? `Respect a hard word limit of approximately ${safeMaxWords} words. Write naturally and do NOT exceed this limit.`
-      : "There is no strict word limit, but keep the text concise and focused.";
+    if (notes) {
+      userLines.push(`Author notes / instructions:\n${notes}`);
+    }
 
-    const notesInstruction = safeNotes
-      ? `The user provided additional drafting instructions:\n"${safeNotes}". Respect these instructions unless they conflict with compliance / factual accuracy.`
-      : "The user did not provide additional drafting instructions.";
+    if (scenario) {
+      userLines.push(`Scenario: ${scenario}`);
+    }
 
-    const systemPrompt =
-      "You are an expert private-markets investment writer. " +
-      "You draft crisp, factual transaction texts based on an internal investment memo and supporting materials. " +
-      "Your tone is neutral, clear, and suitable for professional audiences. " +
-      "You never hallucinate specific financial figures that are not clearly supported by the sources.";
+    userLines.push(
+      `Version type: ${versionType || "complete"}\n` +
+        `Selected output types (ids): ${selectedTypes.join(", ")}`
+    );
 
-    const userPrompt = [
-      scenarioLine,
-      outputTypesLine,
-      wordLimitInstruction,
-      notesInstruction,
-      "",
-      safeTitle ? `Internal event title: ${safeTitle}` : "",
-      "",
-      "Below are the key sources and extracts the user has provided. Use them as your primary factual basis:",
-      sourceSnippets || "(No readable source text provided.)",
-      "",
-      "TASK:",
-      "- Draft a single, self-contained transaction text in professional third-person voice.",
-      "- Focus on the key facts, investment thesis, and high-level rationale.",
-      "- Do NOT include meta commentary, headings, or bullet points.",
-      "- Do NOT explain what you are doing; output ONLY the final draft text.",
-    ]
-      .filter(Boolean)
-      .join("\n");
+    if (safeMaxWords) {
+      userLines.push(
+        `Target length: approximately ${safeMaxWords} words (do not exceed this target by more than ~10%).`
+      );
+    }
 
-    const completionBody = {
+    if (sourceSummaries) {
+      userLines.push(
+        "\nHere are source materials you MUST rely on as primary grounding:\n\n" +
+          sourceSummaries
+      );
+    } else {
+      userLines.push(
+        "\nNo explicit source documents were provided; write based only on the scenario and notes, and do not invent detailed facts or figures."
+      );
+    }
+
+    const userPrompt = userLines.join("\n\n");
+
+    // Call Chat Completions (no web search needed for drafting)
+    const completion = await client.chat.completions.create({
       model: resolvedModel,
-      temperature: 0.3,
-      max_tokens: 1024,
+      temperature: 0.2,
+      max_tokens: 2048,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-    };
+    });
 
-    const openaiResponse = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(completionBody),
-      }
-    );
-
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text().catch(() => "");
-      console.error("OpenAI /v1/chat/completions error:", errorText);
-      return res.status(502).json({
-        error: "Upstream OpenAI error during generate",
-        details: errorText.slice(0, 1000),
-      });
-    }
-
-    const completionPayload = await openaiResponse.json();
-    const choice = completionPayload.choices?.[0];
     const draftText =
-      choice?.message?.content?.trim() ||
-      completionPayload.choices?.[0]?.message?.content?.trim() ||
-      "";
+      completion.choices?.[0]?.message?.content?.trim() || "";
 
     if (!draftText) {
-      console.error("Generate: model returned empty draft:", completionPayload);
-      return res.status(500).json({
-        error: "Model returned empty draft",
-      });
+      console.error("OpenAI completion returned empty content:", completion);
+      return res
+        .status(500)
+        .json({ error: "Model returned empty content" });
     }
 
-    const score = simpleScore(draftText);
+    // Label: let frontend fall back to "Version N" if needed
+    const label =
+      typeof title === "string" && title.trim().length > 0
+        ? `Draft – ${title.trim()}`
+        : null;
+
+    // Score: optional – let frontend scoreDraft() handle fallback
+    const score = null;
 
     return res.status(200).json({
       draftText,
+      label,
       score,
-      label: "Version 1",
+      model: completion.model || resolvedModel,
+      publicSearch: !!publicSearch,
     });
   } catch (err) {
     console.error("Error in /api/generate:", err);
