@@ -4,8 +4,6 @@
 // Uses the Responses API + web search, but keeps the
 // JSON response shape identical for the frontend.
 
-import "isomorphic-fetch"; // safe no-op on modern Node, but fine on Vercel
-
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
