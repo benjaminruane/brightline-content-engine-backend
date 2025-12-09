@@ -1,14 +1,10 @@
 // /api/generate.js
 //
-// Generates a draft based on scenario, output types, notes, and sources.
-// Returns { draftText, label, score } where score may be null and the
-// frontend's local scoreDraft() will act as fallback.
+// Generates a new draft based on scenario, sources and settings.
+// Uses Chat Completions. We keep the JSON response shape stable
+// for the frontend.
 
 import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -24,10 +20,27 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Small helper to cap how much text we send to the model per source
+function truncateText(text, maxChars = 8000) {
+  if (!text || typeof text !== "string") return "";
+  if (text.length <= maxChars) return text;
+  return text.slice(0, maxChars);
+}
+
+// Optional helper if you ever want to estimate tokens
+function approximateTokensFromWords(wordCount) {
+  if (!wordCount || typeof wordCount !== "number") return null;
+  // Rough: 1 token ≈ 0.75 words
+  return Math.round(wordCount / 0.75);
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  // Handle preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -55,78 +68,146 @@ export default async function handler(req, res) {
         .json({ error: "At least one output type must be selected." });
     }
 
+    const safeScenario = typeof scenario === "string" ? scenario : "generic";
+    const safeTitle = typeof title === "string" ? title.trim() : "";
+    const safeNotes = typeof notes === "string" ? notes.trim() : "";
+
     const safeSources = Array.isArray(sources) ? sources : [];
 
-    // Build a concise source summary (no need to send full docs to the model)
-    const sourceSummaries = safeSources
-      .slice(0, 6)
-      .map((s, idx) => {
-        const name = s.name || s.url || `Source ${idx + 1}`;
-        const text =
-          typeof s.text === "string" ? s.text.slice(0, 3000) : "";
-        return `Source ${idx + 1} – ${name}:\n${text}`;
-      })
-      .join("\n\n");
+    if (safeSources.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "At least one source is required to generate a draft." });
+    }
 
-    const safeMaxWords =
-      typeof maxWords === "number" && maxWords > 0 ? maxWords : null;
+    // Build a compact source bundle to avoid overloading the model
+    const sourceSummaries = safeSources.map((s, idx) => {
+      const label = s.name || s.url || `Source ${idx + 1}`;
+      const text =
+        typeof s.text === "string" ? truncateText(s.text, 8000) : "";
+      return `Source ${idx + 1} – ${label}:\n${text}`;
+    });
+
+    const sourcesBlock = sourceSummaries.join("\n\n-----\n\n");
+
+    // Determine scenario label used in prompt
+    const scenarioLabelMap = {
+      new_investment: "New direct investment",
+      exit_realisation: "Direct investment exit",
+      revaluation: "Direct investment revaluation",
+      new_fund_commitment: "New fund commitment",
+      fund_capital_call: "Fund capital call",
+      fund_distribution: "Fund distribution",
+    };
+
+    const scenarioLabel =
+      scenarioLabelMap[safeScenario] || "Investment-related event";
+
+    const versionLabel =
+      versionType === "public"
+        ? "Public / externally safe version"
+        : "Complete internal version";
+
+    // Word-limit prompting: soft guidance + ceiling
+    let lengthGuidance = "";
+    let suggestedMaxTokens = 1024;
+
+    if (typeof maxWords === "number" && maxWords > 0) {
+      const rounded = Math.max(50, Math.round(maxWords));
+      const approxTokens = approximateTokensFromWords(rounded);
+      // Add a small buffer but keep it reasonable
+      suggestedMaxTokens = approxTokens
+        ? Math.min(approxTokens + 200, 2500)
+        : 1200;
+
+      lengthGuidance =
+        `Target length: around ${rounded} words (soft ceiling). ` +
+        `Do not exceed ${rounded} words by more than ~10–15%. ` +
+        `If you can answer fully in fewer words, prefer being concise.`;
+    } else {
+      lengthGuidance =
+        "Write a clear, well-structured draft. Be concise but complete.";
+      suggestedMaxTokens = 1200;
+    }
+
+    const selectedTypeLabels = selectedTypes.map((t) => {
+      switch (t) {
+        case "transaction_text":
+          return "Transaction text";
+        case "investment_note":
+          return "Investor letter";
+        case "press_release":
+          return "Press release";
+        case "linkedin_post":
+          return "LinkedIn post";
+        default:
+          return t;
+      }
+    });
 
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
-        : "gpt-4o-mini";
+        : "gpt-4.1-mini";
 
-    // System prompt – includes soft guidance on length instead of truncation
-    const systemParts = [
-      "You are an assistant that writes high-quality, investment-related draft texts.",
-      "Follow the user's scenario, selected output types, and notes carefully.",
-      "Write in a clear, concise, professional tone suitable for institutional investors.",
-    ];
+    // SYSTEM PROMPT
+    const systemPrompt = [
+      "You are a specialist writer for private markets investment content.",
+      "You draft high-quality, professional text for investors and internal stakeholders.",
+      "",
+      "Key behaviours:",
+      "- Maintain a neutral, fact-based tone.",
+      "- Use the provided sources as your primary grounding.",
+      "- Do not invent specific figures, dates, or names not supported by the sources.",
+      "- Where the sources are silent, you may use standard market phrasing,",
+      "  but keep it generic and non-misleading.",
+      "- Respect the requested scenario and output types.",
+      "",
+      "Quality requirements:",
+      "- Clear structure, short paragraphs.",
+      "- Plain, professional English.",
+      "- Avoid marketing hype; focus on clarity and substance.",
+      "",
+      "Compliance:",
+      "- Avoid forward-looking or predictive statements unless clearly labelled and",
+      "  supported by the materials.",
+      "- Do not cherry-pick information; keep the balance of facts fair and accurate.",
+    ].join("\n");
 
-    if (safeMaxWords) {
-      systemParts.push(
-        `Aim for no more than approximately ${safeMaxWords} words. It is fine to be slightly shorter if that reads better, but do not exceed this target by more than ~10%.`
-      );
-    }
-
-    const systemPrompt = systemParts.join("\n");
-
-    // User prompt
+    // USER PROMPT
     const userLines = [];
 
-    if (title) {
-      userLines.push(`Title: ${title}`);
+    if (safeTitle) {
+      userLines.push(`INTERNAL EVENT TITLE:\n${safeTitle}`);
     }
 
-    if (notes) {
-      userLines.push(`Author notes / instructions:\n${notes}`);
+    userLines.push(`SCENARIO:\n${scenarioLabel}`);
+    userLines.push(
+      `REQUESTED OUTPUT TYPES:\n${selectedTypeLabels.join(", ")}`
+    );
+    userLines.push(`VERSION TYPE:\n${versionLabel}`);
+
+    if (safeNotes) {
+      userLines.push(`INSTRUCTIONS / CONSTRAINTS:\n${safeNotes}`);
     }
 
-    if (scenario) {
-      userLines.push(`Scenario: ${scenario}`);
+    if (lengthGuidance) {
+      userLines.push(`LENGTH GUIDANCE:\n${lengthGuidance}`);
     }
+
+    userLines.push("SOURCE MATERIAL (EXCERPTED – DO NOT HALLUCINATE):");
+    userLines.push(sourcesBlock);
 
     userLines.push(
-      `Version type: ${versionType || "complete"}\n` +
-        `Selected output types (ids): ${selectedTypes.join(", ")}`
+      [
+        "TASK:",
+        "- Based on the scenario, requested output types, version type and sources,",
+        "  write the requested draft text.",
+        "- If multiple output types are requested, structure the response so that",
+        "  each type is clearly separated and labelled (e.g. headings).",
+        "- Do not include any meta commentary about the drafting process.",
+      ].join("\n")
     );
-
-    if (safeMaxWords) {
-      userLines.push(
-        `Target length: approximately ${safeMaxWords} words (do not exceed this target by more than ~10%).`
-      );
-    }
-
-    if (sourceSummaries) {
-      userLines.push(
-        "\nHere are source materials you MUST rely on as primary grounding:\n\n" +
-          sourceSummaries
-      );
-    } else {
-      userLines.push(
-        "\nNo explicit source documents were provided; write based only on the scenario and notes, and do not invent detailed facts or figures."
-      );
-    }
 
     const userPrompt = userLines.join("\n\n");
 
@@ -134,7 +215,8 @@ export default async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: resolvedModel,
       temperature: 0.2,
-      max_tokens: 2048,
+      // IMPORTANT: new models expect max_completion_tokens, not max_tokens
+      max_completion_tokens: suggestedMaxTokens || 2048,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -148,30 +230,34 @@ export default async function handler(req, res) {
       console.error("OpenAI completion returned empty content:", completion);
       return res
         .status(500)
-        .json({ error: "Model returned empty content" });
+        .json({ error: "Model returned empty draft text." });
     }
 
-    // Label: let frontend fall back to "Version N" if needed
-    const label =
-      typeof title === "string" && title.trim().length > 0
-        ? `Draft – ${title.trim()}`
-        : null;
+    // Simple length-based score fallback (backend can override this later)
+    const lengthScore = (() => {
+      const len = draftText.length;
+      if (len < 400) return 60;
+      if (len < 800) return 70;
+      if (len < 1200) return 80;
+      if (len < 2000) return 90;
+      return 95;
+    })();
 
-    // Score: optional – let frontend scoreDraft() handle fallback
-    const score = null;
-
+    // Respond with the same shape the frontend expects
     return res.status(200).json({
       draftText,
-      label,
-      score,
-      model: completion.model || resolvedModel,
-      publicSearch: !!publicSearch,
+      label: `Version ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
+      model: resolvedModel,
+      scenario: safeScenario,
+      scenarioLabel,
+      versionType: versionType || "complete",
+      score: lengthScore,
     });
   } catch (err) {
     console.error("Error in /api/generate:", err);
     return res.status(500).json({
       error: "Failed to generate draft",
-      details: err.message || String(err),
+      details: err?.response?.data || err?.message || String(err),
     });
   }
 }
