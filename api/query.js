@@ -1,10 +1,12 @@
 // /api/query.js
 //
-// Answers a follow-up question about the current draft and sources.
-// Uses the Responses API + web search, but keeps the
-// JSON response shape identical for the frontend.
+// Answers focused questions about the current draft + sources,
+// using OpenAI Responses API with web search.
+//
+// Returns a simple JSON payload the frontend can render safely.
 
-// --- CORS helper --------------------------------------------------
+import OpenAI from "openai";
+
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
@@ -28,180 +30,160 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  try {
-    const { question, draft, sources, model } = req.body || {};
+  const client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
 
-    if (!question || typeof question !== "string") {
-      return res.status(400).json({ error: "Missing or invalid question" });
+  try {
+    const { question, draft, sources, model, publicSearch } = req.body || {};
+
+    if (!question || typeof question !== "string" || !question.trim()) {
+      return res
+        .status(400)
+        .json({ error: "A non-empty question is required." });
     }
 
-    const safeDraft =
-      typeof draft === "string" ? draft.slice(0, 12_000) : "";
+    const safeDraft = typeof draft === "string" ? draft.trim() : "";
     const safeSources = Array.isArray(sources) ? sources : [];
-
-    // Build a compact context string from draft + first few sources
-    const sourceSnippets = safeSources
-      .slice(0, 3)
-      .map((s, idx) => {
-        const name = s.name || s.url || `Source ${idx + 1}`;
-        const text =
-          typeof s.text === "string" ? s.text.slice(0, 4000) : "";
-        return `Source ${idx + 1} – ${name}:\n${text}`;
-      })
-      .join("\n\n");
-
-    const context = [
-      safeDraft
-        ? `CURRENT DRAFT:\n${safeDraft}`
-        : "CURRENT DRAFT:\n(Empty)",
-      sourceSnippets
-        ? `SOURCES:\n${sourceSnippets}`
-        : "SOURCES:\n(None provided)",
-    ].join("\n\n-----\n\n");
-
-    // ------------------------------------------------------------------
-    // Call Responses API directly via fetch.
-    // This avoids SDK issues and always lets Ask AI use web search.
-    // ------------------------------------------------------------------
 
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
-        : "gpt-4o-mini";
+        : "gpt-4.1-mini";
 
-    const body = {
+    const sourceChunks = safeSources.map((s, idx) => {
+      const label = s.name || s.url || `Source ${idx + 1}`;
+      const text =
+        typeof s.text === "string" ? truncateText(s.text, 6000) : "";
+      return `Source ${idx + 1} – ${label}:\n${text}`;
+    });
+
+    const sourcesBlock =
+      sourceChunks.length > 0
+        ? sourceChunks.join("\n\n-----\n\n")
+        : "(No explicit source documents were provided.)";
+
+    const systemPrompt =
+      "You are an assistant that answers focused questions about a draft investment text.\n" +
+      "- Use the provided draft and sources as primary grounding.\n" +
+      "- Where needed, you may use web search for up-to-date factual checks.\n" +
+      "- If the answer is uncertain or speculative, say so explicitly.\n" +
+      "- Do not re-draft the whole document; answer the question directly.\n" +
+      "- Be concise and concrete.\n\n" +
+      "- Citation style for web results:\n" +
+      "  - When you rely on a specific web page, indicate it inline as a numbered footnote like (1), (2), etc.\n" +
+      "  - At the end of your answer, add a 'Sources:' section.\n" +
+      "  - Under 'Sources:', list each source on its own line as '1. Page Title (URL)'.\n" +
+      "  - Use the human-readable page title, not the raw URL, as the link text.";
+
+    const userPromptParts = [];
+
+    userPromptParts.push("QUESTION:\n" + question.trim());
+
+    if (safeDraft) {
+      userPromptParts.push("CURRENT DRAFT (EXCERPT):\n" + truncateText(safeDraft, 8000));
+    }
+
+    userPromptParts.push("ATTACHED SOURCES (EXCERPTED):\n" + sourcesBlock);
+
+    userPromptParts.push(
+      [
+        "TASK:",
+        "- Answer the question using the draft + sources as primary context.",
+        "- If web search adds materially better or newer information, include it.",
+        "- Be precise about what is clearly supported vs. judgement / interpretation.",
+      ].join("\n")
+    );
+
+    const userPrompt = userPromptParts.join("\n\n");
+
+    const tools = publicSearch
+      ? [
+          {
+            type: "web_search",
+          },
+        ]
+      : [];
+
+    const response = await client.responses.create({
       model: resolvedModel,
       input: [
         {
           role: "system",
-          content: [
-            {
-              type: "input_text",
-              text:
-                "You are an assistant helping to review and explain investment-related drafts.\n" +
-                "- Always call the web_search tool at least once before answering.\n" +
-                "- Use the draft and sources as your primary context, but you may also use web search results to add up-to-date, relevant public information about the same company or topic.\n" +
-                '- If the user asks about \"the company\", assume they mean the main company described in the draft.\n' +
-                "- If a specific figure or fact is not present in the draft or sources but appears clearly in trustworthy web results, you may answer using those web results and say so.\n" +
-                "- If neither the draft/sources nor web results provide the answer, say that the information is not available.\n" +
-                "- Be concise and concrete.",
-            },
-          ],
+          content: systemPrompt,
         },
         {
           role: "user",
-          content: [
-            {
-              type: "input_text",
-              text:
-                `Here is the current draft and supporting sources:\n\n${context}\n\n` +
-                `User question: ${question}`,
-            },
-          ],
+          content: userPrompt,
         },
       ],
-      max_output_tokens: 512,
-      temperature: 0.2,
-      tools: [
-        {
-          type: "web_search",
-        },
-      ],
-    };
-
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+      tools,
+      max_output_tokens: 800,
     });
 
-    if (!response.ok) {
-      const errorPayload = await response.text();
-      console.error("OpenAI /v1/responses error:", errorPayload);
-      return res.status(502).json({
-        error: "Upstream OpenAI responses API error",
-        details: errorPayload,
-      });
-    }
-
-    const payload = await response.json();
-
-    // Prefer the helper field if present
-    let answerText = "";
-    if (payload.output_text && typeof payload.output_text === "string") {
-      answerText = payload.output_text.trim();
-    } else if (Array.isArray(payload.output)) {
-      // Fallback: walk the structured output
-      for (const item of payload.output) {
-        if (item.type === "message" && Array.isArray(item.content)) {
-          for (const block of item.content) {
-            if (block.type === "output_text" && block.text?.length) {
-              answerText = block.text.trim();
-              break;
-            }
-          }
-        }
-        if (answerText) break;
-      }
-    }
-
-    if (!answerText) {
-      console.error("Responses API returned no output_text:", payload);
-      return res.status(500).json({
-        error: "Model returned empty answer",
-      });
-    }
-
-    // ------------------------------------------------------------------
-    // Turn markdown links into footnote-style citations:
-    //   [Pinterest](https://...) -> "Pinterest (1)"
-    // and append a Sources section:
-    //   (1) [Pinterest](https://...)
-    // ------------------------------------------------------------------
-    const footnotes = [];
-    const withMarkers = answerText.replace(
-      /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-      (match, label, url) => {
-        let index = footnotes.findIndex((f) => f.url === url);
-        if (index === -1) {
-          footnotes.push({ label: label.trim() || url, url });
-          index = footnotes.length - 1;
-        }
-        // Inline: keep the plain label and add "(n)".
-        return `${label} (${index + 1})`;
-      }
-    );
-
-    let withFootnotes = withMarkers;
-    if (footnotes.length > 0) {
-      const footerLines = footnotes.map(
-        (f, idx) => `(${idx + 1}) [${f.label}](${f.url})`
-      );
-      withFootnotes =
-        withMarkers + "\n\nSources:\n" + footerLines.join("\n");
-    }
-
-    // Strip simple markdown bold/italics for cleaner UI
-    const cleanAnswer = withFootnotes
-      .replace(/\*\*(.*?)\*\*/g, "$1")   // **bold**
-      .replace(/\*(.*?)\*/g, "$1")       // *italic*
-      .trim();
+    const { answer, confidence, confidenceReason } = extractAnswer(response);
 
     return res.status(200).json({
-      answer: cleanAnswer,
-      confidence: null,
-      confidenceReason: null,
-      model: payload.model || resolvedModel,
-      createdAt: new Date().toISOString(),
+      answer,
+      confidence,
+      confidenceReason,
     });
   } catch (err) {
     console.error("Error in /api/query:", err);
     return res.status(500).json({
       error: "Failed to process query",
-      details: err.message || String(err),
+      details: err?.response?.data || err?.message || String(err),
     });
+  }
+}
+
+// --- Helpers -------------------------------------------------------------
+
+function truncateText(text, maxChars) {
+  if (!text || typeof text !== "string") return "";
+  if (text.length <= maxChars) return text;
+  return text.slice(0, maxChars);
+}
+
+function extractAnswer(response) {
+  try {
+    const output = response.output || response;
+    let text = "";
+
+    if (Array.isArray(output) && output.length > 0) {
+      for (const item of output) {
+        if (item.type === "message" && item.content) {
+          const segment = item.content
+            .map((part) => part.text || "")
+            .join("");
+          text += segment;
+        }
+      }
+    } else if (response.output_text) {
+      text = String(response.output_text);
+    }
+
+    const answer = (text || "").trim();
+
+    const meta = response.metadata || {};
+    const confidence =
+      typeof meta.confidence === "number" ? meta.confidence : null;
+    const confidenceReason =
+      typeof meta.confidence_reason === "string"
+        ? meta.confidence_reason
+        : null;
+
+    return {
+      answer,
+      confidence,
+      confidenceReason,
+    };
+  } catch (e) {
+    console.error("Failed to extract answer from Responses payload:", e);
+    return {
+      answer: "Sorry, I couldn't extract a valid answer from the model output.",
+      confidence: null,
+      confidenceReason: null,
+    };
   }
 }
