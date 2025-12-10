@@ -1,5 +1,5 @@
 {
-  "name": "content-engine-backend-v2",
+  "name": "brightline-content-engine-backend",
   "version": "1.0.0",
   "type": "module",
   "main": "api/generate.js",
