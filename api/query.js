@@ -1,12 +1,15 @@
 // /api/query.js
 //
-// Answers focused questions about the current draft + sources,
-// using OpenAI Responses API with web search.
+// Answers a follow-up question about the current draft and sources.
+// Uses Chat Completions. There is NO live web search here:
+// - Primary grounding: draft + attached sources
+// - Secondary: model's general background knowledge
 //
-// Returns a simple JSON payload the frontend can render safely.
+// JSON response shape is kept stable for the frontend.
 
 import OpenAI from "openai";
 
+// --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
@@ -18,6 +21,11 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
+// ------------------------------------------------------------------
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -30,103 +38,136 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
   try {
     const { question, draft, sources, model, publicSearch } = req.body || {};
 
-    if (!question || typeof question !== "string" || !question.trim()) {
-      return res
-        .status(400)
-        .json({ error: "A non-empty question is required." });
+    if (!question || typeof question !== "string") {
+      return res.status(400).json({ error: "Missing or invalid question" });
     }
 
-    const safeDraft = typeof draft === "string" ? draft.trim() : "";
+    // ------------------------------------------------------------------
+    // Build safe context from draft + sources
+    // ------------------------------------------------------------------
+    const safeDraft =
+      typeof draft === "string" ? draft.slice(0, 12_000) : "";
     const safeSources = Array.isArray(sources) ? sources : [];
+
+    // Build a compact context string from draft + first few sources
+    const sourceSnippets = safeSources
+      .slice(0, 3)
+      .map((s, idx) => {
+        const name = s.name || s.url || `Source ${idx + 1}`;
+        const text =
+          typeof s.text === "string" ? s.text.slice(0, 4000) : "";
+        return `Source ${idx + 1} – ${name}:\n${text}`;
+      })
+      .join("\n\n");
+
+    const contextParts = [];
+
+    contextParts.push(
+      safeDraft
+        ? `CURRENT DRAFT:\n${safeDraft}`
+        : "CURRENT DRAFT:\n(Empty)"
+    );
+
+    contextParts.push(
+      sourceSnippets
+        ? `SOURCES (EXCERPTED):\n${sourceSnippets}`
+        : "SOURCES:\n(None provided)"
+    );
+
+    // Optional note about publicSearch flag – for now it just tells the model
+    // it may bring in background knowledge more freely.
+    const searchFlag = !!publicSearch;
+    if (searchFlag) {
+      contextParts.push(
+        "NOTE: The user has enabled publicSearch. You MAY use general background knowledge from your training to provide context, but you still do NOT have live web access or real-time data."
+      );
+    }
+
+    const context = contextParts.join("\n\n-----\n\n");
+
+    // ------------------------------------------------------------------
+    // Call Chat Completions
+    // ------------------------------------------------------------------
 
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
         : "gpt-4.1-mini";
 
-    const sourceChunks = safeSources.map((s, idx) => {
-      const label = s.name || s.url || `Source ${idx + 1}`;
-      const text =
-        typeof s.text === "string" ? truncateText(s.text, 6000) : "";
-      return `Source ${idx + 1} – ${label}:\n${text}`;
+    const systemPrompt = [
+      "You are an assistant helping to review and explain investment-related drafts.",
+      "",
+      "You have access to:",
+      "- The CURRENT DRAFT text.",
+      "- A small set of SOURCES supplied by the user (e.g. URLs, files, raw text).",
+      "",
+      "Your behaviour:",
+      "- Use the draft and sources as your PRIMARY grounding.",
+      "- You MAY use your own general background knowledge from training to:",
+      "  - Explain concepts (e.g. what 'first lien' means),",
+      "  - Provide high-level market or industry context,",
+      "  - Suggest framing or drafting improvements.",
+      "- You do NOT have live web or real-time data access.",
+      "",
+      "If the user asks for:",
+      "- A specific, up-to-date figure (e.g. current share price) or fact that is NOT in the draft or sources:",
+      "  - Say clearly that you do not have live data and cannot confirm the exact current value.",
+      "- Something that contradicts the sources:",
+      "  - Prioritise the sources and explain the discrepancy.",
+      "",
+      "Citations and clarity:",
+      "- When your answer relies on a specific statement in the provided sources, mention this explicitly (e.g. 'According to Source 1…').",
+      "- If something is based mainly on your general knowledge, say so.",
+      "",
+      "Style:",
+      "- Be concise, concrete, and professional.",
+      "- Prefer short paragraphs and clear structure.",
+    ].join("\n");
+
+    const userPrompt = [
+      "Here is the current draft and supporting sources:",
+      "",
+      context,
+      "",
+      "User question:",
+      question,
+    ].join("\n\n");
+
+    const completion = await client.chat.completions.create({
+      model: resolvedModel,
+      temperature: 0.2,
+      max_completion_tokens: 512,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
     });
 
-    const sourcesBlock =
-      sourceChunks.length > 0
-        ? sourceChunks.join("\n\n-----\n\n")
-        : "(No explicit source documents were provided.)";
+    const answerText =
+      completion.choices?.[0]?.message?.content?.trim() || "";
 
-    const systemPrompt =
-      "You are an assistant that answers focused questions about a draft investment text.\n" +
-      "- Use the provided draft and sources as primary grounding.\n" +
-      "- Where needed, you may use web search for up-to-date factual checks.\n" +
-      "- If the answer is uncertain or speculative, say so explicitly.\n" +
-      "- Do not re-draft the whole document; answer the question directly.\n" +
-      "- Be concise and concrete.\n\n" +
-      "- Citation style for web results:\n" +
-      "  - When you rely on a specific web page, indicate it inline as a numbered footnote like (1), (2), etc.\n" +
-      "  - At the end of your answer, add a 'Sources:' section.\n" +
-      "  - Under 'Sources:', list each source on its own line as '1. Page Title (URL)'.\n" +
-      "  - Use the human-readable page title, not the raw URL, as the link text.";
-
-    const userPromptParts = [];
-
-    userPromptParts.push("QUESTION:\n" + question.trim());
-
-    if (safeDraft) {
-      userPromptParts.push("CURRENT DRAFT (EXCERPT):\n" + truncateText(safeDraft, 8000));
+    if (!answerText) {
+      console.error("Chat completion returned no answer:", completion);
+      return res.status(500).json({
+        error: "Model returned empty answer",
+      });
     }
 
-    userPromptParts.push("ATTACHED SOURCES (EXCERPTED):\n" + sourcesBlock);
-
-    userPromptParts.push(
-      [
-        "TASK:",
-        "- Answer the question using the draft + sources as primary context.",
-        "- If web search adds materially better or newer information, include it.",
-        "- Be precise about what is clearly supported vs. judgement / interpretation.",
-      ].join("\n")
-    );
-
-    const userPrompt = userPromptParts.join("\n\n");
-
-    const tools = publicSearch
-      ? [
-          {
-            type: "web_search",
-          },
-        ]
-      : [];
-
-    const response = await client.responses.create({
-      model: resolvedModel,
-      input: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: userPrompt,
-        },
-      ],
-      tools,
-      max_output_tokens: 800,
-    });
-
-    const { answer, confidence, confidenceReason } = extractAnswer(response);
+    // Optional: strip simple markdown for a cleaner UI, if desired
+    const cleanAnswer = answerText
+      .replace(/\*\*(.*?)\*\*/g, "$1") // **bold**
+      .replace(/\*(.*?)\*/g, "$1") // *italic*
+      .trim();
 
     return res.status(200).json({
-      answer,
-      confidence,
-      confidenceReason,
+      answer: cleanAnswer,
+      confidence: null,
+      confidenceReason: null,
+      model: completion.model || resolvedModel,
+      createdAt: new Date().toISOString(),
     });
   } catch (err) {
     console.error("Error in /api/query:", err);
@@ -134,56 +175,5 @@ export default async function handler(req, res) {
       error: "Failed to process query",
       details: err?.response?.data || err?.message || String(err),
     });
-  }
-}
-
-// --- Helpers -------------------------------------------------------------
-
-function truncateText(text, maxChars) {
-  if (!text || typeof text !== "string") return "";
-  if (text.length <= maxChars) return text;
-  return text.slice(0, maxChars);
-}
-
-function extractAnswer(response) {
-  try {
-    const output = response.output || response;
-    let text = "";
-
-    if (Array.isArray(output) && output.length > 0) {
-      for (const item of output) {
-        if (item.type === "message" && item.content) {
-          const segment = item.content
-            .map((part) => part.text || "")
-            .join("");
-          text += segment;
-        }
-      }
-    } else if (response.output_text) {
-      text = String(response.output_text);
-    }
-
-    const answer = (text || "").trim();
-
-    const meta = response.metadata || {};
-    const confidence =
-      typeof meta.confidence === "number" ? meta.confidence : null;
-    const confidenceReason =
-      typeof meta.confidence_reason === "string"
-        ? meta.confidence_reason
-        : null;
-
-    return {
-      answer,
-      confidence,
-      confidenceReason,
-    };
-  } catch (e) {
-    console.error("Failed to extract answer from Responses payload:", e);
-    return {
-      answer: "Sorry, I couldn't extract a valid answer from the model output.",
-      confidence: null,
-      confidenceReason: null,
-    };
   }
 }
