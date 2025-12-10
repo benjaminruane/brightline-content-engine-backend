@@ -1,8 +1,7 @@
 // /api/generate.js
 //
 // Generates a new draft based on scenario, sources and settings.
-// Uses Chat Completions. We keep the JSON response shape stable
-// for the frontend.
+// Uses Chat Completions. JSON response shape is stable for the frontend.
 
 import OpenAI from "openai";
 
@@ -18,6 +17,25 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
+// ------------------------------------------------------------------
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Small helper to cap how much text we send to the model per source
+function truncateText(text, maxChars = 8000) {
+  if (!text || typeof text !== "string") return "";
+  if (text.length <= maxChars) return text;
+  return text.slice(0, maxChars);
+}
+
+// Optional helper if you ever want to estimate tokens
+function approximateTokensFromWords(wordCount) {
+  if (!wordCount || typeof wordCount !== "number") return null;
+  // Rough: 1 token ≈ 0.75 words
+  return Math.round(wordCount / 0.75);
+}
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -30,10 +48,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
   try {
     const {
       title,
@@ -43,10 +57,11 @@ export default async function handler(req, res) {
       versionType,
       maxWords,
       model,
-      publicSearch,
+      publicSearch, // currently unused but kept for compatibility
       sources,
     } = req.body || {};
 
+    // Basic validation
     if (!Array.isArray(selectedTypes) || selectedTypes.length === 0) {
       return res
         .status(400)
@@ -56,15 +71,15 @@ export default async function handler(req, res) {
     const safeScenario = typeof scenario === "string" ? scenario : "generic";
     const safeTitle = typeof title === "string" ? title.trim() : "";
     const safeNotes = typeof notes === "string" ? notes.trim() : "";
-
     const safeSources = Array.isArray(sources) ? sources : [];
 
     if (safeSources.length === 0) {
-      return res.status(400).json({
-        error: "At least one source is required to generate a draft.",
-      });
+      return res
+        .status(400)
+        .json({ error: "At least one source is required to generate a draft." });
     }
 
+    // Build a compact source bundle to avoid overloading the model
     const sourceSummaries = safeSources.map((s, idx) => {
       const label = s.name || s.url || `Source ${idx + 1}`;
       const text =
@@ -74,6 +89,7 @@ export default async function handler(req, res) {
 
     const sourcesBlock = sourceSummaries.join("\n\n-----\n\n");
 
+    // Determine scenario label used in prompt
     const scenarioLabelMap = {
       new_investment: "New direct investment",
       exit_realisation: "Direct investment exit",
@@ -91,9 +107,37 @@ export default async function handler(req, res) {
         ? "Public / externally safe version"
         : "Complete internal version";
 
-    const { lengthGuidance, suggestedMaxTokens } = buildLengthGuidance(
-      maxWords
-    );
+    // Word-limit prompting: soft guidance + ceiling
+    let lengthGuidance = "";
+    let suggestedMaxTokens = 1024;
+
+    let numericMaxWords = null;
+    if (typeof maxWords === "number") {
+      numericMaxWords = maxWords;
+    } else if (typeof maxWords === "string" && maxWords.trim()) {
+      const parsed = Number(maxWords.trim());
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        numericMaxWords = parsed;
+      }
+    }
+
+    if (numericMaxWords && numericMaxWords > 0) {
+      const rounded = Math.max(50, Math.round(numericMaxWords));
+      const approxTokens = approximateTokensFromWords(rounded);
+      // Add a small buffer but keep it reasonable
+      suggestedMaxTokens = approxTokens
+        ? Math.min(approxTokens + 200, 2500)
+        : 1200;
+
+      lengthGuidance =
+        `Target length: around ${rounded} words (soft ceiling). ` +
+        `Try to stay reasonably close to this length. ` +
+        `If you can answer fully in fewer words, prefer being concise rather than verbose.`;
+    } else {
+      lengthGuidance =
+        "Write a clear, well-structured draft. Be concise but complete.";
+      suggestedMaxTokens = 1200;
+    }
 
     const selectedTypeLabels = selectedTypes.map((t) => {
       switch (t) {
@@ -115,18 +159,38 @@ export default async function handler(req, res) {
         ? model.trim()
         : "gpt-4.1-mini";
 
-    const systemParts = [
-      "You are an assistant that writes high-quality, investment-related draft texts.",
-      "Follow the user's scenario, selected output types, and notes carefully.",
-      "Write in a clear, concise, professional tone suitable for institutional investors.",
-      "Style rules:",
-      " - For money amounts, prefer formats like 'USD 10 million' instead of '$10m' or 'USD 10m'.",
-      " - Spell out 'million' and 'billion' in full; avoid using 'm' or 'bn' suffixes.",
-      " - Use ISO currency codes (e.g. USD, EUR, GBP) instead of symbols ($, €, £) where appropriate.",
-    ];
+    // SYSTEM PROMPT
+    const systemPrompt = [
+      "You are a specialist writer for private markets investment content.",
+      "You draft high-quality, professional text for investors and internal stakeholders.",
+      "",
+      "Key behaviours:",
+      "- Maintain a neutral, fact-based tone.",
+      "- Use the provided sources as your primary grounding.",
+      "- Do not invent specific figures, dates, or names not supported by the sources.",
+      "- Where the sources are silent, you may use standard market phrasing,",
+      "  but keep it generic and non-misleading.",
+      "- Respect the requested scenario and output types.",
+      "",
+      "Style and formatting:",
+      "- Always normalise currency amounts into the format 'USD 10 million', 'EUR 250 million', etc.",
+      "- Do NOT use short forms such as '$10m', 'US$10m', '10mm', '10mn', 'm USD', or 'bn'.",
+      "- Spell out 'million' and 'billion' in full.",
+      "- Use 'USD', 'EUR', etc. as three-letter currency codes before the amount.",
+      "- Keep sentences reasonably short and clear.",
+      "",
+      "Quality requirements:",
+      "- Clear structure, short paragraphs.",
+      "- Plain, professional English.",
+      "- Avoid marketing hype; focus on clarity and substance.",
+      "",
+      "Compliance:",
+      "- Avoid forward-looking or predictive statements unless clearly labelled and",
+      "  supported by the materials.",
+      "- Do not cherry-pick information; keep the balance of facts fair and accurate.",
+    ].join("\n");
 
-    const systemPrompt = systemParts.join("\n");
-
+    // USER PROMPT
     const userLines = [];
 
     if (safeTitle) {
@@ -163,6 +227,7 @@ export default async function handler(req, res) {
 
     const userPrompt = userLines.join("\n\n");
 
+    // Call Chat Completions (no web search needed for drafting)
     const completion = await client.chat.completions.create({
       model: resolvedModel,
       temperature: 0.2,
@@ -183,6 +248,7 @@ export default async function handler(req, res) {
         .json({ error: "Model returned empty draft text." });
     }
 
+    // Simple length-based score fallback (backend can override this later)
     const lengthScore = (() => {
       const len = draftText.length;
       if (len < 400) return 60;
@@ -192,12 +258,10 @@ export default async function handler(req, res) {
       return 95;
     })();
 
+    // Respond with the same shape the frontend expects
     return res.status(200).json({
       draftText,
-      label: `Version ${new Date()
-        .toISOString()
-        .slice(0, 16)
-        .replace("T", " ")}`,
+      label: `Version ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
       model: resolvedModel,
       scenario: safeScenario,
       scenarioLabel,
@@ -211,41 +275,4 @@ export default async function handler(req, res) {
       details: err?.response?.data || err?.message || String(err),
     });
   }
-}
-
-// --- Helpers -------------------------------------------------------------
-
-function truncateText(text, maxChars = 8000) {
-  if (!text || typeof text !== "string") return "";
-  if (text.length <= maxChars) return text;
-  return text.slice(0, maxChars);
-}
-
-function approximateTokensFromWords(wordCount) {
-  if (!wordCount || typeof wordCount !== "number") return null;
-  return Math.round(wordCount / 0.75);
-}
-
-function buildLengthGuidance(maxWords) {
-  let lengthGuidance = "";
-  let suggestedMaxTokens = 1024;
-
-  if (typeof maxWords === "number" && maxWords > 0) {
-    const rounded = Math.max(50, Math.round(maxWords));
-    const approxTokens = approximateTokensFromWords(rounded);
-    suggestedMaxTokens = approxTokens
-      ? Math.min(approxTokens + 200, 2500)
-      : 1200;
-
-    lengthGuidance =
-      `Target length: around ${rounded} words (soft ceiling). ` +
-      `Do not exceed ${rounded} words by more than ~10–15%. ` +
-      `If you can answer fully in fewer words, prefer being concise.`;
-  } else {
-    lengthGuidance =
-      "Write a clear, well-structured draft. Be concise but complete.";
-    suggestedMaxTokens = 1200;
-  }
-
-  return { lengthGuidance, suggestedMaxTokens };
 }
