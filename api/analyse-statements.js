@@ -1,10 +1,18 @@
 // /api/analyse-statements.js
 //
-// Analyses a draft into atomic statements, assigns a reliability
-// score (0–1) and category to each, and returns a summary object
-// with richer 'implication' and a simple compliance lens.
+// Analyses a draft into atomic statements, gives each a reliability band,
+// and always uses web search to cross-check. Returns:
+//   {
+//     statements: [{ id, text, reliability, band, implication }],
+//     summary,
+//     references: [{ url, title }]
+//   }
 
 import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -20,10 +28,6 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -36,155 +40,162 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { text, model, publicSearch } = req.body || {};
+    const { text, model } = req.body || {};
 
-    const draftText =
-      typeof text === "string" && text.trim().length > 0
-        ? text.trim()
-        : "";
+    const safeText = typeof text === "string" ? text.trim() : "";
 
-    if (!draftText) {
-      return res
-        .status(400)
-        .json({ error: "Draft text is required for statement analysis." });
+    if (!safeText) {
+      return res.status(400).json({
+        error: "Draft text is required for statement analysis.",
+      });
     }
 
     const resolvedModel =
-      typeof model === "string" && model.trim().length > 0
+      typeof model === "string" && model.trim()
         ? model.trim()
         : "gpt-4.1-mini";
 
     const systemPrompt = [
-      "You are analysing an investment-related draft for factual reliability and compliance.",
+      "You are a reliability analyst for investment write-ups.",
       "",
-      "Your task:",
-      "- Break the text into a list of atomic statements (each expressing a single, self-contained claim).",
-      "- For each statement, assign:",
-      "  - reliability: a number between 0 and 1 (0 = very unreliable, 1 = highly reliable),",
-      "  - category: e.g. 'Factual, data-backed', 'Forward-looking', 'Marketing-style',",
-      "  - implication: 1–3 sentences explaining WHY the reliability score was chosen, and what the risk or implication is.",
-      "  - compliance: a short tag such as 'OK', 'Needs review – forward-looking', 'Needs review – cherry-picking', or similar.",
+      "You must:",
+      "1) Split the draft into short, atomic statements (1 key idea each).",
+      "2) For each statement, assign a reliability score 0–1.",
+      "3) Put the statement into a band:",
+      "   - 'green'   : well grounded and consistent with mainstream evidence.",
+      "   - 'yellow'  : plausible but partly speculative or incomplete.",
+      "   - 'red'     : clearly speculative, contradicted, or misleading.",
+      "4) Briefly explain WHY in an 'implication' string (e.g.",
+      "   'speculative because...' or 'contradicted by newer data...').",
       "",
-      "Compliance lens:",
-      "- Flag forward-looking or predictive statements, especially if they are specific or quantitative.",
-      "- Flag statements that appear to cherry-pick positive information while ignoring material risks.",
-      "- Flag statements that make absolute claims ('will', 'guaranteed') rather than balanced language.",
-      "",
-      "Important formatting requirements:",
-      "- Respond ONLY with valid JSON.",
-      "- Use the following structure:",
-      "",
-      "{",
-      '  "statements": [',
-      "    {",
-      '      "id": "1",',
-      '      "text": "…",',
-      '      "reliability": 0.85,',
-      '      "category": "Factual, data-backed",',
-      '      "implication": "One to three sentences explaining why this is the score and what it implies.",',
-      '      "compliance": "OK"',
-      "    }",
-      "  ]",
-      "}",
-      "",
-      "- reliability MUST be a number between 0 and 1, not a percentage.",
-      "- implication MUST be 1–3 sentences and should use explicit reasoning (e.g. 'because', 'due to', 'given that').",
-      "- If there are no meaningful statements, return an empty array.",
+      "Use web search to validate numbers, dates and named facts.",
+      "However, when good data is not available, you may keep 'yellow'",
+      "with a cautious implication.",
     ].join("\n");
 
     const userPrompt = [
-      "TEXT TO ANALYSE:",
+      "DRAFT TEXT TO ANALYSE:",
+      safeText,
       "",
-      draftText,
+      "TASK:",
+      "- Return a JSON object with this exact shape:",
+      "",
+      "{",
+      '  "statements": [',
+      '    { "id": 1, "text": "...", "reliability": 0.0-1.0, "band": "green|yellow|red", "implication": "..." },',
+      "    ...",
+      "  ],",
+      '  "summary": "Very short summary of key reliability concerns.",',
+      '  "notes": "Optional longer notes for the author."',
+      "}",
+      "",
+      "- Make 8–25 statements depending on draft length.",
+      "- Prefer shorter statements (1–2 lines each).",
+      "- Use web search to validate where helpful.",
     ].join("\n");
 
-    const completion = await client.chat.completions.create({
+    const response = await client.responses.create({
       model: resolvedModel,
-      temperature: 0.1,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+      input: userPrompt,
+      tools: [
+        {
+          type: "web_search",
+          web_search: {
+            max_results: 4,
+          },
+        },
       ],
+      max_output_tokens: 900,
+      response_format: { type: "json_object" },
     });
 
-    const rawContent =
-      completion.choices?.[0]?.message?.content?.trim() || "";
+    const firstOutput = response.output?.[0];
+    let jsonText = "";
 
-    if (!rawContent) {
+    if (
+      firstOutput &&
+      firstOutput.content &&
+      firstOutput.content[0]?.type === "output_text"
+    ) {
+      jsonText = firstOutput.content[0].text?.value || "";
+    }
+
+    if (!jsonText.trim()) {
       console.error(
-        "analyse-statements: model returned empty content:",
-        completion
+        "analyse-statements: empty JSON output from Responses API",
+        response
       );
       return res
         .status(500)
-        .json({ error: "Model returned empty analysis content." });
+        .json({ error: "Model returned empty analysis." });
     }
 
     let parsed;
     try {
-      parsed = JSON.parse(rawContent);
+      parsed = JSON.parse(jsonText);
     } catch (err) {
-      console.error(
-        "analyse-statements: failed to parse JSON from model:",
-        rawContent,
-        err
-      );
+      console.error("Failed to parse JSON from analysis:", err, jsonText);
       return res.status(500).json({
-        error: "Model returned invalid JSON for statement analysis.",
-        details: err.message || String(err),
+        error: "Failed to parse analysis JSON.",
       });
     }
 
-    const statementsArray = Array.isArray(parsed.statements)
+    const statements = Array.isArray(parsed.statements)
       ? parsed.statements
       : [];
 
-    const statements = statementsArray.map((s, index) => {
-      const id = String(s.id || index + 1);
-      const text =
-        typeof s.text === "string" && s.text.trim().length > 0
-          ? s.text.trim()
-          : "";
-      let reliability = typeof s.reliability === "number" ? s.reliability : 0.5;
-      if (reliability < 0) reliability = 0;
-      if (reliability > 1) reliability = 1;
-      const category =
-        typeof s.category === "string" && s.category.trim().length > 0
-          ? s.category.trim()
-          : "Uncategorised";
-      const implication =
-        typeof s.implication === "string" && s.implication.trim().length > 0
-          ? s.implication.trim()
-          : "No detailed implication was provided.";
-      const compliance =
-        typeof s.compliance === "string" && s.compliance.trim().length > 0
-          ? s.compliance.trim()
-          : "OK";
+    // Normalise / fill IDs + bands
+    const normalised = statements.map((s, idx) => {
+      const id =
+        typeof s.id === "number" && Number.isFinite(s.id)
+          ? s.id
+          : idx + 1;
+      const reliability =
+        typeof s.reliability === "number" &&
+        s.reliability >= 0 &&
+        s.reliability <= 1
+          ? s.reliability
+          : 0.7;
+
+      let band = "yellow";
+      if (reliability >= 0.9) band = "green";
+      else if (reliability < 0.75) band = "red";
 
       return {
         id,
-        text,
+        text: s.text || "",
         reliability,
-        category,
-        implication,
-        compliance,
+        band: s.band || band,
+        implication: s.implication || "",
       };
     });
 
-    const statementCount = statements.length;
-    const averageReliability =
-      statementCount === 0
-        ? null
-        : statements.reduce((sum, s) => sum + (s.reliability || 0), 0) /
-          statementCount;
+    // Extract web references (URLs + titles) from annotations
+    const referencesMap = new Map();
+    const annotations =
+      firstOutput?.content?.[0]?.text?.annotations || [];
+
+    for (const ann of annotations) {
+      const url = ann?.url;
+      const title = ann?.title || ann?.site_name;
+      if (url) {
+        const key = url;
+        if (!referencesMap.has(key)) {
+          referencesMap.set(key, {
+            url,
+            title: title || url,
+          });
+        }
+      }
+    }
+
+    const references = Array.from(referencesMap.values());
 
     return res.status(200).json({
-      statements,
-      summary: {
-        statementCount,
-        averageReliability,
-      },
+      statements: normalised,
+      summary: parsed.summary || "",
+      notes: parsed.notes || "",
+      references,
     });
   } catch (err) {
     console.error("Error in /api/analyse-statements:", err);
