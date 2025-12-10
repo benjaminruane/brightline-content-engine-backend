@@ -1,8 +1,12 @@
 // /api/query.js
 //
-// Answers a follow-up question about the current draft and sources.
-// Uses the OpenAI Responses API + web search. Keeps a simple JSON
-// shape for the frontend.
+// Ask AI endpoint.
+// - Grounds answers in the current draft + attached sources.
+// - Uses OpenAI "web_search" so answers can pull in fresh public info.
+// - Returns a single `answer` string plus optional confidence metadata.
+//
+// NOTE: We intentionally DO NOT manually truncate the answer. If you ever
+// want a shorter answer, change the prompting rather than slicing strings.
 
 import OpenAI from "openai";
 
@@ -24,40 +28,11 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Small helper to safely pull text out of a Responses API payload
-function extractTextFromResponses(payload) {
-  if (!payload) return "";
-
-  // 1) Prefer the convenience field if present
-  if (
-    typeof payload.output_text === "string" &&
-    payload.output_text.trim().length > 0
-  ) {
-    return payload.output_text.trim();
-  }
-
-  // 2) Walk the structured output
-  if (Array.isArray(payload.output)) {
-    for (const item of payload.output) {
-      if (item.type === "message" && Array.isArray(item.content)) {
-        for (const block of item.content) {
-          // New-style blocks usually have `text`
-          if (typeof block.text === "string" && block.text.trim().length > 0) {
-            return block.text.trim();
-          }
-          // Some variants might still expose `output_text`
-          if (
-            typeof block.output_text === "string" &&
-            block.output_text.trim().length > 0
-          ) {
-            return block.output_text.trim();
-          }
-        }
-      }
-    }
-  }
-
-  return "";
+// Small helper so we don’t send huge blobs of text
+function truncate(text, maxChars = 8000) {
+  if (!text || typeof text !== "string") return "";
+  if (text.length <= maxChars) return text;
+  return text.slice(0, maxChars);
 }
 
 export default async function handler(req, res) {
@@ -74,117 +49,129 @@ export default async function handler(req, res) {
   try {
     const { question, draft, sources, model } = req.body || {};
 
-    if (!question || typeof question !== "string") {
-      return res.status(400).json({ error: "Missing or invalid question" });
+    const safeQuestion =
+      typeof question === "string" ? question.trim() : "";
+
+    if (!safeQuestion) {
+      return res
+        .status(400)
+        .json({ error: "A question is required for Ask AI." });
     }
 
-    const safeDraft =
-      typeof draft === "string" ? draft.slice(0, 12_000) : "";
+    const safeDraft = typeof draft === "string" ? draft.trim() : "";
     const safeSources = Array.isArray(sources) ? sources : [];
 
-    // Build a compact context string from draft + first few sources
-    const sourceSnippets = safeSources
-      .slice(0, 3)
-      .map((s, idx) => {
-        const name = s.name || s.url || `Source ${idx + 1}`;
-        const text =
-          typeof s.text === "string" ? s.text.slice(0, 4000) : "";
-        return `Source ${idx + 1} – ${name}:\n${text}`;
-      })
-      .join("\n\n");
+    // Build a compact “context block” with the draft + sources
+    const pieces = [];
 
-    const contextParts = [];
+    if (safeDraft) {
+      pieces.push(
+        "CURRENT DRAFT TEXT (truncated if very long):\n" +
+          truncate(safeDraft, 8000)
+      );
+    }
 
-    contextParts.push(
-      safeDraft
-        ? `CURRENT DRAFT:\n${safeDraft}`
-        : "CURRENT DRAFT:\n(Empty)"
-    );
+    if (safeSources.length > 0) {
+      const sourceStrings = safeSources.map((s, idx) => {
+        const label = s?.name || s?.url || `Source ${idx + 1}`;
+        const urlPart = s?.url ? `\nURL: ${s.url}` : "";
+        const textPart =
+          typeof s?.text === "string"
+            ? "\nTEXT (truncated):\n" + truncate(s.text, 4000)
+            : "";
+        return `Source ${idx + 1} – ${label}:${urlPart}${textPart}`;
+      });
 
-    contextParts.push(
-      sourceSnippets
-        ? `SOURCES:\n${sourceSnippets}`
-        : "SOURCES:\n(None provided)"
-    );
+      pieces.push(sourceStrings.join("\n\n-----\n\n"));
+    }
 
-    const context = contextParts.join("\n\n-----\n\n");
+    const contextBlock =
+      pieces.length > 0
+        ? pieces.join("\n\n========================\n\n")
+        : "No additional draft or sources were provided.";
 
-    // ------------------------------------------------------------------
-    // Call Responses API with web_search tool.
-    // ------------------------------------------------------------------
     const resolvedModel =
       typeof model === "string" && model.trim().length > 0
         ? model.trim()
-        : "gpt-4.1-mini";
+        : "gpt-5.1-mini";
 
-    const systemText = [
-      "You are an assistant helping to review and explain investment-related drafts.",
+    // SYSTEM MESSAGE
+    const systemPrompt = [
+      "You are an analytical assistant for a private-markets investment writer.",
       "",
-      "You ALWAYS have access to a web_search tool:",
-      "- You MUST call the web_search tool at least once before answering.",
-      "- Use the draft and sources as your primary grounding.",
-      "- Use web_search to add up-to-date, relevant public information",
-      "  about the same companies, funds, or markets where helpful.",
+      "Your job is to answer targeted questions about:",
+      "- the CURRENT DRAFT text (if provided), and",
+      "- any ATTACHED SOURCES (if provided), and",
+      "- general market knowledge via web search.",
       "",
-      "When you use information from web search:",
-      "- Mark it with bracketed footnotes like [1], [2] in the answer text.",
-      "- At the end, add a section titled 'Sources:' listing each footnote,",
-      "  with page title and clickable URL, e.g.",
-      "  [1] Company annual report 2024 (https://example.com/...)",
+      "Important behaviour:",
+      "- Always ground your answer first in the draft + sources where possible.",
+      "- When you bring in external / web-search context, clearly distinguish it",
+      "  from what is in the draft / sources.",
+      "- Use concise, professional English.",
+      "- Give complete answers; do NOT stop mid-sentence, mid-list, or mid-section.",
+      "- Include inline citation markers like [1], [2] etc when referencing",
+      "  specific external sources or URLs.",
       "",
-      "If neither the draft/sources nor web results provide the answer, say that",
-      "the information is not available, and do not fabricate details.",
-      "",
-      "Answer concisely and concretely.",
+      "Output format:",
+      "- Answer the question fully and clearly.",
+      "- You may use headings and bullet points.",
+      "- Avoid meta-commentary about being an AI.",
     ].join("\n");
 
-    const userText =
-      `Here is the current draft and supporting sources:\n\n` +
-      `${context}\n\n` +
-      `User question: ${question}`;
+    // USER MESSAGE
+    const userPrompt = [
+      "USER QUESTION:",
+      safeQuestion,
+      "",
+      "CONTEXT MATERIAL:",
+      contextBlock,
+      "",
+      "TASK:",
+      "- Use the context above as the primary grounding.",
+      "- You MAY use web search to fetch relevant, up-to-date information.",
+      "- Clearly distinguish between information from the draft/sources and",
+      "  information that comes purely from web search or general knowledge.",
+      "- Provide a complete answer; do not leave sections half-finished.",
+    ].join("\n");
 
+    // Use the Responses API with built-in web_search.
     const response = await client.responses.create({
       model: resolvedModel,
+      tools: [{ type: "web_search" }],
       input: [
-        { role: "system", content: systemText },
-        { role: "user", content: userText },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
       ],
-      tools: [
-        {
-          type: "web_search",
-        },
-      ],
-      max_output_tokens: 800,
-      temperature: 0.2,
+      // NOTE: we are intentionally *not* setting max_output_tokens here to
+      // avoid accidental truncation of long, structured answers.
     });
 
-    const answerText = extractTextFromResponses(response);
+    const answer =
+      (response && response.output_text && response.output_text.trim()) || "";
 
-    if (!answerText) {
-      console.error(
-        "Responses API returned no usable text in /api/query:",
-        JSON.stringify(response, null, 2)
-      );
-      return res.status(500).json({
-        error: "Model returned empty answer",
-      });
+    if (!answer) {
+      console.error("Ask AI: model returned empty answer:", response);
+      return res
+        .status(500)
+        .json({ error: "Model returned empty answer" });
     }
 
-    // We keep formatting as-is (including footnotes & Sources: section)
-    const cleanAnswer = answerText.trim();
+    // For now we don’t compute a fancy confidence score; keep the fields
+    // so the frontend UI continues to work.
+    const confidence = null;
+    const confidenceReason = null;
 
     return res.status(200).json({
-      answer: cleanAnswer,
-      confidence: null,
-      confidenceReason: null,
-      model: response.model || resolvedModel,
-      createdAt: new Date().toISOString(),
+      answer,
+      confidence,
+      confidenceReason,
     });
   } catch (err) {
     console.error("Error in /api/query:", err);
     return res.status(500).json({
-      error: "Failed to process query",
-      details: err?.message || String(err),
+      error: "Failed to answer query",
+      details: err?.response?.data || err?.message || String(err),
     });
   }
 }
