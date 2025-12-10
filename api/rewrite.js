@@ -1,7 +1,8 @@
 // /api/rewrite.js
 //
 // Rewrites an existing draft based on user instructions.
-// Uses Chat Completions. JSON response shape is stable for the frontend.
+// - If publicSearch === true  -> Uses Responses API + web_search
+// - If publicSearch === false -> Uses Chat Completions only
 
 import OpenAI from "openai";
 
@@ -30,15 +31,30 @@ function approximateTokensFromWords(wordCount) {
   return Math.round(wordCount / 0.75);
 }
 
-// Try to infer a word-count target from rewrite instructions like
-// "expand to 100 words" or "around 250 words".
-function inferWordCountFromNotes(notes) {
-  if (!notes || typeof notes !== "string") return null;
-  const match = notes.match(/(\d+)\s*(word|words)\b/i);
-  if (!match) return null;
-  const value = Number(match[1]);
-  if (Number.isNaN(value) || value <= 0) return null;
-  return value;
+function extractTextFromResponses(payload) {
+  if (!payload) return "";
+
+  if (typeof payload.output_text === "string" && payload.output_text.trim()) {
+    return payload.output_text.trim();
+  }
+
+  if (Array.isArray(payload.output)) {
+    for (const item of payload.output) {
+      if (item.type === "message" && Array.isArray(item.content)) {
+        for (const block of item.content) {
+          if (
+            (block.type === "output_text" || block.type === "input_text") &&
+            typeof block.text === "string" &&
+            block.text.trim().length
+          ) {
+            return block.text.trim();
+          }
+        }
+      }
+    }
+  }
+
+  return "";
 }
 
 export default async function handler(req, res) {
@@ -54,28 +70,28 @@ export default async function handler(req, res) {
 
   try {
     const {
-      text,
-      notes,
+      text,          // original draft text
+      notes,         // rewrite instructions
       scenario,
       versionType,
-      maxWords,
       model,
-      publicSearch, // currently unused but kept for compatibility
+      publicSearch,
+      maxWords,
     } = req.body || {};
 
     const baseText =
-      typeof text === "string" && text.trim().length > 0
+      typeof text === "string" && text.trim().length
         ? text.trim()
         : "";
 
     if (!baseText) {
       return res
         .status(400)
-        .json({ error: "Base text is required for rewrite." });
+        .json({ error: "Original draft text is required to rewrite." });
     }
 
     const safeNotes =
-      typeof notes === "string" && notes.trim().length > 0
+      typeof notes === "string" && notes.trim().length
         ? notes.trim()
         : "";
 
@@ -86,43 +102,25 @@ export default async function handler(req, res) {
     }
 
     const safeScenario = typeof scenario === "string" ? scenario : "generic";
-    const safeVersionType = versionType || "complete";
 
-    // Work out length guidance:
-    // 1) Start from maxWords (if any)
-    // 2) Let explicit word-count instructions in notes override that
-    let numericMaxWords = null;
-    if (typeof maxWords === "number") {
-      numericMaxWords = maxWords;
-    } else if (typeof maxWords === "string" && maxWords.trim()) {
-      const parsed = Number(maxWords.trim());
-      if (!Number.isNaN(parsed) && parsed > 0) {
-        numericMaxWords = parsed;
-      }
-    }
-
-    const inferredFromNotes = inferWordCountFromNotes(safeNotes);
-    if (inferredFromNotes && inferredFromNotes > 0) {
-      numericMaxWords = inferredFromNotes;
-    }
-
+    // Word-limit prompting: soft guidance + ceiling
     let lengthGuidance = "";
     let suggestedMaxTokens = 1024;
 
-    if (numericMaxWords && numericMaxWords > 0) {
-      const rounded = Math.max(50, Math.round(numericMaxWords));
+    if (typeof maxWords === "number" && maxWords > 0) {
+      const rounded = Math.max(50, Math.round(maxWords));
       const approxTokens = approximateTokensFromWords(rounded);
       suggestedMaxTokens = approxTokens
         ? Math.min(approxTokens + 200, 2500)
         : 1200;
 
       lengthGuidance =
-        `Target length for the rewritten text: around ${rounded} words. ` +
-        `This is a primary constraint: aim to stay reasonably close to this length. ` +
-        `If the previous draft had a different limit, the new instructions override it.`;
+        `Target length: around ${rounded} words (soft ceiling). ` +
+        `Do not exceed ${rounded} words by more than ~10–15%. ` +
+        `If you can answer fully in fewer words, prefer being concise.`;
     } else {
       lengthGuidance =
-        "There is no strict word limit; keep the text concise but fully responsive to the rewrite instructions.";
+        "Write a clear, well-structured draft. Be concise but complete.";
       suggestedMaxTokens = 1200;
     }
 
@@ -132,73 +130,123 @@ export default async function handler(req, res) {
         : "gpt-4.1-mini";
 
     // SYSTEM PROMPT
-    const systemPrompt = [
-      "You are a specialist writer for private markets investment content.",
-      "You rewrite existing drafts to follow user instructions while keeping meaning and compliance intact.",
+    const baseSystemPrompt = [
+      "You are a senior private-markets editor.",
+      "You revise and improve existing drafts while preserving factual accuracy.",
       "",
       "Key behaviours:",
-      "- Preserve all core facts, figures, and narrative flow unless the user explicitly asks to add or remove content.",
-      "- Use the provided original text as the base and apply the rewrite instructions carefully.",
-      "- If the user asks to expand, you may add reasonable detail as long as it does not contradict or fabricate facts.",
-      "",
-      "Style and formatting:",
-      "- Always normalise currency amounts into the format 'USD 10 million', 'EUR 250 million', etc.",
-      "- Do NOT use short forms such as '$10m', 'US$10m', '10mm', '10mn', 'm USD', or 'bn'.",
-      "- Spell out 'million' and 'billion' in full.",
-      "- Use 'USD', 'EUR', etc. as three-letter currency codes before the amount.",
-      "- Maintain a professional, neutral tone.",
+      "- Preserve all verifiable facts from the original text unless instructed otherwise.",
+      "- Improve clarity, flow, and structure.",
+      "- Maintain a neutral, professional tone.",
+      "- Respect the requested scenario and version type.",
       "",
       "Compliance:",
-      "- Avoid forward-looking or predictive statements unless clearly labelled and supported.",
-      "- Do not cherry-pick information or present an overly biased view.",
-      "",
-      "Length behaviour:",
-      "- Respect the latest rewrite instructions above all for length.",
-      "- If the user specifies a word count (e.g. 'expand to 100 words'), treat that as the main target length.",
+      "- Avoid introducing forward-looking or speculative statements unless clearly requested",
+      "  and clearly labelled.",
+      "- Do not cherry-pick information that would distort the balance of the original text.",
     ].join("\n");
+
+    const systemPrompt = publicSearch
+      ? [
+          baseSystemPrompt,
+          "",
+          "Web search behaviour:",
+          "- You have access to a web_search tool to retrieve up-to-date, public information.",
+          "- Use it to enrich context (e.g., company background, sector context) *only* where it",
+          "  helps clarify or strengthen the draft and does not contradict the original text.",
+          "- If public information conflicts with the draft, prioritise the original text unless",
+          "  the conflict is material and can be neutrally described.",
+        ].join("\n")
+      : baseSystemPrompt;
 
     // USER PROMPT
     const userLines = [];
 
-    userLines.push("ORIGINAL TEXT:");
-    userLines.push(baseText);
-
-    userLines.push("");
-    userLines.push("REWRITE INSTRUCTIONS:");
-    userLines.push(safeNotes);
-
-    if (lengthGuidance) {
-      userLines.push("");
-      userLines.push("LENGTH GUIDANCE:");
-      userLines.push(lengthGuidance);
-    }
-
-    userLines.push("");
+    userLines.push(`SCENARIO (for context):\n${safeScenario}`);
     userLines.push(
-      "TASK:\n" +
-        "- Rewrite the original text according to the rewrite instructions.\n" +
-        "- Preserve factual content, but adjust structure, emphasis, or tone based on the instructions.\n" +
-        "- Apply the style, formatting, and compliance rules from the system prompt.\n" +
-        "- Do not include meta commentary about the rewriting process."
+      `VERSION TYPE:\n${
+        versionType === "public"
+          ? "Public / externally safe version"
+          : "Complete internal version"
+      }`
     );
 
-    const userPrompt = userLines.join("\n");
+    userLines.push(`ORIGINAL DRAFT TEXT:\n${baseText}`);
+    userLines.push(`REWRITE INSTRUCTIONS:\n${safeNotes}`);
 
-    const completion = await client.chat.completions.create({
-      model: resolvedModel,
-      temperature: 0.25,
-      max_completion_tokens: suggestedMaxTokens || 2048,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-    });
+    if (lengthGuidance) {
+      userLines.push(`LENGTH GUIDANCE:\n${lengthGuidance}`);
+    }
 
-    const rewrittenText =
-      completion.choices?.[0]?.message?.content?.trim() || "";
+    userLines.push(
+      [
+        "TASK:",
+        "- Rewrite the original draft according to the instructions.",
+        "- Preserve factual content unless the instructions explicitly request changes.",
+        "- Do not include meta commentary about the rewriting process.",
+      ].join("\n")
+    );
+
+    const userPrompt = userLines.join("\n\n");
+    const useWebSearch = !!publicSearch;
+
+    let rewrittenText = "";
+    let usedModel = resolvedModel;
+
+    if (useWebSearch) {
+      // ---- Branch A: Responses API + web_search -------------------
+      const response = await client.responses.create({
+        model: resolvedModel,
+        input: [
+          {
+            role: "system",
+            content: [
+              {
+                type: "input_text",
+                text: systemPrompt,
+              },
+            ],
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "input_text",
+                text: userPrompt,
+              },
+            ],
+          },
+        ],
+        tools: [
+          {
+            type: "web_search",
+          },
+        ],
+        max_output_tokens: suggestedMaxTokens || 2048,
+        temperature: 0.2,
+      });
+
+      rewrittenText = extractTextFromResponses(response);
+      usedModel = response.model || resolvedModel;
+    } else {
+      // ---- Branch B: Chat Completions only ------------------------
+      const completion = await client.chat.completions.create({
+        model: resolvedModel,
+        temperature: 0.2,
+        max_completion_tokens: suggestedMaxTokens || 2048,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      });
+
+      rewrittenText =
+        completion.choices?.[0]?.message?.content?.trim() || "";
+      usedModel = completion.model || resolvedModel;
+    }
 
     if (!rewrittenText) {
-      console.error("OpenAI completion returned empty content:", completion);
+      console.error("Rewrite: model returned empty content");
       return res
         .status(500)
         .json({ error: "Model returned empty rewrite text." });
@@ -216,10 +264,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       text: rewrittenText,
-      label: `Rewrite ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
-      model: resolvedModel,
-      scenario: safeScenario,
-      versionType: safeVersionType,
+      model: usedModel,
       score: lengthScore,
     });
   } catch (err) {
