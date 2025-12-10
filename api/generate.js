@@ -1,7 +1,9 @@
 // /api/generate.js
 //
 // Generates a new draft based on scenario, sources and settings.
-// Uses Chat Completions. JSON response shape is stable for the frontend.
+// - If publicSearch === true  -> Uses Responses API + web_search
+// - If publicSearch === false -> Uses Chat Completions only
+// JSON response shape is kept stable for the frontend.
 
 import OpenAI from "openai";
 
@@ -37,6 +39,33 @@ function approximateTokensFromWords(wordCount) {
   return Math.round(wordCount / 0.75);
 }
 
+// Extract plain text from a Responses API payload
+function extractTextFromResponses(payload) {
+  if (!payload) return "";
+
+  if (typeof payload.output_text === "string" && payload.output_text.trim()) {
+    return payload.output_text.trim();
+  }
+
+  if (Array.isArray(payload.output)) {
+    for (const item of payload.output) {
+      if (item.type === "message" && Array.isArray(item.content)) {
+        for (const block of item.content) {
+          if (
+            (block.type === "output_text" || block.type === "input_text") &&
+            typeof block.text === "string" &&
+            block.text.trim().length
+          ) {
+            return block.text.trim();
+          }
+        }
+      }
+    }
+  }
+
+  return "";
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -57,11 +86,10 @@ export default async function handler(req, res) {
       versionType,
       maxWords,
       model,
-      publicSearch, // currently unused but kept for compatibility
+      publicSearch,
       sources,
     } = req.body || {};
 
-    // Basic validation
     if (!Array.isArray(selectedTypes) || selectedTypes.length === 0) {
       return res
         .status(400)
@@ -71,6 +99,7 @@ export default async function handler(req, res) {
     const safeScenario = typeof scenario === "string" ? scenario : "generic";
     const safeTitle = typeof title === "string" ? title.trim() : "";
     const safeNotes = typeof notes === "string" ? notes.trim() : "";
+
     const safeSources = Array.isArray(sources) ? sources : [];
 
     if (safeSources.length === 0) {
@@ -111,18 +140,8 @@ export default async function handler(req, res) {
     let lengthGuidance = "";
     let suggestedMaxTokens = 1024;
 
-    let numericMaxWords = null;
-    if (typeof maxWords === "number") {
-      numericMaxWords = maxWords;
-    } else if (typeof maxWords === "string" && maxWords.trim()) {
-      const parsed = Number(maxWords.trim());
-      if (!Number.isNaN(parsed) && parsed > 0) {
-        numericMaxWords = parsed;
-      }
-    }
-
-    if (numericMaxWords && numericMaxWords > 0) {
-      const rounded = Math.max(50, Math.round(numericMaxWords));
+    if (typeof maxWords === "number" && maxWords > 0) {
+      const rounded = Math.max(50, Math.round(maxWords));
       const approxTokens = approximateTokensFromWords(rounded);
       // Add a small buffer but keep it reasonable
       suggestedMaxTokens = approxTokens
@@ -131,8 +150,8 @@ export default async function handler(req, res) {
 
       lengthGuidance =
         `Target length: around ${rounded} words (soft ceiling). ` +
-        `Try to stay reasonably close to this length. ` +
-        `If you can answer fully in fewer words, prefer being concise rather than verbose.`;
+        `Do not exceed ${rounded} words by more than ~10–15%. ` +
+        `If you can answer fully in fewer words, prefer being concise.`;
     } else {
       lengthGuidance =
         "Write a clear, well-structured draft. Be concise but complete.";
@@ -159,8 +178,8 @@ export default async function handler(req, res) {
         ? model.trim()
         : "gpt-4.1-mini";
 
-    // SYSTEM PROMPT
-    const systemPrompt = [
+    // SYSTEM PROMPT (base)
+    const baseSystemPrompt = [
       "You are a specialist writer for private markets investment content.",
       "You draft high-quality, professional text for investors and internal stakeholders.",
       "",
@@ -172,13 +191,6 @@ export default async function handler(req, res) {
       "  but keep it generic and non-misleading.",
       "- Respect the requested scenario and output types.",
       "",
-      "Style and formatting:",
-      "- Always normalise currency amounts into the format 'USD 10 million', 'EUR 250 million', etc.",
-      "- Do NOT use short forms such as '$10m', 'US$10m', '10mm', '10mn', 'm USD', or 'bn'.",
-      "- Spell out 'million' and 'billion' in full.",
-      "- Use 'USD', 'EUR', etc. as three-letter currency codes before the amount.",
-      "- Keep sentences reasonably short and clear.",
-      "",
       "Quality requirements:",
       "- Clear structure, short paragraphs.",
       "- Plain, professional English.",
@@ -189,6 +201,21 @@ export default async function handler(req, res) {
       "  supported by the materials.",
       "- Do not cherry-pick information; keep the balance of facts fair and accurate.",
     ].join("\n");
+
+    // If publicSearch is enabled, extend system prompt with web-search behaviour
+    const systemPrompt = publicSearch
+      ? [
+          baseSystemPrompt,
+          "",
+          "Web search behaviour:",
+          "- You have access to a web_search tool to retrieve up-to-date, public information.",
+          "- Use it to cross-check key facts (company descriptions, sector context, macro backdrop)",
+          "  and to enrich the draft with relevant but non-promotional context.",
+          "- Do NOT contradict the provided internal sources.",
+          "- If web results conflict with internal materials, prioritise the internal materials and",
+          "  mention the public discrepancy only if it is material and can be phrased neutrally.",
+        ].join("\n")
+      : baseSystemPrompt;
 
     // USER PROMPT
     const userLines = [];
@@ -227,22 +254,64 @@ export default async function handler(req, res) {
 
     const userPrompt = userLines.join("\n\n");
 
-    // Call Chat Completions (no web search needed for drafting)
-    const completion = await client.chat.completions.create({
-      model: resolvedModel,
-      temperature: 0.2,
-      max_completion_tokens: suggestedMaxTokens || 2048,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-    });
+    const useWebSearch = !!publicSearch;
+    let draftText = "";
+    let usedModel = resolvedModel;
 
-    const draftText =
-      completion.choices?.[0]?.message?.content?.trim() || "";
+    if (useWebSearch) {
+      // ---- Branch A: Responses API + web_search -------------------
+      const response = await client.responses.create({
+        model: resolvedModel,
+        input: [
+          {
+            role: "system",
+            content: [
+              {
+                type: "input_text",
+                text: systemPrompt,
+              },
+            ],
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "input_text",
+                text: userPrompt,
+              },
+            ],
+          },
+        ],
+        tools: [
+          {
+            type: "web_search",
+          },
+        ],
+        max_output_tokens: suggestedMaxTokens || 2048,
+        temperature: 0.2,
+      });
+
+      draftText = extractTextFromResponses(response);
+      usedModel = response.model || resolvedModel;
+    } else {
+      // ---- Branch B: Chat Completions only ------------------------
+      const completion = await client.chat.completions.create({
+        model: resolvedModel,
+        temperature: 0.2,
+        max_completion_tokens: suggestedMaxTokens || 2048,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      });
+
+      draftText =
+        completion.choices?.[0]?.message?.content?.trim() || "";
+      usedModel = completion.model || resolvedModel;
+    }
 
     if (!draftText) {
-      console.error("OpenAI completion returned empty content:", completion);
+      console.error("Generate: model returned empty content");
       return res
         .status(500)
         .json({ error: "Model returned empty draft text." });
@@ -258,11 +327,14 @@ export default async function handler(req, res) {
       return 95;
     })();
 
-    // Respond with the same shape the frontend expects
+    // Respond with the shape the frontend expects
     return res.status(200).json({
       draftText,
-      label: `Version ${new Date().toISOString().slice(0, 16).replace("T", " ")}`,
-      model: resolvedModel,
+      label: `Version ${new Date()
+        .toISOString()
+        .slice(0, 16)
+        .replace("T", " ")}`,
+      model: usedModel,
       scenario: safeScenario,
       scenarioLabel,
       versionType: versionType || "complete",
