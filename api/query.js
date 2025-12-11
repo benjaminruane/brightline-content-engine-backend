@@ -86,12 +86,15 @@ export default async function handler(req, res) {
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
+    return res
+      .status(500)
+      .json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
     // Vercel / Node can supply body already parsed or as a JSON string.
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const body =
+      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
     const {
       question,
@@ -110,11 +113,14 @@ export default async function handler(req, res) {
     const systemPrompt = buildSystemPrompt();
     const userPrompt = buildUserPrompt({ question, draftText, styleGuide });
 
+    // Translate old maxTokens value (if provided) into max_completion_tokens.
+    const maxCompletionTokens =
+      typeof maxTokens === "number" && maxTokens > 0 ? maxTokens : 512;
+
     const completion = await client.chat.completions.create({
       model: modelId || "gpt-4o-mini",
       temperature: typeof temperature === "number" ? temperature : 0.3,
-      max_tokens:
-        typeof maxTokens === "number" && maxTokens > 0 ? maxTokens : 512,
+      max_completion_tokens: maxCompletionTokens,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
