@@ -179,11 +179,14 @@ export default async function handler(req, res) {
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
+    return res
+      .status(500)
+      .json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const body =
+      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
     const { draftText, modelId, maxStatements } = body;
 
@@ -198,7 +201,7 @@ export default async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: modelId || "gpt-4o-mini",
       temperature: 0,
-      max_tokens: 1400,
+      max_completion_tokens: 1400,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
