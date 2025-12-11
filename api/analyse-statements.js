@@ -44,7 +44,9 @@ You must:
 - For each statement, assign:
   - reliability: a number between 0 and 1 (inclusive). 1 = highly reliable, 0 = unreliable.
   - category: one of ["factual", "subjective", "speculative", "uncertain"].
-  - implication: a short explanation of why you assigned that reliability/category.
+  - implication: 2–3 short sentences explaining:
+      • why you assigned that reliability and category (e.g. forward-looking, incomplete data, management judgement, strong disclosure support, etc.), and
+      • what that means for how confidently the statement can be used in investor-facing materials (e.g. “safe to present as factual”, “better framed as aspiration”, “requires specific caveats”, etc.).
 - Follow the same financial writing style guide as the main system:
   - Use "USD" and English thousand separators for currency (USD 1,500,000).
   - Do not insert thousand separators in years (2025, 1999).
@@ -67,9 +69,20 @@ function buildUserPrompt({ draftText, maxStatements }) {
 
   return [
     `You will receive a block of text from an investor-facing draft document.`,
+    `Your task is to help a compliance-conscious investment writer understand which statements are strong and which are weak.`,
+    ``,
     `1. Identify up to ${maxCount} of the most important, distinct statements.`,
     `2. For each, assign reliability (0–1), category, and implication.`,
-    `3. Summarise the overall mix of statements.`,
+    `   - Focus reliability on how well-supported and precise the claim is.`,
+    `   - Use the categories consistently:`,
+    `       • "factual"      – concrete, well-supported, verifiable claims`,
+    `       • "subjective"   – opinions, qualitative judgements, tone statements`,
+    `       • "speculative"  – forward-looking or contingent claims, scenario language`,
+    `       • "uncertain"    – ambiguous, internally inconsistent, or clearly under-specified claims`,
+    `3. For implication, give 2–3 short sentences describing:`,
+    `       • why you gave that score and category (e.g. relies on unaudited data, extrapolates from limited sample, depends heavily on management judgement, etc.), and`,
+    `       • what this means for investor communication (e.g. should be softened, requires specific caveats, probably fine as-is, etc.).`,
+    `4. Summarise the overall mix of statements at the end.`,
     ``,
     `INPUT DRAFT:`,
     safeDraft.trim(),
@@ -83,7 +96,7 @@ function buildUserPrompt({ draftText, maxStatements }) {
     `  text: string;         // the atomic statement`,
     `  reliability: number;  // between 0 and 1`,
     `  category: StatementCategory;`,
-    `  implication: string;  // explanation in 1–2 short sentences`,
+    `  implication: string;  // 2–3 sentences as described above`,
     `};`,
     ``,
     `type AnalysisResult = {`,
