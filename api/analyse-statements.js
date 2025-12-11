@@ -1,9 +1,13 @@
 // api/analyse-statements.js
 //
-// Analyses a draft into atomic statements, assigns a reliability
-// score (0–1) and category to each, and returns a summary object
-// with safe defaults. Uses chat.completions.create() WITHOUT
-// response_format or tools.
+// Enhanced Statement Analysis:
+// - Splits draft into atomic statements
+// - Assigns reliability, category, implication
+// - NEW: Assigns recommendedChange (type, rationale, suggestedText)
+//   using Rewrite Style C: Aggressive clarity + precision
+//
+// No usage of tools, web search, or response_format.
+// Uses chat.completions.create() with safe fallbacks.
 
 import OpenAI from "openai";
 
@@ -11,17 +15,22 @@ import OpenAI from "openai";
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    origin === "null" ? "*" : origin
+  );
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
+
 // ------------------------------------------------------------------
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Safe defaults if analysis fails
 const EMPTY_ANALYSIS = {
   ok: true,
   summary: {
@@ -36,150 +45,164 @@ const EMPTY_ANALYSIS = {
   statements: [],
 };
 
+// Style-guide + analysis guidance
 const ANALYSIS_STYLE_GUIDE = `
-You are an analytical assistant embedded in an internal tool called "Content Engine".
+You are an analytical assistant embedded in the Content Engine.
 
-You must:
-- Split the input text into short, atomic statements.
-- For each statement, assign:
-  - reliability: a number between 0 and 1 (inclusive). 1 = highly reliable, 0 = unreliable.
-  - category: one of ["factual", "subjective", "speculative", "uncertain"].
-  - implication: 2–3 short sentences explaining:
-      • why you assigned that reliability and category (e.g. forward-looking, incomplete data, management judgement, strong disclosure support, etc.), and
-      • what that means for how confidently the statement can be used in investor-facing materials (e.g. “safe to present as factual”, “better framed as aspiration”, “requires specific caveats”, etc.).
-- Follow the same financial writing style guide as the main system:
-  - Use "USD" and English thousand separators for currency (USD 1,500,000).
-  - Do not insert thousand separators in years (2025, 1999).
-  - Prefer straight double quotes "like this".
+Your task:
+1. Split the input draft into short, atomic statements.
+2. For each statement, assign:
+   - reliability (0–1)
+   - category: "factual", "subjective", "speculative", or "uncertain"
+   - implication: 2–3 sentences explaining:
+       • why you assigned that reliability/category
+       • how the statement should be positioned in investor materials
+3. NEW: Provide recommendedChange for each statement.
+
+=======================
+REWRITE STYLE C (AGGRESSIVE CLARITY + PRECISION)
+=======================
+When proposing a suggested rewrite (recommendedChange.suggestedText):
+
+- Preserve the factual meaning.
+- Make the sentence clearer, tighter, more precise.
+- Remove vague language, filler, and unnecessary qualifiers.
+- Use clean, direct business English.
+- Do NOT invent new facts or quantify anything not already present.
+- If the existing wording is already optimal, return the same text.
+
+=======================
+RECOMMENDED CHANGE RULES
+=======================
+For each statement, assign:
+
+recommendedChange.type:
+- "none"        → if the statement is already clear, precise, and compliant.
+- "clarify"     → if the meaning is unclear or overly wordy.
+- "tighten"     → if the sentence can be made more concise while keeping full meaning.
+- "soften"      → if the tone expresses undue certainty without evidence.
+- "add_caveat"  → if the statement is factual but needs a risk/context qualifier.
+- "remove"      → if the statement is too vague or inappropriate for investor use.
+
+recommendedChange.rationale:
+- 1–2 sentences explaining why this type was chosen.
+
+recommendedChange.suggestedText:
+- A rewritten version of ONLY THAT STATEMENT.
+- Do NOT rewrite surrounding context.
+- Do NOT add numbers or facts not in the original.
+
+=======================
+JSON FORMAT (STRICT)
+=======================
+Return ONLY a valid JSON object:
+
+{
+  "summary": {
+    "totalStatements": number,
+    "byCategory": {
+      "factual": number,
+      "subjective": number,
+      "speculative": number,
+      "uncertain": number
+    }
+  },
+  "statements": [
+    {
+      "id": "s1",
+      "text": "...",
+      "reliability": 0.82,
+      "category": "factual",
+      "implication": "...",
+      "recommendedChange": {
+        "type": "tighten",
+        "rationale": "...",
+        "suggestedText": "..."
+      }
+    }
+  ]
+}
+
+DO NOT wrap in markdown. DO NOT add commentary.
 `;
 
+// Build system prompt
 function buildSystemPrompt() {
   return [
     ANALYSIS_STYLE_GUIDE,
-    `Return results as pure JSON only. Do not wrap in markdown or add commentary.`,
+    "Respond ONLY with JSON.",
   ].join("\n\n");
 }
 
+// Build user prompt
 function buildUserPrompt({ draftText, maxStatements }) {
   const safeDraft = draftText || "";
-  const maxCount =
+  const limit =
     typeof maxStatements === "number" && maxStatements > 0
       ? maxStatements
       : 40;
 
-  return [
-    `You will receive a block of text from an investor-facing draft document.`,
-    `Your task is to help a compliance-conscious investment writer understand which statements are strong and which are weak.`,
-    ``,
-    `1. Identify up to ${maxCount} of the most important, distinct statements.`,
-    `2. For each, assign reliability (0–1), category, and implication.`,
-    `   - Focus reliability on how well-supported and precise the claim is.`,
-    `   - Use the categories consistently:`,
-    `       • "factual"      – concrete, well-supported, verifiable claims`,
-    `       • "subjective"   – opinions, qualitative judgements, tone statements`,
-    `       • "speculative"  – forward-looking or contingent claims, scenario language`,
-    `       • "uncertain"    – ambiguous, internally inconsistent, or clearly under-specified claims`,
-    `3. For implication, give 2–3 short sentences describing:`,
-    `       • why you gave that score and category (e.g. relies on unaudited data, extrapolates from limited sample, depends heavily on management judgement, etc.), and`,
-    `       • what this means for investor communication (e.g. should be softened, requires specific caveats, probably fine as-is, etc.).`,
-    `4. Summarise the overall mix of statements at the end.`,
-    ``,
-    `INPUT DRAFT:`,
-    safeDraft.trim(),
-    ``,
-    `RESPONSE FORMAT (IMPORTANT):`,
-    `Respond ONLY with a single JSON object that matches this TypeScript type:`,
-    ``,
-    `type StatementCategory = "factual" | "subjective" | "speculative" | "uncertain";`,
-    `type AnalysedStatement = {`,
-    `  id: string;           // "s1", "s2", ...`,
-    `  text: string;         // the atomic statement`,
-    `  reliability: number;  // between 0 and 1`,
-    `  category: StatementCategory;`,
-    `  implication: string;  // 2–3 sentences as described above`,
-    `};`,
-    ``,
-    `type AnalysisResult = {`,
-    `  summary: {`,
-    `    totalStatements: number;`,
-    `    byCategory: {`,
-    `      factual: number;`,
-    `      subjective: number;`,
-    `      speculative: number;`,
-    `      uncertain: number;`,
-    `    };`,
-    `  };`,
-    `  statements: AnalysedStatement[];`,
-    `};`,
-    ``,
-    `Respond with valid JSON for AnalysisResult. Do NOT include backticks or any text before/after the JSON.`,
-  ].join("\n");
+  return `
+You will analyse the following investor-facing draft text.
+
+1. Extract up to ${limit} atomic statements.
+2. For each, generate:
+   - reliability (0–1)
+   - category (factual / subjective / speculative / uncertain)
+   - implication (2–3 sentences)
+   - recommendedChange (see rules above)
+
+INPUT DRAFT:
+${safeDraft.trim()}
+
+Remember:
+- JSON only.
+- No markdown.
+- No preamble.
+`;
 }
 
-/**
- * Try to parse model output as JSON safely. If parsing fails or
- * the shape is wrong, return our EMPTY_ANALYSIS instead of 500.
- */
+// --- JSON Parsing Helper ------------------------------------------
 function safeParseAnalysis(rawContent) {
   if (!rawContent || typeof rawContent !== "string") {
     return EMPTY_ANALYSIS;
   }
 
-  let jsonText = rawContent.trim();
+  let json = rawContent.trim();
 
-  // If the model accidentally wraps JSON in markdown or extra text,
-  // try to extract the first {...} block.
-  const braceMatch = jsonText.match(/\{[\s\S]*\}/);
-  if (braceMatch) {
-    jsonText = braceMatch[0];
-  }
+  // Extract first {...} block if needed
+  const match = json.match(/\{[\s\S]*\}/);
+  if (match) json = match[0];
 
   try {
-    const parsed = JSON.parse(jsonText);
-
-    if (!parsed || typeof parsed !== "object") {
-      return EMPTY_ANALYSIS;
-    }
+    const parsed = JSON.parse(json);
 
     const summary = parsed.summary || {};
     const byCategory = summary.byCategory || {};
+    const statements = Array.isArray(parsed.statements)
+      ? parsed.statements
+      : [];
 
-    const normalised = {
+    return {
       ok: true,
       summary: {
-        totalStatements:
-          typeof summary.totalStatements === "number"
-            ? summary.totalStatements
-            : Array.isArray(parsed.statements)
-            ? parsed.statements.length
-            : 0,
+        totalStatements: summary.totalStatements ?? statements.length,
         byCategory: {
-          factual:
-            typeof byCategory.factual === "number" ? byCategory.factual : 0,
-          subjective:
-            typeof byCategory.subjective === "number"
-              ? byCategory.subjective
-              : 0,
-          speculative:
-            typeof byCategory.speculative === "number"
-              ? byCategory.speculative
-              : 0,
-          uncertain:
-            typeof byCategory.uncertain === "number"
-              ? byCategory.uncertain
-              : 0,
+          factual: byCategory.factual || 0,
+          subjective: byCategory.subjective || 0,
+          speculative: byCategory.speculative || 0,
+          uncertain: byCategory.uncertain || 0,
         },
       },
-      statements: Array.isArray(parsed.statements) ? parsed.statements : [],
+      statements,
     };
-
-    return normalised;
   } catch (err) {
-    console.error("Failed to parse analysis JSON:", err);
+    console.error("JSON parse failed:", err);
     return EMPTY_ANALYSIS;
   }
 }
 
+// --- Handler -------------------------------------------------------
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -199,12 +222,13 @@ export default async function handler(req, res) {
 
   try {
     const body =
-      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      typeof req.body === "string"
+        ? JSON.parse(req.body || "{}")
+        : req.body || {};
 
     const { draftText, modelId, maxStatements } = body;
 
-    if (!draftText || typeof draftText !== "string" || draftText.trim().length === 0) {
-      // For empty or missing draft, return a safe empty analysis instead of 400/500.
+    if (!draftText || typeof draftText !== "string") {
       return res.status(200).json(EMPTY_ANALYSIS);
     }
 
@@ -214,30 +238,24 @@ export default async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: modelId || "gpt-4o-mini",
       temperature: 0,
-      max_completion_tokens: 1400,
+      max_completion_tokens: 1800,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
     });
 
-    const message = completion.choices?.[0]?.message;
-    const rawContent = message?.content || "";
-
-    const analysis = safeParseAnalysis(rawContent);
+    const raw = completion.choices?.[0]?.message?.content || "";
+    const analysis = safeParseAnalysis(raw);
 
     return res.status(200).json({
       ...analysis,
       model: completion.model || null,
-      usage: {
-        promptTokens: completion.usage?.prompt_tokens ?? null,
-        completionTokens: completion.usage?.completion_tokens ?? null,
-        totalTokens: completion.usage?.total_tokens ?? null,
-      },
+      usage: completion.usage || null,
     });
   } catch (err) {
-    console.error("Statement analysis /api/analyse-statements error:", err);
-    // Even if OpenAI fails, we still return a safe empty analysis with an error flag.
+    console.error("Statement Analysis error:", err);
+
     return res.status(200).json({
       ...EMPTY_ANALYSIS,
       ok: false,
