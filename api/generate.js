@@ -1,76 +1,133 @@
-// /api/generate.js
+// api/generate.js
 //
-// Generates a new draft based on scenario, sources and settings.
-// Uses Chat Completions. Applies house style rules on the output.
+// Generates a new draft based on the selected output types, scenario,
+// notes and attached sources. Uses OpenAI chat.completions.create()
+// with no tools, no response_format, and returns a single draftText
+// string plus basic metadata.
 
 import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin === "null" ? "*" : origin
-  );
+  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 // ------------------------------------------------------------------
 
-// Small helper to cap how much text we send to the model per source
-function truncateText(text, maxChars = 8000) {
-  if (!text || typeof text !== "string") return "";
-  if (text.length <= maxChars) return text;
-  return text.slice(0, maxChars);
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Shared style-guide instructions
+const STYLE_GUIDE_INSTRUCTIONS = `
+You are part of an internal writing tool called "Content Engine".
+
+Follow this style guide in all outputs:
+
+- Currency:
+  - Use "USD" followed by a space and a number with standard English thousand separators.
+    Example: USD 1,500,000.
+- Years:
+  - Do NOT insert thousand separators into years: 2025, 1999.
+- Quotation marks:
+  - Prefer straight double quotes "like this" for titles, terms, and citations.
+  - Use single quotes only for quotes-within-quotes.
+- Tone:
+  - Clear, concise, neutral, professional.
+`;
+
+function buildSystemPrompt() {
+  return [
+    `You are the draft-generation assistant for the Content Engine.`,
+    `You create high-quality investor-facing drafts using the user's scenario, notes, output types and attached sources.`,
+    `If the user has selected multiple output types, structure the draft in a way that satisfies them all.`,
+    STYLE_GUIDE_INSTRUCTIONS,
+  ].join("\n\n");
 }
 
-// Approximate tokens from desired word count
-function approximateTokensFromWords(wordCount) {
-  if (!wordCount || typeof wordCount !== "number") return null;
-  return Math.round(wordCount / 0.75);
-}
+function buildUserPrompt({
+  title,
+  notes,
+  scenario,
+  selectedTypes,
+  versionType,
+  maxWords,
+  sources,
+}) {
+  const safeTitle = (title || "").trim();
+  const safeNotes = (notes || "").trim();
+  const safeScenario = (scenario || "").trim();
 
-// House-style enforcement: currencies, quotes, separators
-function applyHouseStyle(text) {
-  if (!text || typeof text !== "string") return text;
-  let out = text;
+  const typesLabel =
+    Array.isArray(selectedTypes) && selectedTypes.length > 0
+      ? selectedTypes.join(", ")
+      : "[none specified]";
 
-  // Normalise curly quotes to straight
-  out = out.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+  const versionLabel = versionType || "initial";
 
-  // Currency shortcuts -> long form (very approximate but helpful)
-  // $10m / $10M -> USD 10 million
-  out = out.replace(/\$\s?(\d+(?:\.\d+)?)\s?[mM]\b/g, (m, num) => {
-    return `USD ${num} million`;
-  });
+  const maxWordsInstruction =
+    typeof maxWords === "number" && maxWords > 0
+      ? `Aim for no more than ${maxWords} words overall.`
+      : `Use your judgment on length: concise, but sufficiently detailed for an investor audience.`;
 
-  // S$10m -> SGD 10 million
-  out = out.replace(/S\$\s?(\d+(?:\.\d+)?)\s?[mM]\b/g, (m, num) => {
-    return `SGD ${num} million`;
-  });
+  // Concatenate source snippets into a single context block.
+  const sourceSummaries = Array.isArray(sources)
+    ? sources
+        .filter((s) => s && typeof s.text === "string" && s.text.trim().length > 0)
+        .map((s, idx) => {
+          const name = s.name || `Source ${idx + 1}`;
+          const kind = s.kind || "document";
+          const urlPart = s.url ? ` (URL: ${s.url})` : "";
+          const snippet = s.text.trim();
+          const truncated =
+            snippet.length > 4000 ? snippet.slice(0, 4000) + " [...]" : snippet;
 
-  // Plain S$ amounts -> SGD xx (keep number as-is)
-  out = out.replace(/S\$\s?([\d,.]+)\b/g, (m, num) => {
-    return `SGD ${num}`;
-  });
+          return [
+            `--- SOURCE ${idx + 1} ---`,
+            `Name: ${name}`,
+            `Kind: ${kind}${urlPart}`,
+            ``,
+            truncated,
+          ].join("\n");
+        })
+    : [];
 
-  // €10m -> EUR 10 million
-  out = out.replace(/[€]\s?(\d+(?:\.\d+)?)\s?[mM]\b/g, (m, num) => {
-    return `EUR ${num} million`;
-  });
+  const sourcesBlock =
+    sourceSummaries.length > 0
+      ? sourceSummaries.join("\n\n")
+      : "[No detailed source text was provided. Write in general but realistic terms, and do not invent specific numbers that are not implied by the notes.]";
 
-  // Bare $ amounts -> USD
-  out = out.replace(/\$\s?([\d,.]+)\b/g, (m, num) => {
-    return `USD ${num}`;
-  });
-
-  return out;
+  return [
+    `TITLE:`,
+    safeTitle || "[No explicit title provided]",
+    "",
+    `SCENARIO / CONTEXT:`,
+    safeScenario || "[No explicit scenario provided]",
+    "",
+    `NOTES FROM USER:`,
+    safeNotes || "[No additional notes provided]",
+    "",
+    `REQUESTED OUTPUT TYPES:`,
+    typesLabel,
+    "",
+    `VERSION TYPE:`,
+    versionLabel,
+    "",
+    `ATTACHED SOURCES (summarised):`,
+    sourcesBlock,
+    "",
+    `INSTRUCTIONS:`,
+    `- Produce a single coherent draft suitable for an investor-facing document.`,
+    `- Make sure the draft clearly corresponds to the requested output types (e.g. executive summary, talking points, etc.).`,
+    `- Do not fabricate highly specific data (valuations, returns, dates, counterparties) unless they are either:`,
+    `  (a) explicitly given in the sources or notes, or`,
+    `  (b) clearly illustrative placeholders (e.g. "XX%" or "USD X million").`,
+    `- ${maxWordsInstruction}`,
+  ].join("\n");
 }
 
 export default async function handler(req, res) {
@@ -84,7 +141,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  if (!process.env.OPENAI_API_KEY) {
+    return res
+      .status(500)
+      .json({ error: "Missing OPENAI_API_KEY environment variable" });
+  }
+
   try {
+    const body =
+      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+
     const {
       title,
       notes,
@@ -93,207 +159,86 @@ export default async function handler(req, res) {
       versionType,
       maxWords,
       model,
-      publicSearch, // currently ignored – GENERATE is offline
+      // The frontend may still send publicSearch; we ignore it for now.
+      // publicSearch,
       sources,
-    } = req.body || {};
+    } = body;
 
-    if (!Array.isArray(selectedTypes) || selectedTypes.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "At least one output type must be selected." });
-    }
-
-    const safeScenario = typeof scenario === "string" ? scenario : "generic";
-    const safeTitle = typeof title === "string" ? title.trim() : "";
-    const safeNotes = typeof notes === "string" ? notes.trim() : "";
-
-    const safeSources = Array.isArray(sources) ? sources : [];
-
-    if (safeSources.length === 0) {
+    // Basic validation: we need at least one output type and one source.
+    if (
+      !Array.isArray(selectedTypes) ||
+      selectedTypes.length === 0 ||
+      !Array.isArray(sources) ||
+      sources.length === 0
+    ) {
       return res.status(400).json({
-        error: "At least one source is required to generate a draft.",
+        error:
+          "Missing selectedTypes or sources. At least one output type and one source are required.",
       });
     }
 
-    const sourceSummaries = safeSources.map((s, idx) => {
-      const label = s.name || s.url || `Source ${idx + 1}`;
-      const text =
-        typeof s.text === "string" ? truncateText(s.text, 8000) : "";
-      return `Source ${idx + 1} – ${label}:\n${text}`;
+    const systemPrompt = buildSystemPrompt();
+    const userPrompt = buildUserPrompt({
+      title,
+      notes,
+      scenario,
+      selectedTypes,
+      versionType,
+      maxWords:
+        typeof maxWords === "number" && Number.isFinite(maxWords)
+          ? maxWords
+          : null,
+      sources,
     });
-
-    const sourcesBlock = sourceSummaries.join("\n\n-----\n\n");
-
-    const scenarioLabelMap = {
-      new_investment: "New direct investment",
-      exit_realisation: "Direct investment exit",
-      revaluation: "Direct investment revaluation",
-      new_fund_commitment: "New fund commitment",
-      fund_capital_call: "Fund capital call",
-      fund_distribution: "Fund distribution",
-    };
-
-    const scenarioLabel =
-      scenarioLabelMap[safeScenario] || "Investment-related event";
-
-    const versionLabel =
-      versionType === "public"
-        ? "Public / externally safe version"
-        : "Complete internal version";
-
-    // Word-limit prompting & token budget
-    let lengthGuidance = "";
-    let suggestedMaxTokens = 1024;
-
-    if (typeof maxWords === "number" && maxWords > 0) {
-      const rounded = Math.max(50, Math.round(maxWords));
-      const approxTokens = approximateTokensFromWords(rounded);
-      suggestedMaxTokens = approxTokens
-        ? Math.min(approxTokens + 200, 2500)
-        : 1200;
-
-      lengthGuidance =
-        `Target length: around ${rounded} words (soft ceiling). ` +
-        `Do not exceed ${rounded} words by more than ~10–15%. ` +
-        `If you can answer fully in fewer words, prefer being concise.`;
-    } else {
-      lengthGuidance =
-        "Write a clear, well-structured draft. Be concise but complete.";
-      suggestedMaxTokens = 1200;
-    }
-
-    const selectedTypeLabels = selectedTypes.map((t) => {
-      switch (t) {
-        case "transaction_text":
-          return "Transaction text";
-        case "investment_note":
-          return "Investor letter";
-        case "press_release":
-          return "Press release";
-        case "linkedin_post":
-          return "LinkedIn post";
-        default:
-          return t;
-      }
-    });
-
-    const resolvedModel =
-      typeof model === "string" && model.trim().length > 0
-        ? model.trim()
-        : "gpt-4.1-mini";
-
-    const systemPrompt = [
-      "You are a specialist writer for private markets investment content.",
-      "You draft high-quality, professional text for investors and internal stakeholders.",
-      "",
-      "HOUSE STYLE (MUST FOLLOW):",
-      "- Currency:",
-      "  • Write '$10m' as 'USD 10 million'.",
-      "  • Write 'S$10m' as 'SGD 10 million'.",
-      "  • Write '$5.5m' as 'USD 5.5 million'.",
-      "  • Use 'USD', 'SGD', 'EUR', etc. – never bare '$' or 'S$'.",
-      "- Numbers:",
-      "  • Use normal thousand separators for large numbers where helpful.",
-      "  • Never use separators in calendar years (e.g. '2025', not '2,025').",
-      "- Punctuation:",
-      "  • Use straight quotes \"\" rather than curly quotation marks.",
-      "",
-      "General quality requirements:",
-      "- Clear structure, short paragraphs.",
-      "- Plain, professional English.",
-      "- Avoid marketing hype; focus on clarity and substance.",
-      "",
-      "Compliance:",
-      "- Avoid strongly forward-looking statements unless clearly labelled as views.",
-      "- Do not cherry-pick information; keep the balance of facts fair and accurate.",
-    ].join("\n");
-
-    const userLines = [];
-
-    if (safeTitle) {
-      userLines.push(`INTERNAL EVENT TITLE:\n${safeTitle}`);
-    }
-
-    userLines.push(`SCENARIO:\n${scenarioLabel}`);
-    userLines.push(
-      `REQUESTED OUTPUT TYPES:\n${selectedTypeLabels.join(", ")}`
-    );
-    userLines.push(`VERSION TYPE:\n${versionLabel}`);
-
-    if (safeNotes) {
-      userLines.push(`INSTRUCTIONS / CONSTRAINTS:\n${safeNotes}`);
-    }
-
-    if (lengthGuidance) {
-      userLines.push(`LENGTH GUIDANCE:\n${lengthGuidance}`);
-    }
-
-    userLines.push("SOURCE MATERIAL (EXCERPTED – DO NOT HALLUCINATE):");
-    userLines.push(sourcesBlock);
-
-    userLines.push(
-      [
-        "TASK:",
-        "- Based on the scenario, requested output types, version type and sources,",
-        "  write the requested draft text.",
-        "- If multiple output types are requested, structure the response so that",
-        "  each type is clearly separated and labelled (e.g. headings).",
-        "- Do not include any meta commentary about the drafting process.",
-        "- Apply the house style rules strictly.",
-      ].join("\n")
-    );
-
-    const userPrompt = userLines.join("\n\n");
 
     const completion = await client.chat.completions.create({
-      model: resolvedModel,
-      temperature: 0.2,
-      max_completion_tokens: suggestedMaxTokens || 2048,
+      model: model || "gpt-4o-mini",
+      temperature: 0.3,
+      max_tokens: 2048,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
     });
 
-    let draftText =
-      completion.choices?.[0]?.message?.content?.trim() || "";
+    const message = completion.choices?.[0]?.message;
+    const draftText = (message?.content || "").trim();
 
     if (!draftText) {
-      console.error("OpenAI completion returned empty content:", completion);
-      return res
-        .status(500)
-        .json({ error: "Model returned empty draft text." });
+      // Do NOT throw a 500 here; return a graceful 200 with an error instead.
+      return res.status(200).json({
+        ok: false,
+        draftText: "",
+        error: "Model returned empty draft text.",
+        model: completion.model || null,
+        usage: {
+          promptTokens: completion.usage?.prompt_tokens ?? null,
+          completionTokens: completion.usage?.completion_tokens ?? null,
+          totalTokens: completion.usage?.total_tokens ?? null,
+        },
+      });
     }
 
-    // Apply house style post-processing as extra guardrail
-    draftText = applyHouseStyle(draftText);
-
-    const lengthScore = (() => {
-      const len = draftText.length;
-      if (len < 400) return 60;
-      if (len < 800) return 70;
-      if (len < 1200) return 80;
-      if (len < 2000) return 90;
-      return 95;
-    })();
-
     return res.status(200).json({
+      ok: true,
       draftText,
-      label: `Version ${new Date()
-        .toISOString()
-        .slice(0, 16)
-        .replace("T", " ")}`,
-      model: resolvedModel,
-      scenario: safeScenario,
-      scenarioLabel,
-      versionType: versionType || "complete",
-      score: lengthScore,
+      score: null, // frontend will compute score client-side via scoreDraft()
+      model: completion.model || null,
+      usage: {
+        promptTokens: completion.usage?.prompt_tokens ?? null,
+        completionTokens: completion.usage?.completion_tokens ?? null,
+        totalTokens: completion.usage?.total_tokens ?? null,
+      },
     });
   } catch (err) {
-    console.error("Error in /api/generate:", err);
+    console.error("/api/generate error:", err);
+    const message =
+      err && typeof err === "object" && "message" in err
+        ? err.message
+        : "Unknown error";
     return res.status(500).json({
       error: "Failed to generate draft",
-      details: err?.response?.data || err?.message || String(err),
+      details: message,
     });
   }
 }
