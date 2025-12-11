@@ -1,32 +1,171 @@
-// /api/analyse-statements.js
+// api/analyse-statements.js
 //
-// Analyses a draft into atomic statements, gives each a reliability band,
-// and always uses web search to cross-check. Returns:
-//   {
-//     statements: [{ id, text, reliability, band, implication }],
-//     summary,
-//     references: [{ url, title }]
-//   }
+// Analyses a draft into atomic statements, assigns a reliability
+// score (0–1) and category to each, and returns a summary object
+// with safe defaults. Uses chat.completions.create() WITHOUT
+// response_format or tools.
 
 import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
 
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin === "null" ? "*" : origin
-  );
+  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 // ------------------------------------------------------------------
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const EMPTY_ANALYSIS = {
+  ok: true,
+  summary: {
+    totalStatements: 0,
+    byCategory: {
+      factual: 0,
+      subjective: 0,
+      speculative: 0,
+      uncertain: 0,
+    },
+  },
+  statements: [],
+};
+
+const ANALYSIS_STYLE_GUIDE = `
+You are an analytical assistant embedded in an internal tool called "Content Engine".
+
+You must:
+- Split the input text into short, atomic statements.
+- For each statement, assign:
+  - reliability: a number between 0 and 1 (inclusive). 1 = highly reliable, 0 = unreliable.
+  - category: one of ["factual", "subjective", "speculative", "uncertain"].
+  - implication: a short explanation of why you assigned that reliability/category.
+- Follow the same financial writing style guide as the main system:
+  - Use "USD" and English thousand separators for currency (USD 1,500,000).
+  - Do not insert thousand separators in years (2025, 1999).
+  - Prefer straight double quotes "like this".
+`;
+
+function buildSystemPrompt() {
+  return [
+    ANALYSIS_STYLE_GUIDE,
+    `Return results as pure JSON only. Do not wrap in markdown or add commentary.`,
+  ].join("\n\n");
+}
+
+function buildUserPrompt({ draftText, maxStatements }) {
+  const safeDraft = draftText || "";
+  const maxCount =
+    typeof maxStatements === "number" && maxStatements > 0
+      ? maxStatements
+      : 40;
+
+  return [
+    `You will receive a block of text from an investor-facing draft document.`,
+    `1. Identify up to ${maxCount} of the most important, distinct statements.`,
+    `2. For each, assign reliability (0–1), category, and implication.`,
+    `3. Summarise the overall mix of statements.`,
+    ``,
+    `INPUT DRAFT:`,
+    safeDraft.trim(),
+    ``,
+    `RESPONSE FORMAT (IMPORTANT):`,
+    `Respond ONLY with a single JSON object that matches this TypeScript type:`,
+    ``,
+    `type StatementCategory = "factual" | "subjective" | "speculative" | "uncertain";`,
+    `type AnalysedStatement = {`,
+    `  id: string;           // "s1", "s2", ...`,
+    `  text: string;         // the atomic statement`,
+    `  reliability: number;  // between 0 and 1`,
+    `  category: StatementCategory;`,
+    `  implication: string;  // explanation in 1–2 short sentences`,
+    `};`,
+    ``,
+    `type AnalysisResult = {`,
+    `  summary: {`,
+    `    totalStatements: number;`,
+    `    byCategory: {`,
+    `      factual: number;`,
+    `      subjective: number;`,
+    `      speculative: number;`,
+    `      uncertain: number;`,
+    `    };`,
+    `  };`,
+    `  statements: AnalysedStatement[];`,
+    `};`,
+    ``,
+    `Respond with valid JSON for AnalysisResult. Do NOT include backticks or any text before/after the JSON.`,
+  ].join("\n");
+}
+
+/**
+ * Try to parse model output as JSON safely. If parsing fails or
+ * the shape is wrong, return our EMPTY_ANALYSIS instead of 500.
+ */
+function safeParseAnalysis(rawContent) {
+  if (!rawContent || typeof rawContent !== "string") {
+    return EMPTY_ANALYSIS;
+  }
+
+  let jsonText = rawContent.trim();
+
+  // If the model accidentally wraps JSON in markdown or extra text,
+  // try to extract the first {...} block.
+  const braceMatch = jsonText.match(/\{[\s\S]*\}/);
+  if (braceMatch) {
+    jsonText = braceMatch[0];
+  }
+
+  try {
+    const parsed = JSON.parse(jsonText);
+
+    if (!parsed || typeof parsed !== "object") {
+      return EMPTY_ANALYSIS;
+    }
+
+    const summary = parsed.summary || {};
+    const byCategory = summary.byCategory || {};
+
+    const normalised = {
+      ok: true,
+      summary: {
+        totalStatements:
+          typeof summary.totalStatements === "number"
+            ? summary.totalStatements
+            : Array.isArray(parsed.statements)
+            ? parsed.statements.length
+            : 0,
+        byCategory: {
+          factual:
+            typeof byCategory.factual === "number" ? byCategory.factual : 0,
+          subjective:
+            typeof byCategory.subjective === "number"
+              ? byCategory.subjective
+              : 0,
+          speculative:
+            typeof byCategory.speculative === "number"
+              ? byCategory.speculative
+              : 0,
+          uncertain:
+            typeof byCategory.uncertain === "number"
+              ? byCategory.uncertain
+              : 0,
+        },
+      },
+      statements: Array.isArray(parsed.statements) ? parsed.statements : [],
+    };
+
+    return normalised;
+  } catch (err) {
+    console.error("Failed to parse analysis JSON:", err);
+    return EMPTY_ANALYSIS;
+  }
+}
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
@@ -39,169 +178,54 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
+  }
+
   try {
-    const { text, model } = req.body || {};
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
-    const safeText = typeof text === "string" ? text.trim() : "";
+    const { draftText, modelId, maxStatements } = body;
 
-    if (!safeText) {
-      return res.status(400).json({
-        error: "Draft text is required for statement analysis.",
-      });
+    if (!draftText || typeof draftText !== "string" || draftText.trim().length === 0) {
+      // For empty or missing draft, return a safe empty analysis instead of 400/500.
+      return res.status(200).json(EMPTY_ANALYSIS);
     }
 
-    const resolvedModel =
-      typeof model === "string" && model.trim()
-        ? model.trim()
-        : "gpt-4.1-mini";
+    const systemPrompt = buildSystemPrompt();
+    const userPrompt = buildUserPrompt({ draftText, maxStatements });
 
-    const systemPrompt = [
-      "You are a reliability analyst for investment write-ups.",
-      "",
-      "You must:",
-      "1) Split the draft into short, atomic statements (1 key idea each).",
-      "2) For each statement, assign a reliability score 0–1.",
-      "3) Put the statement into a band:",
-      "   - 'green'   : well grounded and consistent with mainstream evidence.",
-      "   - 'yellow'  : plausible but partly speculative or incomplete.",
-      "   - 'red'     : clearly speculative, contradicted, or misleading.",
-      "4) Briefly explain WHY in an 'implication' string (e.g.",
-      "   'speculative because...' or 'contradicted by newer data...').",
-      "",
-      "Use web search to validate numbers, dates and named facts.",
-      "However, when good data is not available, you may keep 'yellow'",
-      "with a cautious implication.",
-    ].join("\n");
-
-    const userPrompt = [
-      "DRAFT TEXT TO ANALYSE:",
-      safeText,
-      "",
-      "TASK:",
-      "- Return a JSON object with this exact shape:",
-      "",
-      "{",
-      '  "statements": [',
-      '    { "id": 1, "text": "...", "reliability": 0.0-1.0, "band": "green|yellow|red", "implication": "..." },',
-      "    ...",
-      "  ],",
-      '  "summary": "Very short summary of key reliability concerns.",',
-      '  "notes": "Optional longer notes for the author."',
-      "}",
-      "",
-      "- Make 8–25 statements depending on draft length.",
-      "- Prefer shorter statements (1–2 lines each).",
-      "- Use web search to validate where helpful.",
-    ].join("\n");
-
-    const response = await client.responses.create({
-      model: resolvedModel,
-      input: userPrompt,
-      tools: [
-        {
-          type: "web_search",
-          web_search: {
-            max_results: 4,
-          },
-        },
+    const completion = await client.chat.completions.create({
+      model: modelId || "gpt-4o-mini",
+      temperature: 0,
+      max_tokens: 1400,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
       ],
-      max_output_tokens: 900,
-      response_format: { type: "json_object" },
     });
 
-    const firstOutput = response.output?.[0];
-    let jsonText = "";
+    const message = completion.choices?.[0]?.message;
+    const rawContent = message?.content || "";
 
-    if (
-      firstOutput &&
-      firstOutput.content &&
-      firstOutput.content[0]?.type === "output_text"
-    ) {
-      jsonText = firstOutput.content[0].text?.value || "";
-    }
-
-    if (!jsonText.trim()) {
-      console.error(
-        "analyse-statements: empty JSON output from Responses API",
-        response
-      );
-      return res
-        .status(500)
-        .json({ error: "Model returned empty analysis." });
-    }
-
-    let parsed;
-    try {
-      parsed = JSON.parse(jsonText);
-    } catch (err) {
-      console.error("Failed to parse JSON from analysis:", err, jsonText);
-      return res.status(500).json({
-        error: "Failed to parse analysis JSON.",
-      });
-    }
-
-    const statements = Array.isArray(parsed.statements)
-      ? parsed.statements
-      : [];
-
-    // Normalise / fill IDs + bands
-    const normalised = statements.map((s, idx) => {
-      const id =
-        typeof s.id === "number" && Number.isFinite(s.id)
-          ? s.id
-          : idx + 1;
-      const reliability =
-        typeof s.reliability === "number" &&
-        s.reliability >= 0 &&
-        s.reliability <= 1
-          ? s.reliability
-          : 0.7;
-
-      let band = "yellow";
-      if (reliability >= 0.9) band = "green";
-      else if (reliability < 0.75) band = "red";
-
-      return {
-        id,
-        text: s.text || "",
-        reliability,
-        band: s.band || band,
-        implication: s.implication || "",
-      };
-    });
-
-    // Extract web references (URLs + titles) from annotations
-    const referencesMap = new Map();
-    const annotations =
-      firstOutput?.content?.[0]?.text?.annotations || [];
-
-    for (const ann of annotations) {
-      const url = ann?.url;
-      const title = ann?.title || ann?.site_name;
-      if (url) {
-        const key = url;
-        if (!referencesMap.has(key)) {
-          referencesMap.set(key, {
-            url,
-            title: title || url,
-          });
-        }
-      }
-    }
-
-    const references = Array.from(referencesMap.values());
+    const analysis = safeParseAnalysis(rawContent);
 
     return res.status(200).json({
-      statements: normalised,
-      summary: parsed.summary || "",
-      notes: parsed.notes || "",
-      references,
+      ...analysis,
+      model: completion.model || null,
+      usage: {
+        promptTokens: completion.usage?.prompt_tokens ?? null,
+        completionTokens: completion.usage?.completion_tokens ?? null,
+        totalTokens: completion.usage?.total_tokens ?? null,
+      },
     });
   } catch (err) {
-    console.error("Error in /api/analyse-statements:", err);
-    return res.status(500).json({
+    console.error("Statement analysis /api/analyse-statements error:", err);
+    // Even if OpenAI fails, we still return a safe empty analysis with an error flag.
+    return res.status(200).json({
+      ...EMPTY_ANALYSIS,
+      ok: false,
       error: "Failed to analyse statements",
-      details: err?.response?.data || err?.message || String(err),
     });
   }
 }
