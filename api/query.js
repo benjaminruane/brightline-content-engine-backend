@@ -2,18 +2,13 @@
 //
 // Ask AI endpoint for Content Engine.
 // - Uses OpenAI chat.completions.create() (no tools, no response_format).
-// - Web search is ALWAYS ON by default if TAVILY_API_KEY is present.
-// - Smart query construction:
-//     • If question is clearly "about the draft entity", search with the draft subject.
-//     • If question is clearly general/macro, search question-only.
-//     • If ambiguous, include a light subject hint (not the full draft).
-// - Robust answer extraction (handles string or structured content).
+// - Web search is ON by default if TAVILY_API_KEY is present, unless publicSearch === false.
+// - Supports modeOverride: "auto" | "draft_about" | "general".
+// - Returns { ok, answer, references[], meta{draftSubject, mode} }.
 
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Tavily configuration
 const TAVILY_API_URL = "https://api.tavily.com/search";
@@ -38,7 +33,7 @@ Follow this style guide in all answers:
 - Years:
   - Do NOT insert thousand separators into years: 2025, 1999.
 - Quotation marks:
-  - Prefer straight double quotes "like this" for titles, terms, and citations.
+  - Prefer straight double quotes "like this".
   - Use single quotes only for quotes-within-quotes.
 - Tone:
   - Clear, concise, neutral, professional.
@@ -49,19 +44,14 @@ Follow this style guide in all answers:
 function extractAssistantText(message) {
   if (!message) return "";
   const c = message.content;
-
   if (typeof c === "string") return c;
 
-  // Some SDK/model combos may return content as an array of parts.
   if (Array.isArray(c)) {
     const parts = c
       .map((p) => {
         if (!p) return "";
         if (typeof p === "string") return p;
         if (typeof p === "object") {
-          // Common shapes:
-          // { type: "text", text: "..." }
-          // { text: "..." }
           if (typeof p.text === "string") return p.text;
           if (typeof p.content === "string") return p.content;
         }
@@ -74,39 +64,32 @@ function extractAssistantText(message) {
   return "";
 }
 
-// Attempt to infer the draft "subject" (e.g., company/fund/asset name).
-// This is deliberately lightweight (no extra model call).
 function inferDraftSubject({ title, draftText }) {
   const t = (title || "").trim();
-  if (t && t.length >= 3) {
-    // Use title as the best available subject hint.
-    // Keep it short (avoid entire titles with punctuation-heavy templates).
-    return t.length > 80 ? t.slice(0, 80).trim() : t;
-  }
+  if (t && t.length >= 3) return t.length > 80 ? t.slice(0, 80).trim() : t;
 
   const text = (draftText || "").trim();
   if (!text) return null;
 
-  // Heuristic #1: look for patterns like "Pinterest (NYSE: PINS)" or "Pinterest, Inc."
-  const m1 = text.match(/\b([A-Z][A-Za-z0-9&.\-]{2,})(?:\s*,\s*Inc\.|\s*\(|\s*(?:Ltd\.|Limited|PLC|plc|AG|SA|S\.A\.|GmbH)\b)/);
+  const m1 = text.match(
+    /\b([A-Z][A-Za-z0-9&.\-]{2,})(?:\s*,\s*Inc\.|\s*\(|\s*(?:Ltd\.|Limited|PLC|plc|AG|SA|S\.A\.|GmbH)\b)/
+  );
   if (m1 && m1[1]) return m1[1].trim();
 
-  // Heuristic #2: grab the first repeated capitalised token that appears multiple times.
-  // This catches cases like "Pinterest" in an investment memo.
   const tokens = text.match(/\b[A-Z][a-zA-Z0-9&.\-]{2,}\b/g) || [];
   const freq = new Map();
-  for (const tok of tokens.slice(0, 300)) {
-    const key = tok;
-    freq.set(key, (freq.get(key) || 0) + 1);
-  }
+  for (const tok of tokens.slice(0, 300)) freq.set(tok, (freq.get(tok) || 0) + 1);
+
   let best = null;
   let bestCount = 0;
   for (const [k, c] of freq.entries()) {
-    // Avoid generic words
     const lower = k.toLowerCase();
-    if (["the", "and", "for", "with", "this", "that", "company", "fund", "group", "management"].includes(lower)) {
+    if (
+      ["the", "and", "for", "with", "this", "that", "company", "fund", "group", "management"].includes(
+        lower
+      )
+    )
       continue;
-    }
     if (c > bestCount) {
       best = k;
       bestCount = c;
@@ -117,15 +100,10 @@ function inferDraftSubject({ title, draftText }) {
   return null;
 }
 
-// Decide whether question is:
-// - "draft_about" (implicitly refers to the subject in the draft)
-// - "general" (macro/industry question, not about the draft)
-// - "ambiguous"
 function classifyQuestion(question, draftSubject) {
   const q = (question || "").trim().toLowerCase();
   if (!q) return "ambiguous";
 
-  // Strong "general research" indicators
   const generalSignals = [
     "recent trends",
     "market",
@@ -133,46 +111,28 @@ function classifyQuestion(question, draftSubject) {
     "macro",
     "outlook",
     "forecast",
-    "headwinds",
-    "tailwinds",
     "interest rates",
     "inflation",
-    "private equity",
-    "venture capital",
-    "fundraising",
-    "real estate",
-    "credit",
-    "spreads",
     "gdp",
     "recession",
-    "in 2024",
-    "in 2025",
-    "2024–2025",
-    "2024-2025",
     "global",
     "worldwide",
-    "in europe",
-    "in the us",
-    "in asia",
+    "in 2024",
+    "in 2025",
   ];
 
-  // Strong "about the draft entity" indicators (implicit subject)
   const draftSignals = [
     "the company",
     "this company",
     "the firm",
     "this firm",
     "the business",
-    "this business",
-    "the issuer",
-    "the target",
-    "the acquirer",
+    "issuer",
+    "target",
+    "acquirer",
     "the fund",
     "the asset",
-    "it ",
-    "its ",
     "when was it founded",
-    "when was the company founded",
     "founded",
     "headquartered",
     "headquarters",
@@ -180,30 +140,21 @@ function classifyQuestion(question, draftSubject) {
     "ticker",
     "market cap",
     "revenue",
-    "customers",
     "competitors",
   ];
 
   const hasGeneral = generalSignals.some((s) => q.includes(s));
   const hasDraft = draftSignals.some((s) => q.includes(s));
 
-  // If user explicitly names the draft subject, treat as draft_about.
   if (draftSubject) {
     const subj = draftSubject.toLowerCase();
     if (subj.length >= 3 && q.includes(subj)) return "draft_about";
   }
 
-  // If clearly general and not clearly draft-about → general
   if (hasGeneral && !hasDraft) return "general";
-
-  // If clearly draft-about and we have a subject to anchor → draft_about
   if (hasDraft && draftSubject) return "draft_about";
 
-  // If both signals present:
-  // - Prefer general for macro trend questions (reduces hijacking),
-  // - Prefer draft_about for identity/facts (founded/CEO/HQ) if subject exists.
   if (hasGeneral && hasDraft) {
-    // If question looks like identity/facts, prefer draft_about.
     const identitySignals = ["founded", "ceo", "headquartered", "headquarters", "ticker", "market cap"];
     const hasIdentity = identitySignals.some((s) => q.includes(s));
     if (hasIdentity && draftSubject) return "draft_about";
@@ -213,53 +164,24 @@ function classifyQuestion(question, draftSubject) {
   return "ambiguous";
 }
 
-// Build Tavily query based on classification
 function buildWebSearchQuery({ question, draftSubject, mode }) {
   const q = (question || "").trim();
   const subj = (draftSubject || "").trim();
-
   if (!q) return "";
 
-  if (mode === "draft_about") {
-    // Anchor search on the subject explicitly.
-    // Example: "Pinterest when founded"
-    return subj ? `${subj} ${q}` : q;
-  }
-
-  if (mode === "general") {
-    // Question-only for macro/general questions.
-    return q;
-  }
-
-  // Ambiguous: use question + a light subject hint if available (NOT full draft).
-  if (subj) return `${q} (context: ${subj})`;
-  return q;
+  if (mode === "draft_about") return subj ? `${subj} ${q}` : q;
+  if (mode === "general") return q;
+  return subj ? `${q} (context: ${subj})` : q;
 }
-
-// ------------------------- Prompt building -------------------------
 
 function buildSystemPrompt() {
   return [
     `You are the "Ask AI" assistant embedded in the Content Engine application.`,
-    `You answer targeted questions about a draft document and, where provided, web search results.`,
-        `Always format your answer in clean, consistent Markdown using the following template:
-
-## Answer
-- Start with 3–7 bullet points if possible.
-- Use **bold** labels for key fields (e.g., **Date**, **Amount**, **Investors**, **Definition**, **Implication**).
-- Use short paragraphs with a blank line between them.
-
-## What I'm basing this on
-- Separate what comes from the draft vs what comes from web sources.
-- If something is unknown, say exactly what's missing.
-
-## Sources used
-- Do NOT paste URLs here (the UI will show them).
-- When citing, use numeric markers like [1], [2] in the body.`,
-
-    `If the user question is unclear or cannot be answered from the provided context, say so briefly instead of inventing details.`,
-    `When using WEB SEARCH RESULTS, treat them as external context and avoid overstating certainty.`,
-    `If the question is about the subject of the draft (e.g., "the company"), infer the subject from the draft context.`,
+    `You answer the user's question using the draft context and (if provided) web search results.`,
+    `Write in Markdown with short headings and bullet points where helpful.`,
+    `Be concise: provide ONE integrated answer (do not split into "from draft" vs "from web").`,
+    `If details are unknown, say so briefly and move on.`,
+    `When you rely on WEB SEARCH RESULTS, cite them with markers like [1], [2] that match the results list.`,
     STYLE_GUIDE_INSTRUCTIONS,
   ].join("\n\n");
 }
@@ -276,12 +198,12 @@ function buildUserPrompt({ question, draftText, styleGuide, draftSubject, webRes
   lines.push(safeQuestion || "[no question provided]");
   lines.push("");
 
-  lines.push("DRAFT SUBJECT (best-effort, may be empty):");
+  lines.push("DRAFT SUBJECT (best-effort):");
   lines.push(subj || "[unknown]");
   lines.push("");
 
   lines.push("QUESTION MODE (best-effort):");
-  lines.push(mode); // draft_about | general | ambiguous
+  lines.push(mode);
   lines.push("");
 
   lines.push("DRAFT OUTPUT (may be empty):");
@@ -293,36 +215,21 @@ function buildUserPrompt({ question, draftText, styleGuide, draftSubject, webRes
   lines.push("");
 
   if (webResults && Array.isArray(webResults) && webResults.length > 0) {
-    lines.push("WEB SEARCH RESULTS (for additional context):");
-    lines.push(
-      "If you rely on a specific result, cite it using footnote markers like [1], [2], etc., matching the numbering below."
-    );
+    lines.push("WEB SEARCH RESULTS:");
+    lines.push("Use [1], [2], etc. markers when you rely on a specific result.");
     lines.push("");
-
     webResults.forEach((r, idx) => {
       const n = idx + 1;
       lines.push(`[${n}] ${r.title || "Untitled"} — ${r.snippet || ""} (${r.url || ""})`);
     });
-
     lines.push("");
   }
 
   lines.push("INSTRUCTIONS:");
-  lines.push(
-    "Answer the QUESTION as helpfully as possible based on the DRAFT OUTPUT, STYLE GUIDE, DRAFT SUBJECT, and any WEB SEARCH RESULTS provided."
-  );
-  lines.push(
-    "Do NOT invent specific numbers, dates, valuations, or party names. If unknown, say so."
-  );
-  lines.push(
-    "Use [1], [2] markers when relying on web results so the UI can link sources."
-  );
-    lines.push(
-    "Keep the answer concise, structured, and suitable for an institutional investor audience."
-  );
-    lines.push(
-    "Use Markdown headings (##) and bullet lists (-) wherever it improves readability. Ensure blank lines between paragraphs."
-  );
+  lines.push("Answer the QUESTION using the draft and any web results.");
+  lines.push("Do NOT invent specific numbers, dates, valuations, or party names.");
+  lines.push("Keep it concise and investor-appropriate.");
+
   return lines.join("\n");
 }
 
@@ -392,11 +299,12 @@ export default async function handler(req, res) {
       question,
       draftText,
       styleGuide,
-      title, // optional: if frontend passes it, subject inference improves
+      title,
       modelId,
       temperature,
       maxTokens,
-      publicSearch, // if explicitly false, skip web search
+      publicSearch,
+      modeOverride, // "auto" | "draft_about" | "general"
     } = body;
 
     if (!question || typeof question !== "string") {
@@ -404,15 +312,15 @@ export default async function handler(req, res) {
     }
 
     const draftSubject = inferDraftSubject({ title, draftText });
-    const allowedModes = new Set(["draft_about", "general", "ambiguous"]);
-    const mode =
-      body?.modeOverride && allowedModes.has(body.modeOverride)
-        ? body.modeOverride
-        : classifyQuestion(question, draftSubject);
 
-    // Web search is "always on" by default if TAVILY_API_KEY exists,
-    // unless caller explicitly disables it with publicSearch === false.
+    const inferredMode = classifyQuestion(question, draftSubject);
+    const mode =
+      modeOverride === "draft_about" || modeOverride === "general"
+        ? modeOverride
+        : inferredMode;
+
     let webResults = null;
+
     if (process.env.TAVILY_API_KEY && publicSearch !== false) {
       const webQuery = buildWebSearchQuery({ question, draftSubject, mode });
       webResults = await fetchWebResultsTavily({ query: webQuery, maxResults: 4 });
@@ -428,7 +336,8 @@ export default async function handler(req, res) {
       mode,
     });
 
-    const maxCompletionTokens = typeof maxTokens === "number" && maxTokens > 0 ? maxTokens : 700;
+    const maxCompletionTokens =
+      typeof maxTokens === "number" && maxTokens > 0 ? maxTokens : 700;
 
     const completion = await client.chat.completions.create({
       model: modelId || "gpt-4o-mini",
@@ -444,10 +353,8 @@ export default async function handler(req, res) {
     const answer = extractAssistantText(message).trim();
 
     if (!answer) {
-      console.error("Ask AI returned empty answer text. Raw message:", message);
       return res.status(500).json({
         error: "Model returned empty answer",
-        details: "The model response contained no extractable text output.",
         references: webResults || [],
       });
     }
@@ -471,9 +378,6 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error("Ask AI /api/query error:", err);
     const message = err && typeof err === "object" && "message" in err ? err.message : "Unknown error";
-    return res.status(500).json({
-      error: "Failed to process query",
-      details: message,
-    });
+    return res.status(500).json({ error: "Failed to process query", details: message });
   }
 }
