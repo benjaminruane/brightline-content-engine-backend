@@ -1,265 +1,182 @@
 // api/analyse-statements.js
 //
-// Enhanced Statement Analysis:
-// - Splits draft into atomic statements
-// - Assigns reliability, category, implication
-// - NEW: Assigns recommendedChange (type, rationale, suggestedText)
-//   using Rewrite Style C: Aggressive clarity + precision
+// Analyses a draft into atomic statements, assigns a reliability
+// score (0–1) and category to each, and returns a summary object
+// with safe defaults.
 //
-// No usage of tools, web search, or response_format.
-// Uses chat.completions.create() with safe fallbacks.
+// - Uses OpenAI chat.completions.create() (no response_format).
+// - Robust JSON extraction (handles extra prose around JSON).
+// - Returns a predictable shape for the frontend.
 
 import OpenAI from "openai";
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
-
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin === "null" ? "*" : origin
-  );
+  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
-
 // ------------------------------------------------------------------
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function extractAssistantText(message) {
+  if (!message) return "";
+  const c = message.content;
+  if (typeof c === "string") return c;
 
-// Safe defaults if analysis fails
-const EMPTY_ANALYSIS = {
-  ok: true,
-  summary: {
-    totalStatements: 0,
-    byCategory: {
-      factual: 0,
-      subjective: 0,
-      speculative: 0,
-      uncertain: 0,
-    },
-  },
-  statements: [],
-};
-
-// Style-guide + analysis guidance
-const ANALYSIS_STYLE_GUIDE = `
-You are an analytical assistant embedded in the Content Engine.
-
-Your task:
-1. Split the input draft into short, atomic statements.
-2. For each statement, assign:
-   - reliability (0–1)
-   - category: "factual", "subjective", "speculative", or "uncertain"
-   - implication: 2–3 sentences explaining:
-       • why you assigned that reliability/category
-       • how the statement should be positioned in investor materials
-3. NEW: Provide recommendedChange for each statement.
-
-=======================
-REWRITE STYLE C (AGGRESSIVE CLARITY + PRECISION)
-=======================
-When proposing a suggested rewrite (recommendedChange.suggestedText):
-
-- Preserve the factual meaning.
-- Make the sentence clearer, tighter, more precise.
-- Remove vague language, filler, and unnecessary qualifiers.
-- Use clean, direct business English.
-- Do NOT invent new facts or quantify anything not already present.
-- If the existing wording is already optimal, return the same text.
-
-=======================
-RECOMMENDED CHANGE RULES
-=======================
-For each statement, assign:
-
-recommendedChange.type:
-- "none"        → if the statement is already clear, precise, and compliant.
-- "clarify"     → if the meaning is unclear or overly wordy.
-- "tighten"     → if the sentence can be made more concise while keeping full meaning.
-- "soften"      → if the tone expresses undue certainty without evidence.
-- "add_caveat"  → if the statement is factual but needs a risk/context qualifier.
-- "remove"      → if the statement is too vague or inappropriate for investor use.
-
-recommendedChange.rationale:
-- 1–2 sentences explaining why this type was chosen.
-
-recommendedChange.suggestedText:
-- A rewritten version of ONLY THAT STATEMENT.
-- Do NOT rewrite surrounding context.
-- Do NOT add numbers or facts not in the original.
-
-=======================
-JSON FORMAT (STRICT)
-=======================
-Return ONLY a valid JSON object:
-
-{
-  "summary": {
-    "totalStatements": number,
-    "byCategory": {
-      "factual": number,
-      "subjective": number,
-      "speculative": number,
-      "uncertain": number
-    }
-  },
-  "statements": [
-    {
-      "id": "s1",
-      "text": "...",
-      "reliability": 0.82,
-      "category": "factual",
-      "implication": "...",
-      "recommendedChange": {
-        "type": "tighten",
-        "rationale": "...",
-        "suggestedText": "..."
-      }
-    }
-  ]
-}
-
-DO NOT wrap in markdown. DO NOT add commentary.
-`;
-
-// Build system prompt
-function buildSystemPrompt() {
-  return [
-    ANALYSIS_STYLE_GUIDE,
-    "Respond ONLY with JSON.",
-  ].join("\n\n");
-}
-
-// Build user prompt
-function buildUserPrompt({ draftText, maxStatements }) {
-  const safeDraft = draftText || "";
-  const limit =
-    typeof maxStatements === "number" && maxStatements > 0
-      ? maxStatements
-      : 40;
-
-  return `
-You will analyse the following investor-facing draft text.
-
-1. Extract up to ${limit} atomic statements.
-2. For each, generate:
-   - reliability (0–1)
-   - category (factual / subjective / speculative / uncertain)
-   - implication (2–3 sentences)
-   - recommendedChange (see rules above)
-
-INPUT DRAFT:
-${safeDraft.trim()}
-
-Remember:
-- JSON only.
-- No markdown.
-- No preamble.
-`;
-}
-
-// --- JSON Parsing Helper ------------------------------------------
-function safeParseAnalysis(rawContent) {
-  if (!rawContent || typeof rawContent !== "string") {
-    return EMPTY_ANALYSIS;
+  if (Array.isArray(c)) {
+    const parts = c
+      .map((p) => {
+        if (!p) return "";
+        if (typeof p === "string") return p;
+        if (typeof p === "object") {
+          if (typeof p.text === "string") return p.text;
+          if (typeof p.content === "string") return p.content;
+        }
+        return "";
+      })
+      .filter(Boolean);
+    return parts.join("\n");
   }
 
-  let json = rawContent.trim();
+  return "";
+}
 
-  // Extract first {...} block if needed
-  const match = json.match(/\{[\s\S]*\}/);
-  if (match) json = match[0];
+function safeJsonFromText(text) {
+  if (!text || typeof text !== "string") return null;
 
+  // Find the first JSON object block
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) return null;
+
+  const candidate = text.slice(start, end + 1);
   try {
-    const parsed = JSON.parse(json);
-
-    const summary = parsed.summary || {};
-    const byCategory = summary.byCategory || {};
-    const statements = Array.isArray(parsed.statements)
-      ? parsed.statements
-      : [];
-
-    return {
-      ok: true,
-      summary: {
-        totalStatements: summary.totalStatements ?? statements.length,
-        byCategory: {
-          factual: byCategory.factual || 0,
-          subjective: byCategory.subjective || 0,
-          speculative: byCategory.speculative || 0,
-          uncertain: byCategory.uncertain || 0,
-        },
-      },
-      statements,
-    };
-  } catch (err) {
-    console.error("JSON parse failed:", err);
-    return EMPTY_ANALYSIS;
+    return JSON.parse(candidate);
+  } catch {
+    return null;
   }
 }
 
-// --- Handler -------------------------------------------------------
+function normaliseResult(obj) {
+  const rawStatements = Array.isArray(obj?.statements) ? obj.statements : [];
+  const statements = rawStatements
+    .map((s, idx) => {
+      const text = (s?.text || s?.statement || "").toString().trim();
+      if (!text) return null;
+
+      let score = s?.score;
+      if (typeof score !== "number") score = Number(score);
+      if (!Number.isFinite(score)) score = null;
+      if (typeof score === "number") score = Math.max(0, Math.min(1, score));
+
+      const category = (s?.category || "Other").toString().trim() || "Other";
+
+      return {
+        id: s?.id || `s${idx + 1}`,
+        text,
+        category,
+        score,
+      };
+    })
+    .filter(Boolean);
+
+  const summary = typeof obj?.summary === "object" && obj?.summary ? obj.summary : {};
+
+  const out = {
+    ok: true,
+    statements,
+    summary: {
+      note:
+        typeof summary?.note === "string"
+          ? summary.note
+          : statements.length === 0
+          ? "The analysis completed but no individual statements were extracted from this draft. This can happen if the text is very short or mostly bullet points. Try rerunning analysis after refining the draft."
+          : null,
+    },
+  };
+
+  return out;
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   if (!process.env.OPENAI_API_KEY) {
-    return res
-      .status(500)
-      .json({ error: "Missing OPENAI_API_KEY environment variable" });
+    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
-    const body =
-      typeof req.body === "string"
-        ? JSON.parse(req.body || "{}")
-        : req.body || {};
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
-    const { draftText, modelId, maxStatements } = body;
+    const { draftText, modelId } = body;
 
     if (!draftText || typeof draftText !== "string") {
-      return res.status(200).json(EMPTY_ANALYSIS);
+      return res.status(400).json({ error: "Missing or invalid 'draftText' in request body" });
     }
 
-    const systemPrompt = buildSystemPrompt();
-    const userPrompt = buildUserPrompt({ draftText, maxStatements });
+    const system = [
+      `You are an analyst. Extract atomic factual statements from a draft and score their reliability.`,
+      `Return ONLY valid JSON. No markdown, no commentary.`,
+      ``,
+      `Scoring: score is a number from 0.0 to 1.0 where 1.0 = strongly supported and specific; 0.0 = speculative/unsupported.`,
+      `Categories: choose one of: Fact, Estimate, Opinion, Forward-looking, Other.`,
+      ``,
+      `JSON schema:`,
+      `{`,
+      `  "statements": [`,
+      `    { "id": "s1", "text": "…", "category": "Fact|Estimate|Opinion|Forward-looking|Other", "score": 0.0 }`,
+      `  ],`,
+      `  "summary": { "note": "optional short note" }`,
+      `}`,
+    ].join("\n");
+
+    const user = [
+      `DRAFT:`,
+      draftText.trim(),
+      ``,
+      `INSTRUCTIONS:`,
+      `Extract up to 25 atomic statements. If there are none, return "statements": [] and include a short summary.note.`,
+    ].join("\n");
 
     const completion = await client.chat.completions.create({
       model: modelId || "gpt-4o-mini",
-      temperature: 0,
-      max_completion_tokens: 1800,
+      temperature: 0.2,
+      max_completion_tokens: 900,
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+        { role: "system", content: system },
+        { role: "user", content: user },
       ],
     });
 
-    const raw = completion.choices?.[0]?.message?.content || "";
-    const analysis = safeParseAnalysis(raw);
+    const msg = completion.choices?.[0]?.message || null;
+    const text = extractAssistantText(msg).trim();
 
-    return res.status(200).json({
-      ...analysis,
-      model: completion.model || null,
-      usage: completion.usage || null,
-    });
+    const parsed = safeJsonFromText(text);
+
+    if (!parsed) {
+      // Fail soft: return empty statements but keep UX sane
+      return res.status(200).json(
+        normaliseResult({
+          statements: [],
+          summary: {
+            note:
+              "Analysis ran but returned an unexpected format. Try again, or reduce the draft length if very large.",
+          },
+        })
+      );
+    }
+
+    return res.status(200).json(normaliseResult(parsed));
   } catch (err) {
-    console.error("Statement Analysis error:", err);
-
-    return res.status(200).json({
-      ...EMPTY_ANALYSIS,
-      ok: false,
-      error: "Failed to analyse statements",
-    });
+    console.error("analyse-statements error:", err);
+    const message = err && typeof err === "object" && "message" in err ? err.message : "Unknown error";
+    return res.status(500).json({ error: "Failed to analyse statements", details: message });
   }
 }
