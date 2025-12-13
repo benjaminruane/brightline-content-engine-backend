@@ -404,7 +404,11 @@ export default async function handler(req, res) {
     }
 
     const draftSubject = inferDraftSubject({ title, draftText });
-    const mode = classifyQuestion(question, draftSubject);
+    const allowedModes = new Set(["draft_about", "general", "ambiguous"]);
+    const mode =
+      body?.modeOverride && allowedModes.has(body.modeOverride)
+        ? body.modeOverride
+        : classifyQuestion(question, draftSubject);
 
     // Web search is "always on" by default if TAVILY_API_KEY exists,
     // unless caller explicitly disables it with publicSearch === false.
