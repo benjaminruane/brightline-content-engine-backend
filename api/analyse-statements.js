@@ -1,10 +1,11 @@
 // api/analyse-statements.js
 //
 // Extracts atomic statements from a draft and assigns
-// category + reliability score. Returns a rich payload
-// the frontend can render.
+// category + reliability score (0..1), plus rich fields:
+// - explanation (why this score)
+// - implication (what it means / what to do with it)
 //
-// IMPORTANT: Uses max_completion_tokens (not max_tokens) for newer models.
+// IMPORTANT: Uses max_completion_tokens (not max_tokens).
 
 import OpenAI from "openai";
 
@@ -25,11 +26,10 @@ const client = new OpenAI({
 function safeJsonParse(text) {
   if (!text || typeof text !== "string") return null;
 
-  // Try direct JSON
   try {
     return JSON.parse(text);
   } catch {
-    // Try to extract first {...} block
+    // Try to extract the first {...} block
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
     if (start >= 0 && end > start) {
@@ -44,6 +44,11 @@ function safeJsonParse(text) {
   }
 }
 
+function clamp01(n) {
+  if (typeof n !== "number" || !Number.isFinite(n)) return null;
+  return Math.max(0, Math.min(1, n));
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -56,16 +61,23 @@ export default async function handler(req, res) {
     }
 
     const systemPrompt = `
-You are an expert analyst and fact checker.
+You are an expert analyst and fact-checker.
 
-TASK:
-1) Break the draft into ATOMIC statements (each one claim).
-2) For each statement:
-   - category: Fact | Estimate | Projection | Opinion | Assumption
-   - score: reliability score from 0 to 1
+GOAL:
+Turn the draft into atomic statements and assess reliability conservatively.
 
-Be conservative. If uncertain, lower the score.
-Return STRICT JSON ONLY, matching the provided schema.
+OUTPUT RULES:
+- Return STRICT JSON ONLY (no markdown, no backticks).
+- Use the schema exactly.
+- Each statement must be ATOMIC: one claim per row.
+- category must be one of: Fact | Estimate | Projection | Opinion | Assumption
+- score must be 0..1 (confidence/reliability of the claim as written)
+- explanation must be a short, specific reason for the score (1 sentence)
+- implication must be a short, actionable interpretation (1 sentence), e.g.
+  "Treat as assumption; confirm with source" or "Likely accurate; safe to include"
+
+The draft may include plausible but unverifiable claims; penalise those.
+If a claim depends on missing context or external data, reduce score.
 `.trim();
 
     const userPrompt = `
@@ -74,21 +86,30 @@ DRAFT:
 ${draftText}
 """
 
-Return JSON exactly:
+Return JSON exactly in this shape:
 
 {
   "statements": [
-    { "id": "s1", "text": "...", "category": "Fact", "score": 0.85 }
+    {
+      "id": "s1",
+      "text": "…",
+      "category": "Fact",
+      "score": 0.85,
+      "explanation": "…",
+      "implication": "…"
+    }
   ],
-  "summary": { "note": "optional short note" }
+  "summary": {
+    "note": "1–2 sentences. Be specific: describe which claim-types scored higher/lower and why, based on your extracted statements."
+  }
 }
 `.trim();
 
     const completion = await client.chat.completions.create({
       model: modelId || "gpt-4.1",
       temperature: 0.2,
-      // ✅ FIX: use max_completion_tokens (not max_tokens)
-      max_completion_tokens: 1200,
+      // ✅ FIX for newer models
+      max_completion_tokens: 1600,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -107,21 +128,28 @@ Return JSON exactly:
     }
 
     const statements = Array.isArray(parsed.statements)
-      ? parsed.statements.map((s, i) => ({
-          id: typeof s?.id === "string" && s.id.trim() ? s.id.trim() : `s${i + 1}`,
-          text: typeof s?.text === "string" ? s.text.trim() : "",
-          category: typeof s?.category === "string" && s.category.trim() ? s.category.trim() : "Unknown",
-          score:
-            typeof s?.score === "number"
-              ? Math.max(0, Math.min(1, s.score))
-              : null,
-        }))
+      ? parsed.statements.map((s, i) => {
+          const id =
+            typeof s?.id === "string" && s.id.trim() ? s.id.trim() : `s${i + 1}`;
+          const text = typeof s?.text === "string" ? s.text.trim() : "";
+          const category =
+            typeof s?.category === "string" && s.category.trim()
+              ? s.category.trim()
+              : "Unknown";
+
+          const score = clamp01(s?.score);
+
+          const explanation =
+            typeof s?.explanation === "string" ? s.explanation.trim() : "";
+          const implication =
+            typeof s?.implication === "string" ? s.implication.trim() : "";
+
+          return { id, text, category, score, explanation, implication };
+        })
       : [];
 
     const summary =
-      parsed.summary && typeof parsed.summary === "object"
-        ? parsed.summary
-        : {};
+      parsed.summary && typeof parsed.summary === "object" ? parsed.summary : {};
 
     return res.status(200).json({
       ok: true,
