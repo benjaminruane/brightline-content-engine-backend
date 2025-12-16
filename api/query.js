@@ -1,9 +1,27 @@
 // api/query.js
 //
-// Ask AI endpoint — concise answers + confidence metadata.
-// Uses chat.completions.create() and returns stable JSON shape.
+// Ask AI endpoint.
+// IMPORTANT BEHAVIOUR:
+// - Always uses public web search to enrich answers (independent of any UI toggle).
+// - Returns a backward-compatible JSON shape for the frontend.
+//
+// Response shape (stable):
+// {
+//   ok: true,
+//   answer: string,
+//   confidence: number|null,
+//   confidenceReason: string|null,
+//   references: [{ id, title, url }] (may be []),
+//   meta: { ... }
+// }
 
 import OpenAI from "openai";
+import {
+  tavilySearch,
+  formatWebResultsForPrompt,
+  webResultsToReferences,
+  deriveQueryFromAsk,
+} from "./_web.js";
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -25,111 +43,154 @@ function safeJsonParse(text) {
   }
 }
 
+function clamp01(n) {
+  if (typeof n !== "number" || !Number.isFinite(n)) return null;
+  if (n < 0) return 0;
+  if (n > 1) return 1;
+  return n;
+}
+
+function normalizeHistory(history) {
+  if (!Array.isArray(history)) return [];
+  const cleaned = [];
+  for (const m of history.slice(-12)) {
+    if (!m || typeof m !== "object") continue;
+    const role = m.role === "user" || m.role === "assistant" ? m.role : null;
+    const content = typeof m.content === "string" ? m.content : "";
+    if (!role || !content.trim()) continue;
+    cleaned.push({ role, content: content.trim() });
+  }
+  return cleaned;
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res
+      .status(500)
+      .json({ error: "Missing OPENAI_API_KEY environment variable" });
+  }
 
   try {
-    const body = req.body || {};
+    const body =
+      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
     const question = typeof body.question === "string" ? body.question.trim() : "";
+    const title = typeof body.title === "string" ? body.title : "";
     const draftText = typeof body.draftText === "string" ? body.draftText : "";
-    const sourcesText = typeof body.sourcesText === "string" ? body.sourcesText : "";
-    const askMode = typeof body.askMode === "string" ? body.askMode : "auto";
+    const modelId =
+      typeof body.modelId === "string" && body.modelId.trim()
+        ? body.modelId.trim()
+        : "gpt-4o-mini";
+    const history = normalizeHistory(body.history);
 
-    if (!question) {
-      return res.status(400).json({ error: "Missing question" });
-    }
+    // Backwards/forwards compatibility: frontend uses "modeOverride"; older code used "askMode".
+    const askMode =
+      (typeof body.modeOverride === "string" && body.modeOverride.trim()) ||
+      (typeof body.askMode === "string" && body.askMode.trim()) ||
+      "answer";
 
-    const system = [
-      "You are Content Engine's Ask AI assistant.",
-      "",
-      "Output rules:",
-      "- Write a single cohesive answer. Do NOT split into 'from sources' vs 'from web'.",
-      "- Be concise: prefer 5–10 sentences or bullets where helpful.",
-      "- If the question cannot be answered from the provided draft/sources, say what is missing and ask 1–2 clarifying questions.",
-      "- Never fabricate citations or page numbers. If you cite sources, do it generally (e.g., 'in the provided sources').",
-      "",
-      "Return JSON only with this schema:",
-      "{",
-      '  "answer": string,',
-      '  "confidence": number,                // 0.0 to 1.0',
-      '  "confidenceReason": string,          // short reason',
-      '  "references": Array<{ "title": string, "url": string, "snippet": string }>',
-      "}",
-      "",
-      "The references array may be empty if none are available.",
-    ].join("\n");
+    if (!question) return res.status(400).json({ error: "Missing question" });
 
-    const modeHint =
-      askMode === "draft_about"
-        ? "Treat the question as being about the specific subject/entity described in the draft."
-        : askMode === "general"
-          ? "Treat the question as general research / macro / industry context, but still prefer the provided draft and sources if relevant."
-          : "Auto: decide based on the question.";
+    // --- Always-on web search (Ask AI) ------------------------------------
+    const searchQuery = deriveQueryFromAsk({ question, title, draftText });
+    const search = await tavilySearch({ query: searchQuery, maxResults: 5 });
 
-    const user = [
-      `Mode hint: ${modeHint}`,
-      "",
-      "QUESTION:",
-      question,
-      "",
-      "DRAFT (may be empty):",
-      draftText ? draftText : "(no draft provided)",
-      "",
-      "SOURCES (may be empty):",
-      sourcesText ? sourcesText : "(no sources provided)",
-    ].join("\n");
+    const webBlock = search.ok ? formatWebResultsForPrompt(search.results) : "";
+    const references = search.ok ? webResultsToReferences(search.results) : [];
+
+    const system = `
+You are "Ask AI" inside an internal tool called Content Engine.
+
+You MUST answer using the provided web results when they are relevant.
+If the web results are thin, say so, and answer cautiously.
+
+Style:
+- Be concise, direct, and helpful.
+- Prefer bullet points for multi-part answers.
+- Use standard English commas for numbers (e.g., USD 164,000).
+- Do not use thousand separators for years (write 2025, not 2,025).
+
+Output:
+Return ONLY valid JSON with this schema:
+{
+  "answer": string,
+  "confidence": number,            // 0..1
+  "confidenceReason": string|null  // short explanation
+}
+
+If you reference web results in the answer, cite them inline as [1], [2], etc
+matching the result numbers we provided.
+`.trim();
+
+    const user = `
+QUESTION:
+${question}
+
+MODE:
+${askMode}
+
+OPTIONAL CONTEXT:
+Title: ${title || "(none)"}
+
+Draft (may be empty):
+${draftText ? draftText.slice(0, 6000) : "(none)"}
+
+WEB RESULTS:
+${webBlock || "(no web results retrieved)"}
+`.trim();
 
     const completion = await client.chat.completions.create({
-      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      model: modelId,
       temperature: 0.2,
-      max_tokens: 700,
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
+      max_tokens: 900,
+      messages: [{ role: "system", content: system }, ...history, { role: "user", content: user }],
+      response_format: { type: "json_object" },
     });
 
-    const raw = completion?.choices?.[0]?.message?.content || "";
-    const parsed = safeJsonParse(raw);
+    const raw = completion.choices?.[0]?.message?.content || "";
+    const parsed = safeJsonParse(raw) || {};
 
-    // If the model didn't return JSON, fall back gracefully.
-    if (!parsed || typeof parsed.answer !== "string") {
-      return res.status(200).json({
-        answer: raw || "No answer returned.",
-        meta: {
-          confidence: null,
-          confidenceReason: null,
-          references: [],
-        },
-      });
-    }
-
-    const confidence =
-      typeof parsed.confidence === "number"
-        ? Math.max(0, Math.min(1, parsed.confidence))
+    const answer =
+      typeof parsed.answer === "string" && parsed.answer.trim()
+        ? parsed.answer.trim()
+        : "";
+    const confidence = clamp01(parsed.confidence);
+    const confidenceReason =
+      typeof parsed.confidenceReason === "string" && parsed.confidenceReason.trim()
+        ? parsed.confidenceReason.trim()
         : null;
 
-    const references = Array.isArray(parsed.references)
-      ? parsed.references
-          .filter((r) => r && typeof r === "object")
-          .map((r) => ({
-            title: typeof r.title === "string" ? r.title : "",
-            url: typeof r.url === "string" ? r.url : "",
-            snippet: typeof r.snippet === "string" ? r.snippet : "",
-          }))
-      : [];
-
     return res.status(200).json({
-      answer: parsed.answer,
+      ok: true,
+      answer,
+
+      // Backward-compatible top-level fields (frontend reads these)
+      confidence,
+      confidenceReason,
+      references,
+
       meta: {
-        confidence,
-        confidenceReason:
-          typeof parsed.confidenceReason === "string" ? parsed.confidenceReason : null,
-        references,
+        webSearch: {
+          enabled: true,
+          used: Boolean(search.ok && references.length),
+          provider: "tavily",
+          query: searchQuery,
+          resultsCount: references.length,
+          error: search.ok ? null : search.error || "Web search failed",
+          note: "Ask AI always uses web search (independent of the draft toggle).",
+        },
+        model: completion.model || modelId,
+        usage: {
+          promptTokens: completion.usage?.prompt_tokens ?? null,
+          completionTokens: completion.usage?.completion_tokens ?? null,
+          totalTokens: completion.usage?.total_tokens ?? null,
+        },
       },
     });
   } catch (err) {
