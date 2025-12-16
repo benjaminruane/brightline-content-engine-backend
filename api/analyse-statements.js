@@ -34,6 +34,37 @@ function clamp01(n) {
   return Math.max(0, Math.min(1, n));
 }
 
+function normaliseStatements(parsed) {
+  const arr = Array.isArray(parsed?.statements) ? parsed.statements : [];
+
+  const mapped = arr.map((s, idx) => {
+    const id = typeof s?.id === "number" ? s.id : idx + 1;
+    const text = typeof s?.text === "string" ? s.text.trim() : "";
+    const category =
+      typeof s?.category === "string" && s.category.trim()
+        ? s.category.trim()
+        : "Other";
+    const score = clamp01(typeof s?.score === "number" ? s.score : 0);
+
+    let explanation = typeof s?.explanation === "string" ? s.explanation.trim() : "";
+    let implication = typeof s?.implication === "string" ? s.implication.trim() : "";
+
+    if (!explanation || explanation === "-" || explanation === "—") {
+      explanation =
+        "Insufficient information to justify a stronger assessment; treat this claim cautiously.";
+    }
+    if (!implication || implication === "-" || implication === "—") {
+      implication =
+        "Add supporting sources, clarify specifics, or rephrase/remove the claim if it cannot be supported.";
+    }
+
+    return { id, text, category, score, explanation, implication };
+  });
+
+  // Drop empty statements (these can cause the UI to look like “nothing extracted”)
+  return mapped.filter((s) => typeof s.text === "string" && s.text.trim());
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -65,7 +96,14 @@ export default async function handler(req, res) {
     const systemPrompt = `
 You are an expert analyst and fact-checker.
 
-Turn the draft into atomic statements. For each statement:
+Turn the draft into atomic statements.
+
+REQUIREMENTS:
+- Return 8–20 statements when possible.
+- If the draft is short, mostly bullets, or hedged, still return AT LEAST 3 statements by converting implicit claims into explicit ones.
+- Do NOT return an empty statements array unless the draft is empty (it is not).
+
+For each statement include:
 - category
 - reliability score 0..1
 - explanation (never "-" or empty)
@@ -104,32 +142,66 @@ ${webBlock || "(no web results retrieved)"}
 
     const raw = completion.choices?.[0]?.message?.content || "";
     const parsed = safeJsonParse(raw) || {};
+    let finalStatements = normaliseStatements(parsed);
 
-    const statements = Array.isArray(parsed.statements)
-      ? parsed.statements.map((s, idx) => {
-          const id = typeof s?.id === "number" ? s.id : idx + 1;
-          const text = typeof s?.text === "string" ? s.text.trim() : "";
-          const category = typeof s?.category === "string" && s.category.trim() ? s.category.trim() : "Other";
-          const score = clamp01(typeof s?.score === "number" ? s.score : 0);
+    // Fallback: if the model still returned no statements, retry with a stricter extraction prompt.
+    let usedFallback = false;
 
-          let explanation = typeof s?.explanation === "string" ? s.explanation.trim() : "";
-          let implication = typeof s?.implication === "string" ? s.implication.trim() : "";
+    if (finalStatements.length === 0) {
+      usedFallback = true;
 
-          if (!explanation || explanation === "-" || explanation === "—") {
-            explanation = "Insufficient information to justify a stronger assessment; treat this claim cautiously.";
-          }
-          if (!implication || implication === "-" || implication === "—") {
-            implication = "Add supporting sources, clarify specifics, or rephrase/remove the claim if it cannot be supported.";
-          }
+      const fallbackSystemPrompt = `
+You are an expert analyst.
 
-          return { id, text, category, score, explanation, implication };
-        })
-      : [];
+Extract AT LEAST 3 atomic statements from the draft, even if the draft is short, mostly bullets, or hedged.
+Convert implicit claims into explicit statements.
+
+For each statement include:
+- category
+- reliability score 0..1
+- explanation (never "-" or empty)
+- implication (never "-" or empty)
+
+Use WEB RESULTS if relevant; if they don't help, say so in explanation.
+
+Return ONLY valid JSON:
+{
+  "statements": [
+    { "id": number, "text": string, "category": string, "score": number, "explanation": string, "implication": string }
+  ],
+  "summary": { "note": string|null }
+}
+`.trim();
+
+      const fallbackCompletion = await client.chat.completions.create({
+        model: modelId,
+        temperature: 0.2,
+        max_completion_tokens: 1200,
+        messages: [
+          { role: "system", content: fallbackSystemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        response_format: { type: "json_object" },
+      });
+
+      const raw2 = fallbackCompletion.choices?.[0]?.message?.content || "";
+      const parsed2 = safeJsonParse(raw2) || {};
+      finalStatements = normaliseStatements(parsed2);
+    }
+
+    const summaryNote =
+      typeof parsed?.summary?.note === "string" ? parsed.summary.note : null;
 
     return res.status(200).json({
       ok: true,
-      statements,
-      summary: { note: typeof parsed?.summary?.note === "string" ? parsed.summary.note : null },
+      statements: finalStatements,
+      summary: {
+        note:
+          summaryNote ||
+          (finalStatements.length === 0
+            ? "No statements were returned for this draft. Try adding more explicit claims or longer prose."
+            : null),
+      },
       meta: {
         webSearch: {
           enabled: true,
@@ -142,6 +214,10 @@ ${webBlock || "(no web results retrieved)"}
         },
         references,
         model: completion.model || modelId,
+        extraction: {
+          fallbackUsed: usedFallback,
+          statementsCount: finalStatements.length,
+        },
       },
     });
   } catch (err) {
