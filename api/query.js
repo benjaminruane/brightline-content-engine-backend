@@ -122,6 +122,11 @@ CRITICAL CONTEXT LINKAGE:
 If the user question uses phrases like "the company", "the business", "the issuer", or "the firm",
 interpret that as referring to the primary SUBJECT of the draft/title (provided below), unless the user explicitly specifies a different entity.
 
+Answer at the appropriate depth:
+– If the question is narrow, answer in 2–4 sentences.
+– If it’s analytical or ambiguous, answer in 4–10 sentences or concise bullets, and include reasoning + caveats.
+– Avoid filler.
+
 Return ONLY valid JSON:
 {
   "answer": string,
