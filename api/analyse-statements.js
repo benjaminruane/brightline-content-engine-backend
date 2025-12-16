@@ -2,6 +2,11 @@
 //
 // Statement Analysis.
 // Behaviour: ALWAYS uses web search (independent of the draft toggle).
+//
+// Key behaviour guarantees:
+// - Attempts LLM extraction first (with web results).
+// - If LLM returns empty (even after fallback prompt), we DO NOT return empty.
+//   We apply a deterministic local sentence-based extraction to return >= 3 statements.
 
 import OpenAI from "openai";
 import {
@@ -46,8 +51,10 @@ function normaliseStatements(parsed) {
         : "Other";
     const score = clamp01(typeof s?.score === "number" ? s.score : 0);
 
-    let explanation = typeof s?.explanation === "string" ? s.explanation.trim() : "";
-    let implication = typeof s?.implication === "string" ? s.implication.trim() : "";
+    let explanation =
+      typeof s?.explanation === "string" ? s.explanation.trim() : "";
+    let implication =
+      typeof s?.implication === "string" ? s.implication.trim() : "";
 
     if (!explanation || explanation === "-" || explanation === "—") {
       explanation =
@@ -61,18 +68,91 @@ function normaliseStatements(parsed) {
     return { id, text, category, score, explanation, implication };
   });
 
-  // Drop empty statements (these can cause the UI to look like “nothing extracted”)
+  // Drop empty statements
   return mapped.filter((s) => typeof s.text === "string" && s.text.trim());
+}
+
+function stripPlaceholders(text) {
+  if (typeof text !== "string") return "";
+  // Remove bracket placeholders like [Firm name]
+  return text.replace(/\[[^\]]+\]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function localFallbackExtractStatements(draftText, min = 3, max = 12) {
+  const clean = stripPlaceholders(draftText);
+
+  // Split into sentence-ish units
+  const rawParts = clean
+    .split(/(?<=[.!?])\s+|\n+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  // If sentence split fails (e.g., one long paragraph), do a softer split.
+  const parts =
+    rawParts.length > 0
+      ? rawParts
+      : clean
+          .split(/;\s+|,\s+(?=[A-Z])|\s{2,}/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+  const uniq = [];
+  const seen = new Set();
+
+  for (const p of parts) {
+    const t = p.replace(/\s+/g, " ").trim();
+    if (!t) continue;
+    const key = t.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    uniq.push(t);
+    if (uniq.length >= max) break;
+  }
+
+  // Ensure minimum by chunking the first long sentence if needed
+  if (uniq.length < min) {
+    const first = clean || "";
+    if (first) {
+      const chunks = first
+        .split(/,\s+|;\s+|\sand\s+/i)
+        .map((s) => s.trim())
+        .filter((s) => s.length >= 20);
+
+      for (const c of chunks) {
+        const key = c.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        uniq.push(c);
+        if (uniq.length >= min) break;
+      }
+    }
+  }
+
+  const picked = uniq.slice(0, Math.max(min, uniq.length));
+
+  return picked.slice(0, max).map((t, idx) => ({
+    id: idx + 1,
+    text: t,
+    category: "Other",
+    score: 0.5,
+    explanation:
+      "Auto-extracted fallback statement because the model returned no statements. Treat as a draft segmentation of claims, not a validation.",
+    implication:
+      "Review and refine the claim wording, then re-run analysis; add sources if the claim should be verifiable.",
+  }));
 }
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
+    return res
+      .status(500)
+      .json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
@@ -85,10 +165,11 @@ export default async function handler(req, res) {
         ? body.modelId.trim()
         : "gpt-4o-mini";
 
-    if (!draftText.trim()) return res.status(400).json({ error: "Missing or invalid draftText" });
+    if (!draftText.trim())
+      return res.status(400).json({ error: "Missing or invalid draftText" });
 
     // Always-on web retrieval
-    const searchQuery = deriveQueryFromDraft(draftText);
+    const searchQuery = deriveQueryFromDraft(stripPlaceholders(draftText));
     const search = await tavilySearch({ query: searchQuery, maxResults: 6 });
     const webBlock = search.ok ? formatWebResultsForPrompt(search.results) : "";
     const references = search.ok ? webResultsToReferences(search.results) : [];
@@ -144,11 +225,12 @@ ${webBlock || "(no web results retrieved)"}
     const parsed = safeJsonParse(raw) || {};
     let finalStatements = normaliseStatements(parsed);
 
-    // Fallback: if the model still returned no statements, retry with a stricter extraction prompt.
-    let usedFallback = false;
+    // Fallback: stricter prompt if model returned nothing.
+    let usedModelFallback = false;
+    let usedLocalFallback = false;
 
     if (finalStatements.length === 0) {
-      usedFallback = true;
+      usedModelFallback = true;
 
       const fallbackSystemPrompt = `
 You are an expert analyst.
@@ -189,6 +271,12 @@ Return ONLY valid JSON:
       finalStatements = normaliseStatements(parsed2);
     }
 
+    // Last resort: deterministic local extraction (never return empty).
+    if (finalStatements.length === 0) {
+      usedLocalFallback = true;
+      finalStatements = localFallbackExtractStatements(draftText, 3, 12);
+    }
+
     const summaryNote =
       typeof parsed?.summary?.note === "string" ? parsed.summary.note : null;
 
@@ -198,8 +286,8 @@ Return ONLY valid JSON:
       summary: {
         note:
           summaryNote ||
-          (finalStatements.length === 0
-            ? "No statements were returned for this draft. Try adding more explicit claims or longer prose."
+          (usedLocalFallback
+            ? "Model returned no statements; using a sentence-based fallback extraction."
             : null),
       },
       meta: {
@@ -215,7 +303,9 @@ Return ONLY valid JSON:
         references,
         model: completion.model || modelId,
         extraction: {
-          fallbackUsed: usedFallback,
+          fallbackUsed: usedModelFallback || usedLocalFallback,
+          modelFallbackUsed: usedModelFallback,
+          localFallbackUsed: usedLocalFallback,
           statementsCount: finalStatements.length,
         },
       },
