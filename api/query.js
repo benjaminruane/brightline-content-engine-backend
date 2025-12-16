@@ -47,6 +47,28 @@ function normalizeHistory(history) {
   return cleaned;
 }
 
+function inferSubject({ title, draftText }) {
+  const t = typeof title === "string" ? title.trim() : "";
+  if (t) return t;
+
+  const d = typeof draftText === "string" ? draftText.trim() : "";
+  if (!d) return "";
+
+  // First non-empty line is usually the “subject” in your drafts.
+  const firstLine = d.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
+  return firstLine.slice(0, 140);
+}
+
+function hasAmbiguousCompanyRef(question) {
+  const q = typeof question === "string" ? question.toLowerCase() : "";
+  return (
+    q.includes("the company") ||
+    q.includes("the business") ||
+    q.includes("the issuer") ||
+    q.includes("the firm")
+  );
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -77,8 +99,16 @@ export default async function handler(req, res) {
 
     if (!question) return res.status(400).json({ error: "Missing question" });
 
+    const subject = inferSubject({ title, draftText });
+
     // Always-on web retrieval
-    const searchQuery = deriveQueryFromAsk({ question, title, draftText });
+    let searchQuery = deriveQueryFromAsk({ question, title, draftText });
+
+    // If the question uses ambiguous references like "the company", pin it to the subject.
+    if (hasAmbiguousCompanyRef(question) && subject) {
+      searchQuery = `${subject} ${question}`.slice(0, 420);
+    }
+
     const search = await tavilySearch({ query: searchQuery, maxResults: 5 });
     const webBlock = search.ok ? formatWebResultsForPrompt(search.results) : "";
     const references = search.ok ? webResultsToReferences(search.results) : [];
@@ -86,7 +116,11 @@ export default async function handler(req, res) {
     const system = `
 You are "Ask AI" inside Content Engine.
 
-Use the WEB RESULTS when relevant. If results are thin, say so.
+Always use the WEB RESULTS when relevant. If results are thin, say so.
+
+CRITICAL CONTEXT LINKAGE:
+If the user question uses phrases like "the company", "the business", "the issuer", or "the firm",
+interpret that as referring to the primary SUBJECT of the draft/title (provided below), unless the user explicitly specifies a different entity.
 
 Return ONLY valid JSON:
 {
@@ -99,6 +133,9 @@ If you use web results, cite them inline as [1], [2], etc.
 `.trim();
 
     const user = `
+SUBJECT:
+${subject || "(unknown)"}
+
 QUESTION:
 ${question}
 
