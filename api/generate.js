@@ -1,11 +1,9 @@
 // api/generate.js
 //
-// Generates a new draft based on title, notes, scenario, output types,
-// and attached sources.
-//
+// Generates a new draft.
 // Web search behaviour:
-// - If publicSearch === true: enrich the draft with public web search results.
-// - If publicSearch === false: do NOT perform web retrieval (sources + notes only).
+// - publicSearch === true: enrich with web search results
+// - publicSearch === false: do not retrieve from web
 
 import OpenAI from "openai";
 import {
@@ -17,7 +15,6 @@ import {
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
-
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
@@ -25,26 +22,22 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Shared style-guide text (keep in sync with the frontend where applicable)
 const STYLE_GUIDE_INSTRUCTIONS = `
 You are part of an internal writing tool called "Content Engine".
 Follow this style guide in all draft outputs:
 
 - Currency:
   - Use "USD" followed by a space and a number with standard English thousand separators.
-    Example: USD 1,500,000 (not USD1.5m, USD1,500,000 or US$1.5m).
+    Example: USD 1,500,000.
 - Years:
   - Do NOT insert thousand separators into years: 2025, 1999.
 - Quotation marks:
-  - Prefer straight double quotes "like this" for titles, terms, and citations.
-  - Use single quotes only for quotes-within-quotes.
+  - Prefer straight double quotes "like this".
 - Tone:
   - Clear, concise, neutral, professional.
-`;
+`.trim();
 
 function describeScenario(scenarioId) {
   switch (scenarioId) {
@@ -72,15 +65,14 @@ You are a professional private markets writer inside a tool called Content Engin
 TASK:
 Write an investor-grade draft based ONLY on:
 - the user's title/notes/scenario/output types
-- the attached source excerpts (if any)
-- and, if provided, web search results (when publicSearch is enabled)
+- attached source excerpts (if any)
+- and, if provided, web search results (ONLY when publicSearch is enabled)
 
 STRICT RULES:
-- Do not invent facts, numbers, dates, or company details that are not supported by the inputs.
-- If key information is missing, write around it cleanly and use neutral placeholders (e.g., "the Company", "the investment").
-- Keep structure clean: headline + short intro + sections/bullets where appropriate.
-- If web results are provided, use them only to add general context (definitions, market context, non-sensitive facts).
-  Do not fabricate specifics about the user's deal unless supported by sources/notes.
+- Do not invent facts, numbers, dates, or company details not supported by inputs.
+- If key information is missing, write around it cleanly with neutral placeholders.
+- If web results are provided, use them only for general context (definitions/market context).
+  Do not fabricate deal-specific details.
 
 STYLE GUIDE:
 ${STYLE_GUIDE_INSTRUCTIONS}
@@ -117,9 +109,9 @@ function buildUserPrompt(payload) {
     : "(no sources)";
 
   const webBlock =
-    webResultsForPrompt && typeof webResultsForPrompt === "string"
+    typeof webResultsForPrompt === "string" && webResultsForPrompt.trim()
       ? webResultsForPrompt.trim()
-      : "";
+      : "(not enabled or no results)";
 
   return `
 TITLE:
@@ -148,14 +140,13 @@ SOURCES:
 ${sourceBlock}
 
 WEB RESULTS (only if publicSearch enabled):
-${webBlock || "(not enabled or no results)"} 
+${webBlock}
 `.trim();
 }
 
 function coerceDraftText(rawContent) {
   const text = typeof rawContent === "string" ? rawContent.trim() : "";
   if (text) return text;
-
   return "Draft could not be generated. Please try again, or provide more notes and/or sources.";
 }
 
@@ -163,14 +154,10 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   if (!process.env.OPENAI_API_KEY) {
-    return res
-      .status(500)
-      .json({ error: "Missing OPENAI_API_KEY environment variable" });
+    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
@@ -184,22 +171,21 @@ export default async function handler(req, res) {
       selectedTypes,
       versionType,
       maxWords,
-      model,
+      model: modelIdRaw,
       publicSearch,
       sources,
     } = body;
 
     if (!title && !notes && (!Array.isArray(sources) || sources.length === 0)) {
       return res.status(400).json({
-        error:
-          "Missing content to generate from. Provide at least a title, notes, or one source excerpt.",
+        error: "Missing content to generate from. Provide at least a title, notes, or one source excerpt.",
       });
     }
 
     const modelId =
-      typeof model === "string" && model.trim() ? model.trim() : "gpt-4o-mini";
+      typeof modelIdRaw === "string" && modelIdRaw.trim() ? modelIdRaw.trim() : "gpt-4o-mini";
 
-    // --- Optional web enrichment for drafts --------------------------------
+    // Optional web enrichment
     let web = { ok: false, query: "", results: [], error: null };
     let webResultsForPrompt = "";
     let webReferences = [];
@@ -209,9 +195,7 @@ export default async function handler(req, res) {
       if (typeof title === "string" && title.trim()) qParts.push(title.trim());
       if (typeof scenario === "string" && scenario.trim()) qParts.push(scenario.trim());
       if (typeof notes === "string" && notes.trim()) qParts.push(notes.trim().slice(0, 200));
-
-      const query =
-        qParts.filter(Boolean).join(" — ").slice(0, 300) || "General background";
+      const query = qParts.filter(Boolean).join(" — ").slice(0, 320) || "General background";
 
       web = await tavilySearch({ query, maxResults: 5 });
       if (web.ok) {
@@ -232,6 +216,7 @@ export default async function handler(req, res) {
       webResultsForPrompt,
     });
 
+    // IMPORTANT: use max_completion_tokens (not max_tokens)
     const maxCompletionTokens =
       typeof maxWords === "number" && maxWords > 0
         ? Math.min(4096, Math.max(900, Math.round(maxWords * 2)))
@@ -240,7 +225,7 @@ export default async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.3,
-      max_tokens: maxCompletionTokens,
+      max_completion_tokens: maxCompletionTokens,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -267,21 +252,16 @@ export default async function handler(req, res) {
           provider: "tavily",
           query: publicSearch === true ? web.query : null,
           resultsCount: publicSearch === true ? webReferences.length : 0,
-          error:
-            publicSearch === true && !web.ok ? web.error || "Web search failed" : null,
-          note: "Draft generation uses web search only when the draft toggle is enabled.",
+          error: publicSearch === true && !web.ok ? web.error || "Web search failed" : null,
+          note: "Generate uses web search only when the draft toggle is enabled.",
         },
         references: webReferences,
       },
     });
   } catch (err) {
-    console.error("/api/generate error:", err);
-    const message =
-      err && typeof err === "object" && "message" in err ? err.message : "Unknown error";
-
     return res.status(500).json({
       error: "Failed to generate draft",
-      details: message,
+      details: err?.message || String(err),
     });
   }
 }
