@@ -42,19 +42,74 @@ function clamp01(n) {
 function normaliseStatements(parsed) {
   const arr = Array.isArray(parsed?.statements) ? parsed.statements : [];
 
+  const pickText = (s) => {
+    const candidates = [
+      s?.text,
+      s?.statement,
+      s?.claim,
+      s?.atomicStatement,
+      s?.sentence,
+    ];
+    for (const c of candidates) {
+      if (typeof c === "string" && c.trim()) return c.trim();
+    }
+    return "";
+  };
+
+  const pickExplanation = (s) => {
+    const candidates = [s?.explanation, s?.reason, s?.rationale, s?.because];
+    for (const c of candidates) {
+      if (typeof c === "string" && c.trim()) return c.trim();
+    }
+    return "";
+  };
+
+  const pickImplication = (s) => {
+    const candidates = [s?.implication, s?.soWhat, s?.action, s?.recommendation];
+    for (const c of candidates) {
+      if (typeof c === "string" && c.trim()) return c.trim();
+    }
+    return "";
+  };
+
+  const pickScore = (s) => {
+    const raw =
+      typeof s?.score === "number"
+        ? s.score
+        : typeof s?.reliability === "number"
+        ? s.reliability
+        : typeof s?.confidence === "number"
+        ? s.confidence
+        : null;
+
+    if (raw == null || !Number.isFinite(raw)) return 0;
+
+    // Accept either 0..1 or 0..100
+    const n = raw > 1 ? raw / 100 : raw;
+    return clamp01(n);
+  };
+
+  const pickId = (s, idx) => {
+    if (typeof s?.id === "number" && Number.isFinite(s.id)) return s.id;
+    if (typeof s?.id === "string" && s.id.trim()) return idx + 1;
+    return idx + 1;
+  };
+
   const mapped = arr.map((s, idx) => {
-    const id = typeof s?.id === "number" ? s.id : idx + 1;
-    const text = typeof s?.text === "string" ? s.text.trim() : "";
+    const id = pickId(s, idx);
+    const text = pickText(s);
+
     const category =
       typeof s?.category === "string" && s.category.trim()
         ? s.category.trim()
+        : typeof s?.type === "string" && s.type.trim()
+        ? s.type.trim()
         : "Other";
-    const score = clamp01(typeof s?.score === "number" ? s.score : 0);
 
-    let explanation =
-      typeof s?.explanation === "string" ? s.explanation.trim() : "";
-    let implication =
-      typeof s?.implication === "string" ? s.implication.trim() : "";
+    const score = pickScore(s);
+
+    let explanation = pickExplanation(s);
+    let implication = pickImplication(s);
 
     if (!explanation || explanation === "-" || explanation === "—") {
       explanation =
