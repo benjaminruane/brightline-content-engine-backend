@@ -134,7 +134,10 @@ Return ONLY valid JSON:
   "confidenceReason": string|null
 }
 
-If you use web results, cite them inline as [1], [2], etc.
+If you use web results, you MUST cite them inline as [1], [2], etc.
+When web results are available and relevant, include at least one citation.
+When you make factual claims that are supported by web results, include citations on the same sentence.
+
 `.trim();
 
     const user = `
