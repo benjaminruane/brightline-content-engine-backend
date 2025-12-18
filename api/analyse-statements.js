@@ -225,7 +225,7 @@ export default async function handler(req, res) {
 
     // Always-on web retrieval
     const searchQuery = deriveQueryFromDraft(stripPlaceholders(draftText));
-    const search = await tavilySearch({ query: searchQuery, maxResults: 6 });
+    const search = await tavilySearch({ query: searchQuery, maxResults: 4 });
     const webBlock = search.ok ? formatWebResultsForPrompt(search.results) : "";
     const references = search.ok ? webResultsToReferences(search.results) : [];
 
@@ -268,7 +268,7 @@ ${webBlock || "(no web results retrieved)"}
     const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.2,
-      max_completion_tokens: 1800,
+      max_completion_tokens: 1300,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -313,7 +313,7 @@ Return ONLY valid JSON:
       const fallbackCompletion = await client.chat.completions.create({
         model: modelId,
         temperature: 0.2,
-        max_completion_tokens: 1200,
+        max_completion_tokens: 1300,
         messages: [
           { role: "system", content: fallbackSystemPrompt },
           { role: "user", content: userPrompt },
