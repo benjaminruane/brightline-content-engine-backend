@@ -3,10 +3,12 @@
 // Statement Analysis.
 // Behaviour: ALWAYS uses web search (independent of the draft toggle).
 //
-// Key behaviour guarantees:
-// - Attempts LLM extraction first (with web results).
-// - If LLM returns empty (even after fallback prompt), we DO NOT return empty.
-//   We apply a deterministic local sentence-based extraction to return >= 3 statements.
+// Scoring: rules-based (no LLM self-scoring).
+// Extraction: LLM-assisted (with web context) to propose candidate factual statements.
+//
+// UX guarantees:
+// - Never returns canned/technical fallback language.
+// - If no verifiable factual statements are detected, returns an empty set with a calm summary.
 
 import OpenAI from "openai";
 import {
@@ -39,170 +41,266 @@ function clamp01(n) {
   return Math.max(0, Math.min(1, n));
 }
 
-function normaliseStatements(parsed) {
-  const arr = Array.isArray(parsed?.statements) ? parsed.statements : [];
-
-  const pickText = (s) => {
-    const candidates = [
-      s?.text,
-      s?.statement,
-      s?.claim,
-      s?.atomicStatement,
-      s?.sentence,
-    ];
-    for (const c of candidates) {
-      if (typeof c === "string" && c.trim()) return c.trim();
-    }
-    return "";
-  };
-
-  const pickExplanation = (s) => {
-    const candidates = [s?.explanation, s?.reason, s?.rationale, s?.because];
-    for (const c of candidates) {
-      if (typeof c === "string" && c.trim()) return c.trim();
-    }
-    return "";
-  };
-
-  const pickImplication = (s) => {
-    const candidates = [s?.implication, s?.soWhat, s?.action, s?.recommendation];
-    for (const c of candidates) {
-      if (typeof c === "string" && c.trim()) return c.trim();
-    }
-    return "";
-  };
-
-  const pickScore = (s) => {
-    const raw =
-      typeof s?.score === "number"
-        ? s.score
-        : typeof s?.reliability === "number"
-        ? s.reliability
-        : typeof s?.confidence === "number"
-        ? s.confidence
-        : null;
-
-    if (raw == null || !Number.isFinite(raw)) return 0;
-
-    // Accept either 0..1 or 0..100
-    const n = raw > 1 ? raw / 100 : raw;
-    return clamp01(n);
-  };
-
-  const pickId = (s, idx) => {
-    if (typeof s?.id === "number" && Number.isFinite(s.id)) return s.id;
-    if (typeof s?.id === "string" && s.id.trim()) return idx + 1;
-    return idx + 1;
-  };
-
-  const mapped = arr.map((s, idx) => {
-    const id = pickId(s, idx);
-    const text = pickText(s);
-
-    const category =
-      typeof s?.category === "string" && s.category.trim()
-        ? s.category.trim()
-        : typeof s?.type === "string" && s.type.trim()
-        ? s.type.trim()
-        : "Other";
-
-    const score = pickScore(s);
-
-    let explanation = pickExplanation(s);
-    let implication = pickImplication(s);
-
-    if (!explanation || explanation === "-" || explanation === "—") {
-      explanation =
-        "Insufficient information to justify a stronger assessment; treat this claim cautiously.";
-    }
-    if (!implication || implication === "-" || implication === "—") {
-      implication =
-        "Add supporting sources, clarify specifics, or rephrase/remove the claim if it cannot be supported.";
-    }
-
-    return { id, text, category, score, explanation, implication };
-  });
-
-  // Drop empty statements
-  return mapped.filter((s) => typeof s.text === "string" && s.text.trim());
-}
-
 function stripPlaceholders(text) {
   if (typeof text !== "string") return "";
   // Remove bracket placeholders like [Firm name]
   return text.replace(/\[[^\]]+\]/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function localFallbackExtractStatements(draftText, min = 3, max = 12) {
-  const clean = stripPlaceholders(draftText);
+function normaliseExtractedStatements(parsed) {
+  const arr = Array.isArray(parsed?.statements) ? parsed.statements : [];
+  const out = [];
 
-  // Split into sentence-ish units
-  const rawParts = clean
-    .split(/(?<=[.!?])\s+|\n+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  for (let i = 0; i < arr.length; i++) {
+    const s = arr[i] || {};
+    const text =
+      typeof s.text === "string" && s.text.trim()
+        ? s.text.trim()
+        : typeof s.statement === "string" && s.statement.trim()
+        ? s.statement.trim()
+        : typeof s.claim === "string" && s.claim.trim()
+        ? s.claim.trim()
+        : "";
 
-  // If sentence split fails (e.g., one long paragraph), do a softer split.
-  const parts =
-    rawParts.length > 0
-      ? rawParts
-      : clean
-          .split(/;\s+|,\s+(?=[A-Z])|\s{2,}/)
-          .map((s) => s.trim())
-          .filter(Boolean);
+    if (!text) continue;
 
-  const uniq = [];
-  const seen = new Set();
-
-  for (const p of parts) {
-    const t = p.replace(/\s+/g, " ").trim();
-    if (!t) continue;
-    const key = t.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    uniq.push(t);
-    if (uniq.length >= max) break;
+    out.push({
+      id: i + 1,
+      text,
+    });
   }
 
-  // Ensure minimum by chunking the first long sentence if needed
-  if (uniq.length < min) {
-    const first = clean || "";
-    if (first) {
-      const chunks = first
-        .split(/,\s+|;\s+|\sand\s+/i)
-        .map((s) => s.trim())
-        .filter((s) => s.length >= 20);
+  // de-dupe (case-insensitive)
+  const seen = new Set();
+  const uniq = [];
+  for (const s of out) {
+    const key = String(s.text).toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    uniq.push(s);
+  }
+  return uniq.slice(0, 20);
+}
 
-      for (const c of chunks) {
-        const key = c.toLowerCase();
-        if (seen.has(key)) continue;
-        seen.add(key);
-        uniq.push(c);
-        if (uniq.length >= min) break;
+// -----------------------------
+// Rules-based scoring
+// -----------------------------
+
+const STOPWORDS = new Set([
+  "a",
+  "an",
+  "the",
+  "and",
+  "or",
+  "but",
+  "to",
+  "of",
+  "in",
+  "on",
+  "for",
+  "with",
+  "as",
+  "at",
+  "by",
+  "from",
+  "is",
+  "are",
+  "was",
+  "were",
+  "be",
+  "been",
+  "being",
+  "it",
+  "this",
+  "that",
+  "these",
+  "those",
+  "its",
+  "their",
+  "our",
+  "your",
+  "his",
+  "her",
+  "they",
+  "we",
+  "you",
+  "i",
+]);
+
+function tokens(text) {
+  const s = String(text || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!s) return [];
+  return s
+    .split(" ")
+    .map((t) => t.trim())
+    .filter((t) => t && t.length >= 3 && !STOPWORDS.has(t));
+}
+
+function hasNumber(text) {
+  return /\b\d+(?:[\.,]\d+)?\b/.test(String(text || ""));
+}
+
+function isForwardLooking(text) {
+  return /(will|expects?|expected|forecast|project(ed|ion)?|outlook|guidance|target|aims?|plan(s|ned)?|intends?|anticipat(e|es|ed)|likely|may|might|could)/i.test(
+    String(text || "")
+  );
+}
+
+function isSoftOpinion(text) {
+  return /(leading|best[-\s]?in[-\s]?class|strong|robust|high[-\s]?quality|world[-\s]?class|excellent|attractive|compelling)/i.test(
+    String(text || "")
+  );
+}
+
+function bestEvidenceMatches(statementText, references, max = 3) {
+  const stoks = tokens(statementText);
+  if (!stoks.length || !Array.isArray(references) || references.length === 0) {
+    return [];
+  }
+
+  const scored = references
+    .map((r, idx) => {
+      const blob = `${r?.title || ""} ${r?.snippet || ""} ${r?.url || ""}`;
+      const btoks = tokens(blob);
+      const bset = new Set(btoks);
+
+      let hit = 0;
+      for (const t of stoks) {
+        if (bset.has(t)) hit++;
+      }
+
+      // require at least 2 shared tokens for a usable match
+      const ok = hit >= 2;
+
+      return {
+        idx,
+        ok,
+        hit,
+        ref: r,
+      };
+    })
+    .filter((x) => x.ok)
+    .sort((a, b) => b.hit - a.hit)
+    .slice(0, max);
+
+  return scored.map((x) => {
+    const n = x.idx + 1;
+    return {
+      label: `[${n}]`,
+      title: x.ref?.title || "Source",
+      url: x.ref?.url || "",
+      snippet: x.ref?.snippet || "",
+      refIndex: n,
+      tokenHits: x.hit,
+    };
+  });
+}
+
+function scoreOneStatement(text, references) {
+  let score = 0.55;
+  const rationaleBits = [];
+
+  const forward = isForwardLooking(text);
+  const opiniony = isSoftOpinion(text);
+  const numeric = hasNumber(text);
+
+  const matches = bestEvidenceMatches(text, references, 3);
+  const hasWeb = Array.isArray(references) && references.length > 0;
+
+  if (forward) {
+    score -= 0.12;
+    rationaleBits.push("Forward-looking language reduces verifiability.");
+  }
+
+  if (opiniony) {
+    score -= 0.08;
+    rationaleBits.push("This wording is partly qualitative/opinion-based.");
+  }
+
+  if (!hasWeb) {
+    score -= 0.10;
+    rationaleBits.push("No supporting web sources were available for corroboration.");
+  }
+
+  if (matches.length) {
+    // stronger boost if the statement is specific
+    score += numeric ? 0.28 : 0.22;
+    rationaleBits.push("Corroborating sources were found.");
+  } else {
+    // if it reads as factual/specific but we can't corroborate, penalise
+    score -= numeric ? 0.18 : 0.10;
+    rationaleBits.push("No clear corroboration was found in the retrieved sources.");
+  }
+
+  score = clamp01(score);
+
+  let implication = "";
+  if (score >= 0.8) {
+    implication = "Keep as-is. Ensure the linked sources remain current and relevant.";
+  } else if (score >= 0.6) {
+    implication = "Consider adding a direct citation or tightening specifics (who/what/when) to improve confidence.";
+  } else {
+    implication = "If this claim matters, add a supporting source or rephrase to reflect uncertainty/attribution.";
+  }
+
+  const rationale = rationaleBits.length
+    ? rationaleBits.join(" ")
+    : "Insufficient information to make a stronger assessment.";
+
+  return { score, rationale, implication, sources: matches };
+}
+
+// Very lightweight consistency scan (phaseable)
+function detectPotentialContradictions(statements) {
+  if (!Array.isArray(statements) || statements.length < 2) return [];
+
+  const nums = (t) => {
+    const m = String(t || "").match(/\b\d+(?:[\.,]\d+)?\b/g);
+    return Array.isArray(m) ? m.map((x) => x.replace(",", "")) : [];
+  };
+
+  const keyTokens = (t) => {
+    const ts = tokens(t);
+    return new Set(ts.slice(0, 8));
+  };
+
+  const pairs = [];
+  for (let i = 0; i < statements.length; i++) {
+    for (let j = i + 1; j < statements.length; j++) {
+      const a = statements[i];
+      const b = statements[j];
+      const an = nums(a.text);
+      const bn = nums(b.text);
+      if (!an.length || !bn.length) continue;
+
+      const aset = keyTokens(a.text);
+      const bset = keyTokens(b.text);
+      let shared = 0;
+      for (const t of aset) if (bset.has(t)) shared++;
+      if (shared < 2) continue;
+
+      // numeric conflict if different numbers appear
+      const aFirst = an[0];
+      const bFirst = bn[0];
+      if (aFirst && bFirst && aFirst !== bFirst) {
+        pairs.push({ a: a.id, b: b.id, reason: "Potential numeric inconsistency" });
       }
     }
   }
-
-  const picked = uniq.slice(0, Math.max(min, uniq.length));
-
-  return picked.slice(0, max).map((t, idx) => ({
-    id: idx + 1,
-    text: t,
-    category: "Other",
-    score: 0.5,
-    explanation:
-      "Auto-extracted fallback statement because the model returned no statements. Treat as a draft segmentation of claims, not a validation.",
-    implication:
-      "Review and refine the claim wording, then re-run analysis; add sources if the claim should be verifiable.",
-  }));
+  return pairs.slice(0, 25);
 }
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST")
+  if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
 
   if (!process.env.OPENAI_API_KEY) {
     return res
@@ -220,40 +318,34 @@ export default async function handler(req, res) {
         ? body.modelId.trim()
         : "gpt-4o-mini";
 
-    if (!draftText.trim())
+    if (!draftText.trim()) {
       return res.status(400).json({ error: "Missing or invalid draftText" });
+    }
 
     // Always-on web retrieval
-    const searchQuery = deriveQueryFromDraft(stripPlaceholders(draftText));
-    const search = await tavilySearch({ query: searchQuery, maxResults: 4 });
+    const cleanDraft = stripPlaceholders(draftText);
+    const searchQuery = deriveQueryFromDraft(cleanDraft);
+    const search = await tavilySearch({ query: searchQuery, maxResults: 6 });
     const webBlock = search.ok ? formatWebResultsForPrompt(search.results) : "";
     const references = search.ok ? webResultsToReferences(search.results) : [];
 
+    // LLM extraction (statements only; no scoring)
     const systemPrompt = `
-You are an expert analyst and fact-checker.
+You are an expert analyst.
 
-Turn the draft into atomic statements.
+Task: extract verifiable factual statements from the draft.
 
-REQUIREMENTS:
-- Return 8–20 statements when possible.
-- If the draft is short, mostly bullets, or hedged, still return AT LEAST 3 statements by converting implicit claims into explicit ones.
-- Do NOT return an empty statements array unless the draft is empty (it is not).
-
-For each statement include:
-- category
-- reliability score 0..1
-- explanation (never "-" or empty)
-- implication (never "-" or empty)
-
-Use the WEB RESULTS to corroborate or challenge statements where possible.
-If web results are insufficient, say so.
+Rules:
+- Prefer statements that could, in principle, be checked against public sources.
+- Skip pure opinions, marketing adjectives, and vague descriptions.
+- Keep each statement atomic (one claim per statement).
+- It is acceptable to return an empty list if the draft contains no clearly verifiable factual statements.
 
 Return ONLY valid JSON:
 {
   "statements": [
-    { "id": number, "text": string, "category": string, "score": number, "explanation": string, "implication": string }
-  ],
-  "summary": { "note": string|null }
+    { "text": string }
+  ]
 }
 `.trim();
 
@@ -267,8 +359,8 @@ ${webBlock || "(no web results retrieved)"}
 
     const completion = await client.chat.completions.create({
       model: modelId,
-      temperature: 0.2,
-      max_completion_tokens: 1300,
+      temperature: 0.1,
+      max_completion_tokens: 900,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -278,72 +370,59 @@ ${webBlock || "(no web results retrieved)"}
 
     const raw = completion.choices?.[0]?.message?.content || "";
     const parsed = safeJsonParse(raw) || {};
-    let finalStatements = normaliseStatements(parsed);
+    const extracted = normaliseExtractedStatements(parsed);
 
-    // Fallback: stricter prompt if model returned nothing.
-    let usedModelFallback = false;
-    let usedLocalFallback = false;
-
-    if (finalStatements.length === 0) {
-      usedModelFallback = true;
-
-      const fallbackSystemPrompt = `
-You are an expert analyst.
-
-Extract AT LEAST 3 atomic statements from the draft, even if the draft is short, mostly bullets, or hedged.
-Convert implicit claims into explicit statements.
-
-For each statement include:
-- category
-- reliability score 0..1
-- explanation (never "-" or empty)
-- implication (never "-" or empty)
-
-Use WEB RESULTS if relevant; if they don't help, say so in explanation.
-
-Return ONLY valid JSON:
-{
-  "statements": [
-    { "id": number, "text": string, "category": string, "score": number, "explanation": string, "implication": string }
-  ],
-  "summary": { "note": string|null }
-}
-`.trim();
-
-      const fallbackCompletion = await client.chat.completions.create({
-        model: modelId,
-        temperature: 0.2,
-        max_completion_tokens: 1300,
-        messages: [
-          { role: "system", content: fallbackSystemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        response_format: { type: "json_object" },
+    if (!extracted.length) {
+      return res.status(200).json({
+        ok: true,
+        statements: [],
+        summary: {
+          note:
+            "No verifiable factual statements were detected in this draft.\n\nThis text may be opinion-based, forward-looking, or descriptive.",
+        },
+        meta: {
+          webSearch: {
+            enabled: true,
+            used: Boolean(search.ok && references.length),
+            provider: "tavily",
+            query: searchQuery,
+            resultsCount: references.length,
+            error: search.ok ? null : search.error || "Web search failed",
+          },
+          references,
+          model: completion.model || modelId,
+          scoring: {
+            method: "rules-based",
+          },
+          consistency: {
+            contradictions: [],
+          },
+        },
       });
-
-      const raw2 = fallbackCompletion.choices?.[0]?.message?.content || "";
-      const parsed2 = safeJsonParse(raw2) || {};
-      finalStatements = normaliseStatements(parsed2);
     }
 
-    // Last resort: deterministic local extraction (never return empty).
-    if (finalStatements.length === 0) {
-      usedLocalFallback = true;
-      finalStatements = localFallbackExtractStatements(draftText, 3, 12);
-    }
+    const scored = extracted.map((s) => {
+      const scoredOne = scoreOneStatement(s.text, references);
+      return {
+        id: s.id,
+        text: s.text,
+        score: scoredOne.score,
+        explanation: scoredOne.rationale,
+        implication: scoredOne.implication,
+        sources: scoredOne.sources,
+      };
+    });
 
-    const summaryNote =
-      typeof parsed?.summary?.note === "string" ? parsed.summary.note : null;
+    const contradictions = detectPotentialContradictions(extracted);
+    const contradictionNote = contradictions.length
+      ? `Potential internal inconsistencies detected (${contradictions.length}). Review related claims for alignment.`
+      : null;
 
     return res.status(200).json({
       ok: true,
-      statements: finalStatements,
+      statements: scored,
       summary: {
-        note:
-          summaryNote ||
-          (usedLocalFallback
-            ? "Model returned no statements; using a sentence-based fallback extraction."
-            : null),
+        note: contradictionNote,
       },
       meta: {
         webSearch: {
@@ -353,19 +432,19 @@ Return ONLY valid JSON:
           query: searchQuery,
           resultsCount: references.length,
           error: search.ok ? null : search.error || "Web search failed",
-          note: "Statement Analysis always uses web search (independent of the draft toggle).",
         },
         references,
         model: completion.model || modelId,
-        extraction: {
-          fallbackUsed: usedModelFallback || usedLocalFallback,
-          modelFallbackUsed: usedModelFallback,
-          localFallbackUsed: usedLocalFallback,
-          statementsCount: finalStatements.length,
+        scoring: {
+          method: "rules-based",
+        },
+        consistency: {
+          contradictions,
         },
       },
     });
   } catch (err) {
+    // Genuine system failure: return error.
     return res.status(500).json({
       error: "Failed to analyse statements",
       details: err?.message || String(err),
