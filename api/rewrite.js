@@ -43,12 +43,22 @@ HOUSE STYLE:
 - Tone: clear, concise, neutral, professional.
 `.trim();
 
-function approximateTokensFromWords(wordCount) {
+function coercePositiveInt(v) {
+  const n =
+    typeof v === "number"
+      ? v
+      : typeof v === "string"
+      ? Number(v.trim())
+      : NaN;
+
+  if (!Number.isFinite(n)) return null;
+  const i = Math.round(n);
+  return i > 0 ? i : null;
+}
+
+function completionTokensForWordTarget(targetWords) {
   // Keep small targets actually small.
-  if (!wordCount || typeof wordCount !== "number" || !Number.isFinite(wordCount)) return 1200;
-  const n = Math.max(1, Math.round(wordCount));
-  // ~1.3–1.7 tokens/word + buffer
-  return Math.min(4096, Math.max(128, Math.round(n * 1.6) + 120));
+  return Math.min(4096, Math.max(160, Math.round(targetWords * 1.6) + 120));
 }
 
 function countWords(text) {
@@ -58,16 +68,10 @@ function countWords(text) {
 }
 
 async function compressToWordLimit({ modelId, text, maxWords }) {
-  const targetWords =
-    typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0
-      ? Math.round(maxWords)
-      : null;
+  const targetWords = coercePositiveInt(maxWords);
   if (!targetWords) return text;
 
-  const maxCompletionTokens = Math.min(
-    4096,
-    Math.max(128, Math.round(targetWords * 1.6) + 120)
-  );
+  const maxCompletionTokens = completionTokensForWordTarget(targetWords);
 
   const system = `
 You are an expert editor.
@@ -98,9 +102,7 @@ function extractSourcesUsedBlock(rawText) {
   const text = typeof rawText === "string" ? rawText : "";
   const re = /\[SOURCES_USED\]\s*([\s\S]*?)\s*\[\/SOURCES_USED\]/i;
   const m = text.match(re);
-  if (!m) {
-    return { cleaned: text.trim(), sourcesUsed: [] };
-  }
+  if (!m) return { cleaned: text.trim(), sourcesUsed: [] };
 
   const jsonText = (m[1] || "").trim();
   const cleaned = text.replace(re, "").trim();
@@ -118,22 +120,16 @@ function normalizeSourcesUsed(list) {
   const safe = Array.isArray(list) ? list : [];
   return safe
     .map((x) => {
-      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const sourceIndex =
+        typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
       const name = typeof x?.name === "string" ? x.name : "";
       const url = typeof x?.url === "string" ? x.url : null;
-      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const usedPortion =
+        typeof x?.usedPortion === "string" ? x.usedPortion : "";
       const references = Array.isArray(x?.references)
         ? x.references.filter((r) => typeof r === "string")
         : [];
-
-      return {
-        id: `src_${sourceIndex || "x"}_${Math.random().toString(16).slice(2)}`,
-        sourceIndex,
-        name,
-        url,
-        usedPortion,
-        references,
-      };
+      return { sourceIndex, name, url, usedPortion, references };
     })
     .filter((x) => x.name || x.url);
 }
@@ -154,14 +150,35 @@ function buildSourcesBlock(sources) {
     .join("\n\n");
 }
 
+function webReferencesToSourcesUsedRows(webRefs) {
+  const arr = Array.isArray(webRefs) ? webRefs : [];
+  return arr
+    .filter((r) => r && typeof r.url === "string" && r.url.trim())
+    .slice(0, 8)
+    .map((r, i) => ({
+      id: `web_${Date.now()}_${i}_${Math.random().toString(16).slice(2)}`,
+      name:
+        typeof r.title === "string" && r.title.trim()
+          ? r.title.trim()
+          : r.url.trim(),
+      type: "web",
+      url: r.url.trim(),
+      usedPortion: "web search result (used for context)",
+      refs: null,
+    }));
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
+    return res
+      .status(500)
+      .json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
@@ -186,14 +203,17 @@ export default async function handler(req, res) {
     const scenario = typeof body.scenario === "string" ? body.scenario : "";
     const versionType = typeof body.versionType === "string" ? body.versionType : "";
     const publicSearch = body.publicSearch === true;
-    const maxWords = typeof body.maxWords === "number" ? body.maxWords : null;
+    const maxWords = coercePositiveInt(body.maxWords);
 
     const sources = Array.isArray(body.sources) ? body.sources : [];
 
     const modelId =
-      typeof body.model === "string" && body.model.trim() ? body.model.trim() : "gpt-4o-mini";
+      typeof body.model === "string" && body.model.trim()
+        ? body.model.trim()
+        : "gpt-4o-mini";
 
-    if (!baseText.trim()) return res.status(400).json({ error: "Missing base text to rewrite" });
+    if (!baseText.trim())
+      return res.status(400).json({ error: "Missing base text to rewrite" });
     if (!instructions.trim())
       return res.status(400).json({ error: "Missing rewrite instructions" });
 
@@ -211,19 +231,25 @@ export default async function handler(req, res) {
       if (firstLine) qParts.push(firstLine.slice(0, 160));
 
       const query = qParts.filter(Boolean).join(" — ").slice(0, 320) || "General background";
-      web = await tavilySearch({ query, maxResults: 5 });
 
-      if (web.ok) {
-        webResultsForPrompt = formatWebResultsForPrompt(web.results);
-        webReferences = webResultsToReferences(web.results);
+      try {
+        const results = await tavilySearch({ query, maxResults: 5 });
+        web = results;
+
+        if (web?.ok) {
+          webResultsForPrompt = formatWebResultsForPrompt(web.results);
+          webReferences = webResultsToReferences(web.results);
+        }
+      } catch (e) {
+        web = { ok: false, query, results: [], error: e?.message || String(e) };
+        webResultsForPrompt = "";
+        webReferences = [];
       }
     }
 
     const lengthGuidance =
-      typeof maxWords === "number" && maxWords > 0
-        ? `Target rewritten length: <= ${Math.round(
-            maxWords
-          )} words (hard cap). If the instructions explicitly say to expand or shorten, obey those instructions first, but do not exceed the cap.`
+      maxWords
+        ? `Target rewritten length: <= ${maxWords} words (hard cap). If the instructions explicitly say to expand or shorten, obey those instructions first, but do not exceed the cap.`
         : "Keep roughly similar length unless the instructions explicitly say otherwise.";
 
     const systemPrompt = `
@@ -282,10 +308,7 @@ WEB RESULTS (only if publicSearch enabled):
 ${webResultsForPrompt || "(not enabled or no results)"}
 `.trim();
 
-    const maxCompletionTokens =
-      typeof maxWords === "number" && maxWords > 0
-        ? approximateTokensFromWords(maxWords)
-        : 1800;
+    const maxCompletionTokens = maxWords ? completionTokensForWordTarget(maxWords) : 1800;
 
     const completion = await client.chat.completions.create({
       model: modelId,
@@ -307,12 +330,9 @@ ${webResultsForPrompt || "(not enabled or no results)"}
     const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
 
     // Enforce maxWords via clamp (especially important for small targets)
-    if (typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0) {
+    if (maxWords) {
       const wc = countWords(rewrittenText);
       const hardCap = Math.round(maxWords * 1.05);
-
-      // For small targets, clamp as soon as we exceed maxWords (tighter than hardCap).
-      // For larger targets, only clamp if meaningfully above hardCap.
       const mustClamp = maxWords <= 120 ? wc > maxWords : wc > hardCap;
 
       if (mustClamp) {
@@ -328,26 +348,43 @@ ${webResultsForPrompt || "(not enabled or no results)"}
       }
     }
 
+    // SourcesUsedRows: attached sources (from model report) + web references (if enabled)
+    const normalizedSourceRows = (Array.isArray(sourcesUsed) ? sourcesUsed : []).map(
+      (x, idx) => ({
+        id: `src_${x.sourceIndex ?? idx + 1}_${Math.random().toString(16).slice(2)}`,
+        name: x.name || `Source ${idx + 1}`,
+        type: "attached",
+        url: x.url || null,
+        usedPortion: x.usedPortion || "",
+        refs:
+          Array.isArray(x.references) && x.references.length ? x.references : null,
+      })
+    );
+
+    const webRows =
+      publicSearch === true && Array.isArray(webReferences) && webReferences.length
+        ? webReferencesToSourcesUsedRows(webReferences)
+        : [];
+
+    const mergedRows = [...normalizedSourceRows, ...webRows];
+
     return res.status(200).json({
-      // Backward-compatible + new
       text: rewrittenText,
       draftText: rewrittenText,
 
-      // For Sources Used panel
-      sourcesUsedRows: sourcesUsed,
+      sourcesUsedRows: mergedRows,
 
       meta: {
         sourcesUsed,
         webSearch: {
           enabled: publicSearch,
-          used: Boolean(publicSearch && web.ok && webReferences.length),
+          used: Boolean(publicSearch && web?.ok && webReferences.length),
           provider: "tavily",
           query: publicSearch ? web.query : null,
-          resultsCount: publicSearch ? webReferences.length : 0,
-          error: publicSearch && !web.ok ? web.error || "Web search failed" : null,
+          references: webReferences,
+          error: publicSearch && !web?.ok ? web.error || "Web search failed" : null,
           note: "Rewrite uses web search only when the draft toggle is enabled.",
         },
-        references: webReferences,
       },
     });
   } catch (err) {
