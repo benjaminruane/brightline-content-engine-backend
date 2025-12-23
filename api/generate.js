@@ -7,6 +7,7 @@
 //
 // NEW:
 // - Returns meta.sourcesUsed[] describing what was used from attached sources.
+// - Also returns sourcesUsedRows[] at the top-level for convenient frontend consumption.
 // - The model is instructed to append a [SOURCES_USED] JSON block that we strip out.
 
 import OpenAI from "openai";
@@ -314,6 +315,10 @@ export default async function handler(req, res) {
     return res.status(200).json({
       ok: true,
       draftText,
+
+      // NEW: convenient top-level alias for the frontend panel
+      sourcesUsedRows: sourcesUsed,
+
       score: null,
       model: completion.model || null,
       usage: {
