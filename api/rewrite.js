@@ -5,10 +5,17 @@
 // - publicSearch === true: enrich rewrite with web search results
 // - publicSearch === false: do not retrieve from web
 //
-// NEW:
-// - Accepts text OR draftText; notes OR instructions.
-// - Accepts sources[] and returns sourcesUsedRows[] describing what was used.
-// - Model is instructed to append a [SOURCES_USED] JSON block that we strip out.
+// Accepts:
+// - text OR draftText
+// - notes OR instructions
+// - sources[]
+//
+// Returns:
+// - text + draftText
+// - sourcesUsedRows[] describing what was used
+// - meta.webSearch info
+//
+// Model is instructed to append a [SOURCES_USED] JSON block that we strip out.
 
 import OpenAI from "openai";
 import {
@@ -37,13 +44,10 @@ HOUSE STYLE:
 `.trim();
 
 function approximateTokensFromWords(wordCount) {
-  // Heuristic: keep small limits actually small.
-  // (Old Math.max(900, ...) forced huge outputs.)
-  if (!wordCount || typeof wordCount !== "number" || !Number.isFinite(wordCount)) {
-    return 1200;
-  }
+  // Keep small targets actually small.
+  if (!wordCount || typeof wordCount !== "number" || !Number.isFinite(wordCount)) return 1200;
   const n = Math.max(1, Math.round(wordCount));
-  // ~1.3–1.7 tokens/word depending on formatting + buffer
+  // ~1.3–1.7 tokens/word + buffer
   return Math.min(4096, Math.max(128, Math.round(n * 1.6) + 120));
 }
 
@@ -79,11 +83,7 @@ Return ONLY the rewritten draft text.
   const completion = await client.chat.completions.create({
     model: modelId,
     temperature: 0.2,
-
-    // Compatibility: different model routes may honor one or the other.
-    max_tokens: maxCompletionTokens,
     max_completion_tokens: maxCompletionTokens,
-
     messages: [
       { role: "system", content: system },
       { role: "user", content: user },
@@ -118,12 +118,10 @@ function normalizeSourcesUsed(list) {
   const safe = Array.isArray(list) ? list : [];
   return safe
     .map((x) => {
-      const sourceIndex =
-        typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
       const name = typeof x?.name === "string" ? x.name : "";
       const url = typeof x?.url === "string" ? x.url : null;
-      const usedPortion =
-        typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
       const references = Array.isArray(x?.references)
         ? x.references.filter((r) => typeof r === "string")
         : [];
@@ -160,13 +158,10 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST")
-    return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   if (!process.env.OPENAI_API_KEY) {
-    return res
-      .status(500)
-      .json({ error: "Missing OPENAI_API_KEY environment variable" });
+    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
@@ -189,20 +184,16 @@ export default async function handler(req, res) {
         : "";
 
     const scenario = typeof body.scenario === "string" ? body.scenario : "";
-    const versionType =
-      typeof body.versionType === "string" ? body.versionType : "";
+    const versionType = typeof body.versionType === "string" ? body.versionType : "";
     const publicSearch = body.publicSearch === true;
     const maxWords = typeof body.maxWords === "number" ? body.maxWords : null;
 
     const sources = Array.isArray(body.sources) ? body.sources : [];
 
     const modelId =
-      typeof body.model === "string" && body.model.trim()
-        ? body.model.trim()
-        : "gpt-4o-mini";
+      typeof body.model === "string" && body.model.trim() ? body.model.trim() : "gpt-4o-mini";
 
-    if (!baseText.trim())
-      return res.status(400).json({ error: "Missing base text to rewrite" });
+    if (!baseText.trim()) return res.status(400).json({ error: "Missing base text to rewrite" });
     if (!instructions.trim())
       return res.status(400).json({ error: "Missing rewrite instructions" });
 
@@ -216,13 +207,10 @@ export default async function handler(req, res) {
       if (scenario.trim()) qParts.push(scenario.trim());
       if (versionType.trim()) qParts.push(versionType.trim());
       if (instructions.trim()) qParts.push(instructions.trim().slice(0, 220));
-      const firstLine =
-        baseText.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
+      const firstLine = baseText.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
       if (firstLine) qParts.push(firstLine.slice(0, 160));
 
-      const query =
-        qParts.filter(Boolean).join(" — ").slice(0, 320) ||
-        "General background";
+      const query = qParts.filter(Boolean).join(" — ").slice(0, 320) || "General background";
       web = await tavilySearch({ query, maxResults: 5 });
 
       if (web.ok) {
@@ -302,11 +290,7 @@ ${webResultsForPrompt || "(not enabled or no results)"}
     const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.25,
-
-      // Compatibility: different model routes may honor one or the other.
-      max_tokens: maxCompletionTokens,
       max_completion_tokens: maxCompletionTokens,
-
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -315,19 +299,23 @@ ${webResultsForPrompt || "(not enabled or no results)"}
 
     const raw = completion.choices?.[0]?.message?.content?.trim() || "";
     if (!raw) {
-      return res
-        .status(500)
-        .json({ error: "Model returned empty rewrite text." });
+      return res.status(500).json({ error: "Model returned empty rewrite text." });
     }
 
     const extracted = extractSourcesUsedBlock(raw);
     let rewrittenText = extracted.cleaned;
     const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
 
-    // Guaranteed cap (only if maxWords provided)
-    if (typeof maxWords === "number" && maxWords > 0) {
+    // Enforce maxWords via clamp (especially important for small targets)
+    if (typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0) {
+      const wc = countWords(rewrittenText);
       const hardCap = Math.round(maxWords * 1.05);
-      if (countWords(rewrittenText) > hardCap) {
+
+      // For small targets, clamp as soon as we exceed maxWords (tighter than hardCap).
+      // For larger targets, only clamp if meaningfully above hardCap.
+      const mustClamp = maxWords <= 120 ? wc > maxWords : wc > hardCap;
+
+      if (mustClamp) {
         try {
           rewrittenText = await compressToWordLimit({
             modelId,
@@ -335,7 +323,7 @@ ${webResultsForPrompt || "(not enabled or no results)"}
             maxWords,
           });
         } catch {
-          // If clamp fails, return the original; token cap should prevent most overshoots.
+          // If clamp fails, return original; token cap should prevent most overshoots.
         }
       }
     }
@@ -345,12 +333,11 @@ ${webResultsForPrompt || "(not enabled or no results)"}
       text: rewrittenText,
       draftText: rewrittenText,
 
-      // NEW: for Sources Used panel
+      // For Sources Used panel
       sourcesUsedRows: sourcesUsed,
 
       meta: {
         sourcesUsed,
-
         webSearch: {
           enabled: publicSearch,
           used: Boolean(publicSearch && web.ok && webReferences.length),
