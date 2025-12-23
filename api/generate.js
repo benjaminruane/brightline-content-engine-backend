@@ -63,6 +63,20 @@ function describeScenario(scenario) {
   }
 }
 
+function coercePositiveInt(v) {
+  // Accept number or numeric string; otherwise null.
+  const n =
+    typeof v === "number"
+      ? v
+      : typeof v === "string"
+      ? Number(v.trim())
+      : NaN;
+
+  if (!Number.isFinite(n)) return null;
+  const i = Math.round(n);
+  return i > 0 ? i : null;
+}
+
 function buildSystemPrompt() {
   return `
 ${STYLE_GUIDE_INSTRUCTIONS}
@@ -111,6 +125,8 @@ function buildUserPrompt(payload) {
   const safeTypes = Array.isArray(selectedTypes) ? selectedTypes : [];
   const safeSources = Array.isArray(sources) ? sources : [];
 
+  const coercedMaxWords = coercePositiveInt(maxWords);
+
   const sourceBlock = safeSources.length
     ? safeSources
         .map((s, i) => {
@@ -152,8 +168,8 @@ ${versionType || "(none)"}
 
 TARGET LENGTH:
 ${
-  typeof maxWords === "number" && maxWords > 0
-    ? `${maxWords} words maximum (HARD CAP: do not exceed). If you would exceed, compress the draft.`
+  coercedMaxWords
+    ? `${coercedMaxWords} words maximum (HARD CAP: do not exceed). If you would exceed, compress the draft.`
     : "(no max words provided)"
 }
 
@@ -192,23 +208,15 @@ function normalizeSourcesUsed(list) {
   const safe = Array.isArray(list) ? list : [];
   return safe
     .map((x) => {
-      const sourceIndex =
-        typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
       const name = typeof x?.name === "string" ? x.name : "";
       const url = typeof x?.url === "string" ? x.url : null;
-      const usedPortion =
-        typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
       const references = Array.isArray(x?.references)
         ? x.references.filter((r) => typeof r === "string")
         : [];
 
-      return {
-        sourceIndex,
-        name,
-        url,
-        usedPortion,
-        references,
-      };
+      return { sourceIndex, name, url, usedPortion, references };
     })
     .filter((x) => x.name || x.url);
 }
@@ -225,17 +233,17 @@ function countWords(text) {
   return s.split(/\s+/).filter(Boolean).length;
 }
 
+function completionTokensForWordTarget(targetWords) {
+  // Tight but safe; clamp will guarantee final.
+  // Keep a minimum so the model can still form a coherent sentence.
+  return Math.min(4096, Math.max(160, Math.round(targetWords * 1.6) + 80));
+}
+
 async function compressToWordLimit({ modelId, text, maxWords }) {
-  const targetWords =
-    typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0
-      ? Math.round(maxWords)
-      : null;
+  const targetWords = coercePositiveInt(maxWords);
   if (!targetWords) return text;
 
-  const maxCompletionTokens = Math.min(
-    4096,
-    Math.max(256, Math.round(targetWords * 1.6) + 80)
-  );
+  const maxCompletionTokens = completionTokensForWordTarget(targetWords);
 
   const system = `
 You are an expert editor.
@@ -251,10 +259,7 @@ Return ONLY the rewritten draft text.
   const completion = await client.chat.completions.create({
     model: modelId,
     temperature: 0.2,
-
-    // Compatibility: different model routes may honor one or the other.
     max_completion_tokens: maxCompletionTokens,
-
     messages: [
       { role: "system", content: system },
       { role: "user", content: user },
@@ -269,8 +274,7 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST")
-    return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   try {
     const body = req.body || {};
@@ -294,9 +298,9 @@ export default async function handler(req, res) {
     }
 
     const modelId =
-      typeof modelIdRaw === "string" && modelIdRaw.trim()
-        ? modelIdRaw.trim()
-        : "gpt-4o-mini";
+      typeof modelIdRaw === "string" && modelIdRaw.trim() ? modelIdRaw.trim() : "gpt-4o-mini";
+
+    const targetWords = coercePositiveInt(maxWords);
 
     // Optional web search enrichment
     let webResultsForPrompt = "";
@@ -313,13 +317,7 @@ export default async function handler(req, res) {
         webReferences = webResultsToReferences(results);
         web = { ok: true, provider: "tavily", query, results };
       } catch (e) {
-        web = {
-          ok: false,
-          provider: "tavily",
-          query,
-          results: [],
-          error: e?.message || String(e),
-        };
+        web = { ok: false, provider: "tavily", query, results: [], error: e?.message || String(e) };
         webResultsForPrompt = "";
         webReferences = [];
       }
@@ -332,30 +330,17 @@ export default async function handler(req, res) {
       scenario,
       selectedTypes,
       versionType,
-      maxWords: typeof maxWords === "number" ? maxWords : null,
+      maxWords: targetWords, // already coerced
       sources,
       webResultsForPrompt,
     });
 
-    const targetWords =
-      typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0
-        ? Math.round(maxWords)
-        : null;
-
-    const hardCapWords = targetWords ? Math.round(targetWords * 1.05) : null;
-
-    // Rough heuristic: ~0.75–1.0 tokens/word in English + small buffer.
-    const maxCompletionTokens = targetWords
-      ? Math.min(4096, Math.max(256, Math.round(targetWords * 1.6) + 80))
-      : 2048;
+    const maxCompletionTokens = targetWords ? completionTokensForWordTarget(targetWords) : 2048;
 
     const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.3,
-
-      // Compatibility: different model routes may honor one or the other.
       max_completion_tokens: maxCompletionTokens,
-
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -369,13 +354,14 @@ export default async function handler(req, res) {
     let draftText = extracted.cleaned;
     const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
 
-    // Enforce word limit (guaranteed cap).
+    // Guaranteed word cap (crucial for small targets)
     if (targetWords) {
       const wc = countWords(draftText);
-    
-      // For small targets, always enforce via compression
-      const mustClamp = targetWords <= 120 || wc > Math.round(targetWords * 1.05);
-    
+      const hardCap = Math.round(targetWords * 1.05);
+
+      // For small targets, clamp as soon as we exceed the target.
+      const mustClamp = targetWords <= 120 ? wc > targetWords : wc > hardCap;
+
       if (mustClamp) {
         try {
           draftText = await compressToWordLimit({
@@ -384,7 +370,7 @@ export default async function handler(req, res) {
             maxWords: targetWords,
           });
         } catch {
-          // If compression fails, return original (should be rare)
+          // If clamp fails, return original; token cap should reduce overshoots anyway.
         }
       }
     }
@@ -392,10 +378,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       ok: true,
       draftText,
-
-      // NEW: convenient top-level alias for the frontend panel
       sourcesUsedRows: sourcesUsed,
-
       score: null,
       model: completion.model || null,
       usage: {
@@ -405,7 +388,6 @@ export default async function handler(req, res) {
       },
       meta: {
         sourcesUsed,
-
         webSearch: {
           enabled: publicSearch === true,
           used: Boolean(publicSearch === true && web.ok && webReferences.length),
