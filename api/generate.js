@@ -4,6 +4,10 @@
 // Web search behaviour:
 // - publicSearch === true: enrich with web search results
 // - publicSearch === false: do not retrieve from web
+//
+// NEW:
+// - Returns meta.sourcesUsed[] describing what was used from attached sources.
+// - The model is instructed to append a [SOURCES_USED] JSON block that we strip out.
 
 import OpenAI from "openai";
 import {
@@ -76,6 +80,28 @@ STRICT RULES:
 
 STYLE GUIDE:
 ${STYLE_GUIDE_INSTRUCTIONS}
+
+SOURCES USED REPORT (IMPORTANT):
+After the draft, append a machine-readable report in this EXACT format:
+
+[SOURCES_USED]
+{
+  "sourcesUsed": [
+    {
+      "sourceIndex": 1,
+      "name": "Source name",
+      "url": "https://... (or null)",
+      "usedPortion": "1–2 sentences on what was used",
+      "references": ["page/section/quote pointers if available, otherwise empty"]
+    }
+  ]
+}
+[/SOURCES_USED]
+
+Rules:
+- Only include sources you actually used.
+- usedPortion should be concise and specific (not generic).
+- references: keep short; if you cannot infer pages/sections, leave it as [].
 `.trim();
 }
 
@@ -103,7 +129,9 @@ function buildUserPrompt(payload) {
           const kind = typeof s?.kind === "string" ? s.kind : "source";
           const name = typeof s?.name === "string" ? s.name : `Source ${i + 1}`;
           const text = typeof s?.text === "string" ? s.text : "";
-          return `SOURCE ${i + 1} (${kind}) — ${name}\n${text}`.trim();
+          const url = typeof s?.url === "string" ? s.url : "";
+          const urlLine = url ? `URL: ${url}` : "URL: (none)";
+          return `SOURCE ${i + 1} (${kind}) — ${name}\n${urlLine}\n${text}`.trim();
         })
         .join("\n\n")
     : "(no sources)";
@@ -142,6 +170,50 @@ ${sourceBlock}
 WEB RESULTS (only if publicSearch enabled):
 ${webBlock}
 `.trim();
+}
+
+function extractSourcesUsedBlock(rawText) {
+  const text = typeof rawText === "string" ? rawText : "";
+  const re = /\[SOURCES_USED\]\s*([\s\S]*?)\s*\[\/SOURCES_USED\]/i;
+  const m = text.match(re);
+  if (!m) {
+    return { cleaned: text.trim(), sourcesUsed: [] };
+  }
+
+  const jsonText = (m[1] || "").trim();
+  const cleaned = text.replace(re, "").trim();
+
+  try {
+    const parsed = JSON.parse(jsonText);
+    const list = Array.isArray(parsed?.sourcesUsed) ? parsed.sourcesUsed : [];
+    return { cleaned, sourcesUsed: list };
+  } catch {
+    return { cleaned, sourcesUsed: [] };
+  }
+}
+
+function normalizeSourcesUsed(list) {
+  const safe = Array.isArray(list) ? list : [];
+  return safe
+    .map((x) => {
+      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const name = typeof x?.name === "string" ? x.name : "";
+      const url = typeof x?.url === "string" ? x.url : null;
+      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const references = Array.isArray(x?.references)
+        ? x.references.filter((r) => typeof r === "string")
+        : [];
+
+      return {
+        id: `src_${sourceIndex || "x"}_${Math.random().toString(16).slice(2)}`,
+        sourceIndex,
+        name,
+        url,
+        usedPortion,
+        references,
+      };
+    })
+    .filter((x) => x.name || x.url);
 }
 
 function coerceDraftText(rawContent) {
@@ -233,7 +305,11 @@ export default async function handler(req, res) {
     });
 
     const rawContent = completion.choices?.[0]?.message?.content || "";
-    const draftText = coerceDraftText(rawContent);
+    const draftRaw = coerceDraftText(rawContent);
+
+    const extracted = extractSourcesUsedBlock(draftRaw);
+    const draftText = extracted.cleaned;
+    const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
 
     return res.status(200).json({
       ok: true,
@@ -246,6 +322,8 @@ export default async function handler(req, res) {
         totalTokens: completion.usage?.total_tokens ?? null,
       },
       meta: {
+        sourcesUsed,
+
         webSearch: {
           enabled: publicSearch === true,
           used: Boolean(publicSearch === true && web.ok && webReferences.length),
