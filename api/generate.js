@@ -192,10 +192,12 @@ function normalizeSourcesUsed(list) {
   const safe = Array.isArray(list) ? list : [];
   return safe
     .map((x) => {
-      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const sourceIndex =
+        typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
       const name = typeof x?.name === "string" ? x.name : "";
       const url = typeof x?.url === "string" ? x.url : null;
-      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const usedPortion =
+        typeof x?.usedPortion === "string" ? x.usedPortion : "";
       const references = Array.isArray(x?.references)
         ? x.references.filter((r) => typeof r === "string")
         : [];
@@ -249,7 +251,11 @@ Return ONLY the rewritten draft text.
   const completion = await client.chat.completions.create({
     model: modelId,
     temperature: 0.2,
+
+    // Compatibility: different model routes may honor one or the other.
+    max_tokens: maxCompletionTokens,
     max_completion_tokens: maxCompletionTokens,
+
     messages: [
       { role: "system", content: system },
       { role: "user", content: user },
@@ -264,7 +270,8 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   try {
     const body = req.body || {};
@@ -282,12 +289,15 @@ export default async function handler(req, res) {
 
     if (!title && !notes && (!Array.isArray(sources) || sources.length === 0)) {
       return res.status(400).json({
-        error: "Missing content to generate from. Provide at least a title, notes, or one source excerpt.",
+        error:
+          "Missing content to generate from. Provide at least a title, notes, or one source excerpt.",
       });
     }
 
     const modelId =
-      typeof modelIdRaw === "string" && modelIdRaw.trim() ? modelIdRaw.trim() : "gpt-4o-mini";
+      typeof modelIdRaw === "string" && modelIdRaw.trim()
+        ? modelIdRaw.trim()
+        : "gpt-4o-mini";
 
     // Optional web search enrichment
     let webResultsForPrompt = "";
@@ -304,7 +314,13 @@ export default async function handler(req, res) {
         webReferences = webResultsToReferences(results);
         web = { ok: true, provider: "tavily", query, results };
       } catch (e) {
-        web = { ok: false, provider: "tavily", query, results: [], error: e?.message || String(e) };
+        web = {
+          ok: false,
+          provider: "tavily",
+          query,
+          results: [],
+          error: e?.message || String(e),
+        };
         webResultsForPrompt = "";
         webReferences = [];
       }
@@ -322,9 +338,6 @@ export default async function handler(req, res) {
       webResultsForPrompt,
     });
 
-    // IMPORTANT: use max_completion_tokens (not max_tokens)
-    // Use a word-based estimate to keep generations tight.
-    // (The old minimum of 900 tokens allowed huge outputs.)
     const targetWords =
       typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0
         ? Math.round(maxWords)
@@ -340,7 +353,11 @@ export default async function handler(req, res) {
     const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.3,
+
+      // Compatibility: different model routes may honor one or the other.
+      max_tokens: maxCompletionTokens,
       max_completion_tokens: maxCompletionTokens,
+
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
@@ -363,7 +380,7 @@ export default async function handler(req, res) {
           maxWords: targetWords,
         });
       } catch {
-        // If compression fails, still return the original (but the tighter token cap should prevent this).
+        // If compression fails, still return the original (but token cap should prevent most overshoots).
       }
     }
 
