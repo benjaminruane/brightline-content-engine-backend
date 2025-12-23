@@ -253,7 +253,6 @@ Return ONLY the rewritten draft text.
     temperature: 0.2,
 
     // Compatibility: different model routes may honor one or the other.
-    max_tokens: maxCompletionTokens,
     max_completion_tokens: maxCompletionTokens,
 
     messages: [
@@ -355,7 +354,6 @@ export default async function handler(req, res) {
       temperature: 0.3,
 
       // Compatibility: different model routes may honor one or the other.
-      max_tokens: maxCompletionTokens,
       max_completion_tokens: maxCompletionTokens,
 
       messages: [
@@ -372,15 +370,22 @@ export default async function handler(req, res) {
     const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
 
     // Enforce word limit (guaranteed cap).
-    if (hardCapWords && countWords(draftText) > hardCapWords) {
-      try {
-        draftText = await compressToWordLimit({
-          modelId,
-          text: draftText,
-          maxWords: targetWords,
-        });
-      } catch {
-        // If compression fails, still return the original (but token cap should prevent most overshoots).
+    if (targetWords) {
+      const wc = countWords(draftText);
+    
+      // For small targets, always enforce via compression
+      const mustClamp = targetWords <= 120 || wc > Math.round(targetWords * 1.05);
+    
+      if (mustClamp) {
+        try {
+          draftText = await compressToWordLimit({
+            modelId,
+            text: draftText,
+            maxWords: targetWords,
+          });
+        } catch {
+          // If compression fails, return original (should be rare)
+        }
       }
     }
 
