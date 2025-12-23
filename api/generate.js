@@ -15,6 +15,7 @@ import {
   tavilySearch,
   formatWebResultsForPrompt,
   webResultsToReferences,
+  deriveQueryFromDraft,
 } from "./_web.js";
 
 // --- CORS helper --------------------------------------------------
@@ -31,59 +32,45 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const STYLE_GUIDE_INSTRUCTIONS = `
 You are part of an internal writing tool called "Content Engine".
-Follow this style guide in all draft outputs:
+You produce crisp, professional, investment-grade writing.
 
-- Currency:
-  - Use "USD" followed by a space and a number with standard English thousand separators.
-    Example: USD 1,500,000.
-- Years:
-  - Do NOT insert thousand separators into years: 2025, 1999.
-- Quotation marks:
-  - Prefer straight double quotes "like this".
-- Tone:
-  - Clear, concise, neutral, professional.
+General style:
+- Write in clear, confident, neutral business English.
+- Avoid hype, filler, and generic statements.
+- Prefer short paragraphs, strong topic sentences, and concrete facts.
+- Use bullet points only when it improves clarity.
+- If information is missing, do not invent; write around it or explicitly state it is not available.
 `.trim();
 
-function describeScenario(scenarioId) {
-  switch (scenarioId) {
+function describeScenario(scenario) {
+  switch (scenario) {
     case "new_investment":
-      return "New direct investment announcement or description.";
-    case "exit_realisation":
-      return "Direct investment exit or realisation update.";
-    case "revaluation":
-      return "Direct investment valuation or revaluation update.";
-    case "new_fund_commitment":
-      return "New fund commitment (LP committing capital to a fund).";
+      return "Announce / describe a new investment";
+    case "direct_investment":
+      return "Describe a direct investment";
+    case "direct_investment_realisation":
+      return "Describe a realisation/exit of a direct investment";
+    case "fund_commitment":
+      return "Describe a new fund commitment";
     case "fund_capital_call":
-      return "Fund capital call notice.";
+      return "Explain a fund capital call";
     case "fund_distribution":
-      return "Fund distribution or proceeds notice.";
+      return "Explain a fund distribution";
+    case "linkedin_post":
+      return "LinkedIn post style; still professional";
     default:
-      return scenarioId || "General private markets communication.";
+      return "General drafting";
   }
 }
 
 function buildSystemPrompt() {
   return `
-You are a professional private markets writer inside a tool called Content Engine.
-
-TASK:
-Write an investor-grade draft based ONLY on:
-- the user's title/notes/scenario/output types
-- attached source excerpts (if any)
-- and, if provided, web search results (ONLY when publicSearch is enabled)
-
-STRICT RULES:
-- Do not invent facts, numbers, dates, or company details not supported by inputs.
-- If key information is missing, write around it cleanly with neutral placeholders.
-- If web results are provided, use them only for general context (definitions/market context).
-  Do not fabricate deal-specific details.
-
-STYLE GUIDE:
 ${STYLE_GUIDE_INSTRUCTIONS}
 
-SOURCES USED REPORT (IMPORTANT):
-After the draft, append a machine-readable report in this EXACT format:
+You must produce ONLY the draft text.
+Do not include preambles, apologies, or meta commentary.
+
+You MUST append a [SOURCES_USED] JSON block at the end, formatted exactly:
 
 [SOURCES_USED]
 {
@@ -127,12 +114,20 @@ function buildUserPrompt(payload) {
   const sourceBlock = safeSources.length
     ? safeSources
         .map((s, i) => {
-          const kind = typeof s?.kind === "string" ? s.kind : "source";
-          const name = typeof s?.name === "string" ? s.name : `Source ${i + 1}`;
-          const text = typeof s?.text === "string" ? s.text : "";
-          const url = typeof s?.url === "string" ? s.url : "";
-          const urlLine = url ? `URL: ${url}` : "URL: (none)";
-          return `SOURCE ${i + 1} (${kind}) — ${name}\n${urlLine}\n${text}`.trim();
+          const idx = i + 1;
+          const name = (s?.name || `Source ${idx}`).trim();
+          const kind = (s?.kind || "text").trim();
+          const url = typeof s?.url === "string" ? s.url.trim() : "";
+          const text = typeof s?.text === "string" ? s.text.trim() : "";
+
+          return `
+SOURCE ${idx}:
+NAME: ${name}
+TYPE: ${kind}
+URL: ${url || "(none)"}
+CONTENT:
+${text || "(no content)"}
+`.trim();
         })
         .join("\n\n")
     : "(no sources)";
@@ -158,14 +153,14 @@ ${versionType || "(none)"}
 TARGET LENGTH:
 ${
   typeof maxWords === "number" && maxWords > 0
-    ? `${maxWords} words max`
+    ? `${maxWords} words maximum (HARD CAP: do not exceed). If you would exceed, compress the draft.`
     : "(no max words provided)"
 }
 
 NOTES:
 ${safeNotes || "(none)"}
 
-SOURCES:
+ATTACHED SOURCES:
 ${sourceBlock}
 
 WEB RESULTS (only if publicSearch enabled):
@@ -206,7 +201,6 @@ function normalizeSourcesUsed(list) {
         : [];
 
       return {
-        id: `src_${sourceIndex || "x"}_${Math.random().toString(16).slice(2)}`,
         sourceIndex,
         name,
         url,
@@ -223,20 +217,57 @@ function coerceDraftText(rawContent) {
   return "Draft could not be generated. Please try again, or provide more notes and/or sources.";
 }
 
+function countWords(text) {
+  const s = typeof text === "string" ? text.trim() : "";
+  if (!s) return 0;
+  return s.split(/\s+/).filter(Boolean).length;
+}
+
+async function compressToWordLimit({ modelId, text, maxWords }) {
+  const targetWords =
+    typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0
+      ? Math.round(maxWords)
+      : null;
+  if (!targetWords) return text;
+
+  const maxCompletionTokens = Math.min(
+    4096,
+    Math.max(256, Math.round(targetWords * 1.6) + 80)
+  );
+
+  const system = `
+You are an expert editor.
+Rewrite the provided draft so it is <= ${targetWords} words.
+Hard rule: DO NOT exceed the word limit.
+Preserve meaning, facts, and structure as much as possible.
+Do not add headings, preambles, or commentary.
+Return ONLY the rewritten draft text.
+`.trim();
+
+  const user = `DRAFT TO SHORTEN:\n\n${text}`.trim();
+
+  const completion = await client.chat.completions.create({
+    model: modelId,
+    temperature: 0.2,
+    max_completion_tokens: maxCompletionTokens,
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ],
+  });
+
+  const out = completion.choices?.[0]?.message?.content || "";
+  return typeof out === "string" && out.trim() ? out.trim() : text;
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
-  }
-
   try {
-    const body =
-      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
-
+    const body = req.body || {};
     const {
       title,
       notes,
@@ -258,22 +289,24 @@ export default async function handler(req, res) {
     const modelId =
       typeof modelIdRaw === "string" && modelIdRaw.trim() ? modelIdRaw.trim() : "gpt-4o-mini";
 
-    // Optional web enrichment
-    let web = { ok: false, query: "", results: [], error: null };
+    // Optional web search enrichment
     let webResultsForPrompt = "";
     let webReferences = [];
+    let web = { ok: false, provider: "tavily", query: null, results: [] };
 
     if (publicSearch === true) {
-      const qParts = [];
-      if (typeof title === "string" && title.trim()) qParts.push(title.trim());
-      if (typeof scenario === "string" && scenario.trim()) qParts.push(scenario.trim());
-      if (typeof notes === "string" && notes.trim()) qParts.push(notes.trim().slice(0, 200));
-      const query = qParts.filter(Boolean).join(" — ").slice(0, 320) || "General background";
+      const draftSeed = [title, notes].filter(Boolean).join("\n\n");
+      const query = deriveQueryFromDraft(draftSeed);
 
-      web = await tavilySearch({ query, maxResults: 5 });
-      if (web.ok) {
-        webResultsForPrompt = formatWebResultsForPrompt(web.results);
-        webReferences = webResultsToReferences(web.results);
+      try {
+        const results = await tavilySearch(query);
+        webResultsForPrompt = formatWebResultsForPrompt(results);
+        webReferences = webResultsToReferences(results);
+        web = { ok: true, provider: "tavily", query, results };
+      } catch (e) {
+        web = { ok: false, provider: "tavily", query, results: [], error: e?.message || String(e) };
+        webResultsForPrompt = "";
+        webReferences = [];
       }
     }
 
@@ -290,10 +323,19 @@ export default async function handler(req, res) {
     });
 
     // IMPORTANT: use max_completion_tokens (not max_tokens)
-    const maxCompletionTokens =
-      typeof maxWords === "number" && maxWords > 0
-        ? Math.min(4096, Math.max(900, Math.round(maxWords * 2)))
-        : 2048;
+    // Use a word-based estimate to keep generations tight.
+    // (The old minimum of 900 tokens allowed huge outputs.)
+    const targetWords =
+      typeof maxWords === "number" && Number.isFinite(maxWords) && maxWords > 0
+        ? Math.round(maxWords)
+        : null;
+
+    const hardCapWords = targetWords ? Math.round(targetWords * 1.05) : null;
+
+    // Rough heuristic: ~0.75–1.0 tokens/word in English + small buffer.
+    const maxCompletionTokens = targetWords
+      ? Math.min(4096, Math.max(256, Math.round(targetWords * 1.6) + 80))
+      : 2048;
 
     const completion = await client.chat.completions.create({
       model: modelId,
@@ -309,8 +351,21 @@ export default async function handler(req, res) {
     const draftRaw = coerceDraftText(rawContent);
 
     const extracted = extractSourcesUsedBlock(draftRaw);
-    const draftText = extracted.cleaned;
+    let draftText = extracted.cleaned;
     const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
+
+    // Enforce word limit (guaranteed cap).
+    if (hardCapWords && countWords(draftText) > hardCapWords) {
+      try {
+        draftText = await compressToWordLimit({
+          modelId,
+          text: draftText,
+          maxWords: targetWords,
+        });
+      } catch {
+        // If compression fails, still return the original (but the tighter token cap should prevent this).
+      }
+    }
 
     return res.status(200).json({
       ok: true,
@@ -333,18 +388,15 @@ export default async function handler(req, res) {
           enabled: publicSearch === true,
           used: Boolean(publicSearch === true && web.ok && webReferences.length),
           provider: "tavily",
-          query: publicSearch === true ? web.query : null,
-          resultsCount: publicSearch === true ? webReferences.length : 0,
-          error: publicSearch === true && !web.ok ? web.error || "Web search failed" : null,
-          note: "Generate uses web search only when the draft toggle is enabled.",
+          query: web.query || null,
+          references: webReferences,
         },
-        references: webReferences,
       },
     });
   } catch (err) {
     return res.status(500).json({
-      error: "Failed to generate draft",
-      details: err?.message || String(err),
+      ok: false,
+      error: err?.message || "Unknown error",
     });
   }
 }
