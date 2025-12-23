@@ -4,6 +4,11 @@
 // Web search behaviour:
 // - publicSearch === true: enrich rewrite with web search results
 // - publicSearch === false: do not retrieve from web
+//
+// NEW:
+// - Accepts text OR draftText; notes OR instructions.
+// - Accepts sources[] and returns sourcesUsedRows[] describing what was used.
+// - Model is instructed to append a [SOURCES_USED] JSON block that we strip out.
 
 import OpenAI from "openai";
 import {
@@ -24,9 +29,76 @@ function setCorsHeaders(req, res) {
 }
 // ------------------------------------------------------------------
 
+const STYLE_GUIDE_INSTRUCTIONS = `
+HOUSE STYLE:
+- Currency: USD 164,000 (currency code + space, English commas).
+- Years: write 2025, not 2,025.
+- Tone: clear, concise, neutral, professional.
+`.trim();
+
 function approximateTokensFromWords(wordCount) {
   if (!wordCount || typeof wordCount !== "number" || !Number.isFinite(wordCount)) return 1200;
   return Math.max(900, Math.min(4096, Math.round(wordCount * 1.3)));
+}
+
+function extractSourcesUsedBlock(rawText) {
+  const text = typeof rawText === "string" ? rawText : "";
+  const re = /\[SOURCES_USED\]\s*([\s\S]*?)\s*\[\/SOURCES_USED\]/i;
+  const m = text.match(re);
+  if (!m) {
+    return { cleaned: text.trim(), sourcesUsed: [] };
+  }
+
+  const jsonText = (m[1] || "").trim();
+  const cleaned = text.replace(re, "").trim();
+
+  try {
+    const parsed = JSON.parse(jsonText);
+    const list = Array.isArray(parsed?.sourcesUsed) ? parsed.sourcesUsed : [];
+    return { cleaned, sourcesUsed: list };
+  } catch {
+    return { cleaned, sourcesUsed: [] };
+  }
+}
+
+function normalizeSourcesUsed(list) {
+  const safe = Array.isArray(list) ? list : [];
+  return safe
+    .map((x) => {
+      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const name = typeof x?.name === "string" ? x.name : "";
+      const url = typeof x?.url === "string" ? x.url : null;
+      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const references = Array.isArray(x?.references)
+        ? x.references.filter((r) => typeof r === "string")
+        : [];
+
+      return {
+        id: `src_${sourceIndex || "x"}_${Math.random().toString(16).slice(2)}`,
+        sourceIndex,
+        name,
+        url,
+        usedPortion,
+        references,
+      };
+    })
+    .filter((x) => x.name || x.url);
+}
+
+function buildSourcesBlock(sources) {
+  const safeSources = Array.isArray(sources) ? sources : [];
+  if (!safeSources.length) return "(no sources)";
+
+  return safeSources
+    .map((s, i) => {
+      const kind = typeof s?.kind === "string" ? s.kind : "source";
+      const name = typeof s?.name === "string" ? s.name : `Source ${i + 1}`;
+      const text = typeof s?.text === "string" ? s.text : "";
+      const url = typeof s?.url === "string" ? s.url : "";
+      const urlLine = url ? `URL: ${url}` : "URL: (none)";
+      return `SOURCE ${i + 1} (${kind}) — ${name}\n${urlLine}\n${text}`.trim();
+    })
+    .join("\n\n");
 }
 
 export default async function handler(req, res) {
@@ -43,18 +115,34 @@ export default async function handler(req, res) {
     const body =
       typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
-    const text = typeof body.text === "string" ? body.text : "";
-    const notes = typeof body.notes === "string" ? body.notes : "";
+    // Accept both old + new payload shapes
+    const baseText =
+      typeof body.text === "string"
+        ? body.text
+        : typeof body.draftText === "string"
+        ? body.draftText
+        : "";
+
+    const instructions =
+      typeof body.notes === "string"
+        ? body.notes
+        : typeof body.instructions === "string"
+        ? body.instructions
+        : "";
+
     const scenario = typeof body.scenario === "string" ? body.scenario : "";
     const versionType = typeof body.versionType === "string" ? body.versionType : "";
     const publicSearch = body.publicSearch === true;
     const maxWords = typeof body.maxWords === "number" ? body.maxWords : null;
 
+    const sources = Array.isArray(body.sources) ? body.sources : [];
+
     const modelId =
       typeof body.model === "string" && body.model.trim() ? body.model.trim() : "gpt-4o-mini";
 
-    if (!text.trim()) return res.status(400).json({ error: "Missing base text to rewrite" });
-    if (!notes.trim()) return res.status(400).json({ error: "Missing rewrite instructions (notes)" });
+    if (!baseText.trim()) return res.status(400).json({ error: "Missing base text to rewrite" });
+    if (!instructions.trim())
+      return res.status(400).json({ error: "Missing rewrite instructions" });
 
     // Optional web enrichment (toggle-controlled)
     let web = { ok: false, query: "", results: [], error: null };
@@ -65,8 +153,8 @@ export default async function handler(req, res) {
       const qParts = [];
       if (scenario.trim()) qParts.push(scenario.trim());
       if (versionType.trim()) qParts.push(versionType.trim());
-      if (notes.trim()) qParts.push(notes.trim().slice(0, 220));
-      const firstLine = text.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
+      if (instructions.trim()) qParts.push(instructions.trim().slice(0, 220));
+      const firstLine = baseText.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
       if (firstLine) qParts.push(firstLine.slice(0, 160));
 
       const query = qParts.filter(Boolean).join(" — ").slice(0, 320) || "General background";
@@ -80,22 +168,46 @@ export default async function handler(req, res) {
 
     const lengthGuidance =
       typeof maxWords === "number" && maxWords > 0
-        ? `Target rewritten length: around ${Math.round(maxWords)} words. If the instructions explicitly say to expand or shorten, obey those instructions first, but try to stay near this length.`
+        ? `Target rewritten length: around ${Math.round(
+            maxWords
+          )} words. If the instructions explicitly say to expand or shorten, obey those instructions first, but try to stay near this length.`
         : "Keep roughly similar length unless the instructions explicitly say otherwise.";
 
     const systemPrompt = `
 You are rewriting an investment draft based on author instructions.
 
-HOUSE STYLE:
-- Currency: USD 164,000 (currency code + space, English commas).
-- Years: write 2025, not 2,025.
-- Tone: clear, concise, neutral, professional.
+${STYLE_GUIDE_INSTRUCTIONS}
 
 RULES:
 - Do not add new deal-specific facts unless already present in the base draft or instructions.
+- Use the attached SOURCES only to clarify or tighten language. Do not invent new specifics.
 - If web results are provided, use them only for general context/definitions; do not invent specifics.
 ${lengthGuidance}
+
+SOURCES USED REPORT (IMPORTANT):
+After the rewritten draft, append a machine-readable report in this EXACT format:
+
+[SOURCES_USED]
+{
+  "sourcesUsed": [
+    {
+      "sourceIndex": 1,
+      "name": "Source name",
+      "url": "https://... (or null)",
+      "usedPortion": "1–2 sentences on what was used",
+      "references": ["page/section/quote pointers if available, otherwise empty"]
+    }
+  ]
+}
+[/SOURCES_USED]
+
+Rules:
+- Only include sources you actually used.
+- usedPortion should be concise and specific (not generic).
+- references: keep short; if you cannot infer pages/sections, leave it as [].
 `.trim();
+
+    const sourcesBlock = buildSourcesBlock(sources);
 
     const userPrompt = `
 SCENARIO:
@@ -105,17 +217,22 @@ VERSION TYPE:
 ${versionType || "(none)"}
 
 REWRITE INSTRUCTIONS:
-${notes}
+${instructions}
 
 BASE DRAFT:
-${text}
+${baseText}
+
+SOURCES:
+${sourcesBlock}
 
 WEB RESULTS (only if publicSearch enabled):
 ${webResultsForPrompt || "(not enabled or no results)"}
 `.trim();
 
     const maxCompletionTokens =
-      typeof maxWords === "number" && maxWords > 0 ? approximateTokensFromWords(maxWords) : 1800;
+      typeof maxWords === "number" && maxWords > 0
+        ? approximateTokensFromWords(maxWords)
+        : 1800;
 
     const completion = await client.chat.completions.create({
       model: modelId,
@@ -127,14 +244,26 @@ ${webResultsForPrompt || "(not enabled or no results)"}
       ],
     });
 
-    const rewritten = completion.choices?.[0]?.message?.content?.trim() || "";
-    if (!rewritten) {
+    const raw = completion.choices?.[0]?.message?.content?.trim() || "";
+    if (!raw) {
       return res.status(500).json({ error: "Model returned empty rewrite text." });
     }
 
+    const extracted = extractSourcesUsedBlock(raw);
+    const rewrittenText = extracted.cleaned;
+    const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
+
     return res.status(200).json({
-      text: rewritten,
+      // Backward-compatible + new
+      text: rewrittenText,
+      draftText: rewrittenText,
+
+      // NEW: for Sources Used panel
+      sourcesUsedRows: sourcesUsed,
+
       meta: {
+        sourcesUsed,
+
         webSearch: {
           enabled: publicSearch,
           used: Boolean(publicSearch && web.ok && webReferences.length),
