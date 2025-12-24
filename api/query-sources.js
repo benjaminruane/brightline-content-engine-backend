@@ -2,6 +2,8 @@
 //
 // Sources Q&A endpoint.
 // Behaviour: NO web search. Answers MUST be grounded strictly in the provided sources.
+// NOTE: We *can* still answer audit-style questions (e.g., "did web search get used?")
+// using the provided sourcesUsedRows + any web references you pass in as rows.
 
 import OpenAI from "openai";
 
@@ -35,6 +37,38 @@ function normalizeSources(sources) {
     .filter((s) => (s.text || "").trim().length > 0);
 }
 
+function normalizeSourcesUsedRows(rows) {
+  const arr = Array.isArray(rows) ? rows : [];
+  return arr
+    .map((r, i) => {
+      const name = typeof r?.name === "string" ? r.name : `Source ${i + 1}`;
+      const type = typeof r?.type === "string" ? r.type : "";
+      const url = typeof r?.url === "string" ? r.url : null;
+      const usedPortion = typeof r?.usedPortion === "string" ? r.usedPortion : "";
+      const refsArr = Array.isArray(r?.refs) ? r.refs.filter((x) => typeof x === "string") : [];
+      const refsStr = typeof r?.refs === "string" ? r.refs : "";
+      const refs = refsArr.length ? refsArr.join("; ") : refsStr;
+
+      return { name, type, url, usedPortion, refs };
+    })
+    .filter((x) => x.name || x.url);
+}
+
+function sourcesUsedRowsToText(rows) {
+  if (!rows.length) return "(No sources-used list available.)";
+  return rows
+    .map((r) => {
+      const parts = [];
+      parts.push(`- ${r.name}`);
+      if (r.type) parts.push(`type=${r.type}`);
+      if (r.url) parts.push(`url=${r.url}`);
+      if (r.usedPortion) parts.push(`used=${r.usedPortion}`);
+      if (r.refs) parts.push(`refs=${r.refs}`);
+      return parts.join(" — ");
+    })
+    .join("\n");
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -51,7 +85,8 @@ export default async function handler(req, res) {
 
     const question = typeof body?.question === "string" ? body.question.trim() : "";
     const draftText = typeof body?.draftText === "string" ? body.draftText : "";
-    const sourcesUsedRows = Array.isArray(body?.sourcesUsedRows) ? body.sourcesUsedRows : [];
+
+    const sourcesUsedRows = normalizeSourcesUsedRows(body?.sourcesUsedRows);
     const sources = normalizeSources(body?.sources);
 
     if (!question) return res.status(400).json({ error: "Missing question" });
@@ -59,27 +94,47 @@ export default async function handler(req, res) {
     const model =
       process.env.OPENAI_SOURCES_MODEL || process.env.OPENAI_MODEL || "gpt-4o-mini";
 
-    const system = [
-      "You answer questions ONLY using the provided source texts below.",
-      "Do NOT browse the web. Do NOT use outside knowledge.",
-      "If the answer is not in the sources, say so plainly.",
-      "When possible, cite the source by name (and URL if present).",
-      "If asked whether a source was used, use the provided 'Sources Used' list.",
-    ].join("\n");
+    // Helpful “audit” signals (no web browsing required)
+    const usedWebRows = sourcesUsedRows.filter((r) => {
+      const t = (r.type || "").toLowerCase();
+      const u = (r.url || "").toLowerCase();
+      return t === "web" || u.startsWith("http");
+    });
+    const hasAnySourcesUsed = sourcesUsedRows.length > 0;
+    const hasAnyWebUsed = usedWebRows.length > 0;
 
-    const sourcesUsedText =
-      sourcesUsedRows.length > 0
-        ? sourcesUsedRows
-            .map((r, i) => {
-              const name = typeof r?.name === "string" ? r.name : `Source ${i + 1}`;
-              const usedPortion = typeof r?.usedPortion === "string" ? r.usedPortion : "";
-              const refs = typeof r?.refs === "string" ? r.refs : "";
-              return `- ${name}${usedPortion ? ` — used: ${usedPortion}` : ""}${
-                refs ? ` — refs: ${refs}` : ""
-              }`;
-            })
-            .join("\n")
-        : "(No sources-used list available.)";
+    const system = `
+You answer questions using ONLY the provided SOURCE TEXTS and the SOURCES USED audit list.
+
+Rules:
+- Do NOT browse the web. Do NOT use outside knowledge.
+- Answer directly and concisely. Avoid generic boilerplate.
+- If the answer is not present in the SOURCE TEXTS, say: "Not found in the provided sources."
+- If the user asks whether a source (including web search results) was used:
+  - Use ONLY the provided "SOURCES USED" list to answer.
+  - You may say whether web search appears to have been used based on that list.
+- Prefer this response format:
+
+Answer:
+<your answer>
+
+Evidence:
+- <source name> (and URL if present): <short supporting snippet or pointer>
+- ...
+
+If not found, do:
+
+Answer:
+Not found in the provided sources.
+
+What I checked:
+- <which sources you checked>
+
+Diagnostics (only when relevant):
+- If the question is about web-search usage, explain that this endpoint does not browse; it only uses the audit list + provided texts.
+`.trim();
+
+    const sourcesUsedText = sourcesUsedRowsToText(sourcesUsedRows);
 
     const sourcesText = sources
       .map((s, i) => {
@@ -97,16 +152,24 @@ export default async function handler(req, res) {
       "DRAFT (optional context):",
       draftText ? draftText.slice(0, 8000) : "(No draft provided.)",
       "",
-      "SOURCES USED (as recorded by the app):",
+      "SOURCES USED (audit list recorded by the app):",
       sourcesUsedText,
+      "",
+      "AUDIT FLAGS:",
+      `- hasAnySourcesUsed: ${String(hasAnySourcesUsed)}`,
+      `- hasAnyWebUsedFromAuditList: ${String(hasAnyWebUsed)}`,
+      hasAnyWebUsed ? `- webUsedRows: ${usedWebRows.map((r) => r.url || r.name).join(" | ")}` : "",
       "",
       "SOURCE TEXTS:",
       sourcesText || "(No source texts provided.)",
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     const resp = await client.chat.completions.create({
       model,
-      temperature: 0.2,
+      temperature: 0.15,
+      max_completion_tokens: 900,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
