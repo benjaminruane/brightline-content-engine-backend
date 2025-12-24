@@ -12,8 +12,12 @@
 //
 // Returns:
 // - text + draftText
-// - sourcesUsedRows[] describing what was used
+// - sourcesUsedRows[] describing what was used (attached + web refs when enabled)
 // - meta.webSearch info
+//
+// Word-count behaviour (IMPORTANT):
+// - If rewrite instructions include an explicit word target (e.g., "Expand to 100 words"),
+//   that target OVERRIDES the MaxWords UI value for rewrite only.
 //
 // Model is instructed to append a [SOURCES_USED] JSON block that we strip out.
 
@@ -43,13 +47,17 @@ HOUSE STYLE:
 - Tone: clear, concise, neutral, professional.
 `.trim();
 
+function safeJsonParse(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
 function coercePositiveInt(v) {
   const n =
-    typeof v === "number"
-      ? v
-      : typeof v === "string"
-      ? Number(v.trim())
-      : NaN;
+    typeof v === "number" ? v : typeof v === "string" ? Number(v.trim()) : NaN;
 
   if (!Number.isFinite(n)) return null;
   const i = Math.round(n);
@@ -57,7 +65,7 @@ function coercePositiveInt(v) {
 }
 
 function completionTokensForWordTarget(targetWords) {
-  // Keep small targets actually small.
+  // Tight but safe; we still clamp.
   return Math.min(4096, Math.max(160, Math.round(targetWords * 1.6) + 120));
 }
 
@@ -120,12 +128,10 @@ function normalizeSourcesUsed(list) {
   const safe = Array.isArray(list) ? list : [];
   return safe
     .map((x) => {
-      const sourceIndex =
-        typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
       const name = typeof x?.name === "string" ? x.name : "";
       const url = typeof x?.url === "string" ? x.url : null;
-      const usedPortion =
-        typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
       const references = Array.isArray(x?.references)
         ? x.references.filter((r) => typeof r === "string")
         : [];
@@ -168,6 +174,30 @@ function webReferencesToSourcesUsedRows(webRefs) {
     }));
 }
 
+// IMPORTANT: instruction word target overrides MaxWords for rewrite.
+function extractWordTargetFromInstructions(instructions) {
+  const s = typeof instructions === "string" ? instructions : "";
+  const t = s.replace(/\s+/g, " ").trim();
+
+  const patterns = [
+    /(?:expand|increase|grow|lengthen|extend)\s+(?:to|into|up to)\s+(\d{1,5})\s+words?/i,
+    /(?:reduce|shorten|cut|trim)\s+(?:to|into|down to)\s+(\d{1,5})\s+words?/i,
+    /(?:around|about|approx(?:\.|imately)?)\s+(\d{1,5})\s+words?/i,
+    /(?:max(?:imum)?|up to|no more than|<=)\s*(\d{1,5})\s+words?/i,
+    // We deliberately do NOT include a last-resort "\b(\d+) words\b" to avoid false positives
+    // from unrelated text in instructions.
+  ];
+
+  for (const re of patterns) {
+    const m = t.match(re);
+    if (m && m[1]) {
+      const n = Number(m[1]);
+      if (Number.isFinite(n) && n > 0) return Math.round(n);
+    }
+  }
+  return null;
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -183,7 +213,9 @@ export default async function handler(req, res) {
 
   try {
     const body =
-      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      typeof req.body === "string"
+        ? safeJsonParse(req.body || "{}") || {}
+        : req.body || {};
 
     // Accept both old + new payload shapes
     const baseText =
@@ -203,7 +235,10 @@ export default async function handler(req, res) {
     const scenario = typeof body.scenario === "string" ? body.scenario : "";
     const versionType = typeof body.versionType === "string" ? body.versionType : "";
     const publicSearch = body.publicSearch === true;
-    const maxWords = coercePositiveInt(body.maxWords);
+
+    const uiMaxWords = coercePositiveInt(body.maxWords);
+    const instructionWordTarget = extractWordTargetFromInstructions(instructions);
+    const effectiveMaxWords = instructionWordTarget || uiMaxWords || null;
 
     const sources = Array.isArray(body.sources) ? body.sources : [];
 
@@ -227,10 +262,12 @@ export default async function handler(req, res) {
       if (scenario.trim()) qParts.push(scenario.trim());
       if (versionType.trim()) qParts.push(versionType.trim());
       if (instructions.trim()) qParts.push(instructions.trim().slice(0, 220));
-      const firstLine = baseText.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
+      const firstLine =
+        baseText.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
       if (firstLine) qParts.push(firstLine.slice(0, 160));
 
-      const query = qParts.filter(Boolean).join(" — ").slice(0, 320) || "General background";
+      const query =
+        qParts.filter(Boolean).join(" — ").slice(0, 320) || "General background";
 
       try {
         const results = await tavilySearch({ query, maxResults: 5 });
@@ -247,10 +284,9 @@ export default async function handler(req, res) {
       }
     }
 
-    const lengthGuidance =
-      maxWords
-        ? `Target rewritten length: <= ${maxWords} words (hard cap). If the instructions explicitly say to expand or shorten, obey those instructions first, but do not exceed the cap.`
-        : "Keep roughly similar length unless the instructions explicitly say otherwise.";
+    const lengthGuidance = effectiveMaxWords
+      ? `Target rewritten length: <= ${effectiveMaxWords} words (hard cap). IMPORTANT: If the rewrite instructions specify a word target, obey that target.`
+      : "Keep roughly similar length unless the instructions explicitly say otherwise.";
 
     const systemPrompt = `
 You are rewriting an investment draft based on author instructions.
@@ -258,6 +294,7 @@ You are rewriting an investment draft based on author instructions.
 ${STYLE_GUIDE_INSTRUCTIONS}
 
 RULES:
+- Follow the rewrite instructions exactly.
 - Do not add new deal-specific facts unless already present in the base draft or instructions.
 - Use the attached SOURCES only to clarify or tighten language. Do not invent new specifics.
 - If web results are provided, use them only for general context/definitions; do not invent specifics.
@@ -308,7 +345,9 @@ WEB RESULTS (only if publicSearch enabled):
 ${webResultsForPrompt || "(not enabled or no results)"}
 `.trim();
 
-    const maxCompletionTokens = maxWords ? completionTokensForWordTarget(maxWords) : 1800;
+    const maxCompletionTokens = effectiveMaxWords
+      ? completionTokensForWordTarget(effectiveMaxWords)
+      : 1800;
 
     const completion = await client.chat.completions.create({
       model: modelId,
@@ -329,21 +368,22 @@ ${webResultsForPrompt || "(not enabled or no results)"}
     let rewrittenText = extracted.cleaned;
     const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
 
-    // Enforce maxWords via clamp (especially important for small targets)
-    if (maxWords) {
+    // Enforce effectiveMaxWords via clamp (especially important for small targets)
+    if (effectiveMaxWords) {
       const wc = countWords(rewrittenText);
-      const hardCap = Math.round(maxWords * 1.05);
-      const mustClamp = maxWords <= 120 ? wc > maxWords : wc > hardCap;
+      const hardCap = Math.round(effectiveMaxWords * 1.05);
+      const mustClamp =
+        effectiveMaxWords <= 120 ? wc > effectiveMaxWords : wc > hardCap;
 
       if (mustClamp) {
         try {
           rewrittenText = await compressToWordLimit({
             modelId,
             text: rewrittenText,
-            maxWords,
+            maxWords: effectiveMaxWords,
           });
         } catch {
-          // If clamp fails, return original; token cap should prevent most overshoots.
+          // If clamp fails, return original.
         }
       }
     }
@@ -356,8 +396,7 @@ ${webResultsForPrompt || "(not enabled or no results)"}
         type: "attached",
         url: x.url || null,
         usedPortion: x.usedPortion || "",
-        refs:
-          Array.isArray(x.references) && x.references.length ? x.references : null,
+        refs: Array.isArray(x.references) && x.references.length ? x.references : null,
       })
     );
 
@@ -376,6 +415,11 @@ ${webResultsForPrompt || "(not enabled or no results)"}
 
       meta: {
         sourcesUsed,
+        wordTarget: {
+          uiMaxWords: uiMaxWords || null,
+          instructionWordTarget: instructionWordTarget || null,
+          effectiveMaxWords: effectiveMaxWords || null,
+        },
         webSearch: {
           enabled: publicSearch,
           used: Boolean(publicSearch && web?.ok && webReferences.length),
