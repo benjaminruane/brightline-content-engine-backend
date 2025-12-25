@@ -64,7 +64,6 @@ function describeScenario(scenario) {
 }
 
 function coercePositiveInt(v) {
-  // Accept number or numeric string; otherwise null.
   const n =
     typeof v === "number"
       ? v
@@ -188,9 +187,7 @@ function extractSourcesUsedBlock(rawText) {
   const text = typeof rawText === "string" ? rawText : "";
   const re = /\[SOURCES_USED\]\s*([\s\S]*?)\s*\[\/SOURCES_USED\]/i;
   const m = text.match(re);
-  if (!m) {
-    return { cleaned: text.trim(), sourcesUsed: [] };
-  }
+  if (!m) return { cleaned: text.trim(), sourcesUsed: [] };
 
   const jsonText = (m[1] || "").trim();
   const cleaned = text.replace(re, "").trim();
@@ -208,14 +205,15 @@ function normalizeSourcesUsed(list) {
   const safe = Array.isArray(list) ? list : [];
   return safe
     .map((x) => {
-      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
+      const sourceIndex =
+        typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
       const name = typeof x?.name === "string" ? x.name : "";
       const url = typeof x?.url === "string" ? x.url : null;
-      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
+      const usedPortion =
+        typeof x?.usedPortion === "string" ? x.usedPortion : "";
       const references = Array.isArray(x?.references)
         ? x.references.filter((r) => typeof r === "string")
         : [];
-
       return { sourceIndex, name, url, usedPortion, references };
     })
     .filter((x) => x.name || x.url);
@@ -235,7 +233,6 @@ function countWords(text) {
 
 function completionTokensForWordTarget(targetWords) {
   // Tight but safe; clamp will guarantee final.
-  // Keep a minimum so the model can still form a coherent sentence.
   return Math.min(4096, Math.max(160, Math.round(targetWords * 1.6) + 80));
 }
 
@@ -270,11 +267,30 @@ Return ONLY the rewritten draft text.
   return typeof out === "string" && out.trim() ? out.trim() : text;
 }
 
+function webReferencesToSourcesUsedRows(webRefs) {
+  const arr = Array.isArray(webRefs) ? webRefs : [];
+  return arr
+    .filter((r) => r && typeof r.url === "string" && r.url.trim())
+    .slice(0, 8)
+    .map((r, i) => ({
+      id: `web_${Date.now()}_${i}_${Math.random().toString(16).slice(2)}`,
+      name:
+        typeof r.title === "string" && r.title.trim()
+          ? r.title.trim()
+          : r.url.trim(),
+      type: "web",
+      url: r.url.trim(),
+      usedPortion: "web search result (used for context)",
+      refs: null,
+    }));
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   try {
     const body = req.body || {};
@@ -298,7 +314,9 @@ export default async function handler(req, res) {
     }
 
     const modelId =
-      typeof modelIdRaw === "string" && modelIdRaw.trim() ? modelIdRaw.trim() : "gpt-4o-mini";
+      typeof modelIdRaw === "string" && modelIdRaw.trim()
+        ? modelIdRaw.trim()
+        : "gpt-4o-mini";
 
     const targetWords = coercePositiveInt(maxWords);
 
@@ -317,7 +335,13 @@ export default async function handler(req, res) {
         webReferences = webResultsToReferences(results);
         web = { ok: true, provider: "tavily", query, results };
       } catch (e) {
-        web = { ok: false, provider: "tavily", query, results: [], error: e?.message || String(e) };
+        web = {
+          ok: false,
+          provider: "tavily",
+          query,
+          results: [],
+          error: e?.message || String(e),
+        };
         webResultsForPrompt = "";
         webReferences = [];
       }
@@ -335,7 +359,9 @@ export default async function handler(req, res) {
       webResultsForPrompt,
     });
 
-    const maxCompletionTokens = targetWords ? completionTokensForWordTarget(targetWords) : 2048;
+    const maxCompletionTokens = targetWords
+      ? completionTokensForWordTarget(targetWords)
+      : 2048;
 
     const completion = await client.chat.completions.create({
       model: modelId,
@@ -375,10 +401,33 @@ export default async function handler(req, res) {
       }
     }
 
+    // Build Sources Used rows: attached sources (from model report) + web references (if enabled)
+    const normalizedSourceRows = (Array.isArray(sourcesUsed) ? sourcesUsed : []).map(
+      (x, idx) => ({
+        id: `src_${x.sourceIndex ?? idx + 1}_${Math.random().toString(16).slice(2)}`,
+        name: x.name || `Source ${idx + 1}`,
+        type: "attached",
+        url: x.url || null,
+        usedPortion: x.usedPortion || "",
+        refs:
+          Array.isArray(x.references) && x.references.length ? x.references : null,
+      })
+    );
+
+    const webRows =
+      publicSearch === true && Array.isArray(webReferences) && webReferences.length
+        ? webReferencesToSourcesUsedRows(webReferences)
+        : [];
+
+    const mergedRows = [...normalizedSourceRows, ...webRows];
+
     return res.status(200).json({
       ok: true,
       draftText,
-      sourcesUsedRows: sourcesUsed,
+
+      // Top-level alias for frontend Sources Used panel
+      sourcesUsedRows: mergedRows,
+
       score: null,
       model: completion.model || null,
       usage: {
