@@ -41,6 +41,102 @@ function clamp01(n) {
   return Math.max(0, Math.min(1, n));
 }
 
+
+function pctToReliabilityLevel(pct) {
+  const n = typeof pct === "number" && Number.isFinite(pct) ? pct : 0;
+  // Keep thresholds consistent with the UI expectation (can be tuned later).
+  if (n >= 85) return "High";
+  if (n >= 65) return "Medium";
+  return "Low";
+}
+
+function buildSignalsForStatement({ text, reliabilityScore, evidenceCount, contradictionsCount }) {
+  const t = String(text || "").toLowerCase();
+
+  const hasNumber = /\b\d+(?:[\.,]\d+)?\b/.test(t);
+  const hasDateToken =
+    /\b(19\d{2}|20\d{2})\b/.test(t) ||
+    /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b/.test(t) ||
+    /\b(q[1-4])\b/.test(t);
+
+  const hedged = /\b(may|might|could|likely|possibly|expected to|aims to|seeks to)\b/.test(t);
+  const forwardLooking =
+    /\b(will|to be|forecast|project|target|plan to|plans to|going to|next year|in the next)\b/.test(t);
+
+  const quantWords = /\b(growth|grew|increase|decrease|decline|up|down|rose|fell|million|billion|percent|%)\b/.test(t);
+  const timeBoundWords = /\b(by|in|during|since|as of|between|over|within)\b/.test(t);
+
+  const vague = /\b(significant|material|strong|weak|leading|robust|meaningful|substantial)\b/.test(t);
+
+  const signals = [];
+
+  // Evidence-driven signals first (most actionable)
+  if (!evidenceCount) {
+    signals.push({
+      code: "NO_SOURCES",
+      label: "No sources",
+      explanation: "No supporting sources were found for this claim in the available evidence.",
+    });
+  } else if (reliabilityScore < 65) {
+    signals.push({
+      code: "WEAK_SOURCES",
+      label: "Weak sources",
+      explanation: "Evidence exists but is indirect, thin, or not strongly aligned to the claim.",
+    });
+  }
+
+  if (contradictionsCount > 0) {
+    signals.push({
+      code: "CONTRADICTION",
+      label: "Contradiction",
+      explanation: "This claim may conflict with other statements in the same draft.",
+    });
+  }
+
+  if (forwardLooking) {
+    signals.push({
+      code: "FORWARD_LOOKING",
+      label: "Forward-looking",
+      explanation: "Forward-looking language is harder to verify and should be clearly attributed or caveated.",
+    });
+  }
+
+  if (hedged) {
+    signals.push({
+      code: "HEDGED",
+      label: "Hedged",
+      explanation: "Hedging language reduces certainty unless the claim is clearly attributed to a source.",
+    });
+  }
+
+  if (quantWords && !hasNumber) {
+    signals.push({
+      code: "MISSING_FIGURE",
+      label: "Missing figure",
+      explanation: "The claim implies a quantitative change but does not include a specific number.",
+    });
+  }
+
+  if (timeBoundWords && !hasDateToken) {
+    signals.push({
+      code: "MISSING_DATE",
+      label: "Missing date",
+      explanation: "The claim appears time-bound but does not specify when it applies.",
+    });
+  }
+
+  if (vague && !hasNumber) {
+    signals.push({
+      code: "VAGUE_CLAIM",
+      label: "Vague claim",
+      explanation: "The language is broad or subjective; consider tightening with specifics or attribution.",
+    });
+  }
+
+  // Keep signals concise and on-point: cap to a small set.
+  return signals.slice(0, 6);
+}
+
 function stripPlaceholders(text) {
   if (typeof text !== "string") return "";
   // Remove bracket placeholders like [Firm name]
@@ -318,7 +414,9 @@ export default async function handler(req, res) {
         ? body.modelId.trim()
         : "gpt-4o-mini";
 
-    if (!draftText.trim()) {
+        const versionId = typeof body.versionId === "string" ? body.versionId : "";
+
+if (!draftText.trim()) {
       return res.status(400).json({ error: "Missing or invalid draftText" });
     }
 
@@ -327,7 +425,42 @@ export default async function handler(req, res) {
     const searchQuery = deriveQueryFromDraft(cleanDraft);
     const search = await tavilySearch({ query: searchQuery, maxResults: 6 });
     const webBlock = search.ok ? formatWebResultsForPrompt(search.results) : "";
-    const references = search.ok ? webResultsToReferences(search.results) : [];
+    const webReferences = search.ok ? webResultsToReferences(search.results) : [];
+
+    // User-provided sources (files/URLs) are treated as "uploaded" evidence for analysis.
+    const uploadedSources = Array.isArray(req?.body?.sources) ? req.body.sources : [];
+    const uploadedReferences = uploadedSources
+      .map((s, i) => {
+        const sid = typeof s?.id === "string" ? s.id : `upl_${i + 1}`;
+        const name = typeof s?.name === "string" ? s.name : "Uploaded source";
+        const url = typeof s?.url === "string" ? s.url : null;
+        const raw = typeof s?.text === "string" ? s.text : "";
+        const snippet = raw ? raw.slice(0, 700) : null;
+
+        return {
+          id: sid,
+          sourceId: `upl:${sid}`,
+          sourceType: "uploaded",
+          title: name,
+          url,
+          snippet,
+        };
+      })
+      .filter((r) => r && (r.snippet || r.url));
+
+    const uploadedBlock = uploadedReferences.length
+      ? uploadedReferences
+          .map((r, idx) => {
+            const n = idx + 1;
+            const title = r.title || "Uploaded source";
+            const urlLine = r.url ? `URL: ${r.url}` : "";
+            const snippetLine = r.snippet ? `Snippet: ${r.snippet}` : "";
+            return [`[U${n}] ${title}`, urlLine, snippetLine].filter(Boolean).join("\n").trim();
+          })
+          .join("\n\n")
+      : "";
+
+    const references = [...webReferences, ...uploadedReferences];
 
     // LLM extraction (statements only; no scoring)
     const systemPrompt = `
@@ -353,6 +486,9 @@ Return ONLY valid JSON:
 DRAFT:
 ${draftText}
 
+UPLOADED SOURCES:
+${uploadedBlock || "(no uploaded sources provided)"}
+
 WEB RESULTS:
 ${webBlock || "(no web results retrieved)"}
 `.trim();
@@ -375,68 +511,113 @@ ${webBlock || "(no web results retrieved)"}
     if (!extracted.length) {
       return res.status(200).json({
         ok: true,
-        statements: [],
+        status: "success_empty",
+        versionId: String(versionId || ""),
+        analysedAt: new Date().toISOString(),
         summary: {
-          note:
-            "No verifiable factual statements were detected in this draft.\n\nThis text may be opinion-based, forward-looking, or descriptive.",
+          note: "No verifiable factual statements were detected in the provided text.",
         },
+        statements: [],
         meta: {
           webSearch: {
             enabled: true,
-            used: Boolean(search.ok && references.length),
+            used: Boolean(search.ok && Array.isArray(webReferences) && webReferences.length),
             provider: "tavily",
             query: searchQuery,
-            resultsCount: references.length,
+            resultsCount: Array.isArray(webReferences) ? webReferences.length : 0,
             error: search.ok ? null : search.error || "Web search failed",
           },
-          references,
-          model: completion.model || modelId,
-          scoring: {
-            method: "rules-based",
-          },
-          consistency: {
-            contradictions: [],
-          },
+          consistency: { contradictions: [] },
         },
       });
     }
 
-    const scored = extracted.map((s) => {
-      const scoredOne = scoreOneStatement(s.text, references);
-      return {
-        id: s.id,
-        text: s.text,
-        score: scoredOne.score,
-        explanation: scoredOne.rationale,
-        implication: scoredOne.implication,
-        sources: scoredOne.sources,
-      };
-    });
 
     const contradictions = detectPotentialContradictions(extracted);
-    const contradictionNote = contradictions.length
-      ? `Potential internal inconsistencies detected (${contradictions.length}). Review related claims for alignment.`
-      : null;
 
-    return res.status(200).json({
+// Index contradictions by statement id for row-level detail.
+const contradictionsById = new Map();
+for (const c of contradictions) {
+  if (!c) continue;
+  const a = String(c.a || "");
+  const b = String(c.b || "");
+  if (a) contradictionsById.set(a, [...(contradictionsById.get(a) || []), c]);
+  if (b) contradictionsById.set(b, [...(contradictionsById.get(b) || []), c]);
+}
+
+const scored = extracted.map((s) => {
+  const scoredOne = scoreOneStatement(s.text, references);
+  const reliabilityScore = Math.round(clamp01(scoredOne.score) * 100);
+  const reliabilityLevel = pctToReliabilityLevel(reliabilityScore);
+
+  const matches = Array.isArray(scoredOne.sources) ? scoredOne.sources : [];
+  const evidence = matches.map((m) => {
+    const ref = m?.ref || {};
+    return {
+      sourceId: ref.sourceId || (ref.id ? `web:ref:${ref.id}` : "unknown"),
+      sourceType: ref.sourceType || "web",
+      title: typeof ref.title === "string" ? ref.title : null,
+      url: typeof ref.url === "string" ? ref.url : null,
+      snippet: typeof ref.snippet === "string" ? ref.snippet : null,
+    };
+  });
+
+  const rowContradictions = contradictionsById.get(String(s.id)) || [];
+
+  const assessment = [
+    typeof scoredOne.rationale === "string" ? scoredOne.rationale.trim() : "",
+    typeof scoredOne.implication === "string" ? scoredOne.implication.trim() : "",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  const signals = buildSignalsForStatement({
+    text: s.text,
+    reliabilityScore,
+    evidenceCount: evidence.length,
+    contradictionsCount: rowContradictions.length,
+  });
+
+  return {
+    id: String(s.id),
+    text: s.text,
+    reliabilityScore,
+    reliabilityLevel,
+    signals,
+    assessment,
+    evidence,
+    contradictions: rowContradictions,
+  };
+});
+
+const noteBits = [];
+if (!search.ok) {
+  noteBits.push("Web search was unavailable. Results may be less reliable.");
+}
+if (contradictions.length) {
+  noteBits.push(
+    `Potential internal inconsistencies detected (${contradictions.length}). Review related claims for alignment.`
+  );
+}
+const summaryNote = noteBits.length ? noteBits.join(" ") : null;
+
+return res.status(200).json({
       ok: true,
-      statements: scored,
+      status: scored.length ? "success" : "success_empty",
+      versionId: String(versionId || ""),
+      analysedAt: new Date().toISOString(),
       summary: {
-        note: contradictionNote,
+        note: summaryNote,
       },
+      statements: scored,
       meta: {
         webSearch: {
           enabled: true,
-          used: Boolean(search.ok && references.length),
+          used: Boolean(search.ok && Array.isArray(webReferences) && webReferences.length),
           provider: "tavily",
           query: searchQuery,
-          resultsCount: references.length,
+          resultsCount: Array.isArray(webReferences) ? webReferences.length : 0,
           error: search.ok ? null : search.error || "Web search failed",
-        },
-        references,
-        model: completion.model || modelId,
-        scoring: {
-          method: "rules-based",
         },
         consistency: {
           contradictions,
@@ -446,8 +627,23 @@ ${webBlock || "(no web results retrieved)"}
   } catch (err) {
     // Genuine system failure: return error.
     return res.status(500).json({
-      error: "Failed to analyse statements",
-      details: err?.message || String(err),
+      ok: false,
+      status: "failed",
+      error: "Statement analysis failed",
+      versionId: String(req?.body?.versionId || ""),
+      analysedAt: new Date().toISOString(),
+      summary: { note: "Statement analysis failed. Please try again." },
+      statements: [],
+      meta: {
+        webSearch: {
+          enabled: true,
+          used: false,
+          provider: "tavily",
+          query: deriveQueryFromDraft(req?.body?.draftText || ""),
+          resultsCount: 0,
+          error: "Failed",
+        },
+      },
     });
   }
 }
