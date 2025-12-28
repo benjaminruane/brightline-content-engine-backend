@@ -39,34 +39,12 @@ function normalizeHistory(history) {
   const cleaned = [];
   for (const m of history.slice(-12)) {
     if (!m || typeof m !== "object") continue;
-    const role = m.role === "user" || m.role === "assistant" ? m.role : null;
-    const content = typeof m.content === "string" ? m.content.trim() : "";
-    if (!role || !content) continue;
-    cleaned.push({ role, content });
+    const q = typeof m.question === "string" ? m.question.trim() : "";
+    const a = typeof m.answer === "string" ? m.answer.trim() : "";
+    if (!q) continue;
+    cleaned.push({ question: q, answer: a });
   }
   return cleaned;
-}
-
-function inferSubject({ title, draftText }) {
-  const t = typeof title === "string" ? title.trim() : "";
-  if (t) return t;
-
-  const d = typeof draftText === "string" ? draftText.trim() : "";
-  if (!d) return "";
-
-  // First non-empty line is usually the “subject” in your drafts.
-  const firstLine = d.split(/\r?\n/).find((x) => x.trim())?.trim() || "";
-  return firstLine.slice(0, 140);
-}
-
-function hasAmbiguousCompanyRef(question) {
-  const q = typeof question === "string" ? question.toLowerCase() : "";
-  return (
-    q.includes("the company") ||
-    q.includes("the business") ||
-    q.includes("the issuer") ||
-    q.includes("the firm")
-  );
 }
 
 export default async function handler(req, res) {
@@ -80,16 +58,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body =
-      typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
     const question = typeof body.question === "string" ? body.question.trim() : "";
     const title = typeof body.title === "string" ? body.title : "";
     const draftText = typeof body.draftText === "string" ? body.draftText : "";
     const modelId =
-      typeof body.modelId === "string" && body.modelId.trim()
-        ? body.modelId.trim()
-        : "gpt-4o-mini";
+      typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
     const history = normalizeHistory(body.history);
 
     const askMode =
@@ -99,45 +74,32 @@ export default async function handler(req, res) {
 
     if (!question) return res.status(400).json({ error: "Missing question" });
 
-    const subject = inferSubject({ title, draftText });
-
-    // Always-on web retrieval
-    let searchQuery = deriveQueryFromAsk({ question, title, draftText });
-
-    // If the question uses ambiguous references like "the company", pin it to the subject.
-    if (hasAmbiguousCompanyRef(question) && subject) {
-      searchQuery = `${subject} ${question}`.slice(0, 420);
-    }
-
-    const search = await tavilySearch({ query: searchQuery, maxResults: 5 });
-    const webBlock = search.ok ? formatWebResultsForPrompt(search.results) : "";
-    const references = search.ok ? webResultsToReferences(search.results) : [];
+    const subject = deriveQueryFromAsk({ question, title, draftText });
+    const search = await tavilySearch(subject);
+    const webBlock = formatWebResultsForPrompt(search);
+    const references = webResultsToReferences(search?.results || []);
 
     const system = `
 You are "Ask AI" inside Content Engine.
 
-Always use the WEB RESULTS when relevant. If results are thin, say so.
+You MUST use the WEB RESULTS when making factual claims.
 
-CRITICAL CONTEXT LINKAGE:
-If the user question uses phrases like "the company", "the business", "the issuer", or "the firm",
-interpret that as referring to the primary SUBJECT of the draft/title (provided below), unless the user explicitly specifies a different entity.
+Citations:
+- When you use a web result, cite it inline using bracketed numbers like [1], [2], etc.
+- The numbers MUST correspond to the "id" field in the REFERENCES array provided to you.
+- If you cannot find support in WEB RESULTS, say so plainly and do not invent.
 
-Answer at the appropriate depth:
-– If the question is narrow, answer in 2–4 sentences.
-– If it’s analytical or ambiguous, answer in 4–10 sentences or concise bullets, and include reasoning + caveats.
-– Avoid filler.
+Answer depth:
+– Narrow: 2–4 sentences.
+– Analytical/ambiguous: concise bullets or 4–10 sentences with reasoning + caveats.
+– No filler.
 
-Return ONLY valid JSON:
+Return ONLY valid JSON with this exact shape:
 {
-  "answer": string,
-  "confidence": number,            // 0..1
-  "confidenceReason": string|null
+  "answer": "string (may include inline citations like [1])",
+  "confidence": number between 0 and 1,
+  "confidenceReason": "short string"
 }
-
-If you use web results, you MUST cite them inline as [1], [2], etc.
-When web results are available and relevant, include at least one citation.
-When you make factual claims that are supported by web results, include citations on the same sentence.
-
 `.trim();
 
     const user = `
@@ -158,21 +120,39 @@ ${draftText ? draftText.slice(0, 6000) : "(none)"}
 
 WEB RESULTS:
 ${webBlock || "(no web results retrieved)"}
+
+REFERENCES (for citation IDs):
+${JSON.stringify(
+  references.map((r) => ({ id: r.id, title: r.title, url: r.url })),
+  null,
+  2
+)}
 `.trim();
 
     const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.2,
       max_completion_tokens: 900,
-      messages: [{ role: "system", content: system }, ...history, { role: "user", content: user }],
-      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: system },
+        ...(history.length
+          ? [
+              {
+                role: "user",
+                content:
+                  "Recent Q&A context:\n" +
+                  history.map((h, i) => `Q${i + 1}: ${h.question}\nA${i + 1}: ${h.answer || "(none)"}`).join("\n\n"),
+              },
+            ]
+          : []),
+        { role: "user", content: user },
+      ],
     });
 
     const raw = completion.choices?.[0]?.message?.content || "";
     const parsed = safeJsonParse(raw) || {};
 
-    const answer =
-      typeof parsed.answer === "string" && parsed.answer.trim() ? parsed.answer.trim() : "";
+    const answer = typeof parsed.answer === "string" && parsed.answer.trim() ? parsed.answer.trim() : "";
     const confidence = clamp01(parsed.confidence);
     const confidenceReason =
       typeof parsed.confidenceReason === "string" && parsed.confidenceReason.trim()
@@ -182,29 +162,14 @@ ${webBlock || "(no web results retrieved)"}
     return res.status(200).json({
       ok: true,
       answer,
-
-      // Backward compatible top-level fields (frontend reads these)
       confidence,
       confidenceReason,
-      references,
-
+      references, // structured objects with title/url/id
       meta: {
-        webSearch: {
-          enabled: true,
-          used: Boolean(search.ok && references.length),
-          provider: "tavily",
-          query: searchQuery,
-          resultsCount: references.length,
-          error: search.ok ? null : search.error || "Web search failed",
-          note: "Ask AI always uses web search (independent of the draft toggle).",
-        },
-        model: completion.model || modelId,
+        webSearch: { enabled: true, used: Boolean(search?.ok) },
       },
     });
   } catch (err) {
-    return res.status(500).json({
-      error: "Failed to process query",
-      details: err?.message || String(err),
-    });
+    return res.status(500).json({ error: "Ask AI failed", details: err?.message || String(err) });
   }
 }
