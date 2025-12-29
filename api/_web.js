@@ -108,13 +108,20 @@ export function formatWebResultsForPrompt(results) {
 }
 
 export function webResultsToReferences(results) {
-  if (!Array.isArray(results)) return [];
+  if (!Array.isArray(results) || results.length === 0) return [];
+
   return results
-    .map((r) => ({
-      id: typeof r?.id === "number" ? r.id : null,
-      title: typeof r?.title === "string" ? r.title : null,
-      url: typeof r?.url === "string" ? r.url : null,
-    }))
+    .map((r, i) => {
+      const id = typeof r?.id === "number" ? r.id : i + 1;
+      const title = typeof r?.title === "string" ? r.title : null;
+      const url = typeof r?.url === "string" ? r.url : null;
+      const snippet = typeof r?.snippet === "string" ? r.snippet : null;
+
+      // Stable IDs for downstream linking (Statement Analysis / Ask AI).
+      const sourceId = `web:tavily:${id}`;
+
+      return { id, sourceId, sourceType: "web", title, url, snippet };
+    })
     .filter((r) => r.url);
 }
 

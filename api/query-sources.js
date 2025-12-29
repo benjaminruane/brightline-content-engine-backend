@@ -1,9 +1,8 @@
 // api/query-sources.js
 //
 // Sources Q&A endpoint.
-// Behaviour: NO web search. Answers MUST be grounded strictly in the provided sources.
-// NOTE: We *can* still answer audit-style questions (e.g., "did web search get used?")
-// using the provided sourcesUsedRows + any web references you pass in as rows.
+// Behaviour: NO web search. Answers MUST be grounded strictly in the provided sources
+// OR (when source texts are missing/thin) in the SOURCES USED audit list.
 
 import OpenAI from "openai";
 
@@ -23,18 +22,6 @@ function safeJsonParse(text) {
   } catch {
     return null;
   }
-}
-
-function normalizeSources(sources) {
-  const arr = Array.isArray(sources) ? sources : [];
-  return arr
-    .map((s) => ({
-      name: typeof s?.name === "string" ? s.name : "Untitled source",
-      url: typeof s?.url === "string" ? s.url : null,
-      kind: typeof s?.kind === "string" ? s.kind : "other",
-      text: typeof s?.text === "string" ? s.text : "",
-    }))
-    .filter((s) => (s.text || "").trim().length > 0);
 }
 
 function normalizeSourcesUsedRows(rows) {
@@ -60,7 +47,6 @@ function sourcesUsedRowsToText(rows) {
     .map((r) => {
       const parts = [];
       parts.push(`- ${r.name}`);
-      if (r.type) parts.push(`type=${r.type}`);
       if (r.url) parts.push(`url=${r.url}`);
       if (r.usedPortion) parts.push(`used=${r.usedPortion}`);
       if (r.refs) parts.push(`refs=${r.refs}`);
@@ -69,50 +55,89 @@ function sourcesUsedRowsToText(rows) {
     .join("\n");
 }
 
+function normalizeSourceTexts(sources) {
+  const arr = Array.isArray(sources) ? sources : [];
+  return arr
+    .map((s, i) => {
+      const name = typeof s?.name === "string" ? s.name : `Source ${i + 1}`;
+      const url = typeof s?.url === "string" ? s.url : null;
+      const text = typeof s?.text === "string" ? s.text : "";
+      return { name, url, text };
+    })
+    .filter((s) => s.name);
+}
+
+function looksLikeStatementMappingQuestion(q) {
+  const t = String(q || "").toLowerCase();
+  return (
+    t.includes("what statements") ||
+    t.includes("which statements") ||
+    t.includes("sourced directly") ||
+    t.includes("trace") ||
+    t.includes("attribution") ||
+    t.includes("mapped to")
+  );
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
-
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
-  }
-
   try {
-    const body =
-      typeof req.body === "string" ? safeJsonParse(req.body || "{}") : req.body || {};
+    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
 
-    const question = typeof body?.question === "string" ? body.question.trim() : "";
-    const draftText = typeof body?.draftText === "string" ? body.draftText : "";
-
-    const sourcesUsedRows = normalizeSourcesUsedRows(body?.sourcesUsedRows);
-    const sources = normalizeSources(body?.sources);
+    const question = typeof body.question === "string" ? body.question.trim() : "";
+    const draftText = typeof body.draftText === "string" ? body.draftText : "";
+    const sourcesUsedRows = normalizeSourcesUsedRows(body.sourcesUsedRows);
+    const sources = normalizeSourceTexts(body.sources);
 
     if (!question) return res.status(400).json({ error: "Missing question" });
 
-    const model =
-      process.env.OPENAI_SOURCES_MODEL || process.env.OPENAI_MODEL || "gpt-4o-mini";
+    const sourcesUsedText = sourcesUsedRowsToText(sourcesUsedRows);
 
-    // Helpful “audit” signals (no web browsing required)
-    const usedWebRows = sourcesUsedRows.filter((r) => {
-      const t = (r.type || "").toLowerCase();
-      const u = (r.url || "").toLowerCase();
-      return t === "web" || u.startsWith("http");
-    });
-    const hasAnySourcesUsed = sourcesUsedRows.length > 0;
-    const hasAnyWebUsed = usedWebRows.length > 0;
+    const totalSourceChars = sources.reduce((sum, s) => sum + (s.text ? s.text.length : 0), 0);
+    const sourceTextsAreThin = totalSourceChars < 400; // heuristic
+
+    // If source texts are missing/thin, answer using sources-used audit list rather than "Not found"
+    if (sourceTextsAreThin) {
+      // Special handling: statement mapping questions cannot be proven from audit rows alone
+      if (looksLikeStatementMappingQuestion(question)) {
+        const auditAnswer = `
+Answer:
+I can’t reliably map specific *statements* to sources from the "Sources used" audit list alone (it shows what was used, not a statement-by-statement trace). However, based on the audit list, here is what the draft appears to have drawn from each provided source:
+
+Evidence:
+${sourcesUsedRows
+  .map((r) => {
+    const label = r.url ? `${r.name} (${r.url})` : r.name;
+    const used = r.usedPortion ? r.usedPortion : "No used-portion detail available.";
+    return `- ${label}: ${used}`;
+  })
+  .join("\n")}
+`.trim();
+
+        return res.status(200).json({ answer: auditAnswer });
+      }
+
+      const auditAnswer = `
+Answer:
+I don’t have the full source text available to search directly, so I’m answering based on the "Sources used" audit list.
+
+Evidence:
+${sourcesUsedText}
+`.trim();
+
+      return res.status(200).json({ answer: auditAnswer });
+    }
 
     const system = `
 You answer questions using ONLY the provided SOURCE TEXTS and the SOURCES USED audit list.
 
 Rules:
 - Do NOT browse the web. Do NOT use outside knowledge.
-- Answer directly and concisely. Avoid generic boilerplate.
-- If the answer is not present in the SOURCE TEXTS, say: "Not found in the provided sources."
-- If the user asks whether a source (including web search results) was used:
-  - Use ONLY the provided "SOURCES USED" list to answer.
-  - You may say whether web search appears to have been used based on that list.
+- If the answer is not present in the SOURCE TEXTS, you MAY still answer using the SOURCES USED audit list (usedPortion/refs), but clearly label that as "Based on Sources used".
+- Avoid boilerplate.
 - Prefer this response format:
 
 Answer:
@@ -121,55 +146,32 @@ Answer:
 Evidence:
 - <source name> (and URL if present): <short supporting snippet or pointer>
 - ...
-
-If not found, do:
-
-Answer:
-Not found in the provided sources.
-
-What I checked:
-- <which sources you checked>
-
-Diagnostics (only when relevant):
-- If the question is about web-search usage, explain that this endpoint does not browse; it only uses the audit list + provided texts.
 `.trim();
 
-    const sourcesUsedText = sourcesUsedRowsToText(sourcesUsedRows);
+    const user = `
+QUESTION:
+${question}
 
-    const sourcesText = sources
-      .map((s, i) => {
-        const header = `[${i + 1}] ${s.name}${s.url ? ` (${s.url})` : ""}`;
-        const text =
-          s.text.length > 12000 ? s.text.slice(0, 12000) + "\n…[truncated]" : s.text;
-        return `${header}\n${text}`;
-      })
-      .join("\n\n---\n\n");
+DRAFT (may be helpful context):
+${draftText ? draftText.slice(0, 4000) : "(none)"}
 
-    const user = [
-      "QUESTION:",
-      question,
-      "",
-      "DRAFT (optional context):",
-      draftText ? draftText.slice(0, 8000) : "(No draft provided.)",
-      "",
-      "SOURCES USED (audit list recorded by the app):",
-      sourcesUsedText,
-      "",
-      "AUDIT FLAGS:",
-      `- hasAnySourcesUsed: ${String(hasAnySourcesUsed)}`,
-      `- hasAnyWebUsedFromAuditList: ${String(hasAnyWebUsed)}`,
-      hasAnyWebUsed ? `- webUsedRows: ${usedWebRows.map((r) => r.url || r.name).join(" | ")}` : "",
-      "",
-      "SOURCE TEXTS:",
-      sourcesText || "(No source texts provided.)",
-    ]
-      .filter(Boolean)
-      .join("\n");
+SOURCES USED (audit list):
+${sourcesUsedText}
+
+SOURCE TEXTS:
+${sources
+  .map((s) => {
+    const header = s.url ? `${s.name} (${s.url})` : s.name;
+    const excerpt = s.text.slice(0, 6000);
+    return `---\n${header}\n${excerpt}\n`;
+  })
+  .join("\n")}
+`.trim();
 
     const resp = await client.chat.completions.create({
-      model,
-      temperature: 0.15,
-      max_completion_tokens: 900,
+      model: "gpt-5.1",
+      temperature: 0.2,
+      max_completion_tokens: 700,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
