@@ -220,9 +220,9 @@ function normalizeSourcesUsed(list) {
 }
 
 function coerceDraftText(rawContent) {
-  // IMPORTANT: never return a placeholder draft.
-  // If the model returns empty content, treat it as an error so the frontend
-  // can show a proper failure state (rather than displaying a fake draft).
+  // IMPORTANT: never return a placeholder "draft".
+  // If the model returns empty content, we will throw later so the frontend
+  // shows a real error state rather than displaying fake draft text.
   return typeof rawContent === "string" ? rawContent.trim() : "";
 }
 
@@ -381,6 +381,8 @@ export default async function handler(req, res) {
     let draftText = extracted.cleaned;
     const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
 
+    // IMPORTANT: if the model produced no usable draft,
+    // fail the request instead of returning placeholder text.
     if (!draftText || !String(draftText).trim()) {
       throw new Error(
         "Draft could not be generated. Please try again, or provide more notes and/or sources."
