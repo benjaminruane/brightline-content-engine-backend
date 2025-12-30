@@ -1,4 +1,4 @@
-# Brightline Content Engine — Backend  
+# Brightline Content Engine — Backend    
 Version **v6.0.0**
 
 Serverless compute pipeline powering the Content Engine.
