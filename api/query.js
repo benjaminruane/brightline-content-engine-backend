@@ -170,10 +170,11 @@ ${referencesForModel || "(none)"}
       answer,
       confidence,
       confidenceReason,
+      confidenceRationale: confidenceReason || "",
       // Frontend expects a "rationale" style field name; keep existing too.
       confidenceRationale: confidenceReason || "",
       references: references.slice(0, 8).map((r) => ({ title: r.title, url: r.url })), // order = [1..]
-      meta: { webSearch: { enabled: true, used: Boolean(search?.ok) } },
+      meta: { webSearch: { enabled: true, used: Boolean(search?.ok && Array.isArray(search?.results) && search.results.length) } },
     });
   } catch (err) {
     return res.status(500).json({ error: "Ask AI failed", details: err?.message || String(err) });
