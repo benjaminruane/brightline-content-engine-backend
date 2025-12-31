@@ -74,6 +74,13 @@ export default async function handler(req, res) {
     const search = await tavilySearch({ query: subject });
     const webBlock = formatWebResultsForPrompt(search);
 
+    const _tavilyDebug = {
+      ok: Boolean(search?.ok),
+      error: search?.error || null,
+      query: search?.query || null,
+      resultsCount: Array.isArray(search?.results) ? search.results.length : null,
+    };
+    
     // IMPORTANT: keep order stable so [1] maps to references[0], etc.
     const references = webResultsToReferences(search?.results || []).map((r, i) => ({
       ...r,
@@ -175,6 +182,7 @@ ${referencesForModel || "(none)"}
       confidenceRationale: confidenceReason || "",
       references: references.slice(0, 8).map((r) => ({ title: r.title, url: r.url })), // order = [1..]
       meta: { webSearch: { enabled: true, used: Boolean(search?.ok && Array.isArray(search?.results) && search.results.length) } },
+      tavilyDebug: _tavilyDebug,
     });
   } catch (err) {
     return res.status(500).json({ error: "Ask AI failed", details: err?.message || String(err) });
