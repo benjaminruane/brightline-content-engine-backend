@@ -173,21 +173,31 @@ ${referencesForModel || "(none)"}
         : null;
 
     return res.status(200).json({
-      ok: true,
-      answer,
-      confidence,
-      confidenceReason,
-      references,
-      meta: { webSearch: { enabled: true, used: Boolean(search?.ok && Array.isArray(search?.results) && search.results.length) } },
+          ok: true,
+          answer,
+          confidence,
+          confidenceReason,
+          references,
+          meta: {
+            webSearch: {
+              enabled: true,
+              used: Boolean(search?.ok && Array.isArray(search?.results) && search.results.length),
+            },
+          },
     
-      // TEMP DEBUG (remove once fixed)
-      tavilyDebug: {
-        ok: Boolean(search?.ok),
-        error: search?.error || null,
-        query: search?.query || null,
-        resultsCount: Array.isArray(search?.results) ? search.results.length : null,
-      },
-    });
+          // TEMP DEBUG (remove once fixed)
+          __build: {
+            gitSha: process.env.VERCEL_GIT_COMMIT_SHA || null,
+            env: process.env.VERCEL_ENV || null,
+            region: process.env.VERCEL_REGION || null,
+          },
+          tavilyDebug: {
+            ok: Boolean(search?.ok),
+            error: search?.error || null,
+            query: search?.query || null,
+            resultsCount: Array.isArray(search?.results) ? search.results.length : null,
+          },
+        });
   } catch (err) {
     return res.status(500).json({ error: "Ask AI failed", details: err?.message || String(err) });
   }
