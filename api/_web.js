@@ -21,7 +21,10 @@ function withTimeout(ms = 12000) {
   return { signal: controller.signal, cancel: () => clearTimeout(id) };
 }
 
-export async function tavilySearch({ query, maxResults = 4 }) {
+export async function tavilySearch(arg) {
+  const { query, maxResults = 4 } =
+    typeof arg === "string" ? { query: arg, maxResults: 4 } : (arg || {});
+
   if (!query || typeof query !== "string") {
     return {
       ok: false,
