@@ -2,6 +2,9 @@
 //
 // Ask AI endpoint.
 // Behaviour: ALWAYS uses web search (independent of the draft toggle).
+//
+// Returns: { ok, answer, confidence, confidenceReason, references[], meta.webSearch }
+//
 
 import OpenAI from "openai";
 import {
@@ -19,19 +22,19 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-function safeJsonParse(text) {
+function safeJsonParse(s) {
   try {
-    return JSON.parse(text);
+    return JSON.parse(s);
   } catch {
     return null;
   }
 }
 
 function clamp01(n) {
-  if (typeof n !== "number" || !Number.isFinite(n)) return null;
-  return Math.max(0, Math.min(1, n));
+  if (typeof n !== "number" || !Number.isFinite(n)) return 0.5;
+  if (n < 0) return 0;
+  if (n > 1) return 1;
+  return n;
 }
 
 function normalizeHistory(history) {
@@ -53,12 +56,8 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
-  }
-
   try {
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
 
     const question = typeof body.question === "string" ? body.question.trim() : "";
     const title = typeof body.title === "string" ? body.title : "";
@@ -70,7 +69,9 @@ export default async function handler(req, res) {
     if (!question) return res.status(400).json({ error: "Missing question" });
 
     const subject = deriveQueryFromAsk({ question, title, draftText });
-    const search = await tavilySearch(subject);
+
+    // IMPORTANT: Ask AI ALWAYS uses web search
+    const search = await tavilySearch({ query: subject });
     const webBlock = formatWebResultsForPrompt(search);
 
     // IMPORTANT: keep order stable so [1] maps to references[0], etc.
@@ -93,6 +94,7 @@ Citations (strict):
 - Use ONLY these bracketed citations: [1], [2], [3] ... matching the numbered REFERENCES list.
 - Put citations on the same sentence as the claim.
 - If WEB RESULTS do not support a claim, say so plainly.
+- If no WEB RESULTS are provided (or they are empty), do NOT answer from general knowledge. Reply that you could not retrieve sources and cannot provide a cited answer.
 
 Formatting:
 - Use readable markdown: short paragraphs, bullets where helpful.
@@ -117,19 +119,20 @@ OPTIONAL CONTEXT:
 Title: ${title || "(none)"}
 
 Draft (may be empty):
-${draftText ? draftText.slice(0, 6000) : "(none)"}
+${draftText || "(empty)"}
 
 WEB RESULTS:
-${webBlock || "(no web results retrieved)"}
+${webBlock || "(none)"}
 
-REFERENCES (use these exact citation numbers):
-${referencesForModel || "(no references)"}
+REFERENCES (for citations):
+${referencesForModel || "(none)"}
 `.trim();
 
-    const completion = await client.chat.completions.create({
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    const completion = await openai.chat.completions.create({
       model: modelId,
       temperature: 0.2,
-      max_completion_tokens: 900,
       messages: [
         { role: "system", content: system },
         ...(history.length
@@ -151,7 +154,7 @@ ${referencesForModel || "(no references)"}
       ],
     });
 
-    const raw = completion.choices?.[0]?.message?.content || "";
+    const raw = completion?.choices?.[0]?.message?.content || "";
     const parsed = safeJsonParse(raw) || {};
 
     const answer =
@@ -167,6 +170,8 @@ ${referencesForModel || "(no references)"}
       answer,
       confidence,
       confidenceReason,
+      // Frontend expects a "rationale" style field name; keep existing too.
+      confidenceRationale: confidenceReason || "",
       references: references.slice(0, 8).map((r) => ({ title: r.title, url: r.url })), // order = [1..]
       meta: { webSearch: { enabled: true, used: Boolean(search?.ok) } },
     });
