@@ -78,7 +78,33 @@ export default async function handler(req, res) {
 
     // IMPORTANT: Ask AI ALWAYS uses web search
     const search = await tavilySearch({ query: subject, maxResults: 8 });
-    const webBlock = formatWebResultsForPrompt(search?.results || []);
+    
+    if (!search?.ok) {
+      return res.status(200).json({
+        ok: true,
+        answer:
+          "I couldn’t retrieve live web sources for this question (web search failed), so I can’t provide a properly cited answer right now.",
+        confidence: 0.1,
+        confidenceReason: `Web search failed: ${search?.error || "Unknown error"}`,
+        references: [],
+        meta: { webSearch: { enabled: true, used: false, error: search?.error || null } },
+      });
+    }
+    
+    if (!Array.isArray(search.results) || search.results.length === 0) {
+      return res.status(200).json({
+        ok: true,
+        answer:
+          "I ran web search but didn’t get any usable results to cite, so I can’t provide a properly sourced answer right now.",
+        confidence: 0.2,
+        confidenceReason: "Web search returned no usable results for this query.",
+        references: [],
+        meta: { webSearch: { enabled: true, used: false } },
+      });
+    }
+    
+    const webBlock = formatWebResultsForPrompt(search.results);
+
 
     // IMPORTANT: keep order stable so [1] maps to references[0], etc.
     const references = webResultsToReferences(search?.results || []).map((r, i) => ({
@@ -114,7 +140,7 @@ Return ONLY valid JSON:
 {
   "answer": "string (may include markdown and citations like [1])",
   "confidence": number between 0 and 1,
-  "confidenceReason": "short string or null"
+  "confidenceReason": "short string (always present; never empty)"
 }
 `.trim();
 
@@ -165,11 +191,16 @@ ${referencesForModel || "(none)"}
     const answer =
       typeof parsed.answer === "string" && parsed.answer.trim() ? parsed.answer.trim() : "";
     const confidence = clamp01(parsed.confidence);
+    
+    const confidenceReasonRaw =
+      typeof parsed.confidenceReason === "string" ? parsed.confidenceReason.trim() : "";
+    
     const confidenceReason =
-      typeof parsed.confidenceReason === "string" && parsed.confidenceReason.trim()
-        ? parsed.confidenceReason.trim()
-        : null;
-
+      confidenceReasonRaw ||
+      (Array.isArray(search?.results) && search.results.length
+        ? "Based on the cited web sources above."
+        : "No usable web sources were available to cite for this question.");
+    
     return res.status(200).json({
       ok: true,
       answer,
