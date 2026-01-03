@@ -77,8 +77,8 @@ export default async function handler(req, res) {
     const subject = deriveQueryFromAsk({ question, title, draftText });
 
     // IMPORTANT: Ask AI ALWAYS uses web search
-    const search = await tavilySearch({ query: subject });
-    const webBlock = formatWebResultsForPrompt(search);
+    const search = await tavilySearch({ query: subject, maxResults: 8 });
+    const webBlock = formatWebResultsForPrompt(search?.results || []);
 
     // IMPORTANT: keep order stable so [1] maps to references[0], etc.
     const references = webResultsToReferences(search?.results || []).map((r, i) => ({
@@ -105,6 +105,10 @@ Citations (strict):
 Formatting:
 - Use readable markdown: short paragraphs, bullets where helpful.
 - You MAY use **bold** for emphasis.
+- Prefer this structure when it fits:
+  1) **Answer** (1–3 short paragraphs)
+  2) **Evidence** (bullets; each bullet includes citations)
+  3) **Caveats / limits** (only if needed)
 
 Return ONLY valid JSON:
 {
