@@ -56,6 +56,12 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
+  }
+
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
 
@@ -74,13 +80,6 @@ export default async function handler(req, res) {
     const search = await tavilySearch({ query: subject });
     const webBlock = formatWebResultsForPrompt(search);
 
-    const _tavilyDebug = {
-      ok: Boolean(search?.ok),
-      error: search?.error || null,
-      query: search?.query || null,
-      resultsCount: Array.isArray(search?.results) ? search.results.length : null,
-    };
-    
     // IMPORTANT: keep order stable so [1] maps to references[0], etc.
     const references = webResultsToReferences(search?.results || []).map((r, i) => ({
       ...r,
@@ -135,9 +134,7 @@ REFERENCES (for citations):
 ${referencesForModel || "(none)"}
 `.trim();
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-    const completion = await openai.chat.completions.create({
+    const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.2,
       messages: [
@@ -149,10 +146,7 @@ ${referencesForModel || "(none)"}
                 content:
                   "Recent Q&A context:\n" +
                   history
-                    .map(
-                      (h, i) =>
-                        `Q${i + 1}: ${h.question}\nA${i + 1}: ${h.answer || "(none)"}`
-                    )
+                    .map((h, i) => `Q${i + 1}: ${h.question}\nA${i + 1}: ${h.answer || "(none)"}`)
                     .join("\n\n"),
               },
             ]
@@ -173,31 +167,18 @@ ${referencesForModel || "(none)"}
         : null;
 
     return res.status(200).json({
-          ok: true,
-          answer,
-          confidence,
-          confidenceReason,
-          references,
-          meta: {
-            webSearch: {
-              enabled: true,
-              used: Boolean(search?.ok && Array.isArray(search?.results) && search.results.length),
-            },
-          },
-    
-          // TEMP DEBUG (remove once fixed)
-          __build: {
-            gitSha: process.env.VERCEL_GIT_COMMIT_SHA || null,
-            env: process.env.VERCEL_ENV || null,
-            region: process.env.VERCEL_REGION || null,
-          },
-          tavilyDebug: {
-            ok: Boolean(search?.ok),
-            error: search?.error || null,
-            query: search?.query || null,
-            resultsCount: Array.isArray(search?.results) ? search.results.length : null,
-          },
-        });
+      ok: true,
+      answer,
+      confidence,
+      confidenceReason,
+      references,
+      meta: {
+        webSearch: {
+          enabled: true,
+          used: Boolean(search?.ok && Array.isArray(search?.results) && search.results.length),
+        },
+      },
+    });
   } catch (err) {
     return res.status(500).json({ error: "Ask AI failed", details: err?.message || String(err) });
   }
