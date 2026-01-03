@@ -1,8 +1,8 @@
 // api/rewrite.js
 //
 // Rewrites an existing draft.
-// Web search behaviour:
-// - publicSearch === true: enrich rewrite with web search results
+// Behaviour:
+// - publicSearch === true: retrieve from web
 // - publicSearch === false: do not retrieve from web
 
 import OpenAI from "openai";
@@ -21,52 +21,27 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const client = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
-function countWords(text) {
-  const t = typeof text === "string" ? text.trim() : "";
-  if (!t) return 0;
-  return t.split(/\s+/).filter(Boolean).length;
-}
-
-function completionTokensForWordTarget(wordTarget) {
-  // rough heuristic: ~1.3 tokens per word + buffer
-  const w = Math.max(1, Number(wordTarget) || 0);
-  return Math.min(2400, Math.max(600, Math.round(w * 1.3 + 500)));
-}
-
-function extractSourcesUsedBlock(text) {
-  // expected: "SOURCES USED:" JSON block; fallback to raw text
-  const raw = typeof text === "string" ? text : "";
-  const marker = "SOURCES USED:";
-  const idx = raw.indexOf(marker);
-  if (idx === -1) return { cleaned: raw.trim(), sourcesUsed: [] };
-
-  const cleaned = raw.slice(0, idx).trim();
-  const jsonText = raw.slice(idx + marker.length).trim();
-
+function safeJsonParse(text) {
   try {
-    const parsed = JSON.parse(jsonText);
-    const list = Array.isArray(parsed?.sourcesUsed) ? parsed.sourcesUsed : [];
-    return { cleaned, sourcesUsed: list };
+    return JSON.parse(text);
   } catch {
-    return { cleaned, sourcesUsed: [] };
+    return null;
   }
 }
 
-function normalizeSourcesUsed(list) {
-  const safe = Array.isArray(list) ? list : [];
-  return safe
-    .map((x) => {
-      const sourceIndex = typeof x?.sourceIndex === "number" ? x.sourceIndex : null;
-      const name = typeof x?.name === "string" ? x.name : "";
-      const type = typeof x?.type === "string" ? x.type : "";
-      const url = typeof x?.url === "string" ? x.url : null;
-      const usedPortion = typeof x?.usedPortion === "string" ? x.usedPortion : "";
-      const refs = Array.isArray(x?.refs) ? x.refs.filter((r) => typeof r === "string") : [];
-      return { sourceIndex, name, type, url, usedPortion, refs };
-    })
-    .filter((x) => x.name || x.url);
+function normalizeSourcesUsedRows(rows) {
+  const arr = Array.isArray(rows) ? rows : [];
+  return arr
+    .filter((r) => r && typeof r === "object")
+    .map((r) => ({
+      title: typeof r.title === "string" ? r.title : "",
+      url: typeof r.url === "string" ? r.url : "",
+      snippet: typeof r.snippet === "string" ? r.snippet : "",
+    }));
 }
 
 export default async function handler(req, res) {
@@ -75,7 +50,7 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
+  if (!client) {
     return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
@@ -87,13 +62,7 @@ export default async function handler(req, res) {
       (typeof body.draftText === "string" && body.draftText) ||
       "";
 
-    const instructions =
-      (typeof body.notes === "string" && body.notes) ||
-      (typeof body.instructions === "string" && body.instructions) ||
-      "";
-
-    const sources = Array.isArray(body.sources) ? body.sources : [];
-    const publicSearch = Boolean(body.publicSearch);
+    const instructions = typeof body.instructions === "string" ? body.instructions : "";
 
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
@@ -103,113 +72,90 @@ export default async function handler(req, res) {
         ? body.maxWords
         : null;
 
+    const publicSearch = Boolean(body.publicSearch);
+    const sources = Array.isArray(body.sources) ? body.sources : [];
+
     if (!baseText.trim()) return res.status(400).json({ error: "Missing base text to rewrite." });
     if (!instructions.trim())
       return res.status(400).json({ error: "Missing rewrite instructions." });
 
-    const sourcesBlock = sources
-      .map((s, i) => {
-        const name = s?.name || `Source ${i + 1}`;
-        const url = s?.url ? ` (${s.url})` : "";
-        const text = typeof s?.text === "string" ? s.text : "";
-        return `---\n${name}${url}\n${text.slice(0, 6000)}\n`;
-      })
-      .join("\n");
-
     let webResultsForPrompt = "";
-    let webRefs = [];
+    let webReferences = [];
+    let web = { ok: false, enabled: false, used: false };
 
     if (publicSearch) {
-      const q = deriveQueryFromDraft({ draftText: baseText, title: body.title || "" });
-      const search = await tavilySearch(q);
-      webResultsForPrompt = formatWebResultsForPrompt(search);
-      webRefs = webResultsToReferences(search?.results || []);
-    }
+      const query = deriveQueryFromDraft(
+        [instructions, baseText].filter(Boolean).join("\n\n")
+      );
 
-    const system = `
-You are rewriting a draft. Follow the REWRITE INSTRUCTIONS precisely.
-
-Return the rewritten draft text first.
-Then include a "SOURCES USED:" line followed by a JSON object with:
-{
-  "sourcesUsed": [
-    {"sourceIndex": number, "name": string, "type": "file"|"url"|"web", "url": string|null,
-     "usedPortion": string, "refs": [string]}
-  ]
-}
-
-Rules:
-- Keep output clean (no extra commentary).
-- If web results were provided, you MAY draw on them only when publicSearch is enabled.
-`.trim();
-
-    const user = `
-REWRITE INSTRUCTIONS:
-${instructions}
-
-WORD LIMIT (soft):
-${effectiveMaxWords ? `${effectiveMaxWords} words` : "(none)"}
-
-BASE DRAFT:
-${baseText}
-
-SOURCES:
-${sourcesBlock}
-
-WEB RESULTS (only if publicSearch enabled):
-${webResultsForPrompt || "(not enabled or no results)"}
-`.trim();
-
-    const maxCompletionTokens = effectiveMaxWords
-      ? completionTokensForWordTarget(effectiveMaxWords)
-      : 1800;
-
-    const runOnce = async (temp) => {
-      const completion = await client.chat.completions.create({
-        model: modelId,
-        temperature: temp,
-        max_completion_tokens: maxCompletionTokens,
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user },
-        ],
-      });
-      return (completion.choices?.[0]?.message?.content || "").trim();
-    };
-
-    // Retry once if empty (prevents your toast) ✅
-    let raw = await runOnce(0.25);
-    if (!raw) raw = await runOnce(0.15);
-
-    if (!raw) {
-      return res.status(500).json({ error: "Model returned empty rewrite text." });
-    }
-
-    const extracted = extractSourcesUsedBlock(raw);
-    let rewrittenText = extracted.cleaned;
-    const sourcesUsed = normalizeSourcesUsed(extracted.sourcesUsed);
-
-    if (effectiveMaxWords) {
-      // crude clamp (don’t over-think here)
-      const wc = countWords(rewrittenText);
-      if (wc > effectiveMaxWords) {
-        const tokens = rewrittenText.split(/\s+/).slice(0, effectiveMaxWords);
-        rewrittenText = tokens.join(" ");
+      try {
+        const results = await tavilySearch(query);
+        webResultsForPrompt = formatWebResultsForPrompt(results);
+        webReferences = webResultsToReferences(results);
+        web = { ok: true, provider: "tavily", query, results };
+      } catch (e) {
+        web = {
+          ok: false,
+          provider: "tavily",
+          query,
+          results: [],
+          error: e?.message || String(e),
+        };
+        webResultsForPrompt = "";
+        webReferences = [];
       }
     }
 
+    const prompt = `
+Rewrite the text according to the instructions.
+
+INSTRUCTIONS:
+${instructions}
+
+TEXT:
+${baseText}
+
+WEB RESULTS:
+${webResultsForPrompt || "(none)"}
+
+SOURCES:
+${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
+
+Return ONLY JSON:
+{
+  "draftText": "string"
+}
+`.trim();
+
+    const completion = await client.chat.completions.create({
+      model: modelId,
+      temperature: 0.2,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const raw = completion?.choices?.[0]?.message?.content || "";
+    const parsed = safeJsonParse(raw) || {};
+    const rewritten =
+      typeof parsed.draftText === "string" && parsed.draftText.trim()
+        ? parsed.draftText.trim()
+        : "";
+
+    if (!rewritten) {
+      return res.status(500).json({ error: "Rewrite failed. Please try again." });
+    }
+
+    const existingSourcesUsed = normalizeSourcesUsedRows(body?.sourcesUsed?.references || []);
+
     return res.status(200).json({
       ok: true,
-      text: rewrittenText,
-      draftText: rewrittenText,
-      sourcesUsedRows: sourcesUsed,
-      meta: {
-        webSearch: {
-          enabled: publicSearch,
-          used: publicSearch && !!webResultsForPrompt,
-          references: publicSearch ? webRefs : [],
-        },
+      draftText: rewritten,
+      sourcesUsed: {
+        web: publicSearch
+          ? { enabled: true, used: Boolean(web?.ok), provider: "tavily", query: web?.query || "" }
+          : { enabled: false, used: false },
+        references: [...existingSourcesUsed, ...webReferences],
       },
+      meta: { maxWords: effectiveMaxWords },
     });
   } catch (err) {
     return res.status(500).json({ error: "Rewrite failed", details: err?.message || String(err) });
