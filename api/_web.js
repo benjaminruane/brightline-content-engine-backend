@@ -1,20 +1,33 @@
 // api/_web.js
 //
 // Shared web-search utilities for Content Engine.
-// IMPORTANT: This module is imported by multiple endpoints
-// (generate, rewrite, analyse-statements, query, etc).
-// Keep exports backward-compatible.
+// IMPORTANT: This module is imported by multiple endpoints.
+// Vercel will transpile the API entrypoints, but helper modules like this
+// can be evaluated as CommonJS. So this file MUST NOT use ESM `export` syntax.
+//
+// We therefore use CommonJS `module.exports` here, while keeping the same
+// function names used by the API routes.
+//
+// Also: Node 18+ provides global fetch, so we do NOT depend on node-fetch.
 
-import fetch from "node-fetch";
+function assertFetchAvailable() {
+  if (typeof fetch !== "function") {
+    throw new Error(
+      "Global fetch() is not available in this runtime. Set Node to 18+ or polyfill fetch."
+    );
+  }
+}
 
 // -----------------------------
 // Tavily: low-level call
 // -----------------------------
-export async function tavilySearch({ query, maxResults = 6 }) {
+async function tavilySearch({ query, maxResults = 6 }) {
   if (!process.env.TAVILY_API_KEY) {
     throw new Error("Server is missing TAVILY_API_KEY");
   }
   if (!query || !String(query).trim()) return { ok: true, query, results: [] };
+
+  assertFetchAvailable();
 
   const res = await fetch("https://api.tavily.com/search", {
     method: "POST",
@@ -30,18 +43,18 @@ export async function tavilySearch({ query, maxResults = 6 }) {
   });
 
   if (!res.ok) {
-    const text = await res.text();
+    const text = await res.text().catch(() => "");
     throw new Error(`Tavily search failed: ${res.status} ${text}`);
   }
 
-  const data = await res.json();
+  const data = await res.json().catch(() => null);
   return { ok: true, query, ...(data || {}) };
 }
 
 // -----------------------------
 // Prompt formatting helpers
 // -----------------------------
-export function formatWebResultsForPrompt(resultsObj) {
+function formatWebResultsForPrompt(resultsObj) {
   const results = resultsObj?.results || [];
   if (!Array.isArray(results) || results.length === 0) return "";
 
@@ -58,7 +71,7 @@ export function formatWebResultsForPrompt(resultsObj) {
     .join("\n\n");
 }
 
-export function webResultsToReferences(results) {
+function webResultsToReferences(results) {
   if (!Array.isArray(results)) return [];
   return results.slice(0, 8).map((r, idx) => ({
     id: idx + 1,
@@ -70,15 +83,14 @@ export function webResultsToReferences(results) {
 // -----------------------------
 // Query derivation for Generate/Rewrite/Review
 // -----------------------------
-export function deriveQueryFromDraft(text = "") {
+function deriveQueryFromDraft(text = "") {
   const t = String(text || "").trim();
   if (!t) return "";
-  // Use first ~200 chars as a crude query seed
   return t.length > 200 ? t.slice(0, 200) : t;
 }
 
 // -----------------------------
-// NEW: Ask AI (Enquire) helpers
+// Ask AI (Enquire) helpers
 // -----------------------------
 function inferEntityFromDraft(draftText = "") {
   if (!draftText) return "";
@@ -95,7 +107,7 @@ function inferEntityFromDraft(draftText = "") {
   return "";
 }
 
-export function deriveQueryFromAsk({ question, title, draftText }) {
+function deriveQueryFromAsk({ question, title, draftText }) {
   if (!question) return "";
 
   if (title && title.trim()) return `${question} ${title}`.trim();
@@ -107,6 +119,15 @@ export function deriveQueryFromAsk({ question, title, draftText }) {
 }
 
 // Backward-compatible alias if you ever referenced runWebSearch
-export async function runWebSearch({ query, maxResults = 6 }) {
+async function runWebSearch({ query, maxResults = 6 }) {
   return tavilySearch({ query, maxResults });
 }
+
+module.exports = {
+  tavilySearch,
+  formatWebResultsForPrompt,
+  webResultsToReferences,
+  deriveQueryFromDraft,
+  deriveQueryFromAsk,
+  runWebSearch,
+};
