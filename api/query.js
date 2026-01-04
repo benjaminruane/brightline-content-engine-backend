@@ -43,7 +43,6 @@ export default async function handler(req, res) {
       question,
       title = "",
       draftText = "",
-      publicSearch = true,
     } = req.body;
 
     if (!question) {
@@ -51,6 +50,8 @@ export default async function handler(req, res) {
     }
 
     // ----- Web search (always on for Ask AI)
+    // Force publicSearch = true regardless of client request
+    const publicSearch = true;
     const initialQuery = deriveQueryFromAsk({
       question,
       title,

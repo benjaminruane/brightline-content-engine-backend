@@ -46,7 +46,9 @@ export default async function handler(req, res) {
 
     if (!draftText.trim()) return res.status(400).json({ error: "Missing draftText" });
 
-    // Review always uses web search
+    // Analysis always uses web search
+    // Force publicSearch = true regardless of client request (publicSearch from body is ignored)
+    const publicSearch = true;
     const query = deriveQueryFromDraft(draftText);
     const search = await tavilySearch({ query, maxResults: 6 });
     const webBlock = formatWebResultsForPrompt(search);
