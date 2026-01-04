@@ -3,6 +3,7 @@
 // Sources Q&A endpoint.
 
 import OpenAI from "openai";
+import { deriveQueryFromAsk, runWebSearch, formatWebResultsForPrompt } from "../lib/web.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -49,16 +50,56 @@ export default async function handler(req, res) {
 
     if (!question) return res.status(400).json({ error: "Missing question" });
 
+    // ----- Web search (ALWAYS ON for Sources Used Q&A)
+    const initialQuery = deriveQueryFromAsk({
+      question,
+      title: "",
+      draftText,
+    });
+
+    let webSearchResults = [];
+    let webReferences = [];
+    let queryUsed = initialQuery;
+
+    try {
+      const search = await runWebSearch({
+        query: initialQuery,
+        maxResults: 6,
+      });
+      webSearchResults = Array.isArray(search?.results) ? search.results : [];
+      queryUsed = search?.query || initialQuery;
+
+      // Format web references with numbering [1], [2], etc.
+      webReferences = webSearchResults.map((r, i) => ({
+        id: i + 1,
+        title: r?.title || "",
+        url: r?.url || "",
+        snippet: r?.content ? (r.content.length > 300 ? r.content.slice(0, 300) + "…" : r.content) : "",
+      }));
+    } catch (webErr) {
+      console.error("Web search error in query-sources:", webErr);
+      // Continue without web results - don't fail the request
+      webSearchResults = [];
+      webReferences = [];
+    }
+
+    // Format web sources for prompt
+    const webSourcesText = webReferences.length > 0
+      ? formatWebResultsForPrompt({ results: webSearchResults })
+      : "";
+
     const system = `
-You answer questions grounded strictly in the provided sources.
+You answer questions using BOTH the provided uploaded sources AND web sources.
 
 Rules:
-- Only use the provided SOURCES.
-- If you cannot answer from the sources, say so clearly.
+- Use BOTH uploaded sources and web sources to answer.
+- Insert inline citations like [1], [2], etc. for web sources at the exact supporting sentence.
+- Web source citations must match the numbered web sources provided (e.g., [1] refers to the first web source).
+- If you cannot answer from the available sources, say so clearly.
 
 Return ONLY valid JSON:
 {
-  "answer": "string (may include markdown)",
+  "answer": "string (may include markdown with bracket citations [1], [2], etc. for web sources)",
   "confidence": number between 0 and 1,
   "confidenceReason": "string or null"
 }
@@ -71,8 +112,11 @@ ${question}
 DRAFT CONTEXT (may be empty):
 ${draftText || "(none)"}
 
-SOURCES:
+UPLOADED SOURCES:
 ${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
+
+WEB SOURCES:
+${webSourcesText || "(none - no web sources found for this question)"}
 `.trim();
 
     const completion = await client.chat.completions.create({
@@ -100,6 +144,7 @@ ${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
       answer,
       confidence,
       confidenceReason,
+      webReferences: webReferences.length > 0 ? webReferences : [],
     });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Query sources failed" });
