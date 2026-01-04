@@ -44,7 +44,16 @@ export default async function handler(req, res) {
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
     const text = typeof body.text === "string" ? body.text : "";
-    const instructions = typeof body.instructions === "string" ? body.instructions : "";
+    
+    // Accept legacy frontend payloads:
+    // - instructions (preferred)
+    // - notes (Phase 2 frontend)
+    // - rewriteNotes (defensive)
+    const instructions =
+      (typeof body.instructions === "string" ? body.instructions : "") ||
+      (typeof body.notes === "string" ? body.notes : "") ||
+      (typeof body.rewriteNotes === "string" ? body.rewriteNotes : "");
+    
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
     const publicSearch = Boolean(body.publicSearch);
