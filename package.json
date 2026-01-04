@@ -1,6 +1,7 @@
 {
   "name": "brightline-content-engine-backend",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "main": "api/generate.js",
   "scripts": {
@@ -9,6 +10,7 @@
   "dependencies": {
     "openai": "^4.0.0",
     "@mozilla/readability": "^0.5.0",
-    "jsdom": "^24.0.0"
+    "jsdom": "^24.0.0",
+    "node-fetch": "2.6.12"
   }
 }
