@@ -6,8 +6,7 @@
 // - publicSearch === false: do not retrieve from web
 //
 // NEW:
-// - Returns meta.sourcesUsed[] describing what was used from attached sources.
-// - Also returns sourcesUsedRows[] at the top-level for convenient frontend consumption.
+// - Returns sourcesUsedRows[] at the top-level for convenient frontend consumption.
 // - The model is instructed to append a [SOURCES_USED] JSON block that we strip out.
 
 import OpenAI from "openai";
@@ -28,10 +27,6 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-  if (req.method === "OPTIONS") return res.status(200).end();
-  
 // ------------------------------------------------------------------
 
 const STYLE_GUIDE_INSTRUCTIONS = `
@@ -62,7 +57,6 @@ function clampMaxWords(maxWords) {
 
 function stripSourcesUsedBlock(text) {
   if (typeof text !== "string") return "";
-  // Removes a trailing [SOURCES_USED] JSON section if present
   const marker = "[SOURCES_USED]";
   const idx = text.lastIndexOf(marker);
   if (idx === -1) return text.trim();
@@ -101,7 +95,7 @@ export default async function handler(req, res) {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   try {
-    const body = req.body || {};
+    const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
     const {
       title,
       notes,
