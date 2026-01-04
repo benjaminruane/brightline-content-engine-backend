@@ -16,7 +16,7 @@ import {
   formatWebResultsForPrompt,
   webResultsToReferences,
   deriveQueryFromDraft,
-} from "./_web.js";
+} from "../lib/web.js";
 
 // ------------------------------------------------------------------
 // CORS
