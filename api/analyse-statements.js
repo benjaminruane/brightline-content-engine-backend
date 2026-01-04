@@ -8,7 +8,7 @@ import {
   formatWebResultsForPrompt,
   webResultsToReferences,
   deriveQueryFromDraft,
-} from "./_web.js";
+} from "../lib/web.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
