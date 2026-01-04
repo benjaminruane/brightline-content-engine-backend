@@ -4,7 +4,7 @@
 // This is a generic helper the rest of the backend can call,
 // and it's also handy for debugging from the frontend later.
 
-import { tavilySearch } from "./_web.js";
+import { tavilySearch } from "../lib/web.js";
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
