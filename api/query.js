@@ -1,6 +1,6 @@
 // api/query.js
 
-import { deriveQueryFromAsk, runWebSearch } from "./_web.js";
+import { deriveQueryFromAsk, runWebSearch } from "../lib/web.js";
 import { OpenAI } from "openai";
 
 const client = new OpenAI({
