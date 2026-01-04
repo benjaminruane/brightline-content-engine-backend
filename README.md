@@ -10,7 +10,7 @@ Backend work must align strictly with frontend UX constraints.
 
 ## PHASE 1 — Foundations & Stability
 ✅ Complete (locked)
-
+ 
 Delivered:
 - Stable API endpoints:
   - /api/generate
