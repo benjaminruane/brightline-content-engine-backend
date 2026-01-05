@@ -331,24 +331,25 @@ function applyAnchorGating(statements) {
   });
 }
 
-// Detect if reasons indicate uncertainty/unverifiability
+// Detect if reasons indicate strong unverifiability (blocks Medium calibration)
+// Only strong signals that indicate the claim cannot be validated, not merely uncited
 function isUncertaintyReason(reasons) {
   if (!Array.isArray(reasons) || reasons.length === 0) return false;
   
-  const uncertaintyKeywords = [
-    "no supporting source",
-    "no external evidence",
+  // Strong unverifiability keywords only (exclude generic "no supporting source" etc.)
+  const strongUnverifiabilityKeywords = [
+    "unnamed",
+    "not identified",
+    "no identifying details",
+    "cannot verify",
     "cannot be verified",
     "not verifiable",
-    "not identified",
-    "unnamed",
-    "insufficient information",
-    "no corroborating",
-    "evidence is unavailable",
     "cannot corroborate",
     "unverifiable",
-    "no evidence",
-    "cannot verify",
+    "insufficient information",
+    "cannot be validated",
+    "cannot be confirmed",
+    "no way to verify",
   ];
   
   const reasonsText = reasons
@@ -356,7 +357,7 @@ function isUncertaintyReason(reasons) {
     .join(" ")
     .toLowerCase();
   
-  return uncertaintyKeywords.some((keyword) => reasonsText.includes(keyword));
+  return strongUnverifiabilityKeywords.some((keyword) => reasonsText.includes(keyword));
 }
 
 // Calibrate non-anchor statements: allow Medium for uncited synthesis unless uncertain
