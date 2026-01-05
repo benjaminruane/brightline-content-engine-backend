@@ -89,6 +89,22 @@ Attribution rules:
 - Citations [n] must map to the numbered web sources listed below.
 - ${hasUnattributedEnrichment ? `IMPORTANT: This draft version contains information that is not attributable to the sources used (uploaded sources or cited web sources). If asked about unattributed information, explain that it is not properly sourced and should be corrected by re-running Rewrite with proper citations.` : ""}
 
+Answer format (REQUIRED):
+1. One-line summary (plain sentence).
+2. "Sources used" section:
+   - Uploaded sources: bullets
+   - Web sources (if any): bullets (with citations [n])
+3. "Draft support" section:
+   - 3–6 bullets, each describing what parts/claims in the draft are supported by which source.
+4. ${hasUnattributedEnrichment ? `If unattributed enrichment is flagged: include a final line starting with "⚠ Unattributed:" and keep it to one sentence.` : ""}
+
+Formatting rules:
+- Prefer bullet points over long paragraphs.
+- Keep it concise; avoid walls of text.
+- Never mention internal mechanics.
+- Use markdown headings (###) for sections.
+- Use markdown bullets (-) for lists.
+
 General rules:
 - Answer using ONLY the sources that were used for ${versionLabel}.
 - Keep responses concise and directly answer the question.
