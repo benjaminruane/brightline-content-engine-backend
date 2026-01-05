@@ -198,7 +198,7 @@ function fallbackExtractAtomicStatements(draftText) {
           assessment: {
             reliabilityScore: 25,
             reliabilityLabel: "Low",
-            reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting web source was confirmed."],
+            reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting source (uploaded or web) was confirmed."],
             citations: [],
           },
         });
@@ -227,7 +227,7 @@ function fallbackExtractAtomicStatements(draftText) {
           assessment: {
             reliabilityScore: 25,
             reliabilityLabel: "Low",
-            reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting web source was confirmed."],
+            reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting source (uploaded or web) was confirmed."],
             citations: [],
           },
         });
@@ -282,32 +282,33 @@ function applyAnchorGating(statements) {
     const hasCitations = citations.length > 0;
     const isAnchor = isAnchorFact(text);
     
-    // If anchor fact AND no citations: force Low
-    if (isAnchor && !hasCitations) {
-      const existingScore = typeof assessment.reliabilityScore === "number" 
-        ? assessment.reliabilityScore 
-        : 30;
-      const forcedScore = Math.min(existingScore, 35);
-      
-      let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-      const anchorReason = "Anchor fact requires a supporting source; none was cited for this version.";
-      
-      // Prepend anchor reason if not already present
-      if (!reasons.some((r) => r && r.includes("Anchor fact requires"))) {
-        reasons = [anchorReason, ...reasons].slice(0, 4); // Cap at 4
+      // If anchor fact AND no citations: force Low
+      // Citations can be from either uploaded sources or web references
+      if (isAnchor && !hasCitations) {
+        const existingScore = typeof assessment.reliabilityScore === "number" 
+          ? assessment.reliabilityScore 
+          : 30;
+        const forcedScore = Math.min(existingScore, 35);
+        
+        let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        const anchorReason = "Anchor fact requires a supporting source (uploaded or web); none was cited for this version.";
+        
+        // Prepend anchor reason if not already present
+        if (!reasons.some((r) => r && r.includes("Anchor fact requires"))) {
+          reasons = [anchorReason, ...reasons].slice(0, 4); // Cap at 4
+        }
+        
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reliabilityLabel: "Low",
+            reliabilityScore: forcedScore,
+            reasons: reasons.length > 0 ? reasons : [anchorReason],
+            citations: [], // Ensure empty
+          },
+        };
       }
-      
-      return {
-        ...stmt,
-        assessment: {
-          ...assessment,
-          reliabilityLabel: "Low",
-          reliabilityScore: forcedScore,
-          reasons: reasons.length > 0 ? reasons : [anchorReason],
-          citations: [], // Ensure empty
-        },
-      };
-    }
     
     // If NOT anchor fact AND no citations: add neutral reason if empty, but don't force Low
     if (!isAnchor && !hasCitations) {
@@ -450,10 +451,35 @@ export default async function handler(req, res) {
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
     const draftText = typeof body.draftText === "string" ? body.draftText : "";
+    const versionId = typeof body.versionId === "string" ? body.versionId : null;
+    const sources = Array.isArray(body.sources) ? body.sources : [];
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
 
     if (!draftText.trim()) return res.status(400).json({ error: "Missing draftText" });
+
+    // Format uploaded sources for prompt (version-scoped)
+    const uploadedSources = sources.map((s) => ({
+      id: s?.id || null,
+      name: s?.name || s?.title || "Untitled source",
+      text: s?.text || "",
+      kind: s?.kind || s?.sourceType || "file",
+      url: s?.url || null,
+    }));
+
+    // Build uploaded sources context for prompt
+    let uploadedSourcesBlock = "";
+    if (uploadedSources.length > 0) {
+      const sourcesList = uploadedSources.map((s, idx) => {
+        const name = s.name || "Untitled source";
+        const text = s.text || "";
+        const excerpt = text.length > 2000 ? text.substring(0, 2000) + "..." : text;
+        return `[UPLOADED ${idx + 1}] ${name}\n${excerpt || "(no text content)"}`;
+      }).join("\n\n");
+      uploadedSourcesBlock = sourcesList;
+    } else {
+      uploadedSourcesBlock = "(none)";
+    }
 
     // Analysis always uses web search
     // Force publicSearch = true regardless of client request (publicSearch from body is ignored)
@@ -475,6 +501,25 @@ export default async function handler(req, res) {
       webReferences = [];
     }
 
+    // Create unified references list: uploaded first, then web
+    // Uploaded references get IDs 1..N, web references get IDs (N+1)..(N+M)
+    const uploadedReferences = uploadedSources.map((s, idx) => ({
+      id: idx + 1,
+      title: s.name || "Untitled source",
+      url: s.url || null,
+      type: "uploaded",
+    }));
+
+    const webRefStartId = uploadedReferences.length + 1;
+    const webReferencesWithIds = webReferences.map((ref, idx) => ({
+      ...ref,
+      id: webRefStartId + idx,
+      type: "web",
+    }));
+
+    const unifiedReferences = [...uploadedReferences, ...webReferencesWithIds];
+    const maxRefIndex = unifiedReferences.length;
+
     const system = `
 You are the "Review" engine inside Content Engine.
 
@@ -486,19 +531,22 @@ EXTRACTION RULES (CRITICAL):
 - Deduplicate near-duplicates.
 
 ATTRIBUTION RULES (HYBRID):
-- Synthesis is allowed only if supported by web sources (citable with [n]).
-- Numeric paraphrase allowed only if consistent with web sources (citable).
-- Anchor facts (years/dates, exchange/tickers, specific numbers) REQUIRE citations [n].
-- If a claim cannot be cited to web sources:
+- Statements may be supported by EITHER uploaded sources OR web sources (or both).
+- Uploaded sources are authoritative for memo facts and internal claims.
+- Web sources provide external verification and public information.
+- Synthesis is allowed if supported by uploaded sources OR web sources (citable with [n]).
+- Numeric paraphrase allowed if consistent with uploaded sources OR web sources (citable).
+- Anchor facts (years/dates, exchange/tickers, specific numbers) REQUIRE at least ONE citation [n] to either an uploaded source or a web reference.
+- If a claim cannot be cited to any source (uploaded or web):
   - Set citations: []
-  - Set reliabilityLabel: "Low"
-  - Set reliabilityScore: 20-35
-  - Include in reasons: "No supporting source found in cited web sources for this version."
+  - For anchor facts: Set reliabilityLabel: "Low", reliabilityScore: 20-35
+  - Include in reasons: "No supporting source found for this claim."
+- Statements supported by uploaded sources alone (no web citations) can still be scored High/Medium if directly supported.
 
 CITATIONS:
-- Use bracket citations [1], [2], ... referencing the WEB REFERENCES list ONLY.
-- Citations must be integers within the range of provided web references.
-- If web results are empty, do not invent sources; set citations: [] and mark as Low.
+- Use bracket citations [1], [2], ... referencing the unified REFERENCES list (uploaded sources first, then web references).
+- Citations must be integers within the range 1..${maxRefIndex}${uploadedReferences.length > 0 ? ` (where 1..${uploadedReferences.length} are uploaded sources${webReferencesWithIds.length > 0 ? `, ${uploadedReferences.length + 1}..${maxRefIndex} are web references` : ''})` : ''}.
+- If no sources are available, do not invent sources; set citations: [] and mark appropriately.
 - Do NOT invent citations.
 
 OUTPUT FORMAT:
@@ -524,15 +572,31 @@ If no extractable statements are found, return: {"statements": []}
 DRAFT:
 ${draftText}
 
+UPLOADED SOURCES (used for this version):
+${uploadedSourcesBlock}
+
+UPLOADED REFERENCES:
+${
+  uploadedReferences.length > 0
+    ? uploadedReferences.map((r) => `[${r.id}] ${r.title}${r.url ? ` — ${r.url}` : ""}`).join("\n")
+    : "(none)"
+}
+
 WEB RESULTS:
 ${webBlock || "(none)"}
 
 WEB REFERENCES:
 ${
-  webReferences
-    .slice(0, 8)
-    .map((r, i) => `[${i + 1}] ${r.title} — ${r.url}`)
-    .join("\n") || "(none)"
+  webReferencesWithIds.length > 0
+    ? webReferencesWithIds.map((r) => `[${r.id}] ${r.title} — ${r.url}`).join("\n")
+    : "(none)"
+}
+
+ALL REFERENCES (unified, for citation):
+${
+  unifiedReferences.length > 0
+    ? unifiedReferences.map((r) => `[${r.id}] ${r.title}${r.url ? ` — ${r.url}` : ""} (${r.type})`).join("\n")
+    : "(none)"
 }
 `.trim();
 
@@ -551,8 +615,7 @@ ${
     let parsed = extractFirstJson(raw);
     let extractionQuality = "ok";
     
-    // Coerce and validate statements
-    const maxRefIndex = webReferences.length;
+    // Coerce and validate statements (using unified references count)
     let statements = coerceStatements(parsed, maxRefIndex);
     
     // Graceful fallback if model output is invalid or empty
@@ -570,10 +633,12 @@ ${
     return res.status(200).json({
       ok: true,
       statements,
-      references: webReferences,
+      references: unifiedReferences,
       meta: {
         webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
         extractionQuality,
+        uploadedSourcesCount: uploadedReferences.length,
+        webSourcesCount: webReferencesWithIds.length,
       },
     });
   } catch (err) {
@@ -587,13 +652,25 @@ ${
       const gatedFallbackStatements = applyAnchorGating(fallbackStatements);
       const calibratedFallbackStatements = applyNonAnchorCalibration(gatedFallbackStatements);
       
+      // In fallback, try to get sources from body if available
+      const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+      const fallbackSources = Array.isArray(fallbackBody.sources) ? fallbackBody.sources : [];
+      const fallbackUploadedReferences = fallbackSources.map((s, idx) => ({
+        id: idx + 1,
+        title: s?.name || s?.title || "Untitled source",
+        url: s?.url || null,
+        type: "uploaded",
+      }));
+
       return res.status(200).json({
         ok: true,
         statements: calibratedFallbackStatements,
-        references: [],
+        references: fallbackUploadedReferences,
         meta: {
           webSearch: { enabled: true, used: false },
           extractionQuality: "degraded",
+          uploadedSourcesCount: fallbackUploadedReferences.length,
+          webSourcesCount: 0,
         },
       });
     } catch (fallbackErr) {
@@ -605,6 +682,8 @@ ${
         meta: {
           webSearch: { enabled: true, used: false },
           extractionQuality: "degraded",
+          uploadedSourcesCount: 0,
+          webSourcesCount: 0,
         },
       });
     }
