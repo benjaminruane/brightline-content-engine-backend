@@ -126,16 +126,23 @@ function isDocumentDescriptive(text, reasons = []) {
   const lower = text.toLowerCase();
   const reasonsText = Array.isArray(reasons) ? reasons.join(" ").toLowerCase() : "";
   
-  // Patterns for document-descriptive statements
+  // Patterns for document-descriptive statements (tightened for "is evaluating", "seek approval", etc.)
   const docDescriptivePatterns = [
-    // Investment/evaluation language
-    /\b(?:evaluating|evaluates|evaluation of|considering|considers|consideration of|proposing|proposes|proposal to|recommending|recommends|recommendation to)\b/i,
+    // Investment/evaluation language (expanded)
+    /\b(?:evaluating|evaluates|evaluation of|is evaluating|are evaluating)\b/i,
+    /\b(?:considering|considers|consideration of|is considering|are considering)\b/i,
+    /\b(?:proposing|proposes|proposal to|proposed|is proposing)\b/i,
+    /\b(?:recommending|recommends|recommendation to|recommended|is recommending)\b/i,
+    /\b(?:seeking|seeks|seek)\s+(?:approval|funding|financing|investment)\b/i,
     // Document action language
     /\b(?:this memo|the memo|this document|the document|this report|the report)\s+(?:evaluates|proposes|recommends|considers|discusses|outlines|describes|presents|examines|analyzes)/i,
-    // Investment-specific patterns
-    /\b(?:investment|funding|financing|acquisition|partnership)\s+(?:opportunity|proposal|evaluation|consideration)/i,
+    // Investment-specific patterns (expanded)
+    /\b(?:investment|funding|financing|acquisition|partnership)\s+(?:opportunity|proposal|evaluation|consideration|in|into)\b/i,
+    /\b(?:proposed|new|potential)\s+(?:investment|funding|financing|acquisition|partnership)\b/i,
     // Decision/action language about the memo's purpose
     /\b(?:decision to|decision on|action to|action on|plan to|plan for)\b/i,
+    // Request/approval language
+    /\b(?:request|requests|requesting|approval|approve|approving)\s+(?:for|to|of)\b/i,
   ];
   
   // Check if statement matches document-descriptive patterns
@@ -145,12 +152,72 @@ function isDocumentDescriptive(text, reasons = []) {
   const hasDocReason = reasonsText.includes("memo") || 
                        reasonsText.includes("document") ||
                        reasonsText.includes("evaluation") ||
-                       reasonsText.includes("proposal");
+                       reasonsText.includes("proposal") ||
+                       reasonsText.includes("seeking") ||
+                       reasonsText.includes("approval");
   
   // Must match pattern or have doc reason, AND not be an anchor fact
   const hasFactualAnchor = isAnchorFact(text);
   
   return (matchesPattern || hasDocReason) && !hasFactualAnchor;
+}
+
+// Centralized provenance classification: single source of truth for category and provenance
+// Returns: { category, provenance, hasUploadedMemo, resolvedCitations, memoReference }
+function classifyStatementAndProvenance(stmt, unifiedReferences) {
+  if (!stmt || typeof stmt !== "object") {
+    return {
+      category: "WORLD_FACT",
+      provenance: "NONE",
+      hasUploadedMemo: false,
+      resolvedCitations: [],
+      memoReference: null,
+    };
+  }
+  
+  const text = typeof stmt.text === "string" ? stmt.text : "";
+  const assessment = stmt.assessment || {};
+  const resolvedCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+  const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+  
+  // Find uploaded memo reference (if any)
+  const uploadedReferences = Array.isArray(unifiedReferences)
+    ? unifiedReferences.filter((ref) => ref?.type === "uploaded")
+    : [];
+  const hasUploadedMemo = uploadedReferences.length > 0;
+  const memoReference = uploadedReferences.length > 0 ? uploadedReferences[0] : null;
+  
+  // Classify category
+  const isDocDescriptive = isDocumentDescriptive(text, reasons);
+  const category = isDocDescriptive ? "DOCUMENT_DESCRIPTIVE" : "WORLD_FACT";
+  
+  // Determine provenance
+  let provenance;
+  if (category === "DOCUMENT_DESCRIPTIVE") {
+    // Document-descriptive: valid if memo exists (MEMO_OK) or has citations (CITED_OK)
+    if (hasUploadedMemo) {
+      provenance = "MEMO_OK";
+    } else if (resolvedCitations.length > 0) {
+      provenance = "CITED_OK";
+    } else {
+      provenance = "NONE";
+    }
+  } else {
+    // World-fact: valid ONLY if has resolved citations
+    if (resolvedCitations.length > 0) {
+      provenance = "CITED_OK";
+    } else {
+      provenance = "NONE";
+    }
+  }
+  
+  return {
+    category,
+    provenance,
+    hasUploadedMemo,
+    resolvedCitations,
+    memoReference,
+  };
 }
 
 // Detect if a statement is a meta-statement (about the document itself, not the world)
@@ -176,42 +243,37 @@ function isMetaStatement(text) {
 
 // Apply dual-axis verification gate: force Low if no resolvable citations
 // This enforces: no provenance = no verification = no confidence
-// Uses RESOLVED citations (after resolveCitations has run)
+// Uses centralized provenance classification
 function applyDualAxisVerification(statements, unifiedReferences) {
   if (!Array.isArray(statements)) return statements;
-  
-  // Build map of uploaded references for document-descriptive statement checking
-  const uploadedRefIds = new Set();
-  if (Array.isArray(unifiedReferences)) {
-    unifiedReferences.forEach((ref) => {
-      if (ref?.type === "uploaded" && ref?.id != null) {
-        uploadedRefIds.add(String(ref.id));
-      }
-    });
-  }
   
   return statements.map((stmt) => {
     if (!stmt || typeof stmt !== "object") return stmt;
     
     const text = typeof stmt.text === "string" ? stmt.text : "";
     const assessment = stmt.assessment || {};
-    // Citations at this point are already resolved by resolveCitations
-    const resolvedCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
     const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-    const hasResolvableCitations = resolvedCitations.length > 0;
-    const isAnchor = isAnchorFact(text);
-    const isMeta = isMetaStatement(text);
-    const isDocDescriptive = isDocumentDescriptive(text, reasons);
     
-    // Check if document-descriptive statement has memo support
-    const hasMemoSupport = isDocDescriptive && resolvedCitations.some((c) => 
-      uploadedRefIds.has(String(c))
-    );
+    // Use centralized classification
+    const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
+    const { provenance, resolvedCitations, memoReference } = classification;
     
-    // Early return ONLY if: has resolvable citations (world facts) OR document-descriptive with memo support
-    if (hasResolvableCitations || hasMemoSupport) return stmt;
+    // Allow if provenance is valid (CITED_OK or MEMO_OK)
+    if (provenance === "CITED_OK" || provenance === "MEMO_OK") {
+      // For MEMO_OK document-descriptive statements without citations, inject memo citation
+      if (provenance === "MEMO_OK" && resolvedCitations.length === 0 && memoReference) {
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            citations: [memoReference.id], // Inject memo citation for evidence rendering
+          },
+        };
+      }
+      return stmt; // Valid provenance, no changes needed
+    }
     
-    // All other cases: force Low (no provenance = no verification)
+    // Provenance is NONE: force Low
     const existingScore = typeof assessment.reliabilityScore === "number" 
       ? assessment.reliabilityScore 
       : 30;
@@ -579,36 +641,24 @@ function applyAnchorGating(statements) {
 
 // Final post-condition clamp: ensure no High/Medium with missing citations
 // This is the absolute final check before returning response
+// Uses centralized provenance classification
 function applyFinalPostCheck(statements, unifiedReferences) {
   if (!Array.isArray(statements)) return statements;
-  
-  // Build map of uploaded references for document-descriptive statement checking
-  const uploadedRefIds = new Set();
-  if (Array.isArray(unifiedReferences)) {
-    unifiedReferences.forEach((ref) => {
-      if (ref?.type === "uploaded" && ref?.id != null) {
-        uploadedRefIds.add(String(ref.id));
-      }
-    });
-  }
   
   return statements.map((stmt) => {
     if (!stmt || typeof stmt !== "object") return stmt;
     
     const text = typeof stmt.text === "string" ? stmt.text : "";
     const assessment = stmt.assessment || {};
-    const resolvedCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
     const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
     const score = typeof assessment.reliabilityScore === "number" ? assessment.reliabilityScore : 30;
-    const label = typeof assessment.reliabilityLabel === "string" ? assessment.reliabilityLabel : "Low";
     
-    const isDocDescriptive = isDocumentDescriptive(text, reasons);
-    const hasMemoSupport = isDocDescriptive && resolvedCitations.some((c) => 
-      uploadedRefIds.has(String(c))
-    );
+    // Use centralized classification
+    const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
+    const { provenance, resolvedCitations, memoReference } = classification;
     
-    // Allow >35 only if: document-descriptive with memo support OR has resolved citations
-    const canBeHighMedium = hasMemoSupport || resolvedCitations.length > 0;
+    // Allow >35 only if provenance is valid (CITED_OK or MEMO_OK)
+    const canBeHighMedium = provenance === "CITED_OK" || provenance === "MEMO_OK";
     
     // If score >35 but no valid provenance, force Low
     if (score > 35 && !canBeHighMedium) {
@@ -621,7 +671,7 @@ function applyFinalPostCheck(statements, unifiedReferences) {
         updatedReasons = [verificationReason, ...updatedReasons].slice(0, 4);
       }
       
-      console.log(`[Review] Final clamp: forced Low (${forcedScore}) for statement with score ${score}: "${text.substring(0, 50)}..."`);
+      console.log(`[Review] Final clamp: forced Low (${forcedScore}) for statement with score ${score} (provenance: ${provenance}): "${text.substring(0, 50)}..."`);
       
       return {
         ...stmt,
@@ -631,6 +681,17 @@ function applyFinalPostCheck(statements, unifiedReferences) {
           reliabilityScore: forcedScore,
           reasons: updatedReasons.length > 0 ? updatedReasons : [verificationReason],
           citations: [], // Ensure empty
+        },
+      };
+    }
+    
+    // For MEMO_OK document-descriptive statements without citations, ensure memo citation is present
+    if (provenance === "MEMO_OK" && resolvedCitations.length === 0 && memoReference) {
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          citations: [memoReference.id], // Inject memo citation for evidence rendering
         },
       };
     }
