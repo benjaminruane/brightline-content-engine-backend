@@ -29,6 +29,46 @@ function safeJsonParse(s) {
   }
 }
 
+// Detect voice override in user instructions (Notes or Rewrite instructions)
+function detectVoiceOverride(text) {
+  if (typeof text !== "string" || !text.trim()) return null;
+  
+  const lower = text.toLowerCase();
+  
+  // Check for explicit voice instructions
+  const firstPersonPatterns = [
+    /\b(use|write in|write|employ|adopt)\s+(first[\s-]?person|I|we|our|us)\b/,
+    /\bfirst[\s-]?person\b/,
+    /\buse\s+(I|we|our|us)\b/,
+  ];
+  
+  const secondPersonPatterns = [
+    /\b(use|write in|write|employ|adopt)\s+(second[\s-]?person|you|your)\b/,
+    /\bsecond[\s-]?person\b/,
+    /\buse\s+(you|your)\b/,
+  ];
+  
+  const thirdPersonPatterns = [
+    /\b(use|write in|write|employ|adopt)\s+(third[\s-]?person|it|they|them|their)\b/,
+    /\bthird[\s-]?person\b/,
+  ];
+  
+  // Check in order: explicit third-person override, then first, then second
+  for (const pattern of thirdPersonPatterns) {
+    if (pattern.test(lower)) return "third";
+  }
+  
+  for (const pattern of firstPersonPatterns) {
+    if (pattern.test(lower)) return "first";
+  }
+  
+  for (const pattern of secondPersonPatterns) {
+    if (pattern.test(lower)) return "second";
+  }
+  
+  return null; // No override detected, use default (third-person)
+}
+
 // Extract citation numbers from text (e.g., [1], [2] -> [1, 2])
 function extractCitations(text) {
   if (typeof text !== "string") return [];
@@ -99,6 +139,14 @@ export default async function handler(req, res) {
       }
     }
 
+    // Detect voice override in Rewrite instructions
+    const voiceOverride = detectVoiceOverride(instructions);
+    const voiceInstruction = voiceOverride === "first"
+      ? "Write in first-person voice (use 'I', 'we', 'our', 'us')."
+      : voiceOverride === "second"
+      ? "Write in second-person voice (use 'you', 'your')."
+      : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
+
     const prompt = `
 Rewrite the draft based on the instructions.
 
@@ -113,6 +161,9 @@ ${webResultsForPrompt || "(none)"}
 
 SOURCES:
 ${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
+
+VOICE REQUIREMENT:
+${voiceInstruction}
 
 CRITICAL ATTRIBUTION RULES:
 ${publicSearch && webReferences.length > 0 ? `

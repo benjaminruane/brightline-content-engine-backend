@@ -40,7 +40,49 @@ General style:
 - Avoid unnecessary adjectives.
 - Use standard English commas (no weird formatting).
 - Avoid thousand separators for years.
+- Write in third-person voice by default (e.g., "the firm", "the company", "Partners Group", "it", "they").
+  Use third-person even if source documents use first or second person.
 `.trim();
+
+// Detect voice override in user instructions (Notes or Rewrite instructions)
+function detectVoiceOverride(text) {
+  if (typeof text !== "string" || !text.trim()) return null;
+  
+  const lower = text.toLowerCase();
+  
+  // Check for explicit voice instructions
+  const firstPersonPatterns = [
+    /\b(use|write in|write|employ|adopt)\s+(first[\s-]?person|I|we|our|us)\b/,
+    /\bfirst[\s-]?person\b/,
+    /\buse\s+(I|we|our|us)\b/,
+  ];
+  
+  const secondPersonPatterns = [
+    /\b(use|write in|write|employ|adopt)\s+(second[\s-]?person|you|your)\b/,
+    /\bsecond[\s-]?person\b/,
+    /\buse\s+(you|your)\b/,
+  ];
+  
+  const thirdPersonPatterns = [
+    /\b(use|write in|write|employ|adopt)\s+(third[\s-]?person|it|they|them|their)\b/,
+    /\bthird[\s-]?person\b/,
+  ];
+  
+  // Check in order: explicit third-person override, then first, then second
+  for (const pattern of thirdPersonPatterns) {
+    if (pattern.test(lower)) return "third";
+  }
+  
+  for (const pattern of firstPersonPatterns) {
+    if (pattern.test(lower)) return "first";
+  }
+  
+  for (const pattern of secondPersonPatterns) {
+    if (pattern.test(lower)) return "second";
+  }
+  
+  return null; // No override detected, use default (third-person)
+}
 
 function safeJsonParse(text) {
   try {
@@ -167,6 +209,14 @@ export default async function handler(req, res) {
       }
     }
 
+    // Detect voice override in Notes
+    const voiceOverride = detectVoiceOverride(safeNotes);
+    const voiceInstruction = voiceOverride === "first"
+      ? "Write in first-person voice (use 'I', 'we', 'our', 'us')."
+      : voiceOverride === "second"
+      ? "Write in second-person voice (use 'you', 'your')."
+      : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
+
     const userPrompt = `
 You are generating a draft. Follow the style guide.
 
@@ -178,6 +228,9 @@ Selected types: ${safeSelectedTypes.length ? safeSelectedTypes.join(", ") : "(no
 Version type: ${safeVersionType || "(none)"}
 
 Web search enabled: ${safePublicSearch ? "true" : "false"}
+
+VOICE REQUIREMENT:
+${voiceInstruction}
 
 WEB RESULTS:
 ${webResultsForPrompt || "(none)"}
