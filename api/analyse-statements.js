@@ -270,6 +270,7 @@ function isAnchorFact(text) {
 }
 
 // Apply anchor-fact gating: force Low if anchor fact has no citations
+// This is the final authority on anchor facts and runs AFTER all other processing
 function applyAnchorGating(statements) {
   if (!Array.isArray(statements)) return statements;
   
@@ -282,52 +283,34 @@ function applyAnchorGating(statements) {
     const hasCitations = citations.length > 0;
     const isAnchor = isAnchorFact(text);
     
-      // If anchor fact AND no citations: force Low
-      // Citations can be from either uploaded sources or web references
-      if (isAnchor && !hasCitations) {
-        const existingScore = typeof assessment.reliabilityScore === "number" 
-          ? assessment.reliabilityScore 
-          : 30;
-        const forcedScore = Math.min(existingScore, 35);
-        
-        let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-        const anchorReason = "Anchor fact requires a supporting source (uploaded or web); none was cited for this version.";
-        
-        // Prepend anchor reason if not already present
-        if (!reasons.some((r) => r && r.includes("Anchor fact requires"))) {
-          reasons = [anchorReason, ...reasons].slice(0, 4); // Cap at 4
-        }
-        
-        return {
-          ...stmt,
-          assessment: {
-            ...assessment,
-            reliabilityLabel: "Low",
-            reliabilityScore: forcedScore,
-            reasons: reasons.length > 0 ? reasons : [anchorReason],
-            citations: [], // Ensure empty
-          },
-        };
-      }
-    
-    // If NOT anchor fact AND no citations: add neutral reason if empty, but don't force Low
-    if (!isAnchor && !hasCitations) {
+    // STRICT: If anchor fact AND no citations: always force Low
+    // Citations can be from either uploaded sources or web references
+    if (isAnchor && !hasCitations) {
+      const existingScore = typeof assessment.reliabilityScore === "number" 
+        ? assessment.reliabilityScore 
+        : 30;
+      const forcedScore = Math.min(existingScore, 35);
+      
       let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-      if (reasons.length === 0) {
-        reasons = ["No supporting source was cited; assess based on internal consistency and draft context."];
-      }
+      const anchorReason = "Anchor fact requires a supporting source; none was cited for this version.";
+      
+      // Always prepend the anchor reason (strict enforcement)
+      reasons = [anchorReason, ...reasons].slice(0, 4); // Cap at 4
       
       return {
         ...stmt,
         assessment: {
           ...assessment,
-          reasons: reasons.slice(0, 4), // Cap at 4
+          reliabilityLabel: "Low",
+          reliabilityScore: forcedScore,
+          reasons: reasons.length > 0 ? reasons : [anchorReason],
+          citations: [], // Ensure empty
         },
       };
     }
     
-    // If anchor fact AND has citations: leave as-is
-    // If not anchor fact AND has citations: leave as-is
+    // If anchor fact AND has citations: leave as-is (do not downgrade)
+    // If not anchor fact: leave as-is (handled by non-anchor calibration)
     return stmt;
   });
 }
@@ -624,11 +607,12 @@ ${
       extractionQuality = "degraded";
     }
     
-    // Apply anchor-fact gating (post-pass): force Low if anchor facts lack citations
-    statements = applyAnchorGating(statements);
-    
     // Apply non-anchor calibration: allow Medium for uncited synthesis unless uncertain
     statements = applyNonAnchorCalibration(statements);
+    
+    // Apply anchor-fact gating (FINAL AUTHORITY): force Low if anchor facts lack citations
+    // This runs AFTER all other processing to ensure strict enforcement
+    statements = applyAnchorGating(statements);
 
     return res.status(200).json({
       ok: true,
@@ -642,15 +626,15 @@ ${
       },
     });
   } catch (err) {
-    // Graceful degradation: even on error, return valid JSON with fallback statements
+      // Graceful degradation: even on error, return valid JSON with fallback statements
     try {
       const fallbackStatements = fallbackExtractAtomicStatements(
         typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || ""
       );
       
-      // Apply anchor-fact gating and calibration to fallback statements too
-      const gatedFallbackStatements = applyAnchorGating(fallbackStatements);
-      const calibratedFallbackStatements = applyNonAnchorCalibration(gatedFallbackStatements);
+      // Apply calibration and anchor-fact gating to fallback statements too (same order as main path)
+      const calibratedFallbackStatements = applyNonAnchorCalibration(fallbackStatements);
+      const gatedFallbackStatements = applyAnchorGating(calibratedFallbackStatements);
       
       // In fallback, try to get sources from body if available
       const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
@@ -664,7 +648,7 @@ ${
 
       return res.status(200).json({
         ok: true,
-        statements: calibratedFallbackStatements,
+        statements: gatedFallbackStatements,
         references: fallbackUploadedReferences,
         meta: {
           webSearch: { enabled: true, used: false },
