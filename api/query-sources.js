@@ -49,38 +49,52 @@ export default async function handler(req, res) {
     const sources = Array.isArray(body.sources) ? body.sources : [];
     // Accept provenance webReferences from request (from Generate/Rewrite for this version)
     const webReferences = Array.isArray(body.webReferences) ? body.webReferences : [];
+    const usedReferenceIds = Array.isArray(body.usedReferenceIds) ? body.usedReferenceIds : [];
+    const flags = body.flags || {};
+    const versionNumber = typeof body.versionNumber === "number" ? body.versionNumber : null;
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
 
     if (!question) return res.status(400).json({ error: "Missing question" });
 
-    // Format web sources for prompt (using provenance webReferences)
-    // Convert webReferences array to format expected by formatWebResultsForPrompt
-    const webSearchResults = webReferences.map((ref) => ({
+    // Format web sources for prompt (only include those that were actually used/cited)
+    const usedWebReferences = webReferences.filter((ref) => {
+      const id = typeof ref?.id === "number" ? ref.id : null;
+      return id !== null && usedReferenceIds.includes(id);
+    });
+
+    const webSearchResults = usedWebReferences.map((ref) => ({
       title: ref?.title || "",
       url: ref?.url || "",
       content: ref?.snippet || ref?.content || "",
     }));
 
-    const webSourcesText = webReferences.length > 0
+    const webSourcesText = usedWebReferences.length > 0
       ? formatWebResultsForPrompt({ results: webSearchResults })
       : "";
 
+    const versionLabel = versionNumber ? `Version ${versionNumber}` : "this draft version";
+    const hasUnattributedEnrichment = Boolean(flags?.unattributedEnrichment);
+
     const system = `
-You answer questions about a draft using the sources that were used to produce it.
+You answer questions about ${versionLabel} using the sources that were used to produce it.
 
 Available sources:
 - Uploaded sources: memos, emails, documents, or URLs provided by the user
-- Web sources: web pages that were used when generating this draft version (if any)
+- Web sources: web pages that were cited when generating ${versionLabel} (if any)
 
-Rules:
-- Answer using ONLY the sources that were used for this draft version.
-- For web sources, insert inline citations like [1], [2] at the exact supporting sentence.
-- Citations must match the numbered web sources (e.g., [1] refers to the first web source).
-- If no web sources were used for this draft, the answer should rely solely on uploaded sources.
+Attribution rules:
+- If a claim is supported by uploaded sources: say so explicitly (e.g., "According to the uploaded memo...").
+- If a claim is supported by cited web sources: cite them with [1], [2] at the exact supporting sentence.
+- Citations [n] must map to the numbered web sources listed below.
+- ${hasUnattributedEnrichment ? `IMPORTANT: This draft version contains information that is not attributable to the sources used (uploaded sources or cited web sources). If asked about unattributed information, explain that it is not properly sourced and should be corrected by re-running Rewrite with proper citations.` : ""}
+
+General rules:
+- Answer using ONLY the sources that were used for ${versionLabel}.
 - Keep responses concise and directly answer the question.
 - Do NOT mention: "instructions", "system prompt", "WEB SOURCES section", "provided list", or any implementation details.
-- Speak in product terms: "sources used for this draft version", "uploaded memo", "web sources (if any)".
+- Do NOT claim the model "used web search" unless citations [n] exist in the draft.
+- Speak in product terms: "sources used for ${versionLabel}", "uploaded memo", "web sources (if any)".
 
 Return ONLY valid JSON:
 {
@@ -91,23 +105,28 @@ Return ONLY valid JSON:
 `.trim();
 
     // Build user prompt with context about web sources
-    const hasWebSources = webReferences.length > 0;
-    const webSourcesSection = hasWebSources
-      ? webSourcesText
-      : "No web sources were used for this draft version. The draft relied solely on the uploaded sources, or no web sources were relevant enough to cite.";
+    let webSourcesSection = "";
+    if (usedWebReferences.length > 0) {
+      webSourcesSection = webSourcesText;
+    } else if (webReferences.length > 0 && usedReferenceIds.length === 0) {
+      webSourcesSection = "Web sources were retrieved but none were cited in this draft version.";
+    } else {
+      webSourcesSection = "No web sources were used for this draft version. The draft relied solely on the uploaded sources.";
+    }
 
     const user = `
 QUESTION:
 ${question}
 
-DRAFT CONTEXT:
+DRAFT CONTEXT (${versionLabel}):
 ${draftText || "(none)"}
 
-UPLOADED SOURCES (used for this draft):
+UPLOADED SOURCES (used for ${versionLabel}):
 ${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
 
-WEB SOURCES (used for this draft, if any):
+WEB SOURCES (cited in ${versionLabel}, if any):
 ${webSourcesSection}
+${hasUnattributedEnrichment ? `\n\nATTRIBUTION FLAG: This draft version contains unattributed enrichment (facts not supported by uploaded sources and not cited to web sources).` : ""}
 `.trim();
 
     const completion = await client.chat.completions.create({

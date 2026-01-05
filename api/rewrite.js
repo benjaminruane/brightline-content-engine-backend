@@ -29,6 +29,25 @@ function safeJsonParse(s) {
   }
 }
 
+// Extract citation numbers from text (e.g., [1], [2] -> [1, 2])
+function extractCitations(text) {
+  if (typeof text !== "string") return [];
+  const citationPattern = /\[(\d+)\]/g;
+  const citations = new Set();
+  let match;
+  while ((match = citationPattern.exec(text)) !== null) {
+    const num = parseInt(match[1], 10);
+    if (num > 0) citations.add(num);
+  }
+  return Array.from(citations).sort((a, b) => a - b);
+}
+
+// Heuristic to detect unattributed enrichment
+function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, uploadedSources) {
+  if (!webEnabled || usedReferenceIds.length > 0) return false;
+  return true;
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -95,6 +114,18 @@ ${webResultsForPrompt || "(none)"}
 SOURCES:
 ${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
 
+CRITICAL ATTRIBUTION RULES:
+${publicSearch && webReferences.length > 0 ? `
+- If you use ANY factual information from web results, you MUST cite it with inline bracket citations [1], [2], etc.
+- Citations must match the numbered web sources (e.g., [1] refers to the first web source listed above).
+- If you cannot cite a claim to a web source, DO NOT include that claim.
+- Only use information that is either:
+  (a) explicitly stated in the uploaded sources, OR
+  (b) from web results with proper citation [n]
+` : `
+- Use only information from the uploaded sources provided above.
+`}
+
 Return ONLY JSON:
 {
   "draftText": "string"
@@ -115,6 +146,27 @@ Return ONLY JSON:
       return res.status(500).json({ ok: false, error: "Rewrite failed. Please try again." });
     }
 
+    // Extract citations and derive usedReferenceIds
+    const citations = extractCitations(draftText);
+    const usedReferenceIds = citations.filter((id) => 
+      webReferences.some((ref) => ref.id === id)
+    );
+
+    // Detect unattributed enrichment
+    const unattributedEnrichment = detectUnattributedEnrichment(
+      draftText,
+      publicSearch,
+      usedReferenceIds,
+      sources
+    );
+
+    const flags = {
+      unattributedEnrichment: Boolean(unattributedEnrichment),
+      unattributedEnrichmentNotes: unattributedEnrichment
+        ? "Web search was enabled but no web sources were cited in the draft. Any factual enrichment beyond uploaded sources must be cited."
+        : null,
+    };
+
     return res.status(200).json({
       ok: true,
       draftText,
@@ -125,7 +177,9 @@ Return ONLY JSON:
           provider: "tavily",
           query: web?.query || null,
           references: webReferences,
+          usedReferenceIds: usedReferenceIds.length > 0 ? usedReferenceIds : [],
         },
+        flags,
       },
     });
   } catch (err) {
