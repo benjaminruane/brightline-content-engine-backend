@@ -331,6 +331,109 @@ function applyAnchorGating(statements) {
   });
 }
 
+// Detect if reasons indicate uncertainty/unverifiability
+function isUncertaintyReason(reasons) {
+  if (!Array.isArray(reasons) || reasons.length === 0) return false;
+  
+  const uncertaintyKeywords = [
+    "no supporting source",
+    "no external evidence",
+    "cannot be verified",
+    "not verifiable",
+    "not identified",
+    "unnamed",
+    "insufficient information",
+    "no corroborating",
+    "evidence is unavailable",
+    "cannot corroborate",
+    "unverifiable",
+    "no evidence",
+    "cannot verify",
+  ];
+  
+  const reasonsText = reasons
+    .filter((r) => typeof r === "string")
+    .join(" ")
+    .toLowerCase();
+  
+  return uncertaintyKeywords.some((keyword) => reasonsText.includes(keyword));
+}
+
+// Calibrate non-anchor statements: allow Medium for uncited synthesis unless uncertain
+function applyNonAnchorCalibration(statements) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const hasCitations = citations.length > 0;
+    const isAnchor = isAnchorFact(text);
+    const isUncertain = isUncertaintyReason(reasons);
+    
+    // Skip anchor facts (already handled by A2.1 gating)
+    if (isAnchor) return stmt;
+    
+    // Skip statements with citations (respect model scoring)
+    if (hasCitations) return stmt;
+    
+    // Only process non-anchor, uncited statements
+    let score = typeof assessment.reliabilityScore === "number"
+      ? Math.max(0, Math.min(100, assessment.reliabilityScore))
+      : 30;
+    let label = typeof assessment.reliabilityLabel === "string"
+      ? assessment.reliabilityLabel
+      : score >= 80 ? "High" : score >= 60 ? "Medium" : "Low";
+    
+    if (isUncertain) {
+      // Keep Low if uncertain (do not inflate)
+      if (score > 35) {
+        score = 35;
+        label = "Low";
+      }
+    } else {
+      // Not uncertain: raise to Medium default if too low
+      if (score < 55) {
+        score = 65;
+        label = "Medium";
+      } else if (score >= 60 && label !== "High" && label !== "Medium") {
+        // Ensure label matches score if already in Medium/High range
+        label = score >= 80 ? "High" : "Medium";
+      }
+      
+      // Add calibrated note only if reasons are empty
+      let updatedReasons = [...reasons];
+      if (updatedReasons.length === 0) {
+        updatedReasons = ["No supporting source was cited; assessment reflects internal consistency of the draft."];
+      }
+      updatedReasons = updatedReasons.slice(0, 4); // Cap at 4
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reliabilityScore: score,
+          reliabilityLabel: label,
+          reasons: updatedReasons,
+        },
+      };
+    }
+    
+    // If uncertain, return with adjusted score/label
+    return {
+      ...stmt,
+      assessment: {
+        ...assessment,
+        reliabilityScore: score,
+        reliabilityLabel: label,
+      },
+    };
+  });
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -459,6 +562,9 @@ ${
     
     // Apply anchor-fact gating (post-pass): force Low if anchor facts lack citations
     statements = applyAnchorGating(statements);
+    
+    // Apply non-anchor calibration: allow Medium for uncited synthesis unless uncertain
+    statements = applyNonAnchorCalibration(statements);
 
     return res.status(200).json({
       ok: true,
@@ -476,12 +582,13 @@ ${
         typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || ""
       );
       
-      // Apply anchor-fact gating to fallback statements too
+      // Apply anchor-fact gating and calibration to fallback statements too
       const gatedFallbackStatements = applyAnchorGating(fallbackStatements);
+      const calibratedFallbackStatements = applyNonAnchorCalibration(gatedFallbackStatements);
       
       return res.status(200).json({
         ok: true,
-        statements: gatedFallbackStatements,
+        statements: calibratedFallbackStatements,
         references: [],
         meta: {
           webSearch: { enabled: true, used: false },
