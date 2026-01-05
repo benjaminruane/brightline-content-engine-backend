@@ -75,6 +75,24 @@ function extractFirstJson(raw) {
 function resolveCitations(statements, unifiedReferences) {
   if (!Array.isArray(statements) || !Array.isArray(unifiedReferences)) return statements;
   
+  // DIAGNOSTIC: Log unifiedReferences structure
+  console.log(`[DIAG] unifiedReferences count: ${unifiedReferences.length}`);
+  if (unifiedReferences.length > 0) {
+    const sampleRef = unifiedReferences[0];
+    console.log(`[DIAG] Sample reference structure:`, {
+      hasId: 'id' in sampleRef,
+      idValue: sampleRef?.id,
+      idType: typeof sampleRef?.id,
+      hasRefId: 'refId' in sampleRef,
+      refIdValue: sampleRef?.refId,
+      keys: Object.keys(sampleRef || {}),
+      fullRef: JSON.stringify(sampleRef, null, 2).substring(0, 200),
+    });
+    unifiedReferences.forEach((ref, idx) => {
+      console.log(`[DIAG] Reference[${idx}]: id=${ref?.id} (type: ${typeof ref?.id}), type=${ref?.type}, title="${ref?.title?.substring(0, 30)}"`);
+    });
+  }
+  
   // Build references map keyed by String(id) to handle both number and string IDs
   const referencesById = new Map();
   unifiedReferences.forEach((ref) => {
@@ -84,11 +102,23 @@ function resolveCitations(statements, unifiedReferences) {
     }
   });
   
-  return statements.map((stmt) => {
+  console.log(`[DIAG] referencesById map size: ${referencesById.size}, keys: [${Array.from(referencesById.keys()).join(', ')}]`);
+  
+  return statements.map((stmt, stmtIdx) => {
     if (!stmt || typeof stmt !== "object") return stmt;
     
     const assessment = stmt.assessment || {};
     const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    
+    // DIAGNOSTIC: Log statement citations before resolution
+    if (citations.length > 0 || stmtIdx < 3) {
+      console.log(`[DIAG] Statement[${stmtIdx}] "${stmt.text?.substring(0, 50)}...":`, {
+        citationsBefore: citations,
+        citationTypes: citations.map(c => typeof c),
+        score: assessment.reliabilityScore,
+        label: assessment.reliabilityLabel,
+      });
+    }
     
     // Normalize citation IDs to strings and resolve
     const resolvedCitations = citations
@@ -101,6 +131,27 @@ function resolveCitations(statements, unifiedReferences) {
       })
       .filter((id) => !Number.isNaN(id))
       .sort((a, b) => a - b);
+    
+    // DIAGNOSTIC: Log resolution results
+    if (citations.length > 0) {
+      const dropped = citations.length - resolvedCitations.length;
+      if (dropped > 0) {
+        const failed = citations.filter(c => !referencesById.has(String(c)));
+        console.log(`[DIAG] Statement[${stmtIdx}] citation resolution:`, {
+          original: citations,
+          resolved: resolvedCitations,
+          dropped,
+          failedCitations: failed,
+          failedTypes: failed.map(c => typeof c),
+          availableKeys: Array.from(referencesById.keys()),
+        });
+      } else if (stmtIdx < 3) {
+        console.log(`[DIAG] Statement[${stmtIdx}] all citations resolved:`, {
+          original: citations,
+          resolved: resolvedCitations,
+        });
+      }
+    }
     
     // Log if citations were dropped
     if (citations.length > 0 && resolvedCitations.length < citations.length) {
@@ -256,17 +307,41 @@ function applyDualAxisVerification(statements, unifiedReferences) {
     
     // Use centralized classification
     const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
-    const { provenance, resolvedCitations, memoReference } = classification;
+    const { provenance, resolvedCitations, memoReference, category } = classification;
+    
+    // DIAGNOSTIC: Log classification and memo injection
+    if (category === "DOCUMENT_DESCRIPTIVE" || resolvedCitations.length === 0) {
+      console.log(`[DIAG] applyDualAxisVerification statement:`, {
+        text: text.substring(0, 60),
+        category,
+        provenance,
+        resolvedCitationsBefore: resolvedCitations,
+        hasMemoReference: !!memoReference,
+        memoReferenceId: memoReference?.id,
+        memoReferenceIdType: typeof memoReference?.id,
+      });
+    }
     
     // Allow if provenance is valid (CITED_OK or MEMO_OK)
     if (provenance === "CITED_OK" || provenance === "MEMO_OK") {
       // For MEMO_OK document-descriptive statements without citations, inject memo citation
       if (provenance === "MEMO_OK" && resolvedCitations.length === 0 && memoReference) {
+        const injectedId = memoReference.id;
+        // Verify injected ID exists in unifiedReferences
+        const idExists = unifiedReferences.some(r => r.id === injectedId);
+        console.log(`[DIAG] MEMO_OK injection:`, {
+          text: text.substring(0, 60),
+          injectedId,
+          injectedIdType: typeof injectedId,
+          idExistsInReferences: idExists,
+          availableIds: unifiedReferences.map(r => ({ id: r.id, type: typeof r.id, refType: r.type })),
+        });
+        
         return {
           ...stmt,
           assessment: {
             ...assessment,
-            citations: [memoReference.id], // Inject memo citation for evidence rendering
+            citations: [injectedId], // Inject memo citation for evidence rendering
           },
         };
       }
@@ -309,15 +384,20 @@ function applyDualAxisVerification(statements, unifiedReferences) {
 
 // Coerce and validate statements array to match schema
 function coerceStatements(parsed, maxRefIndex) {
-  if (!parsed || typeof parsed !== "object") return [];
+  if (!parsed || typeof parsed !== "object") {
+    console.log(`[DIAG] coerceStatements: parsed is not object, type=${typeof parsed}`);
+    return [];
+  }
   
   let statements = Array.isArray(parsed.statements) ? parsed.statements : [];
+  console.log(`[DIAG] coerceStatements: input count=${statements.length}, maxRefIndex=${maxRefIndex}`);
   if (statements.length === 0) return [];
   
   const maxRef = typeof maxRefIndex === "number" && maxRefIndex > 0 ? maxRefIndex : 0;
   const normalized = new Map(); // For deduplication
   
   const coerced = [];
+  let skippedCount = 0;
   
   for (const stmt of statements) {
     if (!stmt || typeof stmt !== "object") continue;
@@ -333,7 +413,10 @@ function coerceStatements(parsed, maxRefIndex) {
       .replace(/\s+/g, " ")
       .trim();
     
-    if (normalized.has(normalizedKey)) continue; // Skip duplicate
+    if (normalized.has(normalizedKey)) {
+      skippedCount++;
+      continue; // Skip duplicate
+    }
     normalized.set(normalizedKey, true);
     
     // Coerce assessment
@@ -385,9 +468,13 @@ function coerceStatements(parsed, maxRefIndex) {
     });
     
     // Cap at 25 statements
-    if (coerced.length >= 25) break;
+    if (coerced.length >= 25) {
+      console.log(`[DIAG] coerceStatements: hit 25-statement cap, remaining=${statements.length - coerced.length - skippedCount}`);
+      break;
+    }
   }
   
+  console.log(`[DIAG] coerceStatements: output count=${coerced.length}, skipped duplicates=${skippedCount}`);
   return coerced;
 }
 
@@ -397,6 +484,8 @@ function filterDraftOnlyStatements(statements, draftText) {
   if (!Array.isArray(statements) || statements.length === 0) return statements;
   if (typeof draftText !== "string" || !draftText.trim()) return statements;
   
+  console.log(`[DIAG] filterDraftOnlyStatements: input count=${statements.length}, draftText length=${draftText.length}`);
+  
   // Normalize draft text: lowercase, collapse whitespace
   const normalizedDraft = draftText
     .toLowerCase()
@@ -404,12 +493,20 @@ function filterDraftOnlyStatements(statements, draftText) {
     .trim();
   
   const filtered = [];
+  const dropped = [];
   
-  for (const stmt of statements) {
-    if (!stmt || typeof stmt !== "object") continue;
+  for (let i = 0; i < statements.length; i++) {
+    const stmt = statements[i];
+    if (!stmt || typeof stmt !== "object") {
+      dropped.push({ index: i, reason: "invalid object", text: String(stmt) });
+      continue;
+    }
     
     const text = typeof stmt.text === "string" ? stmt.text.trim() : "";
-    if (!text) continue;
+    if (!text) {
+      dropped.push({ index: i, reason: "empty text", text: "" });
+      continue;
+    }
     
     // Normalize statement text: lowercase, collapse whitespace
     const normalizedStmt = text
@@ -425,6 +522,13 @@ function filterDraftOnlyStatements(statements, draftText) {
       if (normalizedDraft.includes(normalizedStmt)) {
         filtered.push(stmt);
       } else {
+        dropped.push({ 
+          index: i, 
+          reason: "very short, not substring", 
+          text: text.substring(0, 100),
+          normalizedStmt,
+          draftContains: normalizedDraft.includes(normalizedStmt),
+        });
         console.log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
       }
       continue;
@@ -441,8 +545,28 @@ function filterDraftOnlyStatements(statements, draftText) {
     if (isSubstring || overlapRatio >= 0.8) {
       filtered.push(stmt);
     } else {
+      dropped.push({
+        index: i,
+        reason: `low overlap (${(overlapRatio * 100).toFixed(1)}%, need 80%)`,
+        text: text.substring(0, 100),
+        isSubstring,
+        overlapRatio,
+        stmtWordsCount: stmtWords.length,
+        matchingWordsCount: matchingWords.length,
+        missingWords: stmtWords.filter(w => !normalizedDraft.includes(w)).slice(0, 5),
+      });
       console.log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
     }
+  }
+  
+  console.log(`[DIAG] filterDraftOnlyStatements: output count=${filtered.length}, dropped=${dropped.length}`);
+  if (dropped.length > 0) {
+    console.log(`[DIAG] Dropped statements (first 5):`, dropped.slice(0, 5).map(d => ({
+      reason: d.reason,
+      text: d.text,
+      overlapRatio: d.overlapRatio,
+      missingWords: d.missingWords,
+    })));
   }
   
   return filtered;
@@ -655,13 +779,32 @@ function applyFinalPostCheck(statements, unifiedReferences) {
     
     // Use centralized classification
     const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
-    const { provenance, resolvedCitations, memoReference } = classification;
+    const { provenance, resolvedCitations, memoReference, category } = classification;
+    
+    // DIAGNOSTIC: Log final post-check for high scores
+    if (score > 35) {
+      console.log(`[DIAG] applyFinalPostCheck statement (score=${score}):`, {
+        text: text.substring(0, 60),
+        category,
+        provenance,
+        resolvedCitations,
+        hasMemoReference: !!memoReference,
+        memoReferenceId: memoReference?.id,
+      });
+    }
     
     // Allow >35 only if provenance is valid (CITED_OK or MEMO_OK)
     const canBeHighMedium = provenance === "CITED_OK" || provenance === "MEMO_OK";
     
     // If score >35 but no valid provenance, force Low
     if (score > 35 && !canBeHighMedium) {
+      console.log(`[DIAG] applyFinalPostCheck: clamping High/Medium to Low:`, {
+        text: text.substring(0, 60),
+        originalScore: score,
+        provenance,
+        resolvedCitations,
+        category,
+      });
       const forcedScore = Math.min(score, 35);
       let updatedReasons = [...reasons];
       const verificationReason = "No verifiable sources cited.";
@@ -687,11 +830,21 @@ function applyFinalPostCheck(statements, unifiedReferences) {
     
     // For MEMO_OK document-descriptive statements without citations, ensure memo citation is present
     if (provenance === "MEMO_OK" && resolvedCitations.length === 0 && memoReference) {
+      const injectedId = memoReference.id;
+      const idExists = unifiedReferences.some(r => r.id === injectedId);
+      console.log(`[DIAG] applyFinalPostCheck: MEMO_OK injection:`, {
+        text: text.substring(0, 60),
+        injectedId,
+        injectedIdType: typeof injectedId,
+        idExistsInReferences: idExists,
+        currentCitations: assessment.citations,
+      });
+      
       return {
         ...stmt,
         assessment: {
           ...assessment,
-          citations: [memoReference.id], // Inject memo citation for evidence rendering
+          citations: [injectedId], // Inject memo citation for evidence rendering
         },
       };
     }
@@ -896,6 +1049,18 @@ export default async function handler(req, res) {
 
     const unifiedReferences = [...uploadedReferences, ...webReferencesWithIds];
     const maxRefIndex = unifiedReferences.length;
+    
+    // DIAGNOSTIC: Log unifiedReferences structure before processing
+    console.log(`[DIAG] unifiedReferences created: count=${unifiedReferences.length}`);
+    unifiedReferences.forEach((ref, idx) => {
+      console.log(`[DIAG] unifiedReferences[${idx}]:`, {
+        id: ref.id,
+        idType: typeof ref.id,
+        type: ref.type,
+        title: ref.title?.substring(0, 40),
+        hasUrl: !!ref.url,
+      });
+    });
 
     const system = `
 You are the "Review" engine inside Content Engine.
@@ -1023,6 +1188,24 @@ ${
     let parsed = extractFirstJson(raw);
     let extractionQuality = "ok";
     
+    // DIAGNOSTIC: Log raw model output
+    if (parsed && typeof parsed === "object") {
+      const rawStatements = Array.isArray(parsed.statements) ? parsed.statements : [];
+      console.log(`[DIAG] Model output: parsed.statements count=${rawStatements.length}`);
+      if (rawStatements.length > 0) {
+        rawStatements.slice(0, 3).forEach((stmt, idx) => {
+          console.log(`[DIAG] Raw model statement[${idx}]:`, {
+            text: stmt?.text?.substring(0, 60),
+            hasAssessment: !!stmt?.assessment,
+            citations: stmt?.assessment?.citations,
+            citationTypes: stmt?.assessment?.citations?.map(c => typeof c),
+          });
+        });
+      }
+    } else {
+      console.log(`[DIAG] Model output: parsed is null or invalid, type=${typeof parsed}`);
+    }
+    
     // Coerce and validate statements (using unified references count)
     let statements = coerceStatements(parsed, maxRefIndex);
     
@@ -1051,6 +1234,27 @@ ${
     
     // F) Final post-condition clamp: ensure no High/Medium with missing citations
     statements = applyFinalPostCheck(statements, unifiedReferences);
+    
+    // DIAGNOSTIC: Log final state before returning
+    console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
+    if (statements.length > 0) {
+      statements.slice(0, 3).forEach((stmt, idx) => {
+        const assessment = stmt.assessment || {};
+        console.log(`[DIAG] Final statement[${idx}]:`, {
+          text: stmt.text?.substring(0, 60),
+          score: assessment.reliabilityScore,
+          label: assessment.reliabilityLabel,
+          citations: assessment.citations,
+          citationTypes: assessment.citations?.map(c => typeof c),
+          reasons: assessment.reasons?.slice(0, 2),
+        });
+      });
+    }
+    console.log(`[DIAG] Final unifiedReferences (first 3):`, unifiedReferences.slice(0, 3).map(r => ({
+      id: r.id,
+      idType: typeof r.id,
+      type: r.type,
+    })));
 
     return res.status(200).json({
       ok: true,
