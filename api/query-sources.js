@@ -67,14 +67,20 @@ export default async function handler(req, res) {
       : "";
 
     const system = `
-You answer questions grounded strictly in the provided sources (uploaded sources + provenance web sources).
+You answer questions about a draft using the sources that were used to produce it.
+
+Available sources:
+- Uploaded sources: memos, emails, documents, or URLs provided by the user
+- Web sources: web pages that were used when generating this draft version (if any)
 
 Rules:
-- Use ONLY the provided uploaded sources and provenance web sources.
-- Insert inline citations like [1], [2], etc. for web sources at the exact supporting sentence.
-- Web source citations must match the numbered web sources provided (e.g., [1] refers to the first web source).
-- Do NOT use any sources not provided.
-- If you cannot answer from the available sources, say so clearly.
+- Answer using ONLY the sources that were used for this draft version.
+- For web sources, insert inline citations like [1], [2] at the exact supporting sentence.
+- Citations must match the numbered web sources (e.g., [1] refers to the first web source).
+- If no web sources were used for this draft, the answer should rely solely on uploaded sources.
+- Keep responses concise and directly answer the question.
+- Do NOT mention: "instructions", "system prompt", "WEB SOURCES section", "provided list", or any implementation details.
+- Speak in product terms: "sources used for this draft version", "uploaded memo", "web sources (if any)".
 
 Return ONLY valid JSON:
 {
@@ -84,18 +90,24 @@ Return ONLY valid JSON:
 }
 `.trim();
 
+    // Build user prompt with context about web sources
+    const hasWebSources = webReferences.length > 0;
+    const webSourcesSection = hasWebSources
+      ? webSourcesText
+      : "No web sources were used for this draft version. The draft relied solely on the uploaded sources, or no web sources were relevant enough to cite.";
+
     const user = `
 QUESTION:
 ${question}
 
-DRAFT CONTEXT (may be empty):
+DRAFT CONTEXT:
 ${draftText || "(none)"}
 
-UPLOADED SOURCES:
+UPLOADED SOURCES (used for this draft):
 ${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
 
-WEB SOURCES:
-${webSourcesText || "(none - no web sources found for this question)"}
+WEB SOURCES (used for this draft, if any):
+${webSourcesSection}
 `.trim();
 
     const completion = await client.chat.completions.create({
