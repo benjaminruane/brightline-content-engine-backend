@@ -87,7 +87,7 @@ Attribution rules:
 - If a claim is supported by uploaded sources: say so explicitly (e.g., "According to the uploaded memo...").
 - If a claim is supported by cited web sources: cite them with [1], [2] at the exact supporting sentence.
 - Citations [n] must map to the numbered web sources listed below.
-- ${hasUnattributedEnrichment ? `IMPORTANT: This draft version contains information that is not attributable to the sources used (uploaded sources or cited web sources). If asked about unattributed information, explain that it is not properly sourced and should be corrected by re-running Rewrite with proper citations.` : ""}
+- ${hasUnattributedEnrichment ? `IMPORTANT: Potential uncited factual claim(s) detected. This draft version may include specific factual claims (e.g., dates, numbers, tickers) that do not appear in the uploaded sources and are not cited to web sources. Any specific facts not present in the uploaded sources must be cited to web sources. If asked about unattributed information, explain that it should be corrected by re-running Rewrite with proper citations.` : ""}
 
 Answer format (REQUIRED):
 1. One-line summary (plain sentence).
