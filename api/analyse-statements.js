@@ -242,6 +242,95 @@ function fallbackExtractAtomicStatements(draftText) {
   return statements;
 }
 
+// Detect if a statement contains anchor facts (years, dates, percentages, currency, exchanges)
+function isAnchorFact(text) {
+  if (typeof text !== "string" || !text.trim()) return false;
+  
+  // Compiled regexes (declare once for efficiency)
+  const yearPattern = /\b(19|20)\d{2}\b/;
+  const monthPattern = /\b(Jan(uary)?|Feb(ruary)?|Mar(ch)?|Apr(il)?|May|Jun(e)?|Jul(y)?|Aug(ust)?|Sep(tember)?|Sept|Oct(ober)?|Nov(ember)?|Dec(ember)?)\b/i;
+  const percentPattern = /\d+(\.\d+)?\s*%|\b(percent|percentage)\b/i;
+  const currencySymbolPattern = /[$£€¥]/;
+  const currencyCodePattern = /\b(USD|SGD|EUR|GBP|AUD|CAD|JPY|CNY|RMB)\b/i;
+  const bigNumberPattern = /\b[\d,]+(?:\.\d+)?\s*(?:million|billion|trillion|m|b|t|k)\b/i;
+  const exchangePattern = /\b(NYSE|NASDAQ|LSE|ASX|HKEX|SGX|TSX|SIX|Euronext)\b/i;
+  // Conservative ticker pattern: only when preceded by ticker keyword or in parentheses like (NYSE: SHOP)
+  const tickerPattern = /\b(ticker|symbol|listed|trades)\s+[A-Z]{1,5}\b|\([A-Z]{1,5}\)|\([A-Z]{2,5}:\s*[A-Z]{1,5}\)/i;
+  
+  return (
+    yearPattern.test(text) ||
+    monthPattern.test(text) ||
+    percentPattern.test(text) ||
+    currencySymbolPattern.test(text) ||
+    currencyCodePattern.test(text) ||
+    bigNumberPattern.test(text) ||
+    exchangePattern.test(text) ||
+    tickerPattern.test(text)
+  );
+}
+
+// Apply anchor-fact gating: force Low if anchor fact has no citations
+function applyAnchorGating(statements) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const hasCitations = citations.length > 0;
+    const isAnchor = isAnchorFact(text);
+    
+    // If anchor fact AND no citations: force Low
+    if (isAnchor && !hasCitations) {
+      const existingScore = typeof assessment.reliabilityScore === "number" 
+        ? assessment.reliabilityScore 
+        : 30;
+      const forcedScore = Math.min(existingScore, 35);
+      
+      let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const anchorReason = "Anchor fact requires a supporting source; none was cited for this version.";
+      
+      // Prepend anchor reason if not already present
+      if (!reasons.some((r) => r && r.includes("Anchor fact requires"))) {
+        reasons = [anchorReason, ...reasons].slice(0, 4); // Cap at 4
+      }
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reliabilityLabel: "Low",
+          reliabilityScore: forcedScore,
+          reasons: reasons.length > 0 ? reasons : [anchorReason],
+          citations: [], // Ensure empty
+        },
+      };
+    }
+    
+    // If NOT anchor fact AND no citations: add neutral reason if empty, but don't force Low
+    if (!isAnchor && !hasCitations) {
+      let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      if (reasons.length === 0) {
+        reasons = ["No supporting source was cited; assess based on internal consistency and draft context."];
+      }
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: reasons.slice(0, 4), // Cap at 4
+        },
+      };
+    }
+    
+    // If anchor fact AND has citations: leave as-is
+    // If not anchor fact AND has citations: leave as-is
+    return stmt;
+  });
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
@@ -367,6 +456,9 @@ ${
       statements = fallbackExtractAtomicStatements(draftText);
       extractionQuality = "degraded";
     }
+    
+    // Apply anchor-fact gating (post-pass): force Low if anchor facts lack citations
+    statements = applyAnchorGating(statements);
 
     return res.status(200).json({
       ok: true,
@@ -384,9 +476,12 @@ ${
         typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || ""
       );
       
+      // Apply anchor-fact gating to fallback statements too
+      const gatedFallbackStatements = applyAnchorGating(fallbackStatements);
+      
       return res.status(200).json({
         ok: true,
-        statements: fallbackStatements,
+        statements: gatedFallbackStatements,
         references: [],
         meta: {
           webSearch: { enabled: true, used: false },
