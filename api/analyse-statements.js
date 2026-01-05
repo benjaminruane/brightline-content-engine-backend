@@ -70,6 +70,144 @@ function extractFirstJson(raw) {
   return safeJsonParse(candidate);
 }
 
+// Validate and resolve citations against unified references
+// Returns statements with only resolvable citations
+function resolveCitations(statements, unifiedReferences) {
+  if (!Array.isArray(statements) || !Array.isArray(unifiedReferences)) return statements;
+  
+  // Build references map keyed by String(id) to handle both number and string IDs
+  const referencesById = new Map();
+  unifiedReferences.forEach((ref) => {
+    const id = ref?.id;
+    if (id != null) {
+      referencesById.set(String(id), ref);
+    }
+  });
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const assessment = stmt.assessment || {};
+    const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    
+    // Normalize citation IDs to strings and resolve
+    const resolvedCitations = citations
+      .map((c) => (c != null ? String(c) : null))
+      .filter((k) => k !== null && referencesById.has(k))
+      .map((k) => {
+        // Return original numeric ID if it was a number, otherwise return the string
+        const original = citations.find((c) => String(c) === k);
+        return typeof original === "number" ? original : Number.parseInt(k, 10);
+      })
+      .filter((id) => !Number.isNaN(id))
+      .sort((a, b) => a - b);
+    
+    // Log if citations were dropped
+    if (citations.length > 0 && resolvedCitations.length < citations.length) {
+      const dropped = citations.length - resolvedCitations.length;
+      console.log(`[Review] Dropped ${dropped} unresolvable citation(s) for statement: "${stmt.text?.substring(0, 50)}..."`);
+    }
+    
+    return {
+      ...stmt,
+      assessment: {
+        ...assessment,
+        citations: resolvedCitations,
+      },
+    };
+  });
+}
+
+// Detect if a statement is a meta-statement (about the document itself, not the world)
+// Very conservative: only allow statements that are clearly about document structure/content
+function isMetaStatement(text) {
+  if (typeof text !== "string" || !text.trim()) return false;
+  
+  const lower = text.toLowerCase();
+  
+  // Very narrow patterns for meta-statements
+  const metaPatterns = [
+    /^this (?:memo|document|report|paper|text|draft) (?:discusses|outlines|describes|presents|covers|addresses|examines|analyzes|explores)/i,
+    /^the (?:memo|document|report|paper|text|draft) (?:discusses|outlines|describes|presents|covers|addresses|examines|analyzes|explores)/i,
+    /^this (?:section|paragraph|part) (?:discusses|outlines|describes|presents|covers|addresses)/i,
+  ];
+  
+  // Must match a meta pattern AND not contain factual anchors
+  const matchesMeta = metaPatterns.some((pattern) => pattern.test(lower));
+  const hasFactualAnchor = isAnchorFact(text);
+  
+  return matchesMeta && !hasFactualAnchor;
+}
+
+// Apply dual-axis verification gate: force Low if no resolvable citations
+// This enforces: no provenance = no verification = no confidence
+function applyDualAxisVerification(statements) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const hasResolvableCitations = citations.length > 0;
+    const isAnchor = isAnchorFact(text);
+    const isMeta = isMetaStatement(text);
+    
+    // Skip if already has resolvable citations
+    if (hasResolvableCitations) return stmt;
+    
+    // Determine if we should force Low
+    let shouldForceLow = false;
+    
+    if (isAnchor) {
+      // Anchor facts already handled by applyAnchorGating, but ensure consistency
+      shouldForceLow = true;
+    } else if (isMeta) {
+      // Meta statements may appear without citations but still should not be High
+      // They're already Low by default, but ensure they don't get inflated
+      shouldForceLow = true;
+    } else {
+      // Default: factual claim without citations = force Low
+      shouldForceLow = true;
+    }
+    
+    if (shouldForceLow) {
+      const existingScore = typeof assessment.reliabilityScore === "number" 
+        ? assessment.reliabilityScore 
+        : 30;
+      const forcedScore = Math.min(existingScore, 35);
+      
+      let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const verificationReason = "No verifiable sources cited.";
+      const explanationReason = "This statement could not be verified against provided sources.";
+      
+      // Prepend verification reason if not already present
+      if (!reasons.some((r) => r && r.includes("No verifiable sources"))) {
+        reasons = [verificationReason, explanationReason, ...reasons].slice(0, 4);
+      }
+      
+      // Log when forcing Low due to missing provenance
+      if (existingScore > 35) {
+        console.log(`[Review] Forced Low (${forcedScore}) due to missing provenance: "${text.substring(0, 50)}..."`);
+      }
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reliabilityLabel: "Low",
+          reliabilityScore: forcedScore,
+          reasons: reasons.length > 0 ? reasons : [verificationReason],
+          citations: [], // Ensure empty
+        },
+      };
+    }
+    
+    return stmt;
+  });
+}
+
 // Coerce and validate statements array to match schema
 function coerceStatements(parsed, maxRefIndex) {
   if (!parsed || typeof parsed !== "object") return [];
@@ -122,10 +260,19 @@ function coerceStatements(parsed, maxRefIndex) {
       .slice(0, 4)
       .map((r) => r.trim());
     
-    // Coerce citations (integers within 1..maxRefIndex only)
+    // Coerce citations (accept numbers or strings that can be converted to numbers)
+    // Validation against actual references happens in resolveCitations
     let citations = Array.isArray(assessment.citations) ? assessment.citations : [];
     citations = citations
-      .filter((c) => typeof c === "number" && Number.isInteger(c) && c >= 1 && c <= maxRef)
+      .map((c) => {
+        if (typeof c === "number" && Number.isFinite(c)) return c;
+        if (typeof c === "string") {
+          const num = Number.parseFloat(c);
+          return Number.isFinite(num) ? num : null;
+        }
+        return null;
+      })
+      .filter((c) => c !== null && c >= 1 && c <= maxRef)
       .sort((a, b) => a - b);
     
     coerced.push({
@@ -359,13 +506,20 @@ function applyNonAnchorCalibration(statements) {
     const isAnchor = isAnchorFact(text);
     const isUncertain = isUncertaintyReason(reasons);
     
-    // Skip anchor facts (already handled by A2.1 gating)
+    // Skip anchor facts (already handled by anchor gating)
     if (isAnchor) return stmt;
     
     // Skip statements with citations (respect model scoring)
     if (hasCitations) return stmt;
     
-    // Only process non-anchor, uncited statements
+    // Skip statements forced Low by dual-axis verification gate
+    // Check if reasons indicate this was forced Low due to missing provenance
+    const hasVerificationReason = reasons.some((r) => 
+      r && (r.includes("No verifiable sources") || r.includes("could not be verified against provided sources"))
+    );
+    if (hasVerificationReason) return stmt; // Already forced Low by dual-axis gate
+    
+    // Only process non-anchor, uncited statements that weren't forced Low
     let score = typeof assessment.reliabilityScore === "number"
       ? Math.max(0, Math.min(100, assessment.reliabilityScore))
       : 30;
@@ -513,24 +667,38 @@ EXTRACTION RULES (CRITICAL):
 - Minimal rewriting: keep statements close to draft wording.
 - Deduplicate near-duplicates.
 
-ATTRIBUTION RULES (HYBRID):
+DUAL-AXIS VERIFICATION (MANDATORY):
+A statement is only verified if BOTH are true:
+1) The statement is factually correct
+2) The statement can be traced to specific, known sources
+
+VERIFICATION RULES:
+- Every factual claim MUST include at least one citation to a source from the REFERENCES list.
+- High/Medium reliability (score >35) is ONLY allowed if the statement has at least one valid citation.
+- If you cannot cite a claim to a provided source:
+  - Set citations: []
+  - Set reliabilityLabel: "Low"
+  - Set reliabilityScore: 20-35
+  - Include in reasons: "No verifiable sources cited." and "This statement could not be verified against provided sources."
+- The draft text itself is NEVER a source. "Directly stated in the draft" describes where a claim appears, but is NOT evidence.
+- Do NOT treat the draft or generated text as a citable source.
+
+ATTRIBUTION RULES:
 - Statements may be supported by EITHER uploaded sources OR web sources (or both).
 - Uploaded sources are authoritative for memo facts and internal claims.
 - Web sources provide external verification and public information.
 - Synthesis is allowed if supported by uploaded sources OR web sources (citable with [n]).
 - Numeric paraphrase allowed if consistent with uploaded sources OR web sources (citable).
 - Anchor facts (years/dates, exchange/tickers, specific numbers) REQUIRE at least ONE citation [n] to either an uploaded source or a web reference.
-- If a claim cannot be cited to any source (uploaded or web):
-  - Set citations: []
-  - For anchor facts: Set reliabilityLabel: "Low", reliabilityScore: 20-35
-  - Include in reasons: "No supporting source found for this claim."
-- Statements supported by uploaded sources alone (no web citations) can still be scored High/Medium if directly supported.
+- Statements supported by uploaded sources alone (no web citations) can still be scored High/Medium if directly supported AND properly cited.
 
-CITATIONS:
-- Use bracket citations [1], [2], ... referencing the unified REFERENCES list (uploaded sources first, then web references).
+CITATIONS (STRICT):
+- Use bracket citations [1], [2], ... referencing ONLY the unified REFERENCES list provided below.
 - Citations must be integers within the range 1..${maxRefIndex}${uploadedReferences.length > 0 ? ` (where 1..${uploadedReferences.length} are uploaded sources${webReferencesWithIds.length > 0 ? `, ${uploadedReferences.length + 1}..${maxRefIndex} are web references` : ''})` : ''}.
-- If no sources are available, do not invent sources; set citations: [] and mark appropriately.
-- Do NOT invent citations.
+- You may ONLY cite sources from the provided REFERENCES list.
+- Do NOT invent citation IDs.
+- Do NOT cite the draft or the generated text as evidence.
+- If no sources are available or a claim cannot be cited, set citations: [] and mark as Low.
 
 OUTPUT FORMAT:
 Return ONLY valid JSON matching this exact schema:
@@ -607,7 +775,14 @@ ${
       extractionQuality = "degraded";
     }
     
+    // A) Citation resolution validation: drop unresolvable citations
+    statements = resolveCitations(statements, unifiedReferences);
+    
+    // B) Dual-axis verification gate: force Low if no resolvable citations
+    statements = applyDualAxisVerification(statements);
+    
     // Apply non-anchor calibration: allow Medium for uncited synthesis unless uncertain
+    // Note: This now only affects statements that already have citations (dual-axis gate runs first)
     statements = applyNonAnchorCalibration(statements);
     
     // Apply anchor-fact gating (FINAL AUTHORITY): force Low if anchor facts lack citations
@@ -632,11 +807,7 @@ ${
         typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || ""
       );
       
-      // Apply calibration and anchor-fact gating to fallback statements too (same order as main path)
-      const calibratedFallbackStatements = applyNonAnchorCalibration(fallbackStatements);
-      const gatedFallbackStatements = applyAnchorGating(calibratedFallbackStatements);
-      
-      // In fallback, try to get sources from body if available
+      // Build minimal unified references for fallback (from body sources if available)
       const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
       const fallbackSources = Array.isArray(fallbackBody.sources) ? fallbackBody.sources : [];
       const fallbackUploadedReferences = fallbackSources.map((s, idx) => ({
@@ -645,6 +816,12 @@ ${
         url: s?.url || null,
         type: "uploaded",
       }));
+      
+      // Apply citation resolution and dual-axis verification to fallback statements (same order as main path)
+      const resolvedFallbackStatements = resolveCitations(fallbackStatements, fallbackUploadedReferences);
+      const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements);
+      const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
+      const gatedFallbackStatements = applyAnchorGating(calibratedFallbackStatements);
 
       return res.status(200).json({
         ok: true,
