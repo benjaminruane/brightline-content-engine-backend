@@ -137,6 +137,194 @@ function extractCitations(text) {
   return Array.from(citations).sort((a, b) => a - b);
 }
 
+// Helper: Normalize number token (e.g., "5.2m" -> 5200000)
+function normalizeNumberToken(str) {
+  if (typeof str !== "string") return null;
+  const cleaned = str.replace(/[,\s]/g, "").toLowerCase();
+  const match = cleaned.match(/^([\d.]+)([kmbt]?)$/);
+  if (!match) return null;
+  const num = parseFloat(match[1]);
+  const unit = match[2];
+  if (!Number.isFinite(num)) return null;
+  const multipliers = { k: 1e3, m: 1e6, b: 1e9, t: 1e12 };
+  return num * (multipliers[unit] || 1);
+}
+
+// Helper: Parse currency and large number mentions from text
+function parseCurrencyMentions(text) {
+  if (typeof text !== "string") return [];
+  const mentions = [];
+  
+  // Patterns: $5.2m, USD 5m, S$5m, £5m, €5m, $700B, 700 billion, 0.7T
+  // Pattern 1: Currency symbols with numbers ($5.2m, £5m, €5m)
+  const symbolPattern = /([$£€¥])\s*([\d,]+(?:\.\d+)?)\s*([kmbt]?)\b/gi;
+  let match;
+  while ((match = symbolPattern.exec(text)) !== null) {
+    const fullMatch = match[0];
+    const numStr = match[2];
+    const unit = (match[3] || "").toLowerCase();
+    const value = normalizeNumberToken(numStr + unit);
+    if (value === null) continue;
+    
+    const start = Math.max(0, match.index - 30);
+    const end = Math.min(text.length, match.index + match[0].length + 30);
+    const context = text.substring(start, end).toLowerCase();
+    const approxKind = detectApproxKind(context);
+    
+    mentions.push({
+      raw: fullMatch,
+      value: value,
+      unit: unit || "",
+      approxKind: approxKind,
+      context: match.index,
+    });
+  }
+  
+  // Pattern 2: Currency codes with numbers (USD 5m, SGD 5m)
+  const codePattern = /\b(USD|SGD|GBP|EUR|JPY|AUD|CAD)\s+([\d,]+(?:\.\d+)?)\s*([kmbt]?)\b/gi;
+  while ((match = codePattern.exec(text)) !== null) {
+    const fullMatch = match[0];
+    const numStr = match[2];
+    const unit = (match[3] || "").toLowerCase();
+    const value = normalizeNumberToken(numStr + unit);
+    if (value === null) continue;
+    
+    const start = Math.max(0, match.index - 30);
+    const end = Math.min(text.length, match.index + match[0].length + 30);
+    const context = text.substring(start, end).toLowerCase();
+    const approxKind = detectApproxKind(context);
+    
+    mentions.push({
+      raw: fullMatch,
+      value: value,
+      unit: unit || "",
+      approxKind: approxKind,
+      context: match.index,
+    });
+  }
+  
+  // Pattern 3: Plain large numbers with units (700 billion, 0.7T)
+  const unitMap = { thousand: "k", million: "m", billion: "b", trillion: "t" };
+  const plainPattern = /\b([\d,]+(?:\.\d+)?)\s+(thousand|million|billion|trillion|k|m|b|t)\b/gi;
+  while ((match = plainPattern.exec(text)) !== null) {
+    const fullMatch = match[0];
+    const numStr = match[1];
+    const unit = (match[2] || "").toLowerCase();
+    const normalizedUnit = unitMap[unit] || unit;
+    const value = normalizeNumberToken(numStr + normalizedUnit);
+    if (value === null) continue;
+    
+    const start = Math.max(0, match.index - 30);
+    const end = Math.min(text.length, match.index + match[0].length + 30);
+    const context = text.substring(start, end).toLowerCase();
+    const approxKind = detectApproxKind(context);
+    
+    mentions.push({
+      raw: fullMatch,
+      value: value,
+      unit: normalizedUnit || "",
+      approxKind: approxKind,
+      context: match.index,
+    });
+  }
+  
+  return mentions;
+}
+
+// Helper: Detect approximation kind from context
+function detectApproxKind(context) {
+  if (/\b(close to|nearly)\b/.test(context)) {
+    return "close_to";
+  } else if (/(about|around|roughly|approximately|~)/.test(context)) {
+    return "approx";
+  } else if (/(more than|over|at least|above)/.test(context)) {
+    return "more_than";
+  } else if (/(less than|under|at most|below)/.test(context)) {
+    return "less_than";
+  } else if (/(between|from|to|-|–|—)/.test(context)) {
+    const rangeMatch = context.match(/([\d,]+(?:\.\d+)?)\s*(?:-|–|—|to)\s*([\d,]+(?:\.\d+)?)/);
+    if (rangeMatch) {
+      return "range";
+    }
+  }
+  return "exact";
+}
+
+// Helper: Extract all numeric values from text (currency + plain large numbers)
+function extractNumericValues(text) {
+  if (typeof text !== "string") return [];
+  const values = [];
+  
+  // Extract currency mentions
+  const currencyMentions = parseCurrencyMentions(text);
+  values.push(...currencyMentions.map((m) => m.value));
+  
+  // Extract plain large numbers (>= 10,000)
+  const largeNumberPattern = /\b([\d,]+(?:\.\d+)?)\b/g;
+  let match;
+  while ((match = largeNumberPattern.exec(text)) !== null) {
+    const numStr = match[1].replace(/,/g, "");
+    const num = parseFloat(numStr);
+    if (Number.isFinite(num) && num >= 10000) {
+      values.push(num);
+    }
+  }
+  
+  return [...new Set(values)].sort((a, b) => a - b);
+}
+
+// Helper: Check if draft numeric claim is supported by uploaded context
+function isNumericClaimSupported(draftMention, uploadedValues) {
+  if (!Array.isArray(uploadedValues) || uploadedValues.length === 0) return false;
+  if (!draftMention || typeof draftMention.value !== "number") return false;
+  
+  const draftValue = draftMention.value;
+  const approxKind = draftMention.approxKind || "exact";
+  
+  for (const uploadedValue of uploadedValues) {
+    if (typeof uploadedValue !== "number" || !Number.isFinite(uploadedValue)) continue;
+    
+    // Exact match
+    if (draftValue === uploadedValue) return true;
+    
+    // Approximation tolerance
+    if (approxKind === "approx") {
+      // ±10% relative for amounts >= 10,000; ±2% for >= 100 million
+      const threshold = uploadedValue >= 100_000_000 ? 0.02 : 0.10;
+      const diff = Math.abs(draftValue - uploadedValue);
+      const relativeDiff = diff / Math.max(uploadedValue, 1);
+      if (relativeDiff <= threshold) return true;
+      
+      // Special: rounding to clean figures (e.g., $5.2m -> ~$5m)
+      // If draft is a clean round number, use adjusted tolerance based on value size
+      const isCleanRound = draftValue % (draftValue >= 1e9 ? 1e9 : draftValue >= 1e6 ? 1e6 : 1e3) === 0;
+      if (isCleanRound) {
+        const cleanRoundThreshold = draftValue < 100_000 ? 0.15 : 0.11; // ±15% for < 100k, ±11% otherwise
+        if (relativeDiff <= cleanRoundThreshold) return true;
+      }
+    } else if (approxKind === "close_to") {
+      // ±5% relative
+      const diff = Math.abs(draftValue - uploadedValue);
+      const relativeDiff = diff / Math.max(uploadedValue, 1);
+      if (relativeDiff <= 0.05) return true;
+    } else if (approxKind === "more_than") {
+      // uploaded >= draft
+      if (uploadedValue >= draftValue) return true;
+    } else if (approxKind === "less_than") {
+      // uploaded <= draft
+      if (uploadedValue <= draftValue) return true;
+    } else if (approxKind === "range") {
+      // For ranges, we'd need to parse the range bounds
+      // For now, check if uploaded is within ±20% of draft
+      const diff = Math.abs(draftValue - uploadedValue);
+      const relativeDiff = diff / Math.max(uploadedValue, 1);
+      if (relativeDiff <= 0.20) return true;
+    }
+  }
+  
+  return false;
+}
+
 // Hybrid detection: flag only genuine uncited factual claims, not paraphrase
 // Returns { unattributedEnrichment: boolean, notes: string|null, indicators: string[] }
 function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, uploadedSources) {
@@ -246,9 +434,22 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
     }
   }
 
-  // Check currency and large numbers
-  if (currencyPattern.test(draftText) || largeNumberPattern.test(draftText)) {
-    // Simple check: if draft has $X billion/million and uploaded doesn't, flag
+  // Check currency and large numbers with paraphrase tolerance
+  const draftCurrencyMentions = parseCurrencyMentions(draftText);
+  const uploadedNumericValues = extractNumericValues(uploadedContext);
+  
+  if (draftCurrencyMentions.length > 0) {
+    for (const mention of draftCurrencyMentions) {
+      if (!isNumericClaimSupported(mention, uploadedNumericValues)) {
+        candidateFacts.push({ 
+          type: "currency", 
+          value: mention.raw,
+          context: mention.context 
+        });
+      }
+    }
+  } else if (currencyPattern.test(draftText) || largeNumberPattern.test(draftText)) {
+    // Fallback: simple pattern check if parsing didn't catch it
     const draftAmounts = draftText.match(currencyPattern) || [];
     const hasAmountContext = draftAmounts.some((amt) => {
       const amtLower = amt.toLowerCase();
@@ -277,10 +478,15 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
   // Trigger flag only if there are candidate unsupported facts with factual anchors
   if (candidateFacts.length > 0 && hasFactualAnchor) {
     const factTypes = [...new Set(candidateFacts.map((f) => f.type))];
+    const currencyFacts = candidateFacts.filter((f) => f.type === "currency");
+    const currencyNote = currencyFacts.length > 0 
+      ? ` Numeric claim not found in uploaded sources: '${currencyFacts[0].value}'.`
+      : "";
+    
     indicators.push(...factTypes);
     return {
       unattributedEnrichment: true,
-      notes: "This version includes at least one specific factual claim (e.g., a date/number/ticker) that does not appear in the uploaded sources and is not cited to a web source.",
+      notes: "This version includes at least one specific factual claim (e.g., a date/number/ticker) that does not appear in the uploaded sources and is not cited to a web source." + currencyNote,
       indicators: factTypes,
     };
   }
