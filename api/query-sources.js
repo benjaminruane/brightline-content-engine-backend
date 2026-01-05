@@ -1,9 +1,11 @@
 // api/query-sources.js
 //
 // Sources Q&A endpoint.
+// Uses provenance sources only (uploaded sources + webReferences from Generate/Rewrite).
+// Does NOT perform fresh web search.
 
 import OpenAI from "openai";
-import { deriveQueryFromAsk, runWebSearch, formatWebResultsForPrompt } from "../lib/web.js";
+import { formatWebResultsForPrompt } from "../lib/web.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -45,56 +47,33 @@ export default async function handler(req, res) {
     const question = typeof body.question === "string" ? body.question.trim() : "";
     const draftText = typeof body.draftText === "string" ? body.draftText : "";
     const sources = Array.isArray(body.sources) ? body.sources : [];
+    // Accept provenance webReferences from request (from Generate/Rewrite for this version)
+    const webReferences = Array.isArray(body.webReferences) ? body.webReferences : [];
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
 
     if (!question) return res.status(400).json({ error: "Missing question" });
 
-    // ----- Web search (ALWAYS ON for Sources Used Q&A)
-    const initialQuery = deriveQueryFromAsk({
-      question,
-      title: "",
-      draftText,
-    });
+    // Format web sources for prompt (using provenance webReferences)
+    // Convert webReferences array to format expected by formatWebResultsForPrompt
+    const webSearchResults = webReferences.map((ref) => ({
+      title: ref?.title || "",
+      url: ref?.url || "",
+      content: ref?.snippet || ref?.content || "",
+    }));
 
-    let webSearchResults = [];
-    let webReferences = [];
-    let queryUsed = initialQuery;
-
-    try {
-      const search = await runWebSearch({
-        query: initialQuery,
-        maxResults: 6,
-      });
-      webSearchResults = Array.isArray(search?.results) ? search.results : [];
-      queryUsed = search?.query || initialQuery;
-
-      // Format web references with numbering [1], [2], etc.
-      webReferences = webSearchResults.map((r, i) => ({
-        id: i + 1,
-        title: r?.title || "",
-        url: r?.url || "",
-        snippet: r?.content ? (r.content.length > 300 ? r.content.slice(0, 300) + "…" : r.content) : "",
-      }));
-    } catch (webErr) {
-      console.error("Web search error in query-sources:", webErr);
-      // Continue without web results - don't fail the request
-      webSearchResults = [];
-      webReferences = [];
-    }
-
-    // Format web sources for prompt
     const webSourcesText = webReferences.length > 0
       ? formatWebResultsForPrompt({ results: webSearchResults })
       : "";
 
     const system = `
-You answer questions using BOTH the provided uploaded sources AND web sources.
+You answer questions grounded strictly in the provided sources (uploaded sources + provenance web sources).
 
 Rules:
-- Use BOTH uploaded sources and web sources to answer.
+- Use ONLY the provided uploaded sources and provenance web sources.
 - Insert inline citations like [1], [2], etc. for web sources at the exact supporting sentence.
 - Web source citations must match the numbered web sources provided (e.g., [1] refers to the first web source).
+- Do NOT use any sources not provided.
 - If you cannot answer from the available sources, say so clearly.
 
 Return ONLY valid JSON:
@@ -144,7 +123,6 @@ ${webSourcesText || "(none - no web sources found for this question)"}
       answer,
       confidence,
       confidenceReason,
-      webReferences: webReferences.length > 0 ? webReferences : [],
     });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Query sources failed" });
