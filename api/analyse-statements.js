@@ -118,6 +118,41 @@ function resolveCitations(statements, unifiedReferences) {
   });
 }
 
+// Detect if a statement is document-descriptive (about what the memo does/proposes/evaluates)
+// These describe the uploaded memo's content, not world facts
+function isDocumentDescriptive(text, reasons = []) {
+  if (typeof text !== "string" || !text.trim()) return false;
+  
+  const lower = text.toLowerCase();
+  const reasonsText = Array.isArray(reasons) ? reasons.join(" ").toLowerCase() : "";
+  
+  // Patterns for document-descriptive statements
+  const docDescriptivePatterns = [
+    // Investment/evaluation language
+    /\b(?:evaluating|evaluates|evaluation of|considering|considers|consideration of|proposing|proposes|proposal to|recommending|recommends|recommendation to)\b/i,
+    // Document action language
+    /\b(?:this memo|the memo|this document|the document|this report|the report)\s+(?:evaluates|proposes|recommends|considers|discusses|outlines|describes|presents|examines|analyzes)/i,
+    // Investment-specific patterns
+    /\b(?:investment|funding|financing|acquisition|partnership)\s+(?:opportunity|proposal|evaluation|consideration)/i,
+    // Decision/action language about the memo's purpose
+    /\b(?:decision to|decision on|action to|action on|plan to|plan for)\b/i,
+  ];
+  
+  // Check if statement matches document-descriptive patterns
+  const matchesPattern = docDescriptivePatterns.some((pattern) => pattern.test(lower));
+  
+  // Also check reasons for document-descriptive indicators
+  const hasDocReason = reasonsText.includes("memo") || 
+                       reasonsText.includes("document") ||
+                       reasonsText.includes("evaluation") ||
+                       reasonsText.includes("proposal");
+  
+  // Must match pattern or have doc reason, AND not be an anchor fact
+  const hasFactualAnchor = isAnchorFact(text);
+  
+  return (matchesPattern || hasDocReason) && !hasFactualAnchor;
+}
+
 // Detect if a statement is a meta-statement (about the document itself, not the world)
 // Very conservative: only allow statements that are clearly about document structure/content
 function isMetaStatement(text) {
@@ -141,8 +176,19 @@ function isMetaStatement(text) {
 
 // Apply dual-axis verification gate: force Low if no resolvable citations
 // This enforces: no provenance = no verification = no confidence
-function applyDualAxisVerification(statements) {
+// Runs AFTER all scoring/calibration to ensure forced Low cannot be overridden
+function applyDualAxisVerification(statements, unifiedReferences) {
   if (!Array.isArray(statements)) return statements;
+  
+  // Build map of uploaded references for document-descriptive statement checking
+  const uploadedRefIds = new Set();
+  if (Array.isArray(unifiedReferences)) {
+    unifiedReferences.forEach((ref) => {
+      if (ref?.type === "uploaded" && ref?.id != null) {
+        uploadedRefIds.add(String(ref.id));
+      }
+    });
+  }
   
   return statements.map((stmt) => {
     if (!stmt || typeof stmt !== "object") return stmt;
@@ -150,25 +196,34 @@ function applyDualAxisVerification(statements) {
     const text = typeof stmt.text === "string" ? stmt.text : "";
     const assessment = stmt.assessment || {};
     const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
     const hasResolvableCitations = citations.length > 0;
     const isAnchor = isAnchorFact(text);
     const isMeta = isMetaStatement(text);
+    const isDocDescriptive = isDocumentDescriptive(text, reasons);
     
-    // Skip if already has resolvable citations
-    if (hasResolvableCitations) return stmt;
+    // Check if document-descriptive statement has memo support
+    const hasMemoSupport = isDocDescriptive && citations.some((c) => 
+      uploadedRefIds.has(String(c))
+    );
+    
+    // Skip if already has resolvable citations (world facts) OR document-descriptive with memo support
+    if (hasResolvableCitations || hasMemoSupport) return stmt;
     
     // Determine if we should force Low
     let shouldForceLow = false;
     
     if (isAnchor) {
-      // Anchor facts already handled by applyAnchorGating, but ensure consistency
+      // Anchor facts require citations - force Low
+      shouldForceLow = true;
+    } else if (isDocDescriptive && !hasMemoSupport) {
+      // Document-descriptive without memo support = force Low
       shouldForceLow = true;
     } else if (isMeta) {
-      // Meta statements may appear without citations but still should not be High
-      // They're already Low by default, but ensure they don't get inflated
+      // Meta statements should not be High - ensure Low
       shouldForceLow = true;
     } else {
-      // Default: factual claim without citations = force Low
+      // Default: world-fact claim without citations = force Low
       shouldForceLow = true;
     }
     
@@ -178,13 +233,13 @@ function applyDualAxisVerification(statements) {
         : 30;
       const forcedScore = Math.min(existingScore, 35);
       
-      let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      let updatedReasons = [...reasons];
       const verificationReason = "No verifiable sources cited.";
       const explanationReason = "This statement could not be verified against provided sources.";
       
       // Prepend verification reason if not already present
-      if (!reasons.some((r) => r && r.includes("No verifiable sources"))) {
-        reasons = [verificationReason, explanationReason, ...reasons].slice(0, 4);
+      if (!updatedReasons.some((r) => r && r.includes("No verifiable sources"))) {
+        updatedReasons = [verificationReason, explanationReason, ...updatedReasons].slice(0, 4);
       }
       
       // Log when forcing Low due to missing provenance
@@ -192,13 +247,14 @@ function applyDualAxisVerification(statements) {
         console.log(`[Review] Forced Low (${forcedScore}) due to missing provenance: "${text.substring(0, 50)}..."`);
       }
       
+      // CRITICAL: Force Low and ensure it cannot be overridden
       return {
         ...stmt,
         assessment: {
           ...assessment,
           reliabilityLabel: "Low",
           reliabilityScore: forcedScore,
-          reasons: reasons.length > 0 ? reasons : [verificationReason],
+          reasons: updatedReasons.length > 0 ? updatedReasons : [verificationReason],
           citations: [], // Ensure empty
         },
       };
@@ -418,6 +474,7 @@ function isAnchorFact(text) {
 
 // Apply anchor-fact gating: force Low if anchor fact has no citations
 // This is the final authority on anchor facts and runs AFTER all other processing
+// Note: Dual-axis verification already handles this, but this provides explicit anchor-specific enforcement
 function applyAnchorGating(statements) {
   if (!Array.isArray(statements)) return statements;
   
@@ -430,19 +487,39 @@ function applyAnchorGating(statements) {
     const hasCitations = citations.length > 0;
     const isAnchor = isAnchorFact(text);
     
+    // Check if already forced Low by dual-axis verification
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const alreadyForcedLow = reasons.some((r) => r && r.includes("No verifiable sources"));
+    
     // STRICT: If anchor fact AND no citations: always force Low
     // Citations can be from either uploaded sources or web references
     if (isAnchor && !hasCitations) {
+      // If already forced Low, ensure anchor-specific reason is present
+      if (alreadyForcedLow) {
+        const anchorReason = "Anchor fact requires a supporting source; none was cited for this version.";
+        if (!reasons.some((r) => r && r.includes("Anchor fact requires"))) {
+          const updatedReasons = [anchorReason, ...reasons].slice(0, 4);
+          return {
+            ...stmt,
+            assessment: {
+              ...assessment,
+              reasons: updatedReasons,
+            },
+          };
+        }
+        return stmt; // Already has anchor reason
+      }
+      
+      // Not yet forced Low - apply anchor gating
       const existingScore = typeof assessment.reliabilityScore === "number" 
         ? assessment.reliabilityScore 
         : 30;
       const forcedScore = Math.min(existingScore, 35);
       
-      let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
       const anchorReason = "Anchor fact requires a supporting source; none was cited for this version.";
       
       // Always prepend the anchor reason (strict enforcement)
-      reasons = [anchorReason, ...reasons].slice(0, 4); // Cap at 4
+      const updatedReasons = [anchorReason, ...reasons].slice(0, 4); // Cap at 4
       
       return {
         ...stmt,
@@ -450,14 +527,14 @@ function applyAnchorGating(statements) {
           ...assessment,
           reliabilityLabel: "Low",
           reliabilityScore: forcedScore,
-          reasons: reasons.length > 0 ? reasons : [anchorReason],
+          reasons: updatedReasons.length > 0 ? updatedReasons : [anchorReason],
           citations: [], // Ensure empty
         },
       };
     }
     
     // If anchor fact AND has citations: leave as-is (do not downgrade)
-    // If not anchor fact: leave as-is (handled by non-anchor calibration)
+    // If not anchor fact: leave as-is (handled by dual-axis verification and calibration)
     return stmt;
   });
 }
@@ -660,8 +737,13 @@ export default async function handler(req, res) {
     const system = `
 You are the "Review" engine inside Content Engine.
 
-EXTRACTION RULES (CRITICAL):
-- Extract ONLY atomic factual statements (verifiable claims).
+EXTRACTION RULES (CRITICAL - HARD REQUIREMENT):
+- Extract ONLY statements that are EXPLICITLY PRESENT in the DRAFT text.
+- Each statement MUST map to a draft text span (verbatim or clear paraphrase).
+- Do NOT introduce new facts from source documents.
+- Do NOT create statements derived solely from uploaded sources or web sources.
+- Source documents may NOT introduce new review statements.
+- If a claim is not in the draft, do NOT include it in the review.
 - Exclude: opinions, hype/marketing fluff, recommendations, predictions, vague assertions.
 - Split compound multi-claim sentences into separate statements.
 - Minimal rewriting: keep statements close to draft wording.
@@ -672,8 +754,20 @@ A statement is only verified if BOTH are true:
 1) The statement is factually correct
 2) The statement can be traced to specific, known sources
 
+STATEMENT CLASSIFICATION:
+Classify each statement as one of:
+1) World-Fact Statement: Claims about the company, metrics, performance, pricing, growth, history, etc.
+   - MUST have resolvable citations to uploaded or web sources
+   - No citations → force Low (≤35)
+2) Document-Descriptive Statement: Claims describing what the uploaded memo does, proposes, evaluates, or recommends
+   - MAY be verified against the uploaded memo itself (memo counts as valid provenance)
+   - Should NOT be treated as uncited if supported by memo
+3) Unsupported/Speculative Statement: Claims with no support in provided sources
+   - Must be scored Low with clear explanation
+
 VERIFICATION RULES:
-- Every factual claim MUST include at least one citation to a source from the REFERENCES list.
+- World-fact claims MUST include at least one citation to a source from the REFERENCES list.
+- Document-descriptive claims MAY cite the uploaded memo (if it supports the claim).
 - High/Medium reliability (score >35) is ONLY allowed if the statement has at least one valid citation.
 - If you cannot cite a claim to a provided source:
   - Set citations: []
@@ -778,12 +872,14 @@ ${
     // A) Citation resolution validation: drop unresolvable citations
     statements = resolveCitations(statements, unifiedReferences);
     
-    // B) Dual-axis verification gate: force Low if no resolvable citations
-    statements = applyDualAxisVerification(statements);
-    
     // Apply non-anchor calibration: allow Medium for uncited synthesis unless uncertain
-    // Note: This now only affects statements that already have citations (dual-axis gate runs first)
+    // This runs before dual-axis verification to allow calibration, but dual-axis will enforce final gate
     statements = applyNonAnchorCalibration(statements);
+    
+    // B) Dual-axis verification gate: force Low if no resolvable citations
+    // This runs AFTER calibration to ensure forced Low cannot be overridden
+    // This is the final gate before anchor gating
+    statements = applyDualAxisVerification(statements, unifiedReferences);
     
     // Apply anchor-fact gating (FINAL AUTHORITY): force Low if anchor facts lack citations
     // This runs AFTER all other processing to ensure strict enforcement
@@ -819,9 +915,9 @@ ${
       
       // Apply citation resolution and dual-axis verification to fallback statements (same order as main path)
       const resolvedFallbackStatements = resolveCitations(fallbackStatements, fallbackUploadedReferences);
-      const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements);
-      const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
-      const gatedFallbackStatements = applyAnchorGating(calibratedFallbackStatements);
+      const calibratedFallbackStatements = applyNonAnchorCalibration(resolvedFallbackStatements);
+      const verifiedFallbackStatements = applyDualAxisVerification(calibratedFallbackStatements, fallbackUploadedReferences);
+      const gatedFallbackStatements = applyAnchorGating(verifiedFallbackStatements);
 
       return res.status(200).json({
         ok: true,
