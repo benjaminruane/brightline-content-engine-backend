@@ -176,7 +176,7 @@ function isMetaStatement(text) {
 
 // Apply dual-axis verification gate: force Low if no resolvable citations
 // This enforces: no provenance = no verification = no confidence
-// Runs AFTER all scoring/calibration to ensure forced Low cannot be overridden
+// Uses RESOLVED citations (after resolveCitations has run)
 function applyDualAxisVerification(statements, unifiedReferences) {
   if (!Array.isArray(statements)) return statements;
   
@@ -195,72 +195,53 @@ function applyDualAxisVerification(statements, unifiedReferences) {
     
     const text = typeof stmt.text === "string" ? stmt.text : "";
     const assessment = stmt.assessment || {};
-    const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    // Citations at this point are already resolved by resolveCitations
+    const resolvedCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
     const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-    const hasResolvableCitations = citations.length > 0;
+    const hasResolvableCitations = resolvedCitations.length > 0;
     const isAnchor = isAnchorFact(text);
     const isMeta = isMetaStatement(text);
     const isDocDescriptive = isDocumentDescriptive(text, reasons);
     
     // Check if document-descriptive statement has memo support
-    const hasMemoSupport = isDocDescriptive && citations.some((c) => 
+    const hasMemoSupport = isDocDescriptive && resolvedCitations.some((c) => 
       uploadedRefIds.has(String(c))
     );
     
-    // Skip if already has resolvable citations (world facts) OR document-descriptive with memo support
+    // Early return ONLY if: has resolvable citations (world facts) OR document-descriptive with memo support
     if (hasResolvableCitations || hasMemoSupport) return stmt;
     
-    // Determine if we should force Low
-    let shouldForceLow = false;
+    // All other cases: force Low (no provenance = no verification)
+    const existingScore = typeof assessment.reliabilityScore === "number" 
+      ? assessment.reliabilityScore 
+      : 30;
+    const forcedScore = Math.min(existingScore, 35);
     
-    if (isAnchor) {
-      // Anchor facts require citations - force Low
-      shouldForceLow = true;
-    } else if (isDocDescriptive && !hasMemoSupport) {
-      // Document-descriptive without memo support = force Low
-      shouldForceLow = true;
-    } else if (isMeta) {
-      // Meta statements should not be High - ensure Low
-      shouldForceLow = true;
-    } else {
-      // Default: world-fact claim without citations = force Low
-      shouldForceLow = true;
+    let updatedReasons = [...reasons];
+    const verificationReason = "No verifiable sources cited.";
+    const explanationReason = "This statement could not be verified against provided sources.";
+    
+    // Prepend verification reason if not already present
+    if (!updatedReasons.some((r) => r && r.includes("No verifiable sources"))) {
+      updatedReasons = [verificationReason, explanationReason, ...updatedReasons].slice(0, 4);
     }
     
-    if (shouldForceLow) {
-      const existingScore = typeof assessment.reliabilityScore === "number" 
-        ? assessment.reliabilityScore 
-        : 30;
-      const forcedScore = Math.min(existingScore, 35);
-      
-      let updatedReasons = [...reasons];
-      const verificationReason = "No verifiable sources cited.";
-      const explanationReason = "This statement could not be verified against provided sources.";
-      
-      // Prepend verification reason if not already present
-      if (!updatedReasons.some((r) => r && r.includes("No verifiable sources"))) {
-        updatedReasons = [verificationReason, explanationReason, ...updatedReasons].slice(0, 4);
-      }
-      
-      // Log when forcing Low due to missing provenance
-      if (existingScore > 35) {
-        console.log(`[Review] Forced Low (${forcedScore}) due to missing provenance: "${text.substring(0, 50)}..."`);
-      }
-      
-      // CRITICAL: Force Low and ensure it cannot be overridden
-      return {
-        ...stmt,
-        assessment: {
-          ...assessment,
-          reliabilityLabel: "Low",
-          reliabilityScore: forcedScore,
-          reasons: updatedReasons.length > 0 ? updatedReasons : [verificationReason],
-          citations: [], // Ensure empty
-        },
-      };
+    // Log when forcing Low due to missing provenance
+    if (existingScore > 35) {
+      console.log(`[Review] Forced Low (${forcedScore}) due to missing provenance: "${text.substring(0, 50)}..."`);
     }
     
-    return stmt;
+    // CRITICAL: Force Low and ensure it cannot be overridden
+    return {
+      ...stmt,
+      assessment: {
+        ...assessment,
+        reliabilityLabel: "Low",
+        reliabilityScore: forcedScore,
+        reasons: updatedReasons.length > 0 ? updatedReasons : [verificationReason],
+        citations: [], // Ensure empty
+      },
+    };
   });
 }
 
@@ -346,6 +327,63 @@ function coerceStatements(parsed, maxRefIndex) {
   }
   
   return coerced;
+}
+
+// Filter statements to only include those present in draft text (hard gate)
+// Normalizes whitespace and case for comparison, requires high overlap
+function filterDraftOnlyStatements(statements, draftText) {
+  if (!Array.isArray(statements) || statements.length === 0) return statements;
+  if (typeof draftText !== "string" || !draftText.trim()) return statements;
+  
+  // Normalize draft text: lowercase, collapse whitespace
+  const normalizedDraft = draftText
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+  
+  const filtered = [];
+  
+  for (const stmt of statements) {
+    if (!stmt || typeof stmt !== "object") continue;
+    
+    const text = typeof stmt.text === "string" ? stmt.text.trim() : "";
+    if (!text) continue;
+    
+    // Normalize statement text: lowercase, collapse whitespace
+    const normalizedStmt = text
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
+    
+    // Check if statement text appears in draft (exact match or high-overlap substring)
+    // Require at least 80% of statement words to appear in draft
+    const stmtWords = normalizedStmt.split(/\s+/).filter((w) => w.length > 2); // Filter very short words
+    if (stmtWords.length === 0) {
+      // Very short statement - require exact or near-exact match
+      if (normalizedDraft.includes(normalizedStmt)) {
+        filtered.push(stmt);
+      } else {
+        console.log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
+      }
+      continue;
+    }
+    
+    // Count how many statement words appear in draft
+    const matchingWords = stmtWords.filter((word) => normalizedDraft.includes(word));
+    const overlapRatio = matchingWords.length / stmtWords.length;
+    
+    // Also check if normalized statement is a substring of draft (for verbatim matches)
+    const isSubstring = normalizedDraft.includes(normalizedStmt);
+    
+    // Accept if: exact substring match OR high word overlap (>=80%)
+    if (isSubstring || overlapRatio >= 0.8) {
+      filtered.push(stmt);
+    } else {
+      console.log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
+    }
+  }
+  
+  return filtered;
 }
 
 // Fallback extraction when model fails
@@ -539,6 +577,68 @@ function applyAnchorGating(statements) {
   });
 }
 
+// Final post-condition clamp: ensure no High/Medium with missing citations
+// This is the absolute final check before returning response
+function applyFinalPostCheck(statements, unifiedReferences) {
+  if (!Array.isArray(statements)) return statements;
+  
+  // Build map of uploaded references for document-descriptive statement checking
+  const uploadedRefIds = new Set();
+  if (Array.isArray(unifiedReferences)) {
+    unifiedReferences.forEach((ref) => {
+      if (ref?.type === "uploaded" && ref?.id != null) {
+        uploadedRefIds.add(String(ref.id));
+      }
+    });
+  }
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const resolvedCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const score = typeof assessment.reliabilityScore === "number" ? assessment.reliabilityScore : 30;
+    const label = typeof assessment.reliabilityLabel === "string" ? assessment.reliabilityLabel : "Low";
+    
+    const isDocDescriptive = isDocumentDescriptive(text, reasons);
+    const hasMemoSupport = isDocDescriptive && resolvedCitations.some((c) => 
+      uploadedRefIds.has(String(c))
+    );
+    
+    // Allow >35 only if: document-descriptive with memo support OR has resolved citations
+    const canBeHighMedium = hasMemoSupport || resolvedCitations.length > 0;
+    
+    // If score >35 but no valid provenance, force Low
+    if (score > 35 && !canBeHighMedium) {
+      const forcedScore = Math.min(score, 35);
+      let updatedReasons = [...reasons];
+      const verificationReason = "No verifiable sources cited.";
+      
+      // Ensure verification reason is present
+      if (!updatedReasons.some((r) => r && r.includes("No verifiable sources"))) {
+        updatedReasons = [verificationReason, ...updatedReasons].slice(0, 4);
+      }
+      
+      console.log(`[Review] Final clamp: forced Low (${forcedScore}) for statement with score ${score}: "${text.substring(0, 50)}..."`);
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reliabilityLabel: "Low",
+          reliabilityScore: forcedScore,
+          reasons: updatedReasons.length > 0 ? updatedReasons : [verificationReason],
+          citations: [], // Ensure empty
+        },
+      };
+    }
+    
+    return stmt;
+  });
+}
+
 // Detect if reasons indicate strong unverifiability (blocks Medium calibration)
 // Only strong signals that indicate the claim cannot be validated, not merely uncited
 function isUncertaintyReason(reasons) {
@@ -569,6 +669,7 @@ function isUncertaintyReason(reasons) {
 }
 
 // Calibrate non-anchor statements: allow Medium for uncited synthesis unless uncertain
+// Only processes statements that passed dual-axis verification (have citations or are doc-descriptive with memo support)
 function applyNonAnchorCalibration(statements) {
   if (!Array.isArray(statements)) return statements;
   
@@ -597,6 +698,7 @@ function applyNonAnchorCalibration(statements) {
     if (hasVerificationReason) return stmt; // Already forced Low by dual-axis gate
     
     // Only process non-anchor, uncited statements that weren't forced Low
+    // These should only be document-descriptive with memo support (which passed dual-axis)
     let score = typeof assessment.reliabilityScore === "number"
       ? Math.max(0, Math.min(100, assessment.reliabilityScore))
       : 30;
@@ -869,21 +971,25 @@ ${
       extractionQuality = "degraded";
     }
     
-    // A) Citation resolution validation: drop unresolvable citations
+    // A) Draft-only filter: enforce statements must appear in draft text (hard gate)
+    statements = filterDraftOnlyStatements(statements, draftText);
+    
+    // B) Citation resolution validation: drop unresolvable citations
     statements = resolveCitations(statements, unifiedReferences);
     
-    // Apply non-anchor calibration: allow Medium for uncited synthesis unless uncertain
-    // This runs before dual-axis verification to allow calibration, but dual-axis will enforce final gate
-    statements = applyNonAnchorCalibration(statements);
-    
-    // B) Dual-axis verification gate: force Low if no resolvable citations
-    // This runs AFTER calibration to ensure forced Low cannot be overridden
-    // This is the final gate before anchor gating
+    // C) Dual-axis verification gate: force Low if no resolvable citations
+    // Runs BEFORE calibration to prevent score inflation of unverifiable statements
     statements = applyDualAxisVerification(statements, unifiedReferences);
     
-    // Apply anchor-fact gating (FINAL AUTHORITY): force Low if anchor facts lack citations
-    // This runs AFTER all other processing to ensure strict enforcement
+    // D) Apply non-anchor calibration: allow Medium for uncited synthesis unless uncertain
+    // Only processes statements that passed dual-axis (have citations or doc-descriptive with memo support)
+    statements = applyNonAnchorCalibration(statements);
+    
+    // E) Apply anchor-fact gating: force Low if anchor facts lack citations
     statements = applyAnchorGating(statements);
+    
+    // F) Final post-condition clamp: ensure no High/Medium with missing citations
+    statements = applyFinalPostCheck(statements, unifiedReferences);
 
     return res.status(200).json({
       ok: true,
@@ -913,15 +1019,18 @@ ${
         type: "uploaded",
       }));
       
-      // Apply citation resolution and dual-axis verification to fallback statements (same order as main path)
-      const resolvedFallbackStatements = resolveCitations(fallbackStatements, fallbackUploadedReferences);
-      const calibratedFallbackStatements = applyNonAnchorCalibration(resolvedFallbackStatements);
-      const verifiedFallbackStatements = applyDualAxisVerification(calibratedFallbackStatements, fallbackUploadedReferences);
-      const gatedFallbackStatements = applyAnchorGating(verifiedFallbackStatements);
+      // Apply same pipeline as main path: draft filter → resolve → dual-axis → calibration → anchor → post-check
+      const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
+      const filteredFallbackStatements = filterDraftOnlyStatements(fallbackStatements, fallbackDraftText);
+      const resolvedFallbackStatements = resolveCitations(filteredFallbackStatements, fallbackUploadedReferences);
+      const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements, fallbackUploadedReferences);
+      const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
+      const gatedFallbackStatements = applyAnchorGating(calibratedFallbackStatements);
+      const finalFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
 
       return res.status(200).json({
         ok: true,
-        statements: gatedFallbackStatements,
+        statements: finalFallbackStatements,
         references: fallbackUploadedReferences,
         meta: {
           webSearch: { enabled: true, used: false },
