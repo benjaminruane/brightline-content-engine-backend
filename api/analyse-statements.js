@@ -1287,6 +1287,196 @@ function enforceReasonSpecificity(statements) {
   });
 }
 
+// A3.5.13c: Extract anchor elements from compound numeric statements
+// Returns array of anchor elements, each with kind, rawText, normalizedNumber, keywords
+// Only returns elements if statement contains ≥2 numeric anchor elements
+function extractAnchorElements(text) {
+  if (typeof text !== "string" || !text.trim()) return [];
+  
+  const elements = [];
+  
+  // Investment amount patterns
+  const investmentPatterns = [
+    /(?:invest|investment|commitment|commit)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /\$?([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|billion|b)\s+(?:investment|commitment|commit)/i,
+  ];
+  
+  // Valuation pre-money patterns
+  const valuationPreMoneyPatterns = [
+    /(?:pre-?money|pre money|premoney)\s+(?:valuation|val)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /(?:valuation|val)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)/i,
+    /\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)\s+(?:valuation|val)/i,
+  ];
+  
+  // Ownership percentage patterns
+  const ownershipPatterns = [
+    /(?:ownership|equity stake|stake|equity)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/i,
+    /(\d+(?:\.\d+)?)\s*%\s+(?:ownership|equity|stake|fully diluted)/i,
+    /(?:fully diluted|diluted)\s+(?:ownership|equity|stake)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/i,
+  ];
+  
+  // Secondary amount patterns
+  const secondaryPatterns = [
+    /(?:secondary|common shares|secondary sale|secondary transaction)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /\$?([\d,]+(?:\.\d+)?)\s+(?:secondary|common shares|secondary sale)/i,
+  ];
+  
+  // Extract investment amounts
+  for (const pattern of investmentPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const normalizedValue = normalizeAnchorValue(match[0]);
+      if (normalizedValue !== null) {
+        elements.push({
+          kind: "investment_amount",
+          rawText: match[0],
+          normalizedNumber: normalizedValue,
+          keywords: ["investment", "commitment", "commit", "invest"],
+        });
+      }
+    }
+  }
+  
+  // Extract valuation pre-money
+  for (const pattern of valuationPreMoneyPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const normalizedValue = normalizeAnchorValue(match[0]);
+      if (normalizedValue !== null) {
+        elements.push({
+          kind: "valuation_premoney",
+          rawText: match[0],
+          normalizedNumber: normalizedValue,
+          keywords: ["pre-money", "premoney", "valuation", "val"],
+        });
+      }
+    }
+  }
+  
+  // Extract ownership percentage
+  for (const pattern of ownershipPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      elements.push({
+        kind: "ownership_pct",
+        rawText: match[0],
+        normalizedNumber: num, // Percentage as-is
+        keywords: ["ownership", "equity", "stake", "fully diluted", "diluted"],
+      });
+    }
+  }
+  
+  // Extract secondary amounts
+  for (const pattern of secondaryPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const normalizedValue = normalizeAnchorValue(match[0]);
+      if (normalizedValue !== null) {
+        elements.push({
+          kind: "secondary_amount",
+          rawText: match[0],
+          normalizedNumber: normalizedValue,
+          keywords: ["secondary", "common shares", "secondary sale"],
+        });
+      }
+    }
+  }
+  
+  // Only return if ≥2 elements found (compound statement)
+  return elements.length >= 2 ? elements : [];
+}
+
+// A3.5.13c: Validate compound numeric anchor elements independently
+// Returns { elements: Array, verdicts: Map<kind, verdict>, supportedKinds: Set, missingKinds: Set, ambiguousKinds: Set }
+function validateCompoundNumericAnchors(statementText, uploadedDocs) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return { elements: [], verdicts: new Map(), supportedKinds: new Set(), missingKinds: new Set(), ambiguousKinds: new Set() };
+  }
+  
+  if (!Array.isArray(uploadedDocs) || uploadedDocs.length === 0) {
+    return { elements: [], verdicts: new Map(), supportedKinds: new Set(), missingKinds: new Set(), ambiguousKinds: new Set() };
+  }
+  
+  // Extract anchor elements (only if ≥2 found)
+  const elements = extractAnchorElements(statementText);
+  if (elements.length < 2) {
+    return { elements: [], verdicts: new Map(), supportedKinds: new Set(), missingKinds: new Set(), ambiguousKinds: new Set() };
+  }
+  
+  const verdicts = new Map();
+  const supportedKinds = new Set();
+  const missingKinds = new Set();
+  const ambiguousKinds = new Set();
+  
+  // Combine corpus text
+  const corpusText = uploadedDocs.map(doc => doc.text || "").join("\n\n");
+  
+  // Group elements by kind for ambiguity detection
+  const elementsByKind = new Map();
+  for (const element of elements) {
+    if (!elementsByKind.has(element.kind)) {
+      elementsByKind.set(element.kind, []);
+    }
+    elementsByKind.get(element.kind).push(element);
+  }
+  
+  // Validate each element independently
+  for (const element of elements) {
+    // Run corpusSearch on the element (not the whole statement)
+    const elementText = element.rawText;
+    const searchResult = corpusSearch(elementText, uploadedDocs);
+    
+    if (searchResult.found) {
+      // Check for ambiguity: multiple distinct values for same kind
+      const sameKindElements = elementsByKind.get(element.kind) || [];
+      if (sameKindElements.length >= 2) {
+        // Check if corpus has multiple distinct values for this kind
+        const corpusNumericValues = extractNumericValues(corpusText);
+        const matchingCorpusValues = Array.from(corpusNumericValues).filter(cv => {
+          return sameKindElements.some(se => numericValuesMatch(se.normalizedNumber, cv));
+        });
+        
+        // Also check for multiple distinct values in statement itself
+        const statementValues = sameKindElements.map(e => e.normalizedNumber);
+        const distinctStatementValues = new Set(statementValues);
+        
+        if (distinctStatementValues.size >= 2 || matchingCorpusValues.length >= 2) {
+          // Ambiguity detected
+          verdicts.set(element.kind, "AMBIGUOUS");
+          ambiguousKinds.add(element.kind);
+        } else {
+          verdicts.set(element.kind, "SUPPORTED");
+          supportedKinds.add(element.kind);
+        }
+      } else {
+        verdicts.set(element.kind, "SUPPORTED");
+        supportedKinds.add(element.kind);
+      }
+    } else {
+      verdicts.set(element.kind, "NOT_FOUND");
+      missingKinds.add(element.kind);
+    }
+  }
+  
+  return { elements, verdicts, supportedKinds, missingKinds, ambiguousKinds };
+}
+
 // Normalize numeric anchor value: convert "$20mm", "$20m", "$20 million" to numeric value
 // Invariant 1: Numeric anchor normalization
 function normalizeAnchorValue(text) {
@@ -1329,6 +1519,121 @@ function normalizeAnchorValue(text) {
   }
   
   return null;
+}
+
+// A3.5.13c: Extract anchor elements from compound numeric statements
+// Returns array of anchor elements, each with kind, rawText, normalizedNumber, keywords
+// Only returns elements if statement contains ≥2 numeric anchor elements
+function extractAnchorElements(text) {
+  if (typeof text !== "string" || !text.trim()) return [];
+  
+  const elements = [];
+  
+  // Investment amount patterns
+  const investmentPatterns = [
+    /(?:invest|investment|commitment|commit)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /\$?([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|billion|b)\s+(?:investment|commitment|commit)/i,
+  ];
+  
+  // Valuation pre-money patterns
+  const valuationPreMoneyPatterns = [
+    /(?:pre-?money|pre money|premoney)\s+(?:valuation|val)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /(?:valuation|val)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)/i,
+    /\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)\s+(?:valuation|val)/i,
+  ];
+  
+  // Ownership percentage patterns
+  const ownershipPatterns = [
+    /(?:ownership|equity stake|stake|equity)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/i,
+    /(\d+(?:\.\d+)?)\s*%\s+(?:ownership|equity|stake|fully diluted)/i,
+    /(?:fully diluted|diluted)\s+(?:ownership|equity|stake)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/i,
+  ];
+  
+  // Secondary amount patterns
+  const secondaryPatterns = [
+    /(?:secondary|common shares|secondary sale|secondary transaction)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /\$?([\d,]+(?:\.\d+)?)\s+(?:secondary|common shares|secondary sale)/i,
+  ];
+  
+  // Extract investment amounts
+  for (const pattern of investmentPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const normalizedValue = normalizeAnchorValue(match[0]);
+      if (normalizedValue !== null) {
+        elements.push({
+          kind: "investment_amount",
+          rawText: match[0],
+          normalizedNumber: normalizedValue,
+          keywords: ["investment", "commitment", "commit", "invest"],
+        });
+      }
+    }
+  }
+  
+  // Extract valuation pre-money
+  for (const pattern of valuationPreMoneyPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const normalizedValue = normalizeAnchorValue(match[0]);
+      if (normalizedValue !== null) {
+        elements.push({
+          kind: "valuation_premoney",
+          rawText: match[0],
+          normalizedNumber: normalizedValue,
+          keywords: ["pre-money", "premoney", "valuation", "val"],
+        });
+      }
+    }
+  }
+  
+  // Extract ownership percentage
+  for (const pattern of ownershipPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      elements.push({
+        kind: "ownership_pct",
+        rawText: match[0],
+        normalizedNumber: num, // Percentage as-is
+        keywords: ["ownership", "equity", "stake", "fully diluted", "diluted"],
+      });
+    }
+  }
+  
+  // Extract secondary amounts
+  for (const pattern of secondaryPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const normalizedValue = normalizeAnchorValue(match[0]);
+      if (normalizedValue !== null) {
+        elements.push({
+          kind: "secondary_amount",
+          rawText: match[0],
+          normalizedNumber: normalizedValue,
+          keywords: ["secondary", "common shares", "secondary sale"],
+        });
+      }
+    }
+  }
+  
+  // Only return if ≥2 elements found (compound statement)
+  return elements.length >= 2 ? elements : [];
 }
 
 // Extract anchor facts from statement text (valuation, funding, revenue, governance, security terms, etc.)
@@ -1943,6 +2248,220 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     // Missing citations MUST NOT trigger absence language without corpusSearch
     const isAnchor = isAnchorFact(text);
     const uploadedSourcesCount = docsWithFullText.length;
+    
+    // A3.5.13c: Check for compound numeric anchors first
+    const compoundNumericResult = validateCompoundNumericAnchors(text, uploadedDocs);
+    
+    // If compound numeric anchors detected, reconcile reasons
+    if (compoundNumericResult.elements.length >= 2) {
+      console.log(`[DIAG] A3.5.13c: Compound numeric anchor statement detected with ${compoundNumericResult.elements.length} elements`);
+      console.log(`[DIAG] A3.5.13c: Element kinds:`, Array.from(new Set(compoundNumericResult.elements.map(e => e.kind))));
+      console.log(`[DIAG] A3.5.13c: Per-element verdicts:`, Object.fromEntries(compoundNumericResult.verdicts));
+      
+      // Invariant 3: Citation / Evidence Injection
+      // If any anchor element is SUPPORTED or AMBIGUOUS by uploaded sources and statement has empty citations
+      const existingCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+      const hasAnySupported = compoundNumericResult.supportedKinds.size > 0 || compoundNumericResult.ambiguousKinds.size > 0;
+      
+      if (hasAnySupported && existingCitations.length === 0) {
+        // Find uploaded memo reference ID
+        let memoReferenceId = null;
+        if (Array.isArray(unifiedReferences) && unifiedReferences.length > 0) {
+          const uploadedRef = unifiedReferences.find(ref => ref?.type === "uploaded");
+          if (uploadedRef && uploadedRef.id != null) {
+            memoReferenceId = uploadedRef.id;
+          } else if (uploadedSources.length > 0) {
+            memoReferenceId = 1; // Fallback
+          }
+        }
+        
+        // Inject memo reference ID
+        let injectedCitations = [];
+        if (memoReferenceId != null) {
+          injectedCitations = [memoReferenceId];
+        }
+        
+        // Build evidence
+        const evidence = [];
+        if (injectedCitations.length > 0 && Array.isArray(unifiedReferences)) {
+          const referencesById = new Map();
+          unifiedReferences.forEach((ref) => {
+            const id = ref?.id;
+            if (id != null) {
+              referencesById.set(String(id), ref);
+            }
+          });
+          
+          injectedCitations.forEach((citationId) => {
+            const citationKey = citationId != null ? String(citationId) : null;
+            if (citationKey && referencesById.has(citationKey)) {
+              const ref = referencesById.get(citationKey);
+              const refType = ref?.type || (ref?.url ? "web" : "uploaded");
+              evidence.push({
+                title: ref?.title || "Untitled source",
+                url: ref?.url || null,
+                sourceType: refType,
+              });
+            }
+          });
+        }
+        
+        console.log(`[DIAG] A3.5.13c: Injected citations/evidence for compound numeric anchors:`, {
+          memoReferenceId,
+          citations: injectedCitations,
+          evidenceCount: evidence.length,
+        });
+        
+        // Invariant 4: Reason Reconciliation (hard rule)
+        // Remove contradictory reasons and generate deterministic templates
+        const kindLabels = {
+          investment_amount: "investment amount",
+          valuation_premoney: "pre-money valuation",
+          ownership_pct: "ownership percentage",
+          secondary_amount: "secondary amount",
+          other_numeric: "numeric value",
+        };
+        
+        // Helper to format element value (handles percentages differently)
+        const formatElementValue = (element) => {
+          if (element.kind === "ownership_pct") {
+            return `${element.normalizedNumber}%`;
+          }
+          return formatNumericValue(element.normalizedNumber);
+        };
+        
+        // Build supported elements list
+        const supportedElements = [];
+        for (const kind of compoundNumericResult.supportedKinds) {
+          const elementsOfKind = compoundNumericResult.elements.filter(e => e.kind === kind);
+          if (elementsOfKind.length > 0) {
+            const element = elementsOfKind[0];
+            const label = kindLabels[kind] || kind;
+            const humanForm = formatElementValue(element);
+            supportedElements.push(`${label} (${humanForm})`);
+          }
+        }
+        
+        // Build missing elements list
+        const missingElements = [];
+        for (const kind of compoundNumericResult.missingKinds) {
+          const elementsOfKind = compoundNumericResult.elements.filter(e => e.kind === kind);
+          if (elementsOfKind.length > 0) {
+            const element = elementsOfKind[0];
+            const label = kindLabels[kind] || kind;
+            const humanForm = formatElementValue(element);
+            missingElements.push(`${label} (${humanForm})`);
+          }
+        }
+        
+        // Build ambiguous elements list
+        const ambiguousElements = [];
+        for (const kind of compoundNumericResult.ambiguousKinds) {
+          const elementsOfKind = compoundNumericResult.elements.filter(e => e.kind === kind);
+          if (elementsOfKind.length >= 2) {
+            const label = kindLabels[kind] || kind;
+            const values = elementsOfKind.map(e => formatElementValue(e));
+            ambiguousElements.push({
+              kind: label,
+              values: values.slice(0, 2), // Limit to 2 values
+            });
+          }
+        }
+        
+        // Generate deterministic reason templates
+        const reconciledReasons = [];
+        
+        // Supported elements
+        if (supportedElements.length > 0) {
+          const supportedText = supportedElements.length === 1
+            ? supportedElements[0]
+            : supportedElements.slice(0, -1).join(", ") + " and " + supportedElements[supportedElements.length - 1];
+          reconciledReasons.push(`Uploaded memo supports: ${supportedText}.`);
+        }
+        
+        // Missing elements
+        if (missingElements.length > 0) {
+          const missingText = missingElements.length === 1
+            ? missingElements[0]
+            : missingElements.slice(0, -1).join(", ") + " and " + missingElements[missingElements.length - 1];
+          reconciledReasons.push(`Uploaded memo does not support: ${missingText} (not found).`);
+        }
+        
+        // Ambiguous elements
+        for (const ambiguous of ambiguousElements) {
+          const valuesText = ambiguous.values.join(" and ");
+          reconciledReasons.push(`Memo mentions multiple ${ambiguous.kind}s (${valuesText}), creating ambiguity; statement selects ${ambiguous.values[0]}.`);
+        }
+        
+        // Remove contradictory reasons from existing reasons
+        const reasonsToRemove = [];
+        const updatedReasons = reasons.filter((reason) => {
+          if (typeof reason !== "string") return false;
+          const lower = reason.toLowerCase();
+          
+          // Remove any reason that contradicts supported kinds
+          for (const kind of compoundNumericResult.supportedKinds) {
+            const label = kindLabels[kind] || kind;
+            if (lower.includes(label) && (
+              /not (?:specified|mentioned|found|stated)/i.test(lower) ||
+              /does not (?:specify|mention|provide|contain)/i.test(lower) ||
+              /memo does not/i.test(lower)
+            )) {
+              reasonsToRemove.push(reason);
+              return false; // Remove this reason
+            }
+          }
+          
+          // Remove any reason that contradicts ambiguous kinds
+          for (const kind of compoundNumericResult.ambiguousKinds) {
+            const label = kindLabels[kind] || kind;
+            if (lower.includes(label) && /not (?:specified|mentioned)/i.test(lower)) {
+              reasonsToRemove.push(reason);
+              return false;
+            }
+          }
+          
+          return true;
+        });
+        
+        // Combine reconciled reasons with non-contradictory existing reasons
+        const finalReasons = [...reconciledReasons, ...updatedReasons].slice(0, 4);
+        
+        console.log(`[DIAG] A3.5.13c: Reasons reconciled:`, {
+          reasonsRemoved: reasonsToRemove.length,
+          examplesRemoved: reasonsToRemove.slice(0, 2),
+          finalReasonsCount: finalReasons.length,
+        });
+        
+        // Invariant 5: Scoring (minimal change)
+        // If ≥1 anchor element SUPPORTED and ≥1 NOT_FOUND → label at most Medium, score cap <=60
+        let updatedScore = assessment.reliabilityScore;
+        let updatedLabel = assessment.reliabilityLabel;
+        if (compoundNumericResult.supportedKinds.size > 0 && compoundNumericResult.missingKinds.size > 0) {
+          // Partial support - cap at Medium
+          if (updatedScore > 60) {
+            updatedScore = Math.min(updatedScore, 60);
+            updatedLabel = "Medium";
+          } else if (updatedLabel === "High") {
+            updatedLabel = "Medium";
+          }
+        }
+        
+        return {
+          ...stmt,
+          citations: injectedCitations,
+          evidence: evidence,
+          assessment: {
+            ...assessment,
+            citations: injectedCitations,
+            evidence: evidence,
+            reasons: finalReasons,
+            reliabilityScore: updatedScore,
+            reliabilityLabel: updatedLabel,
+          },
+        };
+      }
+    }
     
     // A3.5.13 Addendum: Check for compound anchors first (for both absence and non-absence cases)
     const compoundAnchorResult = decomposeAndValidateCompoundAnchors(text, uploadedDocs);
