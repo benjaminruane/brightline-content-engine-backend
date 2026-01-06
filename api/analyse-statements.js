@@ -1310,7 +1310,8 @@ function normalizeAnchorValue(text) {
   return null;
 }
 
-// Extract anchor facts from statement text (valuation, funding, revenue, etc.)
+// Extract anchor facts from statement text (valuation, funding, revenue, governance, security terms, etc.)
+// A3.5.13 Addendum: Extended to detect all anchor types including non-numeric anchors
 function extractAnchorFacts(text) {
   if (typeof text !== "string" || !text.trim()) return [];
   
@@ -1335,6 +1336,26 @@ function extractAnchorFacts(text) {
     /(?:annual|yearly)\s+(?:revenue|sales)/i,
   ];
   
+  // Governance patterns (A3.5.13 Addendum)
+  const governancePatterns = [
+    /(?:board|board seat|board seats|board representation)/i,
+    /(?:two of five|5 board|board of directors)/i,
+    /(?:voting rights|voting control)/i,
+  ];
+  
+  // Security terms patterns (A3.5.13 Addendum)
+  const securityPatterns = [
+    /(?:liquidation preference|1x|straight preferred|preferred stock)/i,
+    /(?:common shares|preferred shares|equity)/i,
+    /(?:warrants|options|convertible)/i,
+  ];
+  
+  // Ownership/equity patterns (A3.5.13 Addendum)
+  const ownershipPatterns = [
+    /(?:ownership|equity stake|ownership percentage)/i,
+    /\d+(?:\.\d+)?\s*%\s*(?:ownership|equity|stake)/i,
+  ];
+  
   // Extract numeric values and context
   const numericValue = normalizeAnchorValue(text);
   if (numericValue !== null) {
@@ -1346,12 +1367,65 @@ function extractAnchorFacts(text) {
       anchorType = "funding";
     } else if (revenuePatterns.some((p) => p.test(text))) {
       anchorType = "revenue";
+    } else if (ownershipPatterns.some((p) => p.test(text))) {
+      anchorType = "ownership";
     }
     
     facts.push({
       value: numericValue,
       type: anchorType,
       text: text,
+    });
+  }
+  
+  // Extract non-numeric anchors (A3.5.13 Addendum)
+  // Governance rights
+  if (governancePatterns.some((p) => p.test(text))) {
+    // Extract the specific governance term
+    let governanceTerm = null;
+    for (const pattern of governancePatterns) {
+      const match = text.match(pattern);
+      if (match) {
+        governanceTerm = match[0];
+        break;
+      }
+    }
+    
+    facts.push({
+      value: null, // Non-numeric anchor
+      type: "governance",
+      text: governanceTerm || "governance rights",
+      keyword: governanceTerm,
+    });
+  }
+  
+  // Security terms
+  if (securityPatterns.some((p) => p.test(text))) {
+    let securityTerm = null;
+    for (const pattern of securityPatterns) {
+      const match = text.match(pattern);
+      if (match) {
+        securityTerm = match[0];
+        break;
+      }
+    }
+    
+    facts.push({
+      value: null,
+      type: "security",
+      text: securityTerm || "security terms",
+      keyword: securityTerm,
+    });
+  }
+  
+  // Ownership percentage (non-numeric detection)
+  const ownershipPercentMatch = text.match(/\d+(?:\.\d+)?\s*%\s*(?:ownership|equity|stake)/i);
+  if (ownershipPercentMatch && !numericValue) {
+    facts.push({
+      value: null,
+      type: "ownership",
+      text: ownershipPercentMatch[0],
+      keyword: ownershipPercentMatch[0],
     });
   }
   
@@ -1388,6 +1462,141 @@ function isSemanticallyEquivalent(context1, context2) {
   ];
   
   return semanticMatches.some((match) => match);
+}
+
+// A3.5.13 Addendum: Decompose compound anchor statements and validate each anchor independently
+// 
+// When a statement contains multiple anchor facts (e.g., valuation, security terms, governance rights)
+// bundled into a single sentence, this function:
+// 1. Decomposes the statement into its constituent anchors
+// 2. Validates each anchor independently against the uploaded corpus
+// 3. Returns which anchors are found and which are missing
+//
+// This ensures that:
+// - If one or more anchors are found, the statement is NOT routed to absence language
+// - If all anchors are found (even across different sections), the statement is fully supported
+// - If some anchors are found and others are not, the statement is classified as partially supported
+//   with reasons explicitly naming which elements are supported and which are not
+// - Under no circumstances is a compound anchor statement downgraded to "unsupported" solely
+//   because no single contiguous span contains all anchors simultaneously
+//
+// Returns { anchors: Array<anchor>, allFound: boolean, someFound: boolean, foundAnchors: Array, missingAnchors: Array }
+function decomposeAndValidateCompoundAnchors(statementText, uploadedDocs) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return { anchors: [], allFound: false, someFound: false, foundAnchors: [], missingAnchors: [] };
+  }
+  
+  if (!Array.isArray(uploadedDocs) || uploadedDocs.length === 0) {
+    return { anchors: [], allFound: false, someFound: false, foundAnchors: [], missingAnchors: [] };
+  }
+  
+  // Extract all anchors from statement
+  const anchors = extractAnchorFacts(statementText);
+  
+  if (anchors.length === 0) {
+    return { anchors: [], allFound: false, someFound: false, foundAnchors: [], missingAnchors: [] };
+  }
+  
+  // If only one anchor, not compound - return early
+  if (anchors.length === 1) {
+    return { anchors, allFound: false, someFound: false, foundAnchors: [], missingAnchors: [] };
+  }
+  
+  // Combine corpus text
+  const corpusText = uploadedDocs
+    .map(doc => doc.text || "")
+    .join("\n\n");
+  
+  const foundAnchors = [];
+  const missingAnchors = [];
+  
+  // Validate each anchor independently
+  for (const anchor of anchors) {
+    let found = false;
+    
+    if (anchor.value !== null) {
+      // Numeric anchor - check for value match
+      const corpusNumericValues = extractNumericValues(corpusText);
+      for (const corpusValue of corpusNumericValues) {
+        if (numericValuesMatch(anchor.value, corpusValue)) {
+          // Check context matches anchor type
+          const valuePattern = new RegExp(
+            `\\$?[\\d,]+(?:\\.[\\d]+)?\\s*(?:mm|million|m|billion|b|thousand|k)?`,
+            "gi"
+          );
+          let match;
+          while ((match = valuePattern.exec(corpusText)) !== null) {
+            const matchValue = normalizeAnchorValue(match[0]);
+            if (matchValue && numericValuesMatch(matchValue, anchor.value)) {
+              // Extract context
+              const contextStart = Math.max(0, match.index - 100);
+              const contextEnd = Math.min(corpusText.length, match.index + match[0].length + 100);
+              const context = corpusText.substring(contextStart, contextEnd).toLowerCase();
+              
+              // Check if context matches anchor type
+              let matchesType = false;
+              if (anchor.type === "valuation") {
+                matchesType = /(?:pre-?money|pre money|premoney|post-?money|post money|postmoney|valuation|val)/i.test(context);
+              } else if (anchor.type === "funding") {
+                matchesType = /(?:funding|financing|raised|raise|series|round)/i.test(context);
+              } else if (anchor.type === "revenue") {
+                matchesType = /(?:revenue|sales|income)/i.test(context);
+              } else if (anchor.type === "ownership") {
+                matchesType = /(?:ownership|equity|stake|%)/i.test(context);
+              } else {
+                matchesType = true; // Generic numeric
+              }
+              
+              if (matchesType) {
+                found = true;
+                break;
+              }
+            }
+          }
+          if (found) break;
+        }
+      }
+    } else {
+      // Non-numeric anchor (governance, security, etc.) - check for keyword match
+      const keyword = anchor.keyword || anchor.text;
+      if (keyword) {
+        // Normalize keyword for matching
+        const normalizedKeyword = keyword.toLowerCase().trim();
+        const normalizedCorpus = corpusText.toLowerCase();
+        
+        // Check if keyword appears in corpus
+        if (normalizedCorpus.includes(normalizedKeyword)) {
+          found = true;
+        } else {
+          // Try partial matches for governance/security terms
+          if (anchor.type === "governance") {
+            const governanceKeywords = ["board", "seat", "representation", "voting"];
+            found = governanceKeywords.some(kw => normalizedCorpus.includes(kw));
+          } else if (anchor.type === "security") {
+            const securityKeywords = ["preferred", "common", "liquidation", "preference", "warrant", "option"];
+            found = securityKeywords.some(kw => normalizedCorpus.includes(kw));
+          }
+        }
+      }
+    }
+    
+    if (found) {
+      foundAnchors.push(anchor);
+    } else {
+      missingAnchors.push(anchor);
+    }
+  }
+  
+  const allFound = foundAnchors.length === anchors.length;
+  const someFound = foundAnchors.length > 0;
+  
+  return {
+    anchors,
+    allFound,
+    someFound,
+    foundAnchors,
+    missingAnchors,
+  };
 }
 
 // A3.5.12: Gate absence-language using deterministic corpusSearch
@@ -1711,7 +1920,145 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
     // Check if reasons contain absence claims
     if (!hasAbsenceClaim(reasons)) return stmt; // No absence claim, no action needed
     
-    // A3.5.13: Check for ambiguity first (before corpus search)
+    // A3.5.13 Addendum: Check for compound anchors first
+    const compoundAnchorResult = decomposeAndValidateCompoundAnchors(text, uploadedDocs);
+    
+    // If compound anchors detected, validate each independently
+    if (compoundAnchorResult.anchors.length >= 2) {
+      console.log(`[DIAG] A3.5.13 Addendum: Compound anchor statement detected with ${compoundAnchorResult.anchors.length} anchors`);
+      
+      // If all anchors found → fully supported
+      if (compoundAnchorResult.allFound) {
+        // Replace absence language with support language
+        let updatedReasons = reasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          const lower = reason.toLowerCase();
+          
+          // Remove absence claims
+          if (/not mentioned/i.test(lower) || /not supported/i.test(lower) || /no support/i.test(lower) || 
+              /not found/i.test(lower) || /not stated/i.test(lower)) {
+            return "All anchor facts in this statement are supported by the uploaded sources.";
+          }
+          return reason;
+        });
+        
+        // Remove any remaining absence language
+        updatedReasons = updatedReasons.filter((reason) => {
+          if (typeof reason !== "string") return true;
+          const lower = reason.toLowerCase();
+          return !(
+            /not mentioned/i.test(lower) ||
+            /not specified/i.test(lower) ||
+            /not supported/i.test(lower) ||
+            /no support/i.test(lower) ||
+            /not found/i.test(lower) ||
+            /not stated/i.test(lower) ||
+            /not referenced/i.test(lower) ||
+            /not cited/i.test(lower) ||
+            /not present/i.test(lower) ||
+            /absent/i.test(lower) ||
+            /lacks?/i.test(lower) ||
+            /missing/i.test(lower)
+          );
+        });
+        
+        // If all reasons were removed, add support reason
+        if (updatedReasons.length === 0) {
+          updatedReasons = ["All anchor facts in this statement are supported by the uploaded sources."];
+        }
+        
+        console.log(`[DIAG] A3.5.13 Addendum: All ${compoundAnchorResult.anchors.length} anchors found, replaced absence language`);
+        
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: updatedReasons.slice(0, 4),
+          },
+        };
+      }
+      
+      // If some anchors found → partially supported or ambiguous
+      if (compoundAnchorResult.someFound) {
+        // Build explicit enumeration of supported vs missing anchors
+        const foundAnchorNames = compoundAnchorResult.foundAnchors.map(a => {
+          if (a.type === "valuation") return "valuation";
+          if (a.type === "funding") return "funding amount";
+          if (a.type === "revenue") return "revenue";
+          if (a.type === "ownership") return "ownership percentage";
+          if (a.type === "governance") return a.keyword || "governance rights";
+          if (a.type === "security") return a.keyword || "security terms";
+          return "numeric value";
+        });
+        
+        const missingAnchorNames = compoundAnchorResult.missingAnchors.map(a => {
+          if (a.type === "valuation") return "valuation";
+          if (a.type === "funding") return "funding amount";
+          if (a.type === "revenue") return "revenue";
+          if (a.type === "ownership") return "ownership percentage";
+          if (a.type === "governance") return a.keyword || "governance rights";
+          if (a.type === "security") return a.keyword || "security terms";
+          return "numeric value";
+        });
+        
+        // Replace absence language with explicit partial support language
+        let updatedReasons = [];
+        
+        // Add explicit enumeration
+        if (foundAnchorNames.length > 0 && missingAnchorNames.length > 0) {
+          const foundText = foundAnchorNames.length === 1 
+            ? foundAnchorNames[0] 
+            : foundAnchorNames.slice(0, -1).join(", ") + " and " + foundAnchorNames[foundAnchorNames.length - 1];
+          const missingText = missingAnchorNames.length === 1
+            ? missingAnchorNames[0]
+            : missingAnchorNames.slice(0, -1).join(", ") + " and " + missingAnchorNames[missingAnchorNames.length - 1];
+          
+          updatedReasons.push(
+            `The uploaded sources support ${foundText}, but do not explicitly support ${missingText}.`
+          );
+          updatedReasons.push(
+            "This statement combines multiple anchor facts; some are supported while others are not found in the uploaded sources."
+          );
+        }
+        
+        // Keep non-absence reasons
+        const nonAbsenceReasons = reasons.filter((reason) => {
+          if (typeof reason !== "string") return false;
+          const lower = reason.toLowerCase();
+          return !(
+            /not mentioned/i.test(lower) ||
+            /not specified/i.test(lower) ||
+            /not supported/i.test(lower) ||
+            /no support/i.test(lower) ||
+            /not found/i.test(lower) ||
+            /not stated/i.test(lower) ||
+            /not referenced/i.test(lower) ||
+            /not cited/i.test(lower) ||
+            /not present/i.test(lower) ||
+            /absent/i.test(lower) ||
+            /lacks?/i.test(lower) ||
+            /missing/i.test(lower)
+          );
+        });
+        
+        updatedReasons = [...updatedReasons, ...nonAbsenceReasons].slice(0, 4);
+        
+        console.log(`[DIAG] A3.5.13 Addendum: Partial support - ${foundAnchorNames.length} found, ${missingAnchorNames.length} missing`);
+        
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: updatedReasons,
+          },
+        };
+      }
+      
+      // If no anchors found, continue to standard absence check below
+      console.log(`[DIAG] A3.5.13 Addendum: No anchors found in compound statement, proceeding to standard absence check`);
+    }
+    
+    // A3.5.13: Check for ambiguity (before corpus search)
     const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
     
     // Perform deterministic corpus search (A3.5.12)
