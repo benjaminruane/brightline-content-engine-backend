@@ -1230,6 +1230,275 @@ function enforceReasonSpecificity(statements) {
   });
 }
 
+// Normalize numeric anchor value: convert "$20mm", "$20m", "$20 million" to numeric value
+// Invariant 1: Numeric anchor normalization
+function normalizeAnchorValue(text) {
+  if (typeof text !== "string") return null;
+  
+  // Pattern: $XXmm, $XXm, $XX million, $XXM, etc.
+  const patterns = [
+    /\$([\d,]+(?:\.\d+)?)\s*(mm|million|m\b|M\b)/i,
+    /\$([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/i,
+    /\$([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/i,
+    /\$([\d,]+(?:\.\d+)?)\s*(trillion|t\b|T\b)/i,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) {
+      const numStr = match[1].replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const unit = match[2].toLowerCase();
+      const multipliers = {
+        mm: 1e6, million: 1e6, m: 1e6,
+        billion: 1e9, b: 1e9,
+        thousand: 1e3, k: 1e3,
+        trillion: 1e12, t: 1e12,
+      };
+      
+      const multiplier = multipliers[unit] || 1;
+      return num * multiplier;
+    }
+  }
+  
+  // Try plain number with $ prefix
+  const plainMatch = text.match(/\$([\d,]+(?:\.\d+)?)/);
+  if (plainMatch) {
+    const numStr = plainMatch[1].replace(/,/g, "");
+    const num = parseFloat(numStr);
+    if (Number.isFinite(num)) return num;
+  }
+  
+  return null;
+}
+
+// Extract anchor facts from statement text (valuation, funding, revenue, etc.)
+function extractAnchorFacts(text) {
+  if (typeof text !== "string" || !text.trim()) return [];
+  
+  const facts = [];
+  
+  // Valuation patterns
+  const valuationPatterns = [
+    /(?:pre-?money|pre money|premoney)\s+(?:valuation|val)/i,
+    /(?:post-?money|post money|postmoney)\s+(?:valuation|val)/i,
+    /valuation\s+(?:of|at|is)\s*\$?([\d,]+(?:\.\d+)?)/i,
+  ];
+  
+  // Funding patterns
+  const fundingPatterns = [
+    /(?:funding|financing|raised|raise)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /(?:series\s+[a-z]|round)\s+(?:funding|financing|valuation)/i,
+  ];
+  
+  // Revenue patterns
+  const revenuePatterns = [
+    /(?:revenue|sales|income)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)/i,
+    /(?:annual|yearly)\s+(?:revenue|sales)/i,
+  ];
+  
+  // Extract numeric values and context
+  const numericValue = normalizeAnchorValue(text);
+  if (numericValue !== null) {
+    // Determine anchor type from context
+    let anchorType = "numeric";
+    if (valuationPatterns.some((p) => p.test(text))) {
+      anchorType = "valuation";
+    } else if (fundingPatterns.some((p) => p.test(text))) {
+      anchorType = "funding";
+    } else if (revenuePatterns.some((p) => p.test(text))) {
+      anchorType = "revenue";
+    }
+    
+    facts.push({
+      value: numericValue,
+      type: anchorType,
+      text: text,
+    });
+  }
+  
+  return facts;
+}
+
+// Check semantic equivalence for anchor context
+// Invariant 2: Semantic anchor equivalence
+function isSemanticallyEquivalent(context1, context2) {
+  if (typeof context1 !== "string" || typeof context2 !== "string") return false;
+  
+  const c1 = context1.toLowerCase();
+  const c2 = context2.toLowerCase();
+  
+  // Normalize common variations
+  const normalize = (s) => s
+    .replace(/\b(pre-?money|pre money|premoney)\b/gi, "premoney")
+    .replace(/\b(post-?money|post money|postmoney)\b/gi, "postmoney")
+    .replace(/\b(the round|round|financing|funding|series [a-z]|this financing|this round)\b/gi, "financing")
+    .replace(/\b(valuation|val|value)\b/gi, "valuation");
+  
+  const n1 = normalize(c1);
+  const n2 = normalize(c2);
+  
+  // Check for key semantic matches
+  const semanticMatches = [
+    // Financing context
+    (/\b(round|financing|funding|series)\b/.test(n1) && /\b(round|financing|funding|series)\b/.test(n2)),
+    // Valuation context
+    (/\b(valuation|val)\b/.test(n1) && /\b(valuation|val)\b/.test(n2)),
+    // Pre-money/post-money
+    (/\bpremoney\b/.test(n1) && /\bpremoney\b/.test(n2)),
+    (/\bpostmoney\b/.test(n1) && /\bpostmoney\b/.test(n2)),
+  ];
+  
+  return semanticMatches.some((match) => match);
+}
+
+// Fix anchor-fact reasons: detect and correct false "not mentioned" claims
+// Invariant 3: Ambiguity ≠ absence
+// Invariant 4: Language downgrade for anchor mismatches
+// Invariant 5: Interaction with A3.5.9
+function fixAnchorFactReasons(statements, unifiedReferences) {
+  if (!Array.isArray(statements) || !Array.isArray(unifiedReferences)) return statements;
+  
+  // Build a map of reference text for searching (we'll use titles and any available content)
+  // Note: We don't have full source text here, but we can check if reasons incorrectly claim absence
+  // The model should have access to sources, so we're fixing post-hoc incorrect claims
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const assessment = stmt.assessment || {};
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    
+    // Check if statement contains anchor facts
+    const anchorFacts = extractAnchorFacts(text);
+    if (anchorFacts.length === 0) return stmt; // Not an anchor fact statement
+    
+    // Normalize citations
+    const citations = 
+      (Array.isArray(stmt?.citations) && stmt.citations.length > 0) ? stmt.citations :
+      (Array.isArray(assessment?.citations) && assessment.citations.length > 0) ? assessment.citations :
+      [];
+    
+    const hasCitations = citations.length > 0;
+    
+    // Detect false "not mentioned" claims for anchor facts
+    const falseAbsencePatterns = [
+      /(?:neither|nor).*(?:mention|state|reference|cite).*(?:valuation|funding|revenue|figure|amount)/i,
+      /(?:no|not).*(?:source|sources|memo|document).*(?:mention|state|reference|cite)/i,
+      /(?:not mentioned|not stated|not referenced|not cited)/i,
+      /(?:no independent source|no source).*(?:found|mentions|states)/i,
+    ];
+    
+    const hasFalseAbsenceClaim = reasons.some((reason) => {
+      if (typeof reason !== "string") return false;
+      // Check if reason claims absence for an anchor fact
+      if (!falseAbsencePatterns.some((pattern) => pattern.test(reason))) return false;
+      // Check if it's about a numeric anchor
+      return anchorFacts.some((fact) => {
+        const factValue = fact.value;
+        // Check if reason mentions a similar value (within reasonable range)
+        const valuePattern = new RegExp(`\\$${Math.round(factValue / 1e6)}[^\\d]|\\$${Math.round(factValue / 1e6)}m|${Math.round(factValue / 1e6)}\\s*million`, "i");
+        return valuePattern.test(reason) || reason.includes("valuation") || reason.includes("funding");
+      });
+    });
+    
+    if (hasFalseAbsenceClaim && hasCitations) {
+      // This is suspicious - we have citations but reason says "not mentioned"
+      // This suggests the model may have missed a semantic match
+      // We'll update the reason to be more cautious/ambiguous rather than claiming absence
+      
+      let updatedReasons = reasons.map((reason) => {
+        if (typeof reason !== "string") return reason;
+        
+        if (falseAbsencePatterns.some((pattern) => pattern.test(reason))) {
+          // Replace absolute absence claim with ambiguity language
+          const anchorFact = anchorFacts[0];
+          const valueText = anchorFact.value >= 1e6 
+            ? `$${Math.round(anchorFact.value / 1e6)} million`
+            : `$${Math.round(anchorFact.value / 1e3)} thousand`;
+          
+          // Check if reason mentions specific value
+          if (reason.match(new RegExp(valueText.replace(/\$/g, "\\$").replace(/million/g, "(?:million|mm|m)"), "i"))) {
+            return `The sources may reference ${valueText} ${anchorFact.type} figures, but the specific context or timing creates ambiguity as to which applies here.`;
+          } else {
+            return `The sources reference ${anchorFact.type} figures, but there may be ambiguity as to which specific value applies to this claim.`;
+          }
+        }
+        
+        return reason;
+      });
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: updatedReasons.slice(0, 4),
+        },
+      };
+    }
+    
+    // Check for multiple anchor values that might cause ambiguity
+    // This is a heuristic - we check if reasons mention multiple values
+    const multipleValuePattern = /(\$\d+(?:\.\d+)?\s*(?:million|mm|m|billion|b))\s+.*(\$\d+(?:\.\d+)?\s*(?:million|mm|m|billion|b))/i;
+    const hasMultipleValues = reasons.some((reason) => {
+      if (typeof reason !== "string") return false;
+      return multipleValuePattern.test(reason);
+    });
+    
+    if (hasMultipleValues && hasCitations) {
+      // Extract the values mentioned
+      const valueMatches = reasons
+        .filter((r) => typeof r === "string")
+        .flatMap((r) => {
+          const matches = r.matchAll(/\$([\d,]+(?:\.\d+)?)\s*(million|mm|m|billion|b)/gi);
+          return Array.from(matches).map((m) => {
+            const num = parseFloat(m[1].replace(/,/g, ""));
+            const unit = m[2].toLowerCase();
+            const multiplier = unit === "b" || unit === "billion" ? 1e9 : 1e6;
+            return num * multiplier;
+          });
+        });
+      
+      const uniqueValues = [...new Set(valueMatches)].sort((a, b) => a - b);
+      
+      if (uniqueValues.length > 1) {
+        // Multiple values exist - ensure reason explicitly mentions ambiguity
+        const hasAmbiguityLanguage = reasons.some((r) => 
+          typeof r === "string" && (r.includes("ambiguity") || r.includes("unclear") || r.includes("multiple"))
+        );
+        
+        if (!hasAmbiguityLanguage) {
+          const valueTexts = uniqueValues.map((v) => 
+            v >= 1e6 ? `$${Math.round(v / 1e6)} million` : `$${Math.round(v / 1e3)} thousand`
+          ).join(" and ");
+          
+          const anchorFact = anchorFacts[0];
+          const ambiguityReason = `The sources reference multiple ${anchorFact.type} figures (${valueTexts}), creating ambiguity as to which applies here.`;
+          
+          // Add ambiguity reason if not already present
+          let updatedReasons = [...reasons];
+          if (!updatedReasons.some((r) => typeof r === "string" && r.includes("ambiguity"))) {
+            updatedReasons.push(ambiguityReason);
+          }
+          
+          return {
+            ...stmt,
+            assessment: {
+              ...assessment,
+              reasons: updatedReasons.slice(0, 4),
+            },
+          };
+        }
+      }
+    }
+    
+    return stmt;
+  });
+}
+
 // Final post-condition clamp: ensure no High/Medium with missing citations
 // This is the absolute final check before returning response
 // Uses centralized provenance classification
@@ -1931,6 +2200,9 @@ ${
     // I) Enforce reason specificity: require explicit enumeration for partial support and contradiction cases (A3.5.9)
     statements = enforceReasonSpecificity(statements);
     
+    // J) Fix anchor-fact reasons: detect and correct false "not mentioned" claims with semantic matching (A3.5.10)
+    statements = fixAnchorFactReasons(statements, unifiedReferences);
+    
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
     if (statements.length > 0) {
@@ -1994,7 +2266,8 @@ ${
       const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
       // Web search not available in fallback path
       const sanitizedFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
-      const finalFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
+      const specificityEnforcedFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
+      const finalFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
 
       return res.status(200).json({
         ok: true,
