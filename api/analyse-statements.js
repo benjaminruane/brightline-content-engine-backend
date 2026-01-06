@@ -964,6 +964,33 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
       }
     }
     
+    // A3.5.17 Fix 1: Incomplete numeric/currency ending guardrail
+    if (!shouldReject) {
+      // Ends with "$" or "$<digits>" with no unit/context (e.g., "$18")
+      if (/\$\d+(?:,\d+)*(?:\.\d+)?\s*$/.test(trimmed) && !/[.?!]\s*$/.test(trimmed)) {
+        shouldReject = true;
+        reason = "incomplete_numeric_fragment";
+      }
+      // Ends with "($<digits>" or ends with "("
+      else if (/\(\$\d+(?:,\d+)*(?:\.\d+)?\s*$/.test(trimmed)) {
+        shouldReject = true;
+        reason = "incomplete_numeric_fragment";
+      }
+      // Ends with words that imply continuation: "implying", "approximately", "at", "to", "of" when followed by end-of-string
+      else if (/\b(implying|approximately|at|to|of)\s+(?:an?\s+)?\$\d+(?:,\d+)*(?:\.\d+)?\s*$/i.test(trimmed)) {
+        shouldReject = true;
+        reason = "incomplete_numeric_fragment";
+      }
+      // Ends with punctuation/comma/emdash suggesting continuation (but not sentence-ending punctuation)
+      else if (/[,—–]\s*$/.test(trimmed) && !/[.?!]\s*$/.test(trimmed)) {
+        // Only reject if it ends with a currency/numeric pattern before the comma/emdash
+        if (/\$\d+(?:,\d+)*(?:\.\d+)?\s*[,—–]\s*$/.test(trimmed)) {
+          shouldReject = true;
+          reason = "incomplete_numeric_fragment";
+        }
+      }
+    }
+    
     // 7) Mid-sentence starts: begins with fragment continuation words
     if (!shouldReject) {
       const fragmentStartPatterns = [
@@ -1033,6 +1060,128 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
       accepted.push(candidate);
     }
   }
+  
+  // A3.5.17 Fix 2: Recombine adjacent fragments before applying fallbacks
+  // Try to merge incomplete_numeric_fragment candidates with next adjacent candidate from same source
+  const recombinedCandidates = [];
+  const recombinedRejected = [];
+  const recombineSamples = [];
+  let recombineCount = 0;
+  const incompleteNumericRejects = [];
+  const recombinedOriginalIndices = new Set(); // Track which rejected indices were recombined
+  
+  // Find all rejected candidates with incomplete_numeric_fragment
+  for (let i = 0; i < rejected.length; i++) {
+    if (rejectionReasons[i] === "incomplete_numeric_fragment") {
+      incompleteNumericRejects.push({
+        candidate: rejected[i],
+        index: rejectedIndices[i],
+        originalIndex: i
+      });
+    }
+  }
+  
+  // Try to recombine each incomplete_numeric_fragment with next candidate
+  for (const rejectInfo of incompleteNumericRejects) {
+    const rejectedCandidate = rejectInfo.candidate;
+    const rejectedIndex = rejectInfo.index;
+    const nextCandidateIndex = rejectedIndex + 1;
+    
+    // Check if there's a next candidate in the original list
+    if (nextCandidateIndex < candidates.length) {
+      const nextCandidate = candidates[nextCandidateIndex];
+      
+      // Check if both candidates come from the same unsplit block
+      const rejectedUnsplit = candidateToUnsplitBlock.get(rejectedCandidate);
+      const nextUnsplit = candidateToUnsplitBlock.get(nextCandidate);
+      
+      if (rejectedUnsplit && nextUnsplit && rejectedUnsplit === nextUnsplit) {
+        // Try merging
+        const merged = (typeof rejectedCandidate === "string" ? rejectedCandidate.trim() : "") + " " + 
+                       (typeof nextCandidate === "string" ? nextCandidate.trim() : "");
+        const mergedTrimmed = merged.trim();
+        
+        // Re-validate the merged candidate
+        let isValid = true;
+        if (mergedTrimmed.length < 10) {
+          isValid = false;
+        } else {
+          // Quick validation: check for balanced brackets and complete ending
+          const openParens = (mergedTrimmed.match(/\(/g) || []).length;
+          const closeParens = (mergedTrimmed.match(/\)/g) || []).length;
+          const hasCompleteEnding = /[.?!]\s*$/.test(mergedTrimmed);
+          const stillIncomplete = /\$\d+(?:,\d+)*(?:\.\d+)?\s*$/.test(mergedTrimmed) && !hasCompleteEnding;
+          
+          if (openParens !== closeParens || stillIncomplete) {
+            isValid = false;
+          }
+        }
+        
+        if (isValid) {
+          // Merge is valid, use it instead of rejecting
+          recombinedCandidates.push(mergedTrimmed);
+          recombinedOriginalIndices.add(rejectInfo.originalIndex);
+          recombineCount++;
+          
+          if (recombineSamples.length < 3) {
+            const beforeA = (typeof rejectedCandidate === "string" ? rejectedCandidate : "").substring(0, 40) + "...";
+            const beforeB = (typeof nextCandidate === "string" ? nextCandidate : "").substring(0, 40) + "...";
+            const after = mergedTrimmed.substring(0, 60) + "...";
+            recombineSamples.push({ beforeA, beforeB, after });
+          }
+          
+          // Also need to remove nextCandidate from accepted if it was accepted
+          // (it will be part of the merged candidate now)
+          const nextCandidateInAccepted = accepted.indexOf(nextCandidate);
+          if (nextCandidateInAccepted >= 0) {
+            accepted.splice(nextCandidateInAccepted, 1);
+          }
+          
+          // Remove from rejected list (we'll skip it in fallback loop)
+          continue;
+        }
+      }
+    }
+    
+    // Couldn't recombine, keep in rejected list
+    recombinedRejected.push(rejectInfo);
+  }
+  
+  // Add recombined candidates to accepted list (keep originally accepted ones)
+  accepted.push(...recombinedCandidates);
+  
+  // Log recombine statistics
+  if (recombineCount > 0) {
+    console.log(`[DIAG][SEG_RECOMBINE] merges=${recombineCount}`);
+    if (recombineSamples.length > 0) {
+      console.log(`[DIAG][SEG_RECOMBINE] samples=${JSON.stringify(recombineSamples)}`);
+    }
+  }
+  
+  // Filter rejected list to exclude recombined ones
+  const stillRejected = [];
+  const stillRejectedIndices = [];
+  const stillRejectionReasons = [];
+  const stillRejectedWithReasons = [];
+  
+  for (let i = 0; i < rejected.length; i++) {
+    if (!recombinedOriginalIndices.has(i)) {
+      stillRejected.push(rejected[i]);
+      stillRejectedIndices.push(rejectedIndices[i]);
+      stillRejectionReasons.push(rejectionReasons[i]);
+      stillRejectedWithReasons.push(rejectedWithReasons[i]);
+    }
+  }
+  
+  // Update rejected arrays
+  rejected.length = 0;
+  rejected.push(...stillRejected);
+  rejectedIndices.length = 0;
+  rejectedIndices.push(...stillRejectedIndices);
+  rejectionReasons.length = 0;
+  rejectionReasons.push(...stillRejectionReasons);
+  rejectedWithReasons.length = 0;
+  rejectedWithReasons.push(...stillRejectedWithReasons);
   
   // Apply fallback: replace rejected candidates with their fallback sentences
   // Fix 2: Ensure fallback happens for all rejected candidates
@@ -1292,11 +1441,14 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
   }
   console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
   
-  // Fix 3: Return with counts for quality computation
+  // A3.5.17 Fix 2 & 3: Return with counts including incomplete_numeric_fragment and recombined counts
+  const incompleteNumericFragmentCount = rejectionReasons.filter(r => r === "incomplete_numeric_fragment").length;
   return { 
     candidates: finalCandidates, 
     rejectedCount: rejected.length, 
-    fallbackCount: fallbackCandidates.length 
+    fallbackCount: fallbackCandidates.length,
+    incompleteNumericFragmentCount,
+    recombinedCount: recombineCount
   };
 }
 
@@ -1340,16 +1492,33 @@ function filterWebSearchResults(rawResults, draftText) {
     let shouldReject = false;
     let reason = null;
     
-    // Reject if domain is unrelated (dating, generic portals, feeds)
-    const unrelatedDomains = [
-      "dating", "tabor.ru", "generic", "portal", "feed", "youtube.com/feed",
-      "google.com/maps", "maps.google", "facebook.com/feed"
+    // A3.5.17 Fix 4: Reject calculator/tool domains (blacklist)
+    const blacklistedDomains = [
+      "omnicalculator.com",
+      "calculator.net",
+      "calculatorsoup.com",
+      "rapidtables.com"
     ];
-    for (const domain of unrelatedDomains) {
+    for (const domain of blacklistedDomains) {
       if (urlLower.includes(domain)) {
         shouldReject = true;
-        reason = "unrelated_domain";
+        reason = "calculator_domain";
         break;
+      }
+    }
+    
+    // Reject if domain is unrelated (dating, generic portals, feeds)
+    if (!shouldReject) {
+      const unrelatedDomains = [
+        "dating", "tabor.ru", "generic", "portal", "feed", "youtube.com/feed",
+        "google.com/maps", "maps.google", "facebook.com/feed"
+      ];
+      for (const domain of unrelatedDomains) {
+        if (urlLower.includes(domain)) {
+          shouldReject = true;
+          reason = "unrelated_domain";
+          break;
+        }
       }
     }
     
@@ -3727,17 +3896,25 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
 
 // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
 // Fix 3: Accept rejected/fallback counts to accurately reflect quality
-function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0) {
+function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0) {
   if (!Array.isArray(statements) || statements.length === 0) {
     return "failed";
   }
   
   let hasTruncation = false;
   let hasUnbalancedParens = false;
+  let hasIncompleteNumeric = false;
   
   for (const stmt of statements) {
     const text = typeof stmt.text === "string" ? stmt.text : "";
     if (!text) continue;
+    
+    // A3.5.17 Fix 3: Check for incomplete numeric fragments in final output
+    if (/\$\d+(?:,\d+)*(?:\.\d+)?\s*$/.test(text) && !/[.?!]\s*$/.test(text)) {
+      hasIncompleteNumeric = true;
+    } else if (/\b(implying|approximately|at|to|of)\s+(?:an?\s+)?\$\d+(?:,\d+)*(?:\.\d+)?\s*$/i.test(text)) {
+      hasIncompleteNumeric = true;
+    }
     
     // Fix 4: Use same truncation detection as SEG_GUARD
     // Check for mid-word end (truncation) - STRICT: only flag if strong evidence
@@ -3774,17 +3951,20 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   }
   
   // Fix 3: Use actual rejected/fallback counts from SEG_GUARD
+  // A3.5.17 Fix 3: Include incomplete_numeric_fragment and recombined counts
   const reasons = [];
   if (hasTruncation) reasons.push("truncation");
   if (hasUnbalancedParens) reasons.push("unbalanced_parens");
   if (rejectedCount > 0) reasons.push(`rejected_candidates=${rejectedCount}`);
   if (fallbackCount > 0) reasons.push(`fallback=${fallbackCount}`);
+  if (incompleteNumericFragmentCount > 0) reasons.push(`incomplete_numeric_fragments=${incompleteNumericFragmentCount}`);
+  if (recombinedCount > 0) reasons.push(`recombined_fragments=${recombinedCount}`);
   
-  // Fix 3: Quality must degrade if candidates were rejected
+  // A3.5.17 Fix 3: Quality must degrade if incomplete_numeric_fragment was repaired
   let quality = "ok";
-  if (hasTruncation || hasUnbalancedParens) {
+  if (hasTruncation || hasUnbalancedParens || hasIncompleteNumeric) {
     quality = "failed";
-  } else if (rejectedCount > 0 || fallbackCount > 0) {
+  } else if (rejectedCount > 0 || fallbackCount > 0 || incompleteNumericFragmentCount > 0 || recombinedCount > 0) {
     quality = "degraded";
   }
   
@@ -4758,8 +4938,8 @@ ${
     }
     
     // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
-    // Fix 3: Pass rejected/fallback counts for accurate quality assessment
-    extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount);
+    // A3.5.17 Fix 3: Pass incomplete_numeric_fragment and recombined counts
+    extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount);
     
     // DIAGNOSTIC: Log final summary
     console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
