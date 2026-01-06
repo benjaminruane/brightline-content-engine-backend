@@ -674,6 +674,168 @@ function extractDeterministicStatementCandidates(draftText) {
   return cappedCandidates;
 }
 
+// A3.5.14 Part A: Filter candidate statements for quality (extraction stability)
+// Rejects candidates that are truncated fragments, mid-sentence starts, or too-short anchors
+function filterCandidateQuality(candidates, rawSentences) {
+  if (!Array.isArray(candidates) || candidates.length === 0) return candidates;
+  
+  const accepted = [];
+  const rejected = [];
+  const rejectionReasons = [];
+  
+  // Build a map of raw sentences for context checking
+  const rawSentenceMap = new Map();
+  if (Array.isArray(rawSentences)) {
+    rawSentences.forEach((s, idx) => {
+      if (typeof s === "string" && s.trim().length > 0) {
+        rawSentenceMap.set(idx, s.trim());
+      }
+    });
+  }
+  
+  for (const candidate of candidates) {
+    if (typeof candidate !== "string" || candidate.trim().length === 0) {
+      rejected.push(candidate);
+      rejectionReasons.push("empty");
+      continue;
+    }
+    
+    const trimmed = candidate.trim();
+    let shouldReject = false;
+    let reason = null;
+    
+    // 1) Truncation / fragment indicators
+    // Ends with "(" or unfinished numeric fragment like "($18" or ends with "approximately" without closing punctuation
+    if (trimmed.endsWith("(")) {
+      shouldReject = true;
+      reason = "ends_with_open_paren";
+    } else if (/\(\$[\d,]+(?:\.\d+)?\s*$/.test(trimmed)) {
+      shouldReject = true;
+      reason = "unfinished_numeric_fragment";
+    } else if (/approximately\s*$/i.test(trimmed) && !/[.?!]/.test(trimmed)) {
+      shouldReject = true;
+      reason = "ends_with_approximately";
+    }
+    
+    // Contains unmatched parentheses count
+    if (!shouldReject) {
+      const openParens = (trimmed.match(/\(/g) || []).length;
+      const closeParens = (trimmed.match(/\)/g) || []).length;
+      if (openParens !== closeParens) {
+        shouldReject = true;
+        reason = "unmatched_parentheses";
+      }
+    }
+    
+    // 2) Mid-sentence starts
+    if (!shouldReject) {
+      // Begins with lowercase letter AND previous raw sentence did not end (detect prior split)
+      const firstChar = trimmed[0];
+      if (firstChar && firstChar === firstChar.toLowerCase() && /[a-z]/.test(firstChar)) {
+        // Check if this looks like a continuation from a previous sentence
+        // This is a heuristic - if it starts lowercase and doesn't start with a proper noun indicator, likely mid-sentence
+        const startsWithProperNoun = /^[A-Z]/.test(trimmed);
+        if (!startsWithProperNoun) {
+          // Check if previous sentence in rawSentences ended properly
+          let foundInRaw = false;
+          for (const rawSentence of rawSentenceMap.values()) {
+            if (rawSentence.includes(trimmed) || trimmed.includes(rawSentence)) {
+              foundInRaw = true;
+              // Check if the raw sentence ended properly
+              if (/[.?!]\s*$/.test(rawSentence)) {
+                // Raw sentence ended properly, so this might be OK
+                break;
+              } else {
+                // Raw sentence didn't end, this is likely a mid-sentence start
+                shouldReject = true;
+                reason = "mid_sentence_start_lowercase";
+                break;
+              }
+            }
+          }
+          // If not found in raw sentences at all, it's suspicious
+          if (!foundInRaw && !/[.?!]\s*$/.test(trimmed)) {
+            shouldReject = true;
+            reason = "mid_sentence_start_not_in_raw";
+          }
+        }
+      }
+      
+      // Begins with ")" or "," or "and " / "with " / "targeting " (fragment continuation)
+      if (!shouldReject) {
+        const fragmentStartPatterns = [
+          /^\)/,
+          /^,\s*/,
+          /^and\s+/i,
+          /^with\s+/i,
+          /^targeting\s+/i,
+        ];
+        for (const pattern of fragmentStartPatterns) {
+          if (pattern.test(trimmed)) {
+            shouldReject = true;
+            reason = "fragment_continuation";
+            break;
+          }
+        }
+      }
+    }
+    
+    // 3) Too-short anchors
+    // Length < 40 chars for WORLD_FACT candidates unless purely numeric anchor
+    if (!shouldReject) {
+      // Check if this looks like a WORLD_FACT (has anchor indicators)
+      const hasAnchorIndicators = /(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?|\b\d+(?:\.\d+)?\s*%|\b(?:valuation|funding|revenue|ownership|equity|pre-money|post-money|board|secondary)\b)/i.test(trimmed);
+      if (hasAnchorIndicators && trimmed.length < 40) {
+        // Check if it's purely numeric anchor (e.g., "$25mm pre-money valuation.")
+        const isPurelyNumericAnchor = /^[\s\w$%.,-]*\$?[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?[\s\w%.,-]*[.?!]?\s*$/i.test(trimmed);
+        if (!isPurelyNumericAnchor) {
+          shouldReject = true;
+          reason = "too_short_anchor";
+        }
+      }
+    }
+    
+    // 4) Require sentence closure
+    // Candidate must end with one of [.?!] OR must be explicitly "anchor style"
+    if (!shouldReject) {
+      const endsWithPunctuation = /[.?!]\s*$/.test(trimmed);
+      const isAnchorStyle = /(?:pre-money|post-money|valuation|ownership|board|secondary)\s+(?:is|was|are|were)\s+\$?[\d,]+(?:\.\d+)?/i.test(trimmed);
+      if (!endsWithPunctuation && !isAnchorStyle) {
+        shouldReject = true;
+        reason = "missing_sentence_closure";
+      }
+    }
+    
+    if (shouldReject) {
+      rejected.push(candidate);
+      rejectionReasons.push(reason);
+    } else {
+      accepted.push(candidate);
+    }
+  }
+  
+  // If filtering reduces candidate count too much, fall back to original unsplit sentences
+  const MIN_ACCEPTABLE_COUNT = Math.max(1, Math.floor(candidates.length * 0.3)); // At least 30% or 1
+  if (accepted.length < MIN_ACCEPTABLE_COUNT && Array.isArray(rawSentences) && rawSentences.length > 0) {
+    console.log(`[DIAG] extractionStability: filtering reduced count too much (${candidates.length} -> ${accepted.length}), falling back to original unsplit sentences`);
+    // Return original unsplit sentences that are long enough
+    const fallbackCandidates = rawSentences
+      .filter(s => typeof s === "string" && s.trim().length >= 40)
+      .slice(0, 25); // Cap at 25 like original
+    console.log(`[DIAG] extractionStability: fallback count=${fallbackCandidates.length}`);
+    return fallbackCandidates;
+  }
+  
+  // Log diagnostics
+  const rejectionSummary = {};
+  rejectionReasons.forEach(r => {
+    rejectionSummary[r] = (rejectionSummary[r] || 0) + 1;
+  });
+  console.log(`[DIAG] extractionStability: acceptedCount=${accepted.length}, rejectedCount=${rejected.length}, rejectionReasons=${JSON.stringify(rejectionSummary)}`);
+  
+  return accepted;
+}
+
 // Fallback extraction when model fails
 function fallbackExtractAtomicStatements(draftText) {
   if (typeof draftText !== "string" || !draftText.trim()) return [];
@@ -2426,14 +2588,33 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     // This ensures corpusSearch determines support before any absence language is considered
     // Missing citations MUST NOT trigger absence language without corpusSearch
     // A3.5.13b: When corpusSearch finds support, inject citations and build evidence
-    if (isAnchor && uploadedSourcesCount > 0) {
-      // Run corpusSearch FIRST for anchor facts (before checking for absence claims)
-      const searchResult = corpusSearch(text, uploadedDocs);
+    // A3.5.14 Part B: Also check WORLD_FACT statements with empty citations
+    const existingCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const hasEmptyCitations = existingCitations.length === 0;
+    
+    // Check if this is a WORLD_FACT statement or contains anchor numbers
+    const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
+    const isWorldFact = classification.category === "WORLD_FACT";
+    
+    // Check for anchor number indicators: $, %, "pre-money", "ownership", "secondary", "board seats", "preferred"
+    const hasAnchorNumbers = /(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?|\b\d+(?:\.\d+)?\s*%|\b(pre-money|post-money|ownership|secondary|board\s+seats?|preferred)\b)/i.test(text);
+    
+    // A3.5.14 Part B: Check for WORLD_FACT or anchor-number statements with empty citations
+    const shouldCheckForMemoCitation = (isAnchor || (isWorldFact && hasAnchorNumbers)) && hasEmptyCitations && uploadedSourcesCount > 0;
+    
+    let searchResult = null;
+    if (shouldCheckForMemoCitation) {
+      // Run corpusSearch FIRST (before checking for absence claims)
+      searchResult = corpusSearch(text, uploadedDocs);
       
-      if (searchResult.found) {
-        // A3.5.13b: corpusSearch found matches - inject citations and build evidence
+      // A3.5.14 Part B: If corpusSearch returns FOUND with number match and keyword match
+      if (searchResult.found && searchResult.debug) {
+        const hasNumberMatch = Array.isArray(searchResult.debug.normalizedNumbersFound) && searchResult.debug.normalizedNumbersFound.length > 0;
+        const hasKeywordMatch = Array.isArray(searchResult.debug.keywordsMatched) && searchResult.debug.keywordsMatched.length > 0;
+        
+        if (hasNumberMatch || hasKeywordMatch) {
+        // A3.5.14 Part B: corpusSearch found matches - inject citations and build evidence
         // Invariant 1: Support Must Attach a Source
-        const existingCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
         const existingTopLevelCitations = Array.isArray(stmt.citations) ? stmt.citations : [];
         
         // Find uploaded memo reference ID
@@ -2509,23 +2690,72 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
           );
         });
         
-        // Replace with support-accurate reason
-        const anchorFacts = extractAnchorFacts(text);
-        const anchorType = anchorFacts.length > 0 ? anchorFacts[0].type : null;
-        let anchorTypeLabel = "anchor fact";
-        if (anchorType === "valuation") anchorTypeLabel = "valuation figure";
-        else if (anchorType === "funding") anchorTypeLabel = "funding amount";
-        else if (anchorType === "revenue") anchorTypeLabel = "revenue figure";
-        else if (anchorType === "ownership") anchorTypeLabel = "ownership percentage";
-        else if (anchorType === "governance") anchorTypeLabel = "governance rights";
-        else if (anchorType === "security") anchorTypeLabel = "security terms";
+        // A3.5.14 Part B: Replace absence reasons with compound anchor template if applicable
+        // Check if statement expresses a range or has multiple figures
+        const hasRange = /(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)\s*[-–—]\s*(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)/i.test(text);
         
-        const supportReason = `The uploaded memo contains the cited ${anchorTypeLabel}.`;
-        updatedReasons = [supportReason, ...updatedReasons].slice(0, 4);
+        // A3.5.14 Part C: Check for ambiguity (multiple figures)
+        const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
+        const isAmbiguous = ambiguityResult.isAmbiguous && ambiguityResult.values.length >= 2;
+        
+        // Initialize score/label variables (may be updated in ambiguity case)
+        let updatedScore = assessment.reliabilityScore;
+        let updatedLabel = assessment.reliabilityLabel;
+        
+        if (isAmbiguous || hasRange) {
+          // A3.5.14 Part C: Use AMBIGUOUS_WITHIN_SOURCES template
+          const anchorTypeLabel = ambiguityResult.anchorType === "valuation" 
+            ? "valuation figure"
+            : ambiguityResult.anchorType === "funding"
+            ? "funding amount"
+            : ambiguityResult.anchorType === "revenue"
+            ? "revenue figure"
+            : "numeric value";
+          
+          const valueList = ambiguityResult.values
+            .slice(0, 2)
+            .map(v => v.humanForm)
+            .join(" and ");
+          
+          const ambiguityReason = `The uploaded memo references more than one ${anchorTypeLabel} (e.g., ${valueList}). This statement's ${ambiguityResult.anchorType || "value"} should be clarified to match the intended figure.`;
+          updatedReasons = [ambiguityReason, ...updatedReasons].slice(0, 4);
+          
+          // A3.5.14 Part C: Cap reliabilityLabel at Medium unless statement explicitly matches one figure exactly
+          
+          // Check if statement explicitly matches one figure exactly (no range)
+          const statementNumericValues = extractNumericValues(text);
+          const exactMatch = statementNumericValues.length === 1 && 
+            ambiguityResult.values.some(v => numericValuesMatch(v.value, statementNumericValues[0]));
+          
+          if (!exactMatch) {
+            // Cap at Medium
+            if (updatedScore > 60) {
+              updatedScore = Math.min(updatedScore, 60);
+            }
+            if (updatedLabel === "High") {
+              updatedLabel = "Medium";
+            }
+          }
+        } else {
+          // A3.5.14 Part B: Use compound anchor template for non-ambiguous cases
+          const anchorFacts = extractAnchorFacts(text);
+          const anchorType = anchorFacts.length > 0 ? anchorFacts[0].type : null;
+          let anchorTypeLabel = "anchor fact";
+          if (anchorType === "valuation") anchorTypeLabel = "valuation figure";
+          else if (anchorType === "funding") anchorTypeLabel = "funding amount";
+          else if (anchorType === "revenue") anchorTypeLabel = "revenue figure";
+          else if (anchorType === "ownership") anchorTypeLabel = "ownership percentage";
+          else if (anchorType === "governance") anchorTypeLabel = "governance rights";
+          else if (anchorType === "security") anchorTypeLabel = "security terms";
+          
+          // A3.5.14 Part B: Use compound anchor template
+          const supportReason = `The uploaded memo contains the cited term(s) / figure(s), but wording in this statement combines multiple deal terms; interpret with care.`;
+          updatedReasons = [supportReason, ...updatedReasons].slice(0, 4);
+        }
         
         // Diagnostics
         const absenceReasonsRemoved = reasons.length - (updatedReasons.length - 1); // -1 because we added support reason
-        console.log(`[DIAG] A3.5.13b: corpusSearch found support, injected citations`);
+        console.log(`[DIAG] A3.5.14 Part B: corpusSearch found support, injected citations for WORLD_FACT/anchor statement`);
         
         // Build updated statement with citations, evidence, and reasons
         // Invariant 4: No Later Overwrite - ensure this persists
@@ -2538,6 +2768,8 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
             citations: injectedCitations, // Assessment citations (Invariant 1)
             evidence: evidence, // Assessment evidence (backward compatibility)
             reasons: updatedReasons, // Updated reasons (Invariant 3)
+            reliabilityScore: updatedScore !== undefined ? updatedScore : assessment.reliabilityScore,
+            reliabilityLabel: updatedLabel !== undefined ? updatedLabel : assessment.reliabilityLabel,
           },
         };
       }
@@ -2551,8 +2783,10 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     // A3.5.13: Check for ambiguity (before corpus search)
     const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
     
-    // Perform deterministic corpus search (A3.5.12)
-    const searchResult = corpusSearch(text, uploadedDocs);
+    // Perform deterministic corpus search (A3.5.12) - only if not already done
+    if (!searchResult) {
+      searchResult = corpusSearch(text, uploadedDocs);
+    }
     
     if (searchResult.found) {
       // Corpus search found matches - MUST NOT state absence (Invariant 2)
@@ -3364,8 +3598,17 @@ export default async function handler(req, res) {
 
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
-    const extractionCandidates = extractDeterministicStatementCandidates(draftText);
-    console.log(`[DIAG] A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call`);
+    const rawExtractionCandidates = extractDeterministicStatementCandidates(draftText);
+    
+    // A3.5.14 Part A: Filter candidates for quality (extraction stability)
+    // Get raw sentences for context (we need to pass them to the filter)
+    const sentenceBoundaryPattern = /[.!?\n]+/;
+    const rawSentences = draftText
+      .split(sentenceBoundaryPattern)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    const extractionCandidates = filterCandidateQuality(rawExtractionCandidates, rawSentences);
+    console.log(`[DIAG] A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates)`);
     
     // Build candidate statements block for prompt
     const candidatesBlock = extractionCandidates.length > 0
