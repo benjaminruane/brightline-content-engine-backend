@@ -678,7 +678,9 @@ function extractDeterministicStatementCandidates(draftText) {
 // Rejects candidates that are truncated fragments, mid-sentence starts, or too-short anchors
 // Implements strict validation with fallback to full sentences
 function filterCandidateQuality(candidates, rawSentences) {
-  if (!Array.isArray(candidates) || candidates.length === 0) return candidates;
+  if (!Array.isArray(candidates) || candidates.length === 0) {
+    return { candidates: [], rejectedCount: 0, fallbackCount: 0 };
+  }
   
   const accepted = [];
   const rejected = [];
@@ -700,23 +702,52 @@ function filterCandidateQuality(candidates, rawSentences) {
   }
   
   // Helper: Find nearest full sentence for fallback
-  function findFallbackSentence(rejectedText) {
+  // Fix 1: Use position-based lookup to ensure fallback is always available
+  function findFallbackSentence(rejectedText, candidateIndex) {
     if (!rejectedText || typeof rejectedText !== "string") return null;
     const trimmed = rejectedText.trim();
     
-    // Try to find containing sentence
+    // First try: find containing sentence (works for most cases)
     for (const rawSentence of rawSentenceList) {
       if (rawSentence.includes(trimmed) && /[.?!]\s*$/.test(rawSentence)) {
         return rawSentence;
       }
     }
     
-    // Try to find sentence that contains key words
-    const keyWords = trimmed.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
-    if (keyWords.length > 0) {
+    // Fix 1: Position-based fallback - use nearest raw sentence by index
+    // This ensures we always have a fallback even for malformed candidates
+    if (rawSentenceList.length > 0) {
+      // Use candidate index to find nearest raw sentence
+      const targetIndex = Math.min(candidateIndex, rawSentenceList.length - 1);
+      const nearestSentence = rawSentenceList[targetIndex];
+      
+      // Ensure it's a valid full sentence
+      if (nearestSentence && /[.?!]\s*$/.test(nearestSentence) && nearestSentence.length >= 45) {
+        return nearestSentence;
+      }
+      
+      // If nearest doesn't work, try adjacent sentences
+      for (let offset = 1; offset < rawSentenceList.length; offset++) {
+        const idx1 = targetIndex + offset;
+        const idx2 = targetIndex - offset;
+        
+        if (idx1 < rawSentenceList.length) {
+          const candidate = rawSentenceList[idx1];
+          if (candidate && /[.?!]\s*$/.test(candidate) && candidate.length >= 45) {
+            return candidate;
+          }
+        }
+        if (idx2 >= 0) {
+          const candidate = rawSentenceList[idx2];
+          if (candidate && /[.?!]\s*$/.test(candidate) && candidate.length >= 45) {
+            return candidate;
+          }
+        }
+      }
+      
+      // Last resort: any full sentence
       for (const rawSentence of rawSentenceList) {
-        const hasKeyWords = keyWords.some(kw => rawSentence.toLowerCase().includes(kw.toLowerCase()));
-        if (hasKeyWords && /[.?!]\s*$/.test(rawSentence) && rawSentence.length >= 45) {
+        if (/[.?!]\s*$/.test(rawSentence) && rawSentence.length >= 45) {
           return rawSentence;
         }
       }
@@ -725,7 +756,8 @@ function filterCandidateQuality(candidates, rawSentences) {
     return null;
   }
   
-  for (const candidate of candidates) {
+  for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
+    const candidate = candidates[candidateIndex];
     if (typeof candidate !== "string" || candidate.trim().length === 0) {
       rejected.push(candidate);
       rejectionReasons.push("empty");
@@ -850,10 +882,16 @@ function filterCandidateQuality(candidates, rawSentences) {
         textPreview: trimmed.substring(0, 50) + (trimmed.length > 50 ? "..." : "")
       });
       
-      // Find fallback sentence
-      const fallback = findFallbackSentence(trimmed);
+      // Fix 1: Find fallback sentence using position-based lookup
+      const fallback = findFallbackSentence(trimmed, candidateIndex);
       if (fallback) {
         fallbackMap.set(candidate, fallback);
+      } else {
+        // Fallback should always be available - use first valid raw sentence as last resort
+        const lastResortFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45);
+        if (lastResortFallback) {
+          fallbackMap.set(candidate, lastResortFallback);
+        }
       }
     } else {
       accepted.push(candidate);
@@ -929,7 +967,12 @@ function filterCandidateQuality(candidates, rawSentences) {
     console.log(`[DIAG][SEG_GUARD] sampleRejected=${JSON.stringify(rejectedWithReasons.slice(0, 3))}`);
     console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
     
-    return unsplitFallback;
+    // Fix 3: Return with counts for quality computation
+    return { 
+      candidates: unsplitFallback, 
+      rejectedCount: rejected.length, 
+      fallbackCount: unsplitFallback.length 
+    };
   }
   
   // Compute stable hash (simple hash for determinism check)
@@ -956,12 +999,24 @@ function filterCandidateQuality(candidates, rawSentences) {
   }
   console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
   
-  // Fix 2: Ensure fallback count is logged correctly
-  if (rejected.length > 0 && fallbackCandidates.length === 0) {
-    console.log(`[DIAG][SEG_GUARD] WARNING: ${rejected.length} candidates rejected but no fallback found`);
+  // Fix 1: Ensure fallback always happens - if rejected > 0, fallback should be > 0
+  const actualFallbackCount = fallbackCandidates.length;
+  if (rejected.length > 0 && actualFallbackCount === 0) {
+    // Last resort: use any valid raw sentence
+    const lastResortFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45);
+    if (lastResortFallback && !finalCandidates.includes(lastResortFallback)) {
+      finalCandidates.push(lastResortFallback);
+      fallbackCandidates.push(lastResortFallback);
+      console.log(`[DIAG][SEG_GUARD] lastResortFallback applied: added 1 fallback sentence`);
+    }
   }
   
-  return finalCandidates;
+  // Fix 3: Return with counts for quality computation
+  return { 
+    candidates: finalCandidates, 
+    rejectedCount: rejected.length, 
+    fallbackCount: fallbackCandidates.length 
+  };
 }
 
 // A3.5.14b Patch 4: Web Reference Hygiene - filter raw search results BEFORE reference construction
@@ -3011,25 +3066,9 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
           updatedReasons = [supportReason, ...updatedReasons].slice(0, 4);
         }
         
-        // Diagnostics
-        const absenceReasonsRemoved = reasons.length - (updatedReasons.length - 1); // -1 because we added support reason
-        console.log(`[DIAG] A3.5.14 Part B: corpusSearch found support, injected citations for WORLD_FACT/anchor statement`);
-        
-        // Build updated statement with citations, evidence, and reasons
-        // Invariant 4: No Later Overwrite - ensure this persists
-        return {
-          ...stmt,
-          citations: injectedCitations, // Top-level citations (Invariant 1)
-          evidence: evidence, // Top-level evidence (Invariant 2)
-          assessment: {
-            ...assessment,
-            citations: injectedCitations, // Assessment citations (Invariant 1)
-            evidence: evidence, // Assessment evidence (backward compatibility)
-            reasons: updatedReasons, // Updated reasons (Invariant 3)
-            reliabilityScore: updatedScore !== undefined ? updatedScore : assessment.reliabilityScore,
-            reliabilityLabel: updatedLabel !== undefined ? updatedLabel : assessment.reliabilityLabel,
-          },
-        };
+        // Fix 2: Remove old injection code - let enforceAnchorCitationsAndAmbiguity() handle it as LAST mutation step
+        // This code is kept for backward compatibility but injection is deferred to enforceAnchorCitationsAndAmbiguity()
+        // Continue to standard absence/ambiguity check below
       }
       // If corpusSearch found nothing, continue to standard absence/ambiguity check below
     }
@@ -3267,12 +3306,15 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
     // Check for anchor terms: Series A|pre-money|valuation|fully diluted|ownership|secondary purchase|%
     const hasAnchorTerms = /(series\s+[a-z]|pre-money|post-money|valuation|fully\s+diluted|ownership|secondary\s+purchase|%)/i.test(text);
     
-    // Check if should enforce
+    // Fix 2: Count ALL anchor-heavy statements for accurate summary (even if they already have citations)
+    if (isWorldFact || hasAnchorTerms) {
+      checked++;
+    }
+    
+    // Check if should enforce (only if empty citations)
     const shouldEnforce = (isWorldFact || hasAnchorTerms) && hasEmptyCitations;
     
     if (!shouldEnforce) return stmt;
-    
-    checked++;
     
     // Run corpusSearch (with error handling)
     let searchResult;
@@ -3403,14 +3445,14 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
 }
 
 // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
-function computeExtractionQuality(statements, extractionCandidates) {
+// Fix 3: Accept rejected/fallback counts to accurately reflect quality
+function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0) {
   if (!Array.isArray(statements) || statements.length === 0) {
     return "failed";
   }
   
   let hasTruncation = false;
   let hasUnbalancedParens = false;
-  let fallbackCount = 0;
   
   for (const stmt of statements) {
     const text = typeof stmt.text === "string" ? stmt.text : "";
@@ -3450,24 +3492,18 @@ function computeExtractionQuality(statements, extractionCandidates) {
     }
   }
   
-  // Check fallback rate (if we had many candidates but few statements, likely fallback)
-  const candidateCount = Array.isArray(extractionCandidates) ? extractionCandidates.length : 0;
-  const statementCount = statements.length;
-  const rejectionRate = candidateCount > 0 ? (candidateCount - statementCount) / candidateCount : 0;
-  
-  if (rejectionRate > 0.5) {
-    fallbackCount++;
-  }
-  
+  // Fix 3: Use actual rejected/fallback counts from SEG_GUARD
   const reasons = [];
   if (hasTruncation) reasons.push("truncation");
   if (hasUnbalancedParens) reasons.push("unbalanced_parens");
-  if (fallbackCount > 0 || rejectionRate > 0.5) reasons.push("high_rejection_rate");
+  if (rejectedCount > 0) reasons.push(`rejected_candidates=${rejectedCount}`);
+  if (fallbackCount > 0) reasons.push(`fallback=${fallbackCount}`);
   
+  // Fix 3: Quality must degrade if candidates were rejected
   let quality = "ok";
   if (hasTruncation || hasUnbalancedParens) {
     quality = "failed";
-  } else if (fallbackCount > 0 || rejectionRate > 0.5) {
+  } else if (rejectedCount > 0 || fallbackCount > 0) {
     quality = "degraded";
   }
   
@@ -4125,8 +4161,11 @@ export default async function handler(req, res) {
       .split(sentenceBoundaryPattern)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
-    const extractionCandidates = filterCandidateQuality(rawExtractionCandidates, rawSentences);
-    console.log(`[DIAG] A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates)`);
+    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences);
+    const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
+    const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
+    const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
+    console.log(`[DIAG] A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount})`);
     
     // Build candidate statements block for prompt
     const candidatesBlock = extractionCandidates.length > 0
@@ -4401,7 +4440,8 @@ ${
     }
     
     // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
-    extractionQuality = computeExtractionQuality(statements, extractionCandidates);
+    // Fix 3: Pass rejected/fallback counts for accurate quality assessment
+    extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount);
     
     // DIAGNOSTIC: Log final summary
     console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
