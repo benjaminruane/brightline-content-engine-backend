@@ -773,10 +773,19 @@ function isAnchorFact(text) {
 }
 
 // Apply anchor-fact gating: force Low if anchor fact has no citations
+// A3.5.13 Addendum - Anchor Absence Precedence: When uploaded sources exist, missing citations
+// MUST NOT trigger absence language. corpusSearch over the full uploaded corpus MUST run first.
+// Only if corpusSearch returns no match may Review emit "not mentioned / not supported" language.
+// Citation presence is advisory, not authoritative, for uploaded documents.
+//
 // This is the final authority on anchor facts and runs AFTER all other processing
 // Note: Dual-axis verification already handles this, but this provides explicit anchor-specific enforcement
-function applyAnchorGating(statements) {
+function applyAnchorGating(statements, uploadedSources = []) {
   if (!Array.isArray(statements)) return statements;
+  
+  // Check if uploaded sources exist with full text
+  const hasUploadedSources = Array.isArray(uploadedSources) && uploadedSources.length > 0 &&
+    uploadedSources.some(s => typeof s.text === "string" && s.text.trim().length > 0);
   
   return statements.map((stmt) => {
     if (!stmt || typeof stmt !== "object") return stmt;
@@ -791,9 +800,21 @@ function applyAnchorGating(statements) {
     const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
     const alreadyForcedLow = reasons.some((r) => r && r.includes("No verifiable sources"));
     
-    // STRICT: If anchor fact AND no citations: always force Low
+    // A3.5.13 Addendum - Anchor Absence Precedence:
+    // If uploaded sources exist AND this is an anchor fact AND no citations:
+    // DO NOT force Low based on missing citations alone.
+    // corpusSearch will run in enforceCorpusVerificationBeforeAbsence and determine support.
+    // Citation presence is advisory, not authoritative, for uploaded documents.
+    if (isAnchor && !hasCitations && hasUploadedSources) {
+      console.log(`[DIAG] A3.5.13 Addendum - Anchor Absence Precedence: Anchor fact with no citations but uploaded sources exist, deferring to corpusSearch: "${text.substring(0, 60)}..."`);
+      // Don't force Low - let corpusSearch determine support
+      // If corpusSearch finds nothing, enforceCorpusVerificationBeforeAbsence will handle absence language
+      return stmt;
+    }
+    
+    // STRICT: If anchor fact AND no citations AND no uploaded sources: force Low
     // Citations can be from either uploaded sources or web references
-    if (isAnchor && !hasCitations) {
+    if (isAnchor && !hasCitations && !hasUploadedSources) {
       // If already forced Low, ensure anchor-specific reason is present
       if (alreadyForcedLow) {
         const anchorReason = "Anchor fact requires a supporting source; none was cited for this version.";
@@ -1916,11 +1937,13 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
     const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
     const text = typeof stmt.text === "string" ? stmt.text : "";
     
-    // Invariant 2: Mandatory corpusSearch before absence language
-    // Check if reasons contain absence claims
-    if (!hasAbsenceClaim(reasons)) return stmt; // No absence claim, no action needed
+    // A3.5.13 Addendum - Anchor Absence Precedence:
+    // For anchor facts, if uploaded sources exist, corpusSearch MUST run first
+    // Missing citations MUST NOT trigger absence language without corpusSearch
+    const isAnchor = isAnchorFact(text);
+    const uploadedSourcesCount = docsWithFullText.length;
     
-    // A3.5.13 Addendum: Check for compound anchors first
+    // A3.5.13 Addendum: Check for compound anchors first (for both absence and non-absence cases)
     const compoundAnchorResult = decomposeAndValidateCompoundAnchors(text, uploadedDocs);
     
     // If compound anchors detected, validate each independently
@@ -2057,6 +2080,60 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
       // If no anchors found, continue to standard absence check below
       console.log(`[DIAG] A3.5.13 Addendum: No anchors found in compound statement, proceeding to standard absence check`);
     }
+    
+    // A3.5.13 Addendum - Anchor Absence Precedence:
+    // For anchor facts with uploaded sources, corpusSearch MUST run FIRST
+    // This ensures corpusSearch determines support before any absence language is considered
+    // Missing citations MUST NOT trigger absence language without corpusSearch
+    if (isAnchor && uploadedSourcesCount > 0) {
+      // Run corpusSearch FIRST for anchor facts (before checking for absence claims)
+      const searchResult = corpusSearch(text, uploadedDocs);
+      
+      if (searchResult.found) {
+        // corpusSearch found matches - MUST NOT state absence
+        // Remove any absence language that may have been added based on missing citations
+        let updatedReasons = reasons.filter((reason) => {
+          if (typeof reason !== "string") return true;
+          const lower = reason.toLowerCase();
+          return !(
+            /not mentioned/i.test(lower) ||
+            /not specified/i.test(lower) ||
+            /not supported/i.test(lower) ||
+            /no support/i.test(lower) ||
+            /not found/i.test(lower) ||
+            /not stated/i.test(lower) ||
+            /not referenced/i.test(lower) ||
+            /not cited/i.test(lower) ||
+            /not present/i.test(lower) ||
+            /absent/i.test(lower) ||
+            /lacks?/i.test(lower) ||
+            /missing/i.test(lower) ||
+            /anchor fact requires/i.test(lower) // Remove citation-based anchor absence language
+          );
+        });
+        
+        // If all reasons were removed, add support reason
+        if (updatedReasons.length === 0) {
+          updatedReasons = ["This anchor fact is supported by the uploaded sources."];
+        }
+        
+        console.log(`[DIAG] A3.5.13 Addendum - Anchor Absence Precedence: corpusSearch found anchor fact in uploaded sources, removed absence language: "${text.substring(0, 60)}..."`);
+        
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: updatedReasons.slice(0, 4),
+          },
+        };
+      }
+      // If corpusSearch found nothing, continue to standard absence/ambiguity check below
+      console.log(`[DIAG] A3.5.13 Addendum - Anchor Absence Precedence: corpusSearch found no match for anchor fact, allowing absence language: "${text.substring(0, 60)}..."`);
+    }
+    
+    // Invariant 2: Mandatory corpusSearch before absence language
+    // Check if reasons contain absence claims
+    if (!hasAbsenceClaim(reasons)) return stmt; // No absence claim, no action needed
     
     // A3.5.13: Check for ambiguity (before corpus search)
     const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
@@ -3164,7 +3241,8 @@ ${
     statements = applyParaphraseTolerance(statements, unifiedReferences);
     
     // E) Apply anchor-fact gating: force Low if anchor facts lack citations
-    statements = applyAnchorGating(statements);
+    // A3.5.13 Addendum: Pass uploadedSources to respect anchor absence precedence
+    statements = applyAnchorGating(statements, uploadedSources);
     
     // F) Final post-condition clamp: ensure no High/Medium with missing citations
     statements = applyFinalPostCheck(statements, unifiedReferences);
@@ -3247,7 +3325,7 @@ ${
       const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements, fallbackUploadedReferences);
       const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
       const toleranceAdjustedFallbackStatements = applyParaphraseTolerance(calibratedFallbackStatements, fallbackUploadedReferences);
-      const gatedFallbackStatements = applyAnchorGating(toleranceAdjustedFallbackStatements);
+      const gatedFallbackStatements = applyAnchorGating(toleranceAdjustedFallbackStatements, fallbackUploadedSources);
       const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
       const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
       // Web search not available in fallback path
