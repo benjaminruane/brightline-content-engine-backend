@@ -2775,6 +2775,7 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
       }
       // If corpusSearch found nothing, continue to standard absence/ambiguity check below
     }
+    }
     
     // Invariant 2: Mandatory corpusSearch before absence language
     // Check if reasons contain absence claims
