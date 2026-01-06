@@ -5014,13 +5014,11 @@ ${
     // A3.5.17 Fix 3: Pass incomplete_numeric_fragment and recombined counts
     extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount);
     
-    // DIAGNOSTIC: Log final summary
-    console.log(`[DIAG][PIPELINE] runId=${runId} phase=complete`);
-    console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
-
-    return res.status(200).json({
+    // A3.5.19 Fix 1 & 3: Create final response object immediately after FINAL_COUNTS
+    // Use the exact statements object that was counted to ensure consistency
+    const finalResponseObject = {
       ok: true,
-      statements,
+      statements, // Use the exact statements array that was counted
       references: unifiedReferences,
       meta: {
         webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
@@ -5028,7 +5026,22 @@ ${
         uploadedSourcesCount: uploadedReferences.length,
         webSourcesCount: webReferencesWithIds.length,
       },
-    });
+    };
+    
+    // A3.5.19 Fix 3: Log return snapshot from the SAME object being returned
+    const firstStmt = finalResponseObject.statements[0];
+    const firstAssessCites = firstStmt?.assessment?.citations?.length || 0;
+    const firstTopCites = firstStmt?.citations?.length || 0;
+    const firstEvidence = firstStmt?.evidence?.length || 0;
+    console.log(`[DIAG][RETURN_SNAPSHOT] statements=${finalResponseObject.statements.length} firstAssessCites=${firstAssessCites} firstTopCites=${firstTopCites} firstEvidence=${firstEvidence}`);
+    
+    // DIAGNOSTIC: Log final summary
+    console.log(`[DIAG][PIPELINE] runId=${runId} phase=complete`);
+    console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
+    
+    // A3.5.19 Fix 1 & 2: Return immediately after FINAL_COUNTS - no code after this point should run
+    console.log(`[DIAG][PIPELINE][END] runId=${runId} returningNow=true`);
+    return res.status(200).json(finalResponseObject);
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
     try {
