@@ -3745,9 +3745,13 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
     
     const text = typeof stmt.text === "string" ? stmt.text : "";
     const assessment = stmt.assessment || {};
-    const existingCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    // A3.5.18: Collect existing citations from both locations (merge for idempotency)
+    const existingAssessmentCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
     const existingTopLevelCitations = Array.isArray(stmt.citations) ? stmt.citations : [];
-    const hasEmptyCitations = existingCitations.length === 0 && existingTopLevelCitations.length === 0;
+    // Merge all existing citations (use Set to dedupe)
+    const existingCitationsSet = new Set([...existingAssessmentCitations, ...existingTopLevelCitations]);
+    const existingCitations = Array.from(existingCitationsSet);
+    const hasEmptyCitations = existingCitations.length === 0;
     
     // Check if this is a WORLD_FACT or contains anchor terms
     const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
@@ -3789,22 +3793,45 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
         foundNoCite++;
         
         try {
-          // Inject memo citation
-          let injectedCitations = [memoReferenceId];
-          if (existingCitations.length > 0) {
-            injectedCitations = [...existingCitations, memoReferenceId];
-            injectedCitations.sort((a, b) => a - b);
-          }
+          // A3.5.18: Inject memo citation - merge with existing (idempotent)
+          // Ensure memoReferenceId is included but don't duplicate
+          const citationSet = new Set(existingCitations);
+          citationSet.add(memoReferenceId);
+          const injectedCitations = Array.from(citationSet).sort((a, b) => a - b);
           
-          // Build evidence
-          const evidence = [];
-          if (memoReference) {
-            evidence.push({
-              title: memoReference.title || "Untitled source",
-              url: memoReference.url || null,
-              sourceType: "uploaded",
-            });
-          }
+          // Build evidence - merge with existing evidence and build for all citations (idempotent)
+          const existingEvidence = Array.isArray(stmt.evidence) ? stmt.evidence : 
+                                   (Array.isArray(assessment.evidence) ? assessment.evidence : []);
+          const evidenceSet = new Map();
+          
+          // Add existing evidence to set (keyed by title to avoid duplicates)
+          existingEvidence.forEach(ev => {
+            const key = ev?.title || ev?.url || String(ev);
+            if (key && !evidenceSet.has(key)) {
+              evidenceSet.set(key, ev);
+            }
+          });
+          
+          // Build evidence for all citations from unifiedReferences
+          injectedCitations.forEach(citationId => {
+            const citationKey = citationId != null ? String(citationId) : null;
+            if (citationKey) {
+              const ref = unifiedReferences.find(r => String(r?.id) === citationKey);
+              if (ref) {
+                const refEvidence = {
+                  title: ref.title || "Untitled source",
+                  url: ref.url || null,
+                  sourceType: ref.type || (ref.url ? "web" : "uploaded"),
+                };
+                const refKey = refEvidence.title || refEvidence.url || citationKey;
+                if (!evidenceSet.has(refKey)) {
+                  evidenceSet.set(refKey, refEvidence);
+                }
+              }
+            }
+          });
+          
+          const evidence = Array.from(evidenceSet.values());
           
           // Remove absence reasons
           const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
@@ -3863,7 +3890,9 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
             evidenceCount: (Array.isArray(assessment.evidence) ? assessment.evidence.length : 0) + (Array.isArray(stmt.evidence) ? stmt.evidence.length : 0)
           };
           
-          console.log(`[DIAG][ANCHOR_ENFORCE] idx=${idx} before=${JSON.stringify(beforeState)} after={assessCites:${injectedCitations.length},topCites:${injectedCitations.length},evidenceCount:${evidence.length}} removedAbsenceReasons=${reasons.length - updatedReasons.length}`);
+          // A3.5.18 Fix 3: Fix negative removedAbsenceReasons counter
+          const removedCount = Math.max(0, reasons.length - updatedReasons.length);
+          console.log(`[DIAG][ANCHOR_ENFORCE] idx=${idx} before=${JSON.stringify(beforeState)} after={assessCites:${injectedCitations.length},topCites:${injectedCitations.length},evidenceCount:${evidence.length}} removedAbsenceReasons=${removedCount}`);
           
           return {
             ...stmt,
@@ -4615,8 +4644,13 @@ export default async function handler(req, res) {
     // This fixes fragmentation issues where rawSentences are already broken
     const normalizedDraftText = mergeContinuationFragments(draftText);
     
+    // A3.5.18 Fix 1: Generate runId for pipeline tracking
+    const runId = Math.random().toString(36).substring(2, 15);
+    console.log(`[DIAG][PIPELINE] runId=${runId} phase=start`);
+    
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
+    console.log(`[DIAG][PIPELINE] runId=${runId} phase=extractCandidates`);
     const rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText);
     
     // A3.5.14 Part A: Filter candidates for quality (extraction stability)
@@ -4846,6 +4880,7 @@ ${
     
     // A) Draft-only filter: enforce statements must appear in draft text (hard gate)
     // Note: This should be redundant now since candidates come from draft, but keep for safety
+    console.log(`[DIAG][PIPELINE] runId=${runId} phase=filterDraftOnly`);
     statements = filterDraftOnlyStatements(statements, draftText);
     
     
@@ -4930,6 +4965,7 @@ ${
     
     // A3.5.14b Patch 2 & 3: Anchor Enforcement + Ambiguity Routing (LAST MUTATION STEP)
     // Must run AFTER all other processing to ensure citations/evidence are not overwritten
+    console.log(`[DIAG][PIPELINE] runId=${runId} phase=enforceAnchorCitations`);
     try {
       statements = enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unifiedReferences);
     } catch (anchorErr) {
@@ -4937,11 +4973,49 @@ ${
       // Continue with statements as-is
     }
     
+    // A3.5.18 Fix 2: Hard invariant at return time - ensure citations/evidence are preserved
+    let totalAssessmentCites = 0;
+    let totalTopCites = 0;
+    let totalEvidence = 0;
+    let hasCorpusSearchFound = false;
+    let hasAnchorEnforcementInjected = false;
+    
+    for (const stmt of statements) {
+      if (!stmt || typeof stmt !== "object") continue;
+      
+      const assessment = stmt.assessment || {};
+      const assessCites = Array.isArray(assessment.citations) ? assessment.citations.length : 0;
+      const topCites = Array.isArray(stmt.citations) ? stmt.citations.length : 0;
+      const evidence = Array.isArray(stmt.evidence) ? stmt.evidence.length : 0;
+      
+      totalAssessmentCites += assessCites;
+      totalTopCites += topCites;
+      totalEvidence += evidence;
+      
+      // Check if this statement had corpusSearch find or anchor enforcement
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const reasonsStr = reasons.join(" ").toLowerCase();
+      if (reasonsStr.includes("memo contains related support") || reasonsStr.includes("citation added via invariant")) {
+        hasAnchorEnforcementInjected = true;
+      }
+      if (reasonsStr.includes("corpus search") || reasonsStr.includes("found in memo")) {
+        hasCorpusSearchFound = true;
+      }
+    }
+    
+    console.log(`[DIAG][FINAL_COUNTS] statements=${statements.length} assessCites=${totalAssessmentCites} topCites=${totalTopCites} evidence=${totalEvidence}`);
+    
+    // A3.5.18 Fix 2: Warn if citations/evidence were lost
+    if ((hasCorpusSearchFound || hasAnchorEnforcementInjected) && totalAssessmentCites === 0 && totalTopCites === 0 && totalEvidence === 0) {
+      console.log(`[DIAG][FINAL_COUNTS][ERROR] citations lost after enforcement`);
+    }
+    
     // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
     // A3.5.17 Fix 3: Pass incomplete_numeric_fragment and recombined counts
     extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount);
     
     // DIAGNOSTIC: Log final summary
+    console.log(`[DIAG][PIPELINE] runId=${runId} phase=complete`);
     console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
 
     return res.status(200).json({
