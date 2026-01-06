@@ -684,6 +684,7 @@ function filterCandidateQuality(candidates, rawSentences) {
   
   const accepted = [];
   const rejected = [];
+  const rejectedIndices = []; // Track indices of rejected candidates for fallback lookup
   const rejectionReasons = [];
   const rejectedWithReasons = []; // For detailed logging
   const fallbackMap = new Map(); // rejected -> fallback candidate
@@ -760,6 +761,7 @@ function filterCandidateQuality(candidates, rawSentences) {
     const candidate = candidates[candidateIndex];
     if (typeof candidate !== "string" || candidate.trim().length === 0) {
       rejected.push(candidate);
+      rejectedIndices.push(candidateIndex); // Track index for fallback lookup
       rejectionReasons.push("empty");
       rejectedWithReasons.push({ reason: "empty", textPreview: "" });
       continue;
@@ -876,6 +878,7 @@ function filterCandidateQuality(candidates, rawSentences) {
     
     if (shouldReject) {
       rejected.push(candidate);
+      rejectedIndices.push(candidateIndex); // Track index for fallback lookup
       rejectionReasons.push(reason);
       rejectedWithReasons.push({ 
         reason, 
@@ -902,19 +905,30 @@ function filterCandidateQuality(candidates, rawSentences) {
   // Fix 2: Ensure fallback happens for all rejected candidates
   const fallbackCandidates = [];
   const fallbackSamples = [];
+  const appliedFallbackReasons = []; // Track reasons for DIAG logging
   
-  for (const rejectedCandidate of rejected) {
+  for (let i = 0; i < rejected.length; i++) {
+    const rejectedCandidate = rejected[i];
+    const candidateIndex = rejectedIndices[i] >= 0 ? rejectedIndices[i] : i; // Use tracked index
+    const rejectionReason = rejectionReasons[i] || "unknown";
     let fallback = fallbackMap.get(rejectedCandidate);
     
     // If no fallback found in map, try to find nearest full sentence from raw sentences
     if (!fallback && rawSentenceList.length > 0) {
       const trimmed = typeof rejectedCandidate === "string" ? rejectedCandidate.trim() : "";
       if (trimmed) {
-        // Try to find containing sentence
+        // Try to find containing sentence (parent sentence for fragments)
         for (const rawSentence of rawSentenceList) {
           if (rawSentence.includes(trimmed) && /[.?!]\s*$/.test(rawSentence)) {
             fallback = rawSentence;
             break;
+          }
+        }
+        // If still no fallback, use nearest raw sentence by index
+        if (!fallback) {
+          // Use the tracked index of the rejected candidate to find nearest raw sentence
+          if (candidateIndex >= 0 && candidateIndex < rawSentenceList.length) {
+            fallback = rawSentenceList[candidateIndex];
           }
         }
         // If still no fallback, use first full sentence that's long enough
@@ -924,18 +938,75 @@ function filterCandidateQuality(candidates, rawSentences) {
       }
     }
     
-    if (fallback && !accepted.includes(fallback) && !fallbackCandidates.includes(fallback)) {
-      fallbackCandidates.push(fallback);
-      if (fallbackSamples.length < 3) {
+    // CRITICAL FIX: Always add fallback for each rejected candidate when rawSentences are available
+    // This ensures rejectedCount > 0 => fallbackCount > 0
+    if (rawSentenceList.length > 0) {
+      // If we still don't have a fallback, use last resort
+      if (!fallback) {
+        fallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45) || rawSentenceList[0];
+      }
+      
+      // Add fallback even if it's a duplicate (we need one per rejected candidate)
+      // Only check that it's not already in accepted list to avoid polluting accepted candidates
+      if (fallback && !accepted.includes(fallback)) {
+        fallbackCandidates.push(fallback);
+        appliedFallbackReasons.push(rejectionReason);
+        
+        // Log individual fallback application for verification
         const rejectedPreview = (typeof rejectedCandidate === "string" ? rejectedCandidate : "").substring(0, 30) + "...";
         const fallbackPreview = fallback.substring(0, 50) + "...";
-        fallbackSamples.push({ rejectedPreview, fallbackPreview });
+        console.log(`[DIAG][SEG_GUARD] appliedFallback reason=${rejectionReason} rejectedPreview="${rejectedPreview}" fallbackPreview="${fallbackPreview}"`);
+        
+        // Track samples for summary log
+        if (fallbackSamples.length < 3) {
+          fallbackSamples.push({ rejectedPreview, fallbackPreview });
+        }
       }
     }
   }
   
   // Combine accepted and fallback candidates
-  const finalCandidates = [...accepted, ...fallbackCandidates];
+  let finalCandidates = [...accepted, ...fallbackCandidates];
+  
+  // CRITICAL FIX: Ensure fallbackCount matches rejectedCount when rawSentences are available
+  // Hard requirement: rejected > 0 && rawSentences available => fallbackCount must match rejectedCount
+  // This must happen BEFORE the "unsplit fallback" check to ensure proper counts
+  if (rejected.length > 0 && rawSentenceList.length > 0) {
+    // If we have fewer fallbacks than rejected candidates, add more
+    while (fallbackCandidates.length < rejected.length) {
+      // Find a valid fallback sentence that's not already in the list
+      const lastResortFallback = rawSentenceList.find(s => {
+        const isValid = /[.?!]\s*$/.test(s) && s.length >= 45;
+        const notInAccepted = !accepted.includes(s);
+        const notInFallbacks = !fallbackCandidates.includes(s);
+        return isValid && notInAccepted && notInFallbacks;
+      });
+      
+      if (lastResortFallback) {
+        finalCandidates.push(lastResortFallback);
+        fallbackCandidates.push(lastResortFallback);
+        appliedFallbackReasons.push("last_resort");
+        console.log(`[DIAG][SEG_GUARD] lastResortFallback applied: added 1 fallback sentence (total fallback=${fallbackCandidates.length}, rejected=${rejected.length})`);
+      } else {
+        // If no unique fallback found, use the first valid one (even if duplicate)
+        const anyValidFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45) || rawSentenceList[0];
+        if (anyValidFallback && !accepted.includes(anyValidFallback)) {
+          finalCandidates.push(anyValidFallback);
+          fallbackCandidates.push(anyValidFallback);
+          appliedFallbackReasons.push("last_resort_duplicate");
+          console.log(`[DIAG][SEG_GUARD] lastResortFallback (duplicate allowed) applied: added 1 fallback sentence (total fallback=${fallbackCandidates.length}, rejected=${rejected.length})`);
+        } else {
+          // Can't add more fallbacks, break to avoid infinite loop
+          break;
+        }
+      }
+    }
+    
+    // Final verification: warn if still mismatched (should not happen with above logic)
+    if (fallbackCandidates.length < rejected.length) {
+      console.log(`[DIAG][SEG_GUARD] WARNING: fallbackCount (${fallbackCandidates.length}) < rejectedCount (${rejected.length}) despite having rawSentences`);
+    }
+  }
   
   // If filtering reduced count too much, use original unsplit sentences
   const MIN_ACCEPTABLE_COUNT = Math.max(1, Math.floor(candidates.length * 0.3));
@@ -975,7 +1046,10 @@ function filterCandidateQuality(candidates, rawSentences) {
     };
   }
   
-  // Compute stable hash (simple hash for determinism check)
+  // Rebuild finalCandidates after fallback additions (in case while loop added more)
+  finalCandidates = [...accepted, ...fallbackCandidates];
+  
+  // Compute stable hash (simple hash for determinism check) - AFTER all fallback additions
   const joinedCandidates = finalCandidates.join('|');
   let hash = 0;
   for (let i = 0; i < joinedCandidates.length; i++) {
@@ -985,7 +1059,7 @@ function filterCandidateQuality(candidates, rawSentences) {
   }
   const stableHash = Math.abs(hash).toString(16).substring(0, 8);
   
-  // Log diagnostics
+  // Log diagnostics - AFTER all fallback additions to show accurate counts
   const rejectionSummary = {};
   rejectionReasons.forEach(r => {
     rejectionSummary[r] = (rejectionSummary[r] || 0) + 1;
@@ -998,18 +1072,6 @@ function filterCandidateQuality(candidates, rawSentences) {
     console.log(`[DIAG][SEG_GUARD] sampleFallback=${JSON.stringify(fallbackSamples)}`);
   }
   console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
-  
-  // Fix 1: Ensure fallback always happens - if rejected > 0, fallback should be > 0
-  const actualFallbackCount = fallbackCandidates.length;
-  if (rejected.length > 0 && actualFallbackCount === 0) {
-    // Last resort: use any valid raw sentence
-    const lastResortFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45);
-    if (lastResortFallback && !finalCandidates.includes(lastResortFallback)) {
-      finalCandidates.push(lastResortFallback);
-      fallbackCandidates.push(lastResortFallback);
-      console.log(`[DIAG][SEG_GUARD] lastResortFallback applied: added 1 fallback sentence`);
-    }
-  }
   
   // Fix 3: Return with counts for quality computation
   return { 
