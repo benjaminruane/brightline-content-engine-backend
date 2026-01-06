@@ -633,10 +633,21 @@ function extractDeterministicStatementCandidates(draftText) {
     .filter((s) => s.length > 0);
   
   console.log(`[DIAG] extractDeterministicStatementCandidates: rawSentences count=${rawSentences.length}`);
+  if (rawSentences.length > 0) {
+    console.log(`[DIAG] extractDeterministicStatementCandidates: first 3 raw sentences:`, rawSentences.slice(0, 3).map((s, idx) => ({
+      index: idx,
+      length: s.length,
+      text: s.substring(0, 80) + (s.length > 80 ? "..." : ""),
+    })));
+  }
   
   // Step 2: For each sentence, check if it needs splitting
+  let skippedShort = 0;
   for (const sentence of rawSentences) {
-    if (sentence.length < 10) continue; // Skip very short fragments
+    if (sentence.length < 10) {
+      skippedShort++;
+      continue; // Skip very short fragments
+    }
     
     // Check for multiple anchor patterns that suggest compound statements
     const anchorPatterns = [
@@ -713,6 +724,7 @@ function extractDeterministicStatementCandidates(draftText) {
   
   // Diagnostics (required by spec)
   console.log(`[DIAG] extractDeterministicStatementCandidates: final count=${cappedCandidates.length}`);
+  console.log(`[DIAG] extractDeterministicStatementCandidates: skippedShort=${skippedShort}, rawSentences=${rawSentences.length}, candidatesBeforeCap=${candidates.length}`);
   if (cappedCandidates.length > 0) {
     console.log(`[DIAG] extractDeterministicStatementCandidates: first 5 candidates:`, 
       cappedCandidates.slice(0, 5).map((c, idx) => ({
@@ -721,6 +733,8 @@ function extractDeterministicStatementCandidates(draftText) {
         length: c.length,
       }))
     );
+  } else {
+    console.log(`[DIAG] extractDeterministicStatementCandidates: WARNING - no candidates extracted! rawSentences=${rawSentences.length}, skippedShort=${skippedShort}`);
   }
   
   return cappedCandidates;
@@ -3409,6 +3423,19 @@ export default async function handler(req, res) {
       kind: s?.kind || s?.sourceType || "file",
       url: s?.url || null,
     }));
+    
+    // DIAGNOSTIC: Log processed sources
+    console.log(`[DIAG] Processed uploadedSources count: ${uploadedSources.length}`);
+    if (uploadedSources.length > 0) {
+      uploadedSources.forEach((s, idx) => {
+        console.log(`[DIAG] UploadedSource[${idx}]:`, {
+          id: s.id,
+          name: s.name,
+          hasText: typeof s.text === "string" && s.text.length > 0,
+          textLength: typeof s.text === "string" ? s.text.length : 0,
+        });
+      });
+    }
 
     // Build uploaded sources context for prompt
     let uploadedSourcesBlock = "";
