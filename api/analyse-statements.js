@@ -3755,31 +3755,51 @@ ${
     
     // E) Apply anchor-fact gating: force Low if anchor facts lack citations
     // A3.5.13 Addendum: Pass uploadedSources to respect anchor absence precedence
+    console.log(`[DIAG] Before applyAnchorGating: statements count=${statements.length}`);
     statements = applyAnchorGating(statements, uploadedSources);
+    console.log(`[DIAG] After applyAnchorGating: statements count=${statements.length}`);
     
     // F) Final post-condition clamp: ensure no High/Medium with missing citations
+    console.log(`[DIAG] Before applyFinalPostCheck: statements count=${statements.length}`);
     statements = applyFinalPostCheck(statements, unifiedReferences);
+    console.log(`[DIAG] After applyFinalPostCheck: statements count=${statements.length}`);
     
     // G) Normalize response structure: ensure citations and evidence are at top-level
     // This enforces the response contract that the Review UI expects
+    console.log(`[DIAG] Before normalizeResponseStructure: statements count=${statements.length}`);
     statements = normalizeResponseStructure(statements, unifiedReferences);
+    console.log(`[DIAG] After normalizeResponseStructure: statements count=${statements.length}`);
     
     // H) Sanitize reasons: remove misleading "no sources cited" messages when citations/evidence exist
     // Also improve language when web search is enabled (A3.5.8)
     const webSearchEnabled = publicSearch === true;
     const webSearchUsed = Boolean(search?.ok && (search?.results || []).length);
+    console.log(`[DIAG] Before sanitizeReasons: statements count=${statements.length}`);
     statements = sanitizeReasons(statements, webSearchEnabled, webSearchUsed);
+    console.log(`[DIAG] After sanitizeReasons: statements count=${statements.length}`);
     
     // I) Enforce reason specificity: require explicit enumeration for partial support and contradiction cases (A3.5.9)
+    console.log(`[DIAG] Before enforceReasonSpecificity: statements count=${statements.length}`);
     statements = enforceReasonSpecificity(statements);
+    console.log(`[DIAG] After enforceReasonSpecificity: statements count=${statements.length}`);
     
     // J) Fix anchor-fact reasons: detect and correct false "not mentioned" claims with semantic matching (A3.5.10)
+    console.log(`[DIAG] Before fixAnchorFactReasons: statements count=${statements.length}`);
     statements = fixAnchorFactReasons(statements, unifiedReferences);
+    console.log(`[DIAG] After fixAnchorFactReasons: statements count=${statements.length}`);
     
     // K) Enforce corpus-level verification before absence claims (A3.5.11)
     // A3.5.13b: Pass unifiedReferences to inject citations and build evidence when corpusSearch finds support
     // MUST perform corpus search before allowing "not mentioned" / "not supported" claims
-    statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences);
+    console.log(`[DIAG] Before enforceCorpusVerificationBeforeAbsence: statements count=${statements.length}`);
+    try {
+      statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences);
+      console.log(`[DIAG] After enforceCorpusVerificationBeforeAbsence: statements count=${statements.length}`);
+    } catch (corpusErr) {
+      console.error(`[ERROR] enforceCorpusVerificationBeforeAbsence failed:`, corpusErr);
+      console.error(`[ERROR] Stack:`, corpusErr?.stack);
+      // Continue with statements as-is rather than losing them
+    }
     
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
@@ -3839,13 +3859,6 @@ ${
       const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements, fallbackUploadedReferences);
       const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
       const toleranceAdjustedFallbackStatements = applyParaphraseTolerance(calibratedFallbackStatements, fallbackUploadedReferences);
-      const gatedFallbackStatements = applyAnchorGating(toleranceAdjustedFallbackStatements, fallbackUploadedSources);
-      const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
-      const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
-      // Web search not available in fallback path
-      const sanitizedFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
-      const specificityEnforcedFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
-      const anchorFixedFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
       // A3.5.11: Enforce corpus-level verification before absence claims in fallback path
       const fallbackUploadedSources = fallbackSources.map((s) => ({
         id: s?.id || null,
@@ -3854,6 +3867,13 @@ ${
         kind: s?.kind || s?.sourceType || "file",
         url: s?.url || null,
       }));
+      const gatedFallbackStatements = applyAnchorGating(toleranceAdjustedFallbackStatements, fallbackUploadedSources);
+      const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
+      const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
+      // Web search not available in fallback path
+      const sanitizedFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
+      const specificityEnforcedFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
+      const anchorFixedFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
       const finalFallbackStatements = enforceCorpusVerificationBeforeAbsence(anchorFixedFallbackStatements, fallbackUploadedSources, fallbackUploadedReferences);
 
       return res.status(200).json({
