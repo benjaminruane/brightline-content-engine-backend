@@ -1883,9 +1883,10 @@ function hasAbsenceClaim(reasons) {
 }
 
 // Enforce corpus-level verification before absence claims (A3.5.11/A3.5.12)
+// A3.5.13b: When corpusSearch finds support, inject citations and build evidence
 // Core Invariant: Review MUST NOT assert absence unless corpus-level search performed and returned no match
 // Uses deterministic corpusSearch utility (A3.5.12)
-function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
+function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences = []) {
   if (!Array.isArray(statements) || !Array.isArray(uploadedSources)) return statements;
   
   // Invariant 1: Full corpus availability - only process if uploaded sources exist with full text
@@ -2085,15 +2086,68 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
     // For anchor facts with uploaded sources, corpusSearch MUST run FIRST
     // This ensures corpusSearch determines support before any absence language is considered
     // Missing citations MUST NOT trigger absence language without corpusSearch
+    // A3.5.13b: When corpusSearch finds support, inject citations and build evidence
     if (isAnchor && uploadedSourcesCount > 0) {
       // Run corpusSearch FIRST for anchor facts (before checking for absence claims)
       const searchResult = corpusSearch(text, uploadedDocs);
       
       if (searchResult.found) {
-        // corpusSearch found matches - MUST NOT state absence
-        // Remove any absence language that may have been added based on missing citations
+        // A3.5.13b: corpusSearch found matches - inject citations and build evidence
+        // Invariant 1: Support Must Attach a Source
+        const existingCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+        const existingTopLevelCitations = Array.isArray(stmt.citations) ? stmt.citations : [];
+        
+        // Find uploaded memo reference ID
+        let memoReferenceId = null;
+        if (Array.isArray(unifiedReferences) && unifiedReferences.length > 0) {
+          // Find first uploaded reference
+          const uploadedRef = unifiedReferences.find(ref => ref?.type === "uploaded");
+          if (uploadedRef && uploadedRef.id != null) {
+            memoReferenceId = uploadedRef.id;
+          } else {
+            // Fallback to first uploaded reference by index (1-based for uploaded sources)
+            if (uploadedSources.length > 0) {
+              memoReferenceId = 1; // Uploaded references start at 1
+            }
+          }
+        }
+        
+        // Inject memo reference ID if not already present
+        let injectedCitations = [...existingCitations];
+        if (memoReferenceId != null && !injectedCitations.includes(memoReferenceId)) {
+          injectedCitations.push(memoReferenceId);
+          injectedCitations.sort((a, b) => a - b);
+        }
+        
+        // Invariant 2: Evidence Must Be Built
+        const evidence = [];
+        if (injectedCitations.length > 0 && Array.isArray(unifiedReferences)) {
+          const referencesById = new Map();
+          unifiedReferences.forEach((ref) => {
+            const id = ref?.id;
+            if (id != null) {
+              referencesById.set(String(id), ref);
+            }
+          });
+          
+          injectedCitations.forEach((citationId) => {
+            const citationKey = citationId != null ? String(citationId) : null;
+            if (citationKey && referencesById.has(citationKey)) {
+              const ref = referencesById.get(citationKey);
+              const refType = ref?.type || (ref?.url ? "web" : "uploaded");
+              evidence.push({
+                title: ref?.title || "Untitled source",
+                url: ref?.url || null,
+                sourceType: refType,
+              });
+            }
+          });
+        }
+        
+        // Invariant 3: Absence Reasons Must Not Survive
+        // Remove any absence reasons
         let updatedReasons = reasons.filter((reason) => {
-          if (typeof reason !== "string") return true;
+          if (typeof reason !== "string") return false;
           const lower = reason.toLowerCase();
           return !(
             /not mentioned/i.test(lower) ||
@@ -2108,22 +2162,50 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
             /absent/i.test(lower) ||
             /lacks?/i.test(lower) ||
             /missing/i.test(lower) ||
-            /anchor fact requires/i.test(lower) // Remove citation-based anchor absence language
+            /anchor fact requires/i.test(lower) ||
+            /none was cited/i.test(lower) ||
+            /does not provide/i.test(lower) ||
+            /cannot be verified/i.test(lower) ||
+            /memo does not/i.test(lower)
           );
         });
         
-        // If all reasons were removed, add support reason
-        if (updatedReasons.length === 0) {
-          updatedReasons = ["This anchor fact is supported by the uploaded sources."];
-        }
+        // Replace with support-accurate reason
+        const anchorFacts = extractAnchorFacts(text);
+        const anchorType = anchorFacts.length > 0 ? anchorFacts[0].type : null;
+        let anchorTypeLabel = "anchor fact";
+        if (anchorType === "valuation") anchorTypeLabel = "valuation figure";
+        else if (anchorType === "funding") anchorTypeLabel = "funding amount";
+        else if (anchorType === "revenue") anchorTypeLabel = "revenue figure";
+        else if (anchorType === "ownership") anchorTypeLabel = "ownership percentage";
+        else if (anchorType === "governance") anchorTypeLabel = "governance rights";
+        else if (anchorType === "security") anchorTypeLabel = "security terms";
         
-        console.log(`[DIAG] A3.5.13 Addendum - Anchor Absence Precedence: corpusSearch found anchor fact in uploaded sources, removed absence language: "${text.substring(0, 60)}..."`);
+        const supportReason = `The uploaded memo contains the cited ${anchorTypeLabel}.`;
+        updatedReasons = [supportReason, ...updatedReasons].slice(0, 4);
         
+        // Diagnostics
+        const absenceReasonsRemoved = reasons.length - (updatedReasons.length - 1); // -1 because we added support reason
+        console.log(`[DIAG] A3.5.13b: corpusSearch found support → injected citation(s):`, {
+          statement: text.substring(0, 60),
+          memoReferenceId,
+          citationsBefore: existingCitations,
+          citationsAfter: injectedCitations,
+          evidenceBuilt: evidence.length,
+          absenceReasonsRemoved,
+        });
+        
+        // Build updated statement with citations, evidence, and reasons
+        // Invariant 4: No Later Overwrite - ensure this persists
         return {
           ...stmt,
+          citations: injectedCitations, // Top-level citations (Invariant 1)
+          evidence: evidence, // Top-level evidence (Invariant 2)
           assessment: {
             ...assessment,
-            reasons: updatedReasons.slice(0, 4),
+            citations: injectedCitations, // Assessment citations (Invariant 1)
+            evidence: evidence, // Assessment evidence (backward compatibility)
+            reasons: updatedReasons, // Updated reasons (Invariant 3)
           },
         };
       }
@@ -3264,8 +3346,9 @@ ${
     statements = fixAnchorFactReasons(statements, unifiedReferences);
     
     // K) Enforce corpus-level verification before absence claims (A3.5.11)
+    // A3.5.13b: Pass unifiedReferences to inject citations and build evidence when corpusSearch finds support
     // MUST perform corpus search before allowing "not mentioned" / "not supported" claims
-    statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources);
+    statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences);
     
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
@@ -3340,7 +3423,7 @@ ${
         kind: s?.kind || s?.sourceType || "file",
         url: s?.url || null,
       }));
-      const finalFallbackStatements = enforceCorpusVerificationBeforeAbsence(anchorFixedFallbackStatements, fallbackUploadedSources);
+      const finalFallbackStatements = enforceCorpusVerificationBeforeAbsence(anchorFixedFallbackStatements, fallbackUploadedSources, fallbackUploadedReferences);
 
       return res.status(200).json({
         ok: true,
