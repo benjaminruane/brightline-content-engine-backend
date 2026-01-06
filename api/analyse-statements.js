@@ -1007,6 +1007,229 @@ function sanitizeReasons(statements, webSearchEnabled = false, webSearchUsed = f
   });
 }
 
+// Enforce reason specificity: require explicit enumeration for partial support and contradiction cases
+// Invariant 1: PARTIAL_SUPPORT must enumerate support coverage
+// Invariant 2: Bundled-claim guidance is conditional
+// Invariant 3: CONTRADICTED requires explicit conflict description
+// Invariant 4: CONTRADICTED applies only to source conflicts
+// Invariant 5: No impact on scoring
+function enforceReasonSpecificity(statements) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const assessment = stmt.assessment || {};
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    
+    // Normalize citations to check if statement has any support
+    const citations = 
+      (Array.isArray(stmt?.citations) && stmt.citations.length > 0) ? stmt.citations :
+      (Array.isArray(assessment?.citations) && assessment.citations.length > 0) ? assessment.citations :
+      [];
+    
+    const hasCitations = citations.length > 0;
+    
+    let updatedReasons = [...reasons];
+    let needsUpdate = false;
+    
+    // Detect vague partial support language
+    const vaguePartialPatterns = [
+      /partially supported/i,
+      /not fully supported/i,
+      /parts? (?:of this statement|go beyond|are not supported)/i,
+      /some (?:parts|elements|claims) (?:are|go) (?:beyond|unsupported|not supported)/i,
+    ];
+    
+    // Detect vague contradiction language
+    const vagueContradictionPatterns = [
+      /inconsistent with (?:sources|provided sources)/i,
+      /does not align (?:with|to)/i,
+      /conflicts? (?:with|against)/i,
+    ];
+    
+    // Detect explicit contradiction language
+    const explicitContradictionPatterns = [
+      /contradicted by/i,
+      /contradicts?/i,
+      /conflicts? with/i,
+    ];
+    
+    // Check if statement appears to be bundled (multiple claims)
+    const bundledIndicators = [
+      /,.*and/i,  // comma followed by "and"
+      / and /i,   // standalone "and"
+      / with /i,  // "with"
+      / which /i, // "which"
+      / under /i, // "under"
+    ];
+    const isBundled = bundledIndicators.some((pattern) => pattern.test(text));
+    
+    // Invariant 1: PARTIAL_SUPPORT must enumerate support coverage
+    const hasVaguePartialSupport = reasons.some((reason) => {
+      if (typeof reason !== "string") return false;
+      return vaguePartialPatterns.some((pattern) => pattern.test(reason));
+    });
+    
+    if (hasVaguePartialSupport && hasCitations) {
+      // Check if reasons already have explicit enumeration
+      const hasExplicitEnumeration = reasons.some((reason) => {
+        if (typeof reason !== "string") return false;
+        // Look for patterns like "support X but not Y" or explicit lists
+        return /support (?:[^,]+(?:,|and|but))/.test(reason) ||
+               /(?:supported|support) .* (?:but|however|while) (?:do not|does not|not) (?:support|explicitly)/i.test(reason);
+      });
+      
+      if (!hasExplicitEnumeration) {
+        // Try to extract supported vs unsupported elements from reasons and statement text
+        // This is a heuristic - we'll enhance the most specific reason we can find
+        const enhancedReasons = reasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          
+          // If this is a vague partial support reason, try to make it more specific
+          if (vaguePartialPatterns.some((pattern) => pattern.test(reason))) {
+            needsUpdate = true;
+            
+            // Try to extract what IS supported from other reasons
+            const otherReasons = reasons.filter((r) => r !== reason && typeof r === "string");
+            const supportedElements = otherReasons
+              .filter((r) => /support/i.test(r) && !/not (?:support|supported)/i.test(r))
+              .map((r) => {
+                // Try to extract the specific element mentioned
+                const match = r.match(/(?:support|supported) (?:the |a |an )?([^,\.]+)/i);
+                return match ? match[1].trim() : null;
+              })
+              .filter((e) => e && e.length > 5);
+            
+            // Try to extract unsupported elements from statement text if bundled
+            let unsupportedElements = [];
+            if (isBundled) {
+              // Look for elements in the statement that might not be supported
+              // This is a heuristic - split on common conjunctions
+              const parts = text.split(/\s*,\s*|\s+and\s+|\s+with\s+/i);
+              // If we have supported elements, assume others might be unsupported
+              if (supportedElements.length > 0 && parts.length > supportedElements.length) {
+                unsupportedElements = parts
+                  .filter((part) => !supportedElements.some((se) => part.toLowerCase().includes(se.toLowerCase())))
+                  .slice(0, 2); // Limit to 2 unsupported elements
+              }
+            }
+            
+            if (supportedElements.length > 0) {
+              // We have some supported elements - create explicit enumeration
+              const supportedText = supportedElements.join(" and ");
+              if (unsupportedElements.length > 0) {
+                const unsupportedText = unsupportedElements.join(" and ");
+                return `The sources support ${supportedText}, but do not explicitly support ${unsupportedText}.`;
+              } else {
+                return `The sources support ${supportedText}, but do not explicitly support all elements of this statement.`;
+              }
+            } else {
+              // Generic but more specific than vague
+              return "The sources support some elements of this statement, but do not explicitly support all claims made.";
+            }
+          }
+          
+          return reason;
+        });
+        
+        updatedReasons = enhancedReasons;
+        
+        // Invariant 2: Add bundled-claim guidance conditionally
+        if (isBundled && hasCitations) {
+          // Check if we have mixed support (some supported, some not)
+          const hasSupportedElements = reasons.some((r) => 
+            typeof r === "string" && /support/i.test(r) && !/not (?:support|supported)/i.test(r)
+          );
+          const hasUnsupportedElements = reasons.some((r) => 
+            typeof r === "string" && /not (?:explicitly )?(?:support|supported)/i.test(r)
+          );
+          
+          if (hasSupportedElements && hasUnsupportedElements) {
+            // Check if guidance already exists
+            const hasGuidance = updatedReasons.some((r) => 
+              typeof r === "string" && /separat/i.test(r) && /statement/i.test(r)
+            );
+            
+            if (!hasGuidance) {
+              updatedReasons.push("Separating these elements into distinct statements would allow higher-confidence verification.");
+              needsUpdate = true;
+            }
+          }
+        }
+      }
+    }
+    
+    // Invariant 3: CONTRADICTED requires explicit conflict description
+    const hasVagueContradiction = reasons.some((reason) => {
+      if (typeof reason !== "string") return false;
+      return vagueContradictionPatterns.some((pattern) => pattern.test(reason)) &&
+             !explicitContradictionPatterns.some((pattern) => pattern.test(reason));
+    });
+    
+    const hasExplicitContradiction = reasons.some((reason) => {
+      if (typeof reason !== "string") return false;
+      return explicitContradictionPatterns.some((pattern) => pattern.test(reason));
+    });
+    
+    if (hasVagueContradiction || (hasExplicitContradiction && hasCitations)) {
+      // Check if reasons already have explicit conflict description
+      const hasExplicitConflict = reasons.some((reason) => {
+        if (typeof reason !== "string") return false;
+        // Look for patterns like "sources state X, which conflicts with Y"
+        return /(?:sources|source) (?:state|indicate|show|say) .* (?:which|that) (?:conflicts?|contradicts?)/i.test(reason) ||
+               /(?:conflicts?|contradicts?) with .* (?:claim|statement|element)/i.test(reason);
+      });
+      
+      if (!hasExplicitConflict) {
+        // Enhance contradiction reasons to be explicit
+        updatedReasons = reasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          
+          if (vagueContradictionPatterns.some((pattern) => pattern.test(reason)) ||
+              (explicitContradictionPatterns.some((pattern) => pattern.test(reason)) && !hasExplicitConflict)) {
+            needsUpdate = true;
+            
+            // Try to extract the conflicting fact from the reason or other reasons
+            const conflictMatch = reason.match(/(?:sources?|source) (?:state|indicate|show|say) ([^,\.]+)/i);
+            const claimMatch = text.match(/([^,\.]+(?:,|and|with)[^,\.]+)/);
+            
+            if (conflictMatch && claimMatch) {
+              return `This statement is contradicted by the cited sources. The sources indicate ${conflictMatch[1]}, which conflicts with ${claimMatch[1]}.`;
+            } else if (conflictMatch) {
+              return `This statement is contradicted by the cited sources. The sources indicate ${conflictMatch[1]}, which conflicts with this claim.`;
+            } else {
+              return "This statement is contradicted by the cited sources. The sources state facts that conflict with elements of this claim.";
+            }
+          }
+          
+          return reason;
+        });
+        
+        // Ensure we have at least one explicit contradiction statement
+        if (!updatedReasons.some((r) => typeof r === "string" && /contradicted by (?:the )?cited sources/i.test(r))) {
+          updatedReasons.unshift("This statement is contradicted by the cited sources.");
+          needsUpdate = true;
+        }
+      }
+    }
+    
+    // Return updated statement if changes were made
+    if (needsUpdate) {
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: updatedReasons.slice(0, 4), // Cap at 4 reasons
+        },
+      };
+    }
+    
+    return stmt;
+  });
+}
+
 // Final post-condition clamp: ensure no High/Medium with missing citations
 // This is the absolute final check before returning response
 // Uses centralized provenance classification
@@ -1705,6 +1928,9 @@ ${
     const webSearchUsed = Boolean(search?.ok && (search?.results || []).length);
     statements = sanitizeReasons(statements, webSearchEnabled, webSearchUsed);
     
+    // I) Enforce reason specificity: require explicit enumeration for partial support and contradiction cases (A3.5.9)
+    statements = enforceReasonSpecificity(statements);
+    
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
     if (statements.length > 0) {
@@ -1767,7 +1993,8 @@ ${
       const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
       const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
       // Web search not available in fallback path
-      const finalFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
+      const sanitizedFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
+      const finalFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
 
       return res.status(200).json({
         ok: true,
