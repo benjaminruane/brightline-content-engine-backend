@@ -677,7 +677,7 @@ function extractDeterministicStatementCandidates(draftText) {
 // A3.5.14b Patch 1: Segmentation Guardrails + Fallback
 // Rejects candidates that are truncated fragments, mid-sentence starts, or too-short anchors
 // Implements strict validation with fallback to full sentences
-function filterCandidateQuality(candidates, rawSentences) {
+function filterCandidateQuality(candidates, rawSentences, draftText) {
   if (!Array.isArray(candidates) || candidates.length === 0) {
     return { candidates: [], rejectedCount: 0, fallbackCount: 0 };
   }
@@ -700,6 +700,32 @@ function filterCandidateQuality(candidates, rawSentences) {
         rawSentenceList.push(trimmed);
       }
     });
+  }
+  
+  // A3.5.15 Fix 1: Build unsplit sentence blocks for unbalanced_brackets fallback
+  // Track which unsplit block contains each candidate
+  const candidateToUnsplitBlock = new Map();
+  if (typeof draftText === "string" && draftText.trim()) {
+    // Split draftText into unsplit blocks (preserve original sentence boundaries)
+    const sentenceBoundaryPattern = /[.!?\n]+/;
+    const unsplitBlocks = draftText
+      .split(sentenceBoundaryPattern)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    
+    // Map each candidate to its containing unsplit block
+    for (const candidate of candidates) {
+      if (typeof candidate === "string") {
+        const trimmedCandidate = candidate.trim();
+        // Find the unsplit block that contains this candidate
+        for (const unsplitBlock of unsplitBlocks) {
+          if (unsplitBlock.includes(trimmedCandidate)) {
+            candidateToUnsplitBlock.set(candidate, unsplitBlock);
+            break;
+          }
+        }
+      }
+    }
   }
   
   // Helper: Find nearest full sentence for fallback
@@ -885,15 +911,36 @@ function filterCandidateQuality(candidates, rawSentences) {
         textPreview: trimmed.substring(0, 50) + (trimmed.length > 50 ? "..." : "")
       });
       
-      // Fix 1: Find fallback sentence using position-based lookup
-      const fallback = findFallbackSentence(trimmed, candidateIndex);
-      if (fallback) {
-        fallbackMap.set(candidate, fallback);
-      } else {
-        // Fallback should always be available - use first valid raw sentence as last resort
-        const lastResortFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45);
-        if (lastResortFallback) {
-          fallbackMap.set(candidate, lastResortFallback);
+      // A3.5.15 Fix 1: For unbalanced_brackets, use unsplit block as fallback
+      let fallback = null;
+      if (reason === "unbalanced_brackets" || reason === "unbalanced_parens") {
+        // Use the unsplit sentence block that contains this candidate
+        fallback = candidateToUnsplitBlock.get(candidate);
+        if (fallback && /[.?!]\s*$/.test(fallback) && fallback.length >= 45) {
+          fallbackMap.set(candidate, fallback);
+        } else {
+          // If unsplit block not found or invalid, find containing sentence from rawSentences
+          for (const rawSentence of rawSentenceList) {
+            if (rawSentence.includes(trimmed) && /[.?!]\s*$/.test(rawSentence) && rawSentence.length >= 45) {
+              fallback = rawSentence;
+              fallbackMap.set(candidate, fallback);
+              break;
+            }
+          }
+        }
+      }
+      
+      // For other rejection reasons, use position-based lookup
+      if (!fallback) {
+        fallback = findFallbackSentence(trimmed, candidateIndex);
+        if (fallback) {
+          fallbackMap.set(candidate, fallback);
+        } else {
+          // Fallback should always be available - use first valid raw sentence as last resort
+          const lastResortFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45);
+          if (lastResortFallback) {
+            fallbackMap.set(candidate, lastResortFallback);
+          }
         }
       }
     } else {
@@ -1008,6 +1055,92 @@ function filterCandidateQuality(candidates, rawSentences) {
     }
   }
   
+  // A3.5.15 Fix 2: Post-fallback re-validation - ensure no unbalanced parens in final candidates
+  // This must happen BEFORE the "unsplit fallback" check
+  const postFallbackRejected = [];
+  const postFallbackRepaired = [];
+  const validatedCandidates = [];
+  
+  for (const candidate of finalCandidates) {
+    if (typeof candidate !== "string" || candidate.trim().length === 0) {
+      postFallbackRejected.push(candidate);
+      continue;
+    }
+    
+    const trimmed = candidate.trim();
+    
+    // Check for unbalanced brackets/parens
+    const openParens = (trimmed.match(/\(/g) || []).length;
+    const closeParens = (trimmed.match(/\)/g) || []).length;
+    const openBrackets = (trimmed.match(/\[/g) || []).length;
+    const closeBrackets = (trimmed.match(/\]/g) || []).length;
+    const openBraces = (trimmed.match(/\{/g) || []).length;
+    const closeBraces = (trimmed.match(/\}/g) || []).length;
+    
+    const isUnbalanced = openParens !== closeParens || openBrackets !== closeBrackets || openBraces !== closeBraces;
+    
+    if (isUnbalanced) {
+      // Try to repair with unsplit block
+      let repaired = candidateToUnsplitBlock.get(candidate);
+      if (!repaired) {
+        // Find containing unsplit block by searching for candidate text
+        for (const [origCandidate, unsplitBlock] of candidateToUnsplitBlock.entries()) {
+          if (unsplitBlock.includes(trimmed)) {
+            repaired = unsplitBlock;
+            break;
+          }
+        }
+      }
+      
+      // If still no repair, use containing raw sentence
+      if (!repaired) {
+        for (const rawSentence of rawSentenceList) {
+          if (rawSentence.includes(trimmed) && /[.?!]\s*$/.test(rawSentence) && rawSentence.length >= 45) {
+            repaired = rawSentence;
+            break;
+          }
+        }
+      }
+      
+      // If repair found and valid, use it
+      if (repaired && /[.?!]\s*$/.test(repaired) && repaired.length >= 45) {
+        // Verify repaired doesn't have unbalanced brackets
+        const repairedOpenParens = (repaired.match(/\(/g) || []).length;
+        const repairedCloseParens = (repaired.match(/\)/g) || []).length;
+        const repairedOpenBrackets = (repaired.match(/\[/g) || []).length;
+        const repairedCloseBrackets = (repaired.match(/\]/g) || []).length;
+        const repairedOpenBraces = (repaired.match(/\{/g) || []).length;
+        const repairedCloseBraces = (repaired.match(/\}/g) || []).length;
+        
+        const repairedIsBalanced = repairedOpenParens === repairedCloseParens && 
+                                   repairedOpenBrackets === repairedCloseBrackets && 
+                                   repairedOpenBraces === repairedCloseBraces;
+        
+        if (repairedIsBalanced) {
+          validatedCandidates.push(repaired);
+          postFallbackRepaired.push({ original: trimmed.substring(0, 40) + "...", repaired: repaired.substring(0, 40) + "..." });
+        } else {
+          // Even repair has unbalanced brackets, drop it
+          postFallbackRejected.push(candidate);
+        }
+      } else {
+        // No valid repair found, drop the candidate
+        postFallbackRejected.push(candidate);
+      }
+    } else {
+      // Candidate is valid, keep it
+      validatedCandidates.push(candidate);
+    }
+  }
+  
+  // Update finalCandidates with validated list
+  finalCandidates = validatedCandidates;
+  
+  // Log post-fallback validation results
+  if (postFallbackRejected.length > 0 || postFallbackRepaired.length > 0) {
+    console.log(`[DIAG][SEG_GUARD] postFallbackValidation rejected=${postFallbackRejected.length} repaired=${postFallbackRepaired.length}`);
+  }
+  
   // If filtering reduced count too much, use original unsplit sentences
   const MIN_ACCEPTABLE_COUNT = Math.max(1, Math.floor(candidates.length * 0.3));
   if (finalCandidates.length < MIN_ACCEPTABLE_COUNT && rawSentenceList.length > 0) {
@@ -1049,7 +1182,7 @@ function filterCandidateQuality(candidates, rawSentences) {
   // Rebuild finalCandidates after fallback additions (in case while loop added more)
   finalCandidates = [...accepted, ...fallbackCandidates];
   
-  // Compute stable hash (simple hash for determinism check) - AFTER all fallback additions
+  // Compute stable hash (simple hash for determinism check) - AFTER all fallback additions and validation
   const joinedCandidates = finalCandidates.join('|');
   let hash = 0;
   for (let i = 0; i < joinedCandidates.length; i++) {
@@ -4223,7 +4356,7 @@ export default async function handler(req, res) {
       .split(sentenceBoundaryPattern)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
-    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences);
+    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, draftText);
     const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
     const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
     const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
@@ -4469,6 +4602,38 @@ ${
     // G) Normalize response structure: ensure citations and evidence are at top-level
     // This enforces the response contract that the Review UI expects
     statements = normalizeResponseStructure(statements, unifiedReferences);
+    
+    // A3.5.15 Fix 3: Deduplicate statements by exact text match
+    const statementTextSet = new Set();
+    const deduplicatedStatements = [];
+    let dedupeRemoved = 0;
+    
+    for (const stmt of statements) {
+      if (!stmt || typeof stmt !== "object") {
+        deduplicatedStatements.push(stmt);
+        continue;
+      }
+      
+      const stmtText = typeof stmt.text === "string" ? stmt.text.trim() : "";
+      if (!stmtText) {
+        deduplicatedStatements.push(stmt);
+        continue;
+      }
+      
+      // Use exact text match for deduplication
+      if (!statementTextSet.has(stmtText)) {
+        statementTextSet.add(stmtText);
+        deduplicatedStatements.push(stmt);
+      } else {
+        dedupeRemoved++;
+      }
+    }
+    
+    if (dedupeRemoved > 0) {
+      console.log(`[DIAG][DEDUP] input=${statements.length} output=${deduplicatedStatements.length} removed=${dedupeRemoved}`);
+    }
+    
+    statements = deduplicatedStatements;
     
     // H) Sanitize reasons: remove misleading "no sources cited" messages when citations/evidence exist
     // Also improve language when web search is enabled (A3.5.8)
