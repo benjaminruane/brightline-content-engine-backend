@@ -567,6 +567,92 @@ function filterDraftOnlyStatements(statements, draftText) {
 // A3.5.13: Deterministic statement extraction (Part B)
 // Extracts candidate statements from draft text deterministically
 // Returns array of candidate statement texts (no assessment yet - LLM will score them)
+// A3.5.16: Pre-merge continuation fragments to fix rawSentences fragmentation
+// Merges segments that look like continuations before sentence splitting
+function mergeContinuationFragments(draftText) {
+  if (typeof draftText !== "string" || !draftText.trim()) {
+    return draftText;
+  }
+  
+  // Split into lines and merge continuation lines
+  const lines = draftText.split(/\n/);
+  const mergedLines = [];
+  const mergeSamples = [];
+  let mergeCount = 0;
+  const inputSegmentCount = lines.filter(l => l && l.trim().length > 0).length;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line || line.trim().length === 0) {
+      // Preserve empty lines as separators (but don't add multiple consecutive empty lines)
+      if (mergedLines.length > 0 && mergedLines[mergedLines.length - 1] !== "") {
+        mergedLines.push("");
+      }
+      continue;
+    }
+    
+    const trimmed = line.trim();
+    
+    // Check if this line looks like a continuation
+    const isContinuation = 
+      // Starts with closing punctuation
+      /^[)\]},;:]/.test(trimmed) ||
+      // Starts with a digit (e.g., "7 million enterprise value), ...")
+      /^\d/.test(trimmed) ||
+      // Starts with currency fragment or open-paren fragment
+      /^\(\$/.test(trimmed) ||
+      /^\(/.test(trimmed) ||
+      // Starts with connector words
+      /^(and|or|via|with|targeting|acquiring|approximately|to|at|of)\s+/i.test(trimmed) ||
+      // Starts with "%" or "fully"
+      /^(%|fully)/i.test(trimmed);
+    
+    // Check if previous line ends with open parenthesis/currency fragment
+    const prevLine = mergedLines.length > 0 ? mergedLines[mergedLines.length - 1] : "";
+    const endsWithOpenFragment = prevLine && prevLine.trim() && (
+      /\(\$$/.test(prevLine) ||
+      /\($/.test(prevLine) ||
+      /\([\d,]+(?:\.\d+)?\s*$/.test(prevLine)
+    );
+    
+    if (isContinuation || endsWithOpenFragment) {
+      // Merge with previous line
+      if (mergedLines.length > 0 && mergedLines[mergedLines.length - 1].trim()) {
+        const beforeText = mergedLines[mergedLines.length - 1];
+        const beforePreview = beforeText.length > 40 ? "..." + beforeText.substring(beforeText.length - 40) : beforeText;
+        mergedLines[mergedLines.length - 1] = beforeText + " " + trimmed;
+        const afterText = mergedLines[mergedLines.length - 1];
+        const afterPreview = afterText.length > 60 ? "..." + afterText.substring(afterText.length - 60) : afterText;
+        mergeCount++;
+        
+        if (mergeSamples.length < 3) {
+          mergeSamples.push({ before: beforePreview, after: afterPreview });
+        }
+      } else {
+        // No previous line, just add it
+        mergedLines.push(trimmed);
+      }
+    } else {
+      // Not a continuation, add as new line
+      mergedLines.push(trimmed);
+    }
+  }
+  
+  // Join lines back with newlines
+  const normalizedText = mergedLines.join("\n");
+  
+  // Log merge statistics
+  if (mergeCount > 0) {
+    const outputSentenceCount = normalizedText.split(/[.!?\n]+/).filter(s => s && s.trim().length > 0).length;
+    console.log(`[DIAG][SENT_MERGE] inputSegments=${inputSegmentCount} outputSentences=${outputSentenceCount} merges=${mergeCount}`);
+    if (mergeSamples.length > 0) {
+      console.log(`[DIAG][SENT_MERGE] sampleMerges=${JSON.stringify(mergeSamples)}`);
+    }
+  }
+  
+  return normalizedText;
+}
+
 function extractDeterministicStatementCandidates(draftText) {
   if (typeof draftText !== "string" || !draftText.trim()) {
     console.log(`[DIAG] extractDeterministicStatementCandidates: empty draftText`);
@@ -933,13 +1019,13 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
       // For other rejection reasons, use position-based lookup
       if (!fallback) {
         fallback = findFallbackSentence(trimmed, candidateIndex);
-        if (fallback) {
-          fallbackMap.set(candidate, fallback);
-        } else {
-          // Fallback should always be available - use first valid raw sentence as last resort
-          const lastResortFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45);
-          if (lastResortFallback) {
-            fallbackMap.set(candidate, lastResortFallback);
+      if (fallback) {
+        fallbackMap.set(candidate, fallback);
+      } else {
+        // Fallback should always be available - use first valid raw sentence as last resort
+        const lastResortFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45);
+        if (lastResortFallback) {
+          fallbackMap.set(candidate, lastResortFallback);
           }
         }
       }
@@ -996,7 +1082,7 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
       // Add fallback even if it's a duplicate (we need one per rejected candidate)
       // Only check that it's not already in accepted list to avoid polluting accepted candidates
       if (fallback && !accepted.includes(fallback)) {
-        fallbackCandidates.push(fallback);
+      fallbackCandidates.push(fallback);
         appliedFallbackReasons.push(rejectionReason);
         
         // Log individual fallback application for verification
@@ -1006,7 +1092,7 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
         
         // Track samples for summary log
         if (fallbackSamples.length < 3) {
-          fallbackSamples.push({ rejectedPreview, fallbackPreview });
+        fallbackSamples.push({ rejectedPreview, fallbackPreview });
         }
       }
     }
@@ -4345,18 +4431,23 @@ export default async function handler(req, res) {
     const maxRefIndex = unifiedReferences.length;
     
 
+    // A3.5.16: Pre-merge continuation fragments before sentence splitting
+    // This fixes fragmentation issues where rawSentences are already broken
+    const normalizedDraftText = mergeContinuationFragments(draftText);
+    
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
-    const rawExtractionCandidates = extractDeterministicStatementCandidates(draftText);
+    const rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText);
     
     // A3.5.14 Part A: Filter candidates for quality (extraction stability)
     // Get raw sentences for context (we need to pass them to the filter)
+    // Use normalized text to ensure consistent sentence boundaries
     const sentenceBoundaryPattern = /[.!?\n]+/;
-    const rawSentences = draftText
+    const rawSentences = normalizedDraftText
       .split(sentenceBoundaryPattern)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
-    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, draftText);
+    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedDraftText);
     const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
     const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
     const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
