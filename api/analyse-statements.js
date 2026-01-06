@@ -1354,6 +1354,379 @@ function isSemanticallyEquivalent(context1, context2) {
   return semanticMatches.some((match) => match);
 }
 
+// A3.5.11: Corpus-level verification before absence claims
+// Normalize numeric values for search (e.g., "25 million" ↔ "$25mm" ↔ "25m")
+function normalizeNumericForSearch(text) {
+  if (typeof text !== "string") return [];
+  
+  const normalized = [];
+  const lower = text.toLowerCase();
+  
+  // Extract all numeric values
+  const numericPatterns = [
+    /\$?([\d,]+(?:\.\d+)?)\s*(million|mm|m\b|M\b)/gi,
+    /\$?([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/gi,
+    /\$?([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
+    /\$?([\d,]+(?:\.\d+)?)\s*(trillion|t\b|T\b)/gi,
+    /\$([\d,]+(?:\.\d+)?)/g,
+  ];
+  
+  for (const pattern of numericPatterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = match[1]?.replace(/,/g, "") || match[1];
+      const num = parseFloat(numStr);
+      if (Number.isFinite(num)) {
+        // Generate variations
+        normalized.push(`${num} million`);
+        normalized.push(`$${num} million`);
+        normalized.push(`$${num}mm`);
+        normalized.push(`$${num}m`);
+        normalized.push(`${num}m`);
+        normalized.push(`$${num}`);
+        normalized.push(String(num));
+      }
+    }
+  }
+  
+  return [...new Set(normalized)];
+}
+
+// Extract key terms from statement for corpus search
+function extractKeyTerms(statementText) {
+  if (typeof statementText !== "string" || !statementText.trim()) return [];
+  
+  const terms = [];
+  const lower = statementText.toLowerCase();
+  
+  // Deal terms and key concepts
+  const dealTermPatterns = [
+    /\b(valuation|pre-?money|post-?money|premoney|postmoney)\b/gi,
+    /\b(liquidation\s+preference|liquidation preference)\b/gi,
+    /\b(board\s+seats?|board seats?)\b/gi,
+    /\b(secondary|secondary sale|secondary transaction)\b/gi,
+    /\b(funding|financing|round|series\s+[a-z])\b/gi,
+    /\b(revenue|sales|income|ARR|MRR)\b/gi,
+    /\b(valuation|val)\b/gi,
+  ];
+  
+  for (const pattern of dealTermPatterns) {
+    const matches = [...statementText.matchAll(pattern)];
+    for (const match of matches) {
+      const term = match[0].trim();
+      if (term && !terms.includes(term.toLowerCase())) {
+        terms.push(term.toLowerCase());
+      }
+    }
+  }
+  
+  // Extract important noun phrases (simplified)
+  const nounPhrases = statementText.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/g);
+  if (nounPhrases) {
+    for (const phrase of nounPhrases.slice(0, 5)) {
+      // Skip very short phrases
+      if (phrase.length > 4 && !terms.includes(phrase.toLowerCase())) {
+        terms.push(phrase.toLowerCase());
+      }
+    }
+  }
+  
+  return terms;
+}
+
+// Perform corpus-level search for a statement
+// Returns: { found: boolean, matches: string[] }
+function searchCorpus(statementText, uploadedSources) {
+  if (!Array.isArray(uploadedSources) || uploadedSources.length === 0) {
+    return { found: false, matches: [] };
+  }
+  
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return { found: false, matches: [] };
+  }
+  
+  const matches = [];
+  const statementLower = statementText.toLowerCase();
+  
+  // Normalize numeric values from statement
+  const numericVariations = normalizeNumericForSearch(statementText);
+  
+  // Extract key terms
+  const keyTerms = extractKeyTerms(statementText);
+  
+  // Search each uploaded source
+  for (const source of uploadedSources) {
+    const sourceText = typeof source.text === "string" ? source.text : "";
+    if (!sourceText.trim()) continue;
+    
+    const sourceLower = sourceText.toLowerCase();
+    
+    // 1. Direct substring match (case-insensitive, with some tolerance)
+    const normalizedStatement = statementText
+      .toLowerCase()
+      .replace(/[^\w\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    
+    const normalizedSource = sourceText
+      .toLowerCase()
+      .replace(/[^\w\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    
+    // Check if key parts of statement appear in source
+    const statementWords = normalizedStatement.split(/\s+/).filter(w => w.length > 3);
+    const matchingWords = statementWords.filter(w => normalizedSource.includes(w));
+    const wordOverlapRatio = statementWords.length > 0 ? matchingWords.length / statementWords.length : 0;
+    
+    if (wordOverlapRatio >= 0.5) {
+      matches.push(`High word overlap (${Math.round(wordOverlapRatio * 100)}%) in "${source.name || "source"}"`);
+    }
+    
+    // 2. Numeric value matching (both string patterns and actual value comparison)
+    for (const numVar of numericVariations) {
+      if (sourceLower.includes(numVar.toLowerCase())) {
+        matches.push(`Numeric value "${numVar}" found in "${source.name || "source"}"`);
+        break;
+      }
+    }
+    
+    // Also extract numeric values from statement and check if similar values exist in source
+    const statementNumericValue = normalizeAnchorValue(statementText);
+    if (statementNumericValue !== null) {
+      // Extract numeric values from source text
+      const sourceNumericPatterns = [
+        /\$?([\d,]+(?:\.\d+)?)\s*(million|mm|m\b|M\b)/gi,
+        /\$?([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/gi,
+        /\$?([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
+        /\$([\d,]+(?:\.\d+)?)/g,
+      ];
+      
+      for (const pattern of sourceNumericPatterns) {
+        const sourceMatches = [...sourceText.matchAll(pattern)];
+        for (const match of sourceMatches) {
+          const numStr = match[1]?.replace(/,/g, "") || match[1];
+          const num = parseFloat(numStr);
+          if (Number.isFinite(num)) {
+            const unit = match[2]?.toLowerCase() || "";
+            const multipliers = {
+              mm: 1e6, million: 1e6, m: 1e6,
+              billion: 1e9, b: 1e9,
+              thousand: 1e3, k: 1e3,
+            };
+            const multiplier = multipliers[unit] || 1;
+            const sourceValue = num * multiplier;
+            
+            // Allow 5% tolerance for numeric matching
+            const tolerance = 0.05;
+            if (Math.abs(sourceValue - statementNumericValue) / Math.max(Math.abs(statementNumericValue), 1) <= tolerance) {
+              matches.push(`Numeric value match (${statementNumericValue} ≈ ${sourceValue}) in "${source.name || "source"}"`);
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    // 3. Key term matching
+    for (const term of keyTerms) {
+      if (sourceLower.includes(term)) {
+        matches.push(`Key term "${term}" found in "${source.name || "source"}"`);
+        break;
+      }
+    }
+    
+    // 4. Fuzzy matching: check if significant portions of statement appear
+    // Split statement into meaningful chunks
+    const statementChunks = statementText
+      .split(/[,;.]/)
+      .map(chunk => chunk.trim())
+      .filter(chunk => chunk.length > 10);
+    
+    for (const chunk of statementChunks.slice(0, 3)) {
+      const chunkLower = chunk.toLowerCase();
+      const chunkWords = chunkLower.split(/\s+/).filter(w => w.length > 3);
+      if (chunkWords.length >= 3) {
+        const chunkMatching = chunkWords.filter(w => sourceLower.includes(w));
+        if (chunkMatching.length >= Math.ceil(chunkWords.length * 0.6)) {
+          matches.push(`Chunk match in "${source.name || "source"}": "${chunk.substring(0, 50)}..."`);
+          break;
+        }
+      }
+    }
+  }
+  
+  return {
+    found: matches.length > 0,
+    matches: [...new Set(matches)].slice(0, 5), // Deduplicate and limit
+  };
+}
+
+// Detect absence claims in reasons
+function hasAbsenceClaim(reasons) {
+  if (!Array.isArray(reasons) || reasons.length === 0) return false;
+  
+  const absencePatterns = [
+    /not mentioned/i,
+    /not specified/i,
+    /not supported/i,
+    /no support/i,
+    /not found/i,
+    /not stated/i,
+    /not referenced/i,
+    /not cited/i,
+    /not present/i,
+    /absent/i,
+    /lacks?/i,
+    /missing/i,
+    /no (?:source|sources|memo|document).*(?:mention|state|reference|cite)/i,
+  ];
+  
+  const reasonsText = reasons
+    .filter(r => typeof r === "string")
+    .join(" ")
+    .toLowerCase();
+  
+  return absencePatterns.some(pattern => pattern.test(reasonsText));
+}
+
+// Enforce corpus-level verification before absence claims (A3.5.11)
+// Core Invariant: Review MUST NOT assert absence unless corpus-level search performed and returned no match
+function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
+  if (!Array.isArray(statements) || !Array.isArray(uploadedSources)) return statements;
+  
+  // Only process if there are uploaded sources
+  if (uploadedSources.length === 0) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const assessment = stmt.assessment || {};
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    
+    // Check if reasons contain absence claims
+    if (!hasAbsenceClaim(reasons)) return stmt; // No absence claim, no action needed
+    
+    // Perform corpus-level search
+    const corpusSearch = searchCorpus(text, uploadedSources);
+    
+    if (corpusSearch.found) {
+      // Corpus search found matches - MUST NOT state absence
+      // Replace absence language with support language
+      let updatedReasons = reasons.map((reason) => {
+        if (typeof reason !== "string") return reason;
+        
+        const lower = reason.toLowerCase();
+        
+        // Replace absence claims with support language
+        if (/not mentioned/i.test(lower)) {
+          return "This information appears in the uploaded sources, though the exact phrasing may differ.";
+        }
+        if (/not specified/i.test(lower)) {
+          return "This information appears in the uploaded sources, though the exact phrasing may differ.";
+        }
+        if (/not supported/i.test(lower) || /no support/i.test(lower)) {
+          return "The uploaded sources contain related information, though the exact claim may not be explicitly stated.";
+        }
+        if (/not found/i.test(lower)) {
+          return "Related information appears in the uploaded sources, though the exact phrasing may differ.";
+        }
+        if (/not stated/i.test(lower) || /not referenced/i.test(lower)) {
+          return "The uploaded sources contain related information, though the exact phrasing may differ.";
+        }
+        if (/no (?:source|sources|memo|document).*(?:mention|state|reference|cite)/i.test(lower)) {
+          return "The uploaded sources contain related information, though the exact phrasing may differ.";
+        }
+        
+        return reason;
+      });
+      
+      // Remove any remaining absence language
+      updatedReasons = updatedReasons.filter((reason) => {
+        if (typeof reason !== "string") return true;
+        const lower = reason.toLowerCase();
+        return !(
+          /not mentioned/i.test(lower) ||
+          /not specified/i.test(lower) ||
+          /not supported/i.test(lower) ||
+          /no support/i.test(lower) ||
+          /not found/i.test(lower) ||
+          /not stated/i.test(lower) ||
+          /not referenced/i.test(lower) ||
+          /not cited/i.test(lower) ||
+          /not present/i.test(lower) ||
+          /absent/i.test(lower) ||
+          /lacks?/i.test(lower) ||
+          /missing/i.test(lower)
+        );
+      });
+      
+      // If all reasons were removed, add a default support reason
+      if (updatedReasons.length === 0) {
+        updatedReasons = ["The uploaded sources contain related information, though the exact phrasing may differ."];
+      }
+      
+      console.log(`[Review] A3.5.11: Prevented absence claim for statement with corpus matches: "${text.substring(0, 50)}..."`);
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: updatedReasons.slice(0, 4),
+        },
+      };
+    } else {
+      // Corpus search found no matches - absence language MAY be used
+      // But ensure it explicitly refers to uploaded sources
+      let updatedReasons = reasons.map((reason) => {
+        if (typeof reason !== "string") return reason;
+        
+        const lower = reason.toLowerCase();
+        
+        // Ensure absence language explicitly refers to uploaded sources
+        if (/not mentioned/i.test(lower) && !/uploaded/i.test(lower) && !/memo/i.test(lower)) {
+          return reason.replace(/not mentioned/i, "not found in the uploaded memo after review");
+        }
+        if (/not specified/i.test(lower) && !/uploaded/i.test(lower) && !/memo/i.test(lower)) {
+          return reason.replace(/not specified/i, "not found in the uploaded memo after review");
+        }
+        if ((/not supported/i.test(lower) || /no support/i.test(lower)) && !/uploaded/i.test(lower) && !/memo/i.test(lower)) {
+          return reason.replace(/(?:not supported|no support)/i, "not found in the uploaded memo after review");
+        }
+        if (/not found/i.test(lower) && !/uploaded/i.test(lower) && !/memo/i.test(lower)) {
+          return reason.replace(/not found/i, "not found in the uploaded memo after review");
+        }
+        
+        return reason;
+      });
+      
+      // Ensure at least one reason explicitly mentions uploaded sources
+      const hasUploadedReference = updatedReasons.some((r) => 
+        typeof r === "string" && (/uploaded/i.test(r) || /memo/i.test(r))
+      );
+      
+      if (!hasUploadedReference && updatedReasons.length > 0) {
+        // Prepend a reason that explicitly references uploaded sources
+        updatedReasons = [
+          "Not found in the uploaded memo after review.",
+          ...updatedReasons,
+        ].slice(0, 4);
+      }
+      
+      console.log(`[Review] A3.5.11: Allowed absence claim after corpus search (no matches): "${text.substring(0, 50)}..."`);
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: updatedReasons.slice(0, 4),
+        },
+      };
+    }
+  });
+}
+
 // Fix anchor-fact reasons: detect and correct false "not mentioned" claims
 // Invariant 3: Ambiguity ≠ absence
 // Invariant 4: Language downgrade for anchor mismatches
@@ -2054,6 +2427,19 @@ VERIFICATION RULES:
 - The draft text itself is NEVER a source. "Directly stated in the draft" describes where a claim appears, but is NOT evidence.
 - Do NOT treat the draft or generated text as a citable source.
 
+ABSENCE CLAIMS (A3.5.11 - CRITICAL):
+- NEVER claim that a fact is "not mentioned", "not specified", or "not supported" by uploaded sources unless you have considered the FULL uploaded document corpus.
+- The uploaded sources excerpts shown here are truncated (first 2000 chars). The full corpus may contain information not visible in these excerpts.
+- Before asserting absence:
+  - Consider numeric variations (e.g., "$25mm" vs "25 million" vs "$25m")
+  - Consider key term variations (e.g., "valuation" vs "pre-money valuation")
+  - Consider phrasing variations (e.g., "board seats" vs "board representation")
+- If you find related information in uploaded sources (even with different phrasing), do NOT claim absence.
+- If you must assert absence after considering the full context:
+  - Use explicit language: "not found in the uploaded memo after review"
+  - Do NOT use vague language like "no sources were provided" when sources exist
+  - Do NOT imply system ignorance or incomplete review
+
 ATTRIBUTION RULES:
 - Statements may be supported by EITHER uploaded sources OR web sources (or both).
 - Uploaded sources are authoritative for memo facts and internal claims.
@@ -2203,6 +2589,10 @@ ${
     // J) Fix anchor-fact reasons: detect and correct false "not mentioned" claims with semantic matching (A3.5.10)
     statements = fixAnchorFactReasons(statements, unifiedReferences);
     
+    // K) Enforce corpus-level verification before absence claims (A3.5.11)
+    // MUST perform corpus search before allowing "not mentioned" / "not supported" claims
+    statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources);
+    
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
     if (statements.length > 0) {
@@ -2267,7 +2657,16 @@ ${
       // Web search not available in fallback path
       const sanitizedFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
       const specificityEnforcedFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
-      const finalFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
+      const anchorFixedFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
+      // A3.5.11: Enforce corpus-level verification before absence claims in fallback path
+      const fallbackUploadedSources = fallbackSources.map((s) => ({
+        id: s?.id || null,
+        name: s?.name || s?.title || "Untitled source",
+        text: s?.text || "",
+        kind: s?.kind || s?.sourceType || "file",
+        url: s?.url || null,
+      }));
+      const finalFallbackStatements = enforceCorpusVerificationBeforeAbsence(anchorFixedFallbackStatements, fallbackUploadedSources);
 
       return res.status(200).json({
         ok: true,
