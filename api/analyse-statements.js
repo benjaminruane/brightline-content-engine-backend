@@ -831,6 +831,84 @@ function normalizeResponseStructure(statements, unifiedReferences) {
   });
 }
 
+// Sanitize assessment reasons: remove misleading "no sources cited" messages when citations/evidence exist
+// Invariant 1: Never say "No verifiable sources cited" when sources exist
+// Invariant 2: Keep "no sources cited" only for truly uncited statements
+function sanitizeReasons(statements) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const assessment = stmt.assessment || {};
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    
+    // Normalize citations from both locations (use first non-empty)
+    const citations = 
+      (Array.isArray(stmt?.citations) && stmt.citations.length > 0) ? stmt.citations :
+      (Array.isArray(assessment?.citations) && assessment.citations.length > 0) ? assessment.citations :
+      [];
+    
+    // Normalize evidence from both locations (use first non-empty)
+    const evidence = 
+      (Array.isArray(stmt?.evidence) && stmt.evidence.length > 0) ? stmt.evidence :
+      (Array.isArray(assessment?.evidence) && assessment.evidence.length > 0) ? assessment.evidence :
+      [];
+    
+    // Count resolved evidence entries (have a title, regardless of url)
+    const resolvedEvidenceCount = evidence.filter((ev) => {
+      const title = ev?.title;
+      return typeof title === "string" && title.trim().length > 0;
+    }).length;
+    
+    // Invariant 1: If citations exist AND evidence is resolved, remove misleading messages
+    const hasSources = citations.length > 0 && resolvedEvidenceCount > 0;
+    
+    if (hasSources) {
+      // Remove misleading "no sources cited" messages
+      const sanitizedReasons = reasons.filter((reason) => {
+        if (typeof reason !== "string") return true;
+        const lower = reason.toLowerCase();
+        // Remove these misleading phrases when sources exist
+        return !(
+          lower.includes("no verifiable sources cited") ||
+          lower.includes("could not be verified against provided sources")
+        );
+      });
+      
+      // If we removed reasons and there are still other reasons, use them
+      // Otherwise, add an accurate explanation about partial support/interpretive framing
+      if (sanitizedReasons.length < reasons.length && sanitizedReasons.length > 0) {
+        // We removed misleading messages but kept other reasons - good
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: sanitizedReasons,
+          },
+        };
+      } else if (sanitizedReasons.length === 0 && reasons.length > 0) {
+        // All reasons were misleading - replace with accurate explanation
+        // Choose appropriate message based on context
+        const replacementReasons = [
+          "Sources were provided, but they do not directly support this claim as written.",
+        ];
+        
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: replacementReasons,
+          },
+        };
+      }
+    }
+    
+    // Invariant 2: If no citations or no resolved evidence, keep existing reasons (may include "no sources cited")
+    return stmt;
+  });
+}
+
 // Final post-condition clamp: ensure no High/Medium with missing citations
 // This is the absolute final check before returning response
 // Uses centralized provenance classification
@@ -1307,6 +1385,9 @@ ${
     // This enforces the response contract that the Review UI expects
     statements = normalizeResponseStructure(statements, unifiedReferences);
     
+    // H) Sanitize reasons: remove misleading "no sources cited" messages when citations/evidence exist
+    statements = sanitizeReasons(statements);
+    
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
     if (statements.length > 0) {
@@ -1366,7 +1447,8 @@ ${
       const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
       const gatedFallbackStatements = applyAnchorGating(calibratedFallbackStatements);
       const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
-      const finalFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
+      const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
+      const finalFallbackStatements = sanitizeReasons(normalizedFallbackStatements);
 
       return res.status(200).json({
         ok: true,
