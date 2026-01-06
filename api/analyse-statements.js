@@ -763,6 +763,74 @@ function applyAnchorGating(statements) {
   });
 }
 
+// Normalize response structure: ensure citations and evidence are at top-level
+// This enforces the response contract that the Review UI expects
+function normalizeResponseStructure(statements, unifiedReferences) {
+  if (!Array.isArray(statements) || !Array.isArray(unifiedReferences)) return statements;
+  
+  // Build references map keyed by String(id) to handle both number and string IDs
+  const referencesById = new Map();
+  unifiedReferences.forEach((ref) => {
+    const id = ref?.id;
+    if (id != null) {
+      referencesById.set(String(id), ref);
+    }
+  });
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const assessment = stmt.assessment || {};
+    const assessmentCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    
+    // Invariant 1: If assessment.citations exists, the same citations MUST be present at statement.citations
+    // Always mirror assessment.citations to statement.citations when assessment.citations exists
+    const citations = assessmentCitations.length > 0 ? assessmentCitations : (Array.isArray(stmt.citations) ? stmt.citations : []);
+    
+    // Invariant 2: Build evidence from resolved references for each citation
+    const evidence = [];
+    if (citations.length > 0) {
+      citations.forEach((citationId) => {
+        const citationKey = citationId != null ? String(citationId) : null;
+        if (citationKey && referencesById.has(citationKey)) {
+          const ref = referencesById.get(citationKey);
+          const refType = ref?.type || (ref?.url ? "web" : "uploaded");
+          evidence.push({
+            title: ref?.title || "Untitled source",
+            url: ref?.url || null,
+            sourceType: refType, // Match frontend expectation
+          });
+        } else {
+          // Citation id cannot be resolved - include placeholder
+          evidence.push({
+            title: "Unresolved citation",
+            url: null,
+            sourceType: "unresolved",
+          });
+        }
+      });
+    }
+    
+    // Build normalized statement
+    const normalized = {
+      ...stmt,
+      citations, // Top-level citations (Invariant 1)
+      evidence,  // Top-level evidence (Invariant 2)
+    };
+    
+    // Optional backward compatibility: mirror evidence back to assessment.evidence
+    if (evidence.length > 0) {
+      normalized.assessment = {
+        ...assessment,
+        citations: assessmentCitations, // Preserve original
+        evidence, // Mirror evidence for backward compatibility
+      };
+    }
+    
+    return normalized;
+  });
+}
+
 // Final post-condition clamp: ensure no High/Medium with missing citations
 // This is the absolute final check before returning response
 // Uses centralized provenance classification
@@ -1235,6 +1303,10 @@ ${
     // F) Final post-condition clamp: ensure no High/Medium with missing citations
     statements = applyFinalPostCheck(statements, unifiedReferences);
     
+    // G) Normalize response structure: ensure citations and evidence are at top-level
+    // This enforces the response contract that the Review UI expects
+    statements = normalizeResponseStructure(statements, unifiedReferences);
+    
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
     if (statements.length > 0) {
@@ -1244,7 +1316,9 @@ ${
           text: stmt.text?.substring(0, 60),
           score: assessment.reliabilityScore,
           label: assessment.reliabilityLabel,
-          citations: assessment.citations,
+          assessmentCitations: assessment.citations,
+          topLevelCitations: stmt.citations,
+          evidenceCount: Array.isArray(stmt.evidence) ? stmt.evidence.length : 0,
           citationTypes: assessment.citations?.map(c => typeof c),
           reasons: assessment.reasons?.slice(0, 2),
         });
@@ -1284,14 +1358,15 @@ ${
         type: "uploaded",
       }));
       
-      // Apply same pipeline as main path: draft filter → resolve → dual-axis → calibration → anchor → post-check
+      // Apply same pipeline as main path: draft filter → resolve → dual-axis → calibration → anchor → post-check → normalize
       const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
       const filteredFallbackStatements = filterDraftOnlyStatements(fallbackStatements, fallbackDraftText);
       const resolvedFallbackStatements = resolveCitations(filteredFallbackStatements, fallbackUploadedReferences);
       const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements, fallbackUploadedReferences);
       const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
       const gatedFallbackStatements = applyAnchorGating(calibratedFallbackStatements);
-      const finalFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
+      const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
+      const finalFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
 
       return res.status(200).json({
         ok: true,
