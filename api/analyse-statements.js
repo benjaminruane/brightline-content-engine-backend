@@ -480,17 +480,52 @@ function coerceStatements(parsed, maxRefIndex) {
 
 // Filter statements to only include those present in draft text (hard gate)
 // Normalizes whitespace and case for comparison, requires high overlap
+// Normalize text for overlap comparison: lowercase, strip punctuation, collapse whitespace
+// Invariant 1: Punctuation should not cause drops
+function normalizeTextForOverlap(text) {
+  if (typeof text !== "string") return "";
+  return text
+    .toLowerCase()
+    // Strip punctuation from token boundaries (keep internal punctuation like apostrophes)
+    .replace(/[^\w\s']/g, " ")
+    // Collapse whitespace
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Common stopwords to ignore in overlap computation
+// Invariant 2: Stopwords should not dominate overlap
+const STOPWORDS = new Set([
+  "the", "and", "that", "of", "to", "in", "a", "an", "is", "it", "as", "be", "was", "for",
+  "on", "are", "with", "this", "but", "from", "they", "have", "has", "had", "at", "by", "not",
+  "or", "which", "one", "we", "all", "can", "her", "would", "there", "their", "what", "so",
+  "up", "out", "if", "about", "who", "get", "which", "when", "make", "can", "like", "time",
+  "just", "him", "know", "take", "into", "year", "your", "good", "some", "could", "them",
+  "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think",
+  "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way",
+  "even", "new", "want", "because", "any", "these", "give", "day", "most", "us", "very",
+]);
+
+// Tokenize text into words, filtering stopwords and very short words
+function tokenizeForOverlap(text) {
+  const normalized = normalizeTextForOverlap(text);
+  return normalized
+    .split(/\s+/)
+    .filter((word) => {
+      // Filter stopwords and very short words
+      return word.length > 2 && !STOPWORDS.has(word);
+    });
+}
+
 function filterDraftOnlyStatements(statements, draftText) {
   if (!Array.isArray(statements) || statements.length === 0) return statements;
   if (typeof draftText !== "string" || !draftText.trim()) return statements;
   
   console.log(`[DIAG] filterDraftOnlyStatements: input count=${statements.length}, draftText length=${draftText.length}`);
   
-  // Normalize draft text: lowercase, collapse whitespace
-  const normalizedDraft = draftText
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
+  // Normalize draft text: lowercase, strip punctuation, collapse whitespace
+  const normalizedDraft = normalizeTextForOverlap(draftText);
+  const draftTokens = new Set(tokenizeForOverlap(draftText));
   
   const filtered = [];
   const dropped = [];
@@ -508,16 +543,13 @@ function filterDraftOnlyStatements(statements, draftText) {
       continue;
     }
     
-    // Normalize statement text: lowercase, collapse whitespace
-    const normalizedStmt = text
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
+    // Normalize statement text: lowercase, strip punctuation, collapse whitespace
+    const normalizedStmt = normalizeTextForOverlap(text);
     
-    // Check if statement text appears in draft (exact match or high-overlap substring)
-    // Require at least 80% of statement words to appear in draft
-    const stmtWords = normalizedStmt.split(/\s+/).filter((w) => w.length > 2); // Filter very short words
-    if (stmtWords.length === 0) {
+    // Tokenize statement (excluding stopwords and very short words)
+    const stmtTokens = tokenizeForOverlap(text);
+    
+    if (stmtTokens.length === 0) {
       // Very short statement - require exact or near-exact match
       if (normalizedDraft.includes(normalizedStmt)) {
         filtered.push(stmt);
@@ -534,26 +566,33 @@ function filterDraftOnlyStatements(statements, draftText) {
       continue;
     }
     
-    // Count how many statement words appear in draft
-    const matchingWords = stmtWords.filter((word) => normalizedDraft.includes(word));
-    const overlapRatio = matchingWords.length / stmtWords.length;
+    // Count how many statement tokens appear in draft tokens
+    const matchingTokens = stmtTokens.filter((token) => draftTokens.has(token));
+    const overlapRatio = matchingTokens.length / stmtTokens.length;
     
     // Also check if normalized statement is a substring of draft (for verbatim matches)
     const isSubstring = normalizedDraft.includes(normalizedStmt);
     
-    // Accept if: exact substring match OR high word overlap (>=80%)
-    if (isSubstring || overlapRatio >= 0.8) {
+    // Invariant 3: Adaptive threshold based on statement length
+    // Long statements: allow slightly lower overlap (70%)
+    // Short statements: keep stricter (75%)
+    const statementLength = stmtTokens.length;
+    const adaptiveThreshold = statementLength >= 10 ? 0.70 : 0.75;
+    
+    // Accept if: exact substring match OR meets adaptive word overlap threshold
+    if (isSubstring || overlapRatio >= adaptiveThreshold) {
       filtered.push(stmt);
     } else {
       dropped.push({
         index: i,
-        reason: `low overlap (${(overlapRatio * 100).toFixed(1)}%, need 80%)`,
+        reason: `low overlap (${(overlapRatio * 100).toFixed(1)}%, need ${(adaptiveThreshold * 100).toFixed(0)}%)`,
         text: text.substring(0, 100),
         isSubstring,
         overlapRatio,
-        stmtWordsCount: stmtWords.length,
-        matchingWordsCount: matchingWords.length,
-        missingWords: stmtWords.filter(w => !normalizedDraft.includes(w)).slice(0, 5),
+        threshold: adaptiveThreshold,
+        stmtTokensCount: stmtTokens.length,
+        matchingTokensCount: matchingTokens.length,
+        missingTokens: stmtTokens.filter(t => !draftTokens.has(t)).slice(0, 5),
       });
       console.log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
     }
@@ -565,7 +604,8 @@ function filterDraftOnlyStatements(statements, draftText) {
       reason: d.reason,
       text: d.text,
       overlapRatio: d.overlapRatio,
-      missingWords: d.missingWords,
+      threshold: d.threshold,
+      missingTokens: d.missingTokens,
     })));
   }
   
