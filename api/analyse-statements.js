@@ -9,6 +9,7 @@ import {
   webResultsToReferences,
   deriveQueryFromDraft,
 } from "../lib/web.js";
+import { corpusSearch } from "../lib/corpusSearch.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -1354,213 +1355,8 @@ function isSemanticallyEquivalent(context1, context2) {
   return semanticMatches.some((match) => match);
 }
 
-// A3.5.11: Corpus-level verification before absence claims
-// Normalize numeric values for search (e.g., "25 million" ↔ "$25mm" ↔ "25m")
-function normalizeNumericForSearch(text) {
-  if (typeof text !== "string") return [];
-  
-  const normalized = [];
-  const lower = text.toLowerCase();
-  
-  // Extract all numeric values
-  const numericPatterns = [
-    /\$?([\d,]+(?:\.\d+)?)\s*(million|mm|m\b|M\b)/gi,
-    /\$?([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/gi,
-    /\$?([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
-    /\$?([\d,]+(?:\.\d+)?)\s*(trillion|t\b|T\b)/gi,
-    /\$([\d,]+(?:\.\d+)?)/g,
-  ];
-  
-  for (const pattern of numericPatterns) {
-    const matches = [...text.matchAll(pattern)];
-    for (const match of matches) {
-      const numStr = match[1]?.replace(/,/g, "") || match[1];
-      const num = parseFloat(numStr);
-      if (Number.isFinite(num)) {
-        // Generate variations
-        normalized.push(`${num} million`);
-        normalized.push(`$${num} million`);
-        normalized.push(`$${num}mm`);
-        normalized.push(`$${num}m`);
-        normalized.push(`${num}m`);
-        normalized.push(`$${num}`);
-        normalized.push(String(num));
-      }
-    }
-  }
-  
-  return [...new Set(normalized)];
-}
-
-// Extract key terms from statement for corpus search
-function extractKeyTerms(statementText) {
-  if (typeof statementText !== "string" || !statementText.trim()) return [];
-  
-  const terms = [];
-  const lower = statementText.toLowerCase();
-  
-  // Deal terms and key concepts
-  const dealTermPatterns = [
-    /\b(valuation|pre-?money|post-?money|premoney|postmoney)\b/gi,
-    /\b(liquidation\s+preference|liquidation preference)\b/gi,
-    /\b(board\s+seats?|board seats?)\b/gi,
-    /\b(secondary|secondary sale|secondary transaction)\b/gi,
-    /\b(funding|financing|round|series\s+[a-z])\b/gi,
-    /\b(revenue|sales|income|ARR|MRR)\b/gi,
-    /\b(valuation|val)\b/gi,
-  ];
-  
-  for (const pattern of dealTermPatterns) {
-    const matches = [...statementText.matchAll(pattern)];
-    for (const match of matches) {
-      const term = match[0].trim();
-      if (term && !terms.includes(term.toLowerCase())) {
-        terms.push(term.toLowerCase());
-      }
-    }
-  }
-  
-  // Extract important noun phrases (simplified)
-  const nounPhrases = statementText.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/g);
-  if (nounPhrases) {
-    for (const phrase of nounPhrases.slice(0, 5)) {
-      // Skip very short phrases
-      if (phrase.length > 4 && !terms.includes(phrase.toLowerCase())) {
-        terms.push(phrase.toLowerCase());
-      }
-    }
-  }
-  
-  return terms;
-}
-
-// Perform corpus-level search for a statement
-// Returns: { found: boolean, matches: string[] }
-function searchCorpus(statementText, uploadedSources) {
-  if (!Array.isArray(uploadedSources) || uploadedSources.length === 0) {
-    return { found: false, matches: [] };
-  }
-  
-  if (typeof statementText !== "string" || !statementText.trim()) {
-    return { found: false, matches: [] };
-  }
-  
-  const matches = [];
-  const statementLower = statementText.toLowerCase();
-  
-  // Normalize numeric values from statement
-  const numericVariations = normalizeNumericForSearch(statementText);
-  
-  // Extract key terms
-  const keyTerms = extractKeyTerms(statementText);
-  
-  // Search each uploaded source
-  for (const source of uploadedSources) {
-    const sourceText = typeof source.text === "string" ? source.text : "";
-    if (!sourceText.trim()) continue;
-    
-    const sourceLower = sourceText.toLowerCase();
-    
-    // 1. Direct substring match (case-insensitive, with some tolerance)
-    const normalizedStatement = statementText
-      .toLowerCase()
-      .replace(/[^\w\s]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    
-    const normalizedSource = sourceText
-      .toLowerCase()
-      .replace(/[^\w\s]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    
-    // Check if key parts of statement appear in source
-    const statementWords = normalizedStatement.split(/\s+/).filter(w => w.length > 3);
-    const matchingWords = statementWords.filter(w => normalizedSource.includes(w));
-    const wordOverlapRatio = statementWords.length > 0 ? matchingWords.length / statementWords.length : 0;
-    
-    if (wordOverlapRatio >= 0.5) {
-      matches.push(`High word overlap (${Math.round(wordOverlapRatio * 100)}%) in "${source.name || "source"}"`);
-    }
-    
-    // 2. Numeric value matching (both string patterns and actual value comparison)
-    for (const numVar of numericVariations) {
-      if (sourceLower.includes(numVar.toLowerCase())) {
-        matches.push(`Numeric value "${numVar}" found in "${source.name || "source"}"`);
-        break;
-      }
-    }
-    
-    // Also extract numeric values from statement and check if similar values exist in source
-    const statementNumericValue = normalizeAnchorValue(statementText);
-    if (statementNumericValue !== null) {
-      // Extract numeric values from source text
-      const sourceNumericPatterns = [
-        /\$?([\d,]+(?:\.\d+)?)\s*(million|mm|m\b|M\b)/gi,
-        /\$?([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/gi,
-        /\$?([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
-        /\$([\d,]+(?:\.\d+)?)/g,
-      ];
-      
-      for (const pattern of sourceNumericPatterns) {
-        const sourceMatches = [...sourceText.matchAll(pattern)];
-        for (const match of sourceMatches) {
-          const numStr = match[1]?.replace(/,/g, "") || match[1];
-          const num = parseFloat(numStr);
-          if (Number.isFinite(num)) {
-            const unit = match[2]?.toLowerCase() || "";
-            const multipliers = {
-              mm: 1e6, million: 1e6, m: 1e6,
-              billion: 1e9, b: 1e9,
-              thousand: 1e3, k: 1e3,
-            };
-            const multiplier = multipliers[unit] || 1;
-            const sourceValue = num * multiplier;
-            
-            // Allow 5% tolerance for numeric matching
-            const tolerance = 0.05;
-            if (Math.abs(sourceValue - statementNumericValue) / Math.max(Math.abs(statementNumericValue), 1) <= tolerance) {
-              matches.push(`Numeric value match (${statementNumericValue} ≈ ${sourceValue}) in "${source.name || "source"}"`);
-              break;
-            }
-          }
-        }
-      }
-    }
-    
-    // 3. Key term matching
-    for (const term of keyTerms) {
-      if (sourceLower.includes(term)) {
-        matches.push(`Key term "${term}" found in "${source.name || "source"}"`);
-        break;
-      }
-    }
-    
-    // 4. Fuzzy matching: check if significant portions of statement appear
-    // Split statement into meaningful chunks
-    const statementChunks = statementText
-      .split(/[,;.]/)
-      .map(chunk => chunk.trim())
-      .filter(chunk => chunk.length > 10);
-    
-    for (const chunk of statementChunks.slice(0, 3)) {
-      const chunkLower = chunk.toLowerCase();
-      const chunkWords = chunkLower.split(/\s+/).filter(w => w.length > 3);
-      if (chunkWords.length >= 3) {
-        const chunkMatching = chunkWords.filter(w => sourceLower.includes(w));
-        if (chunkMatching.length >= Math.ceil(chunkWords.length * 0.6)) {
-          matches.push(`Chunk match in "${source.name || "source"}": "${chunk.substring(0, 50)}..."`);
-          break;
-        }
-      }
-    }
-  }
-  
-  return {
-    found: matches.length > 0,
-    matches: [...new Set(matches)].slice(0, 5), // Deduplicate and limit
-  };
-}
+// A3.5.12: Gate absence-language using deterministic corpusSearch
+// Uses lib/corpusSearch.js for lightweight corpus search
 
 // Detect absence claims in reasons
 function hasAbsenceClaim(reasons) {
@@ -1590,13 +1386,53 @@ function hasAbsenceClaim(reasons) {
   return absencePatterns.some(pattern => pattern.test(reasonsText));
 }
 
-// Enforce corpus-level verification before absence claims (A3.5.11)
+// Enforce corpus-level verification before absence claims (A3.5.11/A3.5.12)
 // Core Invariant: Review MUST NOT assert absence unless corpus-level search performed and returned no match
+// Uses deterministic corpusSearch utility (A3.5.12)
 function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
   if (!Array.isArray(statements) || !Array.isArray(uploadedSources)) return statements;
   
-  // Only process if there are uploaded sources
-  if (uploadedSources.length === 0) return statements;
+  // Invariant 1: Full corpus availability - only process if uploaded sources exist with full text
+  const docsWithFullText = uploadedSources.filter(s => 
+    typeof s.text === "string" && s.text.trim().length > 0
+  );
+  
+  if (docsWithFullText.length === 0) {
+    // No full text available - do not allow absence language
+    return statements.map((stmt) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      
+      if (hasAbsenceClaim(reasons)) {
+        // Replace absence language with weaker wording
+        const updatedReasons = reasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          const lower = reason.toLowerCase();
+          if (/not (?:mentioned|specified|found|stated) in (?:the )?uploaded (?:memo|sources)/i.test(lower)) {
+            return "This claim was not confirmed in the sources reviewed.";
+          }
+          return reason;
+        });
+        
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: updatedReasons.slice(0, 4),
+          },
+        };
+      }
+      return stmt;
+    });
+  }
+  
+  // Format uploaded docs for corpusSearch utility
+  const uploadedDocs = docsWithFullText.map(s => ({
+    id: s.id || s.name || `doc_${Math.random()}`,
+    title: s.name || s.title || "Untitled source",
+    text: s.text || "",
+  }));
   
   return statements.map((stmt) => {
     if (!stmt || typeof stmt !== "object") return stmt;
@@ -1605,14 +1441,15 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
     const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
     const text = typeof stmt.text === "string" ? stmt.text : "";
     
+    // Invariant 2: Mandatory corpusSearch before absence language
     // Check if reasons contain absence claims
     if (!hasAbsenceClaim(reasons)) return stmt; // No absence claim, no action needed
     
-    // Perform corpus-level search
-    const corpusSearch = searchCorpus(text, uploadedSources);
+    // Perform deterministic corpus search (A3.5.12)
+    const searchResult = corpusSearch(text, uploadedDocs);
     
-    if (corpusSearch.found) {
-      // Corpus search found matches - MUST NOT state absence
+    if (searchResult.found) {
+      // Corpus search found matches - MUST NOT state absence (Invariant 2)
       // Replace absence language with support language
       let updatedReasons = reasons.map((reason) => {
         if (typeof reason !== "string") return reason;
@@ -1667,7 +1504,14 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
         updatedReasons = ["The uploaded sources contain related information, though the exact phrasing may differ."];
       }
       
-      console.log(`[Review] A3.5.11: Prevented absence claim for statement with corpus matches: "${text.substring(0, 50)}..."`);
+      // Diagnostics (A3.5.12)
+      const matchTypes = [...new Set(searchResult.hits.map(h => h.matchType))];
+      console.log(`[DIAG] A3.5.12: Prevented absence claim - corpusSearch found matches:`, {
+        statement: text.substring(0, 60),
+        hitsCount: searchResult.hits.length,
+        matchTypes,
+        docIds: [...new Set(searchResult.hits.map(h => h.docId))],
+      });
       
       return {
         ...stmt,
@@ -1714,7 +1558,12 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
         ].slice(0, 4);
       }
       
-      console.log(`[Review] A3.5.11: Allowed absence claim after corpus search (no matches): "${text.substring(0, 50)}..."`);
+      // Diagnostics (A3.5.12)
+      console.log(`[DIAG] A3.5.12: Allowed absence claim after corpusSearch (no matches):`, {
+        statement: text.substring(0, 60),
+        searchedDocs: uploadedDocs.length,
+        debug: searchResult.debug,
+      });
       
       return {
         ...stmt,
