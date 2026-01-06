@@ -613,101 +613,136 @@ function filterDraftOnlyStatements(statements, draftText) {
   return filtered;
 }
 
+// A3.5.13: Deterministic statement extraction (Part B)
+// Extracts candidate statements from draft text deterministically
+// Returns array of candidate statement texts (no assessment yet - LLM will score them)
+function extractDeterministicStatementCandidates(draftText) {
+  if (typeof draftText !== "string" || !draftText.trim()) {
+    console.log(`[DIAG] extractDeterministicStatementCandidates: empty draftText`);
+    return [];
+  }
+  
+  const candidates = [];
+  const seen = new Set();
+  
+  // Step 1: Split by sentence boundaries (period, exclamation, question mark, newline)
+  const sentenceBoundaryPattern = /[.!?\n]+/;
+  const rawSentences = draftText
+    .split(sentenceBoundaryPattern)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+  
+  console.log(`[DIAG] extractDeterministicStatementCandidates: rawSentences count=${rawSentences.length}`);
+  
+  // Step 2: For each sentence, check if it needs splitting
+  for (const sentence of rawSentences) {
+    if (sentence.length < 10) continue; // Skip very short fragments
+    
+    // Check for multiple anchor patterns that suggest compound statements
+    const anchorPatterns = [
+      /\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?/gi, // Money amounts
+      /\b\d+(?:\.\d+)?\s*%/g, // Percentages
+      /\b(?:valuation|funding|revenue|ownership|equity|pre-money|post-money)\b/gi, // Anchor keywords
+    ];
+    
+    // Count distinct anchor occurrences
+    const anchorMatches = [];
+    for (const pattern of anchorPatterns) {
+      const matches = [...sentence.matchAll(pattern)];
+      anchorMatches.push(...matches);
+    }
+    
+    // If sentence has multiple distinct anchors, consider splitting
+    if (anchorMatches.length >= 2) {
+      // Try to split on common separators when they contain distinct anchor phrases
+      const splitPatterns = [
+        /;\s*/, // Semicolons
+        /,\s+(?:and|but|with|which)\s+/i, // Commas with conjunctions
+        /\s+and\s+/i, // Standalone "and" when followed by anchor pattern
+      ];
+      
+      let wasSplit = false;
+      for (const splitPattern of splitPatterns) {
+        if (splitPattern.test(sentence)) {
+          const parts = sentence.split(splitPattern);
+          for (const part of parts) {
+            const trimmed = part.trim();
+            if (trimmed.length < 10) continue;
+            
+            // Check if this part has an anchor
+            const hasAnchor = anchorPatterns.some(p => p.test(trimmed));
+            if (hasAnchor) {
+              const normalized = trimmed.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+              if (!seen.has(normalized)) {
+                seen.add(normalized);
+                candidates.push(trimmed);
+                wasSplit = true;
+                console.log(`[DIAG] extractDeterministicStatementCandidates: split sentence (pattern: ${splitPattern.source}): "${trimmed.substring(0, 50)}..."`);
+              }
+            }
+          }
+          if (wasSplit) break;
+        }
+      }
+      
+      // If we didn't split but have multiple anchors, keep as single candidate
+      if (!wasSplit) {
+        const normalized = sentence.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+        if (!seen.has(normalized)) {
+          seen.add(normalized);
+          candidates.push(sentence);
+        }
+      }
+    } else {
+      // Single anchor or no anchor - keep as single candidate
+      const normalized = sentence.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+      if (!seen.has(normalized)) {
+        seen.add(normalized);
+        candidates.push(sentence);
+      }
+    }
+  }
+  
+  // Step 3: Apply stable cap (deterministic - first N in draft order)
+  const MAX_CANDIDATES = 25;
+  const cappedCandidates = candidates.slice(0, MAX_CANDIDATES);
+  
+  if (candidates.length > MAX_CANDIDATES) {
+    console.log(`[DIAG] extractDeterministicStatementCandidates: cap triggered, ${candidates.length} -> ${MAX_CANDIDATES}`);
+  }
+  
+  // Diagnostics (required by spec)
+  console.log(`[DIAG] extractDeterministicStatementCandidates: final count=${cappedCandidates.length}`);
+  if (cappedCandidates.length > 0) {
+    console.log(`[DIAG] extractDeterministicStatementCandidates: first 5 candidates:`, 
+      cappedCandidates.slice(0, 5).map((c, idx) => ({
+        index: idx,
+        text: c.substring(0, 80) + (c.length > 80 ? "..." : ""),
+        length: c.length,
+      }))
+    );
+  }
+  
+  return cappedCandidates;
+}
+
 // Fallback extraction when model fails
 function fallbackExtractAtomicStatements(draftText) {
   if (typeof draftText !== "string" || !draftText.trim()) return [];
   
-  // Split into sentences (period, newline, or exclamation/question marks)
-  const sentences = draftText
-    .split(/[.!?\n]+/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 10); // Filter very short fragments
+  // Use deterministic extraction for fallback too
+  const candidates = extractDeterministicStatementCandidates(draftText);
   
-  const statements = [];
-  const seen = new Set();
-  
-  // Factual anchor patterns
-  const hasFactualAnchor = (text) => {
-    return (
-      /\b(19|20)\d{2}\b/.test(text) || // Years
-      /[$£€¥]\s*[\d,]+/.test(text) || // Currency
-      /\b\d+(?:\.\d+)?\s*%/.test(text) || // Percentages
-      /\b(nyse|nasdaq|tsx|lse|hkex|asx)\b/i.test(text) || // Exchanges
-      /\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/i.test(text) // Months
-    );
-  };
-  
-  // Split compound sentences conservatively
-  const splitCompound = (text) => {
-    const parts = [];
-    // Split on semicolons, " and ", " but " (conservative)
-    const separators = /;\s*|,\s+and\s+|,\s+but\s+/i;
-    if (separators.test(text)) {
-      const split = text.split(separators);
-      parts.push(...split.map((p) => p.trim()).filter((p) => p.length > 10));
-    } else {
-      parts.push(text);
-    }
-    return parts;
-  };
-  
-  for (const sentence of sentences) {
-    // Prefer sentences with factual anchors
-    if (hasFactualAnchor(sentence)) {
-      const parts = splitCompound(sentence);
-      for (const part of parts) {
-        if (part.length < 10) continue;
-        const normalized = part.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
-        if (seen.has(normalized)) continue;
-        seen.add(normalized);
-        
-        statements.push({
-          text: part,
-          assessment: {
-            reliabilityScore: 25,
-            reliabilityLabel: "Low",
-            reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting source (uploaded or web) was confirmed."],
-            citations: [],
-          },
-        });
-        
-        if (statements.length >= 12) break;
-      }
-    }
-    
-    if (statements.length >= 12) break;
-  }
-  
-  // If we still don't have enough, add non-anchored sentences
-  if (statements.length < 12) {
-    for (const sentence of sentences) {
-      if (hasFactualAnchor(sentence)) continue; // Already processed
-      
-      const parts = splitCompound(sentence);
-      for (const part of parts) {
-        if (part.length < 15) continue; // Slightly longer for non-anchored
-        const normalized = part.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
-        if (seen.has(normalized)) continue;
-        seen.add(normalized);
-        
-        statements.push({
-          text: part,
-          assessment: {
-            reliabilityScore: 25,
-            reliabilityLabel: "Low",
-            reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting source (uploaded or web) was confirmed."],
-            citations: [],
-          },
-        });
-        
-        if (statements.length >= 12) break;
-      }
-      
-      if (statements.length >= 12) break;
-    }
-  }
-  
-  return statements;
+  // Convert candidates to statements with default assessment
+  return candidates.map((text) => ({
+    text,
+    assessment: {
+      reliabilityScore: 25,
+      reliabilityLabel: "Low",
+      reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting source (uploaded or web) was confirmed."],
+      citations: [],
+    },
+  }));
 }
 
 // Detect if a statement contains anchor facts (years, dates, percentages, currency, exchanges)
@@ -1358,6 +1393,237 @@ function isSemanticallyEquivalent(context1, context2) {
 // A3.5.12: Gate absence-language using deterministic corpusSearch
 // Uses lib/corpusSearch.js for lightweight corpus search
 
+// A3.5.13: Detect ambiguity when multiple anchor values exist in corpus
+// Returns { isAmbiguous: boolean, anchorType: string|null, values: Array<{value: number, humanForm: string}> }
+function detectAnchorAmbiguity(statementText, uploadedDocs) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return { isAmbiguous: false, anchorType: null, values: [] };
+  }
+  
+  if (!Array.isArray(uploadedDocs) || uploadedDocs.length === 0) {
+    return { isAmbiguous: false, anchorType: null, values: [] };
+  }
+  
+  // Extract anchor facts from statement
+  const statementAnchors = extractAnchorFacts(statementText);
+  if (statementAnchors.length === 0) {
+    return { isAmbiguous: false, anchorType: null, values: [] };
+  }
+  
+  const statementAnchorType = statementAnchors[0].type; // Use first anchor type
+  const statementValue = statementAnchors[0].value;
+  
+  // Extract all anchor values of the same type from corpus
+  const corpusValues = new Set();
+  const corpusValueTexts = new Map(); // Map normalized value -> human-readable form
+  
+  // Combine all uploaded docs into one corpus text
+  const corpusText = uploadedDocs
+    .map(doc => doc.text || "")
+    .join("\n\n");
+  
+  // Extract all anchor values of the same type from corpus
+  // For each document, extract all numeric values and check context
+  for (const doc of uploadedDocs) {
+    const docText = doc.text || "";
+    if (!docText.trim()) continue;
+    
+    // Extract all numeric values from this document
+    const docNumericValues = extractNumericValues(docText);
+    
+    // For each numeric value, check if it's in the context of the same anchor type
+    for (const numericValue of docNumericValues) {
+      // Check context around this value in the document
+      const valuePattern = new RegExp(
+        `\\$?[\\d,]+(?:\\.[\\d]+)?\\s*(?:mm|million|m|billion|b|thousand|k)?`,
+        "gi"
+      );
+      let match;
+      while ((match = valuePattern.exec(docText)) !== null) {
+        const matchValue = normalizeAnchorValue(match[0]);
+        if (!matchValue || !numericValuesMatch(matchValue, numericValue)) continue;
+        
+        // Extract context around the match (100 chars before and after)
+        const contextStart = Math.max(0, match.index - 100);
+        const contextEnd = Math.min(docText.length, match.index + match[0].length + 100);
+        const context = docText.substring(contextStart, contextEnd).toLowerCase();
+        
+        // Check if context matches the anchor type
+        let matchesType = false;
+        if (statementAnchorType === "valuation") {
+          matchesType = /(?:pre-?money|pre money|premoney|post-?money|post money|postmoney|valuation|val)/i.test(context);
+        } else if (statementAnchorType === "funding") {
+          matchesType = /(?:funding|financing|raised|raise|series|round)/i.test(context);
+        } else if (statementAnchorType === "revenue") {
+          matchesType = /(?:revenue|sales|income)/i.test(context);
+        } else {
+          // For "numeric" type, accept any numeric value
+          matchesType = true;
+        }
+        
+        if (matchesType) {
+          corpusValues.add(numericValue);
+          
+          // Extract human-readable form
+          const humanForm = extractHumanReadableValue(docText, numericValue, statementAnchorType);
+          if (humanForm) {
+            corpusValueTexts.set(numericValue, humanForm);
+          } else {
+            // Fallback: format the normalized value
+            corpusValueTexts.set(numericValue, formatNumericValue(numericValue));
+          }
+          break; // Found this value, move to next
+        }
+      }
+    }
+  }
+  
+  // If we have fewer than 2 distinct values, no ambiguity
+  if (corpusValues.size < 2) {
+    return { isAmbiguous: false, anchorType: statementAnchorType, values: [] };
+  }
+  
+  // Check if statement value matches any corpus value (within tolerance)
+  const statementMatches = Array.from(corpusValues).some(corpusValue => {
+    return numericValuesMatch(statementValue, corpusValue);
+  });
+  
+  // Ambiguity exists if: multiple distinct values in corpus AND statement doesn't uniquely match one
+  const isAmbiguous = corpusValues.size >= 2;
+  
+  if (isAmbiguous) {
+    // Convert to human-readable forms
+    const values = Array.from(corpusValues)
+      .slice(0, 5) // Limit to 5 values
+      .map(value => ({
+        value,
+        humanForm: corpusValueTexts.get(value) || formatNumericValue(value),
+      }));
+    
+    return {
+      isAmbiguous: true,
+      anchorType: statementAnchorType,
+      values,
+    };
+  }
+  
+  return { isAmbiguous: false, anchorType: statementAnchorType, values: [] };
+}
+
+// Helper: Extract human-readable form of a numeric value from text
+function extractHumanReadableValue(text, normalizedValue, anchorType) {
+  if (typeof text !== "string" || !Number.isFinite(normalizedValue)) return null;
+  
+  // Patterns to match the value in various formats
+  const patterns = [
+    // $XXmm, $XXm, $XX million
+    /\$([\d,]+(?:\.\d+)?)\s*(mm|million|m\b|M\b)/gi,
+    /\$([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/gi,
+    /\$([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
+    /\$([\d,]+(?:\.\d+)?)/g,
+  ];
+  
+  for (const pattern of patterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const unit = (match[2] || "").toLowerCase();
+      const multipliers = {
+        mm: 1e6, million: 1e6, m: 1e6,
+        billion: 1e9, b: 1e9,
+        thousand: 1e3, k: 1e3,
+      };
+      const multiplier = multipliers[unit] || 1;
+      const value = num * multiplier;
+      
+      // Check if this matches the normalized value (within tolerance)
+      if (numericValuesMatch(value, normalizedValue)) {
+        // Return human-readable form
+        if (unit === "mm" || unit === "million" || unit === "m") {
+          return `$${num}${unit === "million" ? " million" : unit === "mm" ? "mm" : "m"}`;
+        } else if (unit === "billion" || unit === "b") {
+          return `$${num}${unit === "billion" ? " billion" : "b"}`;
+        } else if (unit === "thousand" || unit === "k") {
+          return `$${num}${unit === "thousand" ? " thousand" : "k"}`;
+        } else {
+          return `$${num}`;
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Helper: Format numeric value to human-readable form
+function formatNumericValue(value) {
+  if (!Number.isFinite(value)) return String(value);
+  
+  if (value >= 1e9) {
+    const billions = value / 1e9;
+    return `$${billions.toFixed(billions >= 10 ? 0 : 1)} billion`;
+  } else if (value >= 1e6) {
+    const millions = value / 1e6;
+    return `$${millions.toFixed(millions >= 10 ? 0 : 1)} million`;
+  } else if (value >= 1e3) {
+    const thousands = value / 1e3;
+    return `$${thousands.toFixed(thousands >= 10 ? 0 : 1)} thousand`;
+  } else {
+    return `$${value.toFixed(0)}`;
+  }
+}
+
+// Helper: Check if two numeric values match (with 5% tolerance) - imported from corpusSearch logic
+function numericValuesMatch(val1, val2) {
+  if (typeof val1 !== "number" || typeof val2 !== "number") return false;
+  if (!Number.isFinite(val1) || !Number.isFinite(val2)) return false;
+  const tolerance = 0.05;
+  const diff = Math.abs(val1 - val2);
+  const maxVal = Math.max(Math.abs(val1), Math.abs(val2), 1);
+  return diff / maxVal <= tolerance;
+}
+
+// Helper: Extract numeric values from text (same logic as corpusSearch)
+function extractNumericValues(text) {
+  if (typeof text !== "string") return [];
+  
+  const values = [];
+  const patterns = [
+    // $25mm, $25m, $25 million, $25M
+    /\$?([\d,]+(?:\.\d+)?)\s*(mm|million|m\b|M\b)/gi,
+    // $2b, $2 billion
+    /\$?([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/gi,
+    // $2k, $2 thousand
+    /\$?([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
+    // Plain $25, $18.7
+    /\$([\d,]+(?:\.\d+)?)/g,
+  ];
+  
+  for (const pattern of patterns) {
+    const matches = [...text.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      const unit = (match[2] || "").toLowerCase();
+      const multipliers = {
+        mm: 1e6, million: 1e6, m: 1e6,
+        billion: 1e9, b: 1e9,
+        thousand: 1e3, k: 1e3,
+      };
+      const multiplier = multipliers[unit] || 1;
+      const value = num * multiplier;
+      values.push(value);
+    }
+  }
+  
+  return [...new Set(values)];
+}
+
 // Detect absence claims in reasons
 function hasAbsenceClaim(reasons) {
   if (!Array.isArray(reasons) || reasons.length === 0) return false;
@@ -1445,12 +1711,78 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources) {
     // Check if reasons contain absence claims
     if (!hasAbsenceClaim(reasons)) return stmt; // No absence claim, no action needed
     
+    // A3.5.13: Check for ambiguity first (before corpus search)
+    const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
+    
     // Perform deterministic corpus search (A3.5.12)
     const searchResult = corpusSearch(text, uploadedDocs);
     
     if (searchResult.found) {
       // Corpus search found matches - MUST NOT state absence (Invariant 2)
-      // Replace absence language with support language
+      
+      // A3.5.13: If ambiguity detected, use ambiguity template instead of generic support language
+      if (ambiguityResult.isAmbiguous && ambiguityResult.values.length >= 2) {
+        const anchorTypeLabel = ambiguityResult.anchorType === "valuation" 
+          ? "pre-money valuation figures"
+          : ambiguityResult.anchorType === "funding"
+          ? "funding amounts"
+          : ambiguityResult.anchorType === "revenue"
+          ? "revenue figures"
+          : "numeric values";
+        
+        const valueList = ambiguityResult.values
+          .slice(0, 2)
+          .map(v => v.humanForm)
+          .join(" and ");
+        
+        // Use exact template from spec
+        const ambiguityReason1 = `The uploaded memo references multiple ${anchorTypeLabel} (e.g., ${valueList}), so the precise ${ambiguityResult.anchorType || "value"} for this draft version is ambiguous.`;
+        const ambiguityReason2 = "This is supported by the memo, but not uniquely confirmed to a single figure.";
+        
+        // Replace all absence language with ambiguity explanation
+        let updatedReasons = [ambiguityReason1, ambiguityReason2];
+        
+        // Remove any remaining absence language
+        const filteredReasons = reasons.filter((reason) => {
+          if (typeof reason !== "string") return false;
+          const lower = reason.toLowerCase();
+          return !(
+            /not mentioned/i.test(lower) ||
+            /not specified/i.test(lower) ||
+            /not supported/i.test(lower) ||
+            /no support/i.test(lower) ||
+            /not found/i.test(lower) ||
+            /not stated/i.test(lower) ||
+            /not referenced/i.test(lower) ||
+            /not cited/i.test(lower) ||
+            /not present/i.test(lower) ||
+            /absent/i.test(lower) ||
+            /lacks?/i.test(lower) ||
+            /missing/i.test(lower)
+          );
+        });
+        
+        // Keep non-absence reasons (up to 2 more, capped at 4 total)
+        updatedReasons = [...updatedReasons, ...filteredReasons].slice(0, 4);
+        
+        // Diagnostics (A3.5.13)
+        console.log(`[DIAG] A3.5.13: Ambiguity detected - replaced absence language:`, {
+          statement: text.substring(0, 60),
+          anchorType: ambiguityResult.anchorType,
+          values: ambiguityResult.values.map(v => v.humanForm),
+          corpusSearchFound: searchResult.found,
+        });
+        
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: updatedReasons,
+          },
+        };
+      }
+      
+      // No ambiguity - use standard support language
       let updatedReasons = reasons.map((reason) => {
         if (typeof reason !== "string") return reason;
         
@@ -2233,20 +2565,34 @@ export default async function handler(req, res) {
       });
     });
 
+    // A3.5.13: Deterministic statement extraction (Part B)
+    // Extract candidate statements BEFORE LLM call
+    const extractionCandidates = extractDeterministicStatementCandidates(draftText);
+    console.log(`[DIAG] A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call`);
+    
+    // Build candidate statements block for prompt
+    const candidatesBlock = extractionCandidates.length > 0
+      ? extractionCandidates.map((c, idx) => `${idx + 1}. ${c}`).join("\n")
+      : "(no extractable statements found)";
+    
     const system = `
 You are the "Review" engine inside Content Engine.
 
-EXTRACTION RULES (CRITICAL - HARD REQUIREMENT):
-- Extract ONLY statements that are EXPLICITLY PRESENT in the DRAFT text.
-- Each statement MUST map to a draft text span (verbatim or clear paraphrase).
-- Do NOT introduce new facts from source documents.
-- Do NOT create statements derived solely from uploaded sources or web sources.
-- Source documents may NOT introduce new review statements.
-- If a claim is not in the draft, do NOT include it in the review.
-- Exclude: opinions, hype/marketing fluff, recommendations, predictions, vague assertions.
-- Split compound multi-claim sentences into separate statements.
-- Minimal rewriting: keep statements close to draft wording.
-- Deduplicate near-duplicates.
+STATEMENT EXTRACTION (A3.5.13 - CRITICAL):
+- You MUST ONLY score and classify the PRE-EXTRACTED candidate statements listed below.
+- Do NOT invent new statements or extract additional statements from the draft.
+- Do NOT create statements derived from source documents.
+- Your job is to ASSESS each pre-extracted candidate, not to extract new ones.
+- For each candidate statement, provide:
+  - reliabilityScore (0-100)
+  - reliabilityLabel (High|Medium|Low)
+  - reasons (array of up to 4 strings explaining the assessment)
+  - citations (array of reference IDs from the REFERENCES list, empty if unsupported)
+
+PRE-EXTRACTED CANDIDATE STATEMENTS (you must assess these):
+${candidatesBlock}
+
+If the candidate list is empty or you cannot assess any candidates, return: {"statements": []}
 
 DUAL-AXIS VERIFICATION (MANDATORY):
 A statement is only verified if BOTH are true:
@@ -2311,7 +2657,7 @@ Return ONLY valid JSON matching this exact schema:
 {
   "statements": [
     {
-      "text": "string (atomic factual statement)",
+      "text": "string (must match one of the pre-extracted candidates exactly or be a close paraphrase)",
       "assessment": {
         "reliabilityScore": number (0-100),
         "reliabilityLabel": "High|Medium|Low",
@@ -2322,7 +2668,9 @@ Return ONLY valid JSON matching this exact schema:
   ]
 }
 
-If no extractable statements are found, return: {"statements": []}
+CRITICAL: Each statement.text in your output MUST correspond to one of the pre-extracted candidates above.
+Do NOT add new statements that are not in the candidate list.
+If you cannot assess any candidates, return: {"statements": []}
 `.trim();
 
     const user = `
@@ -2393,14 +2741,66 @@ ${
     // Coerce and validate statements (using unified references count)
     let statements = coerceStatements(parsed, maxRefIndex);
     
+    // A3.5.13: Map LLM output back to pre-extracted candidates for stability
+    // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
+    if (statements.length > 0 && extractionCandidates.length > 0) {
+      // Build a map of normalized candidates for matching
+      const candidateMap = new Map();
+      extractionCandidates.forEach(candidate => {
+        const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+        if (!candidateMap.has(normalized)) {
+          candidateMap.set(normalized, candidate);
+        }
+      });
+      
+      // Filter statements to only include those matching candidates
+      const matchedStatements = [];
+      for (const stmt of statements) {
+        const stmtText = typeof stmt.text === "string" ? stmt.text : "";
+        const normalized = stmtText.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+        
+        // Check for exact or close match
+        let matched = false;
+        for (const [normCandidate, originalCandidate] of candidateMap.entries()) {
+          // Allow 80% token overlap for minor rewording
+          const stmtTokens = normalized.split(/\s+/).filter(t => t.length > 2);
+          const candidateTokens = normCandidate.split(/\s+/).filter(t => t.length > 2);
+          const overlap = stmtTokens.filter(t => candidateTokens.includes(t)).length;
+          const overlapRatio = candidateTokens.length > 0 ? overlap / candidateTokens.length : 0;
+          
+          if (normalized === normCandidate || overlapRatio >= 0.8 || normalized.includes(normCandidate) || normCandidate.includes(normalized)) {
+            // Use original candidate text for stability
+            matchedStatements.push({
+              ...stmt,
+              text: originalCandidate, // Use deterministic candidate text
+            });
+            matched = true;
+            break;
+          }
+        }
+        
+        if (!matched) {
+          console.log(`[DIAG] A3.5.13: Dropped LLM statement that doesn't match candidates: "${stmtText.substring(0, 60)}..."`);
+        }
+      }
+      
+      statements = matchedStatements;
+      console.log(`[DIAG] A3.5.13: Mapped ${statements.length} statements from ${extractionCandidates.length} candidates`);
+    }
+    
     // Graceful fallback if model output is invalid or empty
     if (statements.length === 0) {
       statements = fallbackExtractAtomicStatements(draftText);
       extractionQuality = "degraded";
+      console.log(`[DIAG] A3.5.13: Using fallback extraction, produced ${statements.length} statements`);
     }
     
     // A) Draft-only filter: enforce statements must appear in draft text (hard gate)
+    // Note: This should be redundant now since candidates come from draft, but keep for safety
     statements = filterDraftOnlyStatements(statements, draftText);
+    
+    // A3.5.13: Final diagnostic - log final statement count
+    console.log(`[DIAG] A3.5.13: Final reviewed statements count=${statements.length} (from ${extractionCandidates.length} candidates)`);
     
     // B) Citation resolution validation: drop unresolvable citations
     statements = resolveCitations(statements, unifiedReferences);
