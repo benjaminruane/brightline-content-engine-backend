@@ -861,15 +861,35 @@ function filterCandidateQuality(candidates, rawSentences) {
   }
   
   // Apply fallback: replace rejected candidates with their fallback sentences
+  // Fix 2: Ensure fallback happens for all rejected candidates
   const fallbackCandidates = [];
   const fallbackSamples = [];
   
   for (const rejectedCandidate of rejected) {
-    const fallback = fallbackMap.get(rejectedCandidate);
+    let fallback = fallbackMap.get(rejectedCandidate);
+    
+    // If no fallback found in map, try to find nearest full sentence from raw sentences
+    if (!fallback && rawSentenceList.length > 0) {
+      const trimmed = typeof rejectedCandidate === "string" ? rejectedCandidate.trim() : "";
+      if (trimmed) {
+        // Try to find containing sentence
+        for (const rawSentence of rawSentenceList) {
+          if (rawSentence.includes(trimmed) && /[.?!]\s*$/.test(rawSentence)) {
+            fallback = rawSentence;
+            break;
+          }
+        }
+        // If still no fallback, use first full sentence that's long enough
+        if (!fallback) {
+          fallback = rawSentenceList.find(s => s.length >= 45 && /[.?!]\s*$/.test(s));
+        }
+      }
+    }
+    
     if (fallback && !accepted.includes(fallback) && !fallbackCandidates.includes(fallback)) {
       fallbackCandidates.push(fallback);
       if (fallbackSamples.length < 3) {
-        const rejectedPreview = rejectedCandidate.substring(0, 30) + "...";
+        const rejectedPreview = (typeof rejectedCandidate === "string" ? rejectedCandidate : "").substring(0, 30) + "...";
         const fallbackPreview = fallback.substring(0, 50) + "...";
         fallbackSamples.push({ rejectedPreview, fallbackPreview });
       }
@@ -935,6 +955,11 @@ function filterCandidateQuality(candidates, rawSentences) {
     console.log(`[DIAG][SEG_GUARD] sampleFallback=${JSON.stringify(fallbackSamples)}`);
   }
   console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
+  
+  // Fix 2: Ensure fallback count is logged correctly
+  if (rejected.length > 0 && fallbackCandidates.length === 0) {
+    console.log(`[DIAG][SEG_GUARD] WARNING: ${rejected.length} candidates rejected but no fallback found`);
+  }
   
   return finalCandidates;
 }
@@ -1637,30 +1662,30 @@ function extractAnchorElements(text) {
   
   const elements = [];
   
-  // Investment amount patterns
+  // Investment amount patterns (must have /g flag for matchAll)
   const investmentPatterns = [
-    /(?:invest|investment|commitment|commit)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)/i,
-    /\$?([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|billion|b)\s+(?:investment|commitment|commit)/i,
+    /(?:invest|investment|commitment|commit)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)/gi,
+    /\$?([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|billion|b)\s+(?:investment|commitment|commit)/gi,
   ];
   
-  // Valuation pre-money patterns
+  // Valuation pre-money patterns (must have /g flag for matchAll)
   const valuationPreMoneyPatterns = [
-    /(?:pre-?money|pre money|premoney)\s+(?:valuation|val)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/i,
-    /(?:valuation|val)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)/i,
-    /\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)\s+(?:valuation|val)/i,
+    /(?:pre-?money|pre money|premoney)\s+(?:valuation|val)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/gi,
+    /(?:valuation|val)\s+(?:of|at|is|was)\s*\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)/gi,
+    /\$?([\d,]+(?:\.\d+)?)\s+(?:pre-?money|pre money|premoney)\s+(?:valuation|val)/gi,
   ];
   
-  // Ownership percentage patterns
+  // Ownership percentage patterns (must have /g flag for matchAll)
   const ownershipPatterns = [
-    /(?:ownership|equity stake|stake|equity)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/i,
-    /(\d+(?:\.\d+)?)\s*%\s+(?:ownership|equity|stake|fully diluted)/i,
-    /(?:fully diluted|diluted)\s+(?:ownership|equity|stake)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/i,
+    /(?:ownership|equity stake|stake|equity)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/gi,
+    /(\d+(?:\.\d+)?)\s*%\s+(?:ownership|equity|stake|fully diluted)/gi,
+    /(?:fully diluted|diluted)\s+(?:ownership|equity|stake)\s+(?:of|at|is|was)?\s*(\d+(?:\.\d+)?)\s*%/gi,
   ];
   
-  // Secondary amount patterns
+  // Secondary amount patterns (must have /g flag for matchAll)
   const secondaryPatterns = [
-    /(?:secondary|common shares|secondary sale|secondary transaction)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/i,
-    /\$?([\d,]+(?:\.\d+)?)\s+(?:secondary|common shares|secondary sale)/i,
+    /(?:secondary|common shares|secondary sale|secondary transaction)\s+(?:of|at|is|was)?\s*\$?([\d,]+(?:\.\d+)?)/gi,
+    /\$?([\d,]+(?:\.\d+)?)\s+(?:secondary|common shares|secondary sale)/gi,
   ];
   
   // Extract investment amounts
@@ -3249,10 +3274,16 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
     
     checked++;
     
-    // Run corpusSearch
-    const searchResult = corpusSearch(text, uploadedDocs);
+    // Run corpusSearch (with error handling)
+    let searchResult;
+    try {
+      searchResult = corpusSearch(text, uploadedDocs);
+    } catch (searchErr) {
+      console.error(`[DIAG][ANCHOR_ENFORCE][ERROR] corpusSearch failed for idx=${idx}:`, searchErr);
+      return stmt; // Continue without injection if search fails
+    }
     
-    if (searchResult.found) {
+    if (searchResult && searchResult.found) {
       // Check if has number match or keyword match
       const hasNumberMatch = searchResult.debug && 
         Array.isArray(searchResult.debug.normalizedNumbersFound) && 
@@ -3261,89 +3292,103 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
         Array.isArray(searchResult.debug.keywordsMatched) && 
         searchResult.debug.keywordsMatched.length > 0;
       
+      // Fix 3: Inject citation if FOUND, even if extraction fails
       if (hasNumberMatch || hasKeywordMatch) {
         foundNoCite++;
         
-        // Inject memo citation
-        let injectedCitations = [memoReferenceId];
-        if (existingCitations.length > 0) {
-          injectedCitations = [...existingCitations, memoReferenceId];
-          injectedCitations.sort((a, b) => a - b);
-        }
-        
-        // Build evidence
-        const evidence = [];
-        if (memoReference) {
-          evidence.push({
-            title: memoReference.title || "Untitled source",
-            url: memoReference.url || null,
-            sourceType: "uploaded",
+        try {
+          // Inject memo citation
+          let injectedCitations = [memoReferenceId];
+          if (existingCitations.length > 0) {
+            injectedCitations = [...existingCitations, memoReferenceId];
+            injectedCitations.sort((a, b) => a - b);
+          }
+          
+          // Build evidence
+          const evidence = [];
+          if (memoReference) {
+            evidence.push({
+              title: memoReference.title || "Untitled source",
+              url: memoReference.url || null,
+              sourceType: "uploaded",
+            });
+          }
+          
+          // Remove absence reasons
+          const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+          let updatedReasons = reasons.filter((reason) => {
+            if (typeof reason !== "string") return false;
+            const lower = reason.toLowerCase();
+            return !(
+              /not found in memo/i.test(lower) ||
+              /does not mention/i.test(lower) ||
+              /no citations provided/i.test(lower) ||
+              /cannot be confirmed from provided text/i.test(lower) ||
+              /not mentioned/i.test(lower) ||
+              /not supported/i.test(lower) ||
+              /not found/i.test(lower)
+            );
           });
-        }
-        
-        // Remove absence reasons
-        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-        let updatedReasons = reasons.filter((reason) => {
-          if (typeof reason !== "string") return false;
-          const lower = reason.toLowerCase();
-          return !(
-            /not found in memo/i.test(lower) ||
-            /does not mention/i.test(lower) ||
-            /no citations provided/i.test(lower) ||
-            /cannot be confirmed from provided text/i.test(lower) ||
-            /not mentioned/i.test(lower) ||
-            /not supported/i.test(lower) ||
-            /not found/i.test(lower)
-          );
-        });
-        
-        // A3.5.14b Patch 3: Check for ambiguity (multiple figures/ranges)
-        const hasRange = /(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)\s*[-–—]\s*(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)/i.test(text);
-        const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
-        const isAmbiguous = (ambiguityResult.isAmbiguous && ambiguityResult.values.length >= 2) || hasRange;
-        
-        if (isAmbiguous) {
-          // A3.5.14b Patch 3: Use ambiguity template
-          const anchorTypeLabel = ambiguityResult.anchorType === "valuation" 
-            ? "valuation figures"
-            : ambiguityResult.anchorType === "funding"
-            ? "funding amounts"
-            : "numeric values";
           
-          const valueList = ambiguityResult.values && ambiguityResult.values.length >= 2
-            ? ambiguityResult.values.slice(0, 2).map(v => v.humanForm).join(" and ")
-            : "multiple values";
+          // A3.5.14b Patch 3: Check for ambiguity (multiple figures/ranges) - with error handling
+          let isAmbiguous = false;
+          try {
+            const hasRange = /(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)\s*[-–—]\s*(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)/i.test(text);
+            const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
+            isAmbiguous = (ambiguityResult.isAmbiguous && ambiguityResult.values.length >= 2) || hasRange;
+            
+            if (isAmbiguous) {
+              // A3.5.14b Patch 3: Use ambiguity template
+              const anchorTypeLabel = ambiguityResult.anchorType === "valuation" 
+                ? "valuation figures"
+                : ambiguityResult.anchorType === "funding"
+                ? "funding amounts"
+                : "numeric values";
+              
+              const valueList = ambiguityResult.values && ambiguityResult.values.length >= 2
+                ? ambiguityResult.values.slice(0, 2).map(v => v.humanForm).join(" and ")
+                : "multiple values";
+              
+              const ambiguityReason = `The memo contains related ${anchorTypeLabel}; the statement's exact value may be ambiguous relative to multiple memo values. Verify which applies.`;
+              updatedReasons = [ambiguityReason, ...updatedReasons].slice(0, 4);
+              
+              console.log(`[DIAG][AMBIGUITY] idx=${idx} trigger=${hasRange ? "RANGE" : "MULTI_MATCH"} numsInStmt=${JSON.stringify(extractNumericValues(text))} numsInMemo=${JSON.stringify(ambiguityResult.values?.map(v => v.value) || [])}`);
+            } else {
+              // A3.5.14b Patch 2: Use standard enforcement reason
+              updatedReasons = ["Memo contains related support; citation added via invariant enforcement.", ...updatedReasons].slice(0, 4);
+            }
+          } catch (ambiguityErr) {
+            // If ambiguity detection fails, use standard enforcement reason
+            console.error(`[DIAG][ANCHOR_ENFORCE][ERROR] ambiguity detection failed for idx=${idx}:`, ambiguityErr);
+            updatedReasons = ["Memo contains related support; citation added via invariant enforcement.", ...updatedReasons].slice(0, 4);
+          }
           
-          const ambiguityReason = `The memo contains related ${anchorTypeLabel}; the statement's exact value may be ambiguous relative to multiple memo values. Verify which applies.`;
-          updatedReasons = [ambiguityReason, ...updatedReasons].slice(0, 4);
+          injected++;
           
-          console.log(`[DIAG][AMBIGUITY] idx=${idx} trigger=${hasRange ? "RANGE" : "MULTI_MATCH"} numsInStmt=${JSON.stringify(extractNumericValues(text))} numsInMemo=${JSON.stringify(ambiguityResult.values?.map(v => v.value) || [])}`);
-        } else {
-          // A3.5.14b Patch 2: Use standard enforcement reason
-          updatedReasons = ["Memo contains related support; citation added via invariant enforcement.", ...updatedReasons].slice(0, 4);
-        }
-        
-        injected++;
-        
-        const beforeState = {
-          assessCites: existingCitations.length,
-          topCites: existingTopLevelCitations.length,
-          evidenceCount: (Array.isArray(assessment.evidence) ? assessment.evidence.length : 0) + (Array.isArray(stmt.evidence) ? stmt.evidence.length : 0)
-        };
-        
-        console.log(`[DIAG][ANCHOR_ENFORCE] idx=${idx} before=${JSON.stringify(beforeState)} after={assessCites:${injectedCitations.length},topCites:${injectedCitations.length},evidenceCount:${evidence.length}} removedAbsenceReasons=${reasons.length - updatedReasons.length}`);
-        
-        return {
-          ...stmt,
-          citations: injectedCitations,
-          evidence: evidence,
-          assessment: {
-            ...assessment,
+          const beforeState = {
+            assessCites: existingCitations.length,
+            topCites: existingTopLevelCitations.length,
+            evidenceCount: (Array.isArray(assessment.evidence) ? assessment.evidence.length : 0) + (Array.isArray(stmt.evidence) ? stmt.evidence.length : 0)
+          };
+          
+          console.log(`[DIAG][ANCHOR_ENFORCE] idx=${idx} before=${JSON.stringify(beforeState)} after={assessCites:${injectedCitations.length},topCites:${injectedCitations.length},evidenceCount:${evidence.length}} removedAbsenceReasons=${reasons.length - updatedReasons.length}`);
+          
+          return {
+            ...stmt,
             citations: injectedCitations,
             evidence: evidence,
-            reasons: updatedReasons,
-          },
-        };
+            assessment: {
+              ...assessment,
+              citations: injectedCitations,
+              evidence: evidence,
+              reasons: updatedReasons,
+            },
+          };
+        } catch (injectionErr) {
+          console.error(`[DIAG][ANCHOR_ENFORCE][ERROR] citation injection failed for idx=${idx}:`, injectionErr);
+          foundButNotInjected++;
+          return stmt; // Continue without injection if it fails
+        }
       } else {
         foundButNotInjected++;
       }
@@ -3371,6 +3416,7 @@ function computeExtractionQuality(statements, extractionCandidates) {
     const text = typeof stmt.text === "string" ? stmt.text : "";
     if (!text) continue;
     
+    // Fix 4: Use same truncation detection as SEG_GUARD
     // Check for mid-word end (truncation) - STRICT: only flag if strong evidence
     const lastChar = text[text.length - 1];
     const endsWithLetter = /[a-zA-Z]/.test(lastChar);
@@ -3392,6 +3438,7 @@ function computeExtractionQuality(statements, extractionCandidates) {
       
       if (isVeryShortFragment || isSuspiciouslyShort) {
         hasTruncation = true;
+        console.log(`[DIAG][QUALITY] truncation detected: textPreview="${text.substring(0, 60)}..." lastWord="${lastWord}"`);
       }
     }
     
