@@ -872,9 +872,11 @@ function normalizeResponseStructure(statements, unifiedReferences) {
 }
 
 // Sanitize assessment reasons: remove misleading "no sources cited" messages when citations/evidence exist
+// Also improve language when web search is enabled to distinguish unsupported vs plausible claims
 // Invariant 1: Never say "No verifiable sources cited" when sources exist
 // Invariant 2: Keep "no sources cited" only for truly uncited statements
-function sanitizeReasons(statements) {
+// Invariant 3: Use nuanced language when web search is enabled (A3.5.8)
+function sanitizeReasons(statements, webSearchEnabled = false, webSearchUsed = false) {
   if (!Array.isArray(statements)) return statements;
   
   return statements.map((stmt) => {
@@ -901,12 +903,21 @@ function sanitizeReasons(statements) {
       return typeof title === "string" && title.trim().length > 0;
     }).length;
     
-    // Invariant 1: If citations exist AND evidence is resolved, remove misleading messages
-    const hasSources = citations.length > 0 && resolvedEvidenceCount > 0;
+    // Check if statement has direct evidence
+    const hasDirectEvidence = citations.length > 0 && resolvedEvidenceCount > 0;
     
-    if (hasSources) {
+    // Check if statement appears to be interpretive/comparative (plausible but not directly evidenced)
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const isInterpretiveClaim = /\b(?:gives|provides|enables|allows|offers|delivers|creates|builds|supports|facilitates)\b/i.test(text) ||
+                                /\b(?:enterprise-like|enterprise-grade|similar to|comparable to|like|as|without|with)\b/i.test(text);
+    
+    let updatedReasons = [...reasons];
+    let needsUpdate = false;
+    
+    // Invariant 1: If citations exist AND evidence is resolved, remove misleading messages
+    if (hasDirectEvidence) {
       // Remove misleading "no sources cited" messages
-      const sanitizedReasons = reasons.filter((reason) => {
+      updatedReasons = updatedReasons.filter((reason) => {
         if (typeof reason !== "string") return true;
         const lower = reason.toLowerCase();
         // Remove these misleading phrases when sources exist
@@ -916,35 +927,82 @@ function sanitizeReasons(statements) {
         );
       });
       
-      // If we removed reasons and there are still other reasons, use them
-      // Otherwise, add an accurate explanation about partial support/interpretive framing
-      if (sanitizedReasons.length < reasons.length && sanitizedReasons.length > 0) {
-        // We removed misleading messages but kept other reasons - good
-        return {
-          ...stmt,
-          assessment: {
-            ...assessment,
-            reasons: sanitizedReasons,
-          },
-        };
-      } else if (sanitizedReasons.length === 0 && reasons.length > 0) {
-        // All reasons were misleading - replace with accurate explanation
-        // Choose appropriate message based on context
-        const replacementReasons = [
+      if (updatedReasons.length < reasons.length) {
+        needsUpdate = true;
+      }
+      
+      // If all reasons were removed, add accurate explanation
+      if (updatedReasons.length === 0 && reasons.length > 0) {
+        updatedReasons = [
           "Sources were provided, but they do not directly support this claim as written.",
         ];
+        needsUpdate = true;
+      }
+    } else {
+      // No direct evidence - apply web search language improvements (A3.5.8)
+      if (webSearchEnabled) {
+        // Invariant 3: Replace absolute "no sources" language with conditional language
+        updatedReasons = updatedReasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          const lower = reason.toLowerCase();
+          
+          // Replace absolute language with conditional language
+          if (lower.includes("no external sources are provided") || 
+              lower.includes("no external sources provided")) {
+            needsUpdate = true;
+            return "This claim is not directly supported by the provided sources.";
+          }
+          
+          if (lower.includes("no verifiable sources cited") && webSearchUsed) {
+            needsUpdate = true;
+            return "This claim is not directly supported by the provided sources, but is broadly consistent with common public descriptions.";
+          }
+          
+          if (lower.includes("could not be verified against provided sources") && webSearchUsed && isInterpretiveClaim) {
+            needsUpdate = true;
+            return "This is an interpretive or comparative claim that aligns with how the subject is generally described, though not explicitly evidenced in the sources reviewed.";
+          }
+          
+          return reason;
+        });
         
-        return {
-          ...stmt,
-          assessment: {
-            ...assessment,
-            reasons: replacementReasons,
-          },
-        };
+        // Invariant 2: Add plausibility language for interpretive claims when web search is available
+        if (webSearchUsed && isInterpretiveClaim && !hasDirectEvidence) {
+          // Check if reasons already mention plausibility or interpretive framing
+          const hasPlausibilityLanguage = updatedReasons.some((r) => {
+            if (typeof r !== "string") return false;
+            const lower = r.toLowerCase();
+            return lower.includes("plausible") || 
+                   lower.includes("consistent with") || 
+                   lower.includes("interpretive") || 
+                   lower.includes("comparative") ||
+                   lower.includes("generally described");
+          });
+          
+          if (!hasPlausibilityLanguage) {
+            // Add clarifying sentence about plausibility
+            const plausibilityNote = "While broadly consistent with public descriptions, this claim is not directly evidenced in the sources reviewed.";
+            updatedReasons.push(plausibilityNote);
+            needsUpdate = true;
+          }
+        }
+      } else {
+        // Web search not enabled - keep existing "could not be verified" language (Invariant 3)
+        // No changes needed for truly unsupported cases
       }
     }
     
-    // Invariant 2: If no citations or no resolved evidence, keep existing reasons (may include "no sources cited")
+    // Return updated statement if changes were made
+    if (needsUpdate) {
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: updatedReasons.slice(0, 4), // Cap at 4 reasons
+        },
+      };
+    }
+    
     return stmt;
   });
 }
@@ -1642,7 +1700,10 @@ ${
     statements = normalizeResponseStructure(statements, unifiedReferences);
     
     // H) Sanitize reasons: remove misleading "no sources cited" messages when citations/evidence exist
-    statements = sanitizeReasons(statements);
+    // Also improve language when web search is enabled (A3.5.8)
+    const webSearchEnabled = publicSearch === true;
+    const webSearchUsed = Boolean(search?.ok && (search?.results || []).length);
+    statements = sanitizeReasons(statements, webSearchEnabled, webSearchUsed);
     
     // DIAGNOSTIC: Log final state before returning
     console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
@@ -1705,7 +1766,8 @@ ${
       const gatedFallbackStatements = applyAnchorGating(toleranceAdjustedFallbackStatements);
       const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
       const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
-      const finalFallbackStatements = sanitizeReasons(normalizedFallbackStatements);
+      // Web search not available in fallback path
+      const finalFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
 
       return res.status(200).json({
         ok: true,
