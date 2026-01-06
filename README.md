@@ -117,3 +117,33 @@ Deferred:
 - Multi-tenant support
 - Audit logging
 - Enterprise deployment options
+
+
+
+## Review correctness principles (non-negotiable)
+
+These invariants define the minimum trust bar for **Statement Analysis (Review)**. If any are violated, Review output must be treated as unreliable.
+
+1) **Truthful absence claims**  
+   Review must never say a fact/term/number is “not mentioned” or “not supported” by uploaded sources unless a corpus-level search over the full uploaded text was performed and found no match.
+
+2) **No false “missing sources” language**  
+   If uploaded sources exist (or citations exist), Review must not imply that the user “provided no sources” or that “no sources exist”.
+
+3) **Citation–evidence consistency**  
+   If citations are present, evidence must be resolvable to reference titles/URLs. Uploaded sources may have `url: null` and are still valid. “Citations missing” only when citations are actually empty.
+
+4) **Correctness over confidence**  
+   Review must not emit confident absence claims if the system has not checked the full relevant corpus.
+
+5) **Ambiguity is not absence**  
+   If multiple plausible anchor values exist (e.g., multiple valuations), Review must flag ambiguity and name the competing values—never claim “not mentioned”.
+
+6) **Contradiction scope**  
+   “Contradicted” applies only to statement-vs-sources conflicts. Draft-to-draft internal consistency is out of scope for Review.
+
+7) **Explain, don’t rewrite**  
+   Review diagnoses and explains scoring; it may provide structural/evidentiary guidance (e.g., split bundled claims), but must not propose rewritten sentences verbatim.
+
+8) **Deterministic safeguards for anchors**  
+   Numeric/anchor facts (valuation, funding, dates, percentages) must be normalized (e.g., `$25mm` == `$25 million`) before declaring mismatch/absence.
