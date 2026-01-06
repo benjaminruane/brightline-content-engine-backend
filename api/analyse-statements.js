@@ -76,23 +76,6 @@ function extractFirstJson(raw) {
 function resolveCitations(statements, unifiedReferences) {
   if (!Array.isArray(statements) || !Array.isArray(unifiedReferences)) return statements;
   
-  // DIAGNOSTIC: Log unifiedReferences structure
-  console.log(`[DIAG] unifiedReferences count: ${unifiedReferences.length}`);
-  if (unifiedReferences.length > 0) {
-    const sampleRef = unifiedReferences[0];
-    console.log(`[DIAG] Sample reference structure:`, {
-      hasId: 'id' in sampleRef,
-      idValue: sampleRef?.id,
-      idType: typeof sampleRef?.id,
-      hasRefId: 'refId' in sampleRef,
-      refIdValue: sampleRef?.refId,
-      keys: Object.keys(sampleRef || {}),
-      fullRef: JSON.stringify(sampleRef, null, 2).substring(0, 200),
-    });
-    unifiedReferences.forEach((ref, idx) => {
-      console.log(`[DIAG] Reference[${idx}]: id=${ref?.id} (type: ${typeof ref?.id}), type=${ref?.type}, title="${ref?.title?.substring(0, 30)}"`);
-    });
-  }
   
   // Build references map keyed by String(id) to handle both number and string IDs
   const referencesById = new Map();
@@ -103,23 +86,11 @@ function resolveCitations(statements, unifiedReferences) {
     }
   });
   
-  console.log(`[DIAG] referencesById map size: ${referencesById.size}, keys: [${Array.from(referencesById.keys()).join(', ')}]`);
-  
   return statements.map((stmt, stmtIdx) => {
     if (!stmt || typeof stmt !== "object") return stmt;
     
     const assessment = stmt.assessment || {};
     const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
-    
-    // DIAGNOSTIC: Log statement citations before resolution
-    if (citations.length > 0 || stmtIdx < 3) {
-      console.log(`[DIAG] Statement[${stmtIdx}] "${stmt.text?.substring(0, 50)}...":`, {
-        citationsBefore: citations,
-        citationTypes: citations.map(c => typeof c),
-        score: assessment.reliabilityScore,
-        label: assessment.reliabilityLabel,
-      });
-    }
     
     // Normalize citation IDs to strings and resolve
     const resolvedCitations = citations
@@ -310,18 +281,6 @@ function applyDualAxisVerification(statements, unifiedReferences) {
     const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
     const { provenance, resolvedCitations, memoReference, category } = classification;
     
-    // DIAGNOSTIC: Log classification and memo injection
-    if (category === "DOCUMENT_DESCRIPTIVE" || resolvedCitations.length === 0) {
-      console.log(`[DIAG] applyDualAxisVerification statement:`, {
-        text: text.substring(0, 60),
-        category,
-        provenance,
-        resolvedCitationsBefore: resolvedCitations,
-        hasMemoReference: !!memoReference,
-        memoReferenceId: memoReference?.id,
-        memoReferenceIdType: typeof memoReference?.id,
-      });
-    }
     
     // Allow if provenance is valid (CITED_OK or MEMO_OK)
     if (provenance === "CITED_OK" || provenance === "MEMO_OK") {
@@ -330,13 +289,9 @@ function applyDualAxisVerification(statements, unifiedReferences) {
         const injectedId = memoReference.id;
         // Verify injected ID exists in unifiedReferences
         const idExists = unifiedReferences.some(r => r.id === injectedId);
-        console.log(`[DIAG] MEMO_OK injection:`, {
-          text: text.substring(0, 60),
-          injectedId,
-          injectedIdType: typeof injectedId,
-          idExistsInReferences: idExists,
-          availableIds: unifiedReferences.map(r => ({ id: r.id, type: typeof r.id, refType: r.type })),
-        });
+        if (!idExists) {
+          console.log(`[DIAG] WARNING: MEMO_OK injection failed - ID ${injectedId} not found in unifiedReferences`);
+        }
         
         return {
           ...stmt,
@@ -391,7 +346,6 @@ function coerceStatements(parsed, maxRefIndex) {
   }
   
   let statements = Array.isArray(parsed.statements) ? parsed.statements : [];
-  console.log(`[DIAG] coerceStatements: input count=${statements.length}, maxRefIndex=${maxRefIndex}`);
   if (statements.length === 0) return [];
   
   const maxRef = typeof maxRefIndex === "number" && maxRefIndex > 0 ? maxRefIndex : 0;
@@ -470,12 +424,10 @@ function coerceStatements(parsed, maxRefIndex) {
     
     // Cap at 25 statements
     if (coerced.length >= 25) {
-      console.log(`[DIAG] coerceStatements: hit 25-statement cap, remaining=${statements.length - coerced.length - skippedCount}`);
       break;
     }
   }
   
-  console.log(`[DIAG] coerceStatements: output count=${coerced.length}, skipped duplicates=${skippedCount}`);
   return coerced;
 }
 
@@ -522,7 +474,6 @@ function filterDraftOnlyStatements(statements, draftText) {
   if (!Array.isArray(statements) || statements.length === 0) return statements;
   if (typeof draftText !== "string" || !draftText.trim()) return statements;
   
-  console.log(`[DIAG] filterDraftOnlyStatements: input count=${statements.length}, draftText length=${draftText.length}`);
   
   // Normalize draft text: lowercase, strip punctuation, collapse whitespace
   const normalizedDraft = normalizeTextForOverlap(draftText);
@@ -633,13 +584,6 @@ function extractDeterministicStatementCandidates(draftText) {
     .filter((s) => s.length > 0);
   
   console.log(`[DIAG] extractDeterministicStatementCandidates: rawSentences count=${rawSentences.length}`);
-  if (rawSentences.length > 0) {
-    console.log(`[DIAG] extractDeterministicStatementCandidates: first 3 raw sentences:`, rawSentences.slice(0, 3).map((s, idx) => ({
-      index: idx,
-      length: s.length,
-      text: s.substring(0, 80) + (s.length > 80 ? "..." : ""),
-    })));
-  }
   
   // Step 2: For each sentence, check if it needs splitting
   let skippedShort = 0;
@@ -676,7 +620,7 @@ function extractDeterministicStatementCandidates(draftText) {
       for (const splitPattern of splitPatterns) {
         if (splitPattern.test(sentence)) {
           const parts = sentence.split(splitPattern);
-          for (const part of parts) {
+      for (const part of parts) {
             const trimmed = part.trim();
             if (trimmed.length < 10) continue;
             
@@ -685,10 +629,9 @@ function extractDeterministicStatementCandidates(draftText) {
             if (hasAnchor) {
               const normalized = trimmed.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
               if (!seen.has(normalized)) {
-                seen.add(normalized);
+        seen.add(normalized);
                 candidates.push(trimmed);
                 wasSplit = true;
-                console.log(`[DIAG] extractDeterministicStatementCandidates: split sentence (pattern: ${splitPattern.source}): "${trimmed.substring(0, 50)}..."`);
               }
             }
           }
@@ -723,18 +666,9 @@ function extractDeterministicStatementCandidates(draftText) {
   }
   
   // Diagnostics (required by spec)
-  console.log(`[DIAG] extractDeterministicStatementCandidates: final count=${cappedCandidates.length}`);
-  console.log(`[DIAG] extractDeterministicStatementCandidates: skippedShort=${skippedShort}, rawSentences=${rawSentences.length}, candidatesBeforeCap=${candidates.length}`);
-  if (cappedCandidates.length > 0) {
-    console.log(`[DIAG] extractDeterministicStatementCandidates: first 5 candidates:`, 
-      cappedCandidates.slice(0, 5).map((c, idx) => ({
-        index: idx,
-        text: c.substring(0, 80) + (c.length > 80 ? "..." : ""),
-        length: c.length,
-      }))
-    );
-  } else {
-    console.log(`[DIAG] extractDeterministicStatementCandidates: WARNING - no candidates extracted! rawSentences=${rawSentences.length}, skippedShort=${skippedShort}`);
+  console.log(`[DIAG] extractDeterministicStatementCandidates: final count=${cappedCandidates.length} (from ${rawSentences.length} sentences, skippedShort=${skippedShort})`);
+  if (cappedCandidates.length === 0) {
+    console.log(`[DIAG] WARNING: No candidates extracted from draft text`);
   }
   
   return cappedCandidates;
@@ -750,12 +684,12 @@ function fallbackExtractAtomicStatements(draftText) {
   // Convert candidates to statements with default assessment
   return candidates.map((text) => ({
     text,
-    assessment: {
-      reliabilityScore: 25,
-      reliabilityLabel: "Low",
-      reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting source (uploaded or web) was confirmed."],
-      citations: [],
-    },
+          assessment: {
+            reliabilityScore: 25,
+            reliabilityLabel: "Low",
+            reasons: ["Auto-extracted from the draft due to analysis degradation; no supporting source (uploaded or web) was confirmed."],
+            citations: [],
+          },
   }));
 }
 
@@ -820,7 +754,6 @@ function applyAnchorGating(statements, uploadedSources = []) {
     // corpusSearch will run in enforceCorpusVerificationBeforeAbsence and determine support.
     // Citation presence is advisory, not authoritative, for uploaded documents.
     if (isAnchor && !hasCitations && hasUploadedSources) {
-      console.log(`[DIAG] A3.5.13 Addendum - Anchor Absence Precedence: Anchor fact with no citations but uploaded sources exist, deferring to corpusSearch: "${text.substring(0, 60)}..."`);
       // Don't force Low - let corpusSearch determine support
       // If corpusSearch finds nothing, enforceCorpusVerificationBeforeAbsence will handle absence language
       return stmt;
@@ -2153,9 +2086,7 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     
     // If compound numeric anchors detected, reconcile reasons
     if (compoundNumericResult.elements.length >= 2) {
-      console.log(`[DIAG] A3.5.13c: Compound numeric anchor statement detected with ${compoundNumericResult.elements.length} elements`);
-      console.log(`[DIAG] A3.5.13c: Element kinds:`, Array.from(new Set(compoundNumericResult.elements.map(e => e.kind))));
-      console.log(`[DIAG] A3.5.13c: Per-element verdicts:`, Object.fromEntries(compoundNumericResult.verdicts));
+      console.log(`[DIAG] A3.5.13c: Compound numeric anchor detected (${compoundNumericResult.elements.length} elements)`);
       
       // Invariant 3: Citation / Evidence Injection
       // If any anchor element is SUPPORTED or AMBIGUOUS by uploaded sources and statement has empty citations
@@ -2205,11 +2136,6 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
           });
         }
         
-        console.log(`[DIAG] A3.5.13c: Injected citations/evidence for compound numeric anchors:`, {
-          memoReferenceId,
-          citations: injectedCitations,
-          evidenceCount: evidence.length,
-        });
         
         // Invariant 4: Reason Reconciliation (hard rule)
         // Remove contradictory reasons and generate deterministic templates
@@ -2326,11 +2252,9 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
         // Combine reconciled reasons with non-contradictory existing reasons
         const finalReasons = [...reconciledReasons, ...updatedReasons].slice(0, 4);
         
-        console.log(`[DIAG] A3.5.13c: Reasons reconciled:`, {
-          reasonsRemoved: reasonsToRemove.length,
-          examplesRemoved: reasonsToRemove.slice(0, 2),
-          finalReasonsCount: finalReasons.length,
-        });
+        if (reasonsToRemove.length > 0) {
+          console.log(`[DIAG] A3.5.13c: Removed ${reasonsToRemove.length} contradictory reasons`);
+        }
         
         // Invariant 5: Scoring (minimal change)
         // If ≥1 anchor element SUPPORTED and ≥1 NOT_FOUND → label at most Medium, score cap <=60
@@ -2367,7 +2291,7 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     
     // If compound anchors detected, validate each independently
     if (compoundAnchorResult.anchors.length >= 2) {
-      console.log(`[DIAG] A3.5.13 Addendum: Compound anchor statement detected with ${compoundAnchorResult.anchors.length} anchors`);
+      console.log(`[DIAG] A3.5.13: Compound anchor detected (${compoundAnchorResult.anchors.length} anchors)`);
       
       // If all anchors found → fully supported
       if (compoundAnchorResult.allFound) {
@@ -2409,7 +2333,6 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
           updatedReasons = ["All anchor facts in this statement are supported by the uploaded sources."];
         }
         
-        console.log(`[DIAG] A3.5.13 Addendum: All ${compoundAnchorResult.anchors.length} anchors found, replaced absence language`);
         
         return {
           ...stmt,
@@ -2485,7 +2408,6 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
         
         updatedReasons = [...updatedReasons, ...nonAbsenceReasons].slice(0, 4);
         
-        console.log(`[DIAG] A3.5.13 Addendum: Partial support - ${foundAnchorNames.length} found, ${missingAnchorNames.length} missing`);
         
         return {
           ...stmt,
@@ -2497,7 +2419,6 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
       }
       
       // If no anchors found, continue to standard absence check below
-      console.log(`[DIAG] A3.5.13 Addendum: No anchors found in compound statement, proceeding to standard absence check`);
     }
     
     // A3.5.13 Addendum - Anchor Absence Precedence:
@@ -2604,14 +2525,7 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
         
         // Diagnostics
         const absenceReasonsRemoved = reasons.length - (updatedReasons.length - 1); // -1 because we added support reason
-        console.log(`[DIAG] A3.5.13b: corpusSearch found support → injected citation(s):`, {
-          statement: text.substring(0, 60),
-          memoReferenceId,
-          citationsBefore: existingCitations,
-          citationsAfter: injectedCitations,
-          evidenceBuilt: evidence.length,
-          absenceReasonsRemoved,
-        });
+        console.log(`[DIAG] A3.5.13b: corpusSearch found support, injected citations`);
         
         // Build updated statement with citations, evidence, and reasons
         // Invariant 4: No Later Overwrite - ensure this persists
@@ -2628,7 +2542,6 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
         };
       }
       // If corpusSearch found nothing, continue to standard absence/ambiguity check below
-      console.log(`[DIAG] A3.5.13 Addendum - Anchor Absence Precedence: corpusSearch found no match for anchor fact, allowing absence language: "${text.substring(0, 60)}..."`);
     }
     
     // Invariant 2: Mandatory corpusSearch before absence language
@@ -2691,10 +2604,7 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
         
         // Diagnostics (A3.5.13)
         console.log(`[DIAG] A3.5.13: Ambiguity detected - replaced absence language:`, {
-          statement: text.substring(0, 60),
           anchorType: ambiguityResult.anchorType,
-          values: ambiguityResult.values.map(v => v.humanForm),
-          corpusSearchFound: searchResult.found,
         });
         
         return {
@@ -2762,12 +2672,7 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
       
       // Diagnostics (A3.5.12)
       const matchTypes = [...new Set(searchResult.hits.map(h => h.matchType))];
-      console.log(`[DIAG] A3.5.12: Prevented absence claim - corpusSearch found matches:`, {
-        statement: text.substring(0, 60),
-        hitsCount: searchResult.hits.length,
-        matchTypes,
-        docIds: [...new Set(searchResult.hits.map(h => h.docId))],
-      });
+      console.log(`[DIAG] A3.5.12: Prevented absence claim - corpusSearch found matches`);
       
       return {
         ...stmt,
@@ -2814,12 +2719,6 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
         ].slice(0, 4);
       }
       
-      // Diagnostics (A3.5.12)
-      console.log(`[DIAG] A3.5.12: Allowed absence claim after corpusSearch (no matches):`, {
-        statement: text.substring(0, 60),
-        searchedDocs: uploadedDocs.length,
-        debug: searchResult.debug,
-      });
       
       return {
         ...stmt,
@@ -2997,14 +2896,6 @@ function applyFinalPostCheck(statements, unifiedReferences) {
     
     // DIAGNOSTIC: Log final post-check for high scores
     if (score > 35) {
-      console.log(`[DIAG] applyFinalPostCheck statement (score=${score}):`, {
-        text: text.substring(0, 60),
-        category,
-        provenance,
-        resolvedCitations,
-        hasMemoReference: !!memoReference,
-        memoReferenceId: memoReference?.id,
-      });
     }
     
     // Allow >35 only if provenance is valid (CITED_OK or MEMO_OK)
@@ -3046,13 +2937,6 @@ function applyFinalPostCheck(statements, unifiedReferences) {
     if (provenance === "MEMO_OK" && resolvedCitations.length === 0 && memoReference) {
       const injectedId = memoReference.id;
       const idExists = unifiedReferences.some(r => r.id === injectedId);
-      console.log(`[DIAG] applyFinalPostCheck: MEMO_OK injection:`, {
-        text: text.substring(0, 60),
-        injectedId,
-        injectedIdType: typeof injectedId,
-        idExistsInReferences: idExists,
-        currentCitations: assessment.citations,
-      });
       
       return {
         ...stmt,
@@ -3423,19 +3307,6 @@ export default async function handler(req, res) {
       kind: s?.kind || s?.sourceType || "file",
       url: s?.url || null,
     }));
-    
-    // DIAGNOSTIC: Log processed sources
-    console.log(`[DIAG] Processed uploadedSources count: ${uploadedSources.length}`);
-    if (uploadedSources.length > 0) {
-      uploadedSources.forEach((s, idx) => {
-        console.log(`[DIAG] UploadedSource[${idx}]:`, {
-          id: s.id,
-          name: s.name,
-          hasText: typeof s.text === "string" && s.text.length > 0,
-          textLength: typeof s.text === "string" ? s.text.length : 0,
-        });
-      });
-    }
 
     // Build uploaded sources context for prompt
     let uploadedSourcesBlock = "";
@@ -3490,17 +3361,6 @@ export default async function handler(req, res) {
     const unifiedReferences = [...uploadedReferences, ...webReferencesWithIds];
     const maxRefIndex = unifiedReferences.length;
     
-    // DIAGNOSTIC: Log unifiedReferences structure before processing
-    console.log(`[DIAG] unifiedReferences created: count=${unifiedReferences.length}`);
-    unifiedReferences.forEach((ref, idx) => {
-      console.log(`[DIAG] unifiedReferences[${idx}]:`, {
-        id: ref.id,
-        idType: typeof ref.id,
-        type: ref.type,
-        title: ref.title?.substring(0, 40),
-        hasUrl: !!ref.url,
-      });
-    });
 
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
@@ -3511,7 +3371,7 @@ export default async function handler(req, res) {
     const candidatesBlock = extractionCandidates.length > 0
       ? extractionCandidates.map((c, idx) => `${idx + 1}. ${c}`).join("\n")
       : "(no extractable statements found)";
-    
+
     const system = `
 You are the "Review" engine inside Content Engine.
 
@@ -3657,20 +3517,10 @@ ${
     let parsed = extractFirstJson(raw);
     let extractionQuality = "ok";
     
-    // DIAGNOSTIC: Log raw model output
+    // DIAGNOSTIC: Log model output summary
     if (parsed && typeof parsed === "object") {
       const rawStatements = Array.isArray(parsed.statements) ? parsed.statements : [];
-      console.log(`[DIAG] Model output: parsed.statements count=${rawStatements.length}`);
-      if (rawStatements.length > 0) {
-        rawStatements.slice(0, 3).forEach((stmt, idx) => {
-          console.log(`[DIAG] Raw model statement[${idx}]:`, {
-            text: stmt?.text?.substring(0, 60),
-            hasAssessment: !!stmt?.assessment,
-            citations: stmt?.assessment?.citations,
-            citationTypes: stmt?.assessment?.citations?.map(c => typeof c),
-          });
-        });
-      }
+      console.log(`[DIAG] Model output: ${rawStatements.length} statements`);
     } else {
       console.log(`[DIAG] Model output: parsed is null or invalid, type=${typeof parsed}`);
     }
@@ -3716,13 +3566,9 @@ ${
           }
         }
         
-        if (!matched) {
-          console.log(`[DIAG] A3.5.13: Dropped LLM statement that doesn't match candidates: "${stmtText.substring(0, 60)}..."`);
-        }
       }
       
       statements = matchedStatements;
-      console.log(`[DIAG] A3.5.13: Mapped ${statements.length} statements from ${extractionCandidates.length} candidates`);
     }
     
     // Graceful fallback if model output is invalid or empty
@@ -3736,8 +3582,6 @@ ${
     // Note: This should be redundant now since candidates come from draft, but keep for safety
     statements = filterDraftOnlyStatements(statements, draftText);
     
-    // A3.5.13: Final diagnostic - log final statement count
-    console.log(`[DIAG] A3.5.13: Final reviewed statements count=${statements.length} (from ${extractionCandidates.length} candidates)`);
     
     // B) Citation resolution validation: drop unresolvable citations
     statements = resolveCitations(statements, unifiedReferences);
@@ -3755,74 +3599,39 @@ ${
     
     // E) Apply anchor-fact gating: force Low if anchor facts lack citations
     // A3.5.13 Addendum: Pass uploadedSources to respect anchor absence precedence
-    console.log(`[DIAG] Before applyAnchorGating: statements count=${statements.length}`);
     statements = applyAnchorGating(statements, uploadedSources);
-    console.log(`[DIAG] After applyAnchorGating: statements count=${statements.length}`);
     
     // F) Final post-condition clamp: ensure no High/Medium with missing citations
-    console.log(`[DIAG] Before applyFinalPostCheck: statements count=${statements.length}`);
     statements = applyFinalPostCheck(statements, unifiedReferences);
-    console.log(`[DIAG] After applyFinalPostCheck: statements count=${statements.length}`);
     
     // G) Normalize response structure: ensure citations and evidence are at top-level
     // This enforces the response contract that the Review UI expects
-    console.log(`[DIAG] Before normalizeResponseStructure: statements count=${statements.length}`);
     statements = normalizeResponseStructure(statements, unifiedReferences);
-    console.log(`[DIAG] After normalizeResponseStructure: statements count=${statements.length}`);
     
     // H) Sanitize reasons: remove misleading "no sources cited" messages when citations/evidence exist
     // Also improve language when web search is enabled (A3.5.8)
     const webSearchEnabled = publicSearch === true;
     const webSearchUsed = Boolean(search?.ok && (search?.results || []).length);
-    console.log(`[DIAG] Before sanitizeReasons: statements count=${statements.length}`);
     statements = sanitizeReasons(statements, webSearchEnabled, webSearchUsed);
-    console.log(`[DIAG] After sanitizeReasons: statements count=${statements.length}`);
     
     // I) Enforce reason specificity: require explicit enumeration for partial support and contradiction cases (A3.5.9)
-    console.log(`[DIAG] Before enforceReasonSpecificity: statements count=${statements.length}`);
     statements = enforceReasonSpecificity(statements);
-    console.log(`[DIAG] After enforceReasonSpecificity: statements count=${statements.length}`);
     
     // J) Fix anchor-fact reasons: detect and correct false "not mentioned" claims with semantic matching (A3.5.10)
-    console.log(`[DIAG] Before fixAnchorFactReasons: statements count=${statements.length}`);
     statements = fixAnchorFactReasons(statements, unifiedReferences);
-    console.log(`[DIAG] After fixAnchorFactReasons: statements count=${statements.length}`);
     
     // K) Enforce corpus-level verification before absence claims (A3.5.11)
     // A3.5.13b: Pass unifiedReferences to inject citations and build evidence when corpusSearch finds support
     // MUST perform corpus search before allowing "not mentioned" / "not supported" claims
-    console.log(`[DIAG] Before enforceCorpusVerificationBeforeAbsence: statements count=${statements.length}`);
     try {
       statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences);
-      console.log(`[DIAG] After enforceCorpusVerificationBeforeAbsence: statements count=${statements.length}`);
     } catch (corpusErr) {
       console.error(`[ERROR] enforceCorpusVerificationBeforeAbsence failed:`, corpusErr);
-      console.error(`[ERROR] Stack:`, corpusErr?.stack);
       // Continue with statements as-is rather than losing them
     }
     
-    // DIAGNOSTIC: Log final state before returning
-    console.log(`[DIAG] Final response: statements count=${statements.length}, references count=${unifiedReferences.length}`);
-    if (statements.length > 0) {
-      statements.slice(0, 3).forEach((stmt, idx) => {
-        const assessment = stmt.assessment || {};
-        console.log(`[DIAG] Final statement[${idx}]:`, {
-          text: stmt.text?.substring(0, 60),
-          score: assessment.reliabilityScore,
-          label: assessment.reliabilityLabel,
-          assessmentCitations: assessment.citations,
-          topLevelCitations: stmt.citations,
-          evidenceCount: Array.isArray(stmt.evidence) ? stmt.evidence.length : 0,
-          citationTypes: assessment.citations?.map(c => typeof c),
-          reasons: assessment.reasons?.slice(0, 2),
-        });
-      });
-    }
-    console.log(`[DIAG] Final unifiedReferences (first 3):`, unifiedReferences.slice(0, 3).map(r => ({
-      id: r.id,
-      idType: typeof r.id,
-      type: r.type,
-    })));
+    // DIAGNOSTIC: Log final summary
+    console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
 
     return res.status(200).json({
       ok: true,
