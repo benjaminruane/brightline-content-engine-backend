@@ -674,29 +674,62 @@ function extractDeterministicStatementCandidates(draftText) {
   return cappedCandidates;
 }
 
-// A3.5.14 Part A: Filter candidate statements for quality (extraction stability)
+// A3.5.14b Patch 1: Segmentation Guardrails + Fallback
 // Rejects candidates that are truncated fragments, mid-sentence starts, or too-short anchors
+// Implements strict validation with fallback to full sentences
 function filterCandidateQuality(candidates, rawSentences) {
   if (!Array.isArray(candidates) || candidates.length === 0) return candidates;
   
   const accepted = [];
   const rejected = [];
   const rejectionReasons = [];
+  const rejectedWithReasons = []; // For detailed logging
+  const fallbackMap = new Map(); // rejected -> fallback candidate
   
-  // Build a map of raw sentences for context checking
+  // Build a map of raw sentences for context checking and fallback
   const rawSentenceMap = new Map();
+  const rawSentenceList = [];
   if (Array.isArray(rawSentences)) {
     rawSentences.forEach((s, idx) => {
       if (typeof s === "string" && s.trim().length > 0) {
-        rawSentenceMap.set(idx, s.trim());
+        const trimmed = s.trim();
+        rawSentenceMap.set(idx, trimmed);
+        rawSentenceList.push(trimmed);
       }
     });
+  }
+  
+  // Helper: Find nearest full sentence for fallback
+  function findFallbackSentence(rejectedText) {
+    if (!rejectedText || typeof rejectedText !== "string") return null;
+    const trimmed = rejectedText.trim();
+    
+    // Try to find containing sentence
+    for (const rawSentence of rawSentenceList) {
+      if (rawSentence.includes(trimmed) && /[.?!]\s*$/.test(rawSentence)) {
+        return rawSentence;
+      }
+    }
+    
+    // Try to find sentence that contains key words
+    const keyWords = trimmed.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
+    if (keyWords.length > 0) {
+      for (const rawSentence of rawSentenceList) {
+        const hasKeyWords = keyWords.some(kw => rawSentence.toLowerCase().includes(kw.toLowerCase()));
+        if (hasKeyWords && /[.?!]\s*$/.test(rawSentence) && rawSentence.length >= 45) {
+          return rawSentence;
+        }
+      }
+    }
+    
+    return null;
   }
   
   for (const candidate of candidates) {
     if (typeof candidate !== "string" || candidate.trim().length === 0) {
       rejected.push(candidate);
       rejectionReasons.push("empty");
+      rejectedWithReasons.push({ reason: "empty", textPreview: "" });
       continue;
     }
     
@@ -704,136 +737,336 @@ function filterCandidateQuality(candidates, rawSentences) {
     let shouldReject = false;
     let reason = null;
     
-    // 1) Truncation / fragment indicators
-    // Ends with "(" or unfinished numeric fragment like "($18" or ends with "approximately" without closing punctuation
-    if (trimmed.endsWith("(")) {
+    // 1) Starts with closing punctuation: ) ] } , ; :
+    if (/^[)\]},;:]/.test(trimmed)) {
       shouldReject = true;
-      reason = "ends_with_open_paren";
-    } else if (/\(\$[\d,]+(?:\.\d+)?\s*$/.test(trimmed)) {
-      shouldReject = true;
-      reason = "unfinished_numeric_fragment";
-    } else if (/approximately\s*$/i.test(trimmed) && !/[.?!]/.test(trimmed)) {
-      shouldReject = true;
-      reason = "ends_with_approximately";
+      reason = "starts_with_closing_punct";
     }
     
-    // Contains unmatched parentheses count
+    // 2) Unbalanced parentheses/brackets
     if (!shouldReject) {
       const openParens = (trimmed.match(/\(/g) || []).length;
       const closeParens = (trimmed.match(/\)/g) || []).length;
-      if (openParens !== closeParens) {
-        shouldReject = true;
-        reason = "unmatched_parentheses";
-      }
-    }
-    
-    // 2) Mid-sentence starts
-    if (!shouldReject) {
-      // Begins with lowercase letter AND previous raw sentence did not end (detect prior split)
-      const firstChar = trimmed[0];
-      if (firstChar && firstChar === firstChar.toLowerCase() && /[a-z]/.test(firstChar)) {
-        // Check if this looks like a continuation from a previous sentence
-        // This is a heuristic - if it starts lowercase and doesn't start with a proper noun indicator, likely mid-sentence
-        const startsWithProperNoun = /^[A-Z]/.test(trimmed);
-        if (!startsWithProperNoun) {
-          // Check if previous sentence in rawSentences ended properly
-          let foundInRaw = false;
-          for (const rawSentence of rawSentenceMap.values()) {
-            if (rawSentence.includes(trimmed) || trimmed.includes(rawSentence)) {
-              foundInRaw = true;
-              // Check if the raw sentence ended properly
-              if (/[.?!]\s*$/.test(rawSentence)) {
-                // Raw sentence ended properly, so this might be OK
-                break;
-              } else {
-                // Raw sentence didn't end, this is likely a mid-sentence start
-                shouldReject = true;
-                reason = "mid_sentence_start_lowercase";
-                break;
-              }
-            }
-          }
-          // If not found in raw sentences at all, it's suspicious
-          if (!foundInRaw && !/[.?!]\s*$/.test(trimmed)) {
-            shouldReject = true;
-            reason = "mid_sentence_start_not_in_raw";
-          }
-        }
-      }
+      const openBrackets = (trimmed.match(/\[/g) || []).length;
+      const closeBrackets = (trimmed.match(/\]/g) || []).length;
+      const openBraces = (trimmed.match(/\{/g) || []).length;
+      const closeBraces = (trimmed.match(/\}/g) || []).length;
       
-      // Begins with ")" or "," or "and " / "with " / "targeting " (fragment continuation)
-      if (!shouldReject) {
-        const fragmentStartPatterns = [
-          /^\)/,
-          /^,\s*/,
-          /^and\s+/i,
-          /^with\s+/i,
-          /^targeting\s+/i,
-        ];
-        for (const pattern of fragmentStartPatterns) {
-          if (pattern.test(trimmed)) {
-            shouldReject = true;
-            reason = "fragment_continuation";
-            break;
-          }
-        }
-      }
-    }
-    
-    // 3) Too-short anchors
-    // Length < 40 chars for WORLD_FACT candidates unless purely numeric anchor
-    if (!shouldReject) {
-      // Check if this looks like a WORLD_FACT (has anchor indicators)
-      const hasAnchorIndicators = /(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?|\b\d+(?:\.\d+)?\s*%|\b(?:valuation|funding|revenue|ownership|equity|pre-money|post-money|board|secondary)\b)/i.test(trimmed);
-      if (hasAnchorIndicators && trimmed.length < 40) {
-        // Check if it's purely numeric anchor (e.g., "$25mm pre-money valuation.")
-        const isPurelyNumericAnchor = /^[\s\w$%.,-]*\$?[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?[\s\w%.,-]*[.?!]?\s*$/i.test(trimmed);
-        if (!isPurelyNumericAnchor) {
-          shouldReject = true;
-          reason = "too_short_anchor";
-        }
-      }
-    }
-    
-    // 4) Require sentence closure
-    // Candidate must end with one of [.?!] OR must be explicitly "anchor style"
-    if (!shouldReject) {
-      const endsWithPunctuation = /[.?!]\s*$/.test(trimmed);
-      const isAnchorStyle = /(?:pre-money|post-money|valuation|ownership|board|secondary)\s+(?:is|was|are|were)\s+\$?[\d,]+(?:\.\d+)?/i.test(trimmed);
-      if (!endsWithPunctuation && !isAnchorStyle) {
+      if (openParens !== closeParens || openBrackets !== closeBrackets || openBraces !== closeBraces) {
         shouldReject = true;
-        reason = "missing_sentence_closure";
+        reason = "unbalanced_brackets";
+      }
+    }
+    
+    // 3) Ends with "open fragment" signals
+    if (!shouldReject) {
+      const endsWithFragment = /[(\$,—]$/.test(trimmed) || 
+        /\b(and|or|to|at|with|targeting|approximately|of)\s*$/i.test(trimmed);
+      if (endsWithFragment) {
+        shouldReject = true;
+        reason = "ends_with_fragment";
+      }
+    }
+    
+    // 4) Ends mid-word (STRICT: only flag if strong evidence of truncation)
+    if (!shouldReject) {
+      const lastChar = trimmed[trimmed.length - 1];
+      const endsWithLetter = /[a-zA-Z]/.test(lastChar);
+      const hasTerminalPunct = /[.?!\"'')]\]\s*$/.test(trimmed);
+      
+      // Only flag if: ends with letter, no terminal punctuation, AND strong truncation evidence
+      if (endsWithLetter && !hasTerminalPunct) {
+        const lastWord = trimmed.split(/\s+/).pop() || "";
+        
+        // Legitimate endings to preserve: acronyms (SMBs, APIs), entity endings (Inc, Ltd, Corp)
+        // Check for acronyms first (all caps, 2+ chars like APIs, SMBs, etc.)
+        const isAcronym = /^[A-Z]{2,}$/.test(lastWord);
+        // Check for common entity endings (case-insensitive)
+        const legitimateEndings = /^(inc|ltd|corp|llc|plc|gmbh|sas|sa|nv|bv|ab|oy|as|ag|spa|srl|pty|co|llp|pc|pa|lp|p\.?c\.?|l\.?l\.?c\.?|l\.?t\.?d\.?|i\.?n\.?c\.?)$/i;
+        const isLegitimateEnding = legitimateEndings.test(lastWord);
+        
+        // Strong truncation evidence: very short word (< 2 chars) that's not an acronym/ending
+        // OR suspiciously short candidate relative to context
+        const isVeryShortFragment = lastWord.length < 2 && !isAcronym && !isLegitimateEnding;
+        const isSuspiciouslyShort = trimmed.length < 30 && lastWord.length < 3 && !isAcronym && !isLegitimateEnding;
+        
+        if (isVeryShortFragment || isSuspiciouslyShort) {
+          shouldReject = true;
+          reason = "ends_mid_word";
+          console.log(`[DIAG][SEG_GUARD] midWordTruncationDetected=true textPreview="${trimmed.substring(0, 60)}..." lastWord="${lastWord}"`);
+        }
+      }
+    }
+    
+    // 5) Too short to stand alone: < 45 chars AND contains no number
+    if (!shouldReject) {
+      const hasNumber = /\d/.test(trimmed);
+      if (trimmed.length < 45 && !hasNumber) {
+        shouldReject = true;
+        reason = "too_short_no_number";
+      }
+    }
+    
+    // 6) Ends with "(" or unfinished numeric fragment
+    if (!shouldReject) {
+      if (trimmed.endsWith("(")) {
+        shouldReject = true;
+        reason = "ends_with_open_paren";
+      } else if (/\(\$[\d,]+(?:\.\d+)?\s*$/.test(trimmed)) {
+        shouldReject = true;
+        reason = "unfinished_numeric_fragment";
+      }
+    }
+    
+    // 7) Mid-sentence starts: begins with fragment continuation words
+    if (!shouldReject) {
+      const fragmentStartPatterns = [
+        /^\)/,
+        /^\]/,
+        /^\}/,
+        /^,\s*/,
+        /^;\s*/,
+        /^:\s*/,
+        /^and\s+/i,
+        /^with\s+/i,
+        /^targeting\s+/i,
+        /^or\s+/i,
+        /^to\s+/i,
+      ];
+      for (const pattern of fragmentStartPatterns) {
+        if (pattern.test(trimmed)) {
+          shouldReject = true;
+          reason = "fragment_continuation";
+          break;
+        }
       }
     }
     
     if (shouldReject) {
       rejected.push(candidate);
       rejectionReasons.push(reason);
+      rejectedWithReasons.push({ 
+        reason, 
+        textPreview: trimmed.substring(0, 50) + (trimmed.length > 50 ? "..." : "")
+      });
+      
+      // Find fallback sentence
+      const fallback = findFallbackSentence(trimmed);
+      if (fallback) {
+        fallbackMap.set(candidate, fallback);
+      }
     } else {
       accepted.push(candidate);
     }
   }
   
-  // If filtering reduces candidate count too much, fall back to original unsplit sentences
-  const MIN_ACCEPTABLE_COUNT = Math.max(1, Math.floor(candidates.length * 0.3)); // At least 30% or 1
-  if (accepted.length < MIN_ACCEPTABLE_COUNT && Array.isArray(rawSentences) && rawSentences.length > 0) {
-    console.log(`[DIAG] extractionStability: filtering reduced count too much (${candidates.length} -> ${accepted.length}), falling back to original unsplit sentences`);
-    // Return original unsplit sentences that are long enough
-    const fallbackCandidates = rawSentences
-      .filter(s => typeof s === "string" && s.trim().length >= 40)
-      .slice(0, 25); // Cap at 25 like original
-    console.log(`[DIAG] extractionStability: fallback count=${fallbackCandidates.length}`);
-    return fallbackCandidates;
+  // Apply fallback: replace rejected candidates with their fallback sentences
+  const fallbackCandidates = [];
+  const fallbackSamples = [];
+  
+  for (const rejectedCandidate of rejected) {
+    const fallback = fallbackMap.get(rejectedCandidate);
+    if (fallback && !accepted.includes(fallback) && !fallbackCandidates.includes(fallback)) {
+      fallbackCandidates.push(fallback);
+      if (fallbackSamples.length < 3) {
+        const rejectedPreview = rejectedCandidate.substring(0, 30) + "...";
+        const fallbackPreview = fallback.substring(0, 50) + "...";
+        fallbackSamples.push({ rejectedPreview, fallbackPreview });
+      }
+    }
   }
+  
+  // Combine accepted and fallback candidates
+  const finalCandidates = [...accepted, ...fallbackCandidates];
+  
+  // If filtering reduced count too much, use original unsplit sentences
+  const MIN_ACCEPTABLE_COUNT = Math.max(1, Math.floor(candidates.length * 0.3));
+  if (finalCandidates.length < MIN_ACCEPTABLE_COUNT && rawSentenceList.length > 0) {
+    console.log(`[DIAG][SEG_GUARD] filtering reduced count too much (${candidates.length} -> ${finalCandidates.length}), using original unsplit sentences`);
+    const unsplitFallback = rawSentenceList
+      .filter(s => s.length >= 45 || /\d/.test(s))
+      .slice(0, 25);
+    console.log(`[DIAG][SEG_GUARD] unsplit fallback count=${unsplitFallback.length}`);
+    
+    // Compute stable hash (simple hash for determinism check)
+    const joinedCandidates = unsplitFallback.join('|');
+    let hash = 0;
+    for (let i = 0; i < joinedCandidates.length; i++) {
+      const char = joinedCandidates.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    const stableHash = Math.abs(hash).toString(16).substring(0, 8);
+    
+    // Log diagnostics
+    const rejectionSummary = {};
+    rejectionReasons.forEach(r => {
+      rejectionSummary[r] = (rejectionSummary[r] || 0) + 1;
+    });
+    console.log(`[DIAG][SEG_GUARD] rawCandidateCount=${candidates.length}`);
+    console.log(`[DIAG][SEG_GUARD] accepted=${accepted.length} rejected=${rejected.length} fallback=${unsplitFallback.length}`);
+    console.log(`[DIAG][SEG_GUARD] rejectedByReason=${JSON.stringify(rejectionSummary)}`);
+    console.log(`[DIAG][SEG_GUARD] sampleRejected=${JSON.stringify(rejectedWithReasons.slice(0, 3))}`);
+    console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
+    
+    return unsplitFallback;
+  }
+  
+  // Compute stable hash (simple hash for determinism check)
+  const joinedCandidates = finalCandidates.join('|');
+  let hash = 0;
+  for (let i = 0; i < joinedCandidates.length; i++) {
+    const char = joinedCandidates.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  const stableHash = Math.abs(hash).toString(16).substring(0, 8);
   
   // Log diagnostics
   const rejectionSummary = {};
   rejectionReasons.forEach(r => {
     rejectionSummary[r] = (rejectionSummary[r] || 0) + 1;
   });
-  console.log(`[DIAG] extractionStability: acceptedCount=${accepted.length}, rejectedCount=${rejected.length}, rejectionReasons=${JSON.stringify(rejectionSummary)}`);
+  console.log(`[DIAG][SEG_GUARD] rawCandidateCount=${candidates.length}`);
+  console.log(`[DIAG][SEG_GUARD] accepted=${accepted.length} rejected=${rejected.length} fallback=${fallbackCandidates.length}`);
+  console.log(`[DIAG][SEG_GUARD] rejectedByReason=${JSON.stringify(rejectionSummary)}`);
+  console.log(`[DIAG][SEG_GUARD] sampleRejected=${JSON.stringify(rejectedWithReasons.slice(0, 3))}`);
+  if (fallbackSamples.length > 0) {
+    console.log(`[DIAG][SEG_GUARD] sampleFallback=${JSON.stringify(fallbackSamples)}`);
+  }
+  console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
   
-  return accepted;
+  return finalCandidates;
+}
+
+// A3.5.14b Patch 4: Web Reference Hygiene - filter raw search results BEFORE reference construction
+// Works on raw Tavily search results (objects with url, title, snippet/content)
+function filterWebSearchResults(rawResults, draftText) {
+  if (!Array.isArray(rawResults) || rawResults.length === 0) return [];
+  if (typeof draftText !== "string" || !draftText.trim()) return rawResults;
+  
+  const draftLower = draftText.toLowerCase();
+  
+  // Extract anchor keywords and entity names from draft
+  const anchorKeywords = [
+    "valuation", "pre-money", "post-money", "series a", "series b", "funding", "investment",
+    "ownership", "equity", "secondary", "board", "preferred", "diluted"
+  ];
+  const hasAnchorKeywords = anchorKeywords.some(kw => draftLower.includes(kw));
+  
+  // Extract entity name (first capitalized word sequence, common company name patterns)
+  const entityMatch = draftText.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/);
+  const entityName = entityMatch ? entityMatch[1].toLowerCase() : null;
+  
+  const kept = [];
+  const rejected = [];
+  const rejectionReasons = {};
+  
+  for (const result of rawResults) {
+    if (!result || typeof result !== "object") {
+      rejected.push(result);
+      const reason = "invalid_object";
+      rejectionReasons[reason] = (rejectionReasons[reason] || 0) + 1;
+      continue;
+    }
+    
+    const url = result.url || "";
+    const title = result.title || "";
+    const snippet = result.snippet || result.content || "";
+    const urlLower = url.toLowerCase();
+    const combinedText = (title + " " + snippet).toLowerCase();
+    
+    let shouldReject = false;
+    let reason = null;
+    
+    // Reject if domain is unrelated (dating, generic portals, feeds)
+    const unrelatedDomains = [
+      "dating", "tabor.ru", "generic", "portal", "feed", "youtube.com/feed",
+      "google.com/maps", "maps.google", "facebook.com/feed"
+    ];
+    for (const domain of unrelatedDomains) {
+      if (urlLower.includes(domain)) {
+        shouldReject = true;
+        reason = "unrelated_domain";
+        break;
+      }
+    }
+    
+    // Reject if URL is generic hub/feed with no relevant snippet
+    if (!shouldReject) {
+      const isGenericFeed = /(feed|hub|homepage|index)$/i.test(urlLower) && snippet.length < 50;
+      if (isGenericFeed) {
+        shouldReject = true;
+        reason = "generic_feed_no_snippet";
+      }
+    }
+    
+    // Require at least ONE: anchor keyword overlap OR entity match + finance term
+    if (!shouldReject) {
+      const hasAnchorOverlap = hasAnchorKeywords && anchorKeywords.some(kw => 
+        combinedText.includes(kw)
+      );
+      
+      const financeTerms = ["investment", "funding", "valuation", "equity", "series", "round", "capital", "venture"];
+      const hasFinanceTerm = financeTerms.some(term => combinedText.includes(term));
+      const hasEntityMatch = entityName && combinedText.includes(entityName);
+      const hasEntityAndFinance = hasEntityMatch && hasFinanceTerm;
+      
+      if (!hasAnchorOverlap && !hasEntityAndFinance) {
+        shouldReject = true;
+        reason = "no_anchor_or_entity_finance_match";
+      }
+    }
+    
+    if (shouldReject) {
+      rejected.push(result);
+      rejectionReasons[reason] = (rejectionReasons[reason] || 0) + 1;
+    } else {
+      kept.push(result);
+    }
+  }
+  
+  // Cap at 3 web results
+  const cappedKept = kept.slice(0, 3);
+  
+  // Extract domains for logging
+  const keptDomains = cappedKept.map(r => {
+    try {
+      return r?.url ? new URL(r.url).hostname : "unknown";
+    } catch {
+      return "unknown";
+    }
+  });
+  
+  // Log diagnostics
+  const sampleRejected = rejected.slice(0, 3).map(r => {
+    try {
+      const domain = r?.url ? new URL(r.url).hostname : "unknown";
+      return { domain, reason: "filtered", title: (r?.title || "").substring(0, 50) };
+    } catch {
+      return { domain: "unknown", reason: "filtered", title: (r?.title || "").substring(0, 50) };
+    }
+  });
+  const sampleKept = cappedKept.slice(0, 3).map(r => {
+    try {
+      const domain = r?.url ? new URL(r.url).hostname : "unknown";
+      return { domain, title: (r?.title || "").substring(0, 50) };
+    } catch {
+      return { domain: "unknown", title: (r?.title || "").substring(0, 50) };
+    }
+  });
+  
+  console.log(`[DIAG][WEB_FILTER] initial=${rawResults.length} kept=${cappedKept.length} rejected=${rejected.length}`);
+  console.log(`[DIAG][WEB_FILTER] keptDomains=${JSON.stringify(keptDomains)}`);
+  console.log(`[DIAG][WEB_FILTER] rejectedByReason=${JSON.stringify(rejectionReasons)}`);
+  if (sampleRejected.length > 0) {
+    console.log(`[DIAG][WEB_FILTER] sampleRejected=${JSON.stringify(sampleRejected)}`);
+  }
+  if (sampleKept.length > 0) {
+    console.log(`[DIAG][WEB_FILTER] kept=${JSON.stringify(sampleKept)}`);
+  }
+  
+  return cappedKept;
 }
 
 // Fallback extraction when model fails
@@ -2966,6 +3199,236 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
   });
 }
 
+// A3.5.14b Patch 2 & 3: Anchor Enforcement + Ambiguity Routing (LAST MUTATION STEP)
+// Enforces invariant: FOUND => cite memo id=1, and routes ambiguity cases
+function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unifiedReferences) {
+  if (!Array.isArray(statements) || !Array.isArray(uploadedSources)) return statements;
+  
+  // Format uploaded docs for corpusSearch
+  const docsWithFullText = uploadedSources.filter(s => 
+    typeof s.text === "string" && s.text.trim().length > 0
+  );
+  
+  if (docsWithFullText.length === 0) return statements;
+  
+  const uploadedDocs = docsWithFullText.map(s => ({
+    id: s.id || s.name || `doc_${Math.random()}`,
+    title: s.name || s.title || "Untitled source",
+    text: s.text || "",
+  }));
+  
+  // Find memo reference ID (id=1 for first uploaded source)
+  const memoReferenceId = 1;
+  const memoReference = unifiedReferences.find(ref => ref?.id === memoReferenceId && ref?.type === "uploaded");
+  
+  let checked = 0;
+  let foundNoCite = 0;
+  let injected = 0;
+  let foundButNotInjected = 0;
+  
+  const updatedStatements = statements.map((stmt, idx) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const existingCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const existingTopLevelCitations = Array.isArray(stmt.citations) ? stmt.citations : [];
+    const hasEmptyCitations = existingCitations.length === 0 && existingTopLevelCitations.length === 0;
+    
+    // Check if this is a WORLD_FACT or contains anchor terms
+    const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
+    const isWorldFact = classification.category === "WORLD_FACT";
+    
+    // Check for anchor terms: Series A|pre-money|valuation|fully diluted|ownership|secondary purchase|%
+    const hasAnchorTerms = /(series\s+[a-z]|pre-money|post-money|valuation|fully\s+diluted|ownership|secondary\s+purchase|%)/i.test(text);
+    
+    // Check if should enforce
+    const shouldEnforce = (isWorldFact || hasAnchorTerms) && hasEmptyCitations;
+    
+    if (!shouldEnforce) return stmt;
+    
+    checked++;
+    
+    // Run corpusSearch
+    const searchResult = corpusSearch(text, uploadedDocs);
+    
+    if (searchResult.found) {
+      // Check if has number match or keyword match
+      const hasNumberMatch = searchResult.debug && 
+        Array.isArray(searchResult.debug.normalizedNumbersFound) && 
+        searchResult.debug.normalizedNumbersFound.length > 0;
+      const hasKeywordMatch = searchResult.debug && 
+        Array.isArray(searchResult.debug.keywordsMatched) && 
+        searchResult.debug.keywordsMatched.length > 0;
+      
+      if (hasNumberMatch || hasKeywordMatch) {
+        foundNoCite++;
+        
+        // Inject memo citation
+        let injectedCitations = [memoReferenceId];
+        if (existingCitations.length > 0) {
+          injectedCitations = [...existingCitations, memoReferenceId];
+          injectedCitations.sort((a, b) => a - b);
+        }
+        
+        // Build evidence
+        const evidence = [];
+        if (memoReference) {
+          evidence.push({
+            title: memoReference.title || "Untitled source",
+            url: memoReference.url || null,
+            sourceType: "uploaded",
+          });
+        }
+        
+        // Remove absence reasons
+        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        let updatedReasons = reasons.filter((reason) => {
+          if (typeof reason !== "string") return false;
+          const lower = reason.toLowerCase();
+          return !(
+            /not found in memo/i.test(lower) ||
+            /does not mention/i.test(lower) ||
+            /no citations provided/i.test(lower) ||
+            /cannot be confirmed from provided text/i.test(lower) ||
+            /not mentioned/i.test(lower) ||
+            /not supported/i.test(lower) ||
+            /not found/i.test(lower)
+          );
+        });
+        
+        // A3.5.14b Patch 3: Check for ambiguity (multiple figures/ranges)
+        const hasRange = /(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)\s*[-–—]\s*(\$[\d,]+(?:\.\d+)?\s*(?:mm|million|m|billion|b|thousand|k)?)/i.test(text);
+        const ambiguityResult = detectAnchorAmbiguity(text, uploadedDocs);
+        const isAmbiguous = (ambiguityResult.isAmbiguous && ambiguityResult.values.length >= 2) || hasRange;
+        
+        if (isAmbiguous) {
+          // A3.5.14b Patch 3: Use ambiguity template
+          const anchorTypeLabel = ambiguityResult.anchorType === "valuation" 
+            ? "valuation figures"
+            : ambiguityResult.anchorType === "funding"
+            ? "funding amounts"
+            : "numeric values";
+          
+          const valueList = ambiguityResult.values && ambiguityResult.values.length >= 2
+            ? ambiguityResult.values.slice(0, 2).map(v => v.humanForm).join(" and ")
+            : "multiple values";
+          
+          const ambiguityReason = `The memo contains related ${anchorTypeLabel}; the statement's exact value may be ambiguous relative to multiple memo values. Verify which applies.`;
+          updatedReasons = [ambiguityReason, ...updatedReasons].slice(0, 4);
+          
+          console.log(`[DIAG][AMBIGUITY] idx=${idx} trigger=${hasRange ? "RANGE" : "MULTI_MATCH"} numsInStmt=${JSON.stringify(extractNumericValues(text))} numsInMemo=${JSON.stringify(ambiguityResult.values?.map(v => v.value) || [])}`);
+        } else {
+          // A3.5.14b Patch 2: Use standard enforcement reason
+          updatedReasons = ["Memo contains related support; citation added via invariant enforcement.", ...updatedReasons].slice(0, 4);
+        }
+        
+        injected++;
+        
+        const beforeState = {
+          assessCites: existingCitations.length,
+          topCites: existingTopLevelCitations.length,
+          evidenceCount: (Array.isArray(assessment.evidence) ? assessment.evidence.length : 0) + (Array.isArray(stmt.evidence) ? stmt.evidence.length : 0)
+        };
+        
+        console.log(`[DIAG][ANCHOR_ENFORCE] idx=${idx} before=${JSON.stringify(beforeState)} after={assessCites:${injectedCitations.length},topCites:${injectedCitations.length},evidenceCount:${evidence.length}} removedAbsenceReasons=${reasons.length - updatedReasons.length}`);
+        
+        return {
+          ...stmt,
+          citations: injectedCitations,
+          evidence: evidence,
+          assessment: {
+            ...assessment,
+            citations: injectedCitations,
+            evidence: evidence,
+            reasons: updatedReasons,
+          },
+        };
+      } else {
+        foundButNotInjected++;
+      }
+    }
+    
+    return stmt;
+  });
+  
+  console.log(`[DIAG][ANCHOR_ENFORCE][SUMMARY] checked=${checked} foundNoCite=${foundNoCite} injected=${injected} foundButNotInjected=${foundButNotInjected}`);
+  
+  return updatedStatements;
+}
+
+// A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
+function computeExtractionQuality(statements, extractionCandidates) {
+  if (!Array.isArray(statements) || statements.length === 0) {
+    return "failed";
+  }
+  
+  let hasTruncation = false;
+  let hasUnbalancedParens = false;
+  let fallbackCount = 0;
+  
+  for (const stmt of statements) {
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    if (!text) continue;
+    
+    // Check for mid-word end (truncation) - STRICT: only flag if strong evidence
+    const lastChar = text[text.length - 1];
+    const endsWithLetter = /[a-zA-Z]/.test(lastChar);
+    const hasTerminalPunct = /[.?!\"'')]\]\s*$/.test(text);
+    
+    if (endsWithLetter && !hasTerminalPunct) {
+      const lastWord = text.split(/\s+/).pop() || "";
+      
+      // Legitimate endings to preserve: acronyms, entity endings
+      // Check for acronyms first (all caps, 2+ chars like APIs, SMBs, etc.)
+      const isAcronym = /^[A-Z]{2,}$/.test(lastWord);
+      // Check for common entity endings (case-insensitive)
+      const legitimateEndings = /^(inc|ltd|corp|llc|plc|gmbh|sas|sa|nv|bv|ab|oy|as|ag|spa|srl|pty|co|llp|pc|pa|lp|p\.?c\.?|l\.?l\.?c\.?|l\.?t\.?d\.?|i\.?n\.?c\.?)$/i;
+      const isLegitimateEnding = legitimateEndings.test(lastWord);
+      
+      // Only flag if very short fragment (< 2 chars) that's not legitimate
+      const isVeryShortFragment = lastWord.length < 2 && !isAcronym && !isLegitimateEnding;
+      const isSuspiciouslyShort = text.length < 30 && lastWord.length < 3 && !isAcronym && !isLegitimateEnding;
+      
+      if (isVeryShortFragment || isSuspiciouslyShort) {
+        hasTruncation = true;
+      }
+    }
+    
+    // Check for unbalanced parentheses
+    const openParens = (text.match(/\(/g) || []).length;
+    const closeParens = (text.match(/\)/g) || []).length;
+    if (openParens !== closeParens) {
+      hasUnbalancedParens = true;
+    }
+  }
+  
+  // Check fallback rate (if we had many candidates but few statements, likely fallback)
+  const candidateCount = Array.isArray(extractionCandidates) ? extractionCandidates.length : 0;
+  const statementCount = statements.length;
+  const rejectionRate = candidateCount > 0 ? (candidateCount - statementCount) / candidateCount : 0;
+  
+  if (rejectionRate > 0.5) {
+    fallbackCount++;
+  }
+  
+  const reasons = [];
+  if (hasTruncation) reasons.push("truncation");
+  if (hasUnbalancedParens) reasons.push("unbalanced_parens");
+  if (fallbackCount > 0 || rejectionRate > 0.5) reasons.push("high_rejection_rate");
+  
+  let quality = "ok";
+  if (hasTruncation || hasUnbalancedParens) {
+    quality = "failed";
+  } else if (fallbackCount > 0 || rejectionRate > 0.5) {
+    quality = "degraded";
+  }
+  
+  console.log(`[DIAG][QUALITY] extractionQuality=${quality} reasons=${JSON.stringify(reasons)}`);
+  
+  return quality;
+}
+
 // Fix anchor-fact reasons: detect and correct false "not mentioned" claims
 // Invariant 3: Ambiguity ≠ absence
 // Invariant 4: Language downgrade for anchor mismatches
@@ -3568,8 +4031,15 @@ export default async function handler(req, res) {
     
     try {
       search = await tavilySearch({ query, maxResults: 6 });
-      webBlock = formatWebResultsForPrompt(search);
-      webReferences = webResultsToReferences(search?.results || []);
+      
+      // A3.5.14b Patch 4: Web Reference Hygiene - filter BEFORE reference construction
+      // Filter raw search results to prevent irrelevant results from being converted to references
+      const rawResults = search?.results || [];
+      const filteredResults = filterWebSearchResults(rawResults, draftText);
+      
+      // Now convert filtered results to references
+      webReferences = webResultsToReferences(filteredResults);
+      webBlock = formatWebResultsForPrompt({ ...search, results: filteredResults });
     } catch (searchErr) {
       // Continue with empty web results - analysis can still proceed
       search = { ok: false, results: [], error: searchErr?.message };
@@ -3873,6 +4343,18 @@ ${
       console.error(`[ERROR] enforceCorpusVerificationBeforeAbsence failed:`, corpusErr);
       // Continue with statements as-is rather than losing them
     }
+    
+    // A3.5.14b Patch 2 & 3: Anchor Enforcement + Ambiguity Routing (LAST MUTATION STEP)
+    // Must run AFTER all other processing to ensure citations/evidence are not overwritten
+    try {
+      statements = enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unifiedReferences);
+    } catch (anchorErr) {
+      console.error(`[ERROR] enforceAnchorCitationsAndAmbiguity failed:`, anchorErr);
+      // Continue with statements as-is
+    }
+    
+    // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
+    extractionQuality = computeExtractionQuality(statements, extractionCandidates);
     
     // DIAGNOSTIC: Log final summary
     console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
