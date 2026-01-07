@@ -19,6 +19,32 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
+// A3.5.20 Fix 1: Central DIAG logger that prefixes every log with runId + reqSig
+function diag(runId, reqSig, ...args) {
+  const message = args.map(arg => 
+    typeof arg === "object" ? JSON.stringify(arg) : String(arg)
+  ).join(" ");
+  console.log(`[DIAG][RID=${runId}][SIG=${reqSig}] ${message}`);
+}
+
+// A3.5.20 Fix 1: Generate deterministic request signature from key inputs
+function generateReqSig(draftText, sources, webSearchEnabled) {
+  const sourcesIds = Array.isArray(sources) 
+    ? sources.map(s => s?.id || s?.name || "").join(",")
+    : "";
+  const inputStr = `${draftText.substring(0, 100)}|${sourcesIds}|${webSearchEnabled}`;
+  
+  // Simple hash function (deterministic)
+  let hash = 0;
+  for (let i = 0; i < inputStr.length; i++) {
+    const char = inputStr.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  
+  return Math.abs(hash).toString(16).substring(0, 8);
+}
+
 function safeJsonParse(s) {
   try {
     return JSON.parse(s);
@@ -470,10 +496,12 @@ function tokenizeForOverlap(text) {
     });
 }
 
-function filterDraftOnlyStatements(statements, draftText) {
+function filterDraftOnlyStatements(statements, draftText, runId = null, reqSig = null) {
   if (!Array.isArray(statements) || statements.length === 0) return statements;
   if (typeof draftText !== "string" || !draftText.trim()) return statements;
   
+  // A3.5.20 Fix 3: Log with RID+SIG if provided
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
   // Normalize draft text: lowercase, strip punctuation, collapse whitespace
   const normalizedDraft = normalizeTextForOverlap(draftText);
@@ -513,7 +541,7 @@ function filterDraftOnlyStatements(statements, draftText) {
           normalizedStmt,
           draftContains: normalizedDraft.includes(normalizedStmt),
         });
-        console.log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
+        log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
       }
       continue;
     }
@@ -546,13 +574,13 @@ function filterDraftOnlyStatements(statements, draftText) {
         matchingTokensCount: matchingTokens.length,
         missingTokens: stmtTokens.filter(t => !draftTokens.has(t)).slice(0, 5),
       });
-      console.log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
+      log(`[Review] Dropped non-draft statement: "${text.substring(0, 50)}..."`);
     }
   }
   
-  console.log(`[DIAG] filterDraftOnlyStatements: output count=${filtered.length}, dropped=${dropped.length}`);
+  log(`filterDraftOnlyStatements: output count=${filtered.length}, dropped=${dropped.length}`);
   if (dropped.length > 0) {
-    console.log(`[DIAG] Dropped statements (first 5):`, dropped.slice(0, 5).map(d => ({
+    log(`Dropped statements (first 5):`, dropped.slice(0, 5).map(d => ({
       reason: d.reason,
       text: d.text,
       overlapRatio: d.overlapRatio,
@@ -644,18 +672,21 @@ function mergeContinuationFragments(draftText) {
   // Log merge statistics
   if (mergeCount > 0) {
     const outputSentenceCount = normalizedText.split(/[.!?\n]+/).filter(s => s && s.trim().length > 0).length;
-    console.log(`[DIAG][SENT_MERGE] inputSegments=${inputSegmentCount} outputSentences=${outputSentenceCount} merges=${mergeCount}`);
+    log(`[SENT_MERGE] inputSegments=${inputSegmentCount} outputSentences=${outputSentenceCount} merges=${mergeCount}`);
     if (mergeSamples.length > 0) {
-      console.log(`[DIAG][SENT_MERGE] sampleMerges=${JSON.stringify(mergeSamples)}`);
+      log(`[SENT_MERGE] sampleMerges=${JSON.stringify(mergeSamples)}`);
     }
   }
   
   return normalizedText;
 }
 
-function extractDeterministicStatementCandidates(draftText) {
+function extractDeterministicStatementCandidates(draftText, runId = null, reqSig = null) {
+  // A3.5.20 Fix 3: Log with RID+SIG if provided
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
   if (typeof draftText !== "string" || !draftText.trim()) {
-    console.log(`[DIAG] extractDeterministicStatementCandidates: empty draftText`);
+    log(`extractDeterministicStatementCandidates: empty draftText`);
     return [];
   }
   
@@ -669,7 +700,7 @@ function extractDeterministicStatementCandidates(draftText) {
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
   
-  console.log(`[DIAG] extractDeterministicStatementCandidates: rawSentences count=${rawSentences.length}`);
+  log(`extractDeterministicStatementCandidates: rawSentences count=${rawSentences.length}`);
   
   // Step 2: For each sentence, check if it needs splitting
   let skippedShort = 0;
@@ -748,13 +779,13 @@ function extractDeterministicStatementCandidates(draftText) {
   const cappedCandidates = candidates.slice(0, MAX_CANDIDATES);
   
   if (candidates.length > MAX_CANDIDATES) {
-    console.log(`[DIAG] extractDeterministicStatementCandidates: cap triggered, ${candidates.length} -> ${MAX_CANDIDATES}`);
+    log(`extractDeterministicStatementCandidates: cap triggered, ${candidates.length} -> ${MAX_CANDIDATES}`);
   }
   
   // Diagnostics (required by spec)
-  console.log(`[DIAG] extractDeterministicStatementCandidates: final count=${cappedCandidates.length} (from ${rawSentences.length} sentences, skippedShort=${skippedShort})`);
+  log(`extractDeterministicStatementCandidates: final count=${cappedCandidates.length} (from ${rawSentences.length} sentences, skippedShort=${skippedShort})`);
   if (cappedCandidates.length === 0) {
-    console.log(`[DIAG] WARNING: No candidates extracted from draft text`);
+    log(`WARNING: No candidates extracted from draft text`);
   }
   
   return cappedCandidates;
@@ -763,7 +794,10 @@ function extractDeterministicStatementCandidates(draftText) {
 // A3.5.14b Patch 1: Segmentation Guardrails + Fallback
 // Rejects candidates that are truncated fragments, mid-sentence starts, or too-short anchors
 // Implements strict validation with fallback to full sentences
-function filterCandidateQuality(candidates, rawSentences, draftText) {
+function filterCandidateQuality(candidates, rawSentences, draftText, runId = null, reqSig = null) {
+  // A3.5.20 Fix 3: Log with RID+SIG if provided
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
   if (!Array.isArray(candidates) || candidates.length === 0) {
     return { candidates: [], rejectedCount: 0, fallbackCount: 0 };
   }
@@ -939,7 +973,7 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
         if (isVeryShortFragment || isSuspiciouslyShort) {
           shouldReject = true;
           reason = "ends_mid_word";
-          console.log(`[DIAG][SEG_GUARD] midWordTruncationDetected=true textPreview="${trimmed.substring(0, 60)}..." lastWord="${lastWord}"`);
+          log(`[SEG_GUARD] midWordTruncationDetected=true textPreview="${trimmed.substring(0, 60)}..." lastWord="${lastWord}"`);
         }
       }
     }
@@ -1152,9 +1186,9 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
   
   // Log recombine statistics
   if (recombineCount > 0) {
-    console.log(`[DIAG][SEG_RECOMBINE] merges=${recombineCount}`);
+    log(`[SEG_RECOMBINE] merges=${recombineCount}`);
     if (recombineSamples.length > 0) {
-      console.log(`[DIAG][SEG_RECOMBINE] samples=${JSON.stringify(recombineSamples)}`);
+      log(`[SEG_RECOMBINE] samples=${JSON.stringify(recombineSamples)}`);
     }
   }
   
@@ -1237,7 +1271,7 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
         // Log individual fallback application for verification
         const rejectedPreview = (typeof rejectedCandidate === "string" ? rejectedCandidate : "").substring(0, 30) + "...";
         const fallbackPreview = fallback.substring(0, 50) + "...";
-        console.log(`[DIAG][SEG_GUARD] appliedFallback reason=${rejectionReason} rejectedPreview="${rejectedPreview}" fallbackPreview="${fallbackPreview}"`);
+        log(`[SEG_GUARD] appliedFallback reason=${rejectionReason} rejectedPreview="${rejectedPreview}" fallbackPreview="${fallbackPreview}"`);
         
         // Track samples for summary log
         if (fallbackSamples.length < 3) {
@@ -1268,7 +1302,7 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
         finalCandidates.push(lastResortFallback);
         fallbackCandidates.push(lastResortFallback);
         appliedFallbackReasons.push("last_resort");
-        console.log(`[DIAG][SEG_GUARD] lastResortFallback applied: added 1 fallback sentence (total fallback=${fallbackCandidates.length}, rejected=${rejected.length})`);
+        log(`[SEG_GUARD] lastResortFallback applied: added 1 fallback sentence (total fallback=${fallbackCandidates.length}, rejected=${rejected.length})`);
       } else {
         // If no unique fallback found, use the first valid one (even if duplicate)
         const anyValidFallback = rawSentenceList.find(s => /[.?!]\s*$/.test(s) && s.length >= 45) || rawSentenceList[0];
@@ -1276,7 +1310,7 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
           finalCandidates.push(anyValidFallback);
           fallbackCandidates.push(anyValidFallback);
           appliedFallbackReasons.push("last_resort_duplicate");
-          console.log(`[DIAG][SEG_GUARD] lastResortFallback (duplicate allowed) applied: added 1 fallback sentence (total fallback=${fallbackCandidates.length}, rejected=${rejected.length})`);
+          log(`[SEG_GUARD] lastResortFallback (duplicate allowed) applied: added 1 fallback sentence (total fallback=${fallbackCandidates.length}, rejected=${rejected.length})`);
         } else {
           // Can't add more fallbacks, break to avoid infinite loop
           break;
@@ -1286,7 +1320,7 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
     
     // Final verification: warn if still mismatched (should not happen with above logic)
     if (fallbackCandidates.length < rejected.length) {
-      console.log(`[DIAG][SEG_GUARD] WARNING: fallbackCount (${fallbackCandidates.length}) < rejectedCount (${rejected.length}) despite having rawSentences`);
+      log(`[SEG_GUARD] WARNING: fallbackCount (${fallbackCandidates.length}) < rejectedCount (${rejected.length}) despite having rawSentences`);
     }
   }
   
@@ -1373,17 +1407,17 @@ function filterCandidateQuality(candidates, rawSentences, draftText) {
   
   // Log post-fallback validation results
   if (postFallbackRejected.length > 0 || postFallbackRepaired.length > 0) {
-    console.log(`[DIAG][SEG_GUARD] postFallbackValidation rejected=${postFallbackRejected.length} repaired=${postFallbackRepaired.length}`);
+    log(`[SEG_GUARD] postFallbackValidation rejected=${postFallbackRejected.length} repaired=${postFallbackRepaired.length}`);
   }
   
   // If filtering reduced count too much, use original unsplit sentences
   const MIN_ACCEPTABLE_COUNT = Math.max(1, Math.floor(candidates.length * 0.3));
   if (finalCandidates.length < MIN_ACCEPTABLE_COUNT && rawSentenceList.length > 0) {
-    console.log(`[DIAG][SEG_GUARD] filtering reduced count too much (${candidates.length} -> ${finalCandidates.length}), using original unsplit sentences`);
+    log(`[SEG_GUARD] filtering reduced count too much (${candidates.length} -> ${finalCandidates.length}), using original unsplit sentences`);
     const unsplitFallback = rawSentenceList
       .filter(s => s.length >= 45 || /\d/.test(s))
       .slice(0, 25);
-    console.log(`[DIAG][SEG_GUARD] unsplit fallback count=${unsplitFallback.length}`);
+    log(`[SEG_GUARD] unsplit fallback count=${unsplitFallback.length}`);
     
     // Compute stable hash (simple hash for determinism check)
     const joinedCandidates = unsplitFallback.join('|');
@@ -1586,14 +1620,14 @@ function filterWebSearchResults(rawResults, draftText) {
     }
   });
   
-  console.log(`[DIAG][WEB_FILTER] initial=${rawResults.length} kept=${cappedKept.length} rejected=${rejected.length}`);
-  console.log(`[DIAG][WEB_FILTER] keptDomains=${JSON.stringify(keptDomains)}`);
-  console.log(`[DIAG][WEB_FILTER] rejectedByReason=${JSON.stringify(rejectionReasons)}`);
+  log(`[WEB_FILTER] initial=${rawResults.length} kept=${cappedKept.length} rejected=${rejected.length}`);
+  log(`[WEB_FILTER] keptDomains=${JSON.stringify(keptDomains)}`);
+  log(`[WEB_FILTER] rejectedByReason=${JSON.stringify(rejectionReasons)}`);
   if (sampleRejected.length > 0) {
-    console.log(`[DIAG][WEB_FILTER] sampleRejected=${JSON.stringify(sampleRejected)}`);
+    log(`[WEB_FILTER] sampleRejected=${JSON.stringify(sampleRejected)}`);
   }
   if (sampleKept.length > 0) {
-    console.log(`[DIAG][WEB_FILTER] kept=${JSON.stringify(sampleKept)}`);
+    log(`[WEB_FILTER] kept=${JSON.stringify(sampleKept)}`);
   }
   
   return cappedKept;
@@ -2948,7 +2982,10 @@ function hasAbsenceClaim(reasons) {
 // A3.5.13b: When corpusSearch finds support, inject citations and build evidence
 // Core Invariant: Review MUST NOT assert absence unless corpus-level search performed and returned no match
 // Uses deterministic corpusSearch utility (A3.5.12)
-function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences = []) {
+function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences = [], runId = null, reqSig = null) {
+  // A3.5.20 Fix 3: Log with RID+SIG if provided
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
   if (!Array.isArray(statements) || !Array.isArray(uploadedSources)) return statements;
   
   // Invariant 1: Full corpus availability - only process if uploaded sources exist with full text
@@ -3533,7 +3570,14 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     
     // Perform deterministic corpus search (A3.5.12) - only if not already done
     if (!searchResult) {
+      // A3.5.20 Fix 3: Log corpusSearch call with RID+SIG
+      if (runId && reqSig) {
+        diag(runId, reqSig, `[corpusSearch] calling for statement idx=${stmtIdx || 'unknown'}`);
+      }
       searchResult = corpusSearch(text, uploadedDocs);
+      if (runId && reqSig) {
+        diag(runId, reqSig, `[corpusSearch] result found=${searchResult?.found || false}`);
+      }
     }
     
     if (searchResult.found) {
@@ -4569,6 +4613,15 @@ export default async function handler(req, res) {
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
 
     if (!draftText.trim()) return res.status(400).json({ error: "Missing draftText" });
+    
+    // A3.5.20 Fix 1 & 2: Generate runId and reqSig early for unambiguous logging
+    const runId = Math.random().toString(36).substring(2, 15);
+    const publicSearch = true; // Analysis always uses web search
+    const reqSig = generateReqSig(draftText, sources, publicSearch);
+    
+    // A3.5.20 Fix 2: Request start sentinel
+    const bodySize = typeof req.body === "string" ? req.body.length : JSON.stringify(req.body || {}).length;
+    diag(runId, reqSig, `START method=${req.method} webSearchEnabled=${publicSearch} bodySize=${bodySize}`);
 
     // Format uploaded sources for prompt (version-scoped)
     const uploadedSources = sources.map((s) => ({
@@ -4595,7 +4648,7 @@ export default async function handler(req, res) {
 
     // Analysis always uses web search
     // Force publicSearch = true regardless of client request (publicSearch from body is ignored)
-    const publicSearch = true;
+    // publicSearch already declared above
     const query = deriveQueryFromDraft(draftText);
     
     let search = { ok: false, results: [] };
@@ -4607,8 +4660,9 @@ export default async function handler(req, res) {
       
       // A3.5.14b Patch 4: Web Reference Hygiene - filter BEFORE reference construction
       // Filter raw search results to prevent irrelevant results from being converted to references
+      diag(runId, reqSig, `[PIPELINE] phase=filterWebSearchResults`);
       const rawResults = search?.results || [];
-      const filteredResults = filterWebSearchResults(rawResults, draftText);
+      const filteredResults = filterWebSearchResults(rawResults, draftText, runId, reqSig);
       
       // Now convert filtered results to references
       webReferences = webResultsToReferences(filteredResults);
@@ -4642,16 +4696,13 @@ export default async function handler(req, res) {
 
     // A3.5.16: Pre-merge continuation fragments before sentence splitting
     // This fixes fragmentation issues where rawSentences are already broken
-    const normalizedDraftText = mergeContinuationFragments(draftText);
-    
-    // A3.5.18 Fix 1: Generate runId for pipeline tracking
-    const runId = Math.random().toString(36).substring(2, 15);
-    console.log(`[DIAG][PIPELINE] runId=${runId} phase=start`);
+    diag(runId, reqSig, `[PIPELINE] phase=mergeContinuationFragments`);
+    const normalizedDraftText = mergeContinuationFragments(draftText, runId, reqSig);
     
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
-    console.log(`[DIAG][PIPELINE] runId=${runId} phase=extractCandidates`);
-    const rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText);
+    diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
+    const rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig);
     
     // A3.5.14 Part A: Filter candidates for quality (extraction stability)
     // Get raw sentences for context (we need to pass them to the filter)
@@ -4661,11 +4712,12 @@ export default async function handler(req, res) {
       .split(sentenceBoundaryPattern)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
-    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedDraftText);
+    diag(runId, reqSig, `[PIPELINE] phase=filterCandidateQuality`);
+    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedDraftText, runId, reqSig);
     const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
     const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
     const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
-    console.log(`[DIAG] A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount})`);
+    diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount})`);
     
     // Build candidate statements block for prompt
     const candidatesBlock = extractionCandidates.length > 0
@@ -4820,9 +4872,9 @@ ${
     // DIAGNOSTIC: Log model output summary
     if (parsed && typeof parsed === "object") {
       const rawStatements = Array.isArray(parsed.statements) ? parsed.statements : [];
-      console.log(`[DIAG] Model output: ${rawStatements.length} statements`);
+      diag(runId, reqSig, `Model output: ${rawStatements.length} statements`);
     } else {
-      console.log(`[DIAG] Model output: parsed is null or invalid, type=${typeof parsed}`);
+      diag(runId, reqSig, `Model output: parsed is null or invalid, type=${typeof parsed}`);
     }
     
     // Coerce and validate statements (using unified references count)
@@ -4875,13 +4927,13 @@ ${
     if (statements.length === 0) {
       statements = fallbackExtractAtomicStatements(draftText);
       extractionQuality = "degraded";
-      console.log(`[DIAG] A3.5.13: Using fallback extraction, produced ${statements.length} statements`);
+      diag(runId, reqSig, `A3.5.13: Using fallback extraction, produced ${statements.length} statements`);
     }
     
     // A) Draft-only filter: enforce statements must appear in draft text (hard gate)
     // Note: This should be redundant now since candidates come from draft, but keep for safety
-    console.log(`[DIAG][PIPELINE] runId=${runId} phase=filterDraftOnly`);
-    statements = filterDraftOnlyStatements(statements, draftText);
+    diag(runId, reqSig, `[PIPELINE] phase=filterDraftOnly`);
+    statements = filterDraftOnlyStatements(statements, draftText, runId, reqSig);
     
     
     // B) Citation resolution validation: drop unresolvable citations
@@ -4936,7 +4988,7 @@ ${
     }
     
     if (dedupeRemoved > 0) {
-      console.log(`[DIAG][DEDUP] input=${statements.length} output=${deduplicatedStatements.length} removed=${dedupeRemoved}`);
+      diag(runId, reqSig, `[DEDUP] input=${statements.length} output=${deduplicatedStatements.length} removed=${dedupeRemoved}`);
     }
     
     statements = deduplicatedStatements;
@@ -4956,20 +5008,21 @@ ${
     // K) Enforce corpus-level verification before absence claims (A3.5.11)
     // A3.5.13b: Pass unifiedReferences to inject citations and build evidence when corpusSearch finds support
     // MUST perform corpus search before allowing "not mentioned" / "not supported" claims
+    diag(runId, reqSig, `[PIPELINE] phase=enforceCorpusVerification`);
     try {
-      statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences);
+      statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences, runId, reqSig);
     } catch (corpusErr) {
-      console.error(`[ERROR] enforceCorpusVerificationBeforeAbsence failed:`, corpusErr);
+      diag(runId, reqSig, `[ERROR] enforceCorpusVerificationBeforeAbsence failed:`, corpusErr);
       // Continue with statements as-is rather than losing them
     }
     
     // A3.5.14b Patch 2 & 3: Anchor Enforcement + Ambiguity Routing (LAST MUTATION STEP)
     // Must run AFTER all other processing to ensure citations/evidence are not overwritten
-    console.log(`[DIAG][PIPELINE] runId=${runId} phase=enforceAnchorCitations`);
+    diag(runId, reqSig, `[PIPELINE] phase=enforceAnchorCitations`);
     try {
       statements = enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unifiedReferences);
     } catch (anchorErr) {
-      console.error(`[ERROR] enforceAnchorCitationsAndAmbiguity failed:`, anchorErr);
+      diag(runId, reqSig, `[ERROR] enforceAnchorCitationsAndAmbiguity failed:`, anchorErr);
       // Continue with statements as-is
     }
     
@@ -5003,11 +5056,11 @@ ${
       }
     }
     
-    console.log(`[DIAG][FINAL_COUNTS] statements=${statements.length} assessCites=${totalAssessmentCites} topCites=${totalTopCites} evidence=${totalEvidence}`);
+    diag(runId, reqSig, `[FINAL_COUNTS] statements=${statements.length} assessCites=${totalAssessmentCites} topCites=${totalTopCites} evidence=${totalEvidence}`);
     
     // A3.5.18 Fix 2: Warn if citations/evidence were lost
     if ((hasCorpusSearchFound || hasAnchorEnforcementInjected) && totalAssessmentCites === 0 && totalTopCites === 0 && totalEvidence === 0) {
-      console.log(`[DIAG][FINAL_COUNTS][ERROR] citations lost after enforcement`);
+      diag(runId, reqSig, `[FINAL_COUNTS][ERROR] citations lost after enforcement`);
     }
     
     // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
@@ -5033,14 +5086,15 @@ ${
     const firstAssessCites = firstStmt?.assessment?.citations?.length || 0;
     const firstTopCites = firstStmt?.citations?.length || 0;
     const firstEvidence = firstStmt?.evidence?.length || 0;
-    console.log(`[DIAG][RETURN_SNAPSHOT] statements=${finalResponseObject.statements.length} firstAssessCites=${firstAssessCites} firstTopCites=${firstTopCites} firstEvidence=${firstEvidence}`);
+    diag(runId, reqSig, `[RETURN_SNAPSHOT] statements=${finalResponseObject.statements.length} firstAssessCites=${firstAssessCites} firstTopCites=${firstTopCites} firstEvidence=${firstEvidence}`);
     
     // DIAGNOSTIC: Log final summary
-    console.log(`[DIAG][PIPELINE] runId=${runId} phase=complete`);
-    console.log(`[DIAG] Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
+    diag(runId, reqSig, `[PIPELINE] phase=complete`);
+    diag(runId, reqSig, `Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
     
     // A3.5.19 Fix 1 & 2: Return immediately after FINAL_COUNTS - no code after this point should run
-    console.log(`[DIAG][PIPELINE][END] runId=${runId} returningNow=true`);
+    // A3.5.20 Fix 2: Request end sentinel
+    diag(runId, reqSig, `END returningNow=true status=200`);
     return res.status(200).json(finalResponseObject);
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
