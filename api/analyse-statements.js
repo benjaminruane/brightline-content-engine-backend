@@ -2458,6 +2458,104 @@ function enforceReasonSpecificity(statements) {
   });
 }
 
+// A3.5.28: Enforce facet-scoped bullets for multi-claim statements
+// Post-processes assessment reasons to ensure bullets reference specific statement clauses
+function enforceFacetScopedBullets(statements) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const assessment = stmt.assessment || {};
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    
+    if (reasons.length === 0 || !text) return stmt;
+    
+    // Detect if statement has multiple claims
+    // Count numeric anchors (dollar amounts, percentages, years, etc.)
+    const numericAnchorPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|billion|m|b|k|thousand)?|[\d,]+(?:\.\d+)?\s*(?:million|billion|m|b|k|thousand)|[\d]{4}(?:\s|$)|[\d,]+%/gi;
+    const numericAnchors = (text.match(numericAnchorPattern) || []).length;
+    
+    // Detect multiple clauses (commas, "at a", "structured as", "for roughly")
+    const hasMultipleClauses = /,|at a|structured as|for roughly/i.test(text);
+    
+    const hasMultipleClaims = numericAnchors >= 2 || hasMultipleClauses;
+    
+    // If not multi-claim, return as-is
+    if (!hasMultipleClaims) return stmt;
+    
+    // Process reasons to add facet tags if missing
+    let updatedReasons = [];
+    let needsUpdate = false;
+    
+    for (const reason of reasons) {
+      if (typeof reason !== "string") {
+        updatedReasons.push(reason);
+        continue;
+      }
+      
+      // Check if bullet already has facet tag and quoted snippet
+      const hasFacetTag = /^\[(?:Investment|Valuation|Structure|Ownership|Timing|Other)\]/i.test(reason);
+      const hasQuotedSnippet = /"[^"]{1,60}"/.test(reason); // Quoted snippet (1-60 chars)
+      
+      if (hasFacetTag && hasQuotedSnippet) {
+        // Already properly formatted
+        updatedReasons.push(reason);
+      } else {
+        // Missing facet tag or quoted snippet - add them
+        needsUpdate = true;
+        
+        // Extract first 6-10 words from statement for snippet (cap at 10 words as per format requirement)
+        const words = text.trim().split(/\s+/);
+        const snippetWords = words.slice(0, Math.min(10, words.length));
+        const snippet = snippetWords.join(" ");
+        const quotedSnippet = `"${snippet}"`;
+        
+        // Prepend [Other] tag and quoted snippet
+        const updatedReason = `[Other] ${quotedSnippet} ${reason}`;
+        updatedReasons.push(updatedReason);
+      }
+    }
+    
+    // Cap at 4 bullets
+    updatedReasons = updatedReasons.slice(0, 4);
+    
+    if (needsUpdate) {
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: updatedReasons,
+        },
+      };
+    }
+    
+    return stmt;
+  });
+}
+
+// A3.5.28: Detect facets in reasons for logging
+// Returns array of facet names detected in a statement's reasons
+function detectFacetsInReasons(reasons) {
+  if (!Array.isArray(reasons)) return [];
+  
+  const facets = new Set();
+  const facetPattern = /\[(Investment|Valuation|Structure|Ownership|Timing|Other)\]/gi;
+  
+  for (const reason of reasons) {
+    if (typeof reason !== "string") continue;
+    const matches = reason.matchAll(facetPattern);
+    for (const match of matches) {
+      if (match[1]) {
+        facets.add(match[1]);
+      }
+    }
+  }
+  
+  return Array.from(facets).sort();
+}
+
 // A3.5.13c: Extract anchor elements from compound numeric statements
 // Returns array of anchor elements, each with kind, rawText, normalizedNumber, keywords
 // Only returns elements if statement contains ≥2 numeric anchor elements
@@ -5266,6 +5364,21 @@ CITATIONS (STRICT):
 - Do NOT cite the draft or the generated text as evidence.
 - If no sources are available or a claim cannot be cited, set citations: [] and mark as Low.
 
+ASSESSMENT REASONS - FACET-SCOPED BULLETS (A3.5.28):
+- If a statement contains 2+ numeric anchors OR multiple clauses (commas / "at a" / "structured as" / "for roughly"),
+  then you MUST write reasons as facet-scoped bullets.
+- Facet-scoped bullet format (strict):
+  - Start each bullet with a short facet label in brackets: [Investment], [Valuation], [Structure], [Ownership], [Timing], [Other]
+  - Include a short quoted snippet (<= 10 words) from the statement showing what the bullet refers to.
+    Example: [Valuation] "$20 million pre-money" not confirmed in sources...
+  - Then provide the actual reasoning.
+- Cap bullets: Max 4 bullets total per statement.
+- Prefer covering the highest-impact facets first (investment amount, valuation, ownership).
+- Eliminate "global" bullets that don't point to a clause.
+  - No bullets like "No verifiable sources cited" unless also tied to a facet:
+    [Structure] "structured as 1x straight preferred" not confirmed...
+- For single-claim statements, you may use standard format without facet tags.
+
 OUTPUT FORMAT:
 Return ONLY valid JSON matching this exact schema:
 {
@@ -5511,6 +5624,9 @@ ${
     // I) Enforce reason specificity: require explicit enumeration for partial support and contradiction cases (A3.5.9)
     statements = enforceReasonSpecificity(statements);
     
+    // I.5) A3.5.28: Enforce facet-scoped bullets for multi-claim statements
+    statements = enforceFacetScopedBullets(statements);
+    
     // J) Fix anchor-fact reasons: detect and correct false "not mentioned" claims with semantic matching (A3.5.10)
     statements = fixAnchorFactReasons(statements, unifiedReferences);
     
@@ -5552,6 +5668,18 @@ ${
     let totalEvidence = 0;
     let hasCorpusSearchFound = false;
     let hasAnchorEnforcementInjected = false;
+    
+    // A3.5.28: Log facet detection for first statement (diagnostic)
+    if (statements.length > 0) {
+      const firstStmt = statements[0];
+      if (firstStmt && typeof firstStmt === "object") {
+        const assessment = firstStmt.assessment || {};
+        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        const facetsDetected = detectFacetsInReasons(reasons);
+        const bulletsCount = reasons.length;
+        diag(runId, reqSig, `[FACET_REASONS] idx=0 facetsDetected=${JSON.stringify(facetsDetected)} bullets=${bulletsCount}`);
+      }
+    }
     
     for (const stmt of statements) {
       if (!stmt || typeof stmt !== "object") continue;
