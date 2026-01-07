@@ -1524,6 +1524,69 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
   };
 }
 
+// A3.5.26 Fix A: Fragment-only candidate suppression (post SEG_GUARD)
+// Detects and filters/merges fragment-like candidates that shouldn't appear as standalone statements
+function filterFragmentCandidates(candidates, runId = null, reqSig = null) {
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
+  if (!Array.isArray(candidates) || candidates.length === 0) {
+    return { candidates: [], dropped: 0, merged: 0, kept: 0 };
+  }
+  
+  const kept = [];
+  const dropped = [];
+  const merged = [];
+  const verbPatterns = /\b(is|are|was|were|will|would|plans|proposes|invested|raised|acquired|sold|launched|announced|reported|expects|targets|values|worth)\b/i;
+  
+  for (let i = 0; i < candidates.length; i++) {
+    const candidate = typeof candidates[i] === "string" ? candidates[i] : "";
+    const trimmed = candidate.trim();
+    
+    // Heuristic checks for fragment-like candidates
+    const isShort = trimmed.length < 30;
+    const tokenCount = trimmed.split(/\s+/).filter(t => t.length > 0).length;
+    const isVeryShort = tokenCount < 6;
+    const hasNoVerb = !verbPatterns.test(trimmed);
+    const startsWithPunctuation = /^[.,;:)\]}]/.test(trimmed);
+    const endsWithFragment = /\)\.\.\.|\.\.\.$/.test(trimmed);
+    const highPunctuationRatio = (trimmed.match(/[.,;:)\]}\(]/g) || []).length / Math.max(trimmed.length, 1) > 0.15;
+    
+    // Fragment detection: short AND (no verb OR starts/ends with punctuation OR high punctuation ratio)
+    const isFragment = (isShort || isVeryShort) && (
+      (hasNoVerb && (startsWithPunctuation || endsWithFragment)) ||
+      (highPunctuationRatio && hasNoVerb)
+    );
+    
+    if (isFragment) {
+      // Try to merge with previous candidate if it exists
+      if (kept.length > 0) {
+        const prevCandidate = kept[kept.length - 1];
+        const mergedText = `${prevCandidate} ${trimmed}`;
+        kept[kept.length - 1] = mergedText;
+        merged.push({ original: trimmed, mergedInto: prevCandidate.substring(0, 50) + "..." });
+      } else {
+        // No previous candidate to merge with, drop it
+        dropped.push(trimmed);
+      }
+    } else {
+      kept.push(trimmed);
+    }
+  }
+  
+  // Log results
+  const droppedPreview = dropped.slice(0, 2).map(d => d.substring(0, 60));
+  const mergedPreview = merged.slice(0, 2).map(m => ({ fragment: m.original.substring(0, 60), into: m.mergedInto }));
+  log(`[FRAG_FILTER] dropped=${dropped.length} merged=${merged.length} kept=${kept.length}`);
+  if (dropped.length > 0) {
+    log(`[FRAG_FILTER] droppedPreview=${JSON.stringify(droppedPreview)}`);
+  }
+  if (merged.length > 0) {
+    log(`[FRAG_FILTER] mergedPreview=${JSON.stringify(mergedPreview)}`);
+  }
+  
+  return { candidates: kept, dropped: dropped.length, merged: merged.length, kept: kept.length };
+}
+
 // A3.5.14b Patch 4: Web Reference Hygiene - filter raw search results BEFORE reference construction
 // Works on raw Tavily search results (objects with url, title, snippet/content)
 function filterWebSearchResults(rawResults, draftText) {
@@ -4792,11 +4855,30 @@ export default async function handler(req, res) {
     const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
     const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
     const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
+    // A3.5.26 Fix C: Extract incompleteNumericFragmentCount and recombinedCount from filterResult
+    const incompleteNumericFragmentCount = typeof filterResult === "object" && filterResult.incompleteNumericFragmentCount != null ? filterResult.incompleteNumericFragmentCount : 0;
+    const recombinedCount = typeof filterResult === "object" && filterResult.recombinedCount != null ? filterResult.recombinedCount : 0;
     diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount})`);
     
+    // A3.5.26 Fix A: Fragment-only candidate suppression (post SEG_GUARD)
+    diag(runId, reqSig, `[PIPELINE] phase=filterFragmentCandidates`);
+    const fragFilterResult = filterFragmentCandidates(extractionCandidates, runId, reqSig);
+    const finalExtractionCandidates = fragFilterResult.candidates;
+    diag(runId, reqSig, `A3.5.26: After fragment filter: ${finalExtractionCandidates.length} candidates (dropped=${fragFilterResult.dropped}, merged=${fragFilterResult.merged})`);
+    
+    // A3.5.26 Fix B: Attach stable candidateIndex to preserve draft order
+    // Store original candidate list with indices for later matching
+    const candidateIndexMap = new Map();
+    finalExtractionCandidates.forEach((candidate, idx) => {
+      const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+      // Store both exact and normalized for matching
+      candidateIndexMap.set(candidate, idx);
+      candidateIndexMap.set(normalized, idx);
+    });
+    
     // Build candidate statements block for prompt
-    const candidatesBlock = extractionCandidates.length > 0
-      ? extractionCandidates.map((c, idx) => `${idx + 1}. ${c}`).join("\n")
+    const candidatesBlock = finalExtractionCandidates.length > 0
+      ? finalExtractionCandidates.map((c, idx) => `${idx + 1}. ${c}`).join("\n")
       : "(no extractable statements found)";
 
     const system = `
@@ -4956,18 +5038,19 @@ ${
     let statements = coerceStatements(parsed, maxRefIndex);
     
     // A3.5.13: Map LLM output back to pre-extracted candidates for stability
+    // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
-    if (statements.length > 0 && extractionCandidates.length > 0) {
+    if (statements.length > 0 && finalExtractionCandidates.length > 0) {
       // Build a map of normalized candidates for matching
       const candidateMap = new Map();
-      extractionCandidates.forEach(candidate => {
+      finalExtractionCandidates.forEach((candidate, idx) => {
         const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
         if (!candidateMap.has(normalized)) {
-          candidateMap.set(normalized, candidate);
+          candidateMap.set(normalized, { candidate, index: idx });
         }
       });
       
-      // Filter statements to only include those matching candidates
+      // Filter statements to only include those matching candidates and assign candidateIndex
       const matchedStatements = [];
       for (const stmt of statements) {
         const stmtText = typeof stmt.text === "string" ? stmt.text : "";
@@ -4975,27 +5058,54 @@ ${
         
         // Check for exact or close match
         let matched = false;
-        for (const [normCandidate, originalCandidate] of candidateMap.entries()) {
+        let bestMatch = null;
+        let bestIndex = null;
+        let bestScore = 0;
+        
+        for (const [normCandidate, candidateData] of candidateMap.entries()) {
           // Allow 80% token overlap for minor rewording
           const stmtTokens = normalized.split(/\s+/).filter(t => t.length > 2);
           const candidateTokens = normCandidate.split(/\s+/).filter(t => t.length > 2);
           const overlap = stmtTokens.filter(t => candidateTokens.includes(t)).length;
           const overlapRatio = candidateTokens.length > 0 ? overlap / candidateTokens.length : 0;
           
-          if (normalized === normCandidate || overlapRatio >= 0.8 || normalized.includes(normCandidate) || normCandidate.includes(normalized)) {
-            // Use original candidate text for stability
-            matchedStatements.push({
-              ...stmt,
-              text: originalCandidate, // Use deterministic candidate text
-            });
+          let score = 0;
+          if (normalized === normCandidate) {
+            score = 1.0; // Exact match
+          } else if (overlapRatio >= 0.8) {
+            score = overlapRatio; // High overlap
+          } else if (normalized.includes(normCandidate) || normCandidate.includes(normalized)) {
+            score = 0.7; // Substring match
+          }
+          
+          if (score > bestScore) {
+            bestScore = score;
+            bestMatch = candidateData.candidate;
+            bestIndex = candidateData.index;
             matched = true;
-            break;
           }
         }
         
+        if (matched && bestMatch) {
+          // Use original candidate text for stability and assign candidateIndex
+          matchedStatements.push({
+            ...stmt,
+            text: bestMatch, // Use deterministic candidate text
+            __candidateIndex: bestIndex, // A3.5.26 Fix B: Preserve draft order
+          });
+        }
       }
       
       statements = matchedStatements;
+      
+      // A3.5.26 Fix B: Sort statements by candidateIndex to preserve draft order
+      statements.sort((a, b) => {
+        const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
+        const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
+        return idxA - idxB;
+      });
+      
+      diag(runId, reqSig, `[ORDERING] sorted ${statements.length} statements by candidateIndex`);
     }
     
     // Graceful fallback if model output is invalid or empty
