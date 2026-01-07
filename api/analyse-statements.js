@@ -4635,6 +4635,13 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
+  // A3.5.22 Fix: Hoist hasReturned, runId, reqSig, and finalResponseObject to top of handler scope
+  // to prevent TDZ ReferenceError when early returns access hasReturned before declaration
+  let hasReturned = false;
+  let runId = null;
+  let reqSig = null;
+  let finalResponseObject = null;
+
   if (req.method === "OPTIONS") {
     hasReturned = true;
     try {
@@ -4659,16 +4666,6 @@ export default async function handler(req, res) {
   }
 
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-  // A3.5.21 Step 3: Safety guard to prevent Review pipeline execution after return
-  let hasReturned = false;
-  
-  // A3.5.21 Fix: Hoist runId and reqSig to handler scope to prevent ReferenceError in catch blocks
-  let runId = null;
-  let reqSig = null;
-  
-  // A3.5.21 Fix: Store final response object in handler scope for fallback guard
-  let finalResponseObject = null;
 
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
