@@ -5148,24 +5148,51 @@ ${
       diag(runId, reqSig, `[FINAL_COUNTS][ERROR] citations lost after enforcement`);
     }
     
-    // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
-    // A3.5.17 Fix 3: Pass incomplete_numeric_fragment and recombined counts
-    extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount);
+    // FIX: Build finalResponseObject IMMEDIATELY after FINAL_COUNTS, before any risky code
+    // This ensures finalResponseObject is always set even if computeExtractionQuality throws
+    try {
+      // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
+      // A3.5.17 Fix 3: Pass incomplete_numeric_fragment and recombined counts
+      extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount);
+    } catch (e) {
+      diag(runId, reqSig, `[ERROR] failed computing extractionQuality after FINAL_COUNTS: ${e?.message || String(e)}`);
+      // Use fallback quality value
+      extractionQuality = extractionQuality || "ok";
+    }
     
     // A3.5.19 Fix 1 & 3: Create final response object immediately after FINAL_COUNTS
     // Use the exact statements object that was counted to ensure consistency
     // A3.5.21 Fix: Store in handler scope for fallback guard
-    finalResponseObject = {
-      ok: true,
-      statements, // Use the exact statements array that was counted
-      references: unifiedReferences,
-      meta: {
-        webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
-        extractionQuality,
-        uploadedSourcesCount: uploadedReferences.length,
-        webSourcesCount: webReferencesWithIds.length,
-      },
-    };
+    // FIX: Build payload snapshot immediately after FINAL_COUNTS to ensure it's never null
+    try {
+      finalResponseObject = {
+        ok: true,
+        statements, // Use the exact statements array that was counted
+        references: unifiedReferences || [],
+        meta: {
+          webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
+          extractionQuality: extractionQuality || "ok",
+          uploadedSourcesCount: uploadedReferences?.length || 0,
+          webSourcesCount: webReferencesWithIds?.length || 0,
+        },
+      };
+    } catch (e) {
+      diag(runId, reqSig, `[ERROR] failed building finalResponseObject after FINAL_COUNTS: ${e?.message || String(e)}`);
+      // As a fallback, set a minimally-correct payload that STILL includes the computed statements:
+      finalResponseObject = {
+        ok: true,
+        statements: statements || [],
+        references: unifiedReferences || [],
+        meta: {
+          webSearch: { enabled: true, used: false },
+          extractionQuality: "error",
+          uploadedSourcesCount: uploadedReferences?.length || 0,
+          webSourcesCount: webReferencesWithIds?.length || 0,
+        },
+      };
+    }
+    
+    // After this point, finalResponseObject must never be null.
     
     // A3.5.19 Fix 3: Log return snapshot from the SAME object being returned
     const firstStmt = finalResponseObject.statements[0];
@@ -5185,6 +5212,7 @@ ${
     diag(runId, reqSig, `END returningNow=true status=200`);
     // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
     try {
+      diag(runId, reqSig, `RETURN_PAYLOAD statements=${finalResponseObject?.statements?.length ?? -1} refs=${finalResponseObject?.references?.length ?? -1}`);
       diag(runId, reqSig, `END_DIAG path=success status=200 returningNow=true`);
       if (runId && runStateByRid[runId]) {
         delete runStateByRid[runId];
@@ -5214,11 +5242,18 @@ ${
       } catch (logErr) {
         // Best-effort logging
       }
-      // Return finalResponseObject if present; otherwise return minimal valid payload
+      // Return finalResponseObject if present; otherwise return payload with actual statements
+      // FIX: If finalCountsReached is true, statements should exist, so use them even if finalResponseObject is null
       if (finalResponseObject) {
+        try {
+          diag(runId, reqSig, `RETURN_PAYLOAD statements=${finalResponseObject?.statements?.length ?? -1} refs=${finalResponseObject?.references?.length ?? -1}`);
+        } catch (logErr) {
+          // Best-effort logging
+        }
         return res.status(200).json(finalResponseObject);
       } else {
-        // Build minimal valid payload when finalResponseObject is unexpectedly null
+        // Build payload with actual statements when finalResponseObject is unexpectedly null
+        // This preserves the computed statements instead of returning empty array
         const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
         const sources = Array.isArray(body.sources) ? body.sources : [];
         const minimalReferences = sources.map((s, idx) => ({
@@ -5227,17 +5262,23 @@ ${
           url: s?.url || null,
           type: "uploaded",
         }));
-        return res.status(200).json({
+        const fallbackPayload = {
           ok: true,
-          statements: [],
-          references: minimalReferences,
+          statements: statements || [], // Use actual statements, not empty array
+          references: unifiedReferences || minimalReferences,
           meta: {
             webSearch: { enabled: true, used: false },
             extractionQuality: "error",
-            uploadedSourcesCount: minimalReferences.length,
-            webSourcesCount: 0,
+            uploadedSourcesCount: uploadedReferences?.length || minimalReferences.length,
+            webSourcesCount: webReferencesWithIds?.length || 0,
           },
-        });
+        };
+        try {
+          diag(runId, reqSig, `RETURN_PAYLOAD statements=${fallbackPayload.statements?.length ?? -1} refs=${fallbackPayload.references?.length ?? -1}`);
+        } catch (logErr) {
+          // Best-effort logging
+        }
+        return res.status(200).json(fallbackPayload);
       }
     }
     
