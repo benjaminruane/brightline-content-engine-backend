@@ -496,7 +496,14 @@ function tokenizeForOverlap(text) {
     });
 }
 
-function filterDraftOnlyStatements(statements, draftText, runId = null, reqSig = null) {
+function filterDraftOnlyStatements(statements, draftText, runId = null, reqSig = null, hasReturned = false) {
+  // A3.5.21 Step 3: Safety assertion to catch regressions
+  if (hasReturned) {
+    const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+    log(`[DIAG][ERROR] filterDraftOnlyStatements called after return`);
+    return statements; // Return as-is to avoid breaking the response
+  }
+  
   if (!Array.isArray(statements) || statements.length === 0) return statements;
   if (typeof draftText !== "string" || !draftText.trim()) return statements;
   
@@ -681,7 +688,14 @@ function mergeContinuationFragments(draftText) {
   return normalizedText;
 }
 
-function extractDeterministicStatementCandidates(draftText, runId = null, reqSig = null) {
+function extractDeterministicStatementCandidates(draftText, runId = null, reqSig = null, hasReturned = false) {
+  // A3.5.21 Step 3: Safety assertion to catch regressions
+  if (hasReturned) {
+    const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+    log(`[DIAG][ERROR] Extraction called after return`);
+    return [];
+  }
+  
   // A3.5.20 Fix 3: Log with RID+SIG if provided
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
@@ -1634,11 +1648,12 @@ function filterWebSearchResults(rawResults, draftText) {
 }
 
 // Fallback extraction when model fails
-function fallbackExtractAtomicStatements(draftText) {
+function fallbackExtractAtomicStatements(draftText, hasReturned = false) {
   if (typeof draftText !== "string" || !draftText.trim()) return [];
   
   // Use deterministic extraction for fallback too
-  const candidates = extractDeterministicStatementCandidates(draftText);
+  // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
+  const candidates = extractDeterministicStatementCandidates(draftText, null, null, hasReturned);
   
   // Convert candidates to statements with default assessment
   return candidates.map((text) => ({
@@ -4604,6 +4619,9 @@ export default async function handler(req, res) {
 
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+  // A3.5.21 Step 3: Safety guard to prevent Review pipeline execution after return
+  let hasReturned = false;
+
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
     const draftText = typeof body.draftText === "string" ? body.draftText : "";
@@ -4701,8 +4719,9 @@ export default async function handler(req, res) {
     
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
+    // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
     diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
-    const rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig);
+    const rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
     
     // A3.5.14 Part A: Filter candidates for quality (extraction stability)
     // Get raw sentences for context (we need to pass them to the filter)
@@ -4932,8 +4951,9 @@ ${
     
     // A) Draft-only filter: enforce statements must appear in draft text (hard gate)
     // Note: This should be redundant now since candidates come from draft, but keep for safety
+    // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
     diag(runId, reqSig, `[PIPELINE] phase=filterDraftOnly`);
-    statements = filterDraftOnlyStatements(statements, draftText, runId, reqSig);
+    statements = filterDraftOnlyStatements(statements, draftText, runId, reqSig, hasReturned);
     
     
     // B) Citation resolution validation: drop unresolvable citations
@@ -5094,13 +5114,17 @@ ${
     
     // A3.5.19 Fix 1 & 2: Return immediately after FINAL_COUNTS - no code after this point should run
     // A3.5.20 Fix 2: Request end sentinel
+    // A3.5.21 Step 2: Set hasReturned flag before return to prevent any further Review pipeline execution
+    hasReturned = true;
     diag(runId, reqSig, `END returningNow=true status=200`);
     return res.status(200).json(finalResponseObject);
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
     try {
+      // A3.5.21 Step 3: Pass hasReturned flag to fallback extraction
       const fallbackStatements = fallbackExtractAtomicStatements(
-        typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || ""
+        typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "",
+        hasReturned
       );
       
       // Build minimal unified references for fallback (from body sources if available)
@@ -5114,8 +5138,10 @@ ${
       }));
       
       // Apply same pipeline as main path: draft filter → resolve → dual-axis → calibration → anchor → post-check → normalize
+      // A3.5.21 Step 2: Fallback path must also return immediately after processing - no Review code after return
+      // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
       const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
-      const filteredFallbackStatements = filterDraftOnlyStatements(fallbackStatements, fallbackDraftText);
+      const filteredFallbackStatements = filterDraftOnlyStatements(fallbackStatements, fallbackDraftText, null, null, hasReturned);
       const resolvedFallbackStatements = resolveCitations(filteredFallbackStatements, fallbackUploadedReferences);
       const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements, fallbackUploadedReferences);
       const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
@@ -5137,6 +5163,8 @@ ${
       const anchorFixedFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
       const finalFallbackStatements = enforceCorpusVerificationBeforeAbsence(anchorFixedFallbackStatements, fallbackUploadedSources, fallbackUploadedReferences);
 
+      // A3.5.21 Step 2: Set hasReturned flag before return in fallback path
+      hasReturned = true;
       return res.status(200).json({
         ok: true,
         statements: finalFallbackStatements,
@@ -5150,6 +5178,8 @@ ${
       });
     } catch (fallbackErr) {
       // Last resort: return empty but valid response
+      // A3.5.21 Step 2: Set hasReturned flag before return in fallback error path
+      hasReturned = true;
       return res.status(200).json({
         ok: true,
         statements: [],
