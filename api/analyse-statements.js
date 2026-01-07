@@ -1514,77 +1514,239 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
   console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
   
   // A3.5.17 Fix 2 & 3: Return with counts including incomplete_numeric_fragment and recombined counts
+  // A3.5.27: Also return candidates with rejection reasons for fragment filter
   const incompleteNumericFragmentCount = rejectionReasons.filter(r => r === "incomplete_numeric_fragment").length;
+  
+  // Build candidates with metadata for fragment filter
+  const candidatesWithReasons = [];
+  // Map fallback candidates to their rejection reasons
+  const fallbackToReasonMap = new Map();
+  for (let i = 0; i < rejected.length; i++) {
+    const fallback = fallbackCandidates[i];
+    const reason = rejectionReasons[i] || "unknown";
+    if (fallback) {
+      fallbackToReasonMap.set(fallback.trim(), reason);
+    }
+  }
+  
+  // Add metadata for all final candidates (fallback candidates have rejection reasons)
+  finalCandidates.forEach((candidate, idx) => {
+    const reason = fallbackToReasonMap.get(candidate.trim());
+    if (reason) {
+      candidatesWithReasons.push({ text: candidate, reason });
+    }
+  });
+  
   return { 
     candidates: finalCandidates, 
     rejectedCount: rejected.length, 
     fallbackCount: fallbackCandidates.length,
     incompleteNumericFragmentCount,
-    recombinedCount: recombineCount
+    recombinedCount: recombineCount,
+    candidatesWithReasons // A3.5.27: For fragment filter
   };
 }
 
-// A3.5.26 Fix A: Fragment-only candidate suppression (post SEG_GUARD)
+// A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
 // Detects and filters/merges fragment-like candidates that shouldn't appear as standalone statements
-function filterFragmentCandidates(candidates, runId = null, reqSig = null) {
+// Supports candidate objects with candidateIndex and rejectionReason metadata
+function filterFragmentCandidates(candidates, runId = null, reqSig = null, segGuardMetadata = null) {
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
   if (!Array.isArray(candidates) || candidates.length === 0) {
-    return { candidates: [], dropped: 0, merged: 0, kept: 0 };
+    return { candidates: [], dropped: 0, mergedPrev: 0, mergedNext: 0, kept: 0 };
+  }
+  
+  // Normalize candidates to objects with candidateIndex
+  const candidateObjects = candidates.map((c, idx) => {
+    if (typeof c === "string") {
+      return { text: c, candidateIndex: idx, sourceSentenceIndex: null, flags: {} };
+    }
+    return {
+      text: c.text || c,
+      candidateIndex: c.candidateIndex != null ? c.candidateIndex : idx,
+      sourceSentenceIndex: c.sourceSentenceIndex || null,
+      flags: c.flags || {},
+      rejectionReason: c.rejectionReason || null
+    };
+  });
+  
+  // Build map of candidate text to rejection reason from SEG_GUARD metadata
+  const rejectionReasonMap = new Map();
+  if (segGuardMetadata && Array.isArray(segGuardMetadata.candidatesWithReasons)) {
+    segGuardMetadata.candidatesWithReasons.forEach(item => {
+      if (item.text && item.reason) {
+        rejectionReasonMap.set(item.text.trim(), item.reason);
+      }
+    });
   }
   
   const kept = [];
   const dropped = [];
-  const merged = [];
-  const verbPatterns = /\b(is|are|was|were|will|would|plans|proposes|invested|raised|acquired|sold|launched|announced|reported|expects|targets|values|worth)\b/i;
+  const mergedPrev = [];
+  const mergedNext = [];
   
-  for (let i = 0; i < candidates.length; i++) {
-    const candidate = typeof candidates[i] === "string" ? candidates[i] : "";
-    const trimmed = candidate.trim();
+  // Simple verb-like detector
+  const verbPatterns = /\b(is|are|was|were|be|been|being|invest|invested|proposes|targeting|expected|results|result|bring|increase|imply|implies|valued|priced|structured|purchase|purchasing)\b/i;
+  
+  function hasVerb(text) {
+    return verbPatterns.test(text);
+  }
+  
+  function isFragmentLike(candidateObj, prevCandidateObj, nextCandidateObj) {
+    const text = candidateObj.text;
+    const trimmed = text.trim();
     
-    // Heuristic checks for fragment-like candidates
-    const isShort = trimmed.length < 30;
-    const tokenCount = trimmed.split(/\s+/).filter(t => t.length > 0).length;
-    const isVeryShort = tokenCount < 6;
-    const hasNoVerb = !verbPatterns.test(trimmed);
-    const startsWithPunctuation = /^[.,;:)\]}]/.test(trimmed);
-    const endsWithFragment = /\)\.\.\.|\.\.\.$/.test(trimmed);
-    const highPunctuationRatio = (trimmed.match(/[.,;:)\]}\(]/g) || []).length / Math.max(trimmed.length, 1) > 0.15;
+    // Very short: trimmed length < 40
+    if (trimmed.length < 40) {
+      return { isFragment: true, reason: "very_short" };
+    }
     
-    // Fragment detection: short AND (no verb OR starts/ends with punctuation OR high punctuation ratio)
-    const isFragment = (isShort || isVeryShort) && (
-      (hasNoVerb && (startsWithPunctuation || endsWithFragment)) ||
-      (highPunctuationRatio && hasNoVerb)
-    );
+    // Starts with lowercase letter AND previous candidate exists (likely continuation)
+    if (prevCandidateObj && /^[a-z]/.test(trimmed)) {
+      return { isFragment: true, reason: "starts_lowercase" };
+    }
     
-    if (isFragment) {
-      // Try to merge with previous candidate if it exists
-      if (kept.length > 0) {
-        const prevCandidate = kept[kept.length - 1];
-        const mergedText = `${prevCandidate} ${trimmed}`;
-        kept[kept.length - 1] = mergedText;
-        merged.push({ original: trimmed, mergedInto: prevCandidate.substring(0, 50) + "..." });
-      } else {
-        // No previous candidate to merge with, drop it
-        dropped.push(trimmed);
+    // Starts with punctuation/close-paren/comma/dash OR ends with ellipsis/trailing comma/semicolon
+    if (/^[.,;:)\]}\-–—]/.test(trimmed) || /\.\.\.$|[,;]\s*$/.test(trimmed)) {
+      return { isFragment: true, reason: "punctuation_fragment" };
+    }
+    
+    // Contains currency/number but lacks a verb (numeric noun phrase)
+    const hasNumber = /\d/.test(trimmed) || /\$|~\$|%|x\s*\d/.test(trimmed);
+    if (hasNumber && !hasVerb(trimmed)) {
+      return { isFragment: true, reason: "numeric_noun_phrase" };
+    }
+    
+    // Incomplete numeric stub: contains "~$" or "$" or "%" or "x" and ends with bare number
+    if ((/~\$|^\$|%|x\s*\d/.test(trimmed)) && /(~?\$?\d+(?:,\d+)*(?:\.\d+)?|x\s*\d+)\s*\.\.?\.?\s*$/.test(trimmed) && !/[.?!]\s*$/.test(trimmed)) {
+      return { isFragment: true, reason: "incomplete_numeric_stub" };
+    }
+    
+    // Bracket imbalance remnants: begins with ")" or "]" or "EV)" etc OR contains unmatched closing bracket
+    if (/^[)\]}]/.test(trimmed)) {
+      return { isFragment: true, reason: "starts_with_closing_bracket" };
+    }
+    const openParens = (trimmed.match(/\(/g) || []).length;
+    const closeParens = (trimmed.match(/\)/g) || []).length;
+    const openBrackets = (trimmed.match(/\[/g) || []).length;
+    const closeBrackets = (trimmed.match(/\]/g) || []).length;
+    if ((closeParens > openParens || closeBrackets > openBrackets) && openParens === 0 && openBrackets === 0) {
+      return { isFragment: true, reason: "unmatched_closing_bracket" };
+    }
+    
+    // High suspicion if SEG_GUARD marked it as incomplete_numeric_fragment or unbalanced_brackets
+    const rejectionReason = candidateObj.rejectionReason || rejectionReasonMap.get(trimmed);
+    if (rejectionReason === "incomplete_numeric_fragment" || rejectionReason === "unbalanced_brackets") {
+      // Require stronger checks - if it's still short or lacks verb, treat as fragment
+      if (trimmed.length < 50 || !hasVerb(trimmed)) {
+        return { isFragment: true, reason: `high_suspicion_${rejectionReason}` };
+      }
+    }
+    
+    return { isFragment: false, reason: null };
+  }
+  
+  for (let i = 0; i < candidateObjects.length; i++) {
+    const candidateObj = candidateObjects[i];
+    const prevCandidateObj = i > 0 ? kept[kept.length - 1] : null;
+    const nextCandidateObj = i < candidateObjects.length - 1 ? candidateObjects[i + 1] : null;
+    
+    const fragmentCheck = isFragmentLike(candidateObj, prevCandidateObj, nextCandidateObj);
+    
+    if (fragmentCheck.isFragment) {
+      // Merge direction logic
+      let merged = false;
+      
+      // Prefer merge into PREVIOUS candidate if:
+      // - previous exists AND previous does NOT end with terminal punctuation (.?!)
+      // - OR fragment starts lowercase / starts with punctuation / starts with number
+      if (prevCandidateObj) {
+        const prevText = prevCandidateObj.text;
+        const prevEndsTerminal = /[.?!]\s*$/.test(prevText);
+        const fragmentStartsLowercase = /^[a-z]/.test(candidateObj.text.trim());
+        const fragmentStartsPunct = /^[.,;:)\]}\-–—]/.test(candidateObj.text.trim());
+        const fragmentStartsNumber = /^\d|^~?\$/.test(candidateObj.text.trim());
+        
+        if (!prevEndsTerminal || fragmentStartsLowercase || fragmentStartsPunct || fragmentStartsNumber) {
+          // Merge into previous
+          const mergedText = `${prevText} ${candidateObj.text.trim()}`;
+          kept[kept.length - 1] = {
+            text: mergedText,
+            candidateIndex: prevCandidateObj.candidateIndex, // Preserve earlier index
+            sourceSentenceIndex: prevCandidateObj.sourceSentenceIndex,
+            flags: { ...prevCandidateObj.flags, merged: true }
+          };
+          mergedPrev.push({
+            original: candidateObj.text.substring(0, 60),
+            mergedInto: prevText.substring(0, 50) + "..."
+          });
+          merged = true;
+        }
+      }
+      
+      // Else try merge into NEXT candidate if:
+      // - next exists AND fragment looks like a prefix fragment (e.g., starts with number phrase and next begins with verb clause)
+      if (!merged && nextCandidateObj) {
+        const fragmentText = candidateObj.text.trim();
+        const nextText = nextCandidateObj.text.trim();
+        const fragmentStartsNumber = /^\d|^~?\$/.test(fragmentText);
+        const nextStartsVerb = hasVerb(nextText.substring(0, 20)); // Check first 20 chars for verb
+        
+        if (fragmentStartsNumber && nextStartsVerb) {
+          // Merge into next (prepend fragment to next)
+          const mergedText = `${fragmentText} ${nextText}`;
+          candidateObjects[i + 1] = {
+            text: mergedText,
+            candidateIndex: nextCandidateObj.candidateIndex, // Keep next's index
+            sourceSentenceIndex: nextCandidateObj.sourceSentenceIndex,
+            flags: { ...nextCandidateObj.flags, merged: true }
+          };
+          mergedNext.push({
+            original: fragmentText.substring(0, 60),
+            mergedInto: nextText.substring(0, 50) + "..."
+          });
+          merged = true;
+          // Skip processing this candidate since it's merged into next
+          continue;
+        }
+      }
+      
+      // If neither merge is safe, drop it
+      if (!merged) {
+        dropped.push(candidateObj.text.substring(0, 60));
       }
     } else {
-      kept.push(trimmed);
+      kept.push(candidateObj);
     }
   }
   
+  // Extract text from kept candidates for return
+  const keptTexts = kept.map(c => c.text);
+  
   // Log results
-  const droppedPreview = dropped.slice(0, 2).map(d => d.substring(0, 60));
-  const mergedPreview = merged.slice(0, 2).map(m => ({ fragment: m.original.substring(0, 60), into: m.mergedInto }));
-  log(`[FRAG_FILTER] dropped=${dropped.length} merged=${merged.length} kept=${kept.length}`);
+  const droppedPreview = dropped.slice(0, 3);
+  const mergedPrevPreview = mergedPrev.slice(0, 3);
+  const mergedNextPreview = mergedNext.slice(0, 3);
+  
+  log(`[FRAG_FILTER] dropped=${dropped.length} mergedPrev=${mergedPrev.length} mergedNext=${mergedNext.length} kept=${kept.length}`);
   if (dropped.length > 0) {
-    log(`[FRAG_FILTER] droppedPreview=${JSON.stringify(droppedPreview)}`);
+    log(`[FRAG_FILTER] sampleDropped=${JSON.stringify(droppedPreview)}`);
   }
-  if (merged.length > 0) {
-    log(`[FRAG_FILTER] mergedPreview=${JSON.stringify(mergedPreview)}`);
+  if (mergedPrev.length > 0 || mergedNext.length > 0) {
+    const allMerged = [...mergedPrevPreview.map(m => ({ type: "prev", ...m })), ...mergedNextPreview.map(m => ({ type: "next", ...m }))];
+    log(`[FRAG_FILTER] sampleMerged=${JSON.stringify(allMerged)}`);
   }
   
-  return { candidates: kept, dropped: dropped.length, merged: merged.length, kept: kept.length };
+  return {
+    candidates: keptTexts,
+    candidateObjects: kept, // Return objects for candidateIndex preservation
+    dropped: dropped.length,
+    mergedPrev: mergedPrev.length,
+    mergedNext: mergedNext.length,
+    merged: mergedPrev.length + mergedNext.length,
+    kept: kept.length
+  };
 }
 
 // A3.5.14b Patch 4: Web Reference Hygiene - filter raw search results BEFORE reference construction
@@ -4072,7 +4234,144 @@ function enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unified
 
 // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
 // Fix 3: Accept rejected/fallback counts to accurately reflect quality
-function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0) {
+// A3.5.27: Citation backfill for supported-but-non-anchored clauses
+// Attempts corpusSearch for statements missing citations when corpusSearch finds support
+function backfillCitations(statements, uploadedSources, unifiedReferences, runId = null, reqSig = null) {
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
+  if (!Array.isArray(statements) || !Array.isArray(uploadedSources)) {
+    return { statements, attempted: 0, injected: 0, skippedShort: 0 };
+  }
+  
+  // Format uploaded docs for corpusSearch
+  const docsWithFullText = uploadedSources.filter(s => 
+    typeof s.text === "string" && s.text.trim().length > 0
+  );
+  
+  if (docsWithFullText.length === 0) {
+    return { statements, attempted: 0, injected: 0, skippedShort: 0 };
+  }
+  
+  const uploadedDocs = docsWithFullText.map(s => ({
+    id: s.id || s.name || `doc_${Math.random()}`,
+    title: s.name || s.title || "Untitled source",
+    text: s.text || "",
+  }));
+  
+  // Find memo reference ID (id=1 for first uploaded source)
+  const memoReferenceId = 1;
+  const memoReference = unifiedReferences.find(ref => ref?.id === memoReferenceId && ref?.type === "uploaded");
+  
+  let attempted = 0;
+  let injected = 0;
+  let skippedShort = 0;
+  const maxAttempts = 3; // Cap backfill attempts
+  
+  const updatedStatements = statements.map((stmt, idx) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    // Skip if we've already attempted max times
+    if (attempted >= maxAttempts) return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    
+    // Skip very short statements (< 40 chars) - should have been merged/dropped
+    if (text.trim().length < 40) {
+      skippedShort++;
+      return stmt;
+    }
+    
+    // Check if citations are missing
+    const existingAssessmentCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const existingTopLevelCitations = Array.isArray(stmt.citations) ? stmt.citations : [];
+    const existingCitationsSet = new Set([...existingAssessmentCitations, ...existingTopLevelCitations]);
+    const hasEmptyCitations = existingCitationsSet.size === 0;
+    
+    // Check if evidence is missing
+    const existingEvidence = Array.isArray(stmt.evidence) ? stmt.evidence : 
+                             (Array.isArray(assessment.evidence) ? assessment.evidence : []);
+    const hasEmptyEvidence = existingEvidence.length === 0;
+    
+    // Only attempt if both citations and evidence are empty
+    if (!hasEmptyCitations || !hasEmptyEvidence) {
+      return stmt;
+    }
+    
+    attempted++;
+    
+    // Run corpusSearch (already does fuzzy matching by default)
+    let searchResult;
+    try {
+      searchResult = corpusSearch(text, uploadedDocs);
+    } catch (searchErr) {
+      log(`[CITE_BACKFILL] corpusSearch failed for idx=${idx}:`, searchErr);
+      return stmt;
+    }
+    
+    if (searchResult && searchResult.found) {
+      // Inject citation
+      const citationSet = new Set(existingCitationsSet);
+      citationSet.add(memoReferenceId);
+      const injectedCitations = Array.from(citationSet).sort((a, b) => a - b);
+      
+      // Build evidence
+      const evidenceSet = new Map();
+      existingEvidence.forEach(ev => {
+        const key = ev?.title || ev?.url || String(ev);
+        if (key && !evidenceSet.has(key)) {
+          evidenceSet.set(key, ev);
+        }
+      });
+      
+      injectedCitations.forEach(citationId => {
+        const citationKey = citationId != null ? String(citationId) : null;
+        if (citationKey) {
+          const ref = unifiedReferences.find(r => String(r?.id) === citationKey);
+          if (ref) {
+            const refEvidence = {
+              title: ref.title || "Untitled source",
+              url: ref.url || null,
+              sourceType: ref.type || (ref.url ? "web" : "uploaded"),
+            };
+            const refKey = refEvidence.title || refEvidence.url || citationKey;
+            if (!evidenceSet.has(refKey)) {
+              evidenceSet.set(refKey, refEvidence);
+            }
+          }
+        }
+      });
+      
+      const evidence = Array.from(evidenceSet.values());
+      
+      // Add reason note
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const updatedReasons = [...reasons, "Memo contains related support; citation added via backfill."];
+      
+      injected++;
+      
+      return {
+        ...stmt,
+        citations: injectedCitations,
+        evidence: evidence,
+        assessment: {
+          ...assessment,
+          citations: injectedCitations,
+          evidence: evidence,
+          reasons: updatedReasons
+        }
+      };
+    }
+    
+    return stmt;
+  });
+  
+  log(`[CITE_BACKFILL] attempted=${attempted} injected=${injected} skippedShort=${skippedShort}`);
+  
+  return { statements: updatedStatements, attempted, injected, skippedShort };
+}
+
+function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0, fragmentDropped = 0, fragmentMerged = 0) {
   if (!Array.isArray(statements) || statements.length === 0) {
     return "failed";
   }
@@ -4128,6 +4427,7 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   
   // Fix 3: Use actual rejected/fallback counts from SEG_GUARD
   // A3.5.17 Fix 3: Include incomplete_numeric_fragment and recombined counts
+  // A3.5.27: Include fragment_dropped and fragment_merged counts
   const reasons = [];
   if (hasTruncation) reasons.push("truncation");
   if (hasUnbalancedParens) reasons.push("unbalanced_parens");
@@ -4135,6 +4435,8 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   if (fallbackCount > 0) reasons.push(`fallback=${fallbackCount}`);
   if (incompleteNumericFragmentCount > 0) reasons.push(`incomplete_numeric_fragments=${incompleteNumericFragmentCount}`);
   if (recombinedCount > 0) reasons.push(`recombined_fragments=${recombinedCount}`);
+  if (fragmentDropped > 0) reasons.push(`fragment_dropped=${fragmentDropped}`);
+  if (fragmentMerged > 0) reasons.push(`fragment_merged=${fragmentMerged}`);
   
   // A3.5.17 Fix 3: Quality must degrade if incomplete_numeric_fragment was repaired
   let quality = "ok";
@@ -4860,20 +5162,26 @@ export default async function handler(req, res) {
     const recombinedCount = typeof filterResult === "object" && filterResult.recombinedCount != null ? filterResult.recombinedCount : 0;
     diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount})`);
     
-    // A3.5.26 Fix A: Fragment-only candidate suppression (post SEG_GUARD)
+    // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
     diag(runId, reqSig, `[PIPELINE] phase=filterFragmentCandidates`);
-    const fragFilterResult = filterFragmentCandidates(extractionCandidates, runId, reqSig);
+    const segGuardMetadata = {
+      candidatesWithReasons: filterResult.candidatesWithReasons || []
+    };
+    const fragFilterResult = filterFragmentCandidates(extractionCandidates, runId, reqSig, segGuardMetadata);
     const finalExtractionCandidates = fragFilterResult.candidates;
-    diag(runId, reqSig, `A3.5.26: After fragment filter: ${finalExtractionCandidates.length} candidates (dropped=${fragFilterResult.dropped}, merged=${fragFilterResult.merged})`);
+    diag(runId, reqSig, `A3.5.27: After fragment filter: ${finalExtractionCandidates.length} candidates (dropped=${fragFilterResult.dropped}, mergedPrev=${fragFilterResult.mergedPrev}, mergedNext=${fragFilterResult.mergedNext})`);
     
-    // A3.5.26 Fix B: Attach stable candidateIndex to preserve draft order
+    // A3.5.27: Use candidateObjects to preserve candidateIndex for draft order
     // Store original candidate list with indices for later matching
     const candidateIndexMap = new Map();
-    finalExtractionCandidates.forEach((candidate, idx) => {
+    const candidateObjects = fragFilterResult.candidateObjects || [];
+    candidateObjects.forEach((candidateObj, idx) => {
+      const candidate = candidateObj.text;
+      const candidateIndex = candidateObj.candidateIndex != null ? candidateObj.candidateIndex : idx;
       const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
-      // Store both exact and normalized for matching
-      candidateIndexMap.set(candidate, idx);
-      candidateIndexMap.set(normalized, idx);
+      // Store both exact and normalized for matching, using preserved candidateIndex
+      candidateIndexMap.set(candidate, candidateIndex);
+      candidateIndexMap.set(normalized, candidateIndex);
     });
     
     // Build candidate statements block for prompt
@@ -5041,14 +5349,26 @@ ${
     // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
     if (statements.length > 0 && finalExtractionCandidates.length > 0) {
-      // Build a map of normalized candidates for matching
+      // Build a map of normalized candidates for matching using preserved candidateIndex
       const candidateMap = new Map();
-      finalExtractionCandidates.forEach((candidate, idx) => {
+      const candidateObjects = fragFilterResult.candidateObjects || [];
+      candidateObjects.forEach((candidateObj) => {
+        const candidate = candidateObj.text;
+        const candidateIndex = candidateObj.candidateIndex != null ? candidateObj.candidateIndex : candidateObjects.indexOf(candidateObj);
         const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
         if (!candidateMap.has(normalized)) {
-          candidateMap.set(normalized, { candidate, index: idx });
+          candidateMap.set(normalized, { candidate, index: candidateIndex });
         }
       });
+      // Fallback: if candidateObjects not available, use finalExtractionCandidates with idx
+      if (candidateObjects.length === 0) {
+        finalExtractionCandidates.forEach((candidate, idx) => {
+          const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+          if (!candidateMap.has(normalized)) {
+            candidateMap.set(normalized, { candidate, index: idx });
+          }
+        });
+      }
       
       // Filter statements to only include those matching candidates and assign candidateIndex
       const matchedStatements = [];
@@ -5098,14 +5418,16 @@ ${
       
       statements = matchedStatements;
       
-      // A3.5.26 Fix B: Sort statements by candidateIndex to preserve draft order
+      // A3.5.27: Sort statements by candidateIndex to preserve draft order
       statements.sort((a, b) => {
         const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
         const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
         return idxA - idxB;
       });
       
-      diag(runId, reqSig, `[ORDERING] sorted ${statements.length} statements by candidateIndex`);
+      // A3.5.27: Log first 5 candidateIndex values for quick sanity check
+      const firstFiveIndices = statements.slice(0, 5).map(s => s.__candidateIndex != null ? s.__candidateIndex : "null");
+      diag(runId, reqSig, `[ORDERING] sorted ${statements.length} statements by candidateIndex, first5=${JSON.stringify(firstFiveIndices)}`);
     }
     
     // Graceful fallback if model output is invalid or empty
@@ -5213,6 +5535,17 @@ ${
       // Continue with statements as-is
     }
     
+    // A3.5.27: Citation backfill for supported-but-non-anchored clauses
+    // Run AFTER enforceAnchorCitationsAndAmbiguity, BEFORE FINAL_COUNTS
+    diag(runId, reqSig, `[PIPELINE] phase=citationBackfill`);
+    try {
+      const backfillResult = backfillCitations(statements, uploadedSources, unifiedReferences, runId, reqSig);
+      statements = backfillResult.statements;
+    } catch (backfillErr) {
+      diag(runId, reqSig, `[ERROR] backfillCitations failed:`, backfillErr);
+      // Continue with statements as-is
+    }
+    
     // A3.5.18 Fix 2: Hard invariant at return time - ensure citations/evidence are preserved
     let totalAssessmentCites = 0;
     let totalTopCites = 0;
@@ -5263,7 +5596,10 @@ ${
     try {
       // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
       // A3.5.17 Fix 3: Pass incomplete_numeric_fragment and recombined counts
-      extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount);
+      // A3.5.27: Pass fragment_dropped and fragment_merged counts
+      const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
+      const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
+      extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged);
     } catch (e) {
       diag(runId, reqSig, `[ERROR] failed computing extractionQuality after FINAL_COUNTS: ${e?.message || String(e)}`);
       // Use fallback quality value
