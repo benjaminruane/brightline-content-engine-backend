@@ -11,6 +11,9 @@ import {
 } from "../lib/web.js";
 import { corpusSearch } from "../lib/corpusSearch.js";
 
+// A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
+const runStateByRid = {};
+
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
@@ -497,6 +500,17 @@ function tokenizeForOverlap(text) {
 }
 
 function filterDraftOnlyStatements(statements, draftText, runId = null, reqSig = null, hasReturned = false) {
+  // A3.5.21 Diagnostic: Probe for post-FINAL_COUNTS execution
+  const missingContext = !runId || !reqSig;
+  const postFinal = runId && runStateByRid[runId]?.finalCountsReached === true;
+  if (missingContext || postFinal) {
+    const stack = new Error().stack || "stack unavailable";
+    const statementsLength = Array.isArray(statements) ? statements.length : 0;
+    const draftTextLength = typeof draftText === "string" ? draftText.length : 0;
+    console.log(`[POST_FINAL_PROBE] func=filterDraftOnlyStatements rid=${runId ?? "null"} sig=${reqSig ?? "null"} missingContext=${missingContext} postFinal=${postFinal} statementsLength=${statementsLength} draftTextLength=${draftTextLength}`);
+    console.log(`[POST_FINAL_PROBE] stack:\n${stack}`);
+  }
+  
   // A3.5.21 Step 3: Safety assertion to catch regressions
   if (hasReturned) {
     const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
@@ -689,6 +703,16 @@ function mergeContinuationFragments(draftText) {
 }
 
 function extractDeterministicStatementCandidates(draftText, runId = null, reqSig = null, hasReturned = false) {
+  // A3.5.21 Diagnostic: Probe for post-FINAL_COUNTS execution
+  const missingContext = !runId || !reqSig;
+  const postFinal = runId && runStateByRid[runId]?.finalCountsReached === true;
+  if (missingContext || postFinal) {
+    const stack = new Error().stack || "stack unavailable";
+    const draftTextLength = typeof draftText === "string" ? draftText.length : 0;
+    console.log(`[POST_FINAL_PROBE] func=extractDeterministicStatementCandidates rid=${runId ?? "null"} sig=${reqSig ?? "null"} missingContext=${missingContext} postFinal=${postFinal} draftTextLength=${draftTextLength}`);
+    console.log(`[POST_FINAL_PROBE] stack:\n${stack}`);
+  }
+  
   // A3.5.21 Step 3: Safety assertion to catch regressions
   if (hasReturned) {
     const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
@@ -4637,6 +4661,11 @@ export default async function handler(req, res) {
     const publicSearch = true; // Analysis always uses web search
     const reqSig = generateReqSig(draftText, sources, publicSearch);
     
+    // A3.5.21 Diagnostic: Initialize run state for this RID
+    if (runId) {
+      runStateByRid[runId] = { finalCountsReached: false };
+    }
+    
     // A3.5.20 Fix 2: Request start sentinel
     const bodySize = typeof req.body === "string" ? req.body.length : JSON.stringify(req.body || {}).length;
     diag(runId, reqSig, `START method=${req.method} webSearchEnabled=${publicSearch} bodySize=${bodySize}`);
@@ -5078,6 +5107,14 @@ ${
     
     diag(runId, reqSig, `[FINAL_COUNTS] statements=${statements.length} assessCites=${totalAssessmentCites} topCites=${totalTopCites} evidence=${totalEvidence}`);
     
+    // A3.5.21 Diagnostic: Mark that FINAL_COUNTS has been reached for this RID
+    if (runId) {
+      if (!runStateByRid[runId]) {
+        runStateByRid[runId] = {};
+      }
+      runStateByRid[runId].finalCountsReached = true;
+    }
+    
     // A3.5.18 Fix 2: Warn if citations/evidence were lost
     if ((hasCorpusSearchFound || hasAnchorEnforcementInjected) && totalAssessmentCites === 0 && totalTopCites === 0 && totalEvidence === 0) {
       diag(runId, reqSig, `[FINAL_COUNTS][ERROR] citations lost after enforcement`);
@@ -5117,9 +5154,17 @@ ${
     // A3.5.21 Step 2: Set hasReturned flag before return to prevent any further Review pipeline execution
     hasReturned = true;
     diag(runId, reqSig, `END returningNow=true status=200`);
+    // A3.5.21 Diagnostic: END_DIAG for success path
+    diag(runId, reqSig, `END_DIAG path=success status=200 returningNow=true`);
+    // A3.5.21 Diagnostic: Clean up run state
+    if (runId && runStateByRid[runId]) {
+      delete runStateByRid[runId];
+    }
     return res.status(200).json(finalResponseObject);
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
+    // A3.5.21 Diagnostic: Clean up run state on outer catch (runId may not be in scope if error occurred early)
+    // We'll clean up in the fallback paths below instead
     try {
       // A3.5.21 Step 3: Pass hasReturned flag to fallback extraction
       const fallbackStatements = fallbackExtractAtomicStatements(
@@ -5165,6 +5210,14 @@ ${
 
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback path
       hasReturned = true;
+      // A3.5.21 Diagnostic: END_DIAG for fallback path
+      const fallbackRunId = runId || "unknown";
+      const fallbackReqSig = reqSig || "unknown";
+      diag(fallbackRunId, fallbackReqSig, `END_DIAG path=fallback status=200 returningNow=true`);
+      // A3.5.21 Diagnostic: Clean up run state
+      if (runId && runStateByRid[runId]) {
+        delete runStateByRid[runId];
+      }
       return res.status(200).json({
         ok: true,
         statements: finalFallbackStatements,
@@ -5180,6 +5233,14 @@ ${
       // Last resort: return empty but valid response
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback error path
       hasReturned = true;
+      // A3.5.21 Diagnostic: END_DIAG for fallback error path
+      const errorRunId = runId || "unknown";
+      const errorReqSig = reqSig || "unknown";
+      diag(errorRunId, errorReqSig, `END_DIAG path=fallback_error status=200 returningNow=true`);
+      // A3.5.21 Diagnostic: Clean up run state
+      if (runId && runStateByRid[runId]) {
+        delete runStateByRid[runId];
+      }
       return res.status(200).json({
         ok: true,
         statements: [],
