@@ -1672,12 +1672,13 @@ function filterWebSearchResults(rawResults, draftText) {
 }
 
 // Fallback extraction when model fails
-function fallbackExtractAtomicStatements(draftText, hasReturned = false) {
+function fallbackExtractAtomicStatements(draftText, hasReturned = false, runId = null, reqSig = null) {
   if (typeof draftText !== "string" || !draftText.trim()) return [];
   
   // Use deterministic extraction for fallback too
   // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
-  const candidates = extractDeterministicStatementCandidates(draftText, null, null, hasReturned);
+  // A3.5.21 Fix: Pass runId and reqSig for proper context
+  const candidates = extractDeterministicStatementCandidates(draftText, runId, reqSig, hasReturned);
   
   // Convert candidates to statements with default assessment
   return candidates.map((text) => ({
@@ -4634,10 +4635,26 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method === "OPTIONS") {
+    hasReturned = true;
+    try {
+      diag("options", "preflight", `END_DIAG path=options status=200 returningNow=true`);
+    } catch {}
+    return res.status(200).end();
+  }
+  if (req.method !== "POST") {
+    hasReturned = true;
+    try {
+      diag("unknown", "method", `END_DIAG path=method_error status=405 returningNow=true`);
+    } catch {}
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   if (!process.env.OPENAI_API_KEY) {
+    hasReturned = true;
+    try {
+      diag("early", "config", `END_DIAG path=config_error status=500 returningNow=true`);
+    } catch {}
     return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
   }
 
@@ -4645,6 +4662,13 @@ export default async function handler(req, res) {
 
   // A3.5.21 Step 3: Safety guard to prevent Review pipeline execution after return
   let hasReturned = false;
+  
+  // A3.5.21 Fix: Hoist runId and reqSig to handler scope to prevent ReferenceError in catch blocks
+  let runId = null;
+  let reqSig = null;
+  
+  // A3.5.21 Fix: Store final response object in handler scope for fallback guard
+  let finalResponseObject = null;
 
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
@@ -4654,12 +4678,18 @@ export default async function handler(req, res) {
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
 
-    if (!draftText.trim()) return res.status(400).json({ error: "Missing draftText" });
+    if (!draftText.trim()) {
+      hasReturned = true;
+      try {
+        diag("early", "validation", `END_DIAG path=validation_error status=400 returningNow=true`);
+      } catch {}
+      return res.status(400).json({ error: "Missing draftText" });
+    }
     
     // A3.5.20 Fix 1 & 2: Generate runId and reqSig early for unambiguous logging
-    const runId = Math.random().toString(36).substring(2, 15);
+    runId = Math.random().toString(36).substring(2, 15);
     const publicSearch = true; // Analysis always uses web search
-    const reqSig = generateReqSig(draftText, sources, publicSearch);
+    reqSig = generateReqSig(draftText, sources, publicSearch);
     
     // A3.5.21 Diagnostic: Initialize run state for this RID
     if (runId) {
@@ -4973,7 +5003,8 @@ ${
     
     // Graceful fallback if model output is invalid or empty
     if (statements.length === 0) {
-      statements = fallbackExtractAtomicStatements(draftText);
+      // A3.5.21 Fix: Pass runId and reqSig for proper context
+      statements = fallbackExtractAtomicStatements(draftText, hasReturned, runId, reqSig);
       extractionQuality = "degraded";
       diag(runId, reqSig, `A3.5.13: Using fallback extraction, produced ${statements.length} statements`);
     }
@@ -5126,7 +5157,8 @@ ${
     
     // A3.5.19 Fix 1 & 3: Create final response object immediately after FINAL_COUNTS
     // Use the exact statements object that was counted to ensure consistency
-    const finalResponseObject = {
+    // A3.5.21 Fix: Store in handler scope for fallback guard
+    finalResponseObject = {
       ok: true,
       statements, // Use the exact statements array that was counted
       references: unifiedReferences,
@@ -5154,23 +5186,40 @@ ${
     // A3.5.21 Step 2: Set hasReturned flag before return to prevent any further Review pipeline execution
     hasReturned = true;
     diag(runId, reqSig, `END returningNow=true status=200`);
-    // A3.5.21 Diagnostic: END_DIAG for success path
-    diag(runId, reqSig, `END_DIAG path=success status=200 returningNow=true`);
-    // A3.5.21 Diagnostic: Clean up run state
-    if (runId && runStateByRid[runId]) {
-      delete runStateByRid[runId];
+    // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+    try {
+      diag(runId, reqSig, `END_DIAG path=success status=200 returningNow=true`);
+      if (runId && runStateByRid[runId]) {
+        delete runStateByRid[runId];
+      }
+    } catch (logErr) {
+      // Best-effort logging; don't crash on cleanup
     }
     return res.status(200).json(finalResponseObject);
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
-    // A3.5.21 Diagnostic: Clean up run state on outer catch (runId may not be in scope if error occurred early)
-    // We'll clean up in the fallback paths below instead
+    // A3.5.21 Fix: Guard against fallback execution after success (FINAL_COUNTS reached)
+    if (runId && runStateByRid[runId]?.finalCountsReached && finalResponseObject) {
+      // Success path already completed; return the prepared response instead of running fallback
+      hasReturned = true;
+      try {
+        diag(runId, reqSig, `SKIP_FALLBACK after FINAL_COUNTS — returning success payload`);
+        diag(runId, reqSig, `END_DIAG path=success_early status=200 returningNow=true`);
+        if (runStateByRid[runId]) {
+          delete runStateByRid[runId];
+        }
+      } catch (logErr) {
+        // Best-effort logging
+      }
+      return res.status(200).json(finalResponseObject);
+    }
+    
     try {
+      // A3.5.21 Fix: Pass runId and reqSig to fallback functions for proper context
+      const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
       // A3.5.21 Step 3: Pass hasReturned flag to fallback extraction
-      const fallbackStatements = fallbackExtractAtomicStatements(
-        typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "",
-        hasReturned
-      );
+      // A3.5.21 Fix: Pass runId and reqSig for proper context
+      const fallbackStatements = fallbackExtractAtomicStatements(fallbackDraftText, hasReturned, runId, reqSig);
       
       // Build minimal unified references for fallback (from body sources if available)
       const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
@@ -5185,8 +5234,8 @@ ${
       // Apply same pipeline as main path: draft filter → resolve → dual-axis → calibration → anchor → post-check → normalize
       // A3.5.21 Step 2: Fallback path must also return immediately after processing - no Review code after return
       // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
-      const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
-      const filteredFallbackStatements = filterDraftOnlyStatements(fallbackStatements, fallbackDraftText, null, null, hasReturned);
+      // A3.5.21 Fix: Pass runId and reqSig for proper context and guard behavior
+      const filteredFallbackStatements = filterDraftOnlyStatements(fallbackStatements, fallbackDraftText, runId, reqSig, hasReturned);
       const resolvedFallbackStatements = resolveCitations(filteredFallbackStatements, fallbackUploadedReferences);
       const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements, fallbackUploadedReferences);
       const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
@@ -5210,13 +5259,14 @@ ${
 
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback path
       hasReturned = true;
-      // A3.5.21 Diagnostic: END_DIAG for fallback path
-      const fallbackRunId = runId || "unknown";
-      const fallbackReqSig = reqSig || "unknown";
-      diag(fallbackRunId, fallbackReqSig, `END_DIAG path=fallback status=200 returningNow=true`);
-      // A3.5.21 Diagnostic: Clean up run state
-      if (runId && runStateByRid[runId]) {
-        delete runStateByRid[runId];
+      // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+      try {
+        diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback status=200 returningNow=true`);
+        if (runId && runStateByRid[runId]) {
+          delete runStateByRid[runId];
+        }
+      } catch (logErr) {
+        // Best-effort logging
       }
       return res.status(200).json({
         ok: true,
@@ -5233,13 +5283,14 @@ ${
       // Last resort: return empty but valid response
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback error path
       hasReturned = true;
-      // A3.5.21 Diagnostic: END_DIAG for fallback error path
-      const errorRunId = runId || "unknown";
-      const errorReqSig = reqSig || "unknown";
-      diag(errorRunId, errorReqSig, `END_DIAG path=fallback_error status=200 returningNow=true`);
-      // A3.5.21 Diagnostic: Clean up run state
-      if (runId && runStateByRid[runId]) {
-        delete runStateByRid[runId];
+      // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+      try {
+        diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback_error status=200 returningNow=true`);
+        if (runId && runStateByRid[runId]) {
+          delete runStateByRid[runId];
+        }
+      } catch (logErr) {
+        // Best-effort logging
       }
       return res.status(200).json({
         ok: true,
@@ -5253,5 +5304,19 @@ ${
         },
       });
     }
+  }
+  
+  // A3.5.21 Fix: Catch-all to prevent silent fallthrough (should never reach here)
+  if (!hasReturned) {
+    hasReturned = true;
+    try {
+      diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallthrough_error status=500 returningNow=true`);
+      if (runId && runStateByRid[runId]) {
+        delete runStateByRid[runId];
+      }
+    } catch (logErr) {
+      // Best-effort logging
+    }
+    return res.status(500).json({ ok: false, error: "Internal server error: handler reached end without returning" });
   }
 }
