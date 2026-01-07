@@ -5195,23 +5195,55 @@ ${
     return res.status(200).json(finalResponseObject);
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
-    // A3.5.21 Fix: Guard against fallback execution after success (FINAL_COUNTS reached)
-    if (runId && runStateByRid[runId]?.finalCountsReached && finalResponseObject) {
-      // Success path already completed; return the prepared response instead of running fallback
+    // A3.5.22 Fix: Unconditional hard stop after FINAL_COUNTS - absolutely no fallback execution
+    if (runId && runStateByRid[runId]?.finalCountsReached) {
       hasReturned = true;
       try {
-        diag(runId, reqSig, `SKIP_FALLBACK after FINAL_COUNTS — returning success payload`);
-        diag(runId, reqSig, `END_DIAG path=success_early status=200 returningNow=true`);
-        if (runStateByRid[runId]) {
+        diag(runId, reqSig, `SKIP_FALLBACK_AFTER_FINAL_COUNTS finalResponseObjectPresent=${Boolean(finalResponseObject)}`);
+        if (!finalResponseObject) {
+          diag(runId, reqSig, `[ERROR] finalResponseObject missing after FINAL_COUNTS — returning current assembled response variables`);
+        }
+      } catch (logErr) {
+        // Best-effort logging
+      }
+      try {
+        diag(runId, reqSig, `END_DIAG path=success_after_final_hardstop status=200 returningNow=true`);
+        if (runId && runStateByRid[runId]) {
           delete runStateByRid[runId];
         }
       } catch (logErr) {
         // Best-effort logging
       }
-      return res.status(200).json(finalResponseObject);
+      // Return finalResponseObject if present; otherwise return minimal valid payload
+      if (finalResponseObject) {
+        return res.status(200).json(finalResponseObject);
+      } else {
+        // Build minimal valid payload when finalResponseObject is unexpectedly null
+        const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+        const sources = Array.isArray(body.sources) ? body.sources : [];
+        const minimalReferences = sources.map((s, idx) => ({
+          id: idx + 1,
+          title: s?.name || s?.title || "Untitled source",
+          url: s?.url || null,
+          type: "uploaded",
+        }));
+        return res.status(200).json({
+          ok: true,
+          statements: [],
+          references: minimalReferences,
+          meta: {
+            webSearch: { enabled: true, used: false },
+            extractionQuality: "error",
+            uploadedSourcesCount: minimalReferences.length,
+            webSourcesCount: 0,
+          },
+        });
+      }
     }
     
     try {
+      // A3.5.22 Fix: Log entry into fallback block for verification
+      diag(runId, reqSig, `ENTER_FALLBACK finalCountsReached=${runId && runStateByRid[runId]?.finalCountsReached} hasReturned=${hasReturned}`);
       // A3.5.21 Fix: Pass runId and reqSig to fallback functions for proper context
       const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
       // A3.5.21 Step 3: Pass hasReturned flag to fallback extraction
