@@ -5928,37 +5928,39 @@ ${
     statements = enforceReasonSpecificity(statements);
     
     // I.5) A3.5.28: Enforce facet-scoped bullets for multi-claim statements
-    statements = enforceFacetScopedBullets(statements);
+    // A3.5.30: MOVED to final cleanup block (after all injections) to avoid missing later-injected reasons
+    // statements = enforceFacetScopedBullets(statements);
     
     // I.6) A3.5.29: Normalize assessment reasons - dedupe, ban generic bullets, enforce facet diversity
-    let firstStmtNormStats = null;
-    statements = statements.map((stmt, idx) => {
-      if (!stmt || typeof stmt !== "object") return stmt;
-      
-      const assessment = stmt.assessment || {};
-      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-      const text = typeof stmt.text === "string" ? stmt.text : "";
-      
-      const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons);
-      
-      // Log normalization stats for first statement only
-      if (idx === 0) {
-        firstStmtNormStats = stats;
-      }
-      
-      return {
-        ...stmt,
-        assessment: {
-          ...assessment,
-          reasons: normalizedReasons,
-        },
-      };
-    });
-    
-    // Log normalization stats for first statement
-    if (firstStmtNormStats) {
-      diag(runId, reqSig, `[REASONS_NORM] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic}`);
-    }
+    // A3.5.30: MOVED to final cleanup block (after all injections) to avoid missing later-injected reasons
+    // let firstStmtNormStats = null;
+    // statements = statements.map((stmt, idx) => {
+    //   if (!stmt || typeof stmt !== "object") return stmt;
+    //   
+    //   const assessment = stmt.assessment || {};
+    //   const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    //   const text = typeof stmt.text === "string" ? stmt.text : "";
+    //   
+    //   const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons);
+    //   
+    //   // Log normalization stats for first statement only
+    //   if (idx === 0) {
+    //     firstStmtNormStats = stats;
+    //   }
+    //   
+    //   return {
+    //     ...stmt,
+    //     assessment: {
+    //       ...assessment,
+    //       reasons: normalizedReasons,
+    //     },
+    //   };
+    // });
+    // 
+    // // Log normalization stats for first statement
+    // if (firstStmtNormStats) {
+    //   diag(runId, reqSig, `[REASONS_NORM] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic}`);
+    // }
     
     // J) Fix anchor-fact reasons: detect and correct false "not mentioned" claims with semantic matching (A3.5.10)
     statements = fixAnchorFactReasons(statements, unifiedReferences);
@@ -5993,6 +5995,34 @@ ${
     } catch (backfillErr) {
       diag(runId, reqSig, `[ERROR] backfillCitations failed:`, backfillErr);
       // Continue with statements as-is
+    }
+    
+    // FINAL REASONS CLEANUP (A3.5.30):
+    // Must run AFTER all injections (anchor enforcement, corpus verification, backfill)
+    statements = enforceFacetScopedBullets(statements);
+
+    let firstStmtNormStats = null;
+    statements = statements.map((stmt, idx) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+
+      const assessment = stmt.assessment || {};
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const text = typeof stmt.text === "string" ? stmt.text : "";
+
+      const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons);
+
+      if (idx === 0) firstStmtNormStats = stats;
+
+      return {
+        ...stmt,
+        assessment: { ...assessment, reasons: normalizedReasons },
+      };
+    });
+
+    if (firstStmtNormStats) {
+      diag(runId, reqSig,
+        `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic}`
+      );
     }
     
     // A3.5.18 Fix 2: Hard invariant at return time - ensure citations/evidence are preserved
