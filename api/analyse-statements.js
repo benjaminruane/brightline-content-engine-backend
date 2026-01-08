@@ -3546,6 +3546,180 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   return finalClaims;
 }
 
+// A3.6.3: Compute statement reliability from claim reliabilities (deterministic, no LLM)
+// Rules:
+// - If total == 0: keep existing statement score/label
+// - Else:
+//   - If low == 0 AND hi >= 1 AND (hi / total) >= 0.5 => statement High
+//   - Else if low <= 1 AND (hi + med) >= 2 => statement Medium
+//   - Else => statement Low
+// Score mapping:
+// - High: clamp to 80–95 based on hi/total
+// - Medium: clamp to 50–79 based on (hi+med)/total and low presence
+// - Low: clamp to 5–49 based on low/total
+function computeStatementReliabilityFromClaims(claims, existingScore, existingLabel) {
+  if (!Array.isArray(claims) || claims.length === 0) {
+    // No claims - keep existing score/label
+    return {
+      reliabilityScore: existingScore,
+      reliabilityLabel: existingLabel,
+    };
+  }
+  
+  // Count claim reliabilities
+  let hi = 0, med = 0, low = 0;
+  for (const claim of claims) {
+    const reliability = claim?.reliability;
+    if (reliability === "High") hi++;
+    else if (reliability === "Medium") med++;
+    else if (reliability === "Low") low++;
+  }
+  
+  const total = hi + med + low;
+  if (total === 0) {
+    // Empty claims list - keep existing
+    return {
+      reliabilityScore: existingScore,
+      reliabilityLabel: existingLabel,
+    };
+  }
+  
+  // Compute statement reliability
+  let statementLabel;
+  let statementScore;
+  
+  // Rule 1: If low == 0 AND hi >= 1 AND (hi / total) >= 0.5 => High
+  if (low === 0 && hi >= 1 && (hi / total) >= 0.5) {
+    statementLabel = "High";
+    // Score: 80-95 based on hi/total
+    const hiRatio = hi / total;
+    statementScore = Math.round(80 + (hiRatio - 0.5) * 30); // 0.5 -> 80, 1.0 -> 95
+    statementScore = Math.max(80, Math.min(95, statementScore));
+  }
+  // Rule 2: Else if low <= 1 AND (hi + med) >= 2 => Medium
+  else if (low <= 1 && (hi + med) >= 2) {
+    statementLabel = "Medium";
+    // Score: 50-79 based on (hi+med)/total and low presence
+    const supportedRatio = (hi + med) / total;
+    const baseScore = 50 + (supportedRatio - (2 / total)) * 40; // Adjust based on ratio
+    const lowPenalty = low === 1 ? 5 : 0; // Small penalty if one low claim
+    statementScore = Math.round(baseScore - lowPenalty);
+    statementScore = Math.max(50, Math.min(79, statementScore));
+  }
+  // Rule 3: Else => Low
+  else {
+    statementLabel = "Low";
+    // Score: 5-49 based on low/total
+    const lowRatio = low / total;
+    statementScore = Math.round(5 + lowRatio * 44); // 0 -> 5, 1.0 -> 49
+    statementScore = Math.max(5, Math.min(49, statementScore));
+  }
+  
+  return {
+    reliabilityScore: statementScore,
+    reliabilityLabel: statementLabel,
+  };
+}
+
+// A3.6.3: Generate claim-linked reasons (concise, non-boilerplate, up to 3 bullets)
+// Format:
+// - If any Low claims exist: bullet 1 lists 1-2 lowest claims with short reason
+// - If any Medium claims exist: bullet 2 lists 1-2 medium claims with reason
+// - If High claims exist: bullet 3 lists 1-2 highest claims as confirmed
+// Each bullet < 140 chars, no facet tags, no "[Other]" prefix, includes citations from claims
+function generateClaimLinkedReasons(claims) {
+  if (!Array.isArray(claims) || claims.length === 0) {
+    return [];
+  }
+  
+  // Separate claims by reliability
+  const lowClaims = claims.filter(c => c?.reliability === "Low");
+  const medClaims = claims.filter(c => c?.reliability === "Medium");
+  const hiClaims = claims.filter(c => c?.reliability === "High");
+  
+  const reasons = [];
+  
+  // Bullet 1: Low claims (1-2 lowest)
+  if (lowClaims.length > 0) {
+    const selectedLow = lowClaims.slice(0, 2);
+    for (const claim of selectedLow) {
+      const claimText = claim?.claimText || "";
+      const comment = claim?.comment || "Not found in sources";
+      const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+        ? ` [${claim.citations.join(", ")}]`
+        : "";
+      
+      // Extract short snippet from claim (first 30 chars)
+      const snippet = claimText.length > 30 ? claimText.substring(0, 30) + "..." : claimText;
+      
+      // Build reason: snippet + comment + citations
+      let reason = `"${snippet}" ${comment}${citations}`;
+      
+      // Ensure < 140 chars
+      if (reason.length > 140) {
+        reason = reason.substring(0, 137) + "...";
+      }
+      
+      reasons.push(reason);
+    }
+  }
+  
+  // Bullet 2: Medium claims (1-2 medium)
+  if (medClaims.length > 0 && reasons.length < 3) {
+    const selectedMed = medClaims.slice(0, 2);
+    for (const claim of selectedMed) {
+      if (reasons.length >= 3) break;
+      
+      const claimText = claim?.claimText || "";
+      const comment = claim?.comment || "Mentioned but not explicitly confirmed";
+      const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+        ? ` [${claim.citations.join(", ")}]`
+        : "";
+      
+      // Extract short snippet from claim (first 30 chars)
+      const snippet = claimText.length > 30 ? claimText.substring(0, 30) + "..." : claimText;
+      
+      // Build reason: snippet + comment + citations
+      let reason = `"${snippet}" ${comment}${citations}`;
+      
+      // Ensure < 140 chars
+      if (reason.length > 140) {
+        reason = reason.substring(0, 137) + "...";
+      }
+      
+      reasons.push(reason);
+    }
+  }
+  
+  // Bullet 3: High claims (1-2 highest, as confirmed)
+  if (hiClaims.length > 0 && reasons.length < 3) {
+    const selectedHi = hiClaims.slice(0, 2);
+    for (const claim of selectedHi) {
+      if (reasons.length >= 3) break;
+      
+      const claimText = claim?.claimText || "";
+      const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+        ? ` [${claim.citations.join(", ")}]`
+        : "";
+      
+      // Extract short snippet from claim (first 30 chars)
+      const snippet = claimText.length > 30 ? claimText.substring(0, 30) + "..." : claimText;
+      
+      // Build reason: snippet + "Matches memo" + citations
+      let reason = `"${snippet}" Matches memo${citations}`;
+      
+      // Ensure < 140 chars
+      if (reason.length > 140) {
+        reason = reason.substring(0, 137) + "...";
+      }
+      
+      reasons.push(reason);
+    }
+  }
+  
+  return reasons.slice(0, 3); // Cap at 3 bullets
+}
+
 // A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
 function scrubRepeatedPhrases(snippet) {
   if (!snippet || typeof snippet !== "string") return snippet;
@@ -7465,12 +7639,25 @@ ${
     // K) Enforce corpus-level verification before absence claims (A3.5.11)
     // A3.5.13b: Pass unifiedReferences to inject citations and build evidence when corpusSearch finds support
     // MUST perform corpus search before allowing "not mentioned" / "not supported" claims
+    // A3.6.3: Harden error handling with proper logging and meta flag
     diag(runId, reqSig, `[PIPELINE] phase=enforceCorpusVerification`);
+    let verificationOk = true;
     try {
       statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences, runId, reqSig);
     } catch (corpusErr) {
-      diag(runId, reqSig, `[ERROR] enforceCorpusVerificationBeforeAbsence failed:`, corpusErr);
+      verificationOk = false;
+      const errorMessage = corpusErr?.message || String(corpusErr) || "Unknown error";
+      const errorStack = corpusErr?.stack || "No stack trace";
+      diag(runId, reqSig, `[ERROR][CORPUS_VERIFY] rid=${runId || 'unknown'} message=${errorMessage} stack=${errorStack.substring(0, 500)}`);
       // Continue with statements as-is rather than losing them
+    }
+    
+    // A3.6.3: Initialize meta object for verification status (will be merged into finalResponseObject.meta)
+    let meta = {};
+    if (!meta.verification) meta.verification = {};
+    meta.verification.ok = verificationOk;
+    if (!verificationOk) {
+      meta.verification.phase = "enforceCorpusVerificationBeforeAbsence";
     }
     
     // A3.5.14b Patch 2 & 3: Anchor Enforcement + Ambiguity Routing (LAST MUTATION STEP)
@@ -7530,6 +7717,30 @@ ${
         `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic} removedAnchorBoilerplate=${firstStmtNormStats.removedAnchorBoilerplate || 0} replacedWeakestForFacet=${firstStmtNormStats.replacedWeakestForFacet || 0} usedDeterministicSet=${firstStmtNormStats.usedDeterministicSet || false}`
       );
     }
+    
+    // A3.6.3: Generate claim-linked reasons after normalization (replace generic reasons with claim-grounded ones)
+    statements = statements.map((stmt) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      
+      const assessment = stmt.assessment || {};
+      const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
+      
+      // Only replace reasons if claims exist and we can generate claim-linked reasons
+      if (claims.length > 0) {
+        const claimLinkedReasons = generateClaimLinkedReasons(claims);
+        if (claimLinkedReasons.length > 0) {
+          return {
+            ...stmt,
+            assessment: {
+              ...assessment,
+              reasons: claimLinkedReasons,
+            },
+          };
+        }
+      }
+      
+      return stmt;
+    });
     
     // A3.5.31: Add observability log for idx=0 after final normalization
     if (statements.length > 0) {
@@ -7642,12 +7853,25 @@ ${
           diag(runId, reqSig, `[CLAIMS_SAMPLE] idx=${idx} first5=${JSON.stringify(sample)}`);
         }
         
-        // Add claims to assessment (non-breaking, additive)
+        // A3.6.3: Compute statement reliability from claims (deterministic)
+        const existingScore = typeof assessment.reliabilityScore === "number" 
+          ? assessment.reliabilityScore 
+          : 30;
+        const existingLabel = typeof assessment.reliabilityLabel === "string"
+          ? assessment.reliabilityLabel
+          : existingScore >= 80 ? "High" : existingScore >= 60 ? "Medium" : "Low";
+        
+        const computedReliability = computeStatementReliabilityFromClaims(claims, existingScore, existingLabel);
+        
+        // Add claims to assessment (non-breaking, additive) and update reliability
+        // Note: claim-linked reasons will be generated after normalization (A3.6.3)
         return {
           ...stmt,
           assessment: {
             ...assessment,
             claims,
+            reliabilityScore: computedReliability.reliabilityScore,
+            reliabilityLabel: computedReliability.reliabilityLabel,
           },
         };
       });
@@ -7701,6 +7925,7 @@ ${
           extractionQuality: extractionQuality || "ok",
           uploadedSourcesCount: uploadedReferences?.length || 0,
           webSourcesCount: webReferencesWithIds?.length || 0,
+          ...(meta?.verification ? { verification: meta.verification } : {}),
         },
       };
     } catch (e) {
@@ -7715,6 +7940,7 @@ ${
           extractionQuality: "error",
           uploadedSourcesCount: uploadedReferences?.length || 0,
           webSourcesCount: webReferencesWithIds?.length || 0,
+          ...(meta?.verification ? { verification: meta.verification } : {}),
         },
       };
     }
