@@ -2577,6 +2577,43 @@ function detectFacetsInStatement(statementText) {
   return facets;
 }
 
+// A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
+function scrubRepeatedPhrases(snippet) {
+  if (!snippet || typeof snippet !== "string") return snippet;
+  
+  let cleaned = snippet;
+  let changed = true;
+  let passes = 0;
+  const maxPasses = 3;
+  
+  // Tokenize words
+  while (changed && passes < maxPasses) {
+    changed = false;
+    passes++;
+    const words = cleaned.split(/\s+/);
+    
+    // Scan for adjacent repeated sequences of length 2..6 words
+    for (let seqLen = 6; seqLen >= 2; seqLen--) {
+      for (let i = 0; i <= words.length - (seqLen * 2); i++) {
+        const seq1 = words.slice(i, i + seqLen).join(" ");
+        const seq2 = words.slice(i + seqLen, i + (seqLen * 2)).join(" ");
+        
+        // Case-insensitive comparison
+        if (seq1.toLowerCase() === seq2.toLowerCase()) {
+          // Remove the second occurrence
+          words.splice(i + seqLen, seqLen);
+          cleaned = words.join(" ");
+          changed = true;
+          break; // Restart scan after modification
+        }
+      }
+      if (changed) break;
+    }
+  }
+  
+  return cleaned.trim();
+}
+
 // A3.5.33: Helper function to extract facet-specific snippet with smart splitting
 function extractFacetSnippet(text, facet, avoidOverlap = false) {
   if (!text || typeof text !== "string") return "";
@@ -2648,6 +2685,8 @@ function extractFacetSnippet(text, facet, avoidOverlap = false) {
     if (snippet.length > 80) {
       snippet = snippet.substring(0, 77) + "...";
     }
+    // A3.5.34: Apply repeat scrubber
+    snippet = scrubRepeatedPhrases(snippet);
     return snippet;
   }
   
@@ -2656,6 +2695,8 @@ function extractFacetSnippet(text, facet, avoidOverlap = false) {
   if (snippet.length > 80) {
     snippet = snippet.substring(0, 77) + "...";
   }
+  // A3.5.34: Apply repeat scrubber
+  snippet = scrubRepeatedPhrases(snippet);
   return snippet;
 }
 
@@ -2664,13 +2705,13 @@ function extractFacetSnippet(text, facet, avoidOverlap = false) {
 // Returns normalized reasons array and stats for logging
 function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
   if (!Array.isArray(reasons) || reasons.length === 0) {
-    return { reasons: [], stats: { before: 0, after: 0, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0 } };
+    return { reasons: [], stats: { before: 0, after: 0, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0, usedDeterministicSet: false } };
   }
   
   const { hasCitations = false, hasEvidence = false, facetsDetected = [] } = opts;
   const hasSources = hasCitations || hasEvidence;
   
-  const stats = { before: reasons.length, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0 };
+  const stats = { before: reasons.length, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0, usedDeterministicSet: false };
   let normalized = [];
   
   // Step 1: De-duplicate bullets
@@ -2705,25 +2746,25 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
     normalized.push(trimmed);
   }
   
-  // Step 2: A3.5.32 Hard-remove anchor-boilerplate bullets (always remove, never keep)
-  const anchorBoilerplatePatterns = [
-    /^all anchor facts .* supported/i,
-    /^all anchor facts in this statement are supported/i,
-    /^anchor facts .* supported by the uploaded sources/i,
-  ];
-  
-  // Also remove near-equivalents: "supported by uploaded sources" without specifying which facet/claim
+  // Step 2: A3.5.34 Hard-remove anchor-boilerplate bullets (match anywhere, not just at start)
+  // A3.5.34: Pattern should match anywhere in the bullet (case-insensitive)
   normalized = normalized.filter((reason) => {
     if (typeof reason !== "string") return true;
     
-    const isAnchorBoilerplate = anchorBoilerplatePatterns.some(pattern => pattern.test(reason));
-    if (isAnchorBoilerplate) {
+    // Remove any bullet where "all anchor facts" matches ANYWHERE
+    if (/all anchor facts/i.test(reason)) {
       stats.removedAnchorBoilerplate++;
       return false;
     }
     
-    // Remove generic "supported by uploaded sources" without facet/snippet specificity
-    if (/supported by (?:uploaded )?sources/i.test(reason)) {
+    // Remove bullets matching "anchor facts ... supported" anywhere
+    if (/anchor facts .*supported/i.test(reason)) {
+      stats.removedAnchorBoilerplate++;
+      return false;
+    }
+    
+    // Remove generic "supported by the uploaded sources" without facet/snippet specificity
+    if (/supported by the uploaded sources/i.test(reason)) {
       const hasFacetTag = /^\[(Investment|Valuation|Structure|Ownership|Timing)\]/i.test(reason);
       const hasSnippet = /"[^"]{1,120}"/.test(reason);
       if (!hasFacetTag || !hasSnippet) {
@@ -3155,13 +3196,13 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
   }
   
   // Add missing facets
-  const text = typeof statementText === "string" ? statementText : "";
+  const textForFacets = typeof statementText === "string" ? statementText : "";
   for (const facet of missingMustCoverFacets) {
     if (normalized.length >= 4) {
       // At bullet cap, replace weakest
       const weakestIndex = findWeakestBullet(normalized);
       if (weakestIndex >= 0) {
-        let snippet = extractFacetSnippet(text, facet, true); // Use avoidOverlap for Structure/Ownership
+        let snippet = extractFacetSnippet(textForFacets, facet, true); // Use avoidOverlap for Structure/Ownership
         if (!snippet) snippet = "statement clause";
         
         let bullet = "";
@@ -3197,7 +3238,7 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
       }
     } else {
       // Have space, add bullet
-      let snippet = extractFacetSnippet(text, facet, true); // Use avoidOverlap for Structure/Ownership
+      let snippet = extractFacetSnippet(textForFacets, facet, true); // Use avoidOverlap for Structure/Ownership
       if (!snippet) snippet = "statement clause";
       
       let bullet = "";
@@ -3230,6 +3271,86 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
       stats.addedDeterministic++;
       presentFacets.add(facet);
     }
+  }
+  
+  // Step 7: A3.5.34 Deterministic reason-set for multi-claim numeric statements
+  const detectedFacetsForDeterministic = facetsDetected.length > 0 ? facetsDetected : detectFacetsInStatement(statementText);
+  const textForDeterministic = typeof statementText === "string" ? statementText : "";
+  
+  // Define "multi-claim numeric" as: facetsDetected length >= 3 AND statementText contains 2+ distinct numeric anchors
+  const numericAnchorPattern = /[\d,]+(?:\.\d+)?|%|\$[\d,]+(?:\.\d+)?|[\d.]+x/i;
+  const numericMatches = textForDeterministic.match(new RegExp(numericAnchorPattern.source, 'gi'));
+  const distinctNumericAnchors = new Set(numericMatches || []);
+  const isMultiClaimNumeric = detectedFacetsForDeterministic.length >= 3 && distinctNumericAnchors.size >= 2;
+  
+  if (isMultiClaimNumeric) {
+    // Keep at most ONE "ambiguity/multi-match" bullet if it exists
+    const ambiguityPattern = /ambiguous|multiple memo values|verify which applies/i;
+    let keptAmbiguityBullet = null;
+    let keptAmbiguityIndex = -1;
+    
+    normalized.forEach((reason, idx) => {
+      if (typeof reason !== "string") return;
+      if (ambiguityPattern.test(reason) && keptAmbiguityBullet === null) {
+        keptAmbiguityBullet = reason;
+        keptAmbiguityIndex = idx;
+      }
+    });
+    
+    // Discard remaining model bullets (except the kept ambiguity bullet)
+    if (keptAmbiguityBullet) {
+      normalized = [keptAmbiguityBullet];
+    } else {
+      normalized = [];
+    }
+    
+    // Generate deterministic bullets for must-cover facets (up to 4)
+    const deterministicFacets = ["Investment", "Valuation", "Structure", "Ownership"];
+    const facetsToAdd = deterministicFacets.filter(f => detectedFacetsForDeterministic.includes(f));
+    
+    for (const facet of facetsToAdd) {
+      if (normalized.length >= 4) break;
+      
+      let snippet = extractFacetSnippet(textForDeterministic, facet, true); // Use avoidOverlap + scrubber
+      if (!snippet) snippet = "statement clause";
+      
+      let bullet = "";
+      if (facet === "Investment") {
+        bullet = `[Investment] "${snippet}" Memo supports the core amount/intent; confirm execution vs approval wording.`;
+      } else if (facet === "Valuation") {
+        bullet = `[Valuation] "${snippet}" Multiple valuation figures may exist; verify which value applies.`;
+      } else if (facet === "Structure") {
+        bullet = `[Structure] "${snippet}" Terms may not be explicitly confirmed in the cited excerpt; treat as unverified unless stated.`;
+      } else if (facet === "Ownership") {
+        bullet = `[Ownership] "${snippet}" Validate the fully-diluted basis/cap table; % may depend on definition.`;
+      }
+      
+      normalized.push(bullet);
+      stats.addedDeterministic++;
+    }
+    
+    // If we kept an ambiguity bullet, cap total at 4 by dropping the weakest deterministic one (typically Structure last)
+    if (keptAmbiguityBullet && normalized.length > 4) {
+      // Find Structure bullet (typically last) and remove it
+      // The ambiguity bullet is at index 0, so look for Structure starting from index 1
+      const structureIndex = normalized.findIndex((r, idx) => {
+        if (idx === 0) return false; // Don't remove the ambiguity bullet (at index 0)
+        return typeof r === "string" && /^\[Structure\]/i.test(r);
+      });
+      
+      if (structureIndex >= 0) {
+        normalized.splice(structureIndex, 1);
+      } else {
+        // If no Structure, remove the last deterministic bullet (not the ambiguity bullet at index 0)
+        if (normalized.length > 1) {
+          normalized.splice(normalized.length - 1, 1);
+        }
+      }
+    }
+    
+    stats.usedDeterministicSet = true;
+  } else {
+    stats.usedDeterministicSet = false;
   }
   
   // Cap at 4 bullets total
@@ -6412,7 +6533,7 @@ ${
 
     if (firstStmtNormStats) {
       diag(runId, reqSig,
-        `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic} removedAnchorBoilerplate=${firstStmtNormStats.removedAnchorBoilerplate || 0} replacedWeakestForFacet=${firstStmtNormStats.replacedWeakestForFacet || 0}`
+        `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic} removedAnchorBoilerplate=${firstStmtNormStats.removedAnchorBoilerplate || 0} replacedWeakestForFacet=${firstStmtNormStats.replacedWeakestForFacet || 0} usedDeterministicSet=${firstStmtNormStats.usedDeterministicSet || false}`
       );
     }
     
