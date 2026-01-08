@@ -2582,13 +2582,13 @@ function detectFacetsInStatement(statementText) {
 // Returns normalized reasons array and stats for logging
 function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
   if (!Array.isArray(reasons) || reasons.length === 0) {
-    return { reasons: [], stats: { before: 0, after: 0, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0 } };
+    return { reasons: [], stats: { before: 0, after: 0, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0 } };
   }
   
   const { hasCitations = false, hasEvidence = false, facetsDetected = [] } = opts;
   const hasSources = hasCitations || hasEvidence;
   
-  const stats = { before: reasons.length, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0 };
+  const stats = { before: reasons.length, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0 };
   let normalized = [];
   
   // Step 1: De-duplicate bullets
@@ -2623,31 +2623,35 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
     normalized.push(trimmed);
   }
   
-  // Step 2: Hard-ban repeated generic bullets
-  const genericPatterns = [
-    /all anchor facts in this statement are supported/i,
-    /all anchor facts.*supported by the uploaded sources/i,
-    /all anchor facts.*supported/i,
+  // Step 2: A3.5.32 Hard-remove anchor-boilerplate bullets (always remove, never keep)
+  const anchorBoilerplatePatterns = [
+    /^all anchor facts .* supported/i,
+    /^all anchor facts in this statement are supported/i,
+    /^anchor facts .* supported by the uploaded sources/i,
   ];
   
-  let genericCount = 0;
+  // Also remove near-equivalents: "supported by uploaded sources" without specifying which facet/claim
   normalized = normalized.filter((reason) => {
     if (typeof reason !== "string") return true;
-    const isGeneric = genericPatterns.some(pattern => pattern.test(reason));
-    if (isGeneric) {
-      genericCount++;
-      // Keep at most ONE instance, and only if it's facet-scoped
-      if (genericCount === 1 && /^\[(?:Investment|Valuation|Structure|Ownership|Timing|Other)\]/i.test(reason)) {
-        return true;
-      }
+    
+    const isAnchorBoilerplate = anchorBoilerplatePatterns.some(pattern => pattern.test(reason));
+    if (isAnchorBoilerplate) {
+      stats.removedAnchorBoilerplate++;
       return false;
     }
+    
+    // Remove generic "supported by uploaded sources" without facet/snippet specificity
+    if (/supported by (?:uploaded )?sources/i.test(reason)) {
+      const hasFacetTag = /^\[(Investment|Valuation|Structure|Ownership|Timing)\]/i.test(reason);
+      const hasSnippet = /"[^"]{1,120}"/.test(reason);
+      if (!hasFacetTag || !hasSnippet) {
+        stats.removedAnchorBoilerplate++;
+        return false;
+      }
+    }
+    
     return true;
   });
-  
-  if (genericCount > 1) {
-    stats.deduped += (genericCount - 1);
-  }
   
   // Step 2.5: A3.5.31 Consistency gates - remove contradictory "no sources" bullets when sources exist
   if (hasSources) {
@@ -2712,6 +2716,79 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
     });
   }
   
+  // Step 2.6: A3.5.32 Collapse "support some elements" into a single summary bullet (max 1)
+  const partialSupportPatterns = [
+    /support some elements/i,
+    /do not explicitly support all claims/i,
+    /partially supported/i,
+  ];
+  
+  let partialSupportCount = 0;
+  let bestPartialSupport = null;
+  let bestPartialSupportIndex = -1;
+  
+  normalized.forEach((reason, idx) => {
+    if (typeof reason !== "string") return;
+    
+    const isPartialSupport = partialSupportPatterns.some(pattern => pattern.test(reason));
+    if (isPartialSupport) {
+      partialSupportCount++;
+      
+      // Prefer the one with a facet tag other than [Other] and a clear snippet
+      const hasFacetTag = /^\[(Investment|Valuation|Structure|Ownership|Timing)\]/i.test(reason);
+      const hasSnippet = /"[^"]{1,120}"/.test(reason);
+      
+      // If we don't have a best one yet, or this one is better, use it
+      if (!bestPartialSupport || (hasFacetTag && hasSnippet && !/^\[Other\]/i.test(reason))) {
+        bestPartialSupport = reason;
+        bestPartialSupportIndex = idx;
+      }
+    }
+  });
+  
+  // If we have multiple partial support bullets, keep only the best one
+  if (partialSupportCount > 1) {
+    normalized = normalized.filter((reason, idx) => {
+      if (typeof reason !== "string") return true;
+      
+      const isPartialSupport = partialSupportPatterns.some(pattern => pattern.test(reason));
+      if (isPartialSupport) {
+        // Keep only the best one
+        if (idx === bestPartialSupportIndex) {
+          return true;
+        }
+        stats.deduped++;
+        return false;
+      }
+      return true;
+    });
+    
+    // Reassign [Other] to a better facet if needed
+    if (bestPartialSupportIndex >= 0 && bestPartialSupportIndex < normalized.length) {
+      const bestReason = normalized[bestPartialSupportIndex];
+      if (typeof bestReason === "string" && /^\[Other\]/i.test(bestReason)) {
+        const text = typeof statementText === "string" ? statementText : "";
+        const lower = text.toLowerCase();
+        let newFacet = null;
+        
+        if (/\b(?:pre-?money|post-?money|valuation|enterprise value|ev)\b/.test(lower)) {
+          newFacet = "Valuation";
+        } else if (/\b(?:ownership|stake|fully diluted)\b|%\b/.test(lower)) {
+          newFacet = "Ownership";
+        } else if (/\b(?:preferred|structured|1x|liquidation|terms)\b/.test(lower)) {
+          newFacet = "Structure";
+        } else if (/\b(?:invest|investment)\b|\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b)/.test(lower)) {
+          newFacet = "Investment";
+        }
+        
+        if (newFacet) {
+          normalized[bestPartialSupportIndex] = bestReason.replace(/^\[Other\]/i, `[${newFacet}]`);
+          stats.autoFacet++;
+        }
+      }
+    }
+  }
+  
   // Step 3: Enforce facet tagging and snippet binding
   const validFacets = ["Investment", "Valuation", "Structure", "Ownership", "Timing", "Other"];
   const facetPattern = /^\[(Investment|Valuation|Structure|Ownership|Timing|Other)\]/i;
@@ -2758,8 +2835,11 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
           // Look for "1x" / "preferred" / "structured" patterns
           keywordPattern = /\b1x\b|\bpreferred\b|\bstructured\b|\bterms\b/i;
         } else if (facetName === "Ownership") {
-          // Look for "%" / "stake" / "fully diluted" / "ownership" patterns
-          keywordPattern = /\d+%|\bstake\b|\bfully diluted\b|\bownership\b/i;
+          // A3.5.32: Extract around "ownership"|"stake"|"%"|"fully diluted"
+          keywordPattern = /\bownership\b|\bstake\b|%\b|\bfully diluted\b/i;
+        } else if (facetName === "Timing") {
+          // A3.5.32: Extract around "expected"|"would"|"plans"|"seeks approval"
+          keywordPattern = /\bexpected\b|\bwould\b|\bplans\b|\bseeks approval\b/i;
         }
         
         if (keywordPattern) {
@@ -2878,8 +2958,11 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
             // Look for "1x" / "preferred" / "structured" patterns
             keywordPattern = /\b1x\b|\bpreferred\b|\bstructured\b|\bterms\b/i;
           } else if (facet === "Ownership") {
-            // Look for "%" / "stake" / "fully diluted" / "ownership" patterns
-            keywordPattern = /\d+%|\bstake\b|\bfully diluted\b|\bownership\b/i;
+            // A3.5.32: Extract around "ownership"|"stake"|"%"|"fully diluted"
+            keywordPattern = /\bownership\b|\bstake\b|%\b|\bfully diluted\b/i;
+          } else if (facet === "Timing") {
+            // A3.5.32: Extract around "expected"|"would"|"plans"|"seeks approval"
+            keywordPattern = /\bexpected\b|\bwould\b|\bplans\b|\bseeks approval\b/i;
           }
           
           if (keywordPattern) {
@@ -2946,6 +3029,108 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
         
         normalized.push(bullet);
         stats.addedDeterministic++;
+      }
+    }
+  }
+  
+  // Step 6: A3.5.32 Guarantee missing facet coverage (Ownership priority)
+  const detectedFacetsForCoverage = facetsDetected.length > 0 ? facetsDetected : detectFacetsInStatement(statementText);
+  const presentFacets = new Set();
+  normalized.forEach((reason) => {
+    if (typeof reason !== "string") return;
+    const match = reason.match(/^\[(\w+)\]/i);
+    if (match && match[1] !== "Other") {
+      presentFacets.add(match[1]);
+    }
+  });
+  
+  // Priority: If "Ownership" is detected AND not present AND bullet slots available
+  if (detectedFacetsForCoverage.includes("Ownership") && !presentFacets.has("Ownership")) {
+    const text = typeof statementText === "string" ? statementText : "";
+    let snippet = "";
+    
+    // Extract Ownership snippet
+    if (text) {
+      const keywordPattern = /\bownership\b|\bstake\b|%\b|\bfully diluted\b/i;
+      const match = text.match(keywordPattern);
+      if (match) {
+        const idx = match.index;
+        const words = text.split(/\s+/);
+        const matchWordIdx = text.substring(0, idx).split(/\s+/).length - 1;
+        const start = Math.max(0, matchWordIdx - 4);
+        const end = Math.min(words.length, matchWordIdx + 8);
+        snippet = words.slice(start, end).join(" ").trim();
+        if (snippet.length > 80) {
+          snippet = snippet.substring(0, 77) + "...";
+        }
+      }
+      
+      if (!snippet) {
+        const words = text.trim().split(/\s+/);
+        snippet = words.slice(0, Math.min(12, words.length)).join(" ");
+        if (snippet.length > 80) {
+          snippet = snippet.substring(0, 77) + "...";
+        }
+      }
+    } else {
+      snippet = "statement clause";
+    }
+    
+    // If we have space, add Ownership bullet
+    if (normalized.length < 4) {
+      const ownershipBullet = `[Ownership] "${snippet}" Ownership percentage should be validated against fully-diluted basis / cap table in memo.`;
+      normalized.push(ownershipBullet);
+      stats.addedDeterministic++;
+    } else {
+      // Replace the weakest/general bullet using priority for removal
+      let weakestIndex = -1;
+      let weakestPriority = Infinity;
+      
+      normalized.forEach((reason, idx) => {
+        if (typeof reason !== "string") return;
+        
+        let priority = Infinity;
+        const match = reason.match(/^\[(\w+)\]/i);
+        const facet = match ? match[1] : "";
+        
+        // Priority 1: [Other] bullets (weakest)
+        if (facet === "Other") {
+          priority = 1;
+        }
+        // Priority 2: generic "support some elements" summary (if there is already another support/ambiguity bullet)
+        else if (/support some elements|do not explicitly support all claims|partially supported/i.test(reason)) {
+          // Check if there's another support/ambiguity bullet
+          const hasOtherSupport = normalized.some((r, i) => {
+            if (i === idx || typeof r !== "string") return false;
+            return /support|ambiguity|may be|not explicitly/i.test(r);
+          });
+          if (hasOtherSupport) {
+            priority = 2;
+          }
+        }
+        // Priority 3: duplicate-facet bullets (e.g., second [Investment])
+        else {
+          const facetCount = normalized.filter((r) => {
+            if (typeof r !== "string") return false;
+            const m = r.match(/^\[(\w+)\]/i);
+            return m && m[1] === facet;
+          }).length;
+          if (facetCount > 1) {
+            priority = 3;
+          }
+        }
+        
+        if (priority < weakestPriority) {
+          weakestPriority = priority;
+          weakestIndex = idx;
+        }
+      });
+      
+      // If we found a weakest bullet, replace it
+      if (weakestIndex >= 0) {
+        const ownershipBullet = `[Ownership] "${snippet}" Ownership percentage should be validated against fully-diluted basis / cap table in memo.`;
+        normalized[weakestIndex] = ownershipBullet;
+        stats.replacedWeakestForFacet++;
       }
     }
   }
@@ -6130,7 +6315,7 @@ ${
 
     if (firstStmtNormStats) {
       diag(runId, reqSig,
-        `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic}`
+        `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic} removedAnchorBoilerplate=${firstStmtNormStats.removedAnchorBoilerplate || 0} replacedWeakestForFacet=${firstStmtNormStats.replacedWeakestForFacet || 0}`
       );
     }
     
