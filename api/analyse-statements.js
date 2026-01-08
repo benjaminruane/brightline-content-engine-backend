@@ -2577,6 +2577,276 @@ function detectFacetsInStatement(statementText) {
   return facets;
 }
 
+// A3.6.1: Clean claim text (remove ~ artifacts, normalize money/%, trim)
+function cleanClaimText(raw) {
+  if (typeof raw !== "string") return "";
+  
+  let cleaned = raw;
+  
+  // Remove all "~" characters
+  cleaned = cleaned.replace(/~/g, "");
+  
+  // Normalize money: "$ 5 million", "$5 million" -> "$5m"
+  cleaned = cleaned.replace(/\$\s*([\d,]+(?:\.\d+)?)\s*million\b/gi, "$$1m");
+  cleaned = cleaned.replace(/\$\s*([\d,]+(?:\.\d+)?)\s*mm\b/gi, "$$1m");
+  
+  // Normalize percentages: "20 %" -> "20%", "31 %" -> "31%"
+  cleaned = cleaned.replace(/([\d,]+(?:\.\d+)?)\s*%/g, "$1%");
+  
+  // Normalize "pre - money", "pre- money" -> "pre-money"
+  cleaned = cleaned.replace(/\bpre\s*-\s*money\b/gi, "pre-money");
+  cleaned = cleaned.replace(/\bpost\s*-\s*money\b/gi, "post-money");
+  
+  // Collapse multiple spaces
+  cleaned = cleaned.replace(/\s+/g, " ");
+  
+  // Trim
+  cleaned = cleaned.trim();
+  
+  // Remove leading/trailing commas and garbage whitespace
+  cleaned = cleaned.replace(/^[,.\s]+/, "").replace(/[,.\s]+$/, "");
+  
+  // If cleaned text ends up < 6 chars, return "" (skip)
+  if (cleaned.length < 6) {
+    return "";
+  }
+  
+  return cleaned;
+}
+
+// A3.6.1: Build claim grouping key for aggregation
+function buildClaimKey(claimText, facet) {
+  if (typeof claimText !== "string" || typeof facet !== "string") {
+    return `${facet || "Other"}:fallback`;
+  }
+  
+  const text = claimText.toLowerCase();
+  let anchorKey = "";
+  
+  // If contains "$<num>m" -> usd_<num>m (e.g., usd_5m, usd_20m)
+  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*m\b/);
+  if (usdMatch) {
+    const num = usdMatch[1].replace(/,/g, "");
+    anchorKey = `usd_${num}m`;
+    return `${facet}:${anchorKey}`;
+  }
+  
+  // If contains "<num>%" -> pct_<num> (pct_20, pct_31)
+  const pctMatch = text.match(/([\d,]+(?:\.\d+)?)\s*%/);
+  if (pctMatch) {
+    const num = pctMatch[1].replace(/,/g, "");
+    anchorKey = `pct_${num}`;
+    return `${facet}:${anchorKey}`;
+  }
+  
+  // Else if facet=Valuation and contains "pre-money" -> premoney
+  if (facet === "Valuation" && /pre-?money/.test(text)) {
+    return `${facet}:premoney`;
+  }
+  
+  // Else if facet=Structure and contains "1x" -> 1x
+  if (facet === "Structure" && /\b1x\b/.test(text)) {
+    return `${facet}:1x`;
+  }
+  
+  // Else if facet=Structure and contains "preferred" -> preferred
+  if (facet === "Structure" && /\bpreferred\b/.test(text)) {
+    return `${facet}:preferred`;
+  }
+  
+  // Else if facet=Investment and contains "Series A" -> series_a
+  if (facet === "Investment" && /series\s+a\b/.test(text)) {
+    return `${facet}:series_a`;
+  }
+  
+  // Fallback: first strong keyword for facet
+  const keywords = {
+    Valuation: ["valuation", "pre-money", "post-money", "ev", "enterprise value"],
+    Structure: ["preferred", "liquidation", "structured"],
+    Ownership: ["ownership", "stake", "fully diluted"],
+    Investment: ["investment", "invest", "series"],
+    Timing: ["expected", "would", "plans"],
+  };
+  
+  const facetKeywords = keywords[facet] || [];
+  for (const keyword of facetKeywords) {
+    if (text.includes(keyword)) {
+      anchorKey = keyword.replace(/\s+/g, "_");
+      return `${facet}:${anchorKey}`;
+    }
+  }
+  
+  // Final fallback
+  return `${facet}:other`;
+}
+
+// A3.6.1: Aggregate claims by key (merge overlapping claims)
+function aggregateClaimsByKey(rawCandidates) {
+  if (!Array.isArray(rawCandidates) || rawCandidates.length === 0) {
+    return [];
+  }
+  
+  // Map<claimKey, ClaimAgg>
+  const aggregated = new Map();
+  
+  for (const candidate of rawCandidates) {
+    if (!candidate || typeof candidate.claimText !== "string" || !candidate.facet) {
+      continue;
+    }
+    
+    const key = candidate.claimKey;
+    if (!aggregated.has(key)) {
+      aggregated.set(key, {
+        claimText: candidate.claimText,
+        facet: candidate.facet,
+        candidates: [candidate],
+      });
+    } else {
+      const existing = aggregated.get(key);
+      existing.candidates.push(candidate);
+      
+      // Select "best" representative claimText using selection rule
+      const best = selectBestClaimText(existing.candidates.map(c => c.claimText));
+      existing.claimText = best;
+    }
+  }
+  
+  // Convert to array
+  return Array.from(aggregated.values()).map(agg => ({
+    claimText: agg.claimText,
+    facet: agg.facet,
+    claimKey: buildClaimKey(agg.claimText, agg.facet),
+    mergedCount: agg.candidates.length,
+  }));
+}
+
+// A3.6.1: Select best claimText from candidates
+function selectBestClaimText(candidates) {
+  if (!Array.isArray(candidates) || candidates.length === 0) {
+    return "";
+  }
+  
+  if (candidates.length === 1) {
+    return candidates[0];
+  }
+  
+  // Selection rule (deterministic):
+  // - Prefer claimText length between 10 and 60 chars
+  // - Prefer fewer commas
+  // - Prefer presence of anchor token (e.g., $5m, 20%, 31%, 1x, pre-money)
+  // - If tie: choose shortest
+  
+  const scored = candidates.map(text => {
+    if (typeof text !== "string") return { text, score: -1 };
+    
+    const length = text.length;
+    const commaCount = (text.match(/,/g) || []).length;
+    const hasAnchor = /\$[\d,]+(?:\.\d+)?\s*m\b|[\d,]+(?:\.\d+)?\s*%|\b1x\b|pre-?money/i.test(text);
+    
+    let score = 0;
+    
+    // Length preference: 10-60 chars is best
+    if (length >= 10 && length <= 60) {
+      score += 100;
+    } else if (length < 10) {
+      score -= 50; // Too short
+    } else {
+      score -= (length - 60) * 2; // Penalize long
+    }
+    
+    // Fewer commas is better
+    score -= commaCount * 10;
+    
+    // Anchor presence is good
+    if (hasAnchor) {
+      score += 50;
+    }
+    
+    return { text, score, length };
+  });
+  
+  // Sort by score (desc), then by length (asc)
+  scored.sort((a, b) => {
+    if (a.score !== b.score) {
+      return b.score - a.score;
+    }
+    return a.length - b.length;
+  });
+  
+  return scored[0].text;
+}
+
+// A3.6.1: Apply facet caps to claims
+function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
+  if (!Array.isArray(claims)) {
+    return [];
+  }
+  
+  const caps = {
+    Investment: 2,
+    Valuation: 1,
+    Structure: 1,
+    Ownership: 2,
+    Timing: 1,
+    Other: 1,
+  };
+  
+  // Group by facet
+  const byFacet = new Map();
+  for (const claim of claims) {
+    const facet = claim.facet || "Other";
+    if (!byFacet.has(facet)) {
+      byFacet.set(facet, []);
+    }
+    byFacet.get(facet).push(claim);
+  }
+  
+  const result = [];
+  
+  for (const [facet, facetClaims] of byFacet.entries()) {
+    const cap = caps[facet] || 1;
+    
+    if (facetClaims.length <= cap) {
+      result.push(...facetClaims);
+    } else {
+      // Keep "best" using same selection heuristic
+      // Sort by selection score
+      const scored = facetClaims.map(claim => {
+        const text = claim.claimText || "";
+        const length = text.length;
+        const commaCount = (text.match(/,/g) || []).length;
+        const hasAnchor = /\$[\d,]+(?:\.\d+)?\s*m\b|[\d,]+(?:\.\d+)?\s*%|\b1x\b|pre-?money/i.test(text);
+        
+        let score = 0;
+        if (length >= 10 && length <= 60) score += 100;
+        else if (length < 10) score -= 50;
+        else score -= (length - 60) * 2;
+        score -= commaCount * 10;
+        if (hasAnchor) score += 50;
+        
+        return { claim, score, length };
+      });
+      
+      scored.sort((a, b) => {
+        if (a.score !== b.score) return b.score - a.score;
+        return a.length - b.length;
+      });
+      
+      const kept = scored.slice(0, cap).map(s => s.claim);
+      const dropped = scored.slice(cap);
+      
+      result.push(...kept);
+      
+      // Log if dropped
+      if (dropped.length > 0 && runId && reqSig) {
+        diag(runId, reqSig, `[CLAIMS_CAP] idx=${idx} facet=${facet} kept=${kept.length} dropped=${dropped.length}`);
+      }
+    }
+  }
+  
+  return result;
+}
+
 // A3.6.0: Extract atomic claims from statement text (deterministic, no LLM)
 function extractAtomicClaims(statementText) {
   if (typeof statementText !== "string" || !statementText.trim()) return [];
@@ -2648,44 +2918,28 @@ function extractAtomicClaims(statementText) {
     }
   }
   
-  // Deduplicate (case-insensitive, numeric-equivalent)
-  const normalized = new Map();
-  const deduped = [];
+  // A3.6.1: Clean, assign facet, and prepare for aggregation
+  const rawCandidates = [];
   
   for (const claim of claims) {
-    const lower = claim.toLowerCase();
-    // Check for numeric-equivalent duplicates
-    const numericMatch = claim.match(/\$?([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|billion|b|thousand|k)?/i);
-    let key = lower;
-    if (numericMatch) {
-      const numStr = numericMatch[1].replace(/,/g, "");
-      const num = parseFloat(numStr);
-      if (Number.isFinite(num)) {
-        // Use normalized numeric value as part of key
-        const unit = (numericMatch[2] || "").toLowerCase();
-        const multipliers = {
-          mm: 1e6, million: 1e6, m: 1e6,
-          billion: 1e9, b: 1e9,
-          thousand: 1e3, k: 1e3,
-        };
-        const multiplier = multipliers[unit] || 1;
-        const normalizedValue = num * multiplier;
-        key = `${lower.replace(/\$?[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b|thousand|k)?/i, "")}_${normalizedValue}`;
-      }
-    }
+    // Clean claimText
+    const cleaned = cleanClaimText(claim);
+    if (!cleaned) continue; // Skip empty after cleaning
     
-    if (!normalized.has(key)) {
-      normalized.set(key, true);
-      deduped.push(claim);
-    }
+    // Assign facet
+    const facet = assignFacetToClaim(cleaned);
+    
+    // Compute claimKey
+    const claimKey = buildClaimKey(cleaned, facet);
+    
+    rawCandidates.push({
+      claimText: cleaned,
+      facet,
+      claimKey,
+    });
   }
   
-  // Limit to 10 claims
-  if (deduped.length > 10) {
-    return deduped.slice(0, 10);
-  }
-  
-  return deduped;
+  return rawCandidates;
 }
 
 // A3.6.0: Assign facet to a claim (per-claim version of detectFacetsInStatement)
@@ -2722,49 +2976,75 @@ function assignFacetToClaim(claimText) {
   return "Other";
 }
 
-// A3.6.0: Score reliability for a claim based on corpusSearch results
-function scoreClaimReliability(claimText, corpusSearchResult, ambiguityResult) {
+// A3.6.1: Score reliability for a claim based on matchTypes (claim-aware)
+function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityResult) {
   if (!corpusSearchResult || !corpusSearchResult.found) {
     return "Low";
   }
   
-  const hitsCount = corpusSearchResult.hits?.length || 0;
+  const hits = corpusSearchResult.hits || [];
+  if (hits.length === 0) {
+    return "Low";
+  }
+  
+  // Determine matchStrength from matchTypes
+  const matchTypes = [...new Set(hits.map(h => h.matchType))];
+  let strength = "NONE";
+  
+  if (matchTypes.includes("number")) {
+    strength = "NUMBER";
+  } else if (matchTypes.includes("keyword")) {
+    strength = "KEYWORD";
+  } else if (matchTypes.includes("fuzzy")) {
+    strength = "FUZZY";
+  }
+  
+  // Reliability mapping
+  let reliability = "Low";
+  if (strength === "NUMBER") {
+    reliability = "High";
+  } else if (strength === "KEYWORD" || strength === "FUZZY") {
+    reliability = "Medium";
+  }
+  
+  // Ambiguity adjustment (only for valuation/ownership claims)
   const isAmbiguous = ambiguityResult?.isAmbiguous || false;
-  
-  // HIGH: Exact match found AND no ambiguity
-  if (hitsCount > 0 && !isAmbiguous) {
-    return "High";
+  if ((facet === "Valuation" || facet === "Ownership") && isAmbiguous) {
+    // Cap reliability at MEDIUM (never HIGH)
+    if (reliability === "High") {
+      reliability = "Medium";
+    }
   }
   
-  // MEDIUM: Found but ambiguous or multiple values
-  if (hitsCount > 0 && isAmbiguous) {
-    return "Medium";
-  }
-  
-  // MEDIUM: Mentioned but not explicitly confirmed (fallback)
-  if (hitsCount > 0) {
-    return "Medium";
-  }
-  
-  return "Low";
+  return reliability;
 }
 
-// A3.6.0: Generate comment for a claim using templates
-function generateClaimComment(reliability, facet) {
+// A3.6.1: Generate comment for a claim using templates (with ambiguity awareness)
+function generateClaimComment(reliability, facet, hasAmbiguityCap, claimText) {
   if (reliability === "High") {
     return "Confirmed in provided source";
   }
   
   if (reliability === "Medium") {
-    if (facet === "Valuation") {
+    // Valuation: "Multiple figures present; verify which applies" ONLY if ambiguity cap applied
+    if (facet === "Valuation" && hasAmbiguityCap) {
       return "Multiple figures present; verify which applies";
     }
+    
+    // Ownership: "Ownership basis not clearly defined" ONLY if ambiguity cap applied OR contains %/fully diluted/stake
     if (facet === "Ownership") {
-      return "Ownership basis not clearly defined";
+      const hasOwnershipTerms = /%|\bfully\s+diluted\b|\bstake\b/i.test(claimText || "");
+      if (hasAmbiguityCap || hasOwnershipTerms) {
+        return "Ownership basis not clearly defined";
+      }
     }
+    
+    // Structure: "Terms mentioned but not explicitly confirmed"
     if (facet === "Structure") {
       return "Terms mentioned but not explicitly confirmed";
     }
+    
+    // Default for Medium
     return "Mentioned but not explicitly confirmed in excerpt";
   }
   
@@ -2775,37 +3055,65 @@ function generateClaimComment(reliability, facet) {
   return "Not supported in provided sources";
 }
 
-// A3.6.0: Generate claims assessment for a statement
-function generateClaimsForStatement(statementText, uploadedDocs, assessment) {
+// A3.6.1: Generate claims assessment for a statement (with aggregation and capping)
+function generateClaimsForStatement(statementText, uploadedDocs, assessment, runId = null, reqSig = null, idx = 0) {
   if (typeof statementText !== "string" || !statementText.trim()) {
     return [];
   }
   
-  // Extract atomic claims
-  const claimTexts = extractAtomicClaims(statementText);
-  if (claimTexts.length === 0) {
+  // Extract raw candidates (already cleaned and with facet/key assigned)
+  const rawCandidates = extractAtomicClaims(statementText);
+  if (rawCandidates.length === 0) {
     return [];
   }
+  
+  // A3.6.1: Aggregate by claimKey
+  const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
+  
+  // Log aggregation stats (per statement)
+  if (runId && reqSig) {
+    const merged = rawCandidates.length - aggregatedClaims.length;
+    diag(runId, reqSig, `[CLAIMS_AGG] idx=${idx} raw=${rawCandidates.length} grouped=${aggregatedClaims.length} merged=${merged}`);
+    
+    // Sample only for first statement to avoid noise
+    if (idx === 0) {
+      const sample = rawCandidates.slice(0, 5).map(c => c.claimText);
+      diag(runId, reqSig, `[CLAIMS_AGG_SAMPLE] idx=${idx} first5=${JSON.stringify(sample)}`);
+    }
+  }
+  
+  // A3.6.1: Apply facet caps
+  const cappedClaims = applyFacetCaps(aggregatedClaims, runId, reqSig, idx);
   
   // Get existing citations if available
   const citations = Array.isArray(assessment?.citations) ? assessment.citations : [];
   
-  const claims = [];
-  for (const claimText of claimTexts) {
-    // Assign facet
-    const facet = assignFacetToClaim(claimText);
+  // Score reliability and generate comments for final claims
+  const finalClaims = [];
+  let hiCount = 0, medCount = 0, lowCount = 0;
+  
+  for (const aggClaim of cappedClaims) {
+    const claimText = aggClaim.claimText;
+    const facet = aggClaim.facet;
     
-    // Run corpusSearch for this claim
+    // Run corpusSearch for this claim (with hybrid mode, maxHits: 2)
     const searchResult = corpusSearch(claimText, uploadedDocs);
     
-    // Check for ambiguity
+    // Check for ambiguity (for valuation/ownership claims)
     const ambiguityResult = detectAnchorAmbiguity(claimText, uploadedDocs);
     
-    // Score reliability
-    const reliability = scoreClaimReliability(claimText, searchResult, ambiguityResult);
+    // Score reliability (claim-aware, using matchTypes)
+    const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult);
     
-    // Generate comment
-    const comment = generateClaimComment(reliability, facet);
+    // Track counts
+    if (reliability === "High") hiCount++;
+    else if (reliability === "Medium") medCount++;
+    else lowCount++;
+    
+    // Generate comment (with ambiguity awareness)
+    const hasAmbiguityCap = (facet === "Valuation" || facet === "Ownership") && 
+                            (ambiguityResult?.isAmbiguous || false);
+    const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, claimText);
     
     // Build claim object
     const claim = {
@@ -2820,10 +3128,15 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment) {
       claim.citations = citations;
     }
     
-    claims.push(claim);
+    finalClaims.push(claim);
   }
   
-  return claims;
+  // Log scoring distribution (per statement)
+  if (runId && reqSig) {
+    diag(runId, reqSig, `[CLAIMS_SCORE] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount}`);
+  }
+  
+  return finalClaims;
 }
 
 // A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
@@ -6876,28 +7189,23 @@ ${
         const text = typeof stmt.text === "string" ? stmt.text : "";
         const assessment = stmt.assessment || {};
         
-        // Generate claims
-        const claims = generateClaimsForStatement(text, uploadedDocs, assessment);
+        // Generate claims (with aggregation, capping, and claim-aware scoring)
+        const claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
         
-        // Log claims for first statement
+        // Log claims for first statement (A3.6.1: show final counts)
         if (idx === 0 && claims.length > 0) {
           const facetCounts = {};
           claims.forEach((c) => {
             facetCounts[c.facet] = (facetCounts[c.facet] || 0) + 1;
           });
           
-          diag(runId, reqSig, `[CLAIMS] idx=${idx} count=${claims.length} facets=${JSON.stringify(facetCounts)}`);
+          diag(runId, reqSig, `[CLAIMS] idx=${idx} final=${claims.length} facetsFinal=${JSON.stringify(facetCounts)}`);
           
           const sample = claims.slice(0, 5).map((c) => ({
             claim: c.claimText,
             reliability: c.reliability,
           }));
           diag(runId, reqSig, `[CLAIMS_SAMPLE] idx=${idx} first5=${JSON.stringify(sample)}`);
-          
-          // Log if exceeded limit
-          if (claims.length > 10) {
-            diag(runId, reqSig, `[CLAIMS] idx=${idx} exceeded limit of 10, truncated`);
-          }
         }
         
         // Add claims to assessment (non-breaking, additive)
