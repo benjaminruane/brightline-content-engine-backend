@@ -7817,6 +7817,50 @@ ${
       diag(runId, reqSig, `[FINAL_COUNTS][ERROR] citations lost after enforcement`);
     }
     
+    // HOTFIX: Build finalResponseObject IMMEDIATELY after FINAL_COUNTS to ensure it's always set
+    // This must happen before any code that might throw, so it's available in error paths
+    try {
+      // Compute extractionQuality first (needed for meta)
+      let extractionQualityValue = extractionQuality || "ok";
+      try {
+        const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
+        const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
+        extractionQualityValue = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged);
+      } catch (e) {
+        diag(runId, reqSig, `[ERROR] failed computing extractionQuality after FINAL_COUNTS: ${e?.message || String(e)}`);
+        extractionQualityValue = extractionQualityValue || "ok";
+      }
+      
+      // Build finalResponseObject with canonical variables
+      finalResponseObject = {
+        ok: true,
+        statements, // Use the exact statements array that was counted
+        references: unifiedReferences || [],
+        meta: {
+          webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
+          extractionQuality: extractionQualityValue,
+          uploadedSourcesCount: uploadedReferences?.length || 0,
+          webSourcesCount: webReferencesWithIds?.length || 0,
+          ...(meta?.verification ? { verification: meta.verification } : {}),
+        },
+      };
+    } catch (e) {
+      diag(runId, reqSig, `[ERROR] failed building finalResponseObject immediately after FINAL_COUNTS: ${e?.message || String(e)}`);
+      // Fallback: build minimal finalResponseObject
+      finalResponseObject = {
+        ok: true,
+        statements: statements || [],
+        references: unifiedReferences || [],
+        meta: {
+          webSearch: { enabled: true, used: false },
+          extractionQuality: "error",
+          uploadedSourcesCount: uploadedReferences?.length || 0,
+          webSourcesCount: webReferencesWithIds?.length || 0,
+          ...(meta?.verification ? { verification: meta.verification } : {}),
+        },
+      };
+    }
+    
     // A3.6.0: Generate atomic claims assessment for each statement
     // Note: uploadedSources is defined in handler scope
     const uploadedDocs = Array.isArray(uploadedSources) && uploadedSources.length > 0
@@ -7896,55 +7940,7 @@ ${
       };
     });
     
-    // FIX: Build finalResponseObject IMMEDIATELY after FINAL_COUNTS, before any risky code
-    // This ensures finalResponseObject is always set even if computeExtractionQuality throws
-    try {
-      // A3.5.14b Patch 5: Compute extractionQuality from actual quality signals
-      // A3.5.17 Fix 3: Pass incomplete_numeric_fragment and recombined counts
-      // A3.5.27: Pass fragment_dropped and fragment_merged counts
-      const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
-      const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
-      extractionQuality = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged);
-    } catch (e) {
-      diag(runId, reqSig, `[ERROR] failed computing extractionQuality after FINAL_COUNTS: ${e?.message || String(e)}`);
-      // Use fallback quality value
-      extractionQuality = extractionQuality || "ok";
-    }
-    
-    // A3.5.19 Fix 1 & 3: Create final response object immediately after FINAL_COUNTS
-    // Use the exact statements object that was counted to ensure consistency
-    // A3.5.21 Fix: Store in handler scope for fallback guard
-    // FIX: Build payload snapshot immediately after FINAL_COUNTS to ensure it's never null
-    try {
-      finalResponseObject = {
-        ok: true,
-        statements, // Use the exact statements array that was counted
-        references: unifiedReferences || [],
-        meta: {
-          webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
-          extractionQuality: extractionQuality || "ok",
-          uploadedSourcesCount: uploadedReferences?.length || 0,
-          webSourcesCount: webReferencesWithIds?.length || 0,
-          ...(meta?.verification ? { verification: meta.verification } : {}),
-        },
-      };
-    } catch (e) {
-      diag(runId, reqSig, `[ERROR] failed building finalResponseObject after FINAL_COUNTS: ${e?.message || String(e)}`);
-      // As a fallback, set a minimally-correct payload that STILL includes the computed statements:
-      finalResponseObject = {
-        ok: true,
-        statements: statements || [],
-        references: unifiedReferences || [],
-        meta: {
-          webSearch: { enabled: true, used: false },
-          extractionQuality: "error",
-          uploadedSourcesCount: uploadedReferences?.length || 0,
-          webSourcesCount: webReferencesWithIds?.length || 0,
-          ...(meta?.verification ? { verification: meta.verification } : {}),
-        },
-      };
-    }
-    
+    // NOTE: finalResponseObject is now built immediately after FINAL_COUNTS (see above)
     // After this point, finalResponseObject must never be null.
     
     // A3.5.19 Fix 3: Log return snapshot from the SAME object being returned
@@ -7982,7 +7978,7 @@ ${
       try {
         diag(runId, reqSig, `SKIP_FALLBACK_AFTER_FINAL_COUNTS finalResponseObjectPresent=${Boolean(finalResponseObject)}`);
         if (!finalResponseObject) {
-          diag(runId, reqSig, `[ERROR] finalResponseObject missing after FINAL_COUNTS — returning current assembled response variables`);
+          diag(runId, reqSig, `[ERROR] finalResponseObject missing after FINAL_COUNTS — building safe fallback`);
         }
       } catch (logErr) {
         // Best-effort logging
@@ -7995,8 +7991,8 @@ ${
       } catch (logErr) {
         // Best-effort logging
       }
-      // Return finalResponseObject if present; otherwise return payload with actual statements
-      // FIX: If finalCountsReached is true, statements should exist, so use them even if finalResponseObject is null
+      // HOTFIX: finalResponseObject should always be set after FINAL_COUNTS
+      // If it's missing, build a safe fallback that doesn't reference undefined variables
       if (finalResponseObject) {
         try {
           diag(runId, reqSig, `RETURN_PAYLOAD statements=${finalResponseObject?.statements?.length ?? -1} refs=${finalResponseObject?.references?.length ?? -1}`);
@@ -8005,8 +8001,9 @@ ${
         }
         return res.status(200).json(finalResponseObject);
       } else {
-        // Build payload with actual statements when finalResponseObject is unexpectedly null
-        // This preserves the computed statements instead of returning empty array
+        // HOTFIX: Build safe fallback without referencing undefined 'statements'
+        // This should never happen if finalResponseObject was built correctly after FINAL_COUNTS
+        diag(runId, reqSig, `[ERROR] finalResponseObject missing after FINAL_COUNTS — building safe fallback`);
         const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
         const sources = Array.isArray(body.sources) ? body.sources : [];
         const minimalReferences = sources.map((s, idx) => ({
@@ -8017,13 +8014,13 @@ ${
         }));
         const fallbackPayload = {
           ok: true,
-          statements: statements || [], // Use actual statements, not empty array
-          references: unifiedReferences || minimalReferences,
+          statements: [], // Safe fallback: empty array since 'statements' is not in scope
+          references: minimalReferences,
           meta: {
             webSearch: { enabled: true, used: false },
             extractionQuality: "error",
-            uploadedSourcesCount: uploadedReferences?.length || minimalReferences.length,
-            webSourcesCount: webReferencesWithIds?.length || 0,
+            uploadedSourcesCount: minimalReferences.length,
+            webSourcesCount: 0,
           },
         };
         try {
