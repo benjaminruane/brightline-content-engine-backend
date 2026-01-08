@@ -2577,12 +2577,16 @@ function detectFacetsInStatement(statementText) {
   return facets;
 }
 
-// A3.5.29: Normalize assessment reasons - dedupe, ban generic bullets, enforce facet tagging, enforce diversity
+// A3.5.31: Normalize assessment reasons - dedupe, ban generic bullets, enforce facet tagging, enforce diversity
+// A3.5.31: Add consistency gates to prevent contradictory "no sources" bullets when sources exist
 // Returns normalized reasons array and stats for logging
-function normalizeAssessmentReasons(statementText, reasons) {
+function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
   if (!Array.isArray(reasons) || reasons.length === 0) {
     return { reasons: [], stats: { before: 0, after: 0, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0 } };
   }
+  
+  const { hasCitations = false, hasEvidence = false, facetsDetected = [] } = opts;
+  const hasSources = hasCitations || hasEvidence;
   
   const stats = { before: reasons.length, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0 };
   let normalized = [];
@@ -2645,6 +2649,69 @@ function normalizeAssessmentReasons(statementText, reasons) {
     stats.deduped += (genericCount - 1);
   }
   
+  // Step 2.5: A3.5.31 Consistency gates - remove contradictory "no sources" bullets when sources exist
+  if (hasSources) {
+    const contradictoryPatterns = [
+      /no verifiable sources cited/i,
+      /no sources cited/i,
+      /could not be verified against provided sources/i,
+      /cannot be verified/i,
+    ];
+    
+    // Also remove "not fully verified" if it's absolute and lacks facet/snippet
+    normalized = normalized.filter((reason) => {
+      if (typeof reason !== "string") return true;
+      
+      const isContradictory = contradictoryPatterns.some(pattern => pattern.test(reason));
+      if (isContradictory) {
+        stats.deduped++;
+        return false;
+      }
+      
+      // Check for absolute "not fully verified" without facet/snippet
+      if (/not fully verified/i.test(reason)) {
+        const hasFacetTag = /^\[(Investment|Valuation|Structure|Ownership|Timing|Other)\]/i.test(reason);
+        const hasSnippet = /"[^"]{1,120}"/.test(reason);
+        if (!hasFacetTag || !hasSnippet) {
+          stats.deduped++;
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  } else {
+    // If NO citations/evidence, keep at most one "missing citations" bullet
+    // But require facet tag + snippet
+    const missingCitationPatterns = [
+      /no (?:verifiable )?sources cited/i,
+      /not supported in provided sources/i,
+      /cannot be verified/i,
+      /could not be verified/i,
+    ];
+    
+    let missingCitationCount = 0;
+    normalized = normalized.filter((reason) => {
+      if (typeof reason !== "string") return true;
+      
+      const isMissingCitation = missingCitationPatterns.some(pattern => pattern.test(reason));
+      if (isMissingCitation) {
+        missingCitationCount++;
+        // Keep only the first one, and only if it has facet tag + snippet
+        if (missingCitationCount === 1) {
+          const hasFacetTag = /^\[(Investment|Valuation|Structure|Ownership|Timing|Other)\]/i.test(reason);
+          const hasSnippet = /"[^"]{1,120}"/.test(reason);
+          if (hasFacetTag && hasSnippet) {
+            return true;
+          }
+        }
+        stats.deduped++;
+        return false;
+      }
+      return true;
+    });
+  }
+  
   // Step 3: Enforce facet tagging and snippet binding
   const validFacets = ["Investment", "Valuation", "Structure", "Ownership", "Timing", "Other"];
   const facetPattern = /^\[(Investment|Valuation|Structure|Ownership|Timing|Other)\]/i;
@@ -2671,8 +2738,7 @@ function normalizeAssessmentReasons(statementText, reasons) {
     
     // If missing snippet, inject one
     if (!hasSnippet) {
-      // Extract snippet from statement text
-      // Try to find a clause around a detected facet keyword first
+      // A3.5.31: Extract facet-specific snippet from statement clauses (not just first 8-12 words)
       const text = typeof statementText === "string" ? statementText : "";
       let snippet = "";
       
@@ -2683,13 +2749,17 @@ function normalizeAssessmentReasons(statementText, reasons) {
         
         let keywordPattern = null;
         if (facetName === "Investment") {
-          keywordPattern = /\b(?:invest|investment|\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b)?)\b/i;
+          // Look for "$" / "up to" / "million" patterns
+          keywordPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b)?|\bup to\b.*\b(?:million|mm|billion|b)?|\binvest\b.*\$\d/i;
         } else if (facetName === "Valuation") {
-          keywordPattern = /\b(?:valuation|pre-?money|post-?money|enterprise value|ev)\b/i;
+          // Look for "pre-money" / "valuation" / "EV" patterns
+          keywordPattern = /\bpre-?money\b|\bpost-?money\b|\bvaluation\b|\benterprise value\b|\bev\b(?!\w)/i;
         } else if (facetName === "Structure") {
-          keywordPattern = /\b(?:preferred|1x|liquidation|structured|terms)\b/i;
+          // Look for "1x" / "preferred" / "structured" patterns
+          keywordPattern = /\b1x\b|\bpreferred\b|\bstructured\b|\bterms\b/i;
         } else if (facetName === "Ownership") {
-          keywordPattern = /\b(?:ownership|stake|fully diluted|\d+%)\b/i;
+          // Look for "%" / "stake" / "fully diluted" / "ownership" patterns
+          keywordPattern = /\d+%|\bstake\b|\bfully diluted\b|\bownership\b/i;
         }
         
         if (keywordPattern) {
@@ -2707,7 +2777,7 @@ function normalizeAssessmentReasons(statementText, reasons) {
           }
         }
         
-        // Fallback: first 8-12 words
+        // Fallback: first 8-12 words (but prefer facet-specific extraction)
         if (!snippet) {
           const words = text.trim().split(/\s+/);
           snippet = words.slice(0, Math.min(12, words.length)).join(" ");
@@ -2768,9 +2838,13 @@ function normalizeAssessmentReasons(statementText, reasons) {
   });
   
   // Step 5: Enforce facet diversity for multi-claim statements
-  const facetsDetected = detectFacetsInStatement(statementText);
+  // A3.5.31: Use facetsDetected from opts, or detect if not provided
+  const detectedFacets = facetsDetected.length > 0 ? facetsDetected : detectFacetsInStatement(statementText);
   
-  if (facetsDetected.length >= 2) {
+  // A3.5.31: If 3+ facets detected, require at least 2 distinct facet tags (excluding [Other])
+  const minFacetsRequired = detectedFacets.length >= 3 ? 2 : (detectedFacets.length >= 2 ? 2 : 0);
+  
+  if (minFacetsRequired > 0) {
     // Extract distinct facets from current reasons (excluding [Other])
     const currentFacets = new Set();
     normalized.forEach((reason) => {
@@ -2781,27 +2855,31 @@ function normalizeAssessmentReasons(statementText, reasons) {
       }
     });
     
-    // Need at least 2 distinct facets (not counting [Other])
-    if (currentFacets.size < 2) {
+    // Need at least minFacetsRequired distinct facets (not counting [Other])
+    if (currentFacets.size < minFacetsRequired) {
       // Generate deterministic bullets for missing facets (up to 2)
-      const missingFacets = facetsDetected.filter(f => f !== "Other" && !currentFacets.has(f)).slice(0, 2);
+      const missingFacets = detectedFacets.filter(f => f !== "Other" && !currentFacets.has(f)).slice(0, 2);
       const text = typeof statementText === "string" ? statementText : "";
       
       for (const facet of missingFacets) {
         if (normalized.length >= 4) break; // Max 4 bullets
         
-        // Extract snippet for this facet
+        // A3.5.31: Extract facet-specific snippet from statement clauses (not just first 8-12 words)
         let snippet = "";
         if (text) {
           let keywordPattern = null;
           if (facet === "Investment") {
-            keywordPattern = /\b(?:invest|investment|\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b)?)\b/i;
+            // Look for "$" / "up to" / "million" patterns
+            keywordPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b)?|\bup to\b.*\b(?:million|mm|billion|b)?|\binvest\b.*\$\d/i;
           } else if (facet === "Valuation") {
-            keywordPattern = /\b(?:valuation|pre-?money|post-?money|enterprise value|ev)\b/i;
+            // Look for "pre-money" / "valuation" / "EV" patterns
+            keywordPattern = /\bpre-?money\b|\bpost-?money\b|\bvaluation\b|\benterprise value\b|\bev\b(?!\w)/i;
           } else if (facet === "Structure") {
-            keywordPattern = /\b(?:preferred|1x|liquidation|structured|terms)\b/i;
+            // Look for "1x" / "preferred" / "structured" patterns
+            keywordPattern = /\b1x\b|\bpreferred\b|\bstructured\b|\bterms\b/i;
           } else if (facet === "Ownership") {
-            keywordPattern = /\b(?:ownership|stake|fully diluted|\d+%)\b/i;
+            // Look for "%" / "stake" / "fully diluted" / "ownership" patterns
+            keywordPattern = /\d+%|\bstake\b|\bfully diluted\b|\bownership\b/i;
           }
           
           if (keywordPattern) {
@@ -2819,6 +2897,7 @@ function normalizeAssessmentReasons(statementText, reasons) {
             }
           }
           
+          // Fallback: first 8-12 words (but prefer facet-specific extraction)
           if (!snippet) {
             const words = text.trim().split(/\s+/);
             snippet = words.slice(0, Math.min(12, words.length)).join(" ");
@@ -2830,18 +2909,39 @@ function normalizeAssessmentReasons(statementText, reasons) {
           snippet = "statement clause";
         }
         
-        // Generate deterministic bullet
+        // A3.5.31: Generate deterministic bullet with better wording
+        // Never claim "not cited" when citations exist; use ambiguity/verification framing
         let bullet = "";
         if (facet === "Valuation") {
-          bullet = `[Valuation] "${snippet}" Evidence appears ambiguous across multiple memo values; verify which applies.`;
+          if (hasSources) {
+            bullet = `[Valuation] "${snippet}" Memo contains valuation figures; figure may be ambiguous across values—verify which applies.`;
+          } else {
+            bullet = `[Valuation] "${snippet}" Valuation figure not supported in provided sources; verify against memo.`;
+          }
         } else if (facet === "Structure") {
-          bullet = `[Structure] "${snippet}" Terms not explicitly confirmed in the visible excerpt; treat as unverified unless cited.`;
+          if (hasSources) {
+            bullet = `[Structure] "${snippet}" Terms may not be explicitly confirmed in the cited excerpt; treat as unverified unless directly stated.`;
+          } else {
+            bullet = `[Structure] "${snippet}" Terms not supported in provided sources; verify against memo.`;
+          }
         } else if (facet === "Investment") {
-          bullet = `[Investment] "${snippet}" Amount not explicitly confirmed in the visible excerpt; verify against sources.`;
+          if (hasSources) {
+            bullet = `[Investment] "${snippet}" Amount may be ambiguous across memo values; verify which applies.`;
+          } else {
+            bullet = `[Investment] "${snippet}" Investment amount not supported in provided sources; verify against memo.`;
+          }
         } else if (facet === "Ownership") {
-          bullet = `[Ownership] "${snippet}" Stake percentage not explicitly confirmed in the visible excerpt; verify against sources.`;
+          if (hasSources) {
+            bullet = `[Ownership] "${snippet}" Ownership percentage should be validated against the memo's cap table / fully-diluted basis.`;
+          } else {
+            bullet = `[Ownership] "${snippet}" Ownership percentage not supported in provided sources; verify against memo.`;
+          }
         } else {
-          bullet = `[${facet}] "${snippet}" Not explicitly confirmed in the visible excerpt; verify against sources.`;
+          if (hasSources) {
+            bullet = `[${facet}] "${snippet}" May not be explicitly confirmed in the visible excerpt; verify against sources.`;
+          } else {
+            bullet = `[${facet}] "${snippet}" Not supported in provided sources; verify against memo.`;
+          }
         }
         
         normalized.push(bullet);
@@ -6008,8 +6108,17 @@ ${
       const assessment = stmt.assessment || {};
       const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
       const text = typeof stmt.text === "string" ? stmt.text : "";
-
-      const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons);
+      
+      // A3.5.31: Pass statement context into normalization
+      const hasCitations = (assessment.citations?.length > 0) || (stmt.citations?.length > 0);
+      const hasEvidence = (stmt.evidence?.length > 0) || (assessment.evidence?.length > 0);
+      const facetsDetected = detectFacetsInStatement(text);
+      
+      const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons, {
+        hasCitations,
+        hasEvidence,
+        facetsDetected,
+      });
 
       if (idx === 0) firstStmtNormStats = stats;
 
@@ -6023,6 +6132,21 @@ ${
       diag(runId, reqSig,
         `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic}`
       );
+    }
+    
+    // A3.5.31: Add observability log for idx=0 after final normalization
+    if (statements.length > 0) {
+      const firstStmt = statements[0];
+      if (firstStmt && typeof firstStmt === "object") {
+        const assessment = firstStmt.assessment || {};
+        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        // Truncate each bullet to ~120 chars for readability
+        const truncatedReasons = reasons.map(r => {
+          if (typeof r !== "string") return String(r);
+          return r.length > 120 ? r.substring(0, 117) + "..." : r;
+        });
+        diag(runId, reqSig, `[REASONS_FINAL_SAMPLE] idx=0 reasons=${JSON.stringify(truncatedReasons)}`);
+      }
     }
     
     // A3.5.18 Fix 2: Hard invariant at return time - ensure citations/evidence are preserved
