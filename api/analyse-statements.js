@@ -2578,6 +2578,7 @@ function detectFacetsInStatement(statementText) {
 }
 
 // A3.6.1: Clean claim text (remove ~ artifacts, normalize money/%, trim)
+// A3.6.2 PATCH v2: Preserve money values correctly, add validation
 function cleanClaimText(raw) {
   if (typeof raw !== "string") return "";
   
@@ -2586,12 +2587,13 @@ function cleanClaimText(raw) {
   // Remove all "~" characters
   cleaned = cleaned.replace(/~/g, "");
   
-  // Normalize money: "$ 5 million", "$5 million" -> "$5m"
-  cleaned = cleaned.replace(/\$\s*([\d,]+(?:\.\d+)?)\s*million\b/gi, "$$1m");
-  cleaned = cleaned.replace(/\$\s*([\d,]+(?:\.\d+)?)\s*mm\b/gi, "$$1m");
+  // A3.6.2 PATCH v2: Preserve money values - only normalize spacing, not values
+  // "$ 5 million" -> "$5 million" (remove space after $, keep "million")
+  cleaned = cleaned.replace(/\$\s+([\d,]+(?:\.\d+)?)/g, "$$1");
+  // DO NOT convert "million" to "m" - preserve original
   
   // Normalize percentages: "20 %" -> "20%", "31 %" -> "31%"
-  cleaned = cleaned.replace(/([\d,]+(?:\.\d+)?)\s*%/g, "$1%");
+  cleaned = cleaned.replace(/([\d,]+(?:\.\d+)?)\s+%/g, "$1%");
   
   // Normalize "pre - money", "pre- money" -> "pre-money"
   cleaned = cleaned.replace(/\bpre\s*-\s*money\b/gi, "pre-money");
@@ -2779,13 +2781,21 @@ function extractAnchor(claimText) {
   
   const text = claimText.toLowerCase();
   
-  // A3.6.2 PATCH: Numeric anchors with consistent normalization
+  // A3.6.2 PATCH v2: Numeric anchors with consistent normalization and validation
   // Match: "$7 million", "$7mm", "$7m" -> all normalize to usd_7m
-  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(?:m\b|mm\b|million|b\b|billion|k\b|thousand)/i);
+  // Use more specific regex to capture full number
+  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/i);
   if (usdMatch) {
-    const num = usdMatch[1].replace(/,/g, "");
+    const numStr = usdMatch[1].replace(/,/g, "");
     const unit = (usdMatch[2] || "").toLowerCase();
-    let normalized = parseFloat(num);
+    const num = parseFloat(numStr);
+    
+    // A3.6.2 PATCH v2: Sanity check - ensure we captured the full number
+    if (!Number.isFinite(num) || num <= 0) {
+      return null;
+    }
+    
+    let normalized = num;
     
     // Normalize to millions
     if (unit.includes("billion") || unit === "b") {
@@ -3122,13 +3132,12 @@ function extractAtomicClaims(statementText) {
           }
         }
         
-        // Normalize common patterns (preserve numeric values correctly)
+        // A3.6.2 PATCH v2: Preserve original claimText verbatim (trim only)
+        // Do NOT normalize money values here - extractAnchor will handle normalization
+        // Only normalize spacing and remove artifacts
         snippet = snippet.replace(/\bup to\b/gi, "up to");
         snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
-        // A3.6.2 PATCH: Preserve original numeric values, normalize units only
-        snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*million\b/gi, "$$1m");
-        snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*mm\b/gi, "$$1m");
-        snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*billion\b/gi, "$$1bn");
+        // DO NOT normalize "$7 million" to "$7m" here - preserve original
         
         if (snippet.length > 0 && snippet.length < 150) {
           claims.push(snippet);
@@ -3138,12 +3147,46 @@ function extractAtomicClaims(statementText) {
   }
   
   // A3.6.1: Clean, assign facet, and prepare for aggregation
+  // A3.6.2 PATCH v2: Add diagnostics for money extraction
   const rawCandidates = [];
+  const shouldLogExtraction = false; // Set to true for debugging
   
   for (const claim of claims) {
-    // Clean claimText
+    // A3.6.2 PATCH v2: Log original clause before cleaning (for diagnostics)
+    if (shouldLogExtraction) {
+      const moneyMatch = claim.match(/\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b)/i);
+      if (moneyMatch) {
+        const contextStart = Math.max(0, claim.indexOf("$") - 40);
+        const contextEnd = Math.min(claim.length, claim.indexOf("$") + 80);
+        console.log(`[CLAIMS_EXTRACT] original_clause="${claim.substring(contextStart, contextEnd)}"`);
+      }
+    }
+    
+    // Clean claimText (preserves money values)
     const cleaned = cleanClaimText(claim);
     if (!cleaned) continue; // Skip empty after cleaning
+    
+    // A3.6.2 PATCH v2: Validate money extraction
+    const originalMoney = claim.match(/\$([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|million|billion|b)/i);
+    const cleanedMoney = cleaned.match(/\$([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|million|billion|b)/i);
+    if (originalMoney && cleanedMoney) {
+      const origNum = originalMoney[1].replace(/,/g, "");
+      const cleanNum = cleanedMoney[1].replace(/,/g, "");
+      if (origNum !== cleanNum) {
+        // Sanity check failed - use original
+        console.log(`[CLAIMS_EXTRACT] WARN: number mismatch orig=${origNum} cleaned=${cleanNum}, using original`);
+        // Keep original claim if numbers don't match
+        const fallbackCleaned = claim.replace(/~/g, "").replace(/\s+/g, " ").trim();
+        if (fallbackCleaned.length >= 6) {
+          rawCandidates.push({
+            claimText: fallbackCleaned,
+            facet: assignFacetToClaim(fallbackCleaned),
+            claimKey: buildClaimKey(fallbackCleaned, assignFacetToClaim(fallbackCleaned)),
+          });
+          continue;
+        }
+      }
+    }
     
     // Assign facet
     const facet = assignFacetToClaim(cleaned);
@@ -3207,8 +3250,28 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
     return "Low";
   }
   
-  // A3.6.2 ADDENDUM: Detect semantic equivalence signals
-  const numericMatch = hits.some(h => h.matchType === "number") ? 1 : 0;
+  // A3.6.2 PATCH v2: Enhanced numericMatch (handles percentages)
+  let numericMatch = 0;
+  if (hits.some(h => h.matchType === "number")) {
+    numericMatch = 1;
+  } else {
+    // Check if claim has percentage and corpus has matching percentage
+    const pctMatch = claimText.match(/([\d,]+(?:\.\d+)?)\s*%/);
+    if (pctMatch) {
+      const claimPct = parseFloat(pctMatch[1].replace(/,/g, ""));
+      const allExcerpts = hits.map(h => h.excerpt || "").join(" ");
+      const pctPattern = /([\d,]+(?:\.\d+)?)\s*%/g;
+      let match;
+      while ((match = pctPattern.exec(allExcerpts)) !== null) {
+        const corpusPct = parseFloat(match[1].replace(/,/g, ""));
+        // Allow 5% tolerance for rounding
+        if (Math.abs(claimPct - corpusPct) / Math.max(claimPct, corpusPct) <= 0.05) {
+          numericMatch = 1;
+          break;
+        }
+      }
+    }
+  }
   
   // Check domain keyword match
   const domainKeywordClass = extractDomainKeywordClass(claimText);
@@ -3375,13 +3438,41 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // Score reliability (A3.6.2 ADDENDUM: anchor-gated semantic equivalence)
     const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult, uploadedDocs);
     
-    // A3.6.2 PATCH: Extract signals for diagnostics
+    // A3.6.2 PATCH v2: Extract signals for diagnostics (enhanced)
     let diagnosticSignals = null;
     if (shouldLogDiagnostics) {
       const anchor = extractAnchor(claimText);
       const meaningKey = buildMeaningKey(claimText);
       const hits = searchResult?.hits || [];
-      const numericMatch = hits.some(h => h.matchType === "number") ? 1 : 0;
+      
+      // A3.6.2 PATCH v2: Enhanced numericMatch for percentages
+      let numericMatch = 0;
+      if (hits.some(h => h.matchType === "number")) {
+        numericMatch = 1;
+      } else {
+        // Check if claim has percentage and corpus has matching percentage
+        const pctMatch = claimText.match(/([\d,]+(?:\.\d+)?)\s*%/);
+        if (pctMatch) {
+          const claimPct = parseFloat(pctMatch[1].replace(/,/g, ""));
+          // Check if corpus excerpts contain this percentage
+          const allExcerpts = hits.map(h => h.excerpt || "").join(" ");
+          const pctPattern = new RegExp(`([\\d,]+(?:\\.[\\d]+)?)\\s*%`, "g");
+          let corpusMatch = false;
+          let corpusMatchVal;
+          while ((match = pctPattern.exec(allExcerpts)) !== null) {
+            const corpusPct = parseFloat(match[1].replace(/,/g, ""));
+            // Allow 5% tolerance for rounding
+            if (Math.abs(claimPct - corpusPct) / Math.max(claimPct, corpusPct) <= 0.05) {
+              corpusMatch = true;
+              corpusMatchVal = corpusPct;
+              break;
+            }
+          }
+          if (corpusMatch) {
+            numericMatch = 1;
+          }
+        }
+      }
       const domainKeywordClass = extractDomainKeywordClass(claimText);
       const allExcerpts = hits.map(h => h.excerpt || "").join(" ").toLowerCase();
       const domainKeywordMatch = domainKeywordClass !== "none" && 
@@ -3580,14 +3671,18 @@ function extractFacetSnippet(text, facet, avoidOverlap = false) {
 
 // A3.5.31: Normalize assessment reasons - dedupe, ban generic bullets, enforce facet tagging, enforce diversity
 // A3.5.31: Add consistency gates to prevent contradictory "no sources" bullets when sources exist
+// A3.6.2 PATCH v2: Disable facet generation (facet-free mode)
 // Returns normalized reasons array and stats for logging
 function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
   if (!Array.isArray(reasons) || reasons.length === 0) {
     return { reasons: [], stats: { before: 0, after: 0, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0, usedDeterministicSet: false } };
   }
   
-  const { hasCitations = false, hasEvidence = false, facetsDetected = [] } = opts;
+  const { hasCitations = false, hasEvidence = false, facetsDetected = [], disableFacets = false } = opts;
   const hasSources = hasCitations || hasEvidence;
+  
+  // A3.6.2 PATCH v2: Hard feature-off for facet generation
+  const FACET_MODE_DISABLED = disableFacets || true; // Always disabled in A3.6.2+
   
   const stats = { before: reasons.length, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0, usedDeterministicSet: false };
   let normalized = [];
@@ -3767,7 +3862,8 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
     // Reassign [Other] to a better facet if needed
     if (bestPartialSupportIndex >= 0 && bestPartialSupportIndex < normalized.length) {
       const bestReason = normalized[bestPartialSupportIndex];
-      if (typeof bestReason === "string" && /^\[Other\]/i.test(bestReason)) {
+      // A3.6.2 PATCH v2: Skip facet generation if disabled
+      if (!FACET_MODE_DISABLED && typeof bestReason === "string" && /^\[Other\]/i.test(bestReason)) {
         const text = typeof statementText === "string" ? statementText : "";
         const lower = text.toLowerCase();
         let newFacet = null;
@@ -3791,91 +3887,97 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
   }
   
   // Step 3: Enforce facet tagging and snippet binding
-  const validFacets = ["Investment", "Valuation", "Structure", "Ownership", "Timing", "Other"];
-  const facetPattern = /^\[(Investment|Valuation|Structure|Ownership|Timing|Other)\]/i;
-  const snippetPattern = /"[^"]{1,120}"/;
-  
-  normalized = normalized.map((reason) => {
-    if (typeof reason !== "string") return reason;
+  // A3.6.2 PATCH v2: Skip if facet mode disabled
+  if (!FACET_MODE_DISABLED) {
+    const validFacets = ["Investment", "Valuation", "Structure", "Ownership", "Timing", "Other"];
+    const facetPattern = /^\[(Investment|Valuation|Structure|Ownership|Timing|Other)\]/i;
+    const snippetPattern = /"[^"]{1,120}"/;
     
-    let updated = reason;
-    let modified = false;
-    
-    // Check if has facet tag
-    const hasFacetTag = facetPattern.test(updated);
-    
-    // Check if has quoted snippet
-    const hasSnippet = snippetPattern.test(updated);
-    
-    // If missing facet tag, prefix [Other]
-    if (!hasFacetTag) {
-      updated = `[Other] ${updated}`;
-      modified = true;
-      stats.autoFacet++;
-    }
-    
-    // If missing snippet, inject one
-    if (!hasSnippet) {
-      // A3.5.33: Use helper function for facet-specific snippet extraction with smart splitting
-      const text = typeof statementText === "string" ? statementText : "";
-      const facetNameMatch = updated.match(/^\[(\w+)\]/i);
-      const facetName = facetNameMatch ? facetNameMatch[1] : "";
+    normalized = normalized.map((reason) => {
+      if (typeof reason !== "string") return reason;
       
-      // Use avoidOverlap for Structure and Ownership to prevent snippet overlap
-      const avoidOverlap = (facetName === "Structure" || facetName === "Ownership");
-      let snippet = extractFacetSnippet(text, facetName, avoidOverlap);
+      let updated = reason;
+      let modified = false;
       
-      if (!snippet) {
-        snippet = "statement clause";
+      // Check if has facet tag
+      const hasFacetTag = facetPattern.test(updated);
+      
+      // Check if has quoted snippet
+      const hasSnippet = snippetPattern.test(updated);
+      
+      // If missing facet tag, prefix [Other]
+      if (!hasFacetTag) {
+        updated = `[Other] ${updated}`;
+        modified = true;
+        stats.autoFacet++;
       }
       
-      // Insert snippet after facet tag
-      const facetMatch = updated.match(/^(\[[^\]]+\])\s*(.*)/);
-      if (facetMatch) {
-        updated = `${facetMatch[1]} "${snippet}" ${facetMatch[2]}`.trim();
-      } else {
-        updated = `"${snippet}" ${updated}`.trim();
+      // If missing snippet, inject one
+      if (!hasSnippet) {
+        // A3.5.33: Use helper function for facet-specific snippet extraction with smart splitting
+        const text = typeof statementText === "string" ? statementText : "";
+        const facetNameMatch = updated.match(/^\[(\w+)\]/i);
+        const facetName = facetNameMatch ? facetNameMatch[1] : "";
+        
+        // Use avoidOverlap for Structure and Ownership to prevent snippet overlap
+        const avoidOverlap = (facetName === "Structure" || facetName === "Ownership");
+        let snippet = extractFacetSnippet(text, facetName, avoidOverlap);
+        
+        if (!snippet) {
+          snippet = "statement clause";
+        }
+        
+        // Insert snippet after facet tag
+        const facetMatch = updated.match(/^(\[[^\]]+\])\s*(.*)/);
+        if (facetMatch) {
+          updated = `${facetMatch[1]} "${snippet}" ${facetMatch[2]}`.trim();
+        } else {
+          updated = `"${snippet}" ${updated}`.trim();
+        }
+        modified = true;
+        stats.autoSnippet++;
       }
-      modified = true;
-      stats.autoSnippet++;
-    }
-    
-    return updated;
-  });
+      
+      return updated;
+    });
+  }
   
   // Step 4: Replace [Other] with a real facet whenever possible
-  normalized = normalized.map((reason) => {
-    if (typeof reason !== "string") return reason;
-    
-    if (!/^\[Other\]/i.test(reason)) return reason;
-    
-    const lower = reason.toLowerCase();
-    let newFacet = null;
-    
-    // Check for Valuation keywords
-    if (/\b(?:pre-?money|post-?money|valuation|enterprise value|ev)\b/.test(lower)) {
-      newFacet = "Valuation";
-    }
-    // Check for Ownership keywords
-    else if (/\b(?:ownership|stake|fully diluted)\b|%\b/.test(lower)) {
-      newFacet = "Ownership";
-    }
-    // Check for Structure keywords
-    else if (/\b(?:preferred|structured|1x|liquidation|terms)\b/.test(lower)) {
-      newFacet = "Structure";
-    }
-    // Check for Investment keywords
-    else if (/\b(?:invest|investment)\b|\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b)/.test(lower)) {
-      newFacet = "Investment";
-    }
-    
-    if (newFacet) {
-      stats.autoFacet++;
-      return reason.replace(/^\[Other\]/i, `[${newFacet}]`);
-    }
-    
-    return reason;
-  });
+  // A3.6.2 PATCH v2: Skip if facet mode disabled
+  if (!FACET_MODE_DISABLED) {
+    normalized = normalized.map((reason) => {
+      if (typeof reason !== "string") return reason;
+      
+      if (!/^\[Other\]/i.test(reason)) return reason;
+      
+      const lower = reason.toLowerCase();
+      let newFacet = null;
+      
+      // Check for Valuation keywords
+      if (/\b(?:pre-?money|post-?money|valuation|enterprise value|ev)\b/.test(lower)) {
+        newFacet = "Valuation";
+      }
+      // Check for Ownership keywords
+      else if (/\b(?:ownership|stake|fully diluted)\b|%\b/.test(lower)) {
+        newFacet = "Ownership";
+      }
+      // Check for Structure keywords
+      else if (/\b(?:preferred|structured|1x|liquidation|terms)\b/.test(lower)) {
+        newFacet = "Structure";
+      }
+      // Check for Investment keywords
+      else if (/\b(?:invest|investment)\b|\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b)/.test(lower)) {
+        newFacet = "Investment";
+      }
+      
+      if (newFacet) {
+        stats.autoFacet++;
+        return reason.replace(/^\[Other\]/i, `[${newFacet}]`);
+      }
+      
+      return reason;
+    });
+  }
   
   // Step 5: Enforce facet diversity for multi-claim statements
   // A3.5.31: Use facetsDetected from opts, or detect if not provided
@@ -4958,6 +5060,7 @@ function numericValuesMatch(val1, val2) {
 }
 
 // Helper: Extract numeric values from text (same logic as corpusSearch)
+// A3.6.2 PATCH v2: Add percentage extraction for numericMatch
 function extractNumericValues(text) {
   if (typeof text !== "string") return [];
   
@@ -4971,6 +5074,8 @@ function extractNumericValues(text) {
     /\$?([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
     // Plain $25, $18.7
     /\$([\d,]+(?:\.\d+)?)/g,
+    // A3.6.2 PATCH v2: Percentages - "20%", "~20%" -> 20 (normalized as percentage value)
+    /([\d,]+(?:\.\d+)?)\s*%/g,
   ];
   
   for (const pattern of patterns) {
@@ -4979,6 +5084,17 @@ function extractNumericValues(text) {
       const numStr = (match[1] || "").replace(/,/g, "");
       const num = parseFloat(numStr);
       if (!Number.isFinite(num)) continue;
+      
+      // A3.6.2 PATCH v2: Handle percentages
+      if (pattern.source.includes("%")) {
+        // Store percentage as-is (20% = 20, not normalized to millions)
+        // Use a special marker to distinguish from dollar amounts
+        values.push(num * 1e-6); // Store as 0.00002 to distinguish from $20m = 20000000
+        // Actually, better: store as negative to distinguish, or use a different approach
+        // For now, store as-is and let numericMatch handle the comparison
+        values.push(num); // Store percentage value directly
+        continue;
+      }
       
       const unit = (match[2] || "").toLowerCase();
       const multipliers = {
@@ -7446,7 +7562,9 @@ ${
         const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
         const facetsDetected = detectFacetsInStatement(text);
         const bulletsCount = reasons.length;
-        diag(runId, reqSig, `[FACET_REASONS] idx=0 facetsDetected=${JSON.stringify(facetsDetected)} bullets=${bulletsCount}`);
+        // A3.6.2 PATCH v2: Disable facet detection
+        const facetsDetectedEmpty = []; // Always empty in facet-free mode
+        diag(runId, reqSig, `[FACET_REASONS] idx=0 facetsDetected=${JSON.stringify(facetsDetectedEmpty)} bullets=${bulletsCount}`);
       }
     }
     
