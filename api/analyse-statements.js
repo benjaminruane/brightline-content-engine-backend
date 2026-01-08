@@ -2680,42 +2680,210 @@ function buildClaimKey(claimText, facet) {
   return `${facet}:other`;
 }
 
+// A3.6.2 ADDENDUM: Extract meaning signature components (deterministic)
+function extractVerbClass(claimText) {
+  if (typeof claimText !== "string") return "none";
+  const text = claimText.toLowerCase();
+  
+  const verbClasses = {
+    invest: ["invest", "investment", "investing", "invested", "investor"],
+    financing: ["financing", "financed", "funding", "funded", "raise", "raised"],
+    purchase: ["purchase", "purchased", "buy", "bought", "acquire", "acquired"],
+    valuation: ["value", "valued", "price", "priced", "valuation"],
+    ownership: ["own", "owned", "ownership", "stake", "equity", "share"],
+  };
+  
+  for (const [verbClass, verbs] of Object.entries(verbClasses)) {
+    for (const verb of verbs) {
+      if (new RegExp(`\\b${verb}\\b`).test(text)) {
+        return verbClass;
+      }
+    }
+  }
+  
+  return "none";
+}
+
+// A3.6.2 ADDENDUM: Extract domain keyword class (deterministic)
+function extractDomainKeywordClass(claimText) {
+  if (typeof claimText !== "string") return "none";
+  const text = claimText.toLowerCase();
+  
+  const domainKeywords = {
+    valuation: ["valuation", "pre-money", "post-money", "premoney", "postmoney", "ev", "enterprise value"],
+    ownership: ["ownership", "stake", "fully diluted", "fully-diluted"],
+    secondary: ["secondary", "common shares", "secondary purchase", "secondary sale"],
+    structure: ["preferred", "liquidation", "liquidation preference", "structured", "1x"],
+    investment: ["investment", "invest", "series a", "series b", "series c"],
+  };
+  
+  for (const [domainClass, keywords] of Object.entries(domainKeywords)) {
+    for (const keyword of keywords) {
+      if (text.includes(keyword.toLowerCase())) {
+        return domainClass;
+      }
+    }
+  }
+  
+  return "none";
+}
+
+// A3.6.2 ADDENDUM: Extract entity key (conservative, deterministic)
+function extractEntityKey(claimText) {
+  if (typeof claimText !== "string") return "";
+  
+  // Extract entities only when:
+  // - two or more consecutive capitalized tokens (e.g. "Shopify Inc")
+  // - OR ALL-CAPS tokens (e.g. tickers)
+  const words = claimText.split(/\s+/);
+  const entities = [];
+  
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i].replace(/[^\w]/g, "");
+    
+    // ALL-CAPS (tickers)
+    if (word.length >= 2 && /^[A-Z]{2,}$/.test(word)) {
+      entities.push(word);
+      continue;
+    }
+    
+    // Two or more consecutive capitalized tokens (not at sentence start)
+    if (i > 0 && word.length > 2 && /^[A-Z]/.test(word)) {
+      // Check if previous word was also capitalized
+      const prevWord = words[i - 1].replace(/[^\w]/g, "");
+      if (prevWord.length > 0 && /^[A-Z]/.test(prevWord)) {
+        // Check if it's not a month/weekday/article
+        const ignoreWords = ["the", "a", "an", "january", "february", "march", "april", "may", "june", 
+                             "july", "august", "september", "october", "november", "december",
+                             "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+        if (!ignoreWords.includes(prevWord.toLowerCase()) && !ignoreWords.includes(word.toLowerCase())) {
+          entities.push(`${prevWord} ${word}`);
+          i++; // Skip next word
+          continue;
+        }
+      }
+    }
+  }
+  
+  // Normalize: join and lowercase for key
+  if (entities.length > 0) {
+    return entities.join("_").toLowerCase();
+  }
+  
+  return "";
+}
+
+// A3.6.2 ADDENDUM: Extract anchor (facet-free, for meaning-based deduplication)
+function extractAnchor(claimText) {
+  if (typeof claimText !== "string") return null;
+  
+  const text = claimText.toLowerCase();
+  
+  // Numeric anchors: "$<num>m", "$<num>mm", "$<num> million", etc.
+  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(?:m|mm|million|b|billion|k|thousand)\b/);
+  if (usdMatch) {
+    const num = usdMatch[1].replace(/,/g, "");
+    let normalized = parseFloat(num);
+    if (text.includes("billion") || text.includes(" b ")) {
+      normalized = normalized * 1000;
+    } else if (text.includes("thousand") || text.includes(" k ")) {
+      normalized = normalized / 1000;
+    }
+    return `usd_${normalized}m`;
+  }
+  
+  // Percentage anchors: "<num>%"
+  const pctMatch = text.match(/([\d,]+(?:\.\d+)?)\s*%/);
+  if (pctMatch) {
+    const num = pctMatch[1].replace(/,/g, "");
+    return `pct_${num}`;
+  }
+  
+  // Multiplier anchors: "<num>x"
+  const multMatch = text.match(/\b([\d,]+(?:\.\d+)?)\s*x\b/);
+  if (multMatch) {
+    const num = multMatch[1].replace(/,/g, "");
+    return `mult_${num}x`;
+  }
+  
+  // Qualitative anchors: discrete assertions
+  if (/\bpre-?money\b/.test(text)) return "qual_premoney";
+  if (/\bpost-?money\b/.test(text)) return "qual_postmoney";
+  if (/\bsecondary\b.*\b(purchase|sale|transaction)\b/.test(text)) return "qual_secondary";
+  if (/\bprofitable\b/.test(text)) return "qual_profitable";
+  if (/\bbootstrapped\b/.test(text)) return "qual_bootstrapped";
+  if (/\b1x\b.*\b(preferred|liquidation)\b/.test(text)) return "qual_1x_preferred";
+  if (/\bpreferred\b/.test(text) && !/\b1x\b/.test(text)) return "qual_preferred";
+  const seriesMatch = text.match(/\bSeries\s+([A-Z])\b/);
+  if (seriesMatch) return `qual_series_${seriesMatch[1].toLowerCase()}`;
+  
+  // Fallback: use first significant domain keyword
+  const domainClass = extractDomainKeywordClass(claimText);
+  if (domainClass !== "none") {
+    return `qual_${domainClass}`;
+  }
+  
+  return null;
+}
+
+// A3.6.2 ADDENDUM: Build meaning-based uniqueness key (anchor + meaning)
+function buildMeaningKey(claimText) {
+  const anchor = extractAnchor(claimText);
+  const verbClass = extractVerbClass(claimText);
+  const domainKeywordClass = extractDomainKeywordClass(claimText);
+  const entityKey = extractEntityKey(claimText);
+  
+  // Effective uniqueness key: anchor + verbClass + domainKeywordClass + entityKey
+  const parts = [
+    anchor || "no_anchor",
+    verbClass,
+    domainKeywordClass,
+    entityKey || "no_entity"
+  ];
+  
+  return parts.join("|");
+}
+
 // A3.6.1: Aggregate claims by key (merge overlapping claims)
+// A3.6.2 ADDENDUM: Now uses anchor + meaning (not anchor-only)
 function aggregateClaimsByKey(rawCandidates) {
   if (!Array.isArray(rawCandidates) || rawCandidates.length === 0) {
     return [];
   }
   
-  // Map<claimKey, ClaimAgg>
+  // Map<meaningKey, ClaimAgg> - groups by anchor + meaning
   const aggregated = new Map();
   
   for (const candidate of rawCandidates) {
-    if (!candidate || typeof candidate.claimText !== "string" || !candidate.facet) {
+    if (!candidate || typeof candidate.claimText !== "string") {
       continue;
     }
     
-    const key = candidate.claimKey;
-    if (!aggregated.has(key)) {
-      aggregated.set(key, {
+    // A3.6.2 ADDENDUM: Use meaning-based key (anchor + verbClass + domainKeywordClass + entityKey)
+    const meaningKey = buildMeaningKey(candidate.claimText);
+    
+    if (!aggregated.has(meaningKey)) {
+      aggregated.set(meaningKey, {
         claimText: candidate.claimText,
-        facet: candidate.facet,
+        facet: candidate.facet || "Other", // Preserve facet for backward compatibility
         candidates: [candidate],
       });
     } else {
-      const existing = aggregated.get(key);
+      const existing = aggregated.get(meaningKey);
       existing.candidates.push(candidate);
       
       // Select "best" representative claimText using selection rule
+      // (Only when claims are semantically equivalent - same meaning key)
       const best = selectBestClaimText(existing.candidates.map(c => c.claimText));
       existing.claimText = best;
     }
   }
   
-  // Convert to array
+  // Convert to array - each entry is a unique anchor + meaning combination
   return Array.from(aggregated.values()).map(agg => ({
     claimText: agg.claimText,
     facet: agg.facet,
-    claimKey: buildClaimKey(agg.claimText, agg.facet),
+    claimKey: buildClaimKey(agg.claimText, agg.facet), // Preserve for backward compatibility
     mergedCount: agg.candidates.length,
   }));
 }
@@ -2977,7 +3145,8 @@ function assignFacetToClaim(claimText) {
 }
 
 // A3.6.1: Score reliability for a claim based on matchTypes (claim-aware)
-function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityResult) {
+// A3.6.2 ADDENDUM: Anchor-gated semantic equivalence (not signal count alone)
+function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityResult, uploadedDocs) {
   if (!corpusSearchResult || !corpusSearchResult.found) {
     return "Low";
   }
@@ -2987,33 +3156,75 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
     return "Low";
   }
   
-  // Determine matchStrength from matchTypes
-  const matchTypes = [...new Set(hits.map(h => h.matchType))];
-  let strength = "NONE";
+  // A3.6.2 ADDENDUM: Detect semantic equivalence signals
+  const numericMatch = hits.some(h => h.matchType === "number") ? 1 : 0;
   
-  if (matchTypes.includes("number")) {
-    strength = "NUMBER";
-  } else if (matchTypes.includes("keyword")) {
-    strength = "KEYWORD";
-  } else if (matchTypes.includes("fuzzy")) {
-    strength = "FUZZY";
+  // Check domain keyword match
+  const domainKeywordClass = extractDomainKeywordClass(claimText);
+  const allExcerpts = hits.map(h => h.excerpt || "").join(" ").toLowerCase();
+  const domainKeywordMatch = domainKeywordClass !== "none" && 
+    allExcerpts.includes(domainKeywordClass.toLowerCase()) ? 1 : 0;
+  
+  // Check verb class match
+  const verbClass = extractVerbClass(claimText);
+  const verbClasses = {
+    invest: ["invest", "investment", "investing", "invested", "investor"],
+    financing: ["financing", "financed", "funding", "funded", "raise", "raised"],
+    purchase: ["purchase", "purchased", "buy", "bought", "acquire", "acquired"],
+    valuation: ["value", "valued", "price", "priced", "valuation"],
+    ownership: ["own", "owned", "ownership", "stake", "equity", "share"],
+  };
+  let verbClassMatch = 0;
+  if (verbClass !== "none") {
+    const classVerbs = verbClasses[verbClass] || [];
+    for (const verb of classVerbs) {
+      if (new RegExp(`\\b${verb}\\b`).test(allExcerpts)) {
+        verbClassMatch = 1;
+        break;
+      }
+    }
   }
   
-  // Reliability mapping
+  // A3.6.2 ADDENDUM: Anchor-gated reliability scoring
+  const anchor = extractAnchor(claimText);
+  const hasNumericAnchor = anchor && (anchor.startsWith("usd_") || anchor.startsWith("pct_") || anchor.startsWith("mult_"));
+  
   let reliability = "Low";
-  if (strength === "NUMBER") {
-    reliability = "High";
-  } else if (strength === "KEYWORD" || strength === "FUZZY") {
-    reliability = "Medium";
-  }
   
-  // Ambiguity adjustment (only for valuation/ownership claims)
-  const isAmbiguous = ambiguityResult?.isAmbiguous || false;
-  if ((facet === "Valuation" || facet === "Ownership") && isAmbiguous) {
-    // Cap reliability at MEDIUM (never HIGH)
-    if (reliability === "High") {
+  if (hasNumericAnchor) {
+    // CLAIMS WITH NUMERIC ANCHORS
+    // High: numericMatch AND (domainKeywordMatch OR verbClassMatch)
+    if (numericMatch === 1 && (domainKeywordMatch === 1 || verbClassMatch === 1)) {
+      reliability = "High";
+    }
+    // Medium: numericMatch alone, OR semantic match but multiple conflicting values
+    else if (numericMatch === 1) {
       reliability = "Medium";
     }
+    // Low: no numericMatch
+    else {
+      reliability = "Low";
+    }
+  } else {
+    // QUALITATIVE-ONLY CLAIMS (NO NUMERIC ANCHOR)
+    // High: domainKeywordMatch AND verbClassMatch
+    if (domainKeywordMatch === 1 && verbClassMatch === 1) {
+      reliability = "High";
+    }
+    // Medium: only one of the above matches, OR ambiguity
+    else if (domainKeywordMatch === 1 || verbClassMatch === 1) {
+      reliability = "Medium";
+    }
+    // Low: no meaningful semantic alignment
+    else {
+      reliability = "Low";
+    }
+  }
+  
+  // A3.6.2 ADDENDUM: Ambiguity rule (unchanged)
+  const isAmbiguous = ambiguityResult?.isAmbiguous || false;
+  if (isAmbiguous && reliability === "High") {
+    reliability = "Medium";
   }
   
   return reliability;
@@ -3070,10 +3281,15 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   // A3.6.1: Aggregate by claimKey
   const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
   
-  // Log aggregation stats (per statement)
+  // Log aggregation stats (per statement) - A3.6.2 ADDENDUM: anchor + meaning
   if (runId && reqSig) {
     const merged = rawCandidates.length - aggregatedClaims.length;
-    diag(runId, reqSig, `[CLAIMS_AGG] idx=${idx} raw=${rawCandidates.length} grouped=${aggregatedClaims.length} merged=${merged}`);
+    // Count unique anchors
+    const uniqueAnchors = new Set(aggregatedClaims.map(c => {
+      const anchor = extractAnchor(c.claimText);
+      return anchor || "no_anchor";
+    }));
+    diag(runId, reqSig, `[CLAIMS_UNIQUE] idx=${idx} raw=${rawCandidates.length} anchors=${uniqueAnchors.size} merged=${merged} final=${aggregatedClaims.length}`);
     
     // Sample only for first statement to avoid noise
     if (idx === 0) {
@@ -3102,8 +3318,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // Check for ambiguity (for valuation/ownership claims)
     const ambiguityResult = detectAnchorAmbiguity(claimText, uploadedDocs);
     
-    // Score reliability (claim-aware, using matchTypes)
-    const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult);
+    // Score reliability (A3.6.2 ADDENDUM: anchor-gated semantic equivalence)
+    const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult, uploadedDocs);
     
     // Track counts
     if (reliability === "High") hiCount++;
