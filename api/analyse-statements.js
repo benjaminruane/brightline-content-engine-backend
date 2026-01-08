@@ -2779,16 +2779,22 @@ function extractAnchor(claimText) {
   
   const text = claimText.toLowerCase();
   
-  // Numeric anchors: "$<num>m", "$<num>mm", "$<num> million", etc.
-  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(?:m|mm|million|b|billion|k|thousand)\b/);
+  // A3.6.2 PATCH: Numeric anchors with consistent normalization
+  // Match: "$7 million", "$7mm", "$7m" -> all normalize to usd_7m
+  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(?:m\b|mm\b|million|b\b|billion|k\b|thousand)/i);
   if (usdMatch) {
     const num = usdMatch[1].replace(/,/g, "");
+    const unit = (usdMatch[2] || "").toLowerCase();
     let normalized = parseFloat(num);
-    if (text.includes("billion") || text.includes(" b ")) {
+    
+    // Normalize to millions
+    if (unit.includes("billion") || unit === "b") {
       normalized = normalized * 1000;
-    } else if (text.includes("thousand") || text.includes(" k ")) {
+    } else if (unit.includes("thousand") || unit === "k") {
       normalized = normalized / 1000;
     }
+    // "million", "mm", "m" all stay as-is (already in millions)
+    
     return `usd_${normalized}m`;
   }
   
@@ -3054,35 +3060,80 @@ function extractAtomicClaims(statementText) {
   // Sort by position
   triggerPositions.sort((a, b) => a.index - b.index);
   
-  // Extract claims around each trigger
-  for (const trigger of triggerPositions) {
-    const start = Math.max(0, trigger.index - 30);
-    const end = Math.min(text.length, trigger.index + trigger.length + 50);
-    let snippet = text.substring(start, end).trim();
-    
-    // Normalize to short clause (≤8-10 words)
-    const words = snippet.split(/\s+/);
-    if (words.length > 10) {
-      // Find the trigger word in the snippet
-      const triggerIndex = snippet.toLowerCase().indexOf(trigger.text.toLowerCase());
-      const triggerWordIndex = snippet.substring(0, triggerIndex).split(/\s+/).length - 1;
-      const before = Math.max(0, triggerWordIndex - 3);
-      const after = Math.min(words.length, triggerWordIndex + 7);
-      snippet = words.slice(before, after).join(" ");
+  // A3.6.2 PATCH: Clause-based extraction (not index-based slicing)
+  // Split statement into clause candidates using stable separators
+  const clauseSeparators = /([,;—()]|\s+and\s+|\s+with\s+|\s+through\s+|\s+at\s+|\s+for\s+)/gi;
+  const clauses = [];
+  let lastIndex = 0;
+  let match;
+  
+  // Find all clause boundaries
+  const boundaries = [0];
+  while ((match = clauseSeparators.exec(text)) !== null) {
+    boundaries.push(match.index);
+    boundaries.push(match.index + match[0].length);
+  }
+  boundaries.push(text.length);
+  
+  // Build clauses from boundaries
+  for (let i = 0; i < boundaries.length - 1; i++) {
+    const start = boundaries[i];
+    const end = boundaries[i + 1];
+    const clause = text.substring(start, end).trim();
+    if (clause.length > 0) {
+      clauses.push({ text: clause, start, end });
     }
+  }
+  
+  // For each trigger, find the smallest clause containing it
+  const usedClauses = new Set();
+  for (const trigger of triggerPositions) {
+    // Find clauses that contain this trigger
+    const containingClauses = clauses
+      .filter(c => c.start <= trigger.index && c.end >= trigger.index + trigger.length)
+      .sort((a, b) => (a.end - a.start) - (b.end - b.start)); // Prefer smaller clauses
     
-    // Clean up: remove leading/trailing punctuation, normalize spacing
-    snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
-    
-    // Normalize common patterns
-    snippet = snippet.replace(/\bup to\b/gi, "up to");
-    snippet = snippet.replace(/\broughly\b|\bapproximately\b|\b~?\b/gi, "~");
-    snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*million\b/gi, "$$1m");
-    snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*mm\b/gi, "$$1m");
-    snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*billion\b/gi, "$$1bn");
-    
-    if (snippet.length > 0 && snippet.length < 100) {
-      claims.push(snippet);
+    if (containingClauses.length > 0) {
+      // Pick the earliest smallest clause
+      const selectedClause = containingClauses[0];
+      const clauseKey = `${selectedClause.start}-${selectedClause.end}`;
+      
+      if (!usedClauses.has(clauseKey)) {
+        usedClauses.add(clauseKey);
+        let snippet = selectedClause.text;
+        
+        // Clean up: remove leading/trailing punctuation, normalize spacing
+        snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+        
+        // A3.6.2 PATCH: Validate not mid-token
+        // If snippet starts with lowercase after alphanumeric, it might be mid-token
+        if (snippet.length > 0 && /^[a-z]/.test(snippet)) {
+          // Check if original text has alphanumeric before this position
+          const beforeChar = text[selectedClause.start - 1];
+          if (beforeChar && /\w/.test(beforeChar)) {
+            // Likely mid-token, use larger context or full sentence
+            // Find sentence boundary
+            const sentenceStart = Math.max(0, text.lastIndexOf(".", selectedClause.start));
+            const sentenceEnd = Math.min(text.length, text.indexOf(".", selectedClause.end) + 1);
+            if (sentenceEnd > sentenceStart) {
+              snippet = text.substring(sentenceStart, sentenceEnd).trim();
+              snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+            }
+          }
+        }
+        
+        // Normalize common patterns (preserve numeric values correctly)
+        snippet = snippet.replace(/\bup to\b/gi, "up to");
+        snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
+        // A3.6.2 PATCH: Preserve original numeric values, normalize units only
+        snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*million\b/gi, "$$1m");
+        snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*mm\b/gi, "$$1m");
+        snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*billion\b/gi, "$$1bn");
+        
+        if (snippet.length > 0 && snippet.length < 150) {
+          claims.push(snippet);
+        }
+      }
     }
   }
   
@@ -3308,6 +3359,9 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   const finalClaims = [];
   let hiCount = 0, medCount = 0, lowCount = 0;
   
+  // A3.6.2 PATCH: Minimal diagnostics for first 1-2 statements
+  const shouldLogDiagnostics = runId && reqSig && idx < 2;
+  
   for (const aggClaim of cappedClaims) {
     const claimText = aggClaim.claimText;
     const facet = aggClaim.facet;
@@ -3321,6 +3375,48 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // Score reliability (A3.6.2 ADDENDUM: anchor-gated semantic equivalence)
     const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult, uploadedDocs);
     
+    // A3.6.2 PATCH: Extract signals for diagnostics
+    let diagnosticSignals = null;
+    if (shouldLogDiagnostics) {
+      const anchor = extractAnchor(claimText);
+      const meaningKey = buildMeaningKey(claimText);
+      const hits = searchResult?.hits || [];
+      const numericMatch = hits.some(h => h.matchType === "number") ? 1 : 0;
+      const domainKeywordClass = extractDomainKeywordClass(claimText);
+      const allExcerpts = hits.map(h => h.excerpt || "").join(" ").toLowerCase();
+      const domainKeywordMatch = domainKeywordClass !== "none" && 
+        allExcerpts.includes(domainKeywordClass.toLowerCase()) ? 1 : 0;
+      const verbClass = extractVerbClass(claimText);
+      const verbClasses = {
+        invest: ["invest", "investment", "investing", "invested", "investor"],
+        financing: ["financing", "financed", "funding", "funded", "raise", "raised"],
+        purchase: ["purchase", "purchased", "buy", "bought", "acquire", "acquired"],
+        valuation: ["value", "valued", "price", "priced", "valuation"],
+        ownership: ["own", "owned", "ownership", "stake", "equity", "share"],
+      };
+      let verbClassMatch = 0;
+      if (verbClass !== "none") {
+        const classVerbs = verbClasses[verbClass] || [];
+        for (const verb of classVerbs) {
+          if (new RegExp(`\\b${verb}\\b`).test(allExcerpts)) {
+            verbClassMatch = 1;
+            break;
+          }
+        }
+      }
+      const entityKey = extractEntityKey(claimText);
+      const entityMatch = entityKey && entityKey !== "" && allExcerpts.includes(entityKey) ? 1 : 0;
+      
+      diagnosticSignals = {
+        numericMatch,
+        entityMatch,
+        verbClassMatch,
+        domainKeywordMatch,
+      };
+      
+      diag(runId, reqSig, `[CLAIMS_DIAG] idx=${idx} claim="${claimText.substring(0, 60)}" anchor=${anchor || "none"} meaningKey=${meaningKey.substring(0, 40)} signals=${JSON.stringify(diagnosticSignals)} reliability=${reliability}`);
+    }
+    
     // Track counts
     if (reliability === "High") hiCount++;
     else if (reliability === "Medium") medCount++;
@@ -3331,10 +3427,9 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
                             (ambiguityResult?.isAmbiguous || false);
     const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, claimText);
     
-    // Build claim object
+    // Build claim object (A3.6.2 PATCH: facet-free output)
     const claim = {
       claimText,
-      facet,
       reliability,
       comment,
     };
@@ -3345,6 +3440,11 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
     
     finalClaims.push(claim);
+  }
+  
+  // A3.6.2 PATCH: Log statement preview for first 1-2 statements
+  if (shouldLogDiagnostics) {
+    diag(runId, reqSig, `[CLAIMS_DIAG] idx=${idx} statement="${statementText.substring(0, 100)}" claims=${finalClaims.length}`);
   }
   
   // Log scoring distribution (per statement)
@@ -7434,6 +7534,25 @@ ${
         };
       });
     }
+    
+    // A3.6.2 PATCH: Strip facet prefixes from reasons (facet-free output)
+    statements = statements.map((stmt) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const cleanedReasons = reasons.map(reason => {
+        if (typeof reason !== "string") return reason;
+        // Remove facet prefix: ^\[[^\]]+\]\s*
+        return reason.replace(/^\[[^\]]+\]\s*/, "").trim();
+      });
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: cleanedReasons,
+        },
+      };
+    });
     
     // FIX: Build finalResponseObject IMMEDIATELY after FINAL_COUNTS, before any risky code
     // This ensures finalResponseObject is always set even if computeExtractionQuality throws
