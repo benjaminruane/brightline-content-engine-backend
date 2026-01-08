@@ -2577,6 +2577,255 @@ function detectFacetsInStatement(statementText) {
   return facets;
 }
 
+// A3.6.0: Extract atomic claims from statement text (deterministic, no LLM)
+function extractAtomicClaims(statementText) {
+  if (typeof statementText !== "string" || !statementText.trim()) return [];
+  
+  const text = statementText.trim();
+  const claims = [];
+  
+  // Trigger patterns for atomic claim candidates
+  const claimTriggers = [
+    // Numeric anchors
+    /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|billion|b|thousand|k)?/gi,
+    /[\d,]+(?:\.\d+)?\s*%/g,
+    /\b[\d,]+(?:\.\d+)?x\b/gi,
+    // Valuation terms
+    /\b(?:valuation|pre-money|post-money|premoney|postmoney|EV|enterprise value)\b/gi,
+    // Structure terms
+    /\b(?:preferred|1x|liquidation|liquidation preference|structured|structured as)\b/gi,
+    // Ownership terms
+    /\b(?:ownership|stake|fully diluted|fully-diluted)\b/gi,
+    // Transaction terms
+    /\b(?:Series [A-Z]|Series [a-z]|secondary|common shares|secondary purchase|secondary sale)\b/gi,
+  ];
+  
+  // Find all trigger positions
+  const triggerPositions = [];
+  for (const pattern of claimTriggers) {
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      triggerPositions.push({
+        index: match.index,
+        text: match[0],
+        length: match[0].length,
+      });
+    }
+  }
+  
+  // Sort by position
+  triggerPositions.sort((a, b) => a.index - b.index);
+  
+  // Extract claims around each trigger
+  for (const trigger of triggerPositions) {
+    const start = Math.max(0, trigger.index - 30);
+    const end = Math.min(text.length, trigger.index + trigger.length + 50);
+    let snippet = text.substring(start, end).trim();
+    
+    // Normalize to short clause (≤8-10 words)
+    const words = snippet.split(/\s+/);
+    if (words.length > 10) {
+      // Find the trigger word in the snippet
+      const triggerIndex = snippet.toLowerCase().indexOf(trigger.text.toLowerCase());
+      const triggerWordIndex = snippet.substring(0, triggerIndex).split(/\s+/).length - 1;
+      const before = Math.max(0, triggerWordIndex - 3);
+      const after = Math.min(words.length, triggerWordIndex + 7);
+      snippet = words.slice(before, after).join(" ");
+    }
+    
+    // Clean up: remove leading/trailing punctuation, normalize spacing
+    snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+    
+    // Normalize common patterns
+    snippet = snippet.replace(/\bup to\b/gi, "up to");
+    snippet = snippet.replace(/\broughly\b|\bapproximately\b|\b~?\b/gi, "~");
+    snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*million\b/gi, "$$1m");
+    snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*mm\b/gi, "$$1m");
+    snippet = snippet.replace(/\$([\d,]+(?:\.\d+)?)\s*billion\b/gi, "$$1bn");
+    
+    if (snippet.length > 0 && snippet.length < 100) {
+      claims.push(snippet);
+    }
+  }
+  
+  // Deduplicate (case-insensitive, numeric-equivalent)
+  const normalized = new Map();
+  const deduped = [];
+  
+  for (const claim of claims) {
+    const lower = claim.toLowerCase();
+    // Check for numeric-equivalent duplicates
+    const numericMatch = claim.match(/\$?([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|billion|b|thousand|k)?/i);
+    let key = lower;
+    if (numericMatch) {
+      const numStr = numericMatch[1].replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (Number.isFinite(num)) {
+        // Use normalized numeric value as part of key
+        const unit = (numericMatch[2] || "").toLowerCase();
+        const multipliers = {
+          mm: 1e6, million: 1e6, m: 1e6,
+          billion: 1e9, b: 1e9,
+          thousand: 1e3, k: 1e3,
+        };
+        const multiplier = multipliers[unit] || 1;
+        const normalizedValue = num * multiplier;
+        key = `${lower.replace(/\$?[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b|thousand|k)?/i, "")}_${normalizedValue}`;
+      }
+    }
+    
+    if (!normalized.has(key)) {
+      normalized.set(key, true);
+      deduped.push(claim);
+    }
+  }
+  
+  // Limit to 10 claims
+  if (deduped.length > 10) {
+    return deduped.slice(0, 10);
+  }
+  
+  return deduped;
+}
+
+// A3.6.0: Assign facet to a claim (per-claim version of detectFacetsInStatement)
+function assignFacetToClaim(claimText) {
+  if (typeof claimText !== "string" || !claimText.trim()) return "Other";
+  
+  const text = claimText.toLowerCase();
+  
+  // Investment: first match wins
+  if (/\binvest\b|\binvestment\b|\$.*invest|Series [A-Za-z]/.test(text)) {
+    return "Investment";
+  }
+  
+  // Valuation
+  if (/\bvaluation\b|\bpre-?money\b|\bpost-?money\b|\bev\b(?!\w)|\benterprise value\b/.test(text)) {
+    return "Valuation";
+  }
+  
+  // Structure
+  if (/\bpreferred\b|1x|\bliquidation\b|\bstructured\b/.test(text)) {
+    return "Structure";
+  }
+  
+  // Ownership
+  if (/%|\bownership\b|\bstake\b|\bfully diluted\b/.test(text)) {
+    return "Ownership";
+  }
+  
+  // Timing
+  if (/\bexpected\b|\bwould\b|\bplans\b|\bsubject to\b/.test(text)) {
+    return "Timing";
+  }
+  
+  return "Other";
+}
+
+// A3.6.0: Score reliability for a claim based on corpusSearch results
+function scoreClaimReliability(claimText, corpusSearchResult, ambiguityResult) {
+  if (!corpusSearchResult || !corpusSearchResult.found) {
+    return "Low";
+  }
+  
+  const hitsCount = corpusSearchResult.hits?.length || 0;
+  const isAmbiguous = ambiguityResult?.isAmbiguous || false;
+  
+  // HIGH: Exact match found AND no ambiguity
+  if (hitsCount > 0 && !isAmbiguous) {
+    return "High";
+  }
+  
+  // MEDIUM: Found but ambiguous or multiple values
+  if (hitsCount > 0 && isAmbiguous) {
+    return "Medium";
+  }
+  
+  // MEDIUM: Mentioned but not explicitly confirmed (fallback)
+  if (hitsCount > 0) {
+    return "Medium";
+  }
+  
+  return "Low";
+}
+
+// A3.6.0: Generate comment for a claim using templates
+function generateClaimComment(reliability, facet) {
+  if (reliability === "High") {
+    return "Confirmed in provided source";
+  }
+  
+  if (reliability === "Medium") {
+    if (facet === "Valuation") {
+      return "Multiple figures present; verify which applies";
+    }
+    if (facet === "Ownership") {
+      return "Ownership basis not clearly defined";
+    }
+    if (facet === "Structure") {
+      return "Terms mentioned but not explicitly confirmed";
+    }
+    return "Mentioned but not explicitly confirmed in excerpt";
+  }
+  
+  if (reliability === "Low") {
+    return "Not supported in provided sources";
+  }
+  
+  return "Not supported in provided sources";
+}
+
+// A3.6.0: Generate claims assessment for a statement
+function generateClaimsForStatement(statementText, uploadedDocs, assessment) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return [];
+  }
+  
+  // Extract atomic claims
+  const claimTexts = extractAtomicClaims(statementText);
+  if (claimTexts.length === 0) {
+    return [];
+  }
+  
+  // Get existing citations if available
+  const citations = Array.isArray(assessment?.citations) ? assessment.citations : [];
+  
+  const claims = [];
+  for (const claimText of claimTexts) {
+    // Assign facet
+    const facet = assignFacetToClaim(claimText);
+    
+    // Run corpusSearch for this claim
+    const searchResult = corpusSearch(claimText, uploadedDocs);
+    
+    // Check for ambiguity
+    const ambiguityResult = detectAnchorAmbiguity(claimText, uploadedDocs);
+    
+    // Score reliability
+    const reliability = scoreClaimReliability(claimText, searchResult, ambiguityResult);
+    
+    // Generate comment
+    const comment = generateClaimComment(reliability, facet);
+    
+    // Build claim object
+    const claim = {
+      claimText,
+      facet,
+      reliability,
+      comment,
+    };
+    
+    // Add citations if available
+    if (citations.length > 0) {
+      claim.citations = citations;
+    }
+    
+    claims.push(claim);
+  }
+  
+  return claims;
+}
+
 // A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
 function scrubRepeatedPhrases(snippet) {
   if (!snippet || typeof snippet !== "string") return snippet;
@@ -6608,6 +6857,58 @@ ${
     // A3.5.18 Fix 2: Warn if citations/evidence were lost
     if ((hasCorpusSearchFound || hasAnchorEnforcementInjected) && totalAssessmentCites === 0 && totalTopCites === 0 && totalEvidence === 0) {
       diag(runId, reqSig, `[FINAL_COUNTS][ERROR] citations lost after enforcement`);
+    }
+    
+    // A3.6.0: Generate atomic claims assessment for each statement
+    // Note: uploadedSources is defined in handler scope
+    const uploadedDocs = Array.isArray(uploadedSources) && uploadedSources.length > 0
+      ? uploadedSources.map((src) => ({
+          id: src.id || src.name || "unknown",
+          title: src.title || src.name || "Untitled",
+          text: src.text || "",
+        }))
+      : [];
+    
+    if (uploadedDocs.length > 0) {
+      statements = statements.map((stmt, idx) => {
+        if (!stmt || typeof stmt !== "object") return stmt;
+        
+        const text = typeof stmt.text === "string" ? stmt.text : "";
+        const assessment = stmt.assessment || {};
+        
+        // Generate claims
+        const claims = generateClaimsForStatement(text, uploadedDocs, assessment);
+        
+        // Log claims for first statement
+        if (idx === 0 && claims.length > 0) {
+          const facetCounts = {};
+          claims.forEach((c) => {
+            facetCounts[c.facet] = (facetCounts[c.facet] || 0) + 1;
+          });
+          
+          diag(runId, reqSig, `[CLAIMS] idx=${idx} count=${claims.length} facets=${JSON.stringify(facetCounts)}`);
+          
+          const sample = claims.slice(0, 5).map((c) => ({
+            claim: c.claimText,
+            reliability: c.reliability,
+          }));
+          diag(runId, reqSig, `[CLAIMS_SAMPLE] idx=${idx} first5=${JSON.stringify(sample)}`);
+          
+          // Log if exceeded limit
+          if (claims.length > 10) {
+            diag(runId, reqSig, `[CLAIMS] idx=${idx} exceeded limit of 10, truncated`);
+          }
+        }
+        
+        // Add claims to assessment (non-breaking, additive)
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            claims,
+          },
+        };
+      });
     }
     
     // FIX: Build finalResponseObject IMMEDIATELY after FINAL_COUNTS, before any risky code
