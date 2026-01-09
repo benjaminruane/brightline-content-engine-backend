@@ -3075,12 +3075,13 @@ function buildMeaningKey(claimText) {
 
 // A3.6.1: Aggregate claims by key (merge overlapping claims)
 // A3.6.2 ADDENDUM: Now uses anchor + meaning (not anchor-only)
+// A3.6.9: Dedupe key must include anchor - never merge claims with different anchors
 function aggregateClaimsByKey(rawCandidates) {
   if (!Array.isArray(rawCandidates) || rawCandidates.length === 0) {
     return [];
   }
   
-  // Map<meaningKey, ClaimAgg> - groups by anchor + meaning
+  // A3.6.9: Map<anchor|normalizedPrefix, ClaimAgg> - groups by anchor + normalized text prefix
   const aggregated = new Map();
   
   for (const candidate of rawCandidates) {
@@ -3088,21 +3089,44 @@ function aggregateClaimsByKey(rawCandidates) {
       continue;
     }
     
-    // A3.6.2 ADDENDUM: Use meaning-based key (anchor + verbClass + domainKeywordClass + entityKey)
-    const meaningKey = buildMeaningKey(candidate.claimText);
+    // A3.6.9: Extract anchor first - this is the primary uniqueness key
+    const anchor = extractAnchor(candidate.claimText) || "no_anchor";
     
-    if (!aggregated.has(meaningKey)) {
-      aggregated.set(meaningKey, {
+    // A3.6.9: Normalize claim text prefix for deduplication (first 50 chars, lowercase, alphanumeric only)
+    const normalizedPrefix = candidate.claimText.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
+    
+    // A3.6.9: Primary uniqueness key: anchor + '|' + normalizedPrefix
+    const dedupeKey = `${anchor}|${normalizedPrefix}`;
+    
+    if (!aggregated.has(dedupeKey)) {
+      aggregated.set(dedupeKey, {
         claimText: candidate.claimText,
         facet: candidate.facet || "Other", // Preserve facet for backward compatibility
+        anchor: anchor, // Store anchor for validation
         candidates: [candidate],
       });
     } else {
-      const existing = aggregated.get(meaningKey);
+      const existing = aggregated.get(dedupeKey);
+      
+      // A3.6.9: Hard guard - never merge claims with different anchors
+      const existingAnchor = extractAnchor(existing.claimText) || "no_anchor";
+      if (anchor !== existingAnchor) {
+        // Different anchors - create separate entry
+        // Use a more specific key to avoid collision
+        const specificKey = `${dedupeKey}_${aggregated.size}`;
+        aggregated.set(specificKey, {
+          claimText: candidate.claimText,
+          facet: candidate.facet || "Other",
+          anchor: anchor,
+          candidates: [candidate],
+        });
+        continue;
+      }
+      
       existing.candidates.push(candidate);
       
       // Select "best" representative claimText using selection rule
-      // (Only when claims are semantically equivalent - same meaning key)
+      // (Only when claims are semantically equivalent - same anchor + meaning)
       const best = selectBestClaimText(existing.candidates.map(c => c.claimText));
       existing.claimText = best;
     }
@@ -3811,7 +3835,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   // A3.6.1: Aggregate by claimKey
   const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
   
-  // A3.6.8: Check for missing anchors
+  // A3.6.9: Check for missing anchors and log dedupe stats
   const emittedAnchors = new Set(aggregatedClaims.map(c => {
     const anchor = extractAnchor(c.claimText);
     return anchor || null;
@@ -3821,15 +3845,21 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     diag(runId, reqSig, `[CLAIMS_MISSING_ANCHORS] idx=${idx} missing=${JSON.stringify(missingAnchors)}`);
   }
   
-  // Log aggregation stats (per statement) - A3.6.2 ADDENDUM: anchor + meaning
+  // A3.6.9: Log aggregation stats with anchor uniqueness (per statement)
   if (runId && reqSig) {
     const merged = rawCandidates.length - aggregatedClaims.length;
-    // Count unique anchors
-    const uniqueAnchors = new Set(aggregatedClaims.map(c => {
+    // Count unique anchors after dedupe
+    const anchorsUnique = Array.from(new Set(aggregatedClaims.map(c => {
       const anchor = extractAnchor(c.claimText);
       return anchor || "no_anchor";
-    }));
-    diag(runId, reqSig, `[CLAIMS_UNIQUE] idx=${idx} raw=${rawCandidates.length} anchors=${uniqueAnchors.size} merged=${merged} final=${aggregatedClaims.length}`);
+    })));
+    
+    // A3.6.9: Diagnostic log for first 2 statements
+    if (idx < 2) {
+      diag(runId, reqSig, `[CLAIMS_DEDUP] idx=${idx} raw=${rawCandidates.length} unique=${aggregatedClaims.length} merged=${merged} anchorsUnique=${JSON.stringify(anchorsUnique.slice(0, 10))}`);
+    }
+    
+    diag(runId, reqSig, `[CLAIMS_UNIQUE] idx=${idx} raw=${rawCandidates.length} anchors=${anchorsUnique.length} merged=${merged} final=${aggregatedClaims.length}`);
     
     // Sample only for first statement to avoid noise
     if (idx === 0) {
@@ -8345,6 +8375,9 @@ ${
         }))
       : [];
     
+    // A3.6.9: Track claims failures for meta
+    let claimsFailures = 0;
+    
     if (uploadedDocs.length > 0) {
       statements = statements.map((stmt, idx) => {
         if (!stmt || typeof stmt !== "object") return stmt;
@@ -8352,16 +8385,33 @@ ${
         const text = typeof stmt.text === "string" ? stmt.text : "";
         const assessment = stmt.assessment || {};
         
-        // Generate claims (with aggregation, capping, and claim-aware scoring)
-        const claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
+        // A3.6.9: Per-statement guard around claim generation - never trigger global fallback
+        let claims = [];
+        let claimsError = false;
+        let uniqueAnchors = new Set();
         
-        // A3.6.7: Log claims ready (idx<2)
-        if (idx < 2 && runId && reqSig) {
-          const uniqueAnchors = new Set(claims.map(c => {
+        try {
+          // Generate claims (with aggregation, capping, and claim-aware scoring)
+          claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
+          
+          // Extract unique anchors for logging
+          uniqueAnchors = new Set(claims.map(c => {
             const anchor = extractAnchor(c.claimText);
             return anchor || "no_anchor";
           }));
-          diag(runId, reqSig, `[CLAIMS_READY] idx=${idx} claimsCount=${claims.length} anchors=${JSON.stringify(Array.from(uniqueAnchors).slice(0, 5))}`);
+        } catch (claimsErr) {
+          // A3.6.9: Log structured error but continue pipeline
+          const errorMessage = claimsErr?.message || String(claimsErr) || "Unknown error";
+          const errorStack = claimsErr?.stack || "No stack trace";
+          diag(runId, reqSig, `[ERROR][CLAIMS] rid=${runId || 'unknown'} idx=${idx} message=${errorMessage} stack=${errorStack.substring(0, 500)}`);
+          claims = [];
+          claimsError = true;
+          claimsFailures++;
+        }
+        
+        // A3.6.9: Log claims phase status (idx<2)
+        if (idx < 2 && runId && reqSig) {
+          diag(runId, reqSig, `[CLAIMS_PHASE] idx=${idx} ok=${!claimsError} claimsCount=${claims.length} anchors=${JSON.stringify(Array.from(uniqueAnchors).slice(0, 5))}`);
         }
         
         // A3.6.3: Compute statement reliability from claims (deterministic)
@@ -8384,18 +8434,20 @@ ${
         }
         const totalCount = hiCount + medCount + lowCount;
         
-        // A3.6.7: Generate claim-linked reasons immediately if claims exist
+        // A3.6.9: Generate claim-linked reasons immediately if claims exist AND no error
         let claimLinkedReasons = [];
-        if (claims.length > 0) {
+        if (claims.length > 0 && !claimsError) {
           claimLinkedReasons = generateClaimLinkedReasons(claims);
           
           // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
           if (idx < 2 && runId && reqSig) {
-            diag(runId, reqSig, `[STMT_FROM_CLAIMS] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount} total=${totalCount} score=${computedReliability.reliabilityScore} label=${computedReliability.reliabilityLabel}`);
+            const branch = computedReliability._branch || "UNKNOWN";
+            diag(runId, reqSig, `[STMT_FROM_CLAIMS] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount} total=${totalCount} score=${computedReliability.reliabilityScore} label=${computedReliability.reliabilityLabel} branch=${branch}`);
           }
         }
         
-        // Add claims to assessment and update reliability
+        // A3.6.9: Add claims to assessment and update reliability
+        // If claimsError, force reasons mode to legacy (claims will be empty array)
         return {
           ...stmt,
           assessment: {
@@ -8403,12 +8455,18 @@ ${
             claims,
             reliabilityScore: computedReliability.reliabilityScore,
             reliabilityLabel: computedReliability.reliabilityLabel,
-            // A3.6.7: Set claim-linked reasons if available, otherwise keep existing reasons
-            reasons: claimLinkedReasons.length > 0 ? claimLinkedReasons : assessment.reasons,
-            reasonsSource: claimLinkedReasons.length > 0 ? "claims" : assessment.reasonsSource,
+            // A3.6.9: Set claim-linked reasons if available and no error, otherwise keep existing reasons
+            reasons: (claimLinkedReasons.length > 0 && !claimsError) ? claimLinkedReasons : assessment.reasons,
+            reasonsSource: (claimLinkedReasons.length > 0 && !claimsError) ? "claims" : "legacy",
+            _claimsError: claimsError, // Internal flag for later phases
           },
         };
       });
+    }
+    
+    // A3.6.9: Store claims failures in meta
+    if (claimsFailures > 0 && !meta.claimsFailures) {
+      meta.claimsFailures = claimsFailures;
     }
 
     let firstStmtNormStats = null;
@@ -8420,19 +8478,25 @@ ${
       const text = typeof stmt.text === "string" ? stmt.text : "";
       const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
       
-      // A3.6.7: If claims exist, ONLY use claim-linked reasons. Do not generate old reasons at all.
-      if (claims.length > 0) {
-        // Skip normalization entirely - claim-linked reasons will be set later
+      // A3.6.9: If claims exist AND no claimsError, ONLY use claim-linked reasons. Do not generate old reasons at all.
+      const claimsError = assessment._claimsError || false;
+      if (claims.length > 0 && !claimsError) {
+        // Skip normalization entirely - claim-linked reasons already set in claims generation phase
         const reasonsSource = "claims";
         
-        // A3.6.7: Log reasons mode (idx<2)
+        // A3.6.9: Log reasons mode (idx<2)
         if (idx < 2 && runId && reqSig) {
           diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=claims claimsCount=${claims.length}`);
         }
         
-        // A3.6.7: Return as-is - claim-linked reasons already set in claims generation phase
+        // A3.6.9: Return as-is - claim-linked reasons already set in claims generation phase
         // DO NOT call normalizeAssessmentReasons() - skip legacy reason generation entirely
         return stmt;
+      }
+      
+      // A3.6.9: If claimsError or no claims, use legacy reasons
+      if (idx < 2 && runId && reqSig) {
+        diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=legacy claimsCount=${claims.length} claimsError=${claimsError}`);
       }
       
       // A3.5.31: Pass statement context into normalization
@@ -8504,6 +8568,55 @@ ${
           ...assessment,
           reasons: cleanedReasons,
         },
+      };
+    });
+    
+    // A3.6.9: Ensure top-level citations/evidence are mirrored before FINAL_COUNTS
+    // For each statement: if statement.citations is missing/empty and assessment.citations exists → copy it
+    // If statement.evidence is missing/empty and assessment.citations exists → derive evidence from citations + references map
+    statements = statements.map((stmt) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      const assessmentCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+      const statementCitations = Array.isArray(stmt.citations) ? stmt.citations : [];
+      
+      // Mirror assessment.citations to statement.citations if missing
+      const citations = statementCitations.length > 0 ? statementCitations : assessmentCitations;
+      
+      // Derive evidence from citations if missing
+      let evidence = Array.isArray(stmt.evidence) ? stmt.evidence : [];
+      if (evidence.length === 0 && citations.length > 0 && Array.isArray(unifiedReferences)) {
+        const referencesById = new Map();
+        unifiedReferences.forEach((ref) => {
+          const id = ref?.id;
+          if (id != null) {
+            referencesById.set(String(id), ref);
+          }
+        });
+        
+        evidence = citations.map((citationId) => {
+          const citationKey = citationId != null ? String(citationId) : null;
+          if (citationKey && referencesById.has(citationKey)) {
+            const ref = referencesById.get(citationKey);
+            const refType = ref?.type || (ref?.url ? "web" : "uploaded");
+            return {
+              title: ref?.title || "Untitled source",
+              url: ref?.url || null,
+              sourceType: refType,
+            };
+          }
+          return {
+            title: "Unresolved citation",
+            url: null,
+            sourceType: "unresolved",
+          };
+        });
+      }
+      
+      return {
+        ...stmt,
+        citations,
+        evidence,
       };
     });
     
@@ -8592,6 +8705,7 @@ ${
           uploadedSourcesCount: uploadedReferences?.length || 0,
           webSourcesCount: webReferencesWithIds?.length || 0,
           ...(meta?.verification ? { verification: meta.verification } : {}),
+          ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
         },
       };
     } catch (e) {
@@ -8607,6 +8721,7 @@ ${
           uploadedSourcesCount: uploadedReferences?.length || 0,
           webSourcesCount: webReferencesWithIds?.length || 0,
           ...(meta?.verification ? { verification: meta.verification } : {}),
+          ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
         },
       };
     }
@@ -8707,6 +8822,75 @@ ${
     }
     
     try {
+      // A3.6.9: Check if statements already exist (after filterDraftOnly, enforceAnchorCitations, etc.)
+      // If so, use them instead of re-extracting to preserve citations/evidence
+      const hasExistingStatements = Array.isArray(statements) && statements.length > 0;
+      const hasAnchorCites = hasExistingStatements && statements.some(s => {
+        const assessment = s?.assessment || {};
+        const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+        return citations.length > 0;
+      });
+      
+      // A3.6.9: Determine fallback stage and reason
+      const fallbackStage = hasExistingStatements ? "after_processing" : "early";
+      const fallbackReason = err?.message || "Unknown error";
+      const afterAnchorCites = hasAnchorCites;
+      const returningAssembled = hasExistingStatements;
+      
+      // A3.6.9: Log fallback type with explicit reason and stage
+      diag(runId, reqSig, `[FALLBACK] stage=${fallbackStage} afterAnchorCites=${afterAnchorCites} returningAssembled=${returningAssembled} reason=${fallbackReason.substring(0, 200)}`);
+      
+      if (hasExistingStatements && returningAssembled) {
+        // A3.6.9: Use existing statements - preserve citations/evidence already injected
+        // Ensure citations/evidence are mirrored to top-level before returning
+        const preservedStatements = normalizeResponseStructure(statements, unifiedReferences || []);
+        
+        // A3.6.9: Strip bracket tags from all reasons
+        const finalStatements = preservedStatements.map((stmt) => {
+          if (!stmt || typeof stmt !== "object") return stmt;
+          const assessment = stmt.assessment || {};
+          const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+          const cleanedReasons = reasons.map(reason => {
+            if (typeof reason !== "string") return reason;
+            // Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
+            return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+          });
+          return {
+            ...stmt,
+            assessment: {
+              ...assessment,
+              reasons: cleanedReasons,
+            },
+          };
+        });
+        
+        // A3.5.21 Step 2: Set hasReturned flag before return in fallback path
+        hasReturned = true;
+        // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+        try {
+          diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback_assembled status=200 returningNow=true`);
+          if (runId && runStateByRid[runId]) {
+            delete runStateByRid[runId];
+          }
+        } catch (logErr) {
+          // Best-effort logging
+        }
+        return res.status(200).json({
+          ok: true,
+          statements: finalStatements,
+          references: unifiedReferences || [],
+          meta: {
+            webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
+            extractionQuality: "degraded",
+            uploadedSourcesCount: uploadedReferences?.length || 0,
+            webSourcesCount: webReferencesWithIds?.length || 0,
+            ...(meta?.verification ? { verification: meta.verification } : {}),
+            ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
+          },
+        });
+      }
+      
+      // A3.6.9: Fallback to re-extraction only if no existing statements
       // A3.5.22 Fix: Log entry into fallback block for verification
       diag(runId, reqSig, `ENTER_FALLBACK finalCountsReached=${runId && runStateByRid[runId]?.finalCountsReached} hasReturned=${hasReturned}`);
       // A3.5.21 Fix: Pass runId and reqSig to fallback functions for proper context
@@ -8750,6 +8934,25 @@ ${
       const specificityEnforcedFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
       const anchorFixedFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
       const finalFallbackStatements = enforceCorpusVerificationBeforeAbsence(anchorFixedFallbackStatements, fallbackUploadedSources, fallbackUploadedReferences);
+      
+      // A3.6.9: Strip bracket tags from all reasons in fallback path
+      const cleanedFallbackStatements = finalFallbackStatements.map((stmt) => {
+        if (!stmt || typeof stmt !== "object") return stmt;
+        const assessment = stmt.assessment || {};
+        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        const cleanedReasons = reasons.map(reason => {
+          if (typeof reason !== "string") return reason;
+          // Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
+          return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+        });
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: cleanedReasons,
+          },
+        };
+      });
 
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback path
       hasReturned = true;
@@ -8764,7 +8967,7 @@ ${
       }
       return res.status(200).json({
         ok: true,
-        statements: finalFallbackStatements,
+        statements: cleanedFallbackStatements,
         references: fallbackUploadedReferences,
         meta: {
           webSearch: { enabled: true, used: false },
