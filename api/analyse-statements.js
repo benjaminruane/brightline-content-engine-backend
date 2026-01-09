@@ -2842,6 +2842,181 @@ function extractAnchor(claimText) {
   return null;
 }
 
+// A3.6.4: Extract all distinct anchors from a clause text
+function extractAllAnchors(clauseText) {
+  if (typeof clauseText !== "string") return [];
+  
+  const anchors = new Set();
+  const text = clauseText.toLowerCase();
+  
+  // Extract USD anchors
+  const usdMatches = [...text.matchAll(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/gi)];
+  for (const match of usdMatches) {
+    const numStr = match[1].replace(/,/g, "");
+    const unit = (match[2] || "").toLowerCase();
+    const num = parseFloat(numStr);
+    
+    if (Number.isFinite(num) && num > 0) {
+      let normalized = num;
+      if (unit.includes("billion") || unit === "b") {
+        normalized = normalized * 1000;
+      } else if (unit.includes("thousand") || unit === "k") {
+        normalized = normalized / 1000;
+      }
+      anchors.add(`usd_${normalized}m`);
+    }
+  }
+  
+  // Extract percentage anchors
+  const pctMatches = [...text.matchAll(/([\d,]+(?:\.\d+)?)\s*%/g)];
+  for (const match of pctMatches) {
+    const num = match[1].replace(/,/g, "");
+    anchors.add(`pct_${num}`);
+  }
+  
+  // Extract multiplier anchors
+  const multMatches = [...text.matchAll(/\b([\d,]+(?:\.\d+)?)\s*x\b/g)];
+  for (const match of multMatches) {
+    const num = match[1].replace(/,/g, "");
+    anchors.add(`mult_${num}x`);
+  }
+  
+  // Extract qualitative anchors
+  if (/\bpre-?money\b/.test(text)) anchors.add("qual_premoney");
+  if (/\bpost-?money\b/.test(text)) anchors.add("qual_postmoney");
+  if (/\bsecondary\b.*\b(purchase|sale|transaction)\b/.test(text)) anchors.add("qual_secondary");
+  if (/\bprofitable\b/.test(text)) anchors.add("qual_profitable");
+  if (/\bbootstrapped\b/.test(text)) anchors.add("qual_bootstrapped");
+  if (/\b1x\b.*\b(preferred|liquidation)\b/.test(text)) anchors.add("qual_1x_preferred");
+  if (/\bpreferred\b/.test(text) && !/\b1x\b/.test(text)) anchors.add("qual_preferred");
+  const seriesMatch = text.match(/\bSeries\s+([A-Z])\b/);
+  if (seriesMatch) anchors.add(`qual_series_${seriesMatch[1].toLowerCase()}`);
+  
+  return Array.from(anchors);
+}
+
+// A3.6.4: Split clause to isolate single-anchor sub-clause containing target anchor
+function splitClauseToIsolateAnchor(clauseText, targetAnchor, triggerIndex, clauseStart, clauseEnd, fullText) {
+  if (typeof clauseText !== "string") return null;
+  
+  // Extract all anchors from the clause
+  const allAnchors = extractAllAnchors(clauseText);
+  
+  // If clause has only one anchor (or none), return as-is
+  if (allAnchors.length <= 1) {
+    return { text: clauseText, start: clauseStart, end: clauseEnd };
+  }
+  
+  // A3.6.4: Determine target anchor from trigger
+  // Extract anchor from the trigger text at triggerIndex
+  const triggerText = fullText.substring(
+    Math.max(0, triggerIndex - 50),
+    Math.min(fullText.length, triggerIndex + 50)
+  );
+  const triggerAnchor = extractAnchor(triggerText);
+  
+  // If we can't determine target anchor, try to find it in the clause
+  const effectiveTargetAnchor = triggerAnchor || targetAnchor;
+  
+  // If still no target anchor, return original clause (can't split without target)
+  if (!effectiveTargetAnchor) {
+    return { text: clauseText, start: clauseStart, end: clauseEnd };
+  }
+  
+  // Check if target anchor is in the clause
+  if (!allAnchors.includes(effectiveTargetAnchor)) {
+    // Target anchor not found, return original clause
+    return { text: clauseText, start: clauseStart, end: clauseEnd };
+  }
+  
+  // A3.6.4: Split on conjunction/connector tokens
+  const splitPatterns = [
+    /\s+and\s+/i,
+    /\s+or\s+/i,
+    /\s+with\s+/i,
+    /\s+plus\s+/i,
+    /\s+as well as\s+/i,
+    /\s+potential to\s+/i,
+    /\s+via\s+/i,
+    /\s+through\s+/i,
+    /,\s+/g, // Commas
+  ];
+  
+  let bestSubClause = null;
+  let bestSubClauseSize = Infinity;
+  
+  // Try splitting on each pattern
+  for (const pattern of splitPatterns) {
+    const parts = clauseText.split(pattern);
+    
+    for (const part of parts) {
+      const trimmed = part.trim();
+      if (trimmed.length < 5) continue; // Skip very short fragments
+      
+      // Check if this sub-clause contains the target anchor
+      const subAnchors = extractAllAnchors(trimmed);
+      if (subAnchors.includes(effectiveTargetAnchor)) {
+        // Check if it has fewer anchors than the original
+        if (subAnchors.length < allAnchors.length) {
+          // This is a better candidate - smaller and contains target
+          if (trimmed.length < bestSubClauseSize) {
+            bestSubClauseSize = trimmed.length;
+            bestSubClause = trimmed;
+          }
+        }
+      }
+    }
+  }
+  
+  // If we found a better sub-clause, use it
+  if (bestSubClause) {
+    // Find the position of this sub-clause in the original text
+    const subClauseIndex = clauseText.indexOf(bestSubClause);
+    if (subClauseIndex >= 0) {
+      return {
+        text: bestSubClause,
+        start: clauseStart + subClauseIndex,
+        end: clauseStart + subClauseIndex + bestSubClause.length,
+      };
+    }
+  }
+  
+  // Fallback: if clause contains multiple anchors but we can't split cleanly,
+  // try to find the smallest window around the trigger that contains only the target anchor
+  // This is a last resort to prevent cross-anchor contamination
+  const triggerInClause = triggerIndex - clauseStart;
+  if (triggerInClause >= 0 && triggerInClause < clauseText.length) {
+    // Try expanding from trigger position to find minimal single-anchor window
+    let windowStart = Math.max(0, triggerInClause - 30);
+    let windowEnd = Math.min(clauseText.length, triggerInClause + 30);
+    
+    // Expand window until we find boundaries or hit clause edges
+    while (windowStart > 0 || windowEnd < clauseText.length) {
+      const windowText = clauseText.substring(windowStart, windowEnd);
+      const windowAnchors = extractAllAnchors(windowText);
+      
+      // If window has only target anchor, use it
+      if (windowAnchors.length === 1 && windowAnchors[0] === effectiveTargetAnchor) {
+        return {
+          text: windowText.trim(),
+          start: clauseStart + windowStart,
+          end: clauseStart + windowEnd,
+        };
+      }
+      
+      // Expand window
+      if (windowStart > 0) windowStart = Math.max(0, windowStart - 10);
+      if (windowEnd < clauseText.length) windowEnd = Math.min(clauseText.length, windowEnd + 10);
+      
+      // Safety: don't expand beyond clause
+      if (windowStart === 0 && windowEnd === clauseText.length) break;
+    }
+  }
+  
+  // Last resort: return original clause (better than nothing)
+  return { text: clauseText, start: clauseStart, end: clauseEnd };
+}
+
 // A3.6.2 ADDENDUM: Build meaning-based uniqueness key (anchor + meaning)
 function buildMeaningKey(claimText) {
   const anchor = extractAnchor(claimText);
@@ -3106,11 +3281,31 @@ function extractAtomicClaims(statementText) {
     if (containingClauses.length > 0) {
       // Pick the earliest smallest clause
       const selectedClause = containingClauses[0];
-      const clauseKey = `${selectedClause.start}-${selectedClause.end}`;
+      
+      // A3.6.4: Extract target anchor from trigger to prevent cross-anchor merges
+      const triggerText = text.substring(
+        Math.max(0, trigger.index - 30),
+        Math.min(text.length, trigger.index + trigger.length + 30)
+      );
+      const targetAnchor = extractAnchor(triggerText);
+      
+      // A3.6.4: Check if clause contains multiple anchors and split if needed
+      const isolatedClause = splitClauseToIsolateAnchor(
+        selectedClause.text,
+        targetAnchor,
+        trigger.index,
+        selectedClause.start,
+        selectedClause.end,
+        text
+      );
+      
+      if (!isolatedClause) continue;
+      
+      const clauseKey = `${isolatedClause.start}-${isolatedClause.end}`;
       
       if (!usedClauses.has(clauseKey)) {
         usedClauses.add(clauseKey);
-        let snippet = selectedClause.text;
+        let snippet = isolatedClause.text;
         
         // Clean up: remove leading/trailing punctuation, normalize spacing
         snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
@@ -3119,12 +3314,12 @@ function extractAtomicClaims(statementText) {
         // If snippet starts with lowercase after alphanumeric, it might be mid-token
         if (snippet.length > 0 && /^[a-z]/.test(snippet)) {
           // Check if original text has alphanumeric before this position
-          const beforeChar = text[selectedClause.start - 1];
+          const beforeChar = text[isolatedClause.start - 1];
           if (beforeChar && /\w/.test(beforeChar)) {
             // Likely mid-token, use larger context or full sentence
             // Find sentence boundary
-            const sentenceStart = Math.max(0, text.lastIndexOf(".", selectedClause.start));
-            const sentenceEnd = Math.min(text.length, text.indexOf(".", selectedClause.end) + 1);
+            const sentenceStart = Math.max(0, text.lastIndexOf(".", isolatedClause.start));
+            const sentenceEnd = Math.min(text.length, text.indexOf(".", isolatedClause.end) + 1);
             if (sentenceEnd > sentenceStart) {
               snippet = text.substring(sentenceStart, sentenceEnd).trim();
               snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
@@ -3138,6 +3333,13 @@ function extractAtomicClaims(statementText) {
         snippet = snippet.replace(/\bup to\b/gi, "up to");
         snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
         // DO NOT normalize "$7 million" to "$7m" here - preserve original
+        
+        // A3.6.4: Final validation - ensure snippet contains target anchor (or at least one anchor)
+        const snippetAnchors = extractAllAnchors(snippet);
+        if (targetAnchor && !snippetAnchors.includes(targetAnchor)) {
+          // Target anchor lost during splitting, skip this claim
+          continue;
+        }
         
         if (snippet.length > 0 && snippet.length < 150) {
           claims.push(snippet);
@@ -5365,8 +5567,11 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     text: s.text || "",
   }));
   
-  return statements.map((stmt) => {
+  return statements.map((stmt, idx) => {
     if (!stmt || typeof stmt !== "object") return stmt;
+    
+    // A3.6.4: Guard against invalid index
+    if (typeof idx !== "number") idx = -1;
     
     const assessment = stmt.assessment || {};
     const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
@@ -5906,8 +6111,9 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
     // Perform deterministic corpus search (A3.5.12) - only if not already done
     if (!searchResult) {
       // A3.5.20 Fix 3: Log corpusSearch call with RID+SIG
+      // A3.6.4: Fix - use idx from map callback scope
       if (runId && reqSig) {
-        diag(runId, reqSig, `[corpusSearch] calling for statement idx=${stmtIdx || 'unknown'}`);
+        diag(runId, reqSig, `[corpusSearch] calling for statement idx=${idx !== undefined ? idx : 'unknown'}`);
       }
       searchResult = corpusSearch(text, uploadedDocs);
       if (runId && reqSig) {
