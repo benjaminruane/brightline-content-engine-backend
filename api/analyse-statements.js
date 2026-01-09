@@ -2866,14 +2866,18 @@ function extractAnchor(claimText) {
 }
 
 // A3.6.4: Extract all distinct anchors from a clause text
+// A3.6.8: Operate on ORIGINAL statement text (before any cleaning that might remove % or punctuation)
 function extractAllAnchors(clauseText) {
   if (typeof clauseText !== "string") return [];
   
+  // A3.6.8: Use original text (don't lowercase yet for anchor detection)
+  const originalText = clauseText;
+  const text = originalText.toLowerCase();
+  
   const anchors = new Set();
-  const text = clauseText.toLowerCase();
   
   // Extract USD anchors
-  const usdMatches = [...text.matchAll(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/gi)];
+  const usdMatches = [...originalText.matchAll(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/gi)];
   for (const match of usdMatches) {
     const numStr = match[1].replace(/,/g, "");
     const unit = (match[2] || "").toLowerCase();
@@ -2890,30 +2894,41 @@ function extractAllAnchors(clauseText) {
     }
   }
   
-  // Extract percentage anchors
-  const pctMatches = [...text.matchAll(/([\d,]+(?:\.\d+)?)\s*%/g)];
+  // A3.6.8: Extract percentage anchors - normalize 31 -> pct_31; 20.0 -> pct_20
+  const pctMatches = [...originalText.matchAll(/(\d+(?:\.\d+)?)\s*%/g)];
   for (const match of pctMatches) {
-    const num = match[1].replace(/,/g, "");
-    anchors.add(`pct_${num}`);
+    const numStr = match[1].replace(/,/g, "");
+    const num = parseFloat(numStr);
+    // Normalize: remove trailing .0, keep integer part
+    const normalizedNum = Number.isFinite(num) ? Math.floor(num).toString() : numStr;
+    anchors.add(`pct_${normalizedNum}`);
   }
   
   // Extract multiplier anchors
-  const multMatches = [...text.matchAll(/\b([\d,]+(?:\.\d+)?)\s*x\b/g)];
+  const multMatches = [...originalText.matchAll(/\b([\d,]+(?:\.\d+)?)\s*x\b/g)];
   for (const match of multMatches) {
     const num = match[1].replace(/,/g, "");
     anchors.add(`mult_${num}x`);
   }
   
-  // Extract qualitative anchors
-  if (/\bpre-?money\b/.test(text)) anchors.add("qual_premoney");
-  if (/\bpost-?money\b/.test(text)) anchors.add("qual_postmoney");
-  if (/\bsecondary\b.*\b(purchase|sale|transaction)\b/.test(text)) anchors.add("qual_secondary");
-  if (/\bprofitable\b/.test(text)) anchors.add("qual_profitable");
-  if (/\bbootstrapped\b/.test(text)) anchors.add("qual_bootstrapped");
-  if (/\b1x\b.*\b(preferred|liquidation)\b/.test(text)) anchors.add("qual_1x_preferred");
-  if (/\bpreferred\b/.test(text) && !/\b1x\b/.test(text)) anchors.add("qual_preferred");
-  const seriesMatch = text.match(/\bSeries\s+([A-Z])\b/);
-  if (seriesMatch) anchors.add(`qual_series_${seriesMatch[1].toLowerCase()}`);
+  // A3.6.8: Extract qualitative anchors - include at least: secondary, pre-money, post-money, fully diluted, ownership, stake, series a, financing, valuation, enterprise value
+  if (/\bpre-?money\b/i.test(originalText)) anchors.add("qual_premoney");
+  if (/\bpost-?money\b/i.test(originalText)) anchors.add("qual_postmoney");
+  if (/\bsecondary\b/i.test(originalText)) anchors.add("qual_secondary"); // A3.6.8: Simplified - just "secondary" is enough
+  if (/\bfully\s+diluted\b/i.test(originalText)) anchors.add("qual_fully_diluted");
+  if (/\bownership\b/i.test(originalText)) anchors.add("qual_ownership");
+  if (/\bstake\b/i.test(originalText)) anchors.add("qual_stake");
+  if (/\bSeries\s+([A-Z])\b/.test(originalText)) {
+    const seriesMatch = originalText.match(/\bSeries\s+([A-Z])\b/);
+    if (seriesMatch) anchors.add(`qual_series_${seriesMatch[1].toLowerCase()}`);
+  }
+  if (/\bfinancing\b/i.test(originalText)) anchors.add("qual_financing");
+  if (/\bvaluation\b/i.test(originalText)) anchors.add("qual_valuation");
+  if (/\benterprise\s+value\b|\bev\b(?!\w)/i.test(originalText)) anchors.add("qual_enterprise_value");
+  if (/\bprofitable\b/i.test(originalText)) anchors.add("qual_profitable");
+  if (/\bbootstrapped\b/i.test(originalText)) anchors.add("qual_bootstrapped");
+  if (/\b1x\b.*\b(preferred|liquidation)\b/i.test(originalText)) anchors.add("qual_1x_preferred");
+  if (/\bpreferred\b/i.test(originalText) && !/\b1x\b/i.test(originalText)) anchors.add("qual_preferred");
   
   return Array.from(anchors);
 }
@@ -3397,26 +3412,28 @@ function extractAtomicClaims(statementText) {
     }
   }
   
-  // A3.6.5: For any anchors not yet processed, find and emit claims
+  // A3.6.8: For any anchors not yet processed, find and emit claims with word-boundary expansion
   for (const anchor of allAnchorsInStatement) {
     if (anchorsProcessed.has(anchor)) continue; // Already processed
     
     // Find the first occurrence of this anchor in the text
-    // For USD anchors, search for the pattern
     let anchorIndex = -1;
+    let anchorMatch = null;
+    
     if (anchor.startsWith("usd_")) {
       const numMatch = anchor.match(/usd_([\d.]+)m/);
       if (numMatch) {
         const num = numMatch[1];
         // Search for $X million/mm/m pattern
         const patterns = [
-          new RegExp(`\\$${num}\\s*(?:million|mm|m\\b)`, "i"),
           new RegExp(`\\$${num.replace(/\./g, "\\.")}\\s*(?:million|mm|m\\b)`, "i"),
+          new RegExp(`\\$${num}\\s*(?:million|mm|m\\b)`, "i"),
         ];
         for (const pattern of patterns) {
           const match = text.match(pattern);
           if (match) {
             anchorIndex = match.index;
+            anchorMatch = match[0];
             break;
           }
         }
@@ -3425,63 +3442,106 @@ function extractAtomicClaims(statementText) {
       const numMatch = anchor.match(/pct_([\d.]+)/);
       if (numMatch) {
         const num = numMatch[1];
-        const pattern = new RegExp(`${num.replace(/\./g, "\\.")}\\s*%`);
+        // A3.6.8: Match percentage with optional decimal
+        const pattern = new RegExp(`(\\d+(?:\\.\\d+)?)\\s*%`);
         const match = text.match(pattern);
-        if (match) {
+        if (match && Math.floor(parseFloat(match[1])) === parseInt(num)) {
           anchorIndex = match.index;
+          anchorMatch = match[0];
         }
       }
     } else if (anchor.startsWith("qual_")) {
-      // For qualitative anchors, search for keywords
+      // A3.6.8: For qualitative anchors, search for keywords with expanded patterns
       const qualType = anchor.replace("qual_", "");
       const qualPatterns = {
-        secondary: /\bsecondary\s+(?:purchase|sale|transaction)\b/i,
+        secondary: /\bsecondary\b/i,
         premoney: /\bpre-?money\b/i,
         postmoney: /\bpost-?money\b/i,
+        fully_diluted: /\bfully\s+diluted\b/i,
+        ownership: /\bownership\b/i,
+        stake: /\bstake\b/i,
+        financing: /\bfinancing\b/i,
+        valuation: /\bvaluation\b/i,
+        enterprise_value: /\benterprise\s+value\b|\bev\b(?!\w)/i,
         profitable: /\bprofitable\b/i,
         bootstrapped: /\bbootstrapped\b/i,
+        "1x_preferred": /\b1x\b.*\b(preferred|liquidation)\b/i,
+        preferred: /\bpreferred\b/i,
       };
       const pattern = qualPatterns[qualType];
       if (pattern) {
         const match = text.match(pattern);
         if (match) {
           anchorIndex = match.index;
+          anchorMatch = match[0];
+        }
+      }
+      // Handle series anchors
+      if (qualType.startsWith("series_")) {
+        const seriesLetter = qualType.replace("series_", "");
+        const seriesPattern = new RegExp(`\\bSeries\\s+${seriesLetter}\\b`, "i");
+        const match = text.match(seriesPattern);
+        if (match) {
+          anchorIndex = match.index;
+          anchorMatch = match[0];
         }
       }
     }
     
     if (anchorIndex >= 0) {
-      // Find clause containing this anchor
-      const containingClauses = clauses
-        .filter(c => c.start <= anchorIndex && c.end >= anchorIndex)
-        .sort((a, b) => (a.end - a.start) - (b.end - b.start));
+      // A3.6.8: Build snippet around anchor (±60 chars) BUT expand to word boundaries
+      const snippetStart = Math.max(0, anchorIndex - 60);
+      const snippetEnd = Math.min(text.length, anchorIndex + (anchorMatch ? anchorMatch.length : 0) + 60);
       
-      if (containingClauses.length > 0) {
-        const selectedClause = containingClauses[0];
-        const isolatedClause = splitClauseToIsolateAnchor(
-          selectedClause.text,
-          anchor,
-          anchorIndex,
-          selectedClause.start,
-          selectedClause.end,
-          text
-        );
-        
-        if (isolatedClause) {
-          const clauseKey = `${isolatedClause.start}-${isolatedClause.end}`;
-          if (!usedClauses.has(clauseKey)) {
-            usedClauses.add(clauseKey);
-            let snippet = isolatedClause.text;
-            snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
-            snippet = snippet.replace(/\bup to\b/gi, "up to");
-            snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
+      // Expand to word boundaries
+      let expandedStart = snippetStart;
+      while (expandedStart > 0 && /\w/.test(text[expandedStart - 1])) {
+        expandedStart--;
+      }
+      let expandedEnd = snippetEnd;
+      while (expandedEnd < text.length && /\w/.test(text[expandedEnd])) {
+        expandedEnd++;
+      }
+      
+      let snippet = text.substring(expandedStart, expandedEnd).trim();
+      
+      // A3.6.8: Ensure snippet contains the anchor and does not include OTHER anchors if possible
+      const snippetAnchors = extractAllAnchors(snippet);
+      if (snippetAnchors.includes(anchor)) {
+        // If snippet contains multiple anchors, try to split
+        if (snippetAnchors.length > 1) {
+          // Try to find a smaller window around just this anchor
+          const anchorPos = snippet.indexOf(anchorMatch || anchor);
+          if (anchorPos >= 0) {
+            const narrowStart = Math.max(0, anchorPos - 30);
+            const narrowEnd = Math.min(snippet.length, anchorPos + (anchorMatch ? anchorMatch.length : 10) + 30);
             
-            const snippetAnchors = extractAllAnchors(snippet);
-            if (snippetAnchors.includes(anchor) && snippet.length > 0 && snippet.length < 150) {
-              claims.push(snippet);
-              anchorsProcessed.add(anchor);
+            // Expand to word boundaries again
+            let narrowExpandedStart = narrowStart;
+            while (narrowExpandedStart > 0 && /\w/.test(snippet[narrowExpandedStart - 1])) {
+              narrowExpandedStart--;
+            }
+            let narrowExpandedEnd = narrowEnd;
+            while (narrowExpandedEnd < snippet.length && /\w/.test(snippet[narrowExpandedEnd])) {
+              narrowExpandedEnd++;
+            }
+            
+            const narrowSnippet = snippet.substring(narrowExpandedStart, narrowExpandedEnd).trim();
+            const narrowAnchors = extractAllAnchors(narrowSnippet);
+            if (narrowAnchors.includes(anchor) && narrowAnchors.length === 1) {
+              snippet = narrowSnippet;
             }
           }
+        }
+        
+        // Clean up snippet
+        snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+        snippet = snippet.replace(/\bup to\b/gi, "up to");
+        snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
+        
+        if (snippet.length > 0 && snippet.length < 150) {
+          claims.push(snippet);
+          anchorsProcessed.add(anchor);
         }
       }
     }
@@ -3736,6 +3796,12 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     return [];
   }
   
+  // A3.6.8: Extract all anchors from original statement text for logging
+  const allAnchorsInOriginal = extractAllAnchors(statementText);
+  if (idx < 2 && runId && reqSig) {
+    diag(runId, reqSig, `[ANCHORS_ALL] idx=${idx} anchors=${JSON.stringify(Array.from(allAnchorsInOriginal))}`);
+  }
+  
   // Extract raw candidates (already cleaned and with facet/key assigned)
   const rawCandidates = extractAtomicClaims(statementText);
   if (rawCandidates.length === 0) {
@@ -3744,6 +3810,16 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   
   // A3.6.1: Aggregate by claimKey
   const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
+  
+  // A3.6.8: Check for missing anchors
+  const emittedAnchors = new Set(aggregatedClaims.map(c => {
+    const anchor = extractAnchor(c.claimText);
+    return anchor || null;
+  }).filter(a => a !== null));
+  const missingAnchors = allAnchorsInOriginal.filter(a => !emittedAnchors.has(a));
+  if (idx < 2 && runId && reqSig && missingAnchors.length > 0) {
+    diag(runId, reqSig, `[CLAIMS_MISSING_ANCHORS] idx=${idx} missing=${JSON.stringify(missingAnchors)}`);
+  }
   
   // Log aggregation stats (per statement) - A3.6.2 ADDENDUM: anchor + meaning
   if (runId && reqSig) {
@@ -3927,47 +4003,48 @@ function computeStatementReliabilityFromClaims(claims, existingScore, existingLa
   
   const total = hi + med + low;
   if (total === 0) {
-    // Empty claims list - keep existing
+    // A3.6.8: Empty claims list - return default Medium
     return {
-      reliabilityScore: existingScore,
-      reliabilityLabel: existingLabel,
+      reliabilityScore: 70,
+      reliabilityLabel: "Medium",
+      _branch: "EMPTY",
     };
   }
   
-  // Compute statement reliability
+  // A3.6.8: Compute statement reliability with fixed deterministic mapping
   let statementLabel;
   let statementScore;
+  let branch = "";
   
-  // Rule 1: If low == 0 AND hi >= 1 AND (hi / total) >= 0.5 => High
+  // A3.6.8: Rule 1: If low == 0 AND hi >= 1 AND (hi / total) >= 0.5 => High
   if (low === 0 && hi >= 1 && (hi / total) >= 0.5) {
     statementLabel = "High";
-    // Score: 80-95 based on hi/total
-    const hiRatio = hi / total;
-    statementScore = Math.round(80 + (hiRatio - 0.5) * 30); // 0.5 -> 80, 1.0 -> 95
-    statementScore = Math.max(80, Math.min(95, statementScore));
+    branch = "HIGH_MAJORITY";
+    statementScore = 85; // Fixed score for High
   }
-  // Rule 2: Else if low <= 1 AND (hi + med) >= 2 => Medium
+  // A3.6.8: Rule 2: Else if low == 0 AND med >= 1 => Medium (any Medium-only set should be Medium, not Low)
+  else if (low === 0 && med >= 1) {
+    statementLabel = "Medium";
+    branch = "MED_ONLY";
+    statementScore = 70; // Fixed score for Medium-only
+  }
+  // A3.6.8: Rule 3: Else if low <= 1 AND (hi + med) >= 2 => Medium
   else if (low <= 1 && (hi + med) >= 2) {
     statementLabel = "Medium";
-    // Score: 50-79 based on (hi+med)/total and low presence
-    const supportedRatio = (hi + med) / total;
-    const baseScore = 50 + (supportedRatio - (2 / total)) * 40; // Adjust based on ratio
-    const lowPenalty = low === 1 ? 5 : 0; // Small penalty if one low claim
-    statementScore = Math.round(baseScore - lowPenalty);
-    statementScore = Math.max(50, Math.min(79, statementScore));
+    branch = "MED_MIXED";
+    statementScore = 65; // Fixed score for mixed Medium
   }
-  // Rule 3: Else => Low
+  // A3.6.8: Rule 4: Else => Low
   else {
     statementLabel = "Low";
-    // Score: 5-49 based on low/total
-    const lowRatio = low / total;
-    statementScore = Math.round(5 + lowRatio * 44); // 0 -> 5, 1.0 -> 49
-    statementScore = Math.max(5, Math.min(49, statementScore));
+    branch = "LOW";
+    statementScore = 30; // Fixed score for Low
   }
   
   return {
     reliabilityScore: statementScore,
     reliabilityLabel: statementLabel,
+    _branch: branch, // For logging
   };
 }
 
@@ -3988,30 +4065,90 @@ function generateClaimLinkedReasons(claims) {
   const seenAnchors = new Set();
   const seenTextPrefixes = new Set();
   
-  // Helper to extract anchor-bearing substring (prefer anchor context)
+  // A3.6.8: Helper to extract anchor context with word-boundary expansion
+  function extractAnchorContext(claimText, anchor) {
+    if (!anchor) return claimText;
+    
+    // Try to find the anchor-bearing substring (e.g., "20%" or "$50M")
+    const pctMatch = claimText.match(/(\d+(?:\.\d+)?\s*%)/);
+    const usdMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b)/i);
+    
+    let anchorIndex = -1;
+    let anchorLength = 0;
+    
+    if (pctMatch) {
+      anchorIndex = claimText.indexOf(pctMatch[0]);
+      anchorLength = pctMatch[0].length;
+    } else if (usdMatch) {
+      anchorIndex = claimText.indexOf(usdMatch[0]);
+      anchorLength = usdMatch[0].length;
+    } else {
+      // For qualitative anchors, find keyword
+      const qualType = anchor.replace("qual_", "");
+      const qualKeywords = {
+        secondary: "secondary",
+        premoney: "pre-money",
+        postmoney: "post-money",
+        fully_diluted: "fully diluted",
+        ownership: "ownership",
+        stake: "stake",
+        financing: "financing",
+        valuation: "valuation",
+        enterprise_value: "enterprise value",
+      };
+      const keyword = qualKeywords[qualType] || qualType;
+      const keywordMatch = claimText.match(new RegExp(`\\b${keyword}\\b`, "i"));
+      if (keywordMatch) {
+        anchorIndex = keywordMatch.index;
+        anchorLength = keywordMatch[0].length;
+      }
+    }
+    
+    if (anchorIndex >= 0) {
+      // Extract context around anchor (±30 chars) then expand to word boundaries
+      let start = Math.max(0, anchorIndex - 30);
+      let end = Math.min(claimText.length, anchorIndex + anchorLength + 30);
+      
+      // A3.6.8: Expand to word boundaries - move start left to previous whitespace/punctuation boundary
+      while (start > 0 && /\w/.test(claimText[start - 1])) {
+        start--;
+      }
+      // Move end right to next whitespace/punctuation boundary
+      while (end < claimText.length && /\w/.test(claimText[end])) {
+        end++;
+      }
+      
+      let snippet = claimText.substring(start, end).trim();
+      
+      // A3.6.8: If resulting snippet < 8 chars or starts with lowercase mid-word pattern, fall back to claimText
+      if (snippet.length < 8 || /^[a-z]/.test(snippet)) {
+        // Check if it's truly mid-word (has alphanumeric before)
+        const beforeChar = claimText[start - 1];
+        if (beforeChar && /\w/.test(beforeChar)) {
+          // Mid-word, use full claimText
+          return claimText;
+        }
+      }
+      
+      return snippet;
+    }
+    
+    // Fallback: use claimText trimmed
+    return claimText.trim();
+  }
+  
+  // A3.6.8: Helper to extract anchor-bearing substring (prefer anchor context, never mid-token)
   function extractAnchorSubstring(claimText) {
     const anchor = extractAnchor(claimText);
     if (anchor) {
-      // Try to find the anchor-bearing substring (e.g., "20%" or "$50M")
-      const pctMatch = claimText.match(/([\d,]+(?:\.\d+)?\s*%)/);
-      const usdMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b)/i);
-      
-      if (pctMatch) {
-        // Extract context around percentage (up to 40 chars)
-        const idx = claimText.indexOf(pctMatch[0]);
-        const start = Math.max(0, idx - 15);
-        const end = Math.min(claimText.length, idx + pctMatch[0].length + 15);
-        return claimText.substring(start, end).trim();
-      } else if (usdMatch) {
-        // Extract context around USD (up to 40 chars)
-        const idx = claimText.indexOf(usdMatch[0]);
-        const start = Math.max(0, idx - 15);
-        const end = Math.min(claimText.length, idx + usdMatch[0].length + 15);
-        return claimText.substring(start, end).trim();
+      const context = extractAnchorContext(claimText, anchor);
+      // If context is reasonable, use it; otherwise use full claimText
+      if (context.length >= 8 && !/^[a-z]/.test(context)) {
+        return context;
       }
     }
-    // Fallback: first 40 chars
-    return claimText.length > 40 ? claimText.substring(0, 40) + "..." : claimText;
+    // Fallback: use claimText (trimmed, but don't truncate mid-token)
+    return claimText.trim();
   }
   
   // Helper to normalize text prefix for deduplication
@@ -4048,15 +4185,32 @@ function generateClaimLinkedReasons(claims) {
         ? ` [${claim.citations.join(", ")}]`
         : "";
       
-      // Prefer anchor-bearing substring
-      const snippet = extractAnchorSubstring(claimText);
+      // A3.6.8: Prefer anchor-bearing substring (never mid-token)
+      let snippet = extractAnchorSubstring(claimText);
+      
+      // A3.6.8: If snippet is too long, truncate at word boundary (not mid-token)
+      if (snippet.length > 50) {
+        // Find last space before 50 chars
+        const truncateAt = snippet.lastIndexOf(" ", 50);
+        if (truncateAt > 20) {
+          snippet = snippet.substring(0, truncateAt) + "...";
+        } else {
+          // No good space found, use first 47 chars and add ellipsis
+          snippet = snippet.substring(0, 47) + "...";
+        }
+      }
       
       // Build reason: snippet + comment + citations
       let reason = `"${snippet}" ${comment}${citations}`;
       
-      // Ensure < 120 chars
+      // A3.6.8: Ensure < 120 chars, truncate at word boundary if needed
       if (reason.length > 120) {
-        reason = reason.substring(0, 117) + "...";
+        const truncateAt = reason.lastIndexOf(" ", 117);
+        if (truncateAt > 80) {
+          reason = reason.substring(0, truncateAt) + "...";
+        } else {
+          reason = reason.substring(0, 117) + "...";
+        }
       }
       
       reasons.push(reason);
@@ -4085,15 +4239,32 @@ function generateClaimLinkedReasons(claims) {
         ? ` [${claim.citations.join(", ")}]`
         : "";
       
-      // Prefer anchor-bearing substring
-      const snippet = extractAnchorSubstring(claimText);
+      // A3.6.8: Prefer anchor-bearing substring (never mid-token)
+      let snippet = extractAnchorSubstring(claimText);
+      
+      // A3.6.8: If snippet is too long, truncate at word boundary (not mid-token)
+      if (snippet.length > 50) {
+        // Find last space before 50 chars
+        const truncateAt = snippet.lastIndexOf(" ", 50);
+        if (truncateAt > 20) {
+          snippet = snippet.substring(0, truncateAt) + "...";
+        } else {
+          // No good space found, use first 47 chars and add ellipsis
+          snippet = snippet.substring(0, 47) + "...";
+        }
+      }
       
       // Build reason: snippet + comment + citations
       let reason = `"${snippet}" ${comment}${citations}`;
       
-      // Ensure < 120 chars
+      // A3.6.8: Ensure < 120 chars, truncate at word boundary if needed
       if (reason.length > 120) {
-        reason = reason.substring(0, 117) + "...";
+        const truncateAt = reason.lastIndexOf(" ", 117);
+        if (truncateAt > 80) {
+          reason = reason.substring(0, truncateAt) + "...";
+        } else {
+          reason = reason.substring(0, 117) + "...";
+        }
       }
       
       reasons.push(reason);
@@ -4121,15 +4292,32 @@ function generateClaimLinkedReasons(claims) {
         ? ` [${claim.citations.join(", ")}]`
         : "";
       
-      // Prefer anchor-bearing substring
-      const snippet = extractAnchorSubstring(claimText);
+      // A3.6.8: Prefer anchor-bearing substring (never mid-token)
+      let snippet = extractAnchorSubstring(claimText);
+      
+      // A3.6.8: If snippet is too long, truncate at word boundary (not mid-token)
+      if (snippet.length > 50) {
+        // Find last space before 50 chars
+        const truncateAt = snippet.lastIndexOf(" ", 50);
+        if (truncateAt > 20) {
+          snippet = snippet.substring(0, truncateAt) + "...";
+        } else {
+          // No good space found, use first 47 chars and add ellipsis
+          snippet = snippet.substring(0, 47) + "...";
+        }
+      }
       
       // Build reason: snippet + "Matches memo" + citations
       let reason = `"${snippet}" Matches memo${citations}`;
       
-      // Ensure < 120 chars
+      // A3.6.8: Ensure < 120 chars, truncate at word boundary if needed
       if (reason.length > 120) {
-        reason = reason.substring(0, 117) + "...";
+        const truncateAt = reason.lastIndexOf(" ", 117);
+        if (truncateAt > 80) {
+          reason = reason.substring(0, truncateAt) + "...";
+        } else {
+          reason = reason.substring(0, 117) + "...";
+        }
       }
       
       reasons.push(reason);
