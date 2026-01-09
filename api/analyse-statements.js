@@ -1592,49 +1592,111 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
       continue;
     }
     
-    // Repair strategy: extend to nearest valid sentence boundary from original draft text
+    // A3.6.12: Repair strategy: extend to nearest valid sentence boundary from original draft text
     const textIndex = draftText.indexOf(trimmed);
+    let repairedText = null;
+    let changed = false;
+    
     if (textIndex >= 0) {
       // Find sentence boundary after the statement
       const sentenceEnd = draftText.indexOf(".", textIndex + trimmed.length);
       if (sentenceEnd >= 0) {
-        const repairedText = draftText.substring(textIndex, sentenceEnd + 1).trim();
-        if (repairedText.length > trimmed.length) {
-          repaired.push({
-            ...stmt,
-            text: repairedText,
-            __repairedNumericFragment: true,
-          });
-          repairCount++;
-          log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} original="${trimmed.substring(0, 50)}..." repaired="${repairedText.substring(0, 50)}..."`);
-          continue;
+        const extended = draftText.substring(textIndex, sentenceEnd + 1).trim();
+        // A3.6.12: Only use extension if it actually completes the number/paren
+        if (extended.length > trimmed.length) {
+          // Verify the extension completes the fragment
+          const hasCompleteNumber = !/\$\d+$/.test(extended) && !/\d+\.\d*$/.test(extended);
+          const hasBalancedParens = (extended.match(/\(/g) || []).length === (extended.match(/\)/g) || []).length;
+          const hasNoDanglingCurrency = !/\$$/.test(extended);
+          
+          if (hasCompleteNumber && hasBalancedParens && hasNoDanglingCurrency) {
+            repairedText = extended;
+            changed = true;
+          }
         }
       }
     }
     
-    // If extension not possible, truncate the fragment entirely
-    // Find last complete word before the fragment
-    const lastCompleteWord = trimmed.match(/\b\w+\b(?=\s*$)/);
-    if (lastCompleteWord && lastCompleteWord.index > 0) {
-      const truncatedText = trimmed.substring(0, lastCompleteWord.index).trim();
-      if (truncatedText.length >= 10) {
-        repaired.push({
-          ...stmt,
-          text: truncatedText,
-          __repairedNumericFragment: true,
-        });
-        repairCount++;
-        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} original="${trimmed.substring(0, 50)}..." truncated="${truncatedText.substring(0, 50)}..."`);
-        continue;
+    // A3.6.12: If extension not possible or didn't work, truncate the fragment entirely
+    if (!changed) {
+      // Find last complete sentence or word boundary before the fragment
+      // Try to find sentence boundary first
+      const lastSentenceEnd = trimmed.lastIndexOf(".");
+      if (lastSentenceEnd > 0) {
+        const truncated = trimmed.substring(0, lastSentenceEnd + 1).trim();
+        if (truncated.length >= 10) {
+          repairedText = truncated;
+          changed = true;
+        }
+      }
+      
+      // If no sentence boundary, find last complete word
+      if (!changed) {
+        const lastCompleteWord = trimmed.match(/\b\w+\b(?=\s*$)/);
+        if (lastCompleteWord && lastCompleteWord.index > 0) {
+          const truncated = trimmed.substring(0, lastCompleteWord.index).trim();
+          if (truncated.length >= 10) {
+            repairedText = truncated;
+            changed = true;
+          }
+        }
+      }
+      
+      // A3.6.12: If still no repair, remove trailing fragment entirely
+      if (!changed) {
+        // Remove everything from the last complete clause
+        const clauseEnd = trimmed.lastIndexOf(/\s+(?:and|with|at|for|to)\s+/i);
+        if (clauseEnd > 0) {
+          const truncated = trimmed.substring(0, clauseEnd).trim();
+          if (truncated.length >= 10) {
+            repairedText = truncated;
+            changed = true;
+          }
+        }
       }
     }
     
-    // Last resort: keep as-is but mark as repaired
-    repaired.push({
-      ...stmt,
-      __repairedNumericFragment: true,
-    });
-    repairCount++;
+    // A3.6.12: Postcondition check - repaired text must not end with dangling fragments
+    if (repairedText) {
+      const endsWithDangling = /\$$/.test(repairedText) || 
+                               /\$\d+$/.test(repairedText) || 
+                               /\d+\.\d*$/.test(repairedText) ||
+                               (repairedText.match(/\(/g) || []).length > (repairedText.match(/\)/g) || []).length;
+      
+      if (endsWithDangling) {
+        // Still has dangling fragment - truncate more aggressively
+        const lastGoodEnd = repairedText.search(/\b\w+\s*[.!?]\s*$/);
+        if (lastGoodEnd > 0) {
+          repairedText = repairedText.substring(0, lastGoodEnd + 1).trim();
+        } else {
+          // Fallback: remove last 20 chars if they contain the fragment
+          const beforeFragment = repairedText.substring(0, Math.max(10, repairedText.length - 20)).trim();
+          if (beforeFragment.length >= 10) {
+            repairedText = beforeFragment;
+          }
+        }
+      }
+    }
+    
+    if (repairedText && repairedText !== trimmed) {
+      repaired.push({
+        ...stmt,
+        text: repairedText,
+        __repairedNumericFragment: true,
+      });
+      repairCount++;
+      const originalPreview = trimmed.length > 50 ? trimmed.substring(0, 50) + "..." : trimmed;
+      const repairedPreview = repairedText.length > 50 ? repairedText.substring(0, 50) + "..." : repairedText;
+      log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} changed=true originalPreview="${originalPreview}" repairedPreview="${repairedPreview}"`);
+    } else {
+      // A3.6.12: If we couldn't repair, still mark as repaired but keep original (shouldn't happen often)
+      repaired.push({
+        ...stmt,
+        __repairedNumericFragment: true,
+      });
+      repairCount++;
+      log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} changed=false originalPreview="${trimmed.substring(0, 50)}..." (could not repair)`);
+    }
   }
   
   if (repairCount > 0) {
@@ -2957,26 +3019,80 @@ function extractAnchor(claimText) {
   if (/\bvaluation\b/.test(text)) return canonicalizeAnchor("qual_valuation");
   if (/\benterprise\s+value\b|\bev\b(?!\w)/.test(text)) return canonicalizeAnchor("qual_enterprise_value");
   
-  // A3.6.11: Ownership - only return qual_ownership if no percentage present
-  // (percentages should use pct_* anchors)
+  // A3.6.12: Ownership - canonicalize with context to map qual_ownership to pct_* if percentage present
   if (/\bownership\b/.test(text) && !pctMatch) {
-    return canonicalizeAnchor("qual_ownership");
+    const canonicalized = canonicalizeAnchor("qual_ownership", claimText);
+    // If canonicalized to null or pct_*, return that; otherwise return null (qual_ownership forbidden)
+    return canonicalized;
   }
   
   // Fallback: use first significant domain keyword
   const domainClass = extractDomainKeywordClass(claimText);
   if (domainClass !== "none") {
-    return canonicalizeAnchor(`qual_${domainClass}`);
+    return canonicalizeAnchor(`qual_${domainClass}`, claimText);
   }
   
   return null;
 }
 
+// A3.6.12: Canonical anchor allowlist for claim emission
+const CANONICAL_ANCHOR_ALLOWLIST = new Set([
+  // pct_* anchors
+  ...Array.from({ length: 101 }, (_, i) => `pct_${i}`), // 0-100%
+  // usd_* anchors (common ranges)
+  ...Array.from({ length: 1000 }, (_, i) => `usd_${i + 1}m`), // 1m-1000m
+  // qual_* anchors (canonical only)
+  "qual_valuation",
+  "qual_premoney",
+  "qual_postmoney",
+  "qual_secondary",
+  "qual_fully_diluted",
+  "qual_stake",
+  "qual_financing",
+  "qual_profitable",
+  "qual_bootstrapped",
+  "qual_1x_preferred",
+  "qual_preferred",
+  ...Array.from({ length: 26 }, (_, i) => `qual_series_${String.fromCharCode(97 + i)}`), // series_a-z
+  // mult_* anchors
+  ...Array.from({ length: 10 }, (_, i) => `mult_${i + 1}x`), // 1x-10x
+]);
+
+// Helper to check if anchor is canonical (supports dynamic pct/usd/mult patterns)
+function isCanonicalAnchor(anchor) {
+  if (typeof anchor !== "string") return false;
+  
+  // Check exact match first
+  if (CANONICAL_ANCHOR_ALLOWLIST.has(anchor)) return true;
+  
+  // Dynamic patterns
+  if (/^pct_\d+$/.test(anchor)) return true; // Any pct_* number
+  if (/^usd_[\d.]+m$/.test(anchor)) return true; // Any usd_*m
+  if (/^mult_[\d.]+x$/.test(anchor)) return true; // Any mult_*x
+  
+  return false;
+}
+
 // A3.6.4: Extract all distinct anchors from a clause text
 // A3.6.8: Operate on ORIGINAL statement text (before any cleaning that might remove % or punctuation)
 // A3.6.11: Canonical anchor taxonomy - maps all anchor variants to canonical forms
-function canonicalizeAnchor(anchor) {
+// A3.6.12: qual_ownership must never be emitted - canonicalize to null or map to pct_*
+function canonicalizeAnchor(anchor, contextText = null) {
   if (typeof anchor !== "string") return anchor;
+  
+  // A3.6.12: qual_ownership must never reach claim creation
+  // If qual_ownership, try to map to pct_* if percentage present, otherwise return null
+  if (anchor === "qual_ownership") {
+    if (contextText && typeof contextText === "string") {
+      // Check if there's a percentage in the context
+      const pctMatch = contextText.match(/(\d+(?:\.\d+)?)\s*%/);
+      if (pctMatch) {
+        const num = Math.floor(parseFloat(pctMatch[1]));
+        return `pct_${num}`; // Map to pct_* anchor
+      }
+    }
+    return null; // Skip qual_ownership - do not emit
+  }
   
   // All valuation concepts → qual_valuation
   if (anchor === "qual_enterprise_value" || anchor === "qual_valuation") {
@@ -3237,37 +3353,41 @@ function aggregateClaimsByKey(rawCandidates) {
       continue;
     }
     
-    // A3.6.11: Extract anchor first - canonicalize it
+    // A3.6.12: Extract anchor first - canonicalize it (with context for qual_ownership mapping)
     const rawAnchor = candidate.anchor || extractAnchor(candidate.claimText) || "no_anchor";
-    const anchor = canonicalizeAnchor(rawAnchor);
+    const canonicalAnchor = canonicalizeAnchor(rawAnchor, candidate.claimText);
     
-    // A3.6.11: Build normalized meaning key (strips numbers, stopwords, collapses whitespace)
+    // A3.6.12: Skip if canonicalization resulted in null (e.g., qual_ownership without pct)
+    if (!canonicalAnchor) {
+      continue;
+    }
+    
+    // A3.6.12: Build normalized meaning key (strips numbers, stopwords, collapses whitespace)
     const normalizedMeaningKey = buildNormalizedMeaningKey(candidate.claimText);
     
-    // A3.6.11: Primary uniqueness key: canonicalAnchor + '|' + normalizedMeaningKey
-    const dedupeKey = `${anchor}|${normalizedMeaningKey}`;
+    // A3.6.12: Primary uniqueness key: canonicalAnchor + '|' + normalizedMeaningKey
+    const dedupeKey = `${canonicalAnchor}|${normalizedMeaningKey}`;
     
     if (!aggregated.has(dedupeKey)) {
       aggregated.set(dedupeKey, {
         claimText: candidate.claimText,
         facet: candidate.facet || "Other", // Preserve facet for backward compatibility
-        anchor: anchor, // Store anchor for validation
+        anchor: canonicalAnchor, // Store canonical anchor
         candidates: [candidate],
       });
     } else {
       const existing = aggregated.get(dedupeKey);
       
-      // A3.6.11: Hard guard - never merge claims with different canonical anchors
-      const existingRawAnchor = existing.anchor || extractAnchor(existing.claimText) || "no_anchor";
-      const existingAnchor = canonicalizeAnchor(existingRawAnchor);
-      if (anchor !== existingAnchor) {
+      // A3.6.12: Hard guard - never merge claims with different canonical anchors
+      // (This should not happen since dedupeKey includes canonicalAnchor, but double-check)
+      if (existing.anchor !== canonicalAnchor) {
         // Different anchors - create separate entry
         // Use a more specific key to avoid collision
         const specificKey = `${dedupeKey}_${aggregated.size}`;
         aggregated.set(specificKey, {
           claimText: candidate.claimText,
           facet: candidate.facet || "Other",
-          anchor: anchor,
+          anchor: canonicalAnchor,
           candidates: [candidate],
         });
         continue;
@@ -4106,14 +4226,31 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     diag(runId, reqSig, `[CLAIMS_MISSING_ANCHORS] idx=${idx} missing=${JSON.stringify(missingAnchors)}`);
   }
   
-  // A3.6.9: Log aggregation stats with anchor uniqueness (per statement)
+  // A3.6.12: Log aggregation stats with anchor uniqueness (per statement)
   if (runId && reqSig) {
     const merged = rawCandidates.length - aggregatedClaims.length;
-    // Count unique anchors after dedupe
+    // Count unique canonical anchors after dedupe
     const anchorsUnique = Array.from(new Set(aggregatedClaims.map(c => {
-      const anchor = extractAnchor(c.claimText);
-      return anchor || "no_anchor";
+      const anchor = c.anchor || extractAnchor(c.claimText);
+      return canonicalizeAnchor(anchor, c.claimText) || "no_anchor";
     })));
+    
+    // A3.6.12: Diagnostic log for dedupe keys (once per statement)
+    if (idx < 2) {
+      const dedupKeys = aggregatedClaims.slice(0, 5).map(c => {
+        const anchor = c.anchor || extractAnchor(c.claimText);
+        const canonicalAnchor = canonicalizeAnchor(anchor, c.claimText) || "no_anchor";
+        const normalizedMeaningKey = buildNormalizedMeaningKey(c.claimText);
+        const uniquenessKey = `${canonicalAnchor}|${normalizedMeaningKey}`;
+        return {
+          claimPreview: c.claimText.substring(0, 40),
+          anchor: canonicalAnchor,
+          normalizedMeaningKey: normalizedMeaningKey.substring(0, 30),
+          uniquenessKey: uniquenessKey.substring(0, 50)
+        };
+      });
+      diag(runId, reqSig, `[CLAIMS_DEDUP_KEYS] idx=${idx} keys=${JSON.stringify(dedupKeys)}`);
+    }
     
     // A3.6.9: Diagnostic log for first 2 statements
     if (idx < 2) {
@@ -4146,6 +4283,18 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     const claimText = aggClaim.claimText;
     const facet = aggClaim.facet;
     
+    // A3.6.12: Extract and canonicalize anchor - enforce canonical anchor allowlist
+    const claimAnchor = aggClaim.anchor || extractAnchor(claimText);
+    const canonicalClaimAnchor = canonicalizeAnchor(claimAnchor, claimText);
+    
+    // A3.6.12: Hard guard - skip non-canonical anchors (including null from qual_ownership)
+    if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
+      if (runId && reqSig && idx < 2) {
+        diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${idx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
+      }
+      continue; // Skip this claim
+    }
+    
     // Run corpusSearch for this claim (with hybrid mode, maxHits: 2)
     const searchResult = corpusSearch(claimText, uploadedDocs);
     
@@ -4156,8 +4305,6 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult, uploadedDocs);
     
     // A3.6.11 ADDENDUM: Generic rule-driven diagnostic logging (no topic branching)
-    const claimAnchor = extractAnchor(claimText);
-    const canonicalClaimAnchor = canonicalizeAnchor(claimAnchor);
     const rules = ANCHOR_RULES[canonicalClaimAnchor] || {};
     if (rules.requireKeywordForHigh && runId && reqSig) {
       const hits = searchResult?.hits || [];
@@ -4267,10 +4414,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       comment,
     };
     
-    // A3.6.10: Preserve explicit anchor if available from aggregated claim
-    if (aggClaim.anchor) {
-      claim.anchor = aggClaim.anchor;
-    }
+    // A3.6.12: Always set canonical anchor (enforced above)
+    claim.anchor = canonicalClaimAnchor;
     
     // Add citations if available
     if (citations.length > 0) {
@@ -4280,12 +4425,16 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     finalClaims.push(claim);
   }
   
-  // A3.6.11: Anchor coverage logging - post-condition check (using canonical anchors)
+  // A3.6.12: Anchor coverage logging - post-condition check (using canonical anchors only)
   if (runId && reqSig) {
-    const anchorsDetected = allAnchorsInOriginal.map(canonicalizeAnchor);
+    // Canonicalize detected anchors and filter to canonical only
+    const anchorsDetected = allAnchorsInOriginal
+      .map(a => canonicalizeAnchor(a, statementText))
+      .filter(a => a && isCanonicalAnchor(a));
     const anchorsEmitted = Array.from(new Set(finalClaims.map(c => {
       const anchor = c.anchor || extractAnchor(c.claimText);
-      return canonicalizeAnchor(anchor);
+      const canonical = canonicalizeAnchor(anchor, c.claimText);
+      return canonical && isCanonicalAnchor(canonical) ? canonical : null;
     }).filter(Boolean)));
     const missing = Array.from(new Set(anchorsDetected.filter(a => !anchorsEmitted.includes(a))));
     
@@ -4511,7 +4660,7 @@ function generateClaimLinkedReasons(claims) {
   for (const claim of claims) {
     const claimText = claim?.claimText || "";
     const anchor = claim?.anchor || extractAnchor(claimText);
-    const canonicalAnchor = canonicalizeAnchor(anchor) || "no_anchor";
+    const canonicalAnchor = canonicalizeAnchor(anchor, claimText) || "no_anchor";
     
     if (!claimsByAnchor.has(canonicalAnchor)) {
       claimsByAnchor.set(canonicalAnchor, []);
@@ -4579,7 +4728,36 @@ function generateClaimLinkedReasons(claims) {
     reasons.push(reason);
   }
   
-  return reasons; // A3.6.11: Max 2 bullets (already limited by slice(0, 2))
+  // A3.6.12: Final post-pass to dedupe reasons by canonical anchor or uniquenessKey
+  // This ensures no duplicate reasons differing only by trivial prefixes
+  const dedupedReasons = [];
+  const seenReasonKeys = new Set();
+  
+  for (const reason of reasons) {
+    if (typeof reason !== "string") {
+      dedupedReasons.push(reason);
+      continue;
+    }
+    
+    // Extract anchor from reason text using extractAnchor (finds anchor-bearing phrases)
+    const anchor = extractAnchor(reason);
+    const canonicalAnchor = anchor ? canonicalizeAnchor(anchor, reason) : null;
+    
+    // Build uniqueness key: canonicalAnchor + normalized reason text prefix
+    const normalizedPrefix = reason.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
+    const reasonKey = canonicalAnchor ? `${canonicalAnchor}|${normalizedPrefix}` : normalizedPrefix;
+    
+    // Skip if we've seen this key before
+    if (seenReasonKeys.has(reasonKey)) {
+      continue;
+    }
+    
+    seenReasonKeys.add(reasonKey);
+    dedupedReasons.push(reason);
+  }
+  
+  // A3.6.12: Limit to max 2 bullets after dedupe
+  return dedupedReasons.slice(0, 2);
 }
 
 // A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
@@ -7320,10 +7498,17 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   let hasTruncation = false;
   let hasUnbalancedParens = false;
   let hasIncompleteNumeric = false;
+  let repairedNumericFragmentCount = 0;
   
   for (const stmt of statements) {
     const text = typeof stmt.text === "string" ? stmt.text : "";
     if (!text) continue;
+    
+    // A3.6.12: Skip repaired numeric fragments from quality checks
+    if (stmt.__repairedNumericFragment === true) {
+      repairedNumericFragmentCount++;
+      continue; // Do not count repaired statements as incomplete
+    }
     
     // A3.5.17 Fix 3: Check for incomplete numeric fragments in final output
     if (/\$\d+(?:,\d+)*(?:\.\d+)?\s*$/.test(text) && !/[.?!]\s*$/.test(text)) {
@@ -7369,21 +7554,25 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   // Fix 3: Use actual rejected/fallback counts from SEG_GUARD
   // A3.5.17 Fix 3: Include incomplete_numeric_fragment and recombined counts
   // A3.5.27: Include fragment_dropped and fragment_merged counts
+  // A3.6.12: Exclude repaired numeric fragments from incomplete_numeric_fragments count
   const reasons = [];
   if (hasTruncation) reasons.push("truncation");
   if (hasUnbalancedParens) reasons.push("unbalanced_parens");
   if (rejectedCount > 0) reasons.push(`rejected_candidates=${rejectedCount}`);
   if (fallbackCount > 0) reasons.push(`fallback=${fallbackCount}`);
-  if (incompleteNumericFragmentCount > 0) reasons.push(`incomplete_numeric_fragments=${incompleteNumericFragmentCount}`);
+  // A3.6.12: Only count incomplete_numeric_fragments that were NOT repaired
+  const unrepairedIncompleteCount = Math.max(0, incompleteNumericFragmentCount - repairedNumericFragmentCount);
+  if (unrepairedIncompleteCount > 0) reasons.push(`incomplete_numeric_fragments=${unrepairedIncompleteCount}`);
   if (recombinedCount > 0) reasons.push(`recombined_fragments=${recombinedCount}`);
   if (fragmentDropped > 0) reasons.push(`fragment_dropped=${fragmentDropped}`);
   if (fragmentMerged > 0) reasons.push(`fragment_merged=${fragmentMerged}`);
   
-  // A3.5.17 Fix 3: Quality must degrade if incomplete_numeric_fragment was repaired
+  // A3.6.12: Quality must degrade if incomplete_numeric_fragment was NOT repaired
+  // Repaired fragments are excluded from quality degradation
   let quality = "ok";
   if (hasTruncation || hasUnbalancedParens || hasIncompleteNumeric) {
     quality = "failed";
-  } else if (rejectedCount > 0 || fallbackCount > 0 || incompleteNumericFragmentCount > 0 || recombinedCount > 0) {
+  } else if (rejectedCount > 0 || fallbackCount > 0 || unrepairedIncompleteCount > 0 || recombinedCount > 0) {
     quality = "degraded";
   }
   
