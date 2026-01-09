@@ -3089,8 +3089,8 @@ function aggregateClaimsByKey(rawCandidates) {
       continue;
     }
     
-    // A3.6.9: Extract anchor first - this is the primary uniqueness key
-    const anchor = extractAnchor(candidate.claimText) || "no_anchor";
+    // A3.6.10: Extract anchor first - use explicit anchor field if available, otherwise extract
+    const anchor = candidate.anchor || extractAnchor(candidate.claimText) || "no_anchor";
     
     // A3.6.9: Normalize claim text prefix for deduplication (first 50 chars, lowercase, alphanumeric only)
     const normalizedPrefix = candidate.claimText.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
@@ -3137,6 +3137,7 @@ function aggregateClaimsByKey(rawCandidates) {
     claimText: agg.claimText,
     facet: agg.facet,
     claimKey: buildClaimKey(agg.claimText, agg.facet), // Preserve for backward compatibility
+    anchor: agg.anchor, // A3.6.10: Preserve explicit anchor
     mergedCount: agg.candidates.length,
   }));
 }
@@ -3398,19 +3399,40 @@ function extractAtomicClaims(statementText) {
         // Clean up: remove leading/trailing punctuation, normalize spacing
         snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
         
-        // A3.6.2 PATCH: Validate not mid-token
-        // If snippet starts with lowercase after alphanumeric, it might be mid-token
+        // A3.6.10: Validate not mid-token - expand to word boundaries
+        // Check if snippet starts mid-word (has alphanumeric before start position)
+        const beforeChar = isolatedClause.start > 0 ? text[isolatedClause.start - 1] : null;
+        if (beforeChar && /\w/.test(beforeChar)) {
+          // Start is mid-word, expand left to word boundary
+          let expandedStart = isolatedClause.start;
+          while (expandedStart > 0 && /\w/.test(text[expandedStart - 1])) {
+            expandedStart--;
+          }
+          // Re-extract snippet with expanded start
+          snippet = text.substring(expandedStart, isolatedClause.end).trim();
+        }
+        
+        // Check if snippet ends mid-word (has alphanumeric after end position)
+        const afterChar = isolatedClause.end < text.length ? text[isolatedClause.end] : null;
+        if (afterChar && /\w/.test(afterChar)) {
+          // End is mid-word, expand right to word boundary
+          let expandedEnd = isolatedClause.end;
+          while (expandedEnd < text.length && /\w/.test(text[expandedEnd])) {
+            expandedEnd++;
+          }
+          // Re-extract snippet with expanded end
+          snippet = text.substring(isolatedClause.start, expandedEnd).trim();
+        }
+        
+        // A3.6.10: Final check - if snippet still starts with lowercase mid-word pattern, use sentence boundary
         if (snippet.length > 0 && /^[a-z]/.test(snippet)) {
-          // Check if original text has alphanumeric before this position
-          const beforeChar = text[isolatedClause.start - 1];
-          if (beforeChar && /\w/.test(beforeChar)) {
+          const beforeChar2 = isolatedClause.start > 0 ? text[isolatedClause.start - 1] : null;
+          if (beforeChar2 && /\w/.test(beforeChar2)) {
             // Likely mid-token, use larger context or full sentence
-            // Find sentence boundary
-            const sentenceStart = Math.max(0, text.lastIndexOf(".", isolatedClause.start));
+            const sentenceStart = Math.max(0, text.lastIndexOf(".", isolatedClause.start) + 1);
             const sentenceEnd = Math.min(text.length, text.indexOf(".", isolatedClause.end) + 1);
             if (sentenceEnd > sentenceStart) {
               snippet = text.substring(sentenceStart, sentenceEnd).trim();
-              snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
             }
           }
         }
@@ -3430,7 +3452,8 @@ function extractAtomicClaims(statementText) {
         }
         
         if (snippet.length > 0 && snippet.length < 150) {
-          claims.push(snippet);
+          // A3.6.10: Store anchor explicitly with claim snippet
+          claims.push({ text: snippet, anchor: targetAnchor });
         }
       }
     }
@@ -3513,15 +3536,16 @@ function extractAtomicClaims(statementText) {
     }
     
     if (anchorIndex >= 0) {
-      // A3.6.8: Build snippet around anchor (±60 chars) BUT expand to word boundaries
+      // A3.6.10: Build snippet around anchor (±60 chars) BUT expand to word boundaries
       const snippetStart = Math.max(0, anchorIndex - 60);
       const snippetEnd = Math.min(text.length, anchorIndex + (anchorMatch ? anchorMatch.length : 0) + 60);
       
-      // Expand to word boundaries
+      // A3.6.10: Expand to word boundaries - move start left to previous whitespace/punctuation boundary
       let expandedStart = snippetStart;
       while (expandedStart > 0 && /\w/.test(text[expandedStart - 1])) {
         expandedStart--;
       }
+      // Move end right to next whitespace/punctuation boundary
       let expandedEnd = snippetEnd;
       while (expandedEnd < text.length && /\w/.test(text[expandedEnd])) {
         expandedEnd++;
@@ -3529,18 +3553,32 @@ function extractAtomicClaims(statementText) {
       
       let snippet = text.substring(expandedStart, expandedEnd).trim();
       
-      // A3.6.8: Ensure snippet contains the anchor and does not include OTHER anchors if possible
+      // A3.6.10: Final validation - ensure snippet doesn't start mid-word
+      if (snippet.length > 0 && /^[a-z]/.test(snippet)) {
+        const beforeChar = expandedStart > 0 ? text[expandedStart - 1] : null;
+        if (beforeChar && /\w/.test(beforeChar)) {
+          // Still mid-word, expand to sentence boundary
+          const sentenceStart = Math.max(0, text.lastIndexOf(".", expandedStart) + 1);
+          const sentenceEnd = Math.min(text.length, text.indexOf(".", expandedEnd) + 1);
+          if (sentenceEnd > sentenceStart) {
+            snippet = text.substring(sentenceStart, sentenceEnd).trim();
+          }
+        }
+      }
+      
+      // A3.6.10: Ensure snippet contains the anchor and does not include OTHER anchors if possible
       const snippetAnchors = extractAllAnchors(snippet);
       if (snippetAnchors.includes(anchor)) {
-        // If snippet contains multiple anchors, try to split
+        // A3.6.10: If snippet contains multiple anchors, try to split to smallest containing only target anchor
         if (snippetAnchors.length > 1) {
           // Try to find a smaller window around just this anchor
           const anchorPos = snippet.indexOf(anchorMatch || anchor);
           if (anchorPos >= 0) {
-            const narrowStart = Math.max(0, anchorPos - 30);
-            const narrowEnd = Math.min(snippet.length, anchorPos + (anchorMatch ? anchorMatch.length : 10) + 30);
+            // Start with narrow window and expand if needed
+            let narrowStart = Math.max(0, anchorPos - 30);
+            let narrowEnd = Math.min(snippet.length, anchorPos + (anchorMatch ? anchorMatch.length : 10) + 30);
             
-            // Expand to word boundaries again
+            // Expand to word boundaries
             let narrowExpandedStart = narrowStart;
             while (narrowExpandedStart > 0 && /\w/.test(snippet[narrowExpandedStart - 1])) {
               narrowExpandedStart--;
@@ -3552,8 +3590,26 @@ function extractAtomicClaims(statementText) {
             
             const narrowSnippet = snippet.substring(narrowExpandedStart, narrowExpandedEnd).trim();
             const narrowAnchors = extractAllAnchors(narrowSnippet);
-            if (narrowAnchors.includes(anchor) && narrowAnchors.length === 1) {
+            // A3.6.10: Use narrow snippet only if it contains target anchor and has fewer anchors
+            if (narrowAnchors.includes(anchor) && narrowAnchors.length < snippetAnchors.length) {
               snippet = narrowSnippet;
+            }
+            // A3.6.10: If narrow snippet still has multiple anchors, try splitting on separators
+            if (narrowAnchors.length > 1 && narrowAnchors.includes(anchor)) {
+              const splitPatterns = [/\s+and\s+/i, /\s+,\s+/, /\s+with\s+/i];
+              for (const pattern of splitPatterns) {
+                const parts = narrowSnippet.split(pattern);
+                for (const part of parts) {
+                  const trimmed = part.trim();
+                  if (trimmed.length < 5) continue;
+                  const partAnchors = extractAllAnchors(trimmed);
+                  if (partAnchors.includes(anchor) && partAnchors.length === 1) {
+                    snippet = trimmed;
+                    break;
+                  }
+                }
+                if (extractAllAnchors(snippet).length === 1) break;
+              }
             }
           }
         }
@@ -3563,8 +3619,11 @@ function extractAtomicClaims(statementText) {
         snippet = snippet.replace(/\bup to\b/gi, "up to");
         snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
         
-        if (snippet.length > 0 && snippet.length < 150) {
-          claims.push(snippet);
+        // A3.6.10: Final check - ensure snippet still contains target anchor after cleaning
+        const finalAnchors = extractAllAnchors(snippet);
+        if (finalAnchors.includes(anchor) && snippet.length > 0 && snippet.length < 150) {
+          // A3.6.10: Store anchor explicitly with claim snippet
+          claims.push({ text: snippet, anchor: anchor });
           anchorsProcessed.add(anchor);
         }
       }
@@ -3576,23 +3635,27 @@ function extractAtomicClaims(statementText) {
   const rawCandidates = [];
   const shouldLogExtraction = false; // Set to true for debugging
   
-  for (const claim of claims) {
+  for (const claimEntry of claims) {
+    // A3.6.10: Handle both string and object format (backward compatibility)
+    const claimText = typeof claimEntry === "string" ? claimEntry : claimEntry.text;
+    const claimAnchor = typeof claimEntry === "object" && claimEntry.anchor ? claimEntry.anchor : null;
+    
     // A3.6.2 PATCH v2: Log original clause before cleaning (for diagnostics)
     if (shouldLogExtraction) {
-      const moneyMatch = claim.match(/\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b)/i);
+      const moneyMatch = claimText.match(/\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b)/i);
       if (moneyMatch) {
-        const contextStart = Math.max(0, claim.indexOf("$") - 40);
-        const contextEnd = Math.min(claim.length, claim.indexOf("$") + 80);
-        console.log(`[CLAIMS_EXTRACT] original_clause="${claim.substring(contextStart, contextEnd)}"`);
+        const contextStart = Math.max(0, claimText.indexOf("$") - 40);
+        const contextEnd = Math.min(claimText.length, claimText.indexOf("$") + 80);
+        console.log(`[CLAIMS_EXTRACT] original_clause="${claimText.substring(contextStart, contextEnd)}"`);
       }
     }
     
     // Clean claimText (preserves money values)
-    const cleaned = cleanClaimText(claim);
+    const cleaned = cleanClaimText(claimText);
     if (!cleaned) continue; // Skip empty after cleaning
     
     // A3.6.2 PATCH v2: Validate money extraction
-    const originalMoney = claim.match(/\$([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|million|billion|b)/i);
+    const originalMoney = claimText.match(/\$([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|million|billion|b)/i);
     const cleanedMoney = cleaned.match(/\$([\d,]+(?:\.\d+)?)\s*(?:million|mm|m|million|billion|b)/i);
     if (originalMoney && cleanedMoney) {
       const origNum = originalMoney[1].replace(/,/g, "");
@@ -3601,12 +3664,13 @@ function extractAtomicClaims(statementText) {
         // Sanity check failed - use original
         console.log(`[CLAIMS_EXTRACT] WARN: number mismatch orig=${origNum} cleaned=${cleanNum}, using original`);
         // Keep original claim if numbers don't match
-        const fallbackCleaned = claim.replace(/~/g, "").replace(/\s+/g, " ").trim();
+        const fallbackCleaned = claimText.replace(/~/g, "").replace(/\s+/g, " ").trim();
         if (fallbackCleaned.length >= 6) {
           rawCandidates.push({
             claimText: fallbackCleaned,
             facet: assignFacetToClaim(fallbackCleaned),
             claimKey: buildClaimKey(fallbackCleaned, assignFacetToClaim(fallbackCleaned)),
+            anchor: claimAnchor || extractAnchor(fallbackCleaned), // A3.6.10: Preserve anchor
           });
           continue;
         }
@@ -3619,10 +3683,13 @@ function extractAtomicClaims(statementText) {
     // Compute claimKey
     const claimKey = buildClaimKey(cleaned, facet);
     
+    // A3.6.10: Preserve anchor explicitly (use provided anchor or extract from cleaned text)
+    const anchor = claimAnchor || extractAnchor(cleaned);
     rawCandidates.push({
       claimText: cleaned,
       facet,
       claimKey,
+      anchor: anchor, // A3.6.10: Explicit anchor field
     });
   }
   
@@ -3915,6 +3982,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
           const pctPattern = new RegExp(`([\\d,]+(?:\\.[\\d]+)?)\\s*%`, "g");
           let corpusMatch = false;
           let corpusMatchVal;
+          let match;
           while ((match = pctPattern.exec(allExcerpts)) !== null) {
             const corpusPct = parseFloat(match[1].replace(/,/g, ""));
             // Allow 5% tolerance for rounding
@@ -3981,12 +4049,28 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       comment,
     };
     
+    // A3.6.10: Preserve explicit anchor if available from aggregated claim
+    if (aggClaim.anchor) {
+      claim.anchor = aggClaim.anchor;
+    }
+    
     // Add citations if available
     if (citations.length > 0) {
       claim.citations = citations;
     }
     
     finalClaims.push(claim);
+  }
+  
+  // A3.6.10: Anchor coverage logging - post-condition check
+  if (runId && reqSig) {
+    const anchorsDetected = allAnchorsInOriginal;
+    const anchorsEmitted = Array.from(new Set(finalClaims.map(c => c.anchor || extractAnchor(c.claimText)).filter(Boolean)));
+    const missing = anchorsDetected.filter(a => !anchorsEmitted.includes(a));
+    
+    if (idx < 2 || missing.length > 0) {
+      diag(runId, reqSig, `[CLAIMS_ANCHOR_COVERAGE] idx=${idx} detected=${JSON.stringify(Array.from(anchorsDetected))} emitted=${JSON.stringify(anchorsEmitted)} missing=${JSON.stringify(missing)}`);
+    }
   }
   
   // A3.6.2 PATCH: Log statement preview for first 1-2 statements
@@ -4000,6 +4084,22 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   }
   
   return finalClaims;
+}
+
+// A3.6.10: Universal bracket-tag stripping helper
+function stripReasonTags(reasons) {
+  if (!Array.isArray(reasons)) return [];
+  
+  return reasons.map(reason => {
+    if (typeof reason !== "string") return reason;
+    // Remove any leading bracket tag via regex: /^\[[^\]]+\]\s*/g
+    const cleaned = reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+    return cleaned;
+  }).filter(reason => {
+    // Drop empty strings
+    if (typeof reason === "string") return reason.length > 0;
+    return true;
+  });
 }
 
 // A3.6.3: Compute statement reliability from claim reliabilities (deterministic, no LLM)
@@ -8400,10 +8500,24 @@ ${
             return anchor || "no_anchor";
           }));
         } catch (claimsErr) {
-          // A3.6.9: Log structured error but continue pipeline
+          // A3.6.10: Log structured error but continue pipeline
           const errorMessage = claimsErr?.message || String(claimsErr) || "Unknown error";
           const errorStack = claimsErr?.stack || "No stack trace";
           diag(runId, reqSig, `[ERROR][CLAIMS] rid=${runId || 'unknown'} idx=${idx} message=${errorMessage} stack=${errorStack.substring(0, 500)}`);
+          
+          // A3.6.10: Optional error site logging to pinpoint failing block
+          let errorSite = "unknown";
+          if (errorMessage.includes("match is not defined")) {
+            errorSite = "pct_pattern_match";
+          } else if (errorMessage.includes("Cannot read property") || errorMessage.includes("Cannot read")) {
+            errorSite = "property_access";
+          } else if (errorMessage.includes("is not a function")) {
+            errorSite = "function_call";
+          }
+          if (errorSite !== "unknown") {
+            diag(runId, reqSig, `[CLAIMS_ERR_SITE] idx=${idx} site=${errorSite}`);
+          }
+          
           claims = [];
           claimsError = true;
           claimsFailures++;
@@ -8551,17 +8665,13 @@ ${
       }
     }
     
-    // A3.6.7: Strip bracket tags from ALL reasons (legacy + claims) BEFORE FINAL_COUNTS
-    // This must apply regardless of mode so "[Ownership]" never appears in output
+    // A3.6.10: Universal bracket-tag stripping BEFORE FINAL_COUNTS
+    // Apply stripReasonTags to every statement's reasons (legacy + claims mode)
     statements = statements.map((stmt) => {
       if (!stmt || typeof stmt !== "object") return stmt;
       const assessment = stmt.assessment || {};
       const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-      const cleanedReasons = reasons.map(reason => {
-        if (typeof reason !== "string") return reason;
-        // A3.6.7: Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
-        return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
-      });
+      const cleanedReasons = stripReasonTags(reasons);
       return {
         ...stmt,
         assessment: {
