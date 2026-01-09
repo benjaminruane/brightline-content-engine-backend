@@ -3310,7 +3310,17 @@ function buildNormalizedMeaningKey(claimText) {
   
   let normalized = claimText.toLowerCase();
   
-  // Strip numbers
+  // A3.6.15: Strip generic lead-in boilerplate before anchor-bearing tokens
+  // Anchor-bearing tokens: currency/number ($, digits), percent (%), uppercase/proper-noun runs
+  // Find the first anchor-bearing token and remove everything before it
+  const anchorBearingPattern = /(\$|[\d,]+(?:\.\d+)?\s*%|[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)|[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/;
+  const anchorMatch = normalized.match(anchorBearingPattern);
+  if (anchorMatch && anchorMatch.index > 0) {
+    // Remove everything before the first anchor-bearing token
+    normalized = normalized.substring(anchorMatch.index);
+  }
+  
+  // Strip numbers (but keep anchor-bearing structure)
   normalized = normalized.replace(/[\d,]+(?:\.\d+)?/g, "");
   
   // Strip stopwords and boilerplate phrases
@@ -3957,6 +3967,13 @@ function extractAtomicClaims(statementText) {
           // A3.6.10: Store anchor explicitly with claim snippet
           claims.push({ text: snippet, anchor: anchor });
           anchorsProcessed.add(anchor);
+        } else if (anchor === "qual_valuation") {
+          // A3.6.15: Fallback snippet extractor for qual_valuation when primary extraction returns empty
+          const fallbackSnippet = extractValuationFallbackSnippet(text, anchor);
+          if (fallbackSnippet && fallbackSnippet.length > 0 && fallbackSnippet.length < 150) {
+            claims.push({ text: fallbackSnippet, anchor: anchor });
+            anchorsProcessed.add(anchor);
+          }
         }
       }
     }
@@ -4026,6 +4043,86 @@ function extractAtomicClaims(statementText) {
   }
   
   return rawCandidates;
+}
+
+// A3.6.15: Fallback snippet extractor for qual_valuation when primary extraction returns empty
+function extractValuationFallbackSnippet(statementText, anchor) {
+  if (typeof statementText !== "string" || anchor !== "qual_valuation") {
+    return "";
+  }
+  
+  // Find first occurrence of any valuation keyword
+  const valuationKeywords = [
+    /\bvaluation\b/i,
+    /\benterprise\s+value\b/i,
+    /\bev\b(?!\w)/i,
+  ];
+  
+  let keywordIndex = -1;
+  let keywordMatch = null;
+  
+  for (const pattern of valuationKeywords) {
+    const match = statementText.match(pattern);
+    if (match) {
+      keywordIndex = match.index;
+      keywordMatch = match[0];
+      break;
+    }
+  }
+  
+  if (keywordIndex < 0) {
+    return "";
+  }
+  
+  // Extract span around keyword (±60 chars)
+  const spanStart = Math.max(0, keywordIndex - 60);
+  const spanEnd = Math.min(statementText.length, keywordIndex + (keywordMatch ? keywordMatch.length : 0) + 60);
+  
+  // Expand to word boundaries
+  let expandedStart = spanStart;
+  while (expandedStart > 0 && /\w/.test(statementText[expandedStart - 1])) {
+    expandedStart--;
+  }
+  let expandedEnd = spanEnd;
+  while (expandedEnd < statementText.length && /\w/.test(statementText[expandedEnd])) {
+    expandedEnd++;
+  }
+  
+  let snippet = statementText.substring(expandedStart, expandedEnd).trim();
+  
+  // Look for USD amount within or adjacent to the span
+  const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
+  const snippetUsdMatch = snippet.match(usdPattern);
+  if (!snippetUsdMatch) {
+    // Try to expand snippet to include USD amount if it's nearby
+    const expandedUsdStart = Math.max(0, expandedStart - 40);
+    const expandedUsdEnd = Math.min(statementText.length, expandedEnd + 40);
+    const expandedText = statementText.substring(expandedUsdStart, expandedUsdEnd);
+    const expandedUsdMatch = expandedText.match(usdPattern);
+    if (expandedUsdMatch) {
+      // Find the position of the USD match in the full text
+      const usdMatchIndex = expandedUsdStart + expandedText.indexOf(expandedUsdMatch[0]);
+      // Create a snippet that includes both the keyword and the USD amount
+      const newStart = Math.min(expandedStart, usdMatchIndex - 20);
+      const newEnd = Math.max(expandedEnd, usdMatchIndex + expandedUsdMatch[0].length + 20);
+      // Expand to word boundaries
+      let newExpandedStart = newStart;
+      while (newExpandedStart > 0 && /\w/.test(statementText[newExpandedStart - 1])) {
+        newExpandedStart--;
+      }
+      let newExpandedEnd = newEnd;
+      while (newExpandedEnd < statementText.length && /\w/.test(statementText[newExpandedEnd])) {
+        newExpandedEnd++;
+      }
+      snippet = statementText.substring(newExpandedStart, newExpandedEnd).trim();
+    }
+  }
+  
+  // Clean up snippet
+  snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+  
+  // Return smallest clean phrase containing the keyword + (if present) USD amount
+  return snippet;
 }
 
 // A3.6.0: Assign facet to a claim (per-claim version of detectFacetsInStatement)
@@ -4273,6 +4370,20 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   const rawCandidates = extractAtomicClaims(statementText);
   if (rawCandidates.length === 0) {
     return [];
+  }
+  
+  // A3.6.15: Diagnostic for USD anchors before aggregation
+  if (runId && reqSig && (idx < 2 || idx === 3)) {
+    for (const candidate of rawCandidates) {
+      const rawAnchor = candidate.anchor || extractAnchor(candidate.claimText) || "no_anchor";
+      const canonicalAnchor = canonicalizeAnchor(rawAnchor, candidate.claimText);
+      if (canonicalAnchor && canonicalAnchor.startsWith("usd_")) {
+        const normalizedMeaningKey = buildNormalizedMeaningKey(candidate.claimText);
+        const uniquenessKey = `${canonicalAnchor}|${normalizedMeaningKey}`;
+        const preview = candidate.claimText.substring(0, 50);
+        diag(runId, reqSig, `[CLAIMS_DEDUP_USD] idx=${idx} anchor=${canonicalAnchor} uniquenessKey=${uniquenessKey.substring(0, 80)} preview="${preview}"`);
+      }
+    }
   }
   
   // A3.6.1: Aggregate by claimKey
