@@ -1557,14 +1557,19 @@ function filterFragmentCandidates(candidates, runId = null, reqSig = null, segGu
     return { candidates: [], dropped: 0, mergedPrev: 0, mergedNext: 0, kept: 0 };
   }
   
-  // Normalize candidates to objects with candidateIndex
+  // Normalize candidates to objects with candidateIndex and draftPosition
+  // A3.6.6: draftPosition should come from candidateIndex or the original candidate sentence order BEFORE merge/drop
   const candidateObjects = candidates.map((c, idx) => {
+    const candidateIdx = (typeof c === "object" && c.candidateIndex != null) ? c.candidateIndex : idx;
+    const draftPos = candidateIdx; // draftPosition = candidateIndex initially
+    
     if (typeof c === "string") {
-      return { text: c, candidateIndex: idx, sourceSentenceIndex: null, flags: {} };
+      return { text: c, candidateIndex: idx, draftPosition: draftPos, sourceSentenceIndex: null, flags: {} };
     }
     return {
       text: c.text || c,
-      candidateIndex: c.candidateIndex != null ? c.candidateIndex : idx,
+      candidateIndex: candidateIdx,
+      draftPosition: draftPos,
       sourceSentenceIndex: c.sourceSentenceIndex || null,
       flags: c.flags || {},
       rejectionReason: c.rejectionReason || null
@@ -1596,6 +1601,18 @@ function filterFragmentCandidates(candidates, runId = null, reqSig = null, segGu
   function isFragmentLike(candidateObj, prevCandidateObj, nextCandidateObj) {
     const text = candidateObj.text;
     const trimmed = text.trim();
+    
+    // A3.6.6: Check for strong anchors (%, $) - keep anchor-bearing fragments even if short
+    const hasStrongAnchor = /(\d+(\.\d+)?\s*%)/.test(trimmed) || /\$\s*\d/.test(trimmed);
+    if (hasStrongAnchor) {
+      // Also check using extractAllAnchors for pct_/usd_ anchors
+      const allAnchors = extractAllAnchors(trimmed);
+      const hasAnchorTag = allAnchors.some(a => a.startsWith("pct_") || a.startsWith("usd_"));
+      if (hasAnchorTag) {
+        // Keep anchor-bearing fragments - do not drop
+        return { isFragment: false, reason: null };
+      }
+    }
     
     // Very short: trimmed length < 40
     if (trimmed.length < 40) {
@@ -1670,10 +1687,13 @@ function filterFragmentCandidates(candidates, runId = null, reqSig = null, segGu
         
         if (!prevEndsTerminal || fragmentStartsLowercase || fragmentStartsPunct || fragmentStartsNumber) {
           // Merge into previous
+          // A3.6.6: When merging prev/next, inherit the MIN(draftPosition) of merged pieces
           const mergedText = `${prevText} ${candidateObj.text.trim()}`;
+          const minDraftPosition = Math.min(prevCandidateObj.draftPosition || prevCandidateObj.candidateIndex, candidateObj.draftPosition || candidateObj.candidateIndex);
           kept[kept.length - 1] = {
             text: mergedText,
             candidateIndex: prevCandidateObj.candidateIndex, // Preserve earlier index
+            draftPosition: minDraftPosition, // A3.6.6: Use MIN(draftPosition)
             sourceSentenceIndex: prevCandidateObj.sourceSentenceIndex,
             flags: { ...prevCandidateObj.flags, merged: true }
           };
@@ -1695,10 +1715,13 @@ function filterFragmentCandidates(candidates, runId = null, reqSig = null, segGu
         
         if (fragmentStartsNumber && nextStartsVerb) {
           // Merge into next (prepend fragment to next)
+          // A3.6.6: When merging prev/next, inherit the MIN(draftPosition) of merged pieces
           const mergedText = `${fragmentText} ${nextText}`;
+          const minDraftPosition = Math.min(candidateObj.draftPosition || candidateObj.candidateIndex, nextCandidateObj.draftPosition || nextCandidateObj.candidateIndex);
           candidateObjects[i + 1] = {
             text: mergedText,
             candidateIndex: nextCandidateObj.candidateIndex, // Keep next's index
+            draftPosition: minDraftPosition, // A3.6.6: Use MIN(draftPosition)
             sourceSentenceIndex: nextCandidateObj.sourceSentenceIndex,
             flags: { ...nextCandidateObj.flags, merged: true }
           };
@@ -3639,12 +3662,21 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
     }
   } else {
     // QUALITATIVE-ONLY CLAIMS (NO NUMERIC ANCHOR)
-    // High: domainKeywordMatch AND verbClassMatch
+    // A3.6.6: Check for fuzzy matches - treat as at least Medium support
+    const hasFuzzyMatch = hits.some(h => h.matchType === "fuzzy");
+    const hasExactKeywordMatch = domainKeywordClass !== "none" && 
+      allExcerpts.includes(domainKeywordClass.toLowerCase());
+    
+    // High: domainKeywordMatch AND verbClassMatch, OR exact keyword match
     if (domainKeywordMatch === 1 && verbClassMatch === 1) {
       reliability = "High";
     }
-    // Medium: only one of the above matches, OR ambiguity
-    else if (domainKeywordMatch === 1 || verbClassMatch === 1) {
+    // High: exact keyword match (qualitative keyword itself appears)
+    else if (hasExactKeywordMatch && verbClassMatch === 1) {
+      reliability = "High";
+    }
+    // Medium: only one of the above matches, OR fuzzy match found, OR ambiguity
+    else if (domainKeywordMatch === 1 || verbClassMatch === 1 || hasFuzzyMatch) {
       reliability = "Medium";
     }
     // Low: no meaningful semantic alignment
@@ -3940,14 +3972,51 @@ function computeStatementReliabilityFromClaims(claims, existingScore, existingLa
 }
 
 // A3.6.3: Generate claim-linked reasons (concise, non-boilerplate, up to 3 bullets)
+// A3.6.6: Dedupe by anchor first, then normalized text prefix. Max 3 bullets, each < 120 chars.
 // Format:
 // - If any Low claims exist: bullet 1 lists 1-2 lowest claims with short reason
 // - If any Medium claims exist: bullet 2 lists 1-2 medium claims with reason
 // - If High claims exist: bullet 3 lists 1-2 highest claims as confirmed
-// Each bullet < 140 chars, no facet tags, no "[Other]" prefix, includes citations from claims
+// Each bullet < 120 chars, no facet tags, no "[Other]" prefix, includes citations from claims
+// Prefer including the anchor-bearing substring rather than long claimText
 function generateClaimLinkedReasons(claims) {
   if (!Array.isArray(claims) || claims.length === 0) {
     return [];
+  }
+  
+  // A3.6.6: Deduplicate selected claims by anchor first, then normalized text prefix
+  const seenAnchors = new Set();
+  const seenTextPrefixes = new Set();
+  
+  // Helper to extract anchor-bearing substring (prefer anchor context)
+  function extractAnchorSubstring(claimText) {
+    const anchor = extractAnchor(claimText);
+    if (anchor) {
+      // Try to find the anchor-bearing substring (e.g., "20%" or "$50M")
+      const pctMatch = claimText.match(/([\d,]+(?:\.\d+)?\s*%)/);
+      const usdMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b)/i);
+      
+      if (pctMatch) {
+        // Extract context around percentage (up to 40 chars)
+        const idx = claimText.indexOf(pctMatch[0]);
+        const start = Math.max(0, idx - 15);
+        const end = Math.min(claimText.length, idx + pctMatch[0].length + 15);
+        return claimText.substring(start, end).trim();
+      } else if (usdMatch) {
+        // Extract context around USD (up to 40 chars)
+        const idx = claimText.indexOf(usdMatch[0]);
+        const start = Math.max(0, idx - 15);
+        const end = Math.min(claimText.length, idx + usdMatch[0].length + 15);
+        return claimText.substring(start, end).trim();
+      }
+    }
+    // Fallback: first 40 chars
+    return claimText.length > 40 ? claimText.substring(0, 40) + "..." : claimText;
+  }
+  
+  // Helper to normalize text prefix for deduplication
+  function normalizeTextPrefix(text) {
+    return text.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
   }
   
   // Separate claims by reliability
@@ -3961,21 +4030,33 @@ function generateClaimLinkedReasons(claims) {
   if (lowClaims.length > 0) {
     const selectedLow = lowClaims.slice(0, 2);
     for (const claim of selectedLow) {
+      if (reasons.length >= 3) break;
+      
       const claimText = claim?.claimText || "";
+      const anchor = extractAnchor(claimText);
+      const textPrefix = normalizeTextPrefix(claimText);
+      
+      // Dedupe: skip if same anchor or same text prefix already seen
+      if (anchor && seenAnchors.has(anchor)) continue;
+      if (seenTextPrefixes.has(textPrefix)) continue;
+      
+      seenAnchors.add(anchor || "");
+      seenTextPrefixes.add(textPrefix);
+      
       const comment = claim?.comment || "Not found in sources";
       const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
         ? ` [${claim.citations.join(", ")}]`
         : "";
       
-      // Extract short snippet from claim (first 30 chars)
-      const snippet = claimText.length > 30 ? claimText.substring(0, 30) + "..." : claimText;
+      // Prefer anchor-bearing substring
+      const snippet = extractAnchorSubstring(claimText);
       
       // Build reason: snippet + comment + citations
       let reason = `"${snippet}" ${comment}${citations}`;
       
-      // Ensure < 140 chars
-      if (reason.length > 140) {
-        reason = reason.substring(0, 137) + "...";
+      // Ensure < 120 chars
+      if (reason.length > 120) {
+        reason = reason.substring(0, 117) + "...";
       }
       
       reasons.push(reason);
@@ -3989,20 +4070,30 @@ function generateClaimLinkedReasons(claims) {
       if (reasons.length >= 3) break;
       
       const claimText = claim?.claimText || "";
+      const anchor = extractAnchor(claimText);
+      const textPrefix = normalizeTextPrefix(claimText);
+      
+      // Dedupe: skip if same anchor or same text prefix already seen
+      if (anchor && seenAnchors.has(anchor)) continue;
+      if (seenTextPrefixes.has(textPrefix)) continue;
+      
+      seenAnchors.add(anchor || "");
+      seenTextPrefixes.add(textPrefix);
+      
       const comment = claim?.comment || "Mentioned but not explicitly confirmed";
       const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
         ? ` [${claim.citations.join(", ")}]`
         : "";
       
-      // Extract short snippet from claim (first 30 chars)
-      const snippet = claimText.length > 30 ? claimText.substring(0, 30) + "..." : claimText;
+      // Prefer anchor-bearing substring
+      const snippet = extractAnchorSubstring(claimText);
       
       // Build reason: snippet + comment + citations
       let reason = `"${snippet}" ${comment}${citations}`;
       
-      // Ensure < 140 chars
-      if (reason.length > 140) {
-        reason = reason.substring(0, 137) + "...";
+      // Ensure < 120 chars
+      if (reason.length > 120) {
+        reason = reason.substring(0, 117) + "...";
       }
       
       reasons.push(reason);
@@ -4016,19 +4107,29 @@ function generateClaimLinkedReasons(claims) {
       if (reasons.length >= 3) break;
       
       const claimText = claim?.claimText || "";
+      const anchor = extractAnchor(claimText);
+      const textPrefix = normalizeTextPrefix(claimText);
+      
+      // Dedupe: skip if same anchor or same text prefix already seen
+      if (anchor && seenAnchors.has(anchor)) continue;
+      if (seenTextPrefixes.has(textPrefix)) continue;
+      
+      seenAnchors.add(anchor || "");
+      seenTextPrefixes.add(textPrefix);
+      
       const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
         ? ` [${claim.citations.join(", ")}]`
         : "";
       
-      // Extract short snippet from claim (first 30 chars)
-      const snippet = claimText.length > 30 ? claimText.substring(0, 30) + "..." : claimText;
+      // Prefer anchor-bearing substring
+      const snippet = extractAnchorSubstring(claimText);
       
       // Build reason: snippet + "Matches memo" + citations
       let reason = `"${snippet}" Matches memo${citations}`;
       
-      // Ensure < 140 chars
-      if (reason.length > 140) {
-        reason = reason.substring(0, 137) + "...";
+      // Ensure < 120 chars
+      if (reason.length > 120) {
+        reason = reason.substring(0, 117) + "...";
       }
       
       reasons.push(reason);
@@ -7569,16 +7670,18 @@ export default async function handler(req, res) {
     diag(runId, reqSig, `A3.5.27: After fragment filter: ${finalExtractionCandidates.length} candidates (dropped=${fragFilterResult.dropped}, mergedPrev=${fragFilterResult.mergedPrev}, mergedNext=${fragFilterResult.mergedNext})`);
     
     // A3.5.27: Use candidateObjects to preserve candidateIndex for draft order
+    // A3.6.6: Also preserve draftPosition
     // Store original candidate list with indices for later matching
     const candidateIndexMap = new Map();
     const candidateObjects = fragFilterResult.candidateObjects || [];
     candidateObjects.forEach((candidateObj, idx) => {
       const candidate = candidateObj.text;
       const candidateIndex = candidateObj.candidateIndex != null ? candidateObj.candidateIndex : idx;
+      const draftPosition = candidateObj.draftPosition != null ? candidateObj.draftPosition : candidateIndex;
       const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
-      // Store both exact and normalized for matching, using preserved candidateIndex
-      candidateIndexMap.set(candidate, candidateIndex);
-      candidateIndexMap.set(normalized, candidateIndex);
+      // Store both exact and normalized for matching, using preserved candidateIndex and draftPosition
+      candidateIndexMap.set(candidate, { candidateIndex, draftPosition });
+      candidateIndexMap.set(normalized, { candidateIndex, draftPosition });
     });
     
     // Build candidate statements block for prompt
@@ -7763,15 +7866,16 @@ ${
     // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
     if (statements.length > 0 && finalExtractionCandidates.length > 0) {
-      // Build a map of normalized candidates for matching using preserved candidateIndex
+      // Build a map of normalized candidates for matching using preserved candidateIndex and draftPosition
       const candidateMap = new Map();
       const candidateObjects = fragFilterResult.candidateObjects || [];
       candidateObjects.forEach((candidateObj) => {
         const candidate = candidateObj.text;
         const candidateIndex = candidateObj.candidateIndex != null ? candidateObj.candidateIndex : candidateObjects.indexOf(candidateObj);
+        const draftPosition = candidateObj.draftPosition != null ? candidateObj.draftPosition : candidateIndex;
         const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
         if (!candidateMap.has(normalized)) {
-          candidateMap.set(normalized, { candidate, index: candidateIndex });
+          candidateMap.set(normalized, { candidate, index: candidateIndex, draftPosition });
         }
       });
       // Fallback: if candidateObjects not available, use finalExtractionCandidates with idx
@@ -7779,7 +7883,7 @@ ${
         finalExtractionCandidates.forEach((candidate, idx) => {
           const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
           if (!candidateMap.has(normalized)) {
-            candidateMap.set(normalized, { candidate, index: idx });
+            candidateMap.set(normalized, { candidate, index: idx, draftPosition: idx });
           }
         });
       }
@@ -7794,6 +7898,7 @@ ${
         let matched = false;
         let bestMatch = null;
         let bestIndex = null;
+        let bestDraftPosition = null;
         let bestScore = 0;
         
         for (const [normCandidate, candidateData] of candidateMap.entries()) {
@@ -7816,16 +7921,19 @@ ${
             bestScore = score;
             bestMatch = candidateData.candidate;
             bestIndex = candidateData.index;
+            bestDraftPosition = candidateData.draftPosition != null ? candidateData.draftPosition : candidateData.index;
             matched = true;
           }
         }
         
         if (matched && bestMatch) {
-          // Use original candidate text for stability and assign candidateIndex
+          // Use original candidate text for stability and assign candidateIndex and draftPosition
+          // A3.6.6: Preserve draftPosition from candidateData
           matchedStatements.push({
             ...stmt,
             text: bestMatch, // Use deterministic candidate text
             __candidateIndex: bestIndex, // A3.5.26 Fix B: Preserve draft order
+            __draftPosition: bestDraftPosition, // A3.6.6: Preserve draftPosition
           });
         }
       }
@@ -7833,15 +7941,27 @@ ${
       statements = matchedStatements;
       
       // A3.5.27: Sort statements by candidateIndex to preserve draft order
+      // A3.6.6: Final ordering sort key: draftPosition ASC (tie-breaker: candidateIndex ASC)
       statements.sort((a, b) => {
+        const draftPosA = a.__draftPosition != null ? a.__draftPosition : (a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        const draftPosB = b.__draftPosition != null ? b.__draftPosition : (b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        
+        if (draftPosA !== draftPosB) {
+          return draftPosA - draftPosB;
+        }
+        
+        // Tie-breaker: candidateIndex ASC
         const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
         const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
         return idxA - idxB;
       });
       
-      // A3.5.27: Log first 5 candidateIndex values for quick sanity check
-      const firstFiveIndices = statements.slice(0, 5).map(s => s.__candidateIndex != null ? s.__candidateIndex : "null");
-      diag(runId, reqSig, `[ORDERING] sorted ${statements.length} statements by candidateIndex, first5=${JSON.stringify(firstFiveIndices)}`);
+      // A3.6.6: Log first 5 draftPositions + candidateIndex
+      const firstFiveOrdering = statements.slice(0, 5).map(s => ({
+        draftPos: s.__draftPosition != null ? s.__draftPosition : (s.__candidateIndex != null ? s.__candidateIndex : "null"),
+        candidateIdx: s.__candidateIndex != null ? s.__candidateIndex : "null"
+      }));
+      diag(runId, reqSig, `[ORDERING] sorted ${statements.length} statements by draftPosition, first5=${JSON.stringify(firstFiveOrdering)}`);
     }
     
     // Graceful fallback if model output is invalid or empty
@@ -7885,7 +8005,8 @@ ${
     statements = normalizeResponseStructure(statements, unifiedReferences);
     
     // A3.5.15 Fix 3: Deduplicate statements by exact text match
-    const statementTextSet = new Set();
+    // A3.6.6: When deduping, keep the earliest draftPosition
+    const statementTextMap = new Map(); // Map text -> statement with earliest draftPosition
     const deduplicatedStatements = [];
     let dedupeRemoved = 0;
     
@@ -7901,11 +8022,24 @@ ${
         continue;
       }
       
-      // Use exact text match for deduplication
-      if (!statementTextSet.has(stmtText)) {
-        statementTextSet.add(stmtText);
+      // A3.6.6: Use exact text match for deduplication, keep earliest draftPosition
+      const existingStmt = statementTextMap.get(stmtText);
+      const stmtDraftPos = stmt.__draftPosition != null ? stmt.__draftPosition : (stmt.__candidateIndex != null ? stmt.__candidateIndex : Number.MAX_SAFE_INTEGER);
+      
+      if (!existingStmt) {
+        statementTextMap.set(stmtText, stmt);
         deduplicatedStatements.push(stmt);
       } else {
+        const existingDraftPos = existingStmt.__draftPosition != null ? existingStmt.__draftPosition : (existingStmt.__candidateIndex != null ? existingStmt.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        // Keep the one with earlier draftPosition
+        if (stmtDraftPos < existingDraftPos) {
+          // Replace with earlier one
+          const idx = deduplicatedStatements.indexOf(existingStmt);
+          if (idx >= 0) {
+            deduplicatedStatements[idx] = stmt;
+            statementTextMap.set(stmtText, stmt);
+          }
+        }
         dedupeRemoved++;
       }
     }
@@ -8019,13 +8153,34 @@ ${
       const assessment = stmt.assessment || {};
       const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
       const text = typeof stmt.text === "string" ? stmt.text : "";
+      const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
+      
+      // A3.6.6: If claims exist, ONLY use claim-linked reasons. Do not generate old reasons at all.
+      if (claims.length > 0) {
+        // Skip normalization entirely - claim-linked reasons will be set later
+        const reasonsSource = "claims";
+        
+        // Log reasons mode (idx<2)
+        if (idx < 2 && runId && reqSig) {
+          diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=claims claimsCount=${claims.length}`);
+        }
+        
+        // Return as-is - claim-linked reasons will be set in the claims generation phase
+        return stmt;
+      }
       
       // A3.5.31: Pass statement context into normalization
       // A3.6.5: Pass reasonsSource to prevent overwriting claim-linked reasons
+      // A3.6.6: Legacy reasons only run when claims.length === 0
       const hasCitations = (assessment.citations?.length > 0) || (stmt.citations?.length > 0);
       const hasEvidence = (stmt.evidence?.length > 0) || (assessment.evidence?.length > 0);
       const facetsDetected = detectFacetsInStatement(text);
       const reasonsSource = assessment.reasonsSource || null;
+      
+      // Log reasons mode (idx<2)
+      if (idx < 2 && runId && reqSig) {
+        diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=legacy claimsCount=0`);
+      }
       
       const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons, {
         hasCitations,
