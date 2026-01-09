@@ -3270,8 +3270,30 @@ function extractAtomicClaims(statementText) {
     }
   }
   
-  // For each trigger, find the smallest clause containing it
+  // A3.6.5: Extract ALL anchors from statement first (not just triggers)
+  const allAnchorsInStatement = extractAllAnchors(text);
+  
+  // A3.6.5: Build anchor-to-trigger mapping
+  const anchorToTriggers = new Map();
+  for (const trigger of triggerPositions) {
+    const triggerText = text.substring(
+      Math.max(0, trigger.index - 30),
+      Math.min(text.length, trigger.index + trigger.length + 30)
+    );
+    const anchor = extractAnchor(triggerText);
+    if (anchor) {
+      if (!anchorToTriggers.has(anchor)) {
+        anchorToTriggers.set(anchor, []);
+      }
+      anchorToTriggers.get(anchor).push(trigger);
+    }
+  }
+  
+  // A3.6.5: For each unique anchor, ensure we emit at least one claim
   const usedClauses = new Set();
+  const anchorsProcessed = new Set();
+  
+  // Process triggers first (existing logic)
   for (const trigger of triggerPositions) {
     // Find clauses that contain this trigger
     const containingClauses = clauses
@@ -3288,6 +3310,10 @@ function extractAtomicClaims(statementText) {
         Math.min(text.length, trigger.index + trigger.length + 30)
       );
       const targetAnchor = extractAnchor(triggerText);
+      
+      if (targetAnchor) {
+        anchorsProcessed.add(targetAnchor);
+      }
       
       // A3.6.4: Check if clause contains multiple anchors and split if needed
       const isolatedClause = splitClauseToIsolateAnchor(
@@ -3343,6 +3369,96 @@ function extractAtomicClaims(statementText) {
         
         if (snippet.length > 0 && snippet.length < 150) {
           claims.push(snippet);
+        }
+      }
+    }
+  }
+  
+  // A3.6.5: For any anchors not yet processed, find and emit claims
+  for (const anchor of allAnchorsInStatement) {
+    if (anchorsProcessed.has(anchor)) continue; // Already processed
+    
+    // Find the first occurrence of this anchor in the text
+    // For USD anchors, search for the pattern
+    let anchorIndex = -1;
+    if (anchor.startsWith("usd_")) {
+      const numMatch = anchor.match(/usd_([\d.]+)m/);
+      if (numMatch) {
+        const num = numMatch[1];
+        // Search for $X million/mm/m pattern
+        const patterns = [
+          new RegExp(`\\$${num}\\s*(?:million|mm|m\\b)`, "i"),
+          new RegExp(`\\$${num.replace(/\./g, "\\.")}\\s*(?:million|mm|m\\b)`, "i"),
+        ];
+        for (const pattern of patterns) {
+          const match = text.match(pattern);
+          if (match) {
+            anchorIndex = match.index;
+            break;
+          }
+        }
+      }
+    } else if (anchor.startsWith("pct_")) {
+      const numMatch = anchor.match(/pct_([\d.]+)/);
+      if (numMatch) {
+        const num = numMatch[1];
+        const pattern = new RegExp(`${num.replace(/\./g, "\\.")}\\s*%`);
+        const match = text.match(pattern);
+        if (match) {
+          anchorIndex = match.index;
+        }
+      }
+    } else if (anchor.startsWith("qual_")) {
+      // For qualitative anchors, search for keywords
+      const qualType = anchor.replace("qual_", "");
+      const qualPatterns = {
+        secondary: /\bsecondary\s+(?:purchase|sale|transaction)\b/i,
+        premoney: /\bpre-?money\b/i,
+        postmoney: /\bpost-?money\b/i,
+        profitable: /\bprofitable\b/i,
+        bootstrapped: /\bbootstrapped\b/i,
+      };
+      const pattern = qualPatterns[qualType];
+      if (pattern) {
+        const match = text.match(pattern);
+        if (match) {
+          anchorIndex = match.index;
+        }
+      }
+    }
+    
+    if (anchorIndex >= 0) {
+      // Find clause containing this anchor
+      const containingClauses = clauses
+        .filter(c => c.start <= anchorIndex && c.end >= anchorIndex)
+        .sort((a, b) => (a.end - a.start) - (b.end - b.start));
+      
+      if (containingClauses.length > 0) {
+        const selectedClause = containingClauses[0];
+        const isolatedClause = splitClauseToIsolateAnchor(
+          selectedClause.text,
+          anchor,
+          anchorIndex,
+          selectedClause.start,
+          selectedClause.end,
+          text
+        );
+        
+        if (isolatedClause) {
+          const clauseKey = `${isolatedClause.start}-${isolatedClause.end}`;
+          if (!usedClauses.has(clauseKey)) {
+            usedClauses.add(clauseKey);
+            let snippet = isolatedClause.text;
+            snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+            snippet = snippet.replace(/\bup to\b/gi, "up to");
+            snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
+            
+            const snippetAnchors = extractAllAnchors(snippet);
+            if (snippetAnchors.includes(anchor) && snippet.length > 0 && snippet.length < 150) {
+              claims.push(snippet);
+              anchorsProcessed.add(anchor);
+            }
+          }
         }
       }
     }
@@ -4054,7 +4170,12 @@ function normalizeAssessmentReasons(statementText, reasons, opts = {}) {
     return { reasons: [], stats: { before: 0, after: 0, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0, usedDeterministicSet: false } };
   }
   
-  const { hasCitations = false, hasEvidence = false, facetsDetected = [], disableFacets = false } = opts;
+  // A3.6.5: Skip normalization if reasons are claim-linked
+  const { hasCitations = false, hasEvidence = false, facetsDetected = [], disableFacets = false, reasonsSource = null } = opts;
+  if (reasonsSource === "claims") {
+    // Claim-linked reasons should not be normalized - return as-is
+    return { reasons, stats: { before: reasons.length, after: reasons.length, deduped: 0, autoFacet: 0, autoSnippet: 0, addedDeterministic: 0, removedAnchorBoilerplate: 0, replacedWeakestForFacet: 0, usedDeterministicSet: false } };
+  }
   const hasSources = hasCitations || hasEvidence;
   
   // A3.6.2 PATCH v2: Hard feature-off for facet generation
@@ -7900,14 +8021,17 @@ ${
       const text = typeof stmt.text === "string" ? stmt.text : "";
       
       // A3.5.31: Pass statement context into normalization
+      // A3.6.5: Pass reasonsSource to prevent overwriting claim-linked reasons
       const hasCitations = (assessment.citations?.length > 0) || (stmt.citations?.length > 0);
       const hasEvidence = (stmt.evidence?.length > 0) || (assessment.evidence?.length > 0);
       const facetsDetected = detectFacetsInStatement(text);
+      const reasonsSource = assessment.reasonsSource || null;
       
       const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons, {
         hasCitations,
         hasEvidence,
         facetsDetected,
+        reasonsSource,
       });
 
       if (idx === 0) firstStmtNormStats = stats;
@@ -7925,14 +8049,15 @@ ${
     }
     
     // A3.6.3: Generate claim-linked reasons after normalization (replace generic reasons with claim-grounded ones)
+    // A3.6.5: Only generate if not already set (preserve claim-linked reasons set earlier)
     statements = statements.map((stmt) => {
       if (!stmt || typeof stmt !== "object") return stmt;
       
       const assessment = stmt.assessment || {};
       const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
       
-      // Only replace reasons if claims exist and we can generate claim-linked reasons
-      if (claims.length > 0) {
+      // A3.6.5: Only replace reasons if claims exist, claim-linked reasons not already set, and we can generate them
+      if (claims.length > 0 && assessment.reasonsSource !== "claims") {
         const claimLinkedReasons = generateClaimLinkedReasons(claims);
         if (claimLinkedReasons.length > 0) {
           return {
@@ -7940,6 +8065,7 @@ ${
             assessment: {
               ...assessment,
               reasons: claimLinkedReasons,
+              reasonsSource: "claims",
             },
           };
         }
@@ -8113,8 +8239,31 @@ ${
         
         const computedReliability = computeStatementReliabilityFromClaims(claims, existingScore, existingLabel);
         
+        // A3.6.5: Count claim reliabilities for logging
+        let hiCount = 0, medCount = 0, lowCount = 0;
+        for (const claim of claims) {
+          const reliability = claim?.reliability;
+          if (reliability === "High") hiCount++;
+          else if (reliability === "Medium") medCount++;
+          else if (reliability === "Low") lowCount++;
+        }
+        const totalCount = hiCount + medCount + lowCount;
+        
+        // A3.6.5: Log claim-derived statement scoring (idx<2)
+        if (idx < 2 && runId && reqSig) {
+          diag(runId, reqSig, `[STMT_FROM_CLAIMS] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount} total=${totalCount} score=${computedReliability.reliabilityScore} label=${computedReliability.reliabilityLabel}`);
+        }
+        
+        // A3.6.5: Generate claim-linked reasons immediately after claims are finalized
+        const claimLinkedReasons = generateClaimLinkedReasons(claims);
+        
+        // A3.6.5: Log claim-linked reasons (idx<2)
+        if (idx < 2 && runId && reqSig && claimLinkedReasons.length > 0) {
+          diag(runId, reqSig, `[REASONS_FROM_CLAIMS] idx=${idx} reasons=${JSON.stringify(claimLinkedReasons)}`);
+        }
+        
         // Add claims to assessment (non-breaking, additive) and update reliability
-        // Note: claim-linked reasons will be generated after normalization (A3.6.3)
+        // A3.6.5: Set claim-linked reasons immediately (will be preserved if normalization respects them)
         return {
           ...stmt,
           assessment: {
@@ -8122,20 +8271,23 @@ ${
             claims,
             reliabilityScore: computedReliability.reliabilityScore,
             reliabilityLabel: computedReliability.reliabilityLabel,
+            reasons: claimLinkedReasons.length > 0 ? claimLinkedReasons : assessment.reasons,
+            reasonsSource: claimLinkedReasons.length > 0 ? "claims" : assessment.reasonsSource,
           },
         };
       });
     }
     
     // A3.6.2 PATCH: Strip facet prefixes from reasons (facet-free output)
+    // A3.6.5: Strip ALL bracket tags (not just facet prefixes)
     statements = statements.map((stmt) => {
       if (!stmt || typeof stmt !== "object") return stmt;
       const assessment = stmt.assessment || {};
       const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
       const cleanedReasons = reasons.map(reason => {
         if (typeof reason !== "string") return reason;
-        // Remove facet prefix: ^\[[^\]]+\]\s*
-        return reason.replace(/^\[[^\]]+\]\s*/, "").trim();
+        // A3.6.5: Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
+        return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
       });
       return {
         ...stmt,
