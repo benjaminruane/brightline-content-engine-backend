@@ -3961,6 +3961,17 @@ function extractAtomicClaims(statementText) {
         snippet = snippet.replace(/\bup to\b/gi, "up to");
         snippet = snippet.replace(/\broughly\b|\bapproximately\b/gi, "~");
         
+        // A3.6.16: Apply sanitizer for qual_valuation before final check
+        let sanitizedSnippet = snippet;
+        if (anchor === "qual_valuation") {
+          const beforeSanitize = snippet;
+          sanitizedSnippet = stripDanglingNumericTail(snippet);
+          
+          // A3.6.16: Diagnostic for primary extraction
+          // Note: runId and reqSig are not available here, so we'll add diagnostic at call site
+          snippet = sanitizedSnippet;
+        }
+        
         // A3.6.10: Final check - ensure snippet still contains target anchor after cleaning
         const finalAnchors = extractAllAnchors(snippet);
         if (finalAnchors.includes(anchor) && snippet.length > 0 && snippet.length < 150) {
@@ -4045,81 +4056,204 @@ function extractAtomicClaims(statementText) {
   return rawCandidates;
 }
 
+// A3.6.16: Sanitize snippet to remove dangling numeric tails that invalidate extraction
+function stripDanglingNumericTail(text) {
+  if (typeof text !== "string") return text;
+  
+  let sanitized = text;
+  
+  // Rule 1: If text ends with incomplete currency fragment, truncate it
+  // Pattern: "implying an $18" or "implies a $18" or similar
+  const implyingPattern = /\b(implying|implies)\s+an?\s+\$\s*\d*\s*$/i;
+  const match = sanitized.match(implyingPattern);
+  if (match) {
+    // Truncate to the start index of the match
+    sanitized = sanitized.substring(0, match.index).trim();
+  } else {
+    // Also check for "$" + digits at end when preceded by "implying|implies" within last ~25 chars
+    const danglingDollarPattern = /\$\s*\d+\s*$/;
+    if (danglingDollarPattern.test(sanitized)) {
+      const last25 = sanitized.substring(Math.max(0, sanitized.length - 25));
+      if (/\b(implying|implies)\b/i.test(last25)) {
+        // Find the position of "implying" or "implies" in the last 25 chars
+        const implyingMatch = last25.match(/\b(implying|implies)\b/i);
+        if (implyingMatch) {
+          const implyingIndex = sanitized.length - 25 + implyingMatch.index;
+          sanitized = sanitized.substring(0, implyingIndex).trim();
+        } else {
+          // Fallback: just remove the dangling "$" + digits
+          sanitized = sanitized.replace(/\$\s*\d+\s*$/, "").trim();
+        }
+      }
+    }
+  }
+  
+  // Rule 2: If text ends with unmatched opening paren, truncate from that paren
+  let lastOpenParen = -1;
+  let parenDepth = 0;
+  for (let i = sanitized.length - 1; i >= 0; i--) {
+    if (sanitized[i] === ')') {
+      parenDepth++;
+    } else if (sanitized[i] === '(') {
+      if (parenDepth === 0) {
+        lastOpenParen = i;
+        break;
+      }
+      parenDepth--;
+    }
+  }
+  if (lastOpenParen >= 0) {
+    sanitized = sanitized.substring(0, lastOpenParen).trim();
+  }
+  
+  // Rule 3: If text ends with comma/colon/semicolon + whitespace only tail, trim
+  sanitized = sanitized.replace(/[,:;]\s*$/, "").trim();
+  
+  return sanitized;
+}
+
 // A3.6.15: Fallback snippet extractor for qual_valuation when primary extraction returns empty
+// A3.6.16: Enhanced to prefer "pre-money valuation" clauses and sanitize dangling tails
 function extractValuationFallbackSnippet(statementText, anchor) {
   if (typeof statementText !== "string" || anchor !== "qual_valuation") {
     return "";
   }
   
-  // Find first occurrence of any valuation keyword
-  const valuationKeywords = [
-    /\bvaluation\b/i,
-    /\benterprise\s+value\b/i,
-    /\bev\b(?!\w)/i,
-  ];
+  // A3.6.16: B1. Prefer "pre-money valuation" or "post-money valuation" clause when present
+  const premoneyPattern = /\bpre-?money\s+valuation\b/i;
+  const postmoneyPattern = /\bpost-?money\s+valuation\b/i;
   
+  let snippet = "";
   let keywordIndex = -1;
   let keywordMatch = null;
   
-  for (const pattern of valuationKeywords) {
-    const match = statementText.match(pattern);
-    if (match) {
-      keywordIndex = match.index;
-      keywordMatch = match[0];
-      break;
+  // Check for pre-money/post-money valuation first
+  const premoneyMatch = statementText.match(premoneyPattern);
+  const postmoneyMatch = statementText.match(postmoneyPattern);
+  
+  if (premoneyMatch || postmoneyMatch) {
+    const match = premoneyMatch || postmoneyMatch;
+    keywordIndex = match.index;
+    keywordMatch = match[0];
+    
+    // Find the nearest USD amount preceding the valuation keyword
+    const beforeKeyword = statementText.substring(0, keywordIndex);
+    const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
+    const usdMatches = [...beforeKeyword.matchAll(usdPattern)];
+    
+    let snippetStart = keywordIndex;
+    if (usdMatches.length > 0) {
+      // Use the last (nearest) USD match before the keyword
+      const nearestUsd = usdMatches[usdMatches.length - 1];
+      snippetStart = nearestUsd.index;
+    } else {
+      // No USD found before, expand backwards from keyword
+      snippetStart = Math.max(0, keywordIndex - 40);
+    }
+    
+    // Find clause boundary (stop at earliest: ", implying", ";", "—", or end of string)
+    let snippetEnd = statementText.length;
+    const boundaryPatterns = [
+      /,\s+implying/i,
+      /;/,
+      /—/,
+    ];
+    
+    for (const pattern of boundaryPatterns) {
+      const boundaryMatch = statementText.substring(keywordIndex).match(pattern);
+      if (boundaryMatch) {
+        const boundaryIndex = keywordIndex + boundaryMatch.index;
+        if (boundaryIndex < snippetEnd) {
+          snippetEnd = boundaryIndex;
+        }
+      }
+    }
+    
+    // Expand to word boundaries
+    let expandedStart = snippetStart;
+    while (expandedStart > 0 && /\w/.test(statementText[expandedStart - 1])) {
+      expandedStart--;
+    }
+    let expandedEnd = snippetEnd;
+    while (expandedEnd < statementText.length && /\w/.test(statementText[expandedEnd])) {
+      expandedEnd++;
+    }
+    
+    snippet = statementText.substring(expandedStart, expandedEnd).trim();
+  } else {
+    // B2. Otherwise, keep existing keyword search
+    const valuationKeywords = [
+      /\bvaluation\b/i,
+      /\benterprise\s+value\b/i,
+      /\bev\b(?!\w)/i,
+    ];
+    
+    for (const pattern of valuationKeywords) {
+      const match = statementText.match(pattern);
+      if (match) {
+        keywordIndex = match.index;
+        keywordMatch = match[0];
+        break;
+      }
+    }
+    
+    if (keywordIndex < 0) {
+      return "";
+    }
+    
+    // Extract span around keyword (±60 chars)
+    const spanStart = Math.max(0, keywordIndex - 60);
+    const spanEnd = Math.min(statementText.length, keywordIndex + (keywordMatch ? keywordMatch.length : 0) + 60);
+    
+    // Expand to word boundaries
+    let expandedStart = spanStart;
+    while (expandedStart > 0 && /\w/.test(statementText[expandedStart - 1])) {
+      expandedStart--;
+    }
+    let expandedEnd = spanEnd;
+    while (expandedEnd < statementText.length && /\w/.test(statementText[expandedEnd])) {
+      expandedEnd++;
+    }
+    
+    snippet = statementText.substring(expandedStart, expandedEnd).trim();
+    
+    // Look for USD amount within or adjacent to the span
+    const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
+    const snippetUsdMatch = snippet.match(usdPattern);
+    if (!snippetUsdMatch) {
+      // Try to expand snippet to include USD amount if it's nearby
+      const expandedUsdStart = Math.max(0, expandedStart - 40);
+      const expandedUsdEnd = Math.min(statementText.length, expandedEnd + 40);
+      const expandedText = statementText.substring(expandedUsdStart, expandedUsdEnd);
+      const expandedUsdMatch = expandedText.match(usdPattern);
+      if (expandedUsdMatch) {
+        // Find the position of the USD match in the full text
+        const usdMatchIndex = expandedUsdStart + expandedText.indexOf(expandedUsdMatch[0]);
+        // Create a snippet that includes both the keyword and the USD amount
+        const newStart = Math.min(expandedStart, usdMatchIndex - 20);
+        const newEnd = Math.max(expandedEnd, usdMatchIndex + expandedUsdMatch[0].length + 20);
+        // Expand to word boundaries
+        let newExpandedStart = newStart;
+        while (newExpandedStart > 0 && /\w/.test(statementText[newExpandedStart - 1])) {
+          newExpandedStart--;
+        }
+        let newExpandedEnd = newEnd;
+        while (newExpandedEnd < statementText.length && /\w/.test(statementText[newExpandedEnd])) {
+          newExpandedEnd++;
+        }
+        snippet = statementText.substring(newExpandedStart, newExpandedEnd).trim();
+      }
     }
   }
   
-  if (keywordIndex < 0) {
-    return "";
-  }
-  
-  // Extract span around keyword (±60 chars)
-  const spanStart = Math.max(0, keywordIndex - 60);
-  const spanEnd = Math.min(statementText.length, keywordIndex + (keywordMatch ? keywordMatch.length : 0) + 60);
-  
-  // Expand to word boundaries
-  let expandedStart = spanStart;
-  while (expandedStart > 0 && /\w/.test(statementText[expandedStart - 1])) {
-    expandedStart--;
-  }
-  let expandedEnd = spanEnd;
-  while (expandedEnd < statementText.length && /\w/.test(statementText[expandedEnd])) {
-    expandedEnd++;
-  }
-  
-  let snippet = statementText.substring(expandedStart, expandedEnd).trim();
-  
-  // Look for USD amount within or adjacent to the span
-  const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
-  const snippetUsdMatch = snippet.match(usdPattern);
-  if (!snippetUsdMatch) {
-    // Try to expand snippet to include USD amount if it's nearby
-    const expandedUsdStart = Math.max(0, expandedStart - 40);
-    const expandedUsdEnd = Math.min(statementText.length, expandedEnd + 40);
-    const expandedText = statementText.substring(expandedUsdStart, expandedUsdEnd);
-    const expandedUsdMatch = expandedText.match(usdPattern);
-    if (expandedUsdMatch) {
-      // Find the position of the USD match in the full text
-      const usdMatchIndex = expandedUsdStart + expandedText.indexOf(expandedUsdMatch[0]);
-      // Create a snippet that includes both the keyword and the USD amount
-      const newStart = Math.min(expandedStart, usdMatchIndex - 20);
-      const newEnd = Math.max(expandedEnd, usdMatchIndex + expandedUsdMatch[0].length + 20);
-      // Expand to word boundaries
-      let newExpandedStart = newStart;
-      while (newExpandedStart > 0 && /\w/.test(statementText[newExpandedStart - 1])) {
-        newExpandedStart--;
-      }
-      let newExpandedEnd = newEnd;
-      while (newExpandedEnd < statementText.length && /\w/.test(statementText[newExpandedEnd])) {
-        newExpandedEnd++;
-      }
-      snippet = statementText.substring(newExpandedStart, newExpandedEnd).trim();
-    }
-  }
+  // A3.6.16: Apply sanitizer before final cleanup
+  snippet = stripDanglingNumericTail(snippet);
   
   // Clean up snippet
   snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+  
+  // Re-tighten to smallest phrase that still contains the keyword (+ USD amount if found nearby)
+  // This is already handled by the extraction logic above
   
   // Return smallest clean phrase containing the keyword + (if present) USD amount
   return snippet;
@@ -4370,6 +4504,41 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   const rawCandidates = extractAtomicClaims(statementText);
   if (rawCandidates.length === 0) {
     return [];
+  }
+  
+  // A3.6.16: Diagnostic for qual_valuation extraction (check if detected but not emitted)
+  if (runId && reqSig) {
+    const qualValuationDetected = allAnchorsInOriginal.some(a => {
+      const canonical = canonicalizeAnchor(a, statementText);
+      return canonical === "qual_valuation";
+    });
+    
+    if (qualValuationDetected) {
+      const qualValuationCandidates = rawCandidates.filter(c => {
+        const rawAnchor = c.anchor || extractAnchor(c.claimText) || "no_anchor";
+        const canonicalAnchor = canonicalizeAnchor(rawAnchor, c.claimText);
+        return canonicalAnchor === "qual_valuation";
+      });
+      
+      if (qualValuationCandidates.length > 0) {
+        // Primary extraction succeeded
+        const primarySnippet = qualValuationCandidates[0].claimText;
+        const sanitized = stripDanglingNumericTail(primarySnippet);
+        const preview = primarySnippet.substring(Math.max(0, primarySnippet.length - 50));
+        const sanitizedPreview = sanitized.substring(Math.max(0, sanitized.length - 50));
+        diag(runId, reqSig, `[VAL_SNIP_SAN] idx=${idx} mode=primary before="${preview}" after="${sanitizedPreview}" ok=true`);
+      } else {
+        // Primary extraction failed, check fallback
+        const fallbackSnippet = extractValuationFallbackSnippet(statementText, "qual_valuation");
+        if (fallbackSnippet && fallbackSnippet.length > 0) {
+          const beforeFallback = statementText.substring(Math.max(0, statementText.length - 80));
+          const preview = fallbackSnippet.substring(Math.max(0, fallbackSnippet.length - 50));
+          diag(runId, reqSig, `[VAL_SNIP_SAN] idx=${idx} mode=fallback before="${beforeFallback.substring(Math.max(0, beforeFallback.length - 50))}" after="${preview}" ok=true`);
+        } else {
+          diag(runId, reqSig, `[VAL_SNIP_SAN] idx=${idx} mode=fallback ok=false reason=empty_after_sanitize`);
+        }
+      }
+    }
   }
   
   // A3.6.15: Diagnostic for USD anchors before aggregation
