@@ -1547,6 +1547,103 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
   };
 }
 
+// A3.6.11: Numeric-fragment repair - repairs statements ending mid-number or mid-parenthesis
+function repairNumericFragments(statements, draftText, runId = null, reqSig = null) {
+  if (!Array.isArray(statements) || statements.length === 0) return statements;
+  if (typeof draftText !== "string" || !draftText.trim()) return statements;
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  const repaired = [];
+  let repairCount = 0;
+  
+  for (const stmt of statements) {
+    if (!stmt || typeof stmt !== "object") {
+      repaired.push(stmt);
+      continue;
+    }
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    if (!text.trim()) {
+      repaired.push(stmt);
+      continue;
+    }
+    
+    const trimmed = text.trim();
+    let needsRepair = false;
+    
+    // Detect trailing fragments:
+    // 1. Dangling currency symbols (ends with $)
+    if (/\$$/.test(trimmed)) {
+      needsRepair = true;
+    }
+    // 2. Incomplete parentheses (unbalanced)
+    const openParens = (trimmed.match(/\(/g) || []).length;
+    const closeParens = (trimmed.match(/\)/g) || []).length;
+    if (openParens > closeParens) {
+      needsRepair = true;
+    }
+    // 3. Truncated numbers (ends with incomplete number like "$18" without unit)
+    if (/\$\d+$/.test(trimmed) || /\d+\.\d*$/.test(trimmed)) {
+      needsRepair = true;
+    }
+    
+    if (!needsRepair) {
+      repaired.push(stmt);
+      continue;
+    }
+    
+    // Repair strategy: extend to nearest valid sentence boundary from original draft text
+    const textIndex = draftText.indexOf(trimmed);
+    if (textIndex >= 0) {
+      // Find sentence boundary after the statement
+      const sentenceEnd = draftText.indexOf(".", textIndex + trimmed.length);
+      if (sentenceEnd >= 0) {
+        const repairedText = draftText.substring(textIndex, sentenceEnd + 1).trim();
+        if (repairedText.length > trimmed.length) {
+          repaired.push({
+            ...stmt,
+            text: repairedText,
+            __repairedNumericFragment: true,
+          });
+          repairCount++;
+          log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} original="${trimmed.substring(0, 50)}..." repaired="${repairedText.substring(0, 50)}..."`);
+          continue;
+        }
+      }
+    }
+    
+    // If extension not possible, truncate the fragment entirely
+    // Find last complete word before the fragment
+    const lastCompleteWord = trimmed.match(/\b\w+\b(?=\s*$)/);
+    if (lastCompleteWord && lastCompleteWord.index > 0) {
+      const truncatedText = trimmed.substring(0, lastCompleteWord.index).trim();
+      if (truncatedText.length >= 10) {
+        repaired.push({
+          ...stmt,
+          text: truncatedText,
+          __repairedNumericFragment: true,
+        });
+        repairCount++;
+        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} original="${trimmed.substring(0, 50)}..." truncated="${truncatedText.substring(0, 50)}..."`);
+        continue;
+      }
+    }
+    
+    // Last resort: keep as-is but mark as repaired
+    repaired.push({
+      ...stmt,
+      __repairedNumericFragment: true,
+    });
+    repairCount++;
+  }
+  
+  if (repairCount > 0) {
+    log(`[NUMERIC_FRAGMENT_REPAIR] repaired=${repairCount} total=${statements.length}`);
+  }
+  
+  return repaired;
+}
+
 // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
 // Detects and filters/merges fragment-like candidates that shouldn't appear as standalone statements
 // Supports candidate objects with candidateIndex and rejectionReason metadata
@@ -2846,20 +2943,30 @@ function extractAnchor(claimText) {
   }
   
   // Qualitative anchors: discrete assertions
-  if (/\bpre-?money\b/.test(text)) return "qual_premoney";
-  if (/\bpost-?money\b/.test(text)) return "qual_postmoney";
-  if (/\bsecondary\b.*\b(purchase|sale|transaction)\b/.test(text)) return "qual_secondary";
-  if (/\bprofitable\b/.test(text)) return "qual_profitable";
-  if (/\bbootstrapped\b/.test(text)) return "qual_bootstrapped";
-  if (/\b1x\b.*\b(preferred|liquidation)\b/.test(text)) return "qual_1x_preferred";
-  if (/\bpreferred\b/.test(text) && !/\b1x\b/.test(text)) return "qual_preferred";
+  if (/\bpre-?money\b/.test(text)) return canonicalizeAnchor("qual_premoney");
+  if (/\bpost-?money\b/.test(text)) return canonicalizeAnchor("qual_postmoney");
+  if (/\bsecondary\b.*\b(purchase|sale|transaction)\b/.test(text)) return canonicalizeAnchor("qual_secondary");
+  if (/\bprofitable\b/.test(text)) return canonicalizeAnchor("qual_profitable");
+  if (/\bbootstrapped\b/.test(text)) return canonicalizeAnchor("qual_bootstrapped");
+  if (/\b1x\b.*\b(preferred|liquidation)\b/.test(text)) return canonicalizeAnchor("qual_1x_preferred");
+  if (/\bpreferred\b/.test(text) && !/\b1x\b/.test(text)) return canonicalizeAnchor("qual_preferred");
   const seriesMatch = text.match(/\bSeries\s+([A-Z])\b/);
-  if (seriesMatch) return `qual_series_${seriesMatch[1].toLowerCase()}`;
+  if (seriesMatch) return canonicalizeAnchor(`qual_series_${seriesMatch[1].toLowerCase()}`);
+  
+  // A3.6.11: Valuation and enterprise value → qual_valuation
+  if (/\bvaluation\b/.test(text)) return canonicalizeAnchor("qual_valuation");
+  if (/\benterprise\s+value\b|\bev\b(?!\w)/.test(text)) return canonicalizeAnchor("qual_enterprise_value");
+  
+  // A3.6.11: Ownership - only return qual_ownership if no percentage present
+  // (percentages should use pct_* anchors)
+  if (/\bownership\b/.test(text) && !pctMatch) {
+    return canonicalizeAnchor("qual_ownership");
+  }
   
   // Fallback: use first significant domain keyword
   const domainClass = extractDomainKeywordClass(claimText);
   if (domainClass !== "none") {
-    return `qual_${domainClass}`;
+    return canonicalizeAnchor(`qual_${domainClass}`);
   }
   
   return null;
@@ -2867,6 +2974,26 @@ function extractAnchor(claimText) {
 
 // A3.6.4: Extract all distinct anchors from a clause text
 // A3.6.8: Operate on ORIGINAL statement text (before any cleaning that might remove % or punctuation)
+// A3.6.11: Canonical anchor taxonomy - maps all anchor variants to canonical forms
+function canonicalizeAnchor(anchor) {
+  if (typeof anchor !== "string") return anchor;
+  
+  // All valuation concepts → qual_valuation
+  if (anchor === "qual_enterprise_value" || anchor === "qual_valuation") {
+    return "qual_valuation";
+  }
+  
+  // Pre-money / post-money → keep as-is (they represent specific valuation types)
+  // But they should also have usd_* anchors if numeric values are present
+  
+  // Ownership percentages → pct_* only (no qual_ownership for percentages)
+  // qual_ownership is kept only for non-percentage ownership mentions
+  
+  // All other anchors remain as-is
+  return anchor;
+}
+
+// A3.6.11: Extract all anchors and canonicalize them
 function extractAllAnchors(clauseText) {
   if (typeof clauseText !== "string") return [];
   
@@ -2930,7 +3057,9 @@ function extractAllAnchors(clauseText) {
   if (/\b1x\b.*\b(preferred|liquidation)\b/i.test(originalText)) anchors.add("qual_1x_preferred");
   if (/\bpreferred\b/i.test(originalText) && !/\b1x\b/i.test(originalText)) anchors.add("qual_preferred");
   
-  return Array.from(anchors);
+  // A3.6.11: Canonicalize all anchors before returning
+  const canonicalAnchors = Array.from(anchors).map(canonicalizeAnchor);
+  return Array.from(new Set(canonicalAnchors)); // Remove duplicates after canonicalization
 }
 
 // A3.6.4: Split clause to isolate single-anchor sub-clause containing target anchor
@@ -3055,6 +3184,25 @@ function splitClauseToIsolateAnchor(clauseText, targetAnchor, triggerIndex, clau
   return { text: clauseText, start: clauseStart, end: clauseEnd };
 }
 
+// A3.6.11: Build normalized meaning key (strips numbers, stopwords, collapses whitespace, lowercases)
+function buildNormalizedMeaningKey(claimText) {
+  if (typeof claimText !== "string") return "";
+  
+  let normalized = claimText.toLowerCase();
+  
+  // Strip numbers
+  normalized = normalized.replace(/[\d,]+(?:\.\d+)?/g, "");
+  
+  // Strip stopwords
+  const stopwords = /\b(the|a|an|and|or|but|in|on|at|to|for|of|with|by|from|as|is|was|are|were|be|been|being|have|has|had|do|does|did|will|would|should|could|may|might|can|must|this|that|these|those|it|its|they|them|their|we|our|us)\b/gi;
+  normalized = normalized.replace(stopwords, " ");
+  
+  // Collapse whitespace
+  normalized = normalized.replace(/\s+/g, " ").trim();
+  
+  return normalized;
+}
+
 // A3.6.2 ADDENDUM: Build meaning-based uniqueness key (anchor + meaning)
 function buildMeaningKey(claimText) {
   const anchor = extractAnchor(claimText);
@@ -3089,14 +3237,15 @@ function aggregateClaimsByKey(rawCandidates) {
       continue;
     }
     
-    // A3.6.10: Extract anchor first - use explicit anchor field if available, otherwise extract
-    const anchor = candidate.anchor || extractAnchor(candidate.claimText) || "no_anchor";
+    // A3.6.11: Extract anchor first - canonicalize it
+    const rawAnchor = candidate.anchor || extractAnchor(candidate.claimText) || "no_anchor";
+    const anchor = canonicalizeAnchor(rawAnchor);
     
-    // A3.6.9: Normalize claim text prefix for deduplication (first 50 chars, lowercase, alphanumeric only)
-    const normalizedPrefix = candidate.claimText.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
+    // A3.6.11: Build normalized meaning key (strips numbers, stopwords, collapses whitespace)
+    const normalizedMeaningKey = buildNormalizedMeaningKey(candidate.claimText);
     
-    // A3.6.9: Primary uniqueness key: anchor + '|' + normalizedPrefix
-    const dedupeKey = `${anchor}|${normalizedPrefix}`;
+    // A3.6.11: Primary uniqueness key: canonicalAnchor + '|' + normalizedMeaningKey
+    const dedupeKey = `${anchor}|${normalizedMeaningKey}`;
     
     if (!aggregated.has(dedupeKey)) {
       aggregated.set(dedupeKey, {
@@ -3108,8 +3257,9 @@ function aggregateClaimsByKey(rawCandidates) {
     } else {
       const existing = aggregated.get(dedupeKey);
       
-      // A3.6.9: Hard guard - never merge claims with different anchors
-      const existingAnchor = extractAnchor(existing.claimText) || "no_anchor";
+      // A3.6.11: Hard guard - never merge claims with different canonical anchors
+      const existingRawAnchor = existing.anchor || extractAnchor(existing.claimText) || "no_anchor";
+      const existingAnchor = canonicalizeAnchor(existingRawAnchor);
       if (anchor !== existingAnchor) {
         // Different anchors - create separate entry
         // Use a more specific key to avoid collision
@@ -3730,8 +3880,18 @@ function assignFacetToClaim(claimText) {
   return "Other";
 }
 
+// A3.6.11 ADDENDUM: Anchor rules configuration (data-driven, no topic branching)
+const ANCHOR_RULES = {
+  qual_valuation: {
+    requireKeywordForHigh: true,
+    keywordList: ["valuation", "valued", "value", "enterprise value", "ev", "pre-money", "post-money", "premoney", "postmoney"],
+    requireEnterpriseValueKeyword: false, // Set to true if claim text implies EV
+  },
+};
+
 // A3.6.1: Score reliability for a claim based on matchTypes (claim-aware)
 // A3.6.2 ADDENDUM: Anchor-gated semantic equivalence (not signal count alone)
+// A3.6.11 ADDENDUM: Rule-driven scoring (no topic branching)
 function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityResult, uploadedDocs) {
   if (!corpusSearchResult || !corpusSearchResult.found) {
     return "Low";
@@ -3793,15 +3953,49 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
   
   // A3.6.2 ADDENDUM: Anchor-gated reliability scoring
   const anchor = extractAnchor(claimText);
+  const canonicalAnchor = canonicalizeAnchor(anchor);
   const hasNumericAnchor = anchor && (anchor.startsWith("usd_") || anchor.startsWith("pct_") || anchor.startsWith("mult_"));
+  
+  // A3.6.11 ADDENDUM: Get anchor-specific rules (data-driven, no branching)
+  const rules = ANCHOR_RULES[canonicalAnchor] || {};
+  const requireKeywordForHigh = rules.requireKeywordForHigh === true;
+  const keywordList = rules.keywordList || [];
+  
+  // A3.6.11 ADDENDUM: Detect enterprise value intent from claim text (signal-based, not branching)
+  const hasEnterpriseValueIntent = /\benterprise\s+value\b|\bev\b(?!\w)/i.test(claimText);
+  const requireEnterpriseValueKeyword = hasEnterpriseValueIntent;
+  
+  // A3.6.11 ADDENDUM: Check keyword match generically (using rule-driven keyword list or domain keyword)
+  let keywordOk = false;
+  if (requireKeywordForHigh && keywordList.length > 0) {
+    // Use rule-specified keyword list
+    keywordOk = keywordList.some(keyword => 
+      new RegExp(`\\b${keyword}\\b`, "i").test(allExcerpts)
+    );
+    // If enterprise value intent detected, require explicit "enterprise value" keyword in corpus
+    if (requireEnterpriseValueKeyword) {
+      keywordOk = keywordOk && /\benterprise\s+value\b|\bev\b(?!\w)/i.test(allExcerpts);
+    }
+  } else if (requireKeywordForHigh) {
+    // Fallback to domain keyword match if no keyword list specified
+    keywordOk = domainKeywordMatch === 1;
+  } else {
+    // No keyword requirement - keywordOk doesn't gate High
+    keywordOk = true;
+  }
+  
+  // A3.6.11 ADDENDUM: Generic signal-based gating
+  const numericOk = numericMatch >= 1;
+  const highGateOk = numericOk && (!requireKeywordForHigh || keywordOk);
   
   let reliability = "Low";
   
   if (hasNumericAnchor) {
     // CLAIMS WITH NUMERIC ANCHORS
-    // High: numericMatch AND (domainKeywordMatch OR verbClassMatch)
+    // A3.6.11 ADDENDUM: Apply rule-driven gating (caps High if gate fails)
     if (numericMatch === 1 && (domainKeywordMatch === 1 || verbClassMatch === 1)) {
-      reliability = "High";
+      // Would be High, but check rule-driven gate
+      reliability = highGateOk ? "High" : "Medium";
     }
     // Medium: numericMatch alone, OR semantic match but multiple conflicting values
     else if (numericMatch === 1) {
@@ -3961,6 +4155,30 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // Score reliability (A3.6.2 ADDENDUM: anchor-gated semantic equivalence)
     const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult, uploadedDocs);
     
+    // A3.6.11 ADDENDUM: Generic rule-driven diagnostic logging (no topic branching)
+    const claimAnchor = extractAnchor(claimText);
+    const canonicalClaimAnchor = canonicalizeAnchor(claimAnchor);
+    const rules = ANCHOR_RULES[canonicalClaimAnchor] || {};
+    if (rules.requireKeywordForHigh && runId && reqSig) {
+      const hits = searchResult?.hits || [];
+      const allExcerpts = hits.map(h => h.excerpt || "").join(" ").toLowerCase();
+      const keywordList = rules.keywordList || [];
+      let hasKeyword = false;
+      if (keywordList.length > 0) {
+        hasKeyword = keywordList.some(keyword => new RegExp(`\\b${keyword}\\b`, "i").test(allExcerpts));
+        // Check enterprise value requirement if claim has EV intent
+        const hasEnterpriseValueIntent = /\benterprise\s+value\b|\bev\b(?!\w)/i.test(claimText);
+        if (hasEnterpriseValueIntent) {
+          hasKeyword = hasKeyword && /\benterprise\s+value\b|\bev\b(?!\w)/i.test(allExcerpts);
+        }
+      }
+      let numericMatch = 0;
+      if (hits.some(h => h.matchType === "number")) {
+        numericMatch = 1;
+      }
+      diag(runId, reqSig, `[CLAIMS_VALUATION_RULE] idx=${idx} numeric=${numericMatch} keyword=${hasKeyword ? 1 : 0} finalReliability=${reliability}`);
+    }
+    
     // A3.6.2 PATCH v2: Extract signals for diagnostics (enhanced)
     let diagnosticSignals = null;
     if (shouldLogDiagnostics) {
@@ -4062,11 +4280,14 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     finalClaims.push(claim);
   }
   
-  // A3.6.10: Anchor coverage logging - post-condition check
+  // A3.6.11: Anchor coverage logging - post-condition check (using canonical anchors)
   if (runId && reqSig) {
-    const anchorsDetected = allAnchorsInOriginal;
-    const anchorsEmitted = Array.from(new Set(finalClaims.map(c => c.anchor || extractAnchor(c.claimText)).filter(Boolean)));
-    const missing = anchorsDetected.filter(a => !anchorsEmitted.includes(a));
+    const anchorsDetected = allAnchorsInOriginal.map(canonicalizeAnchor);
+    const anchorsEmitted = Array.from(new Set(finalClaims.map(c => {
+      const anchor = c.anchor || extractAnchor(c.claimText);
+      return canonicalizeAnchor(anchor);
+    }).filter(Boolean)));
+    const missing = Array.from(new Set(anchorsDetected.filter(a => !anchorsEmitted.includes(a))));
     
     if (idx < 2 || missing.length > 0) {
       diag(runId, reqSig, `[CLAIMS_ANCHOR_COVERAGE] idx=${idx} detected=${JSON.stringify(Array.from(anchorsDetected))} emitted=${JSON.stringify(anchorsEmitted)} missing=${JSON.stringify(missing)}`);
@@ -4178,12 +4399,12 @@ function computeStatementReliabilityFromClaims(claims, existingScore, existingLa
   };
 }
 
-// A3.6.3: Generate claim-linked reasons (concise, non-boilerplate, up to 3 bullets)
-// A3.6.6: Dedupe by anchor first, then normalized text prefix. Max 3 bullets, each < 120 chars.
+// A3.6.3: Generate claim-linked reasons (concise, non-boilerplate, max 2 bullets)
+// A3.6.11: Tightened - Max 2 bullets, one per distinct canonical anchor
 // Format:
-// - If any Low claims exist: bullet 1 lists 1-2 lowest claims with short reason
-// - If any Medium claims exist: bullet 2 lists 1-2 medium claims with reason
-// - If High claims exist: bullet 3 lists 1-2 highest claims as confirmed
+// - One bullet per distinct canonical anchor
+// - Reason text must start at word boundary, include anchor-bearing phrase, be ≤120 chars
+// - Strip all prefixes/facets/tags
 // Each bullet < 120 chars, no facet tags, no "[Other]" prefix, includes citations from claims
 // Prefer including the anchor-bearing substring rather than long claimText
 function generateClaimLinkedReasons(claims) {
@@ -4191,9 +4412,8 @@ function generateClaimLinkedReasons(claims) {
     return [];
   }
   
-  // A3.6.6: Deduplicate selected claims by anchor first, then normalized text prefix
-  const seenAnchors = new Set();
-  const seenTextPrefixes = new Set();
+  // A3.6.11: Deduplicate by canonical anchor - one bullet per distinct canonical anchor
+  const seenCanonicalAnchors = new Set();
   
   // A3.6.8: Helper to extract anchor context with word-boundary expansion
   function extractAnchorContext(claimText, anchor) {
@@ -4286,175 +4506,80 @@ function generateClaimLinkedReasons(claims) {
     return text.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
   }
   
-  // Separate claims by reliability
-  const lowClaims = claims.filter(c => c?.reliability === "Low");
-  const medClaims = claims.filter(c => c?.reliability === "Medium");
-  const hiClaims = claims.filter(c => c?.reliability === "High");
+  // A3.6.11: Group claims by canonical anchor, then select one per anchor
+  const claimsByAnchor = new Map();
+  for (const claim of claims) {
+    const claimText = claim?.claimText || "";
+    const anchor = claim?.anchor || extractAnchor(claimText);
+    const canonicalAnchor = canonicalizeAnchor(anchor) || "no_anchor";
+    
+    if (!claimsByAnchor.has(canonicalAnchor)) {
+      claimsByAnchor.set(canonicalAnchor, []);
+    }
+    claimsByAnchor.get(canonicalAnchor).push(claim);
+  }
   
+  // A3.6.11: Select one claim per canonical anchor (prefer High > Medium > Low)
+  const selectedClaims = [];
+  for (const [canonicalAnchor, anchorClaims] of claimsByAnchor.entries()) {
+    // Sort by reliability (High > Medium > Low)
+    anchorClaims.sort((a, b) => {
+      const order = { High: 3, Medium: 2, Low: 1 };
+      return (order[b?.reliability] || 0) - (order[a?.reliability] || 0);
+    });
+    // Take the first (best) claim for this anchor
+    selectedClaims.push({ claim: anchorClaims[0], canonicalAnchor });
+  }
+  
+  // A3.6.11: Limit to max 2 bullets
   const reasons = [];
-  
-  // Bullet 1: Low claims (1-2 lowest)
-  if (lowClaims.length > 0) {
-    const selectedLow = lowClaims.slice(0, 2);
-    for (const claim of selectedLow) {
-      if (reasons.length >= 3) break;
-      
-      const claimText = claim?.claimText || "";
-      const anchor = extractAnchor(claimText);
-      const textPrefix = normalizeTextPrefix(claimText);
-      
-      // Dedupe: skip if same anchor or same text prefix already seen
-      if (anchor && seenAnchors.has(anchor)) continue;
-      if (seenTextPrefixes.has(textPrefix)) continue;
-      
-      seenAnchors.add(anchor || "");
-      seenTextPrefixes.add(textPrefix);
-      
-      const comment = claim?.comment || "Not found in sources";
-      const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
-        ? ` [${claim.citations.join(", ")}]`
-        : "";
-      
-      // A3.6.8: Prefer anchor-bearing substring (never mid-token)
-      let snippet = extractAnchorSubstring(claimText);
-      
-      // A3.6.8: If snippet is too long, truncate at word boundary (not mid-token)
-      if (snippet.length > 50) {
-        // Find last space before 50 chars
-        const truncateAt = snippet.lastIndexOf(" ", 50);
-        if (truncateAt > 20) {
-          snippet = snippet.substring(0, truncateAt) + "...";
-        } else {
-          // No good space found, use first 47 chars and add ellipsis
-          snippet = snippet.substring(0, 47) + "...";
-        }
+  for (const { claim, canonicalAnchor } of selectedClaims.slice(0, 2)) {
+    if (seenCanonicalAnchors.has(canonicalAnchor)) continue;
+    seenCanonicalAnchors.add(canonicalAnchor);
+    
+    const claimText = claim?.claimText || "";
+    const anchor = claim?.anchor || extractAnchor(claimText);
+    
+    const comment = claim?.comment || "Not found in sources";
+    const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+      ? ` [${claim.citations.join(", ")}]`
+      : "";
+    
+    // A3.6.11: Prefer anchor-bearing substring (never mid-token, start at word boundary)
+    let snippet = extractAnchorSubstring(claimText);
+    
+    // A3.6.11: If snippet is too long, truncate at word boundary (not mid-token)
+    if (snippet.length > 50) {
+      // Find last space before 50 chars
+      const truncateAt = snippet.lastIndexOf(" ", 50);
+      if (truncateAt > 20) {
+        snippet = snippet.substring(0, truncateAt) + "...";
+      } else {
+        // No good space found, use first 47 chars and add ellipsis
+        snippet = snippet.substring(0, 47) + "...";
       }
-      
-      // Build reason: snippet + comment + citations
-      let reason = `"${snippet}" ${comment}${citations}`;
-      
-      // A3.6.8: Ensure < 120 chars, truncate at word boundary if needed
-      if (reason.length > 120) {
-        const truncateAt = reason.lastIndexOf(" ", 117);
-        if (truncateAt > 80) {
-          reason = reason.substring(0, truncateAt) + "...";
-        } else {
-          reason = reason.substring(0, 117) + "...";
-        }
-      }
-      
-      reasons.push(reason);
     }
+    
+    // A3.6.11: Build reason: snippet + comment + citations
+    let reason = `"${snippet}" ${comment}${citations}`;
+    
+    // A3.6.11: Ensure ≤120 chars, truncate at word boundary if needed
+    if (reason.length > 120) {
+      const truncateAt = reason.lastIndexOf(" ", 117);
+      if (truncateAt > 80) {
+        reason = reason.substring(0, truncateAt) + "...";
+      } else {
+        reason = reason.substring(0, 117) + "...";
+      }
+    }
+    
+    // A3.6.11: Strip all prefixes/facets/tags from reason
+    reason = stripReasonTags([reason])[0];
+    
+    reasons.push(reason);
   }
   
-  // Bullet 2: Medium claims (1-2 medium)
-  if (medClaims.length > 0 && reasons.length < 3) {
-    const selectedMed = medClaims.slice(0, 2);
-    for (const claim of selectedMed) {
-      if (reasons.length >= 3) break;
-      
-      const claimText = claim?.claimText || "";
-      const anchor = extractAnchor(claimText);
-      const textPrefix = normalizeTextPrefix(claimText);
-      
-      // Dedupe: skip if same anchor or same text prefix already seen
-      if (anchor && seenAnchors.has(anchor)) continue;
-      if (seenTextPrefixes.has(textPrefix)) continue;
-      
-      seenAnchors.add(anchor || "");
-      seenTextPrefixes.add(textPrefix);
-      
-      const comment = claim?.comment || "Mentioned but not explicitly confirmed";
-      const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
-        ? ` [${claim.citations.join(", ")}]`
-        : "";
-      
-      // A3.6.8: Prefer anchor-bearing substring (never mid-token)
-      let snippet = extractAnchorSubstring(claimText);
-      
-      // A3.6.8: If snippet is too long, truncate at word boundary (not mid-token)
-      if (snippet.length > 50) {
-        // Find last space before 50 chars
-        const truncateAt = snippet.lastIndexOf(" ", 50);
-        if (truncateAt > 20) {
-          snippet = snippet.substring(0, truncateAt) + "...";
-        } else {
-          // No good space found, use first 47 chars and add ellipsis
-          snippet = snippet.substring(0, 47) + "...";
-        }
-      }
-      
-      // Build reason: snippet + comment + citations
-      let reason = `"${snippet}" ${comment}${citations}`;
-      
-      // A3.6.8: Ensure < 120 chars, truncate at word boundary if needed
-      if (reason.length > 120) {
-        const truncateAt = reason.lastIndexOf(" ", 117);
-        if (truncateAt > 80) {
-          reason = reason.substring(0, truncateAt) + "...";
-        } else {
-          reason = reason.substring(0, 117) + "...";
-        }
-      }
-      
-      reasons.push(reason);
-    }
-  }
-  
-  // Bullet 3: High claims (1-2 highest, as confirmed)
-  if (hiClaims.length > 0 && reasons.length < 3) {
-    const selectedHi = hiClaims.slice(0, 2);
-    for (const claim of selectedHi) {
-      if (reasons.length >= 3) break;
-      
-      const claimText = claim?.claimText || "";
-      const anchor = extractAnchor(claimText);
-      const textPrefix = normalizeTextPrefix(claimText);
-      
-      // Dedupe: skip if same anchor or same text prefix already seen
-      if (anchor && seenAnchors.has(anchor)) continue;
-      if (seenTextPrefixes.has(textPrefix)) continue;
-      
-      seenAnchors.add(anchor || "");
-      seenTextPrefixes.add(textPrefix);
-      
-      const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
-        ? ` [${claim.citations.join(", ")}]`
-        : "";
-      
-      // A3.6.8: Prefer anchor-bearing substring (never mid-token)
-      let snippet = extractAnchorSubstring(claimText);
-      
-      // A3.6.8: If snippet is too long, truncate at word boundary (not mid-token)
-      if (snippet.length > 50) {
-        // Find last space before 50 chars
-        const truncateAt = snippet.lastIndexOf(" ", 50);
-        if (truncateAt > 20) {
-          snippet = snippet.substring(0, truncateAt) + "...";
-        } else {
-          // No good space found, use first 47 chars and add ellipsis
-          snippet = snippet.substring(0, 47) + "...";
-        }
-      }
-      
-      // Build reason: snippet + "Matches memo" + citations
-      let reason = `"${snippet}" Matches memo${citations}`;
-      
-      // A3.6.8: Ensure < 120 chars, truncate at word boundary if needed
-      if (reason.length > 120) {
-        const truncateAt = reason.lastIndexOf(" ", 117);
-        if (truncateAt > 80) {
-          reason = reason.substring(0, truncateAt) + "...";
-        } else {
-          reason = reason.substring(0, 117) + "...";
-        }
-      }
-      
-      reasons.push(reason);
-    }
-  }
-  
-  return reasons.slice(0, 3); // Cap at 3 bullets
+  return reasons; // A3.6.11: Max 2 bullets (already limited by slice(0, 2))
 }
 
 // A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
@@ -8179,6 +8304,10 @@ ${
     
     // Coerce and validate statements (using unified references count)
     let statements = coerceStatements(parsed, maxRefIndex);
+    
+    // A3.6.11: Repair numeric fragments after filterCandidateQuality
+    diag(runId, reqSig, `[PIPELINE] phase=repairNumericFragments`);
+    statements = repairNumericFragments(statements, normalizedDraftText, runId, reqSig);
     
     // A3.5.13: Map LLM output back to pre-extracted candidates for stability
     // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
