@@ -8146,6 +8146,83 @@ ${
     // Must run AFTER all injections (anchor enforcement, corpus verification, backfill)
     statements = enforceFacetScopedBullets(statements);
 
+    // A3.6.7: Generate claims BEFORE reasons-mode decision and BEFORE FINAL_COUNTS
+    // This ensures assessment.claims is available when deciding on reasons mode
+    diag(runId, reqSig, `[PIPELINE] phase=generateClaims`);
+    const uploadedDocs = Array.isArray(uploadedSources) && uploadedSources.length > 0
+      ? uploadedSources.map((src) => ({
+          id: src.id || src.name || "unknown",
+          title: src.title || src.name || "Untitled",
+          text: src.text || "",
+        }))
+      : [];
+    
+    if (uploadedDocs.length > 0) {
+      statements = statements.map((stmt, idx) => {
+        if (!stmt || typeof stmt !== "object") return stmt;
+        
+        const text = typeof stmt.text === "string" ? stmt.text : "";
+        const assessment = stmt.assessment || {};
+        
+        // Generate claims (with aggregation, capping, and claim-aware scoring)
+        const claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
+        
+        // A3.6.7: Log claims ready (idx<2)
+        if (idx < 2 && runId && reqSig) {
+          const uniqueAnchors = new Set(claims.map(c => {
+            const anchor = extractAnchor(c.claimText);
+            return anchor || "no_anchor";
+          }));
+          diag(runId, reqSig, `[CLAIMS_READY] idx=${idx} claimsCount=${claims.length} anchors=${JSON.stringify(Array.from(uniqueAnchors).slice(0, 5))}`);
+        }
+        
+        // A3.6.3: Compute statement reliability from claims (deterministic)
+        const existingScore = typeof assessment.reliabilityScore === "number" 
+          ? assessment.reliabilityScore 
+          : 30;
+        const existingLabel = typeof assessment.reliabilityLabel === "string"
+          ? assessment.reliabilityLabel
+          : existingScore >= 80 ? "High" : existingScore >= 60 ? "Medium" : "Low";
+        
+        const computedReliability = computeStatementReliabilityFromClaims(claims, existingScore, existingLabel);
+        
+        // A3.6.5: Count claim reliabilities for logging
+        let hiCount = 0, medCount = 0, lowCount = 0;
+        for (const claim of claims) {
+          const reliability = claim?.reliability;
+          if (reliability === "High") hiCount++;
+          else if (reliability === "Medium") medCount++;
+          else if (reliability === "Low") lowCount++;
+        }
+        const totalCount = hiCount + medCount + lowCount;
+        
+        // A3.6.7: Generate claim-linked reasons immediately if claims exist
+        let claimLinkedReasons = [];
+        if (claims.length > 0) {
+          claimLinkedReasons = generateClaimLinkedReasons(claims);
+          
+          // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
+          if (idx < 2 && runId && reqSig) {
+            diag(runId, reqSig, `[STMT_FROM_CLAIMS] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount} total=${totalCount} score=${computedReliability.reliabilityScore} label=${computedReliability.reliabilityLabel}`);
+          }
+        }
+        
+        // Add claims to assessment and update reliability
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            claims,
+            reliabilityScore: computedReliability.reliabilityScore,
+            reliabilityLabel: computedReliability.reliabilityLabel,
+            // A3.6.7: Set claim-linked reasons if available, otherwise keep existing reasons
+            reasons: claimLinkedReasons.length > 0 ? claimLinkedReasons : assessment.reasons,
+            reasonsSource: claimLinkedReasons.length > 0 ? "claims" : assessment.reasonsSource,
+          },
+        };
+      });
+    }
+
     let firstStmtNormStats = null;
     statements = statements.map((stmt, idx) => {
       if (!stmt || typeof stmt !== "object") return stmt;
@@ -8155,17 +8232,18 @@ ${
       const text = typeof stmt.text === "string" ? stmt.text : "";
       const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
       
-      // A3.6.6: If claims exist, ONLY use claim-linked reasons. Do not generate old reasons at all.
+      // A3.6.7: If claims exist, ONLY use claim-linked reasons. Do not generate old reasons at all.
       if (claims.length > 0) {
         // Skip normalization entirely - claim-linked reasons will be set later
         const reasonsSource = "claims";
         
-        // Log reasons mode (idx<2)
+        // A3.6.7: Log reasons mode (idx<2)
         if (idx < 2 && runId && reqSig) {
           diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=claims claimsCount=${claims.length}`);
         }
         
-        // Return as-is - claim-linked reasons will be set in the claims generation phase
+        // A3.6.7: Return as-is - claim-linked reasons already set in claims generation phase
+        // DO NOT call normalizeAssessmentReasons() - skip legacy reason generation entirely
         return stmt;
       }
       
@@ -8203,31 +8281,8 @@ ${
       );
     }
     
-    // A3.6.3: Generate claim-linked reasons after normalization (replace generic reasons with claim-grounded ones)
-    // A3.6.5: Only generate if not already set (preserve claim-linked reasons set earlier)
-    statements = statements.map((stmt) => {
-      if (!stmt || typeof stmt !== "object") return stmt;
-      
-      const assessment = stmt.assessment || {};
-      const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
-      
-      // A3.6.5: Only replace reasons if claims exist, claim-linked reasons not already set, and we can generate them
-      if (claims.length > 0 && assessment.reasonsSource !== "claims") {
-        const claimLinkedReasons = generateClaimLinkedReasons(claims);
-        if (claimLinkedReasons.length > 0) {
-          return {
-            ...stmt,
-            assessment: {
-              ...assessment,
-              reasons: claimLinkedReasons,
-              reasonsSource: "claims",
-            },
-          };
-        }
-      }
-      
-      return stmt;
-    });
+    // A3.6.7: Claim-linked reasons are now generated earlier (in claims generation phase)
+    // This redundant section is removed - claims and reasons are set before normalization
     
     // A3.5.31: Add observability log for idx=0 after final normalization
     if (statements.length > 0) {
@@ -8243,6 +8298,26 @@ ${
         diag(runId, reqSig, `[REASONS_FINAL_SAMPLE] idx=0 reasons=${JSON.stringify(truncatedReasons)}`);
       }
     }
+    
+    // A3.6.7: Strip bracket tags from ALL reasons (legacy + claims) BEFORE FINAL_COUNTS
+    // This must apply regardless of mode so "[Ownership]" never appears in output
+    statements = statements.map((stmt) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const cleanedReasons = reasons.map(reason => {
+        if (typeof reason !== "string") return reason;
+        // A3.6.7: Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
+        return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+      });
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: cleanedReasons,
+        },
+      };
+    });
     
     // A3.5.18 Fix 2: Hard invariant at return time - ensure citations/evidence are preserved
     let totalAssessmentCites = 0;
@@ -8348,110 +8423,8 @@ ${
       };
     }
     
-    // A3.6.0: Generate atomic claims assessment for each statement
-    // Note: uploadedSources is defined in handler scope
-    const uploadedDocs = Array.isArray(uploadedSources) && uploadedSources.length > 0
-      ? uploadedSources.map((src) => ({
-          id: src.id || src.name || "unknown",
-          title: src.title || src.name || "Untitled",
-          text: src.text || "",
-        }))
-      : [];
-    
-    if (uploadedDocs.length > 0) {
-      statements = statements.map((stmt, idx) => {
-        if (!stmt || typeof stmt !== "object") return stmt;
-        
-        const text = typeof stmt.text === "string" ? stmt.text : "";
-        const assessment = stmt.assessment || {};
-        
-        // Generate claims (with aggregation, capping, and claim-aware scoring)
-        const claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
-        
-        // Log claims for first statement (A3.6.1: show final counts)
-        if (idx === 0 && claims.length > 0) {
-          const facetCounts = {};
-          claims.forEach((c) => {
-            facetCounts[c.facet] = (facetCounts[c.facet] || 0) + 1;
-          });
-          
-          diag(runId, reqSig, `[CLAIMS] idx=${idx} final=${claims.length} facetsFinal=${JSON.stringify(facetCounts)}`);
-          
-          const sample = claims.slice(0, 5).map((c) => ({
-            claim: c.claimText,
-            reliability: c.reliability,
-          }));
-          diag(runId, reqSig, `[CLAIMS_SAMPLE] idx=${idx} first5=${JSON.stringify(sample)}`);
-        }
-        
-        // A3.6.3: Compute statement reliability from claims (deterministic)
-        const existingScore = typeof assessment.reliabilityScore === "number" 
-          ? assessment.reliabilityScore 
-          : 30;
-        const existingLabel = typeof assessment.reliabilityLabel === "string"
-          ? assessment.reliabilityLabel
-          : existingScore >= 80 ? "High" : existingScore >= 60 ? "Medium" : "Low";
-        
-        const computedReliability = computeStatementReliabilityFromClaims(claims, existingScore, existingLabel);
-        
-        // A3.6.5: Count claim reliabilities for logging
-        let hiCount = 0, medCount = 0, lowCount = 0;
-        for (const claim of claims) {
-          const reliability = claim?.reliability;
-          if (reliability === "High") hiCount++;
-          else if (reliability === "Medium") medCount++;
-          else if (reliability === "Low") lowCount++;
-        }
-        const totalCount = hiCount + medCount + lowCount;
-        
-        // A3.6.5: Log claim-derived statement scoring (idx<2)
-        if (idx < 2 && runId && reqSig) {
-          diag(runId, reqSig, `[STMT_FROM_CLAIMS] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount} total=${totalCount} score=${computedReliability.reliabilityScore} label=${computedReliability.reliabilityLabel}`);
-        }
-        
-        // A3.6.5: Generate claim-linked reasons immediately after claims are finalized
-        const claimLinkedReasons = generateClaimLinkedReasons(claims);
-        
-        // A3.6.5: Log claim-linked reasons (idx<2)
-        if (idx < 2 && runId && reqSig && claimLinkedReasons.length > 0) {
-          diag(runId, reqSig, `[REASONS_FROM_CLAIMS] idx=${idx} reasons=${JSON.stringify(claimLinkedReasons)}`);
-        }
-        
-        // Add claims to assessment (non-breaking, additive) and update reliability
-        // A3.6.5: Set claim-linked reasons immediately (will be preserved if normalization respects them)
-        return {
-          ...stmt,
-          assessment: {
-            ...assessment,
-            claims,
-            reliabilityScore: computedReliability.reliabilityScore,
-            reliabilityLabel: computedReliability.reliabilityLabel,
-            reasons: claimLinkedReasons.length > 0 ? claimLinkedReasons : assessment.reasons,
-            reasonsSource: claimLinkedReasons.length > 0 ? "claims" : assessment.reasonsSource,
-          },
-        };
-      });
-    }
-    
-    // A3.6.2 PATCH: Strip facet prefixes from reasons (facet-free output)
-    // A3.6.5: Strip ALL bracket tags (not just facet prefixes)
-    statements = statements.map((stmt) => {
-      if (!stmt || typeof stmt !== "object") return stmt;
-      const assessment = stmt.assessment || {};
-      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
-      const cleanedReasons = reasons.map(reason => {
-        if (typeof reason !== "string") return reason;
-        // A3.6.5: Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
-        return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
-      });
-      return {
-        ...stmt,
-        assessment: {
-          ...assessment,
-          reasons: cleanedReasons,
-        },
-      };
-    });
+    // A3.6.7: Claims generation moved earlier (before reasons normalization and FINAL_COUNTS)
+    // Bracket stripping also moved earlier (before FINAL_COUNTS)
     
     // NOTE: finalResponseObject is now built immediately after FINAL_COUNTS (see above)
     // After this point, finalResponseObject must never be null.
