@@ -3313,9 +3313,22 @@ function buildNormalizedMeaningKey(claimText) {
   // Strip numbers
   normalized = normalized.replace(/[\d,]+(?:\.\d+)?/g, "");
   
-  // Strip stopwords
+  // Strip stopwords and boilerplate phrases
   const stopwords = /\b(the|a|an|and|or|but|in|on|at|to|for|of|with|by|from|as|is|was|are|were|be|been|being|have|has|had|do|does|did|will|would|should|could|may|might|can|must|this|that|these|those|it|its|they|them|their|we|our|us)\b/gi;
   normalized = normalized.replace(stopwords, " ");
+  
+  // A3.6.14: Remove generic boilerplate phrases that cause duplicate claims
+  const boilerplatePhrases = [
+    /\bthe firm\b/gi,
+    /\bis evaluating\b/gi,
+    /\bevaluating\b/gi,
+    /\binvestment\b/gi,
+    /\bof up to\b/gi,
+    /\bfinancing\b/gi,
+  ];
+  for (const phrase of boilerplatePhrases) {
+    normalized = normalized.replace(phrase, " ");
+  }
   
   // Collapse whitespace
   normalized = normalized.replace(/\s+/g, " ").trim();
@@ -3784,7 +3797,8 @@ function extractAtomicClaims(statementText) {
         ownership: /\bownership\b/i,
         stake: /\bstake\b/i,
         financing: /\bfinancing\b/i,
-        valuation: /\bvaluation\b/i,
+        // A3.6.14: qual_valuation matches both "valuation" and "enterprise value" (canonicalized from qual_enterprise_value)
+        valuation: /\b(?:valuation|enterprise\s+value|ev\b(?!\w))\b/i,
         enterprise_value: /\benterprise\s+value\b|\bev\b(?!\w)/i,
         profitable: /\bprofitable\b/i,
         bootstrapped: /\bbootstrapped\b/i,
@@ -3812,9 +3826,16 @@ function extractAtomicClaims(statementText) {
     }
     
     if (anchorIndex >= 0) {
-      // A3.6.10: Build snippet around anchor (±60 chars) BUT expand to word boundaries
-      const snippetStart = Math.max(0, anchorIndex - 60);
-      const snippetEnd = Math.min(text.length, anchorIndex + (anchorMatch ? anchorMatch.length : 0) + 60);
+      // A3.6.14: For qual_valuation, expand window to include numeric values (USD amounts)
+      let windowSize = 60;
+      if (anchor === "qual_valuation") {
+        // Look for numeric values within ±80 chars of the anchor
+        windowSize = 80;
+      }
+      
+      // A3.6.10: Build snippet around anchor (±windowSize chars) BUT expand to word boundaries
+      const snippetStart = Math.max(0, anchorIndex - windowSize);
+      const snippetEnd = Math.min(text.length, anchorIndex + (anchorMatch ? anchorMatch.length : 0) + windowSize);
       
       // A3.6.10: Expand to word boundaries - move start left to previous whitespace/punctuation boundary
       let expandedStart = snippetStart;
@@ -3828,14 +3849,49 @@ function extractAtomicClaims(statementText) {
       }
       
       let snippet = text.substring(expandedStart, expandedEnd).trim();
+      let finalExpandedStart = expandedStart;
+      let finalExpandedEnd = expandedEnd;
+      
+      // A3.6.14: For qual_valuation, ensure snippet includes numeric value (USD amount) if present
+      if (anchor === "qual_valuation") {
+        // Look for USD amount patterns near the anchor
+        const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
+        const snippetUsdMatch = snippet.match(usdPattern);
+        if (!snippetUsdMatch) {
+          // Try to expand snippet to include USD amount if it's nearby
+          const expandedUsdStart = Math.max(0, expandedStart - 40);
+          const expandedUsdEnd = Math.min(text.length, expandedEnd + 40);
+          const expandedText = text.substring(expandedUsdStart, expandedUsdEnd);
+          const expandedUsdMatch = expandedText.match(usdPattern);
+          if (expandedUsdMatch) {
+            // Find the position of the USD match in the full text
+            const usdMatchIndex = expandedUsdStart + expandedText.indexOf(expandedUsdMatch[0]);
+            // Create a snippet that includes both the anchor and the USD amount
+            const newStart = Math.min(expandedStart, usdMatchIndex - 20);
+            const newEnd = Math.max(expandedEnd, usdMatchIndex + expandedUsdMatch[0].length + 20);
+            // Expand to word boundaries
+            let newExpandedStart = newStart;
+            while (newExpandedStart > 0 && /\w/.test(text[newExpandedStart - 1])) {
+              newExpandedStart--;
+            }
+            let newExpandedEnd = newEnd;
+            while (newExpandedEnd < text.length && /\w/.test(text[newExpandedEnd])) {
+              newExpandedEnd++;
+            }
+            snippet = text.substring(newExpandedStart, newExpandedEnd).trim();
+            finalExpandedStart = newExpandedStart;
+            finalExpandedEnd = newExpandedEnd;
+          }
+        }
+      }
       
       // A3.6.10: Final validation - ensure snippet doesn't start mid-word
       if (snippet.length > 0 && /^[a-z]/.test(snippet)) {
-        const beforeChar = expandedStart > 0 ? text[expandedStart - 1] : null;
-        if (beforeChar && /\w/.test(beforeChar)) {
+        const beforeChar = finalExpandedStart > 0 ? text[finalExpandedStart - 1] : null;
+          if (beforeChar && /\w/.test(beforeChar)) {
           // Still mid-word, expand to sentence boundary
-          const sentenceStart = Math.max(0, text.lastIndexOf(".", expandedStart) + 1);
-          const sentenceEnd = Math.min(text.length, text.indexOf(".", expandedEnd) + 1);
+          const sentenceStart = Math.max(0, text.lastIndexOf(".", finalExpandedStart) + 1);
+          const sentenceEnd = Math.min(text.length, text.indexOf(".", finalExpandedEnd) + 1);
           if (sentenceEnd > sentenceStart) {
             snippet = text.substring(sentenceStart, sentenceEnd).trim();
           }
@@ -4259,7 +4315,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
     
     // A3.6.9: Diagnostic log for first 2 statements
-    if (idx < 2) {
+    // A3.6.14: Also log for idx=3 to debug duplicate usd_7m claims
+    if (idx < 2 || idx === 3) {
       diag(runId, reqSig, `[CLAIMS_DEDUP] idx=${idx} raw=${rawCandidates.length} unique=${aggregatedClaims.length} merged=${merged} anchorsUnique=${JSON.stringify(anchorsUnique.slice(0, 10))}`);
     }
     
@@ -4443,6 +4500,57 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       return canonical && isCanonicalAnchor(canonical) ? canonical : null;
     }).filter(Boolean)));
     const missing = Array.from(new Set(anchorsDetected.filter(a => !anchorsEmitted.includes(a))));
+    
+    // A3.6.14: Diagnostic for anchors detected but not emitted
+    if (missing.length > 0 && runId && reqSig) {
+      // Re-extract raw candidates to check why anchors were skipped
+      const rawCandidates = extractAtomicClaims(statementText);
+      const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
+      const cappedClaims = applyFacetCaps(aggregatedClaims, runId, reqSig, idx);
+      
+      for (const missingAnchor of missing) {
+        // Determine reason for skip
+        let reason = "other";
+        
+        // Check if anchor was in raw candidates but filtered out
+        const hadRawCandidate = rawCandidates.some(c => {
+          const cAnchor = c.anchor || extractAnchor(c.claimText);
+          const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+          return cCanonical === missingAnchor;
+        });
+        
+        if (!hadRawCandidate) {
+          reason = "no_claim_text";
+        } else {
+          // Check if it was filtered in aggregation
+          const hadAggregated = aggregatedClaims.some(c => {
+            const cAnchor = c.anchor || extractAnchor(c.claimText);
+            const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+            return cCanonical === missingAnchor;
+          });
+          
+          if (!hadAggregated) {
+            reason = "deduped_out";
+          } else {
+            // Check if it was in capped claims
+            const hadCapped = cappedClaims.some(c => {
+              const cAnchor = c.anchor || extractAnchor(c.claimText);
+              const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+              return cCanonical === missingAnchor;
+            });
+            
+            if (!hadCapped) {
+              reason = "filtered_empty";
+            } else {
+              // Must have been filtered at emission (non-canonical check)
+              reason = "non_canonical";
+            }
+          }
+        }
+        
+        diag(runId, reqSig, `[CLAIMS_EMIT_SKIP] idx=${idx} anchor=${missingAnchor} reason=${reason}`);
+      }
+    }
     
     if (idx < 2 || missing.length > 0) {
       diag(runId, reqSig, `[CLAIMS_ANCHOR_COVERAGE] idx=${idx} detected=${JSON.stringify(Array.from(anchorsDetected))} emitted=${JSON.stringify(anchorsEmitted)} missing=${JSON.stringify(missing)}`);
