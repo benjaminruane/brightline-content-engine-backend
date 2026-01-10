@@ -5159,6 +5159,23 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         const preview = bestValSnip && bestValSnip.length > 0 ? bestValSnip.substring(0, 50) : "";
         let diagMsg = `[VAL_QUAL_FROM_BEST] idx=${idx} used=false preview="${preview}" reason=${reason}`;
         
+        // A3.6.22: D) Update diagnostics - check if claim ultimately emits due to restoration
+        // Note: This check happens after finalClaims is built, so we can check finalClaims here
+        // Check if qual_valuation exists in finalClaims with _emitKeepAliveRestored flag
+        const finalQualValuation = finalClaims.find(c => {
+          const cAnchor = c.anchor || extractAnchor(c.claimText);
+          const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+          return cCanonical === "qual_valuation";
+        });
+        
+        if (finalQualValuation && finalQualValuation._emitKeepAliveRestored) {
+          // Claim ultimately emitted due to restoration - update reason
+          if (!builderReturnedEmpty && reason === "dropped_downstream") {
+            // Don't label as dropped_downstream if it was fixed by keep-alive
+            diagMsg = diagMsg.replace(/reason=dropped_downstream/, `reason=dropped_downstream downstreamFixedBy=emit_keepalive`);
+          }
+        }
+        
         // A3.6.21: E) Include expanded debug info for both best_filtered_empty and dropped_downstream
         if ((reason === "best_filtered_empty" || reason === "dropped_downstream") && debugInfo) {
           const rawPreview = debugInfo.rawTextPreview || "";
@@ -5272,7 +5289,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   const shouldLogDiagnostics = runId && reqSig && idx < 2;
   
   for (const aggClaim of cappedClaims) {
-    const claimText = aggClaim.claimText;
+    let claimText = aggClaim.claimText;
     const facet = aggClaim.facet;
     
     // A3.6.12: Extract and canonicalize anchor - enforce canonical anchor allowlist
@@ -5285,6 +5302,21 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${idx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
       }
       continue; // Skip this claim
+    }
+    
+    // A3.6.22: A) Capture "last-known-good" claimText for qual_valuation
+    let preRulesText = "";
+    let preRulesOk = false;
+    let emitKeepAliveRestored = false;
+    if (canonicalClaimAnchor === "qual_valuation") {
+      preRulesText = (claimText || "").trim();
+      preRulesOk = isValuationSnippet(preRulesText);
+      
+      // A3.6.22: C) Trace checkpoint: pre_rules_emit
+      if ((idx < 2 || idx === 3) && runId && reqSig) {
+        const source = aggClaim._traceInfo ? aggClaim._traceInfo.source : "unknown";
+        diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=pre_rules_emit len=${preRulesText.length} preview="${preRulesText.substring(0, 60)}" source=${source}`);
+      }
     }
     
     // Run corpusSearch for this claim (with hybrid mode, maxHits: 2)
@@ -5394,20 +5426,64 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     else if (reliability === "Medium") medCount++;
     else lowCount++;
     
+    // A3.6.22: Apply any final rule chain that could empty claimText
+    // (This is where filtered_empty_after_rules would be determined)
+    let postRulesText = claimText;
+    
+    // A3.6.22: C) Trace checkpoint: post_rules_emit (for qual_valuation)
+    if (canonicalClaimAnchor === "qual_valuation" && (idx < 2 || idx === 3) && runId && reqSig) {
+      const source = aggClaim._traceInfo ? aggClaim._traceInfo.source : "unknown";
+      diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=post_rules_emit len=${postRulesText.length} preview="${postRulesText.substring(0, 60)}" source=${source}`);
+    }
+    
+    // A3.6.22: B) Emit-time keep-alive restore
+    if (canonicalClaimAnchor === "qual_valuation" && (!postRulesText || !postRulesText.trim()) && preRulesOk) {
+      // Restore claimText with ONLY trailing punctuation trimmed
+      let restoredText = preRulesText.trim();
+      restoredText = restoredText.replace(/[,;:.\s]+$/, "").trim();
+      
+      // Re-check: must still pass isValuationSnippet()
+      if (isValuationSnippet(restoredText)) {
+        postRulesText = restoredText;
+        emitKeepAliveRestored = true;
+        
+        // A3.6.22: D) Diagnostics: log restoration
+        if ((idx < 2 || idx === 3) && runId && reqSig) {
+          diag(runId, reqSig, `[VAL_QUAL_KEEPALIVE] idx=${idx} restored=true preLen=${preRulesText.length} postLen=0 finalLen=${postRulesText.length}`);
+        }
+      }
+    }
+    
+    // A3.6.22: C) Trace checkpoint: final_emit_decision
+    if (canonicalClaimAnchor === "qual_valuation" && (idx < 2 || idx === 3) && runId && reqSig) {
+      const source = aggClaim._traceInfo ? aggClaim._traceInfo.source : "unknown";
+      diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=final_emit_decision len=${postRulesText.length} preview="${postRulesText.substring(0, 60)}" source=${source} restored=${emitKeepAliveRestored}`);
+    }
+    
+    // Skip if still empty after keep-alive
+    if (!postRulesText || !postRulesText.trim()) {
+      continue;
+    }
+    
     // Generate comment (with ambiguity awareness)
     const hasAmbiguityCap = (facet === "Valuation" || facet === "Ownership") && 
                             (ambiguityResult?.isAmbiguous || false);
-    const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, claimText);
+    const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, postRulesText);
     
     // Build claim object (A3.6.2 PATCH: facet-free output)
     const claim = {
-      claimText,
+      claimText: postRulesText,
       reliability,
       comment,
     };
     
     // A3.6.12: Always set canonical anchor (enforced above)
     claim.anchor = canonicalClaimAnchor;
+    
+    // A3.6.22: Store keep-alive restoration flag for diagnostics
+    if (emitKeepAliveRestored) {
+      claim._emitKeepAliveRestored = true;
+    }
     
     // Add citations if available
     if (citations.length > 0) {
