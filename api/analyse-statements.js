@@ -5153,6 +5153,9 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   // This must be declared before any code that references it (e.g., diagnostic checks)
   let finalClaims = [];
   
+  // A3.6.29: Track if qual_valuation was forced for this statement
+  let forcedValQual = false;
+  
   // A3.6.18: Compute and cache best valuation snippet once per statement
   const bestValSnip = getBestValuationSnippet(statementText);
   
@@ -5263,6 +5266,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
             qualValuationClaim._valQualCandidate = sanitized;
             qualValuationClaim._valQualCandidateOk = true;
             qualValuationClaim._valQualCandidateSource = usedBestValSnip ? "best" : "primary";
+            // A3.6.29: Set statement-level flag
+            forcedValQual = true;
             const action = "updated";
             const finalLen = sanitized.length;
             const preview = sanitized.length > 80 ? sanitized.substring(0, 80) : sanitized;
@@ -5281,6 +5286,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
               _valQualCandidateSource: usedBestValSnip ? "best" : "primary"
             };
             rawCandidates.push(newClaim);
+            // A3.6.29: Set statement-level flag
+            forcedValQual = true;
             const action = "created";
             const finalLen = sanitized.length;
             const preview = sanitized.length > 80 ? sanitized.substring(0, 80) : sanitized;
@@ -5399,6 +5406,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
               qualValuationClaim._valQualCandidate = sanitizedFallback;
               qualValuationClaim._valQualCandidateOk = true;
               qualValuationClaim._valQualCandidateSource = "fallback";
+              // A3.6.29: Set statement-level flag
+              forcedValQual = true;
               const action = "updated";
               const finalLen = sanitizedFallback.length;
               const preview = sanitizedFallback.length > 80 ? sanitizedFallback.substring(0, 80) : sanitizedFallback;
@@ -5417,6 +5426,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
                 _valQualCandidateSource: "fallback"
               };
               rawCandidates.push(newClaim);
+              // A3.6.29: Set statement-level flag
+              forcedValQual = true;
               const action = "created";
               const finalLen = sanitizedFallback.length;
               const preview = sanitizedFallback.length > 80 ? sanitizedFallback.substring(0, 80) : sanitizedFallback;
@@ -5699,7 +5710,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       const post = (postRulesText ?? "").trim();
       const cand = (aggClaim._valQualCandidate ?? "").trim();
       const candOk = aggClaim._valQualCandidateOk === true;
-      const forced = aggClaim._forcedValQual === true;
+      // A3.6.29: forced must reflect either claim._forcedValQual === true OR local forcedValQual === true
+      const forced = aggClaim._forcedValQual === true || forcedValQual === true;
       const candLen = cand ? cand.length : 0;
       
       // A3.6.28: 3) Log trace before the empty-check
@@ -5708,11 +5720,12 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=emit_gate postLen=${post.length} candOk=${candOk} candLen=${candLen} candPreview="${candPreview}" forced=${forced}`);
       }
       
-      // A3.6.28: 4) Diagnostics to confirm we are touching the same claim that gets skipped
+      // A3.6.29: 3) In [VAL_QUAL_OBJ] log for idx=3, forced must reflect claim._forcedValQual
       if (statementIdx === 3 && runId && reqSig) {
         const keys = Object.keys(aggClaim).sort().join(",");
         const hasCandidate = (aggClaim._valQualCandidate && aggClaim._valQualCandidate.length > 0) ? "true" : "false";
-        diag(runId, reqSig, `[VAL_QUAL_OBJ] idx=3 keys=${keys} hasCandidate=${hasCandidate} forced=${forced}`);
+        const forcedForObj = aggClaim._forcedValQual === true;
+        diag(runId, reqSig, `[VAL_QUAL_OBJ] idx=3 keys=${keys} hasCandidate=${hasCandidate} forced=${forcedForObj}`);
       }
       
       // A3.6.28: 3) If post is empty AND candOk AND cand non-empty
