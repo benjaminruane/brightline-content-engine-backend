@@ -3409,6 +3409,10 @@ function aggregateClaimsByKey(rawCandidates) {
         aggClaim._valQualCandidateOk = candidate._valQualCandidateOk;
         aggClaim._valQualCandidateSource = candidate._valQualCandidateSource;
       }
+      // A3.6.40: Preserve _forcedValQual flag from candidate
+      if (candidate._forcedValQual === true) {
+        aggClaim._forcedValQual = true;
+      }
       // A3.6.27: Also preserve other diagnostic flags
       if (candidate._usedBestValSnip) {
         aggClaim._usedBestValSnip = true;
@@ -3443,6 +3447,10 @@ function aggregateClaimsByKey(rawCandidates) {
           aggClaim2._valQualCandidateOk = candidate._valQualCandidateOk;
           aggClaim2._valQualCandidateSource = candidate._valQualCandidateSource;
         }
+        // A3.6.40: Preserve _forcedValQual flag from candidate
+        if (candidate._forcedValQual === true) {
+          aggClaim2._forcedValQual = true;
+        }
         // A3.6.27: Also preserve other diagnostic flags
         if (candidate._usedBestValSnip) {
           aggClaim2._usedBestValSnip = true;
@@ -3465,6 +3473,10 @@ function aggregateClaimsByKey(rawCandidates) {
         existing._valQualCandidate = candidate._valQualCandidate;
         existing._valQualCandidateOk = candidate._valQualCandidateOk;
         existing._valQualCandidateSource = candidate._valQualCandidateSource;
+      }
+      // A3.6.40: When merging, propagate _forcedValQual if ANY merged/source claim has it
+      if (candidate._forcedValQual === true) {
+        existing._forcedValQual = true;
       }
       // A3.6.27: Also preserve other diagnostic flags when merging
       if (candidate._usedBestValSnip && !existing._usedBestValSnip) {
@@ -3499,6 +3511,10 @@ function aggregateClaimsByKey(rawCandidates) {
       result._valQualCandidate = agg._valQualCandidate;
       result._valQualCandidateOk = agg._valQualCandidateOk;
       result._valQualCandidateSource = agg._valQualCandidateSource;
+    }
+    // A3.6.40: Preserve _forcedValQual flag in aggregated result
+    if (agg._forcedValQual === true) {
+      result._forcedValQual = true;
     }
     // A3.6.27: Also preserve other diagnostic flags
     if (agg._usedBestValSnip) {
@@ -5459,6 +5475,17 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   
   // A3.6.1: Aggregate by claimKey
   const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
+  
+  // A3.6.40: 2) Safety net - if forcedValQual === true at statement level, ensure qual_valuation claims have the flag
+  if (forcedValQual === true) {
+    for (const aggClaim of aggregatedClaims) {
+      const claimAnchor = aggClaim.anchor || extractAnchor(aggClaim.claimText);
+      const canonicalClaimAnchor = canonicalizeAnchor(claimAnchor, aggClaim.claimText);
+      if (canonicalClaimAnchor === "qual_valuation") {
+        aggClaim._forcedValQual = true;
+      }
+    }
+  }
   
   // A3.6.9: Check for missing anchors and log dedupe stats
   const emittedAnchors = new Set(aggregatedClaims.map(c => {
