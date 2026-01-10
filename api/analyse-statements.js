@@ -4189,53 +4189,145 @@ function stripDanglingNumericTail(text) {
   return sanitized;
 }
 
+// A3.6.20: Minimal cleaning for best valuation snippets (preserves content)
+function cleanBestValuationSnippet(raw) {
+  if (!raw || typeof raw !== "string") return "";
+  
+  let cleaned = raw;
+  
+  // Trim whitespace
+  cleaned = cleaned.trim();
+  
+  // Collapse internal whitespace to single spaces
+  cleaned = cleaned.replace(/\s+/g, " ");
+  
+  // Remove trailing punctuation-only tails: trailing [",", ";", ":", "."] and whitespace
+  cleaned = cleaned.replace(/[,;:.\s]+$/, "").trim();
+  
+  // DO NOT apply aggressive sanitizers:
+  // - do not truncate on parentheses heuristics
+  // - do not remove fragments containing currency/digits
+  // - do not remove hyphenated terms like "pre-money"/"post-money"
+  
+  return cleaned;
+}
+
 // A3.6.19: Try to build qual_valuation claimText from a snippet (primary or best mode)
+// A3.6.20: Enhanced with minimal cleaning for best mode and fail-safe fallback
 function tryBuildQualValuationClaimText(rawText, mode = "primary") {
   if (typeof rawText !== "string" || !rawText.trim()) {
-    return { claimText: "", debug: { mode, reason: "empty_input" } };
+    const rawPreview = rawText ? `${rawText.substring(0, 40)}...` : "";
+    return { claimText: "", debug: { mode, reason: "empty_input", rawTextPreview: rawPreview, cleaningPath: "none" } };
   }
   
-  // Clean the text
-  let cleaned = cleanClaimText(rawText);
+  // A3.6.20: For best mode, use minimal cleaning path
+  let cleaned = "";
+  let cleaningPath = "";
+  let fallbackUsed = false;
+  let fallbackPreview = "";
   
-  // A3.6.19: For best mode, apply acceptance rules (must contain valuation keywords + digit/currency)
   if (mode === "best") {
-    // Check acceptance rules BEFORE cleaning to avoid false negatives
+    // Check acceptance rules BEFORE cleaning
     const rawHasValuationKeyword = /\b(valuation|pre-?money|post-?money|enterprise\s+value|ev\b(?!\w))\b/i.test(rawText);
     const rawHasDigitOrCurrency = /[\d$]/.test(rawText);
     
     if (!rawHasValuationKeyword || !rawHasDigitOrCurrency) {
-      return { claimText: "", debug: { mode, reason: "best_rejected_guard", hasKeyword: rawHasValuationKeyword, hasDigitOrCurrency: rawHasDigitOrCurrency } };
+      const rawPreview = `${rawText.substring(0, 40)}...${rawText.length > 40 ? rawText.substring(rawText.length - 40) : ""}`;
+      return { 
+        claimText: "", 
+        debug: { 
+          mode, 
+          reason: "best_rejected_guard", 
+          hasKeyword: rawHasValuationKeyword, 
+          hasDigitOrCurrency: rawHasDigitOrCurrency,
+          rawTextPreview: rawPreview,
+          cleaningPath: "none"
+        } 
+      };
     }
     
-    // A3.6.19: Guard against overly-aggressive stripping - if cleaned becomes empty but rawText has valuation keywords, try to recover
+    // A3.6.20: Use minimal cleaning for best mode
+    cleaningPath = "best_minimal";
+    cleaned = cleanBestValuationSnippet(rawText);
+    
+    // A3.6.20: Fail-safe fallback - if cleaned becomes empty but rawText is valid, use safe fallback
     if (cleaned.length === 0 && rawHasValuationKeyword) {
-      // Try to preserve at least the valuation phrase
-      const valMatch = rawText.match(/\b(valuation|pre-?money|post-?money|enterprise\s+value|ev\b(?!\w))\b/i);
-      if (valMatch) {
-        const start = Math.max(0, valMatch.index - 30);
-        const end = Math.min(rawText.length, valMatch.index + valMatch[0].length + 30);
-        cleaned = rawText.substring(start, end).trim();
-        cleaned = cleanClaimText(cleaned);
+      fallbackUsed = true;
+      // Fallback: minimal trim + trailing punctuation removal only
+      let fallbackText = rawText.trim();
+      fallbackText = fallbackText.replace(/[,;:.\s]+$/, "").trim();
+      
+      // Check if fallback still contains valuation keywords
+      const fallbackHasKeyword = /\b(valuation|pre-?money|post-?money|enterprise\s+value|ev\b(?!\w))\b/i.test(fallbackText);
+      if (fallbackHasKeyword) {
+        cleaned = fallbackText;
+        fallbackPreview = `${fallbackText.substring(0, 40)}...${fallbackText.length > 40 ? fallbackText.substring(fallbackText.length - 40) : ""}`;
+        cleaningPath = "best_minimal_fallback";
       }
     }
-  }
-  
-  // Final validation: must still contain valuation keywords after cleaning (for best mode)
-  if (cleaned.length > 0 && mode === "best") {
-    const stillHasValuationKeyword = /\b(valuation|pre-?money|post-?money|enterprise\s+value|ev\b(?!\w))\b/i.test(cleaned);
-    if (!stillHasValuationKeyword) {
-      // A3.6.19: If valuation keyword was lost during cleaning, this is a filtering failure
-      return { claimText: "", debug: { mode, reason: "best_filtered_empty", originalLen: rawText.length, cleanedLen: cleaned.length } };
+    
+    // Final validation: must still contain valuation keywords after cleaning
+    if (cleaned.length > 0) {
+      const stillHasValuationKeyword = /\b(valuation|pre-?money|post-?money|enterprise\s+value|ev\b(?!\w))\b/i.test(cleaned);
+      if (!stillHasValuationKeyword) {
+        const rawPreview = `${rawText.substring(0, 40)}...${rawText.length > 40 ? rawText.substring(rawText.length - 40) : ""}`;
+        const cleanedPreview = `${cleaned.substring(0, 40)}...${cleaned.length > 40 ? cleaned.substring(cleaned.length - 40) : ""}`;
+        return { 
+          claimText: "", 
+          debug: { 
+            mode, 
+            reason: "best_filtered_empty", 
+            originalLen: rawText.length, 
+            cleanedLen: cleaned.length,
+            rawTextPreview: rawPreview,
+            cleanedPreview: cleanedPreview,
+            cleaningPath: cleaningPath,
+            fallbackUsed: fallbackUsed,
+            fallbackPreview: fallbackPreview
+          } 
+        };
+      }
     }
+  } else {
+    // Primary mode: use full cleaning
+    cleaningPath = "primary_rules";
+    cleaned = cleanClaimText(rawText);
   }
   
   // Check length constraints
   if (cleaned.length === 0 || cleaned.length >= 150) {
-    return { claimText: "", debug: { mode, reason: cleaned.length === 0 ? "empty_after_clean" : "too_long", cleanedLen: cleaned.length } };
+    const rawPreview = `${rawText.substring(0, 40)}...${rawText.length > 40 ? rawText.substring(rawText.length - 40) : ""}`;
+    const cleanedPreview = cleaned.length > 0 ? `${cleaned.substring(0, 40)}...${cleaned.length > 40 ? cleaned.substring(cleaned.length - 40) : ""}` : "";
+    return { 
+      claimText: "", 
+      debug: { 
+        mode, 
+        reason: cleaned.length === 0 ? "empty_after_clean" : "too_long", 
+        cleanedLen: cleaned.length,
+        rawTextPreview: rawPreview,
+        cleanedPreview: cleanedPreview,
+        cleaningPath: cleaningPath,
+        fallbackUsed: fallbackUsed,
+        fallbackPreview: fallbackPreview
+      } 
+    };
   }
   
-  return { claimText: cleaned, debug: { mode, reason: "ok", cleanedLen: cleaned.length } };
+  const rawPreview = `${rawText.substring(0, 40)}...${rawText.length > 40 ? rawText.substring(rawText.length - 40) : ""}`;
+  const cleanedPreview = `${cleaned.substring(0, 40)}...${cleaned.length > 40 ? cleaned.substring(cleaned.length - 40) : ""}`;
+  return { 
+    claimText: cleaned, 
+    debug: { 
+      mode, 
+      reason: "ok", 
+      cleanedLen: cleaned.length,
+      rawTextPreview: rawPreview,
+      cleanedPreview: cleanedPreview,
+      cleaningPath: cleaningPath,
+      fallbackUsed: fallbackUsed,
+      fallbackPreview: fallbackPreview
+    } 
+  };
 }
 
 // A3.6.18: Get best available valuation snippet from statement text
@@ -4931,9 +5023,11 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       } else {
         // Primary extraction failed completely
         let reason = "best_missing";
+        let debugInfo = null;
         if (bestValSnip && bestValSnip.length > 0) {
           // A3.6.19: Check why bestValSnip wasn't used
           const bestAttempt = tryBuildQualValuationClaimText(bestValSnip, "best");
+          debugInfo = bestAttempt.debug;
           if (bestAttempt.claimText.length > 0) {
             reason = "best_filtered_empty"; // Shouldn't happen if tryBuildQualValuationClaimText worked
           } else {
@@ -4948,7 +5042,22 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         
         // A3.6.19: Diagnostic when qual_valuation would use bestValSnip but wasn't created
         const preview = bestValSnip && bestValSnip.length > 0 ? bestValSnip.substring(0, 50) : "";
-        diag(runId, reqSig, `[VAL_QUAL_FROM_BEST] idx=${idx} used=false preview="${preview}" reason=${reason}`);
+        let diagMsg = `[VAL_QUAL_FROM_BEST] idx=${idx} used=false preview="${preview}" reason=${reason}`;
+        
+        // A3.6.20: Include expanded debug info for best_filtered_empty
+        if (reason === "best_filtered_empty" && debugInfo) {
+          const rawPreview = debugInfo.rawTextPreview || "";
+          const cleanedPreview = debugInfo.cleanedPreview || "";
+          const cleaningPath = debugInfo.cleaningPath || "";
+          const fallbackUsed = debugInfo.fallbackUsed ? "true" : "false";
+          const fallbackPreview = debugInfo.fallbackPreview || "";
+          diagMsg += ` rawPreview="${rawPreview}" cleanedPreview="${cleanedPreview}" cleaningPath=${cleaningPath} fallbackUsed=${fallbackUsed}`;
+          if (fallbackUsed === "true" && fallbackPreview) {
+            diagMsg += ` fallbackPreview="${fallbackPreview}"`;
+          }
+        }
+        
+        diag(runId, reqSig, diagMsg);
         
         // Primary extraction failed, check fallback
         const fallbackSnippet = extractValuationFallbackSnippet(statementText, "qual_valuation", runId, reqSig, idx);
