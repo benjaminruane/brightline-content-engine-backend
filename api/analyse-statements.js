@@ -5140,6 +5140,11 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     diag(runId, reqSig, `[DIAG][A3.6.27] build_marker=a3_6_27_val_claim_persist_v1 stmtIdx=${statementIdx}`);
   }
   
+  // A3.6.28: Deployment marker - confirms new build is executing
+  if (runId && reqSig) {
+    diag(runId, reqSig, `[DIAG][A3.6.28] build_marker=a3_6_28_force_qual_valuation_v1 stmtIdx=${statementIdx}`);
+  }
+  
   if (typeof statementText !== "string" || !statementText.trim()) {
     return [];
   }
@@ -5238,6 +5243,52 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         candidate._valQualCandidate = sanitized;
         candidate._valQualCandidateOk = sanitizedOk;
         candidate._valQualCandidateSource = usedBestValSnip ? "best" : "primary";
+        
+        // A3.6.28: 2) Force create/update qual_valuation claim from sanitized snippet (authoritative)
+        if ((idx < 2 || idx === 3) && sanitizedOk && sanitized && sanitized.length > 0) {
+          // Get citations from assessment (or best guess)
+          const statementCitations = Array.isArray(assessment?.citations) ? assessment.citations : [];
+          
+          // Find existing qual_valuation claim in rawCandidates
+          let qualValuationClaim = rawCandidates.find(c => {
+            const cAnchor = c.anchor || extractAnchor(c.claimText);
+            const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+            return cCanonical === "qual_valuation";
+          });
+          
+          if (qualValuationClaim) {
+            // Update existing claim
+            qualValuationClaim.claimText = sanitized;
+            qualValuationClaim._forcedValQual = true;
+            qualValuationClaim._valQualCandidate = sanitized;
+            qualValuationClaim._valQualCandidateOk = true;
+            qualValuationClaim._valQualCandidateSource = usedBestValSnip ? "best" : "primary";
+            const action = "updated";
+            const finalLen = sanitized.length;
+            const preview = sanitized.length > 80 ? sanitized.substring(0, 80) : sanitized;
+            if (runId && reqSig) {
+              diag(runId, reqSig, `[VAL_QUAL_FORCE] idx=${idx} action=${action} finalLen=${finalLen} preview="${preview}"`);
+            }
+          } else {
+            // Create new claim
+            const newClaim = {
+              anchor: "qual_valuation",
+              claimText: sanitized,
+              citations: statementCitations,
+              _forcedValQual: true,
+              _valQualCandidate: sanitized,
+              _valQualCandidateOk: true,
+              _valQualCandidateSource: usedBestValSnip ? "best" : "primary"
+            };
+            rawCandidates.push(newClaim);
+            const action = "created";
+            const finalLen = sanitized.length;
+            const preview = sanitized.length > 80 ? sanitized.substring(0, 80) : sanitized;
+            if (runId && reqSig) {
+              diag(runId, reqSig, `[VAL_QUAL_FORCE] idx=${idx} action=${action} finalLen=${finalLen} preview="${preview}"`);
+            }
+          }
+        }
       } else {
         // Primary extraction failed completely
         let reason = "best_missing";
@@ -5324,8 +5375,56 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         const fallbackSnippet = extractValuationFallbackSnippet(statementText, "qual_valuation", runId, reqSig, idx);
         if (fallbackSnippet && fallbackSnippet.length > 0) {
           const beforeFallback = statementText.substring(Math.max(0, statementText.length - 80));
-          const preview = fallbackSnippet.substring(Math.max(0, fallbackSnippet.length - 50));
+          const sanitizedFallback = stripDanglingNumericTail(fallbackSnippet);
+          const preview = sanitizedFallback.substring(Math.max(0, sanitizedFallback.length - 50));
           diag(runId, reqSig, `[VAL_SNIP_SAN] idx=${idx} mode=fallback before="${beforeFallback.substring(Math.max(0, beforeFallback.length - 50))}" after="${preview}" ok=true`);
+          
+          // A3.6.28: 2) Force create/update qual_valuation claim from sanitized fallback snippet (authoritative)
+          const sanitizedFallbackOk = sanitizedFallback && sanitizedFallback.length > 0 && isValuationSnippet(sanitizedFallback);
+          if ((idx < 2 || idx === 3) && sanitizedFallbackOk && sanitizedFallback && sanitizedFallback.length > 0) {
+            // Get citations from assessment (or best guess)
+            const statementCitations = Array.isArray(assessment?.citations) ? assessment.citations : [];
+            
+            // Find existing qual_valuation claim in rawCandidates
+            let qualValuationClaim = rawCandidates.find(c => {
+              const cAnchor = c.anchor || extractAnchor(c.claimText);
+              const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+              return cCanonical === "qual_valuation";
+            });
+            
+            if (qualValuationClaim) {
+              // Update existing claim
+              qualValuationClaim.claimText = sanitizedFallback;
+              qualValuationClaim._forcedValQual = true;
+              qualValuationClaim._valQualCandidate = sanitizedFallback;
+              qualValuationClaim._valQualCandidateOk = true;
+              qualValuationClaim._valQualCandidateSource = "fallback";
+              const action = "updated";
+              const finalLen = sanitizedFallback.length;
+              const preview = sanitizedFallback.length > 80 ? sanitizedFallback.substring(0, 80) : sanitizedFallback;
+              if (runId && reqSig) {
+                diag(runId, reqSig, `[VAL_QUAL_FORCE] idx=${idx} action=${action} finalLen=${finalLen} preview="${preview}"`);
+              }
+            } else {
+              // Create new claim
+              const newClaim = {
+                anchor: "qual_valuation",
+                claimText: sanitizedFallback,
+                citations: statementCitations,
+                _forcedValQual: true,
+                _valQualCandidate: sanitizedFallback,
+                _valQualCandidateOk: true,
+                _valQualCandidateSource: "fallback"
+              };
+              rawCandidates.push(newClaim);
+              const action = "created";
+              const finalLen = sanitizedFallback.length;
+              const preview = sanitizedFallback.length > 80 ? sanitizedFallback.substring(0, 80) : sanitizedFallback;
+              if (runId && reqSig) {
+                diag(runId, reqSig, `[VAL_QUAL_FORCE] idx=${idx} action=${action} finalLen=${finalLen} preview="${preview}"`);
+              }
+            }
+          }
         } else {
           diag(runId, reqSig, `[VAL_SNIP_SAN] idx=${idx} mode=fallback ok=false reason=empty_after_sanitize`);
         }
@@ -5593,23 +5692,30 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=post_rules_emit len=${postRulesText.trim().length} preview="${preview}" source=${source}`);
     }
     
-    // A3.6.27: 3) Emit-time restore uses persisted candidate (authoritative)
+    // A3.6.28: 3) Put keepalive restore inside the real emit/skip gate (the one that logs CLAIMS_EMIT_SKIP)
     // This is the EXACT gate that currently triggers filtered_empty_after_rules
     // Right before that skip decision
     if (canonicalClaimAnchor === "qual_valuation") {
       const post = (postRulesText ?? "").trim();
+      const cand = (aggClaim._valQualCandidate ?? "").trim();
       const candOk = aggClaim._valQualCandidateOk === true;
-      const cand = aggClaim._valQualCandidate || "";
+      const forced = aggClaim._forcedValQual === true;
       const candLen = cand ? cand.length : 0;
       
-      // A3.6.27: 4) Guaranteed trace for idx=3 (and all qual_valuation)
-      // In the SAME block, log one line for qual_valuation before the empty-check
+      // A3.6.28: 3) Log trace before the empty-check
       if (runId && reqSig) {
         const candPreview = cand.length > 80 ? cand.substring(0, 80) : cand;
-        diag(runId, reqSig, `[VAL_QUAL_TRACE] stmtIdx=${statementIdx} checkpoint=emit_gate postLen=${post.length} candOk=${candOk} candLen=${candLen} candPreview="${candPreview}"`);
+        diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=emit_gate postLen=${post.length} candOk=${candOk} candLen=${candLen} candPreview="${candPreview}" forced=${forced}`);
       }
       
-      // A3.6.27: 3) If post is empty AND claim._valQualCandidateOk === true AND claim._valQualCandidate is non-empty
+      // A3.6.28: 4) Diagnostics to confirm we are touching the same claim that gets skipped
+      if (statementIdx === 3 && runId && reqSig) {
+        const keys = Object.keys(aggClaim).sort().join(",");
+        const hasCandidate = (aggClaim._valQualCandidate && aggClaim._valQualCandidate.length > 0) ? "true" : "false";
+        diag(runId, reqSig, `[VAL_QUAL_OBJ] idx=3 keys=${keys} hasCandidate=${hasCandidate} forced=${forced}`);
+      }
+      
+      // A3.6.28: 3) If post is empty AND candOk AND cand non-empty
       if (!post && candOk && cand && cand.length > 0) {
         postRulesText = cand;
         claimText = cand; // IMPORTANT: ensure the variable used for emit is restored too
@@ -5617,12 +5723,12 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         aggClaim._emitKeepAliveRestored = true;
         if (runId && reqSig) {
           const candPreview = cand.length > 80 ? cand.substring(0, 80) : cand;
-          diag(runId, reqSig, `[VAL_QUAL_KEEPALIVE] stmtIdx=${statementIdx} restored=true from=persisted_candidate candLen=${candLen} candPreview="${candPreview}"`);
+          diag(runId, reqSig, `[VAL_QUAL_KEEPALIVE] idx=${statementIdx} restored=true from=persisted_candidate candLen=${candLen} candPreview="${candPreview}"`);
         }
       } else if (!post) {
-        // A3.6.27: 3) Else log (only for qual_valuation)
+        // A3.6.28: 3) Else log (only for qual_valuation)
         if (runId && reqSig) {
-          diag(runId, reqSig, `[VAL_QUAL_KEEPALIVE] stmtIdx=${statementIdx} restored=false postLen=${post.length} candOk=${candOk} candLen=${candLen}`);
+          diag(runId, reqSig, `[VAL_QUAL_KEEPALIVE] idx=${statementIdx} restored=false postLen=${post.length} candOk=${candOk} candLen=${candLen}`);
         }
       }
     }
