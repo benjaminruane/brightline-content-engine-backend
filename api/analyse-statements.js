@@ -3536,12 +3536,33 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
         const commaCount = (text.match(/,/g) || []).length;
         const hasAnchor = /\$[\d,]+(?:\.\d+)?\s*m\b|[\d,]+(?:\.\d+)?\s*%|\b1x\b|pre-?money/i.test(text);
         
+        // A3.6.18: Prefer qual_valuation over usd_* for valuation facet
+        const anchor = claim.anchor || extractAnchor(text);
+        const canonicalAnchor = canonicalizeAnchor(anchor, text);
+        const isQualValuation = canonicalAnchor === "qual_valuation";
+        const isUsdValuation = canonicalAnchor && canonicalAnchor.startsWith("usd_") && facet === "Valuation";
+        
         let score = 0;
         if (length >= 10 && length <= 60) score += 100;
         else if (length < 10) score -= 50;
         else score -= (length - 60) * 2;
         score -= commaCount * 10;
         if (hasAnchor) score += 50;
+        
+        // A3.6.18: Boost qual_valuation, penalize usd_* when both exist for valuation
+        if (isQualValuation) {
+          score += 200; // Strong preference for qual_valuation
+        } else if (isUsdValuation) {
+          // Check if there's also a qual_valuation in the same facet
+          const hasQualValuation = facetClaims.some(c => {
+            const cAnchor = c.anchor || extractAnchor(c.claimText);
+            const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+            return cCanonical === "qual_valuation";
+          });
+          if (hasQualValuation) {
+            score -= 100; // Prefer to drop usd_* if qual_valuation exists
+          }
+        }
         
         return { claim, score, length };
       });
@@ -3567,7 +3588,7 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
 }
 
 // A3.6.0: Extract atomic claims from statement text (deterministic, no LLM)
-function extractAtomicClaims(statementText) {
+function extractAtomicClaims(statementText, bestValSnip = "") {
   if (typeof statementText !== "string" || !statementText.trim()) return [];
   
   const text = statementText.trim();
@@ -3979,11 +4000,25 @@ function extractAtomicClaims(statementText) {
           claims.push({ text: snippet, anchor: anchor });
           anchorsProcessed.add(anchor);
         } else if (anchor === "qual_valuation") {
-          // A3.6.15: Fallback snippet extractor for qual_valuation when primary extraction returns empty
-          // A3.6.17: Pass null for diagnostics (not available in extractAtomicClaims context)
-          const fallbackSnippet = extractValuationFallbackSnippet(text, anchor, null, null, null);
+          // A3.6.18: Use bestValSnip if primary extraction failed
+          let fallbackSnippet = "";
+          let usedBestValSnip = false;
+          if (bestValSnip && bestValSnip.length > 0) {
+            fallbackSnippet = bestValSnip;
+            usedBestValSnip = true;
+          } else {
+            // A3.6.15: Fallback snippet extractor for qual_valuation when primary extraction returns empty
+            // A3.6.17: Pass null for diagnostics (not available in extractAtomicClaims context)
+            fallbackSnippet = extractValuationFallbackSnippet(text, anchor, null, null, null);
+          }
+          
           if (fallbackSnippet && fallbackSnippet.length > 0 && fallbackSnippet.length < 150) {
-            claims.push({ text: fallbackSnippet, anchor: anchor });
+            // A3.6.18: Store flag indicating bestValSnip was used (for diagnostics)
+            const claimEntry = { text: fallbackSnippet, anchor: anchor };
+            if (usedBestValSnip) {
+              claimEntry._usedBestValSnip = true;
+            }
+            claims.push(claimEntry);
             anchorsProcessed.add(anchor);
           }
         }
@@ -4046,12 +4081,19 @@ function extractAtomicClaims(statementText) {
     
     // A3.6.10: Preserve anchor explicitly (use provided anchor or extract from cleaned text)
     const anchor = claimAnchor || extractAnchor(cleaned);
-    rawCandidates.push({
+    const candidate = {
       claimText: cleaned,
       facet,
       claimKey,
       anchor: anchor, // A3.6.10: Explicit anchor field
-    });
+    };
+    
+    // A3.6.18: Preserve _usedBestValSnip flag if present
+    if (typeof claimEntry === "object" && claimEntry._usedBestValSnip) {
+      candidate._usedBestValSnip = true;
+    }
+    
+    rawCandidates.push(candidate);
   }
   
   return rawCandidates;
@@ -4111,6 +4153,199 @@ function stripDanglingNumericTail(text) {
   sanitized = sanitized.replace(/[,:;]\s*$/, "").trim();
   
   return sanitized;
+}
+
+// A3.6.18: Get best available valuation snippet from statement text
+function getBestValuationSnippet(statementText) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return "";
+  }
+  
+  try {
+    // Strategy a) Prefer "pre-money valuation" / "post-money valuation" clause
+    const premoneyPattern = /\bpre-?money\s+valuation\b/i;
+    const postmoneyPattern = /\bpost-?money\s+valuation\b/i;
+    
+    const premoneyMatch = statementText.match(premoneyPattern);
+    const postmoneyMatch = statementText.match(postmoneyPattern);
+    
+    if (premoneyMatch || postmoneyMatch) {
+      const match = premoneyMatch || postmoneyMatch;
+      const keywordIndex = match.index;
+      const keywordMatch = match[0];
+      
+      // Find the nearest USD amount preceding the valuation keyword
+      const beforeKeyword = statementText.substring(0, keywordIndex);
+      const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
+      const usdPatternGlobal = ensureGlobalRegex(usdPattern);
+      const usdMatches = [...beforeKeyword.matchAll(usdPatternGlobal)];
+      
+      let snippetStart = keywordIndex;
+      if (usdMatches.length > 0) {
+        // Use the last (nearest) USD match before the keyword
+        const nearestUsd = usdMatches[usdMatches.length - 1];
+        snippetStart = nearestUsd.index;
+      } else {
+        // No USD found before, expand backwards from keyword
+        snippetStart = Math.max(0, keywordIndex - 40);
+      }
+      
+      // Find clause boundary (stop at earliest: ", implying", ";", "—", or end of string)
+      let snippetEnd = statementText.length;
+      const boundaryPatterns = [
+        /,\s+implying/i,
+        /;/,
+        /—/,
+      ];
+      
+      for (const pattern of boundaryPatterns) {
+        const boundaryMatch = statementText.substring(keywordIndex).match(pattern);
+        if (boundaryMatch) {
+          const boundaryIndex = keywordIndex + boundaryMatch.index;
+          if (boundaryIndex < snippetEnd) {
+            snippetEnd = boundaryIndex;
+          }
+        }
+      }
+      
+      // Expand to word boundaries
+      let expandedStart = snippetStart;
+      while (expandedStart > 0 && /\w/.test(statementText[expandedStart - 1])) {
+        expandedStart--;
+      }
+      let expandedEnd = snippetEnd;
+      while (expandedEnd < statementText.length && /\w/.test(statementText[expandedEnd])) {
+        expandedEnd++;
+      }
+      
+      let snippet = statementText.substring(expandedStart, expandedEnd).trim();
+      snippet = stripDanglingNumericTail(snippet);
+      snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+      
+      if (snippet.length > 0 && snippet.length < 150) {
+        return snippet;
+      }
+    }
+    
+    // Strategy b) Else "enterprise value" clause
+    const enterpriseValuePattern = /\benterprise\s+value\b|\bev\b(?!\w)/i;
+    const evMatch = statementText.match(enterpriseValuePattern);
+    if (evMatch) {
+      const keywordIndex = evMatch.index;
+      const keywordMatch = evMatch[0];
+      
+      // Find USD amount near the keyword
+      const spanStart = Math.max(0, keywordIndex - 60);
+      const spanEnd = Math.min(statementText.length, keywordIndex + keywordMatch.length + 60);
+      
+      // Expand to word boundaries
+      let expandedStart = spanStart;
+      while (expandedStart > 0 && /\w/.test(statementText[expandedStart - 1])) {
+        expandedStart--;
+      }
+      let expandedEnd = spanEnd;
+      while (expandedEnd < statementText.length && /\w/.test(statementText[expandedEnd])) {
+        expandedEnd++;
+      }
+      
+      let snippet = statementText.substring(expandedStart, expandedEnd).trim();
+      
+      // Look for USD amount within or adjacent to the span
+      const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
+      const snippetUsdMatch = snippet.match(usdPattern);
+      if (!snippetUsdMatch) {
+        // Try to expand snippet to include USD amount if it's nearby
+        const expandedUsdStart = Math.max(0, expandedStart - 40);
+        const expandedUsdEnd = Math.min(statementText.length, expandedEnd + 40);
+        const expandedText = statementText.substring(expandedUsdStart, expandedUsdEnd);
+        const expandedUsdMatch = expandedText.match(usdPattern);
+        if (expandedUsdMatch) {
+          const usdMatchIndex = expandedUsdStart + expandedText.indexOf(expandedUsdMatch[0]);
+          const newStart = Math.min(expandedStart, usdMatchIndex - 20);
+          const newEnd = Math.max(expandedEnd, usdMatchIndex + expandedUsdMatch[0].length + 20);
+          
+          let newExpandedStart = newStart;
+          while (newExpandedStart > 0 && /\w/.test(statementText[newExpandedStart - 1])) {
+            newExpandedStart--;
+          }
+          let newExpandedEnd = newEnd;
+          while (newExpandedEnd < statementText.length && /\w/.test(statementText[newExpandedEnd])) {
+            newExpandedEnd++;
+          }
+          snippet = statementText.substring(newExpandedStart, newExpandedEnd).trim();
+        }
+      }
+      
+      snippet = stripDanglingNumericTail(snippet);
+      snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+      
+      if (snippet.length > 0 && snippet.length < 150) {
+        return snippet;
+      }
+    }
+    
+    // Strategy c) Else generic "valuation" / "EV" keyword span
+    const valuationPattern = /\bvaluation\b/i;
+    const valMatch = statementText.match(valuationPattern);
+    if (valMatch) {
+      const keywordIndex = valMatch.index;
+      const keywordMatch = valMatch[0];
+      
+      // Extract span around keyword (±60 chars)
+      const spanStart = Math.max(0, keywordIndex - 60);
+      const spanEnd = Math.min(statementText.length, keywordIndex + keywordMatch.length + 60);
+      
+      // Expand to word boundaries
+      let expandedStart = spanStart;
+      while (expandedStart > 0 && /\w/.test(statementText[expandedStart - 1])) {
+        expandedStart--;
+      }
+      let expandedEnd = spanEnd;
+      while (expandedEnd < statementText.length && /\w/.test(statementText[expandedEnd])) {
+        expandedEnd++;
+      }
+      
+      let snippet = statementText.substring(expandedStart, expandedEnd).trim();
+      
+      // Look for USD amount within or adjacent to the span
+      const usdPattern = /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m\b|billion|b\b|thousand|k\b)/i;
+      const snippetUsdMatch = snippet.match(usdPattern);
+      if (!snippetUsdMatch) {
+        // Try to expand snippet to include USD amount if it's nearby
+        const expandedUsdStart = Math.max(0, expandedStart - 40);
+        const expandedUsdEnd = Math.min(statementText.length, expandedEnd + 40);
+        const expandedText = statementText.substring(expandedUsdStart, expandedUsdEnd);
+        const expandedUsdMatch = expandedText.match(usdPattern);
+        if (expandedUsdMatch) {
+          const usdMatchIndex = expandedUsdStart + expandedText.indexOf(expandedUsdMatch[0]);
+          const newStart = Math.min(expandedStart, usdMatchIndex - 20);
+          const newEnd = Math.max(expandedEnd, usdMatchIndex + expandedUsdMatch[0].length + 20);
+          
+          let newExpandedStart = newStart;
+          while (newExpandedStart > 0 && /\w/.test(statementText[newExpandedStart - 1])) {
+            newExpandedStart--;
+          }
+          let newExpandedEnd = newEnd;
+          while (newExpandedEnd < statementText.length && /\w/.test(statementText[newExpandedEnd])) {
+            newExpandedEnd++;
+          }
+          snippet = statementText.substring(newExpandedStart, newExpandedEnd).trim();
+        }
+      }
+      
+      snippet = stripDanglingNumericTail(snippet);
+      snippet = snippet.replace(/^[^\w$%]+/, "").replace(/[^\w$%]+$/, "").replace(/\s+/g, " ").trim();
+      
+      if (snippet.length > 0 && snippet.length < 150) {
+        return snippet;
+      }
+    }
+    
+    return "";
+  } catch (err) {
+    // A3.6.18: Safe fallback - never throw
+    return "";
+  }
 }
 
 // A3.6.17: Ensure RegExp has global flag for matchAll() compatibility
@@ -4540,6 +4775,18 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     return [];
   }
   
+  // A3.6.18: Compute and cache best valuation snippet once per statement
+  const bestValSnip = getBestValuationSnippet(statementText);
+  
+  // A3.6.18: Diagnostic for best valuation snippet
+  if ((idx < 2 || idx === 3) && runId && reqSig) {
+    const preview = bestValSnip ? bestValSnip.substring(0, 50) : "";
+    diag(runId, reqSig, `[VAL_BEST_SNIP] idx=${idx} len=${bestValSnip.length} preview="${preview}"`);
+  }
+  
+  // A3.6.18: Diagnostic when qual_valuation uses bestValSnip (will be logged after extraction)
+  // This is set up here but logged in the extraction/aggregation phase
+  
   // A3.6.8: Extract all anchors from original statement text for logging
   const allAnchorsInOriginal = extractAllAnchors(statementText);
   if (idx < 2 && runId && reqSig) {
@@ -4547,7 +4794,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   }
   
   // Extract raw candidates (already cleaned and with facet/key assigned)
-  const rawCandidates = extractAtomicClaims(statementText);
+  // A3.6.18: Pass bestValSnip to extractAtomicClaims for qual_valuation fallback
+  const rawCandidates = extractAtomicClaims(statementText, bestValSnip);
   if (rawCandidates.length === 0) {
     return [];
   }
@@ -4567,13 +4815,34 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       });
       
       if (qualValuationCandidates.length > 0) {
+        // Check if this candidate used bestValSnip
+        const candidate = qualValuationCandidates[0];
+        const candidateText = candidate.claimText;
+        // A3.6.18: Check _usedBestValSnip flag or compare text
+        const usedBestValSnip = candidate._usedBestValSnip || 
+          (bestValSnip && bestValSnip.length > 0 && 
+           (candidateText === bestValSnip || candidateText.includes(bestValSnip.substring(0, 30))));
+        
+        if (usedBestValSnip) {
+          // A3.6.18: Diagnostic when qual_valuation uses bestValSnip
+          const preview = candidateText.substring(0, 50);
+          diag(runId, reqSig, `[VAL_QUAL_FROM_BEST] idx=${idx} used=true preview="${preview}"`);
+        }
+        
         // Primary extraction succeeded
-        const primarySnippet = qualValuationCandidates[0].claimText;
+        const primarySnippet = candidateText;
         const sanitized = stripDanglingNumericTail(primarySnippet);
         const preview = primarySnippet.substring(Math.max(0, primarySnippet.length - 50));
         const sanitizedPreview = sanitized.substring(Math.max(0, sanitized.length - 50));
         diag(runId, reqSig, `[VAL_SNIP_SAN] idx=${idx} mode=primary before="${preview}" after="${sanitizedPreview}" ok=true`);
       } else {
+        // Primary extraction failed, check if bestValSnip would have been used
+        if (bestValSnip && bestValSnip.length > 0) {
+          // A3.6.18: Diagnostic when qual_valuation would use bestValSnip but wasn't created
+          const preview = bestValSnip.substring(0, 50);
+          diag(runId, reqSig, `[VAL_QUAL_FROM_BEST] idx=${idx} used=false preview="${preview}" reason=not_created`);
+        }
+        
         // Primary extraction failed, check fallback
         const fallbackSnippet = extractValuationFallbackSnippet(statementText, "qual_valuation", runId, reqSig, idx);
         if (fallbackSnippet && fallbackSnippet.length > 0) {
@@ -4830,7 +5099,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // A3.6.14: Diagnostic for anchors detected but not emitted
     if (missing.length > 0 && runId && reqSig) {
       // Re-extract raw candidates to check why anchors were skipped
-      const rawCandidates = extractAtomicClaims(statementText);
+      // A3.6.18: Pass bestValSnip to extractAtomicClaims for accurate diagnostic
+      const rawCandidates = extractAtomicClaims(statementText, bestValSnip);
       const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
       const cappedClaims = applyFacetCaps(aggregatedClaims, runId, reqSig, idx);
       
@@ -4846,7 +5116,14 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         });
         
         if (!hadRawCandidate) {
-          reason = "no_claim_text";
+          // A3.6.18: For qual_valuation, check if bestValSnip exists - if so, it's not no_claim_text
+          if (missingAnchor === "qual_valuation" && bestValSnip && bestValSnip.length > 0) {
+            // bestValSnip exists but claim wasn't created - must be a different reason
+            // Check if it would have been created but filtered later
+            reason = "filtered_empty_after_rules";
+          } else {
+            reason = "no_claim_text";
+          }
         } else {
           // Check if it was filtered in aggregation
           const hadAggregated = aggregatedClaims.some(c => {
