@@ -5033,6 +5033,10 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     return [];
   }
   
+  // A3.6.23: Initialize finalClaims early to avoid TDZ (Temporal Dead Zone) error
+  // This must be declared before any code that references it (e.g., diagnostic checks)
+  let finalClaims = [];
+  
   // A3.6.18: Compute and cache best valuation snippet once per statement
   const bestValSnip = getBestValuationSnippet(statementText);
   
@@ -5282,7 +5286,9 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   const citations = Array.isArray(assessment?.citations) ? assessment.citations : [];
   
   // Score reliability and generate comments for final claims
-  const finalClaims = [];
+  // A3.6.23: finalClaims already initialized at top of function to avoid TDZ
+  // Reset to empty array here (it was initialized as [] at top)
+  finalClaims = [];
   let hiCount = 0, medCount = 0, lowCount = 0;
   
   // A3.6.2 PATCH: Minimal diagnostics for first 1-2 statements
