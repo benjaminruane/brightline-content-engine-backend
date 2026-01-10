@@ -4001,15 +4001,30 @@ function extractAtomicClaims(statementText, bestValSnip = "") {
           anchorsProcessed.add(anchor);
         } else if (anchor === "qual_valuation") {
           // A3.6.19: Two-phase retry for qual_valuation
+          // A3.6.21: B) Instrument precise qual_valuation trace
+          // Note: runId/reqSig/idx not available here, trace will be logged in generateClaimsForStatement
+          
           // Phase 1: Try primary extraction
           let primaryAttempt = tryBuildQualValuationClaimText(snippet, "primary");
           let finalSnippet = "";
           let usedBestValSnip = false;
           let retryDebug = null;
+          let traceInfo = {
+            primarySnippet: snippet,
+            primarySnippetLen: snippet.length,
+            primaryResult: primaryAttempt.claimText,
+            primaryResultLen: primaryAttempt.claimText.length,
+            bestValSnipRaw: bestValSnip || "",
+            bestValSnipLen: bestValSnip ? bestValSnip.length : 0,
+            finalSnippet: "",
+            finalSnippetLen: 0,
+            source: "none"
+          };
           
           if (primaryAttempt.claimText.length > 0) {
             // Primary succeeded
             finalSnippet = primaryAttempt.claimText;
+            traceInfo.source = "primary";
           } else if (bestValSnip && bestValSnip.length > 0) {
             // Phase 2: Retry with bestValSnip
             const bestAttempt = tryBuildQualValuationClaimText(bestValSnip, "best");
@@ -4023,11 +4038,13 @@ function extractAtomicClaims(statementText, bestValSnip = "") {
             if (bestAttempt.claimText.length > 0) {
               finalSnippet = bestAttempt.claimText;
               usedBestValSnip = true;
+              traceInfo.source = "best";
             } else {
               // Both failed - try legacy fallback as last resort
               const fallbackSnippet = extractValuationFallbackSnippet(text, anchor, null, null, null);
               if (fallbackSnippet && fallbackSnippet.length > 0 && fallbackSnippet.length < 150) {
                 finalSnippet = fallbackSnippet;
+                traceInfo.source = "fallback";
               }
             }
           } else {
@@ -4035,8 +4052,12 @@ function extractAtomicClaims(statementText, bestValSnip = "") {
             const fallbackSnippet = extractValuationFallbackSnippet(text, anchor, null, null, null);
             if (fallbackSnippet && fallbackSnippet.length > 0 && fallbackSnippet.length < 150) {
               finalSnippet = fallbackSnippet;
+              traceInfo.source = "fallback";
             }
           }
+          
+          traceInfo.finalSnippet = finalSnippet;
+          traceInfo.finalSnippetLen = finalSnippet.length;
           
           if (finalSnippet && finalSnippet.length > 0 && finalSnippet.length < 150) {
             // A3.6.18: Store flag indicating bestValSnip was used (for diagnostics)
@@ -4047,8 +4068,16 @@ function extractAtomicClaims(statementText, bestValSnip = "") {
             if (retryDebug) {
               claimEntry._retryDebug = retryDebug;
             }
+            // A3.6.21: Store trace info for diagnostics
+            claimEntry._traceInfo = traceInfo;
             claims.push(claimEntry);
             anchorsProcessed.add(anchor);
+          } else {
+            // A3.6.21: Store trace info even if empty (for diagnostics)
+            if (bestValSnip && bestValSnip.length > 0) {
+              // Store trace info in a way that can be accessed later for diagnostics
+              // We'll log this in generateClaimsForStatement
+            }
           }
         }
       }
@@ -4076,7 +4105,25 @@ function extractAtomicClaims(statementText, bestValSnip = "") {
     }
     
     // Clean claimText (preserves money values)
-    const cleaned = cleanClaimText(claimText);
+    // A3.6.21: D) Prevent downstream emptying for valuation snippets sourced from bestValSnip
+    let cleaned = cleanClaimText(claimText);
+    
+    // A3.6.21: If qual_valuation originated from bestValSnip and cleaning emptied it, use fail-safe
+    if (!cleaned && claimAnchor === "qual_valuation" && typeof claimEntry === "object" && claimEntry._usedBestValSnip) {
+      // Check if original claimText passes isValuationSnippet()
+      if (isValuationSnippet(claimText)) {
+        // Fallback to original text (already minimal-cleaned by builder)
+        cleaned = claimText.trim();
+        // Only apply minimal trailing punctuation removal
+        cleaned = cleaned.replace(/[,;:.\s]+$/, "").trim();
+        
+        // Final check: must still pass isValuationSnippet()
+        if (!isValuationSnippet(cleaned)) {
+          cleaned = ""; // Still invalid, skip
+        }
+      }
+    }
+    
     if (!cleaned) continue; // Skip empty after cleaning
     
     // A3.6.2 PATCH v2: Validate money extraction
@@ -4125,6 +4172,11 @@ function extractAtomicClaims(statementText, bestValSnip = "") {
     // A3.6.19: Preserve _retryDebug flag if present
     if (typeof claimEntry === "object" && claimEntry._retryDebug) {
       candidate._retryDebug = claimEntry._retryDebug;
+    }
+    
+    // A3.6.21: Preserve _traceInfo flag if present
+    if (typeof claimEntry === "object" && claimEntry._traceInfo) {
+      candidate._traceInfo = claimEntry._traceInfo;
     }
     
     rawCandidates.push(candidate);
@@ -4187,6 +4239,22 @@ function stripDanglingNumericTail(text) {
   sanitized = sanitized.replace(/[,:;]\s*$/, "").trim();
   
   return sanitized;
+}
+
+// A3.6.21: Check if text is a valid valuation snippet
+function isValuationSnippet(text) {
+  if (typeof text !== "string") return false;
+  
+  const trimmed = text.trim();
+  if (trimmed.length === 0) return false;
+  
+  // Must contain valuation keyword
+  const hasValuationKeyword = /\b(valuation|pre-?money|post-?money|enterprise\s+value|ev\b(?!\w))\b/i.test(trimmed);
+  
+  // Must contain digit or currency symbol
+  const hasDigitOrCurrency = /[\d$]/.test(trimmed);
+  
+  return hasValuationKeyword && hasDigitOrCurrency;
 }
 
 // A3.6.20: Minimal cleaning for best valuation snippets (preserves content)
@@ -4266,28 +4334,43 @@ function tryBuildQualValuationClaimText(rawText, mode = "primary") {
       }
     }
     
-    // Final validation: must still contain valuation keywords after cleaning
-    if (cleaned.length > 0) {
-      const stillHasValuationKeyword = /\b(valuation|pre-?money|post-?money|enterprise\s+value|ev\b(?!\w))\b/i.test(cleaned);
-      if (!stillHasValuationKeyword) {
-        const rawPreview = `${rawText.substring(0, 40)}...${rawText.length > 40 ? rawText.substring(rawText.length - 40) : ""}`;
-        const cleanedPreview = `${cleaned.substring(0, 40)}...${cleaned.length > 40 ? cleaned.substring(cleaned.length - 40) : ""}`;
-        return { 
-          claimText: "", 
-          debug: { 
-            mode, 
-            reason: "best_filtered_empty", 
-            originalLen: rawText.length, 
-            cleanedLen: cleaned.length,
-            rawTextPreview: rawPreview,
-            cleanedPreview: cleanedPreview,
-            cleaningPath: cleaningPath,
-            fallbackUsed: fallbackUsed,
-            fallbackPreview: fallbackPreview
-          } 
-        };
-      }
+    // A3.6.21: C) Fix builder return correctness - if minimal-cleaned text is non-empty AND passes isValuationSnippet(), return it immediately
+    if (cleaned.length > 0 && isValuationSnippet(cleaned)) {
+      // Return immediately - no further stripping / rule chain
+      const rawPreview = `${rawText.substring(0, 60)}${rawText.length > 60 ? "..." : ""}`;
+      const cleanedPreview = `${cleaned.substring(0, 60)}${cleaned.length > 60 ? "..." : ""}`;
+      return { 
+        claimText: cleaned, 
+        debug: { 
+          mode, 
+          reason: "ok", 
+          cleanedLen: cleaned.length,
+          rawTextPreview: rawPreview,
+          cleanedPreview: cleanedPreview,
+          cleaningPath: cleaningPath,
+          fallbackUsed: fallbackUsed,
+          fallbackPreview: fallbackPreview
+        } 
+      };
     }
+    
+    // If cleaned doesn't pass isValuationSnippet(), it's filtered
+    const rawPreview = `${rawText.substring(0, 60)}${rawText.length > 60 ? "..." : ""}`;
+    const cleanedPreview = cleaned.length > 0 ? `${cleaned.substring(0, 60)}${cleaned.length > 60 ? "..." : ""}` : "";
+    return { 
+      claimText: "", 
+      debug: { 
+        mode, 
+        reason: "best_filtered_empty", 
+        originalLen: rawText.length, 
+        cleanedLen: cleaned.length,
+        rawTextPreview: rawPreview,
+        cleanedPreview: cleanedPreview,
+        cleaningPath: cleaningPath,
+        fallbackUsed: fallbackUsed,
+        fallbackPreview: fallbackPreview
+      } 
+    };
   } else {
     // Primary mode: use full cleaning
     cleaningPath = "primary_rules";
@@ -4998,6 +5081,19 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
           (bestValSnip && bestValSnip.length > 0 && 
            (candidateText === bestValSnip || candidateText.includes(bestValSnip.substring(0, 30))));
         
+        // A3.6.21: B) Instrument precise qual_valuation trace (idx < 2 or idx === 3 only)
+        if ((idx < 2 || idx === 3) && candidate._traceInfo) {
+          const trace = candidate._traceInfo;
+          // Checkpoint 1: after primary extraction snippet (before any cleaning)
+          diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=primary_extraction len=${trace.primarySnippetLen} preview="${trace.primarySnippet.substring(0, 60)}" source=primary`);
+          // Checkpoint 2: after bestValSnip selection (raw bestValSnip)
+          if (trace.bestValSnipLen > 0) {
+            diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=best_selection len=${trace.bestValSnipLen} preview="${trace.bestValSnipRaw.substring(0, 60)}" source=best`);
+          }
+          // Checkpoint 3: after tryBuildQualValuationClaimText() returns (final returned claimText)
+          diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=builder_result len=${trace.finalSnippetLen} preview="${trace.finalSnippet.substring(0, 60)}" source=${trace.source}`);
+        }
+        
         // A3.6.19: Diagnostic for retry behavior
         if ((idx < 2 || idx === 3) && candidate._retryDebug) {
           const retryDebug = candidate._retryDebug;
@@ -5024,13 +5120,32 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         // Primary extraction failed completely
         let reason = "best_missing";
         let debugInfo = null;
+        let builderReturnedEmpty = true;
         if (bestValSnip && bestValSnip.length > 0) {
           // A3.6.19: Check why bestValSnip wasn't used
           const bestAttempt = tryBuildQualValuationClaimText(bestValSnip, "best");
           debugInfo = bestAttempt.debug;
+          builderReturnedEmpty = bestAttempt.claimText.length === 0;
+          
+          // A3.6.21: E) Make failure reason truthful
+          // Check if builder returned non-empty but candidate doesn't exist in rawCandidates
           if (bestAttempt.claimText.length > 0) {
-            reason = "best_filtered_empty"; // Shouldn't happen if tryBuildQualValuationClaimText worked
+            // Builder returned non-empty - check if it exists in rawCandidates
+            const existsInRawCandidates = rawCandidates.some(c => {
+              const cAnchor = c.anchor || extractAnchor(c.claimText);
+              const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+              return cCanonical === "qual_valuation";
+            });
+            
+            if (!existsInRawCandidates) {
+              // Builder returned non-empty but later disappeared - must be downstream
+              reason = "dropped_downstream";
+            } else {
+              // Builder returned non-empty and exists in rawCandidates - shouldn't happen here
+              reason = "best_filtered_empty";
+            }
           } else {
+            // Builder truly returned empty
             reason = bestAttempt.debug.reason || "best_rejected_guard";
           }
           
@@ -5044,8 +5159,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         const preview = bestValSnip && bestValSnip.length > 0 ? bestValSnip.substring(0, 50) : "";
         let diagMsg = `[VAL_QUAL_FROM_BEST] idx=${idx} used=false preview="${preview}" reason=${reason}`;
         
-        // A3.6.20: Include expanded debug info for best_filtered_empty
-        if (reason === "best_filtered_empty" && debugInfo) {
+        // A3.6.21: E) Include expanded debug info for both best_filtered_empty and dropped_downstream
+        if ((reason === "best_filtered_empty" || reason === "dropped_downstream") && debugInfo) {
           const rawPreview = debugInfo.rawTextPreview || "";
           const cleanedPreview = debugInfo.cleanedPreview || "";
           const cleaningPath = debugInfo.cleaningPath || "";
@@ -5054,6 +5169,9 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
           diagMsg += ` rawPreview="${rawPreview}" cleanedPreview="${cleanedPreview}" cleaningPath=${cleaningPath} fallbackUsed=${fallbackUsed}`;
           if (fallbackUsed === "true" && fallbackPreview) {
             diagMsg += ` fallbackPreview="${fallbackPreview}"`;
+          }
+          if (reason === "dropped_downstream") {
+            diagMsg += ` builderReturnedEmpty=${builderReturnedEmpty}`;
           }
         }
         
@@ -5364,6 +5482,28 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
               // Must have been filtered at emission (non-canonical check)
               reason = "non_canonical";
             }
+          }
+        }
+        
+        // A3.6.21: B) Checkpoint 4: immediately before the step that emits [CLAIMS_EMIT_SKIP] for qual_valuation
+        if (missingAnchor === "qual_valuation" && (idx < 2 || idx === 3)) {
+          // Find the candidate that should have been emitted
+          const missingCandidate = rawCandidates.find(c => {
+            const cAnchor = c.anchor || extractAnchor(c.claimText);
+            const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+            return cCanonical === "qual_valuation";
+          });
+          
+          if (missingCandidate) {
+            const checkpointText = missingCandidate.claimText || "";
+            const checkpointLen = checkpointText.length;
+            const checkpointPreview = checkpointText.substring(0, 60);
+            const checkpointSource = missingCandidate._traceInfo ? missingCandidate._traceInfo.source : "unknown";
+            diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=before_emit_skip len=${checkpointLen} preview="${checkpointPreview}" source=${checkpointSource}`);
+          } else if (bestValSnip && bestValSnip.length > 0) {
+            // No candidate found, but bestValSnip exists - log that
+            const checkpointPreview = bestValSnip.substring(0, 60);
+            diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${idx} checkpoint=before_emit_skip len=${bestValSnip.length} preview="${checkpointPreview}" source=best`);
           }
         }
         
