@@ -13033,20 +13033,51 @@ export default async function handler(req, res) {
     const sources = Array.isArray(body.sources) ? body.sources : [];
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
-    // A3.7.0: Selection mode support
-    const selectionTextRaw = typeof body.selectionText === "string" ? body.selectionText : null;
-    const selectionText = selectionTextRaw ? selectionTextRaw.trim() : null;
-
-    // A3.7.0: Validate selectionText if provided
-    if (selectionText !== null) {
-      if (selectionText.length < 3) {
+    
+    // A3.7.4: Make selection-mode base text unambiguous and early
+    // Derive selectionUsed and selectedText early from multiple possible sources
+    const selectionUsed = Boolean(
+      body?.selectionUsed || 
+      body?.mode === "selection" || 
+      typeof body?.selectedText === "string" ||
+      typeof body?.selectionText === "string"
+    );
+    const selectedText = (body?.selectedText ?? body?.selectionText ?? "").toString().trim();
+    
+    // A3.7.4: Hard guard for empty selection
+    if (selectionUsed && selectedText.length === 0) {
+      hasReturned = true;
+      try {
+        diag("early", "validation", `END_DIAG path=empty_selection status=200 returningNow=true`);
+      } catch {}
+      return res.status(200).json({
+        ok: true,
+        statements: [],
+        references: [],
+        meta: {
+          webSearch: { enabled: true, used: false },
+          extractionQuality: "degraded",
+          extractionQualityReasons: ["empty_selection"],
+          uploadedSourcesCount: 0,
+          webSourcesCount: 0,
+          selectionUsed: true,
+          selectionPreview: "",
+          selectionStatementCountReturned: 0,
+          selectionStatementsReturned: 0,
+        },
+      });
+    }
+    
+    // A3.7.4: Validate selectionText if provided
+    if (selectionUsed && selectedText.length > 0) {
+      if (selectedText.length < 3) {
         hasReturned = true;
         try {
           diag("early", "validation", `END_DIAG path=selection_validation_error status=400 returningNow=true`);
         } catch {}
         return res.status(400).json({ ok: false, error: "selectionText too short" });
       }
-      if (selectionText.length > 8000) {
+      if (selectedText.length > 8000) {
         hasReturned = true;
         try {
           diag("early", "validation", `END_DIAG path=selection_validation_error status=400 returningNow=true`);
@@ -13062,6 +13093,9 @@ export default async function handler(req, res) {
       } catch {}
       return res.status(400).json({ error: "Missing draftText" });
     }
+    
+    // A3.7.4: Define base text - selection mode uses selectedText, non-selection uses draftText
+    const baseText = selectionUsed ? selectedText : draftText;
     
     // A3.5.20 Fix 1 & 2: Generate runId and reqSig early for unambiguous logging
     runId = Math.random().toString(36).substring(2, 15);
@@ -13153,23 +13187,22 @@ export default async function handler(req, res) {
     diag(runId, reqSig, `[PIPELINE] phase=mergeContinuationFragments`);
     const normalizedDraftText = mergeContinuationFragments(draftText, runId, reqSig);
     
-    // A3.7.0/A3.7.2: Selection mode branch - if selectionText is provided, split into candidates
-    let isSelectionMode = false;
+    // A3.7.4: Selection mode branch - use selectionUsed flag (already determined early)
+    // Normalize selection text for indexing (only used for finding position in draft)
     let normalizedSelection = null;
     let selectionStartPosition = null;
     
-    if (selectionText !== null && selectionText.length >= 3) {
-      isSelectionMode = true;
+    if (selectionUsed && selectedText.length >= 3) {
       // Normalize line breaks to "\n" and collapse excessive whitespace for indexing
-      normalizedSelection = selectionText
+      normalizedSelection = selectedText
         .replace(/\r\n/g, "\n")
         .replace(/\r/g, "\n")
         .replace(/\s+/g, " ")
         .trim();
       
-      // Compute selectionStartPosition: find selection in draftText
+      // Compute selectionStartPosition: find selection in draftText (for reference only)
       // Try exact match first, then try trimmed match
-      let startIndex = normalizedDraftText.indexOf(selectionText);
+      let startIndex = normalizedDraftText.indexOf(selectedText);
       if (startIndex === -1) {
         startIndex = normalizedDraftText.indexOf(normalizedSelection);
       }
@@ -13189,34 +13222,34 @@ export default async function handler(req, res) {
         selectionStartPosition = null;
       }
       
-      diag(runId, reqSig, `[PIPELINE] mode=selection selectionLen=${selectionText.length} foundSelectionStartPos=${selectionStartPosition !== null ? selectionStartPosition : "null"}`);
+      diag(runId, reqSig, `[PIPELINE] mode=selection selectionLen=${selectedText.length} foundSelectionStartPos=${selectionStartPosition !== null ? selectionStartPosition : "null"}`);
     }
     
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
     // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
-    // A3.7.3: In selection mode, split selection into atomic candidates with metadata
+    // A3.7.4: In selection mode, split ONLY selectedText (never the full draft)
     let rawExtractionCandidates = [];
     let selectionMetadataMap = new Map(); // Map candidate text -> { selectionGroupId, selectionIndex, selectionTotal }
-    let selectionStatementCountReturned = null; // A3.7.3: Store N from split
-    if (!isSelectionMode) {
+    let selectionStatementCountReturned = null; // A3.7.4: Store N from split
+    if (!selectionUsed) {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
       rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
     } else {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates (selection mode - splitting)`);
-      // A3.7.3: Split selection into atomic candidates (returns objects with text + metadata)
-      const splitResult = splitSelectionIntoCandidates(selectionText, runId, reqSig);
+      // A3.7.4: Split ONLY selectedText (baseText in selection mode)
+      const splitResult = splitSelectionIntoCandidates(selectedText, runId, reqSig);
       if (splitResult.length === 0) {
         // Fallback: if split returns empty, use selection as single candidate (backward compat)
-        rawExtractionCandidates = [normalizedSelection || selectionText];
-        selectionStatementCountReturned = 1; // A3.7.3: Single row fallback
+        rawExtractionCandidates = [selectedText.trim()];
+        selectionStatementCountReturned = 1; // A3.7.4: Single row fallback
         diag(runId, reqSig, `[PIPELINE] selection split returned 0 candidates, using selection as single candidate`);
       } else {
-        // A3.7.3: Store N from split
+        // A3.7.4: Store N from split
         selectionStatementCountReturned = splitResult.length;
-        // Extract metadata and text separately
+        // Extract metadata and text separately - each candidate is verbatim slice (trim only)
         rawExtractionCandidates = splitResult.map(item => {
-          const text = typeof item === "string" ? item : (item.text || String(item));
+          const text = typeof item === "string" ? item.trim() : ((item.text || String(item)).trim());
           if (typeof item === "object" && item.selectionGroupId) {
             selectionMetadataMap.set(text.trim(), {
               selectionGroupId: item.selectionGroupId,
@@ -13230,20 +13263,23 @@ export default async function handler(req, res) {
     }
     
     // A3.5.14 Part A: Filter candidates for quality (extraction stability)
+    // A3.7.4: In selection mode, use baseText (selectedText) for sentence context
     // Get raw sentences for context (we need to pass them to the filter)
     // Use normalized text to ensure consistent sentence boundaries
+    const normalizedBaseText = selectionUsed ? mergeContinuationFragments(selectedText, runId, reqSig) : normalizedDraftText;
     const sentenceBoundaryPattern = /[.!?\n]+/;
-    const rawSentences = normalizedDraftText
+    const rawSentences = normalizedBaseText
       .split(sentenceBoundaryPattern)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
     diag(runId, reqSig, `[PIPELINE] phase=filterCandidateQuality`);
     // A3.6.72: Wrap filterCandidateQuality in try/catch to handle errors gracefully
+    // A3.7.4: In selection mode, pass baseText (selectedText) not draftText
     let filterResult = null;
     let segGuardError = false;
     let segGuardErrorDetails = null;
     try {
-      filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedDraftText, runId, reqSig);
+      filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedBaseText, runId, reqSig);
     } catch (segGuardErr) {
       // A3.6.72: Log seg-guard error but continue pipeline with original candidates
       segGuardError = true;
@@ -13295,9 +13331,10 @@ export default async function handler(req, res) {
     diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount}${segGuardFallback ? ", segGuardFallback=true" : ""})`);
     
     // A3.6.72: Ensure pipeline continues even if extractionCandidates is empty (use best-effort)
-    if (extractionCandidates.length === 0 && typeof normalizedDraftText === "string" && normalizedDraftText.trim()) {
+    // A3.7.4: In selection mode, use baseText (selectedText) not draftText
+    if (extractionCandidates.length === 0 && typeof normalizedBaseText === "string" && normalizedBaseText.trim()) {
       // Last resort: permissive sentence split
-      const permissiveSplit = normalizedDraftText
+      const permissiveSplit = normalizedBaseText
         .split(/[.!?\n]+/)
         .map(s => s.trim())
         .filter(s => s.length >= 20)
@@ -13321,43 +13358,34 @@ export default async function handler(req, res) {
     
     // A3.5.27: Use candidateObjects to preserve candidateIndex for draft order
     // A3.6.6: Also preserve draftPosition
-    // A3.7.3: In selection mode, map draft positions and attach selection metadata
+    // A3.7.4: In selection mode, ensure candidates have __draftPosition and __candidateIndex
     const candidateIndexMap = new Map();
     let candidateObjects = fragFilterResult.candidateObjects || [];
     
-    // A3.7.3: Map draft positions and attach selection metadata for selection mode candidates
-    if (isSelectionMode && selectionStartPosition !== null) {
+    // A3.7.4: Map draft positions and attach selection metadata for selection mode candidates
+    if (selectionUsed) {
       candidateObjects = candidateObjects.map((candidateObj, idx) => {
         const candidate = candidateObj.text;
-        // Try to find this candidate within the draft text
-        let candidateDraftPosition = null;
         
-        // Try exact match first
-        let pos = normalizedDraftText.indexOf(candidate);
-        if (pos === -1) {
-          // Try normalized match (collapse whitespace)
-          const normalizedCandidate = candidate.replace(/\s+/g, " ").trim();
-          const normalizedDraft = normalizedDraftText.replace(/\s+/g, " ");
-          pos = normalizedDraft.indexOf(normalizedCandidate);
-        }
-        
-        if (pos >= 0) {
-          candidateDraftPosition = pos;
-        } else if (selectionStartPosition !== null) {
-          // Fallback: use selection start position + offset (approximate)
-          candidateDraftPosition = selectionStartPosition + idx * 10;
-        }
-        
-        // A3.7.3: Attach selection metadata if available
+        // A3.7.4: For selection mode, __draftPosition = selectionIndex-1 (0..N-1), NOT character offsets
+        // Get selection metadata to determine selectionIndex
         const selectionMetadata = selectionMetadataMap.get(candidate.trim()) || 
                                   selectionMetadataMap.get(candidate.replace(/\s+/g, " ").trim());
         
+        // A3.7.4: Use selectionIndex-1 as __draftPosition (stable index, not character offset)
+        const selectionIndex = selectionMetadata?.selectionIndex ?? (idx + 1);
+        const __draftPosition = selectionIndex - 1; // 0..N-1
+        const __candidateIndex = idx;
+        
         const result = {
           ...candidateObj,
-          draftPosition: candidateDraftPosition,
-          candidateIndex: idx,
+          __draftPosition: __draftPosition,
+          __candidateIndex: __candidateIndex,
+          draftPosition: __draftPosition, // Also set legacy field for compatibility
+          candidateIndex: __candidateIndex, // Also set legacy field for compatibility
         };
         
+        // A3.7.4: Attach selection metadata as plain JSON fields (optional chaining required downstream)
         if (selectionMetadata) {
           result.selectionGroupId = selectionMetadata.selectionGroupId;
           result.selectionIndex = selectionMetadata.selectionIndex;
@@ -13367,7 +13395,7 @@ export default async function handler(req, res) {
         return result;
       });
       
-      diag(runId, reqSig, `[A3.7.3][DRAFT_POS_MAP] mapped ${candidateObjects.length} selection candidates to draft positions`);
+      diag(runId, reqSig, `[A3.7.4][DRAFT_POS_MAP] mapped ${candidateObjects.length} selection candidates with __draftPosition=selectionIndex-1`);
     }
     
     // Store original candidate list with indices for later matching
@@ -13782,7 +13810,7 @@ ${
     // A3.6.66: Run whenever found=true (not just when both preMoney and enterpriseValue exist)
     // A3.7.1: Skip canonicalization in selection mode to keep selection as primary statement
     let dealDedupDropped = 0;
-    if (!isSelectionMode) {
+    if (!selectionUsed) {
       diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement`);
       if (dealTerms) {
         statements = canonicalizeDealTermsStatements(statements, dealTerms, runId, reqSig);
@@ -14437,11 +14465,13 @@ ${
           webSourcesCount: webReferencesWithIds?.length || 0,
           ...(meta?.verification ? { verification: meta.verification } : {}),
           ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
-          // A3.7.0: Selection mode metadata
-          selectionUsed: isSelectionMode || false,
-          selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
-          // A3.7.3: Selection statement count (N from split)
-          selectionStatementCountReturned: isSelectionMode && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (isSelectionMode ? statements.length : undefined),
+          // A3.7.4: Selection mode metadata - always set when selectionUsed is true
+          selectionUsed: selectionUsed || false,
+          selectionPreview: selectionUsed && selectedText ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : null,
+          // A3.7.4: Selection statement count (N from split) - intended count
+          selectionStatementCountReturned: selectionUsed && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (selectionUsed ? statements.length : undefined),
+          // A3.7.4: Actual statements returned (may differ from intended if filtering drops rows)
+          selectionStatementsReturned: selectionUsed ? statements.length : undefined,
         },
       };
     } catch (e) {
@@ -14458,11 +14488,13 @@ ${
           webSourcesCount: webReferencesWithIds?.length || 0,
           ...(meta?.verification ? { verification: meta.verification } : {}),
           ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
-          // A3.7.0: Selection mode metadata
-          selectionUsed: isSelectionMode || false,
-          selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
-          // A3.7.3: Selection statement count (N from split)
-          selectionStatementCountReturned: isSelectionMode && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (isSelectionMode ? (statements?.length || 0) : undefined),
+          // A3.7.4: Selection mode metadata - always set when selectionUsed is true
+          selectionUsed: selectionUsed || false,
+          selectionPreview: selectionUsed && selectedText ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : null,
+          // A3.7.4: Selection statement count (N from split) - intended count
+          selectionStatementCountReturned: selectionUsed && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (selectionUsed ? (statements?.length || 0) : undefined),
+          // A3.7.4: Actual statements returned (may differ from intended if filtering drops rows)
+          selectionStatementsReturned: selectionUsed ? (statements?.length || 0) : undefined,
         },
       };
     }
@@ -14610,6 +14642,17 @@ ${
     return res.status(200).json(finalResponseObject);
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
+    // A3.7.4: Add diagnostics for fatal errors
+    const errorName = err?.name || "Error";
+    const errorMessage = err?.message || String(err);
+    const errorStack = err?.stack ? err.stack.substring(0, 300) : null;
+    const currentPhase = "unknown"; // Could be enhanced with phase tracking
+    try {
+      diag(runId || "unknown", reqSig || "unknown", `[PIPELINE_FATAL_ERROR] name="${errorName}" message="${errorMessage.substring(0, 200)}" stack="${errorStack || "none"}" mode=${selectionUsed ? "selection" : "normal"} phase=${currentPhase}`);
+    } catch (logErr) {
+      // Best-effort logging
+    }
+    
     // A3.5.22 Fix: Unconditional hard stop after FINAL_COUNTS - absolutely no fallback execution
     if (runId && runStateByRid[runId]?.finalCountsReached) {
       hasReturned = true;
@@ -14831,19 +14874,24 @@ ${
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback error path
       hasReturned = true;
       
-      // A3.6.72: Log that this is a truly fatal pipeline error (not just seg-guard)
+      // A3.7.4: Add diagnostics for fatal errors with full details
+      const errorName = fallbackErr?.name || "Error";
+      const errorMessage = fallbackErr?.message || String(fallbackErr);
+      const errorStack = fallbackErr?.stack ? fallbackErr.stack.substring(0, 300) : null;
+      const currentPhase = "fallback_error_handler";
       try {
-        diag(runId || "unknown", reqSig || "unknown", `[PIPELINE_FATAL] message="${fallbackErr?.message || String(fallbackErr)}" name="${fallbackErr?.name || "Error"}"`);
+        diag(runId || "unknown", reqSig || "unknown", `[PIPELINE_FATAL_ERROR] name="${errorName}" message="${errorMessage.substring(0, 200)}" stack="${errorStack || "none"}" mode=${selectionUsed ? "selection" : "normal"} phase=${currentPhase}`);
       } catch (logErr) {
         // Best-effort logging
       }
       
-      // A3.6.72: Try to extract best-effort statements from draft
+      // A3.7.4: Try to extract best-effort statements - use selectedText in selection mode, draftText otherwise
       let bestEffortStatements = [];
-      const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
-      if (fallbackDraftText && typeof fallbackDraftText === "string" && fallbackDraftText.trim()) {
+      const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+      const fallbackText = selectionUsed && selectedText ? selectedText : (fallbackBody?.draftText || "");
+      if (fallbackText && typeof fallbackText === "string" && fallbackText.trim()) {
         try {
-          const permissiveSplit = fallbackDraftText
+          const permissiveSplit = fallbackText
             .split(/[.!?\n]+/)
             .map(s => s.trim())
             .filter(s => s.length >= 20)
@@ -14853,6 +14901,7 @@ ${
             .map((text, idx) => ({
               text,
               __draftPosition: idx,
+              __candidateIndex: idx,
               assessment: {
                 reliabilityScore: 50,
                 reliabilityLabel: "Low",
@@ -14865,8 +14914,7 @@ ${
         }
       }
       
-      // Build references from request body
-      const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+      // Build references from request body (already parsed above)
       const fallbackSources = Array.isArray(fallbackBody.sources) ? fallbackBody.sources : [];
       const fallbackUploadedReferences = fallbackSources.map((s, idx) => ({
         id: idx + 1,
@@ -14884,17 +14932,34 @@ ${
       } catch (logErr) {
         // Best-effort logging
       }
+      // A3.7.4: Build meta with selection mode fields and error diagnostics
+      const meta = {
+        webSearch: { enabled: true, used: false },
+        extractionQuality: bestEffortStatements.length > 0 ? "degraded" : "failed",
+        extractionQualityReasons: bestEffortStatements.length > 0 ? ["pipeline_fatal_error"] : ["pipeline_fatal_error", "no_statements"],
+        uploadedSourcesCount: fallbackUploadedReferences.length,
+        webSourcesCount: 0,
+      };
+      
+      // A3.7.4: Add selection mode metadata if applicable
+      if (selectionUsed) {
+        meta.selectionUsed = true;
+        meta.selectionPreview = selectedText ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : "";
+        meta.selectionStatementCountReturned = 0;
+        meta.selectionStatementsReturned = bestEffortStatements.length;
+      }
+      
+      // A3.7.4: Add error diagnostics only when extractionQuality is degraded
+      if (meta.extractionQuality === "degraded" || meta.extractionQuality === "failed") {
+        meta.degradedReasonCode = "pipeline_fatal_error";
+        meta.degradedErrorName = errorName;
+      }
+      
       return res.status(200).json({
         ok: true,
         statements: bestEffortStatements,
         references: fallbackUploadedReferences,
-        meta: {
-          webSearch: { enabled: true, used: false },
-          extractionQuality: bestEffortStatements.length > 0 ? "degraded" : "failed",
-          extractionQualityReasons: bestEffortStatements.length > 0 ? ["pipeline_fatal_error"] : ["pipeline_fatal_error", "no_statements"],
-          uploadedSourcesCount: fallbackUploadedReferences.length,
-          webSourcesCount: 0,
-        },
+        meta,
       });
     }
   }
