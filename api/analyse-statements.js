@@ -829,6 +829,64 @@ function extractDeterministicStatementCandidates(draftText, runId = null, reqSig
   return cappedCandidates;
 }
 
+// A3.6.71: Sanitize candidate text to balance parentheses and trim dangling approximations
+function sanitizeCandidateText(text, runId = null, reqSig = null) {
+  if (typeof text !== "string" || !text.trim()) {
+    return text;
+  }
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  let changed = false;
+  let originalText = text;
+  let sanitized = text;
+  
+  // a) Balance parentheses
+  const openCount = (sanitized.match(/\(/g) || []).length;
+  const closeCount = (sanitized.match(/\)/g) || []).length;
+  
+  if (openCount > closeCount) {
+    const hasEnterpriseValue = /\benterprise\s+value\b|\bev\b(?!\w)|\bapproximately\b/i.test(sanitized);
+    
+    if (hasEnterpriseValue) {
+      // Append ')' at the end (unless it already ends with punctuation)
+      if (!/[.!?;:)]\s*$/.test(sanitized)) {
+        sanitized = sanitized + ")";
+        changed = true;
+        log(`[A3.6.71][CAND_PARENS] action=append_close beforeCounts=(${openCount},${closeCount}) afterCounts=(${openCount},${closeCount + 1})`);
+      }
+    } else {
+      // Remove unmatched '(' characters (drop the last '(')
+      const lastOpenIdx = sanitized.lastIndexOf("(");
+      if (lastOpenIdx >= 0) {
+        sanitized = sanitized.substring(0, lastOpenIdx) + sanitized.substring(lastOpenIdx + 1);
+        changed = true;
+        log(`[A3.6.71][CAND_PARENS] action=drop_unmatched beforeCounts=(${openCount},${closeCount}) afterCounts=(${openCount - 1},${closeCount})`);
+      }
+    }
+  }
+  
+  // b) Trim dangling "c" or "c." approximations
+  const danglingCPattern = /(\b(?:c|c\.)\s*)$/i;
+  if (danglingCPattern.test(sanitized)) {
+    sanitized = sanitized.replace(danglingCPattern, "").trim();
+    changed = true;
+  }
+  
+  // c) Normalize "c." approximations inline
+  sanitized = sanitized.replace(/\bc\.\s*(\d+(?:\.\d+)?)%/gi, "approximately $1%");
+  if (sanitized !== text) {
+    changed = true;
+  }
+  
+  if (changed) {
+    const sampleBefore = originalText.length > 80 ? originalText.substring(0, 80) + "..." : originalText;
+    const sampleAfter = sanitized.length > 80 ? sanitized.substring(0, 80) + "..." : sanitized;
+    log(`[A3.6.71][CAND_SAN] changed=true sampleBefore="${sampleBefore}" sampleAfter="${sampleAfter}"`);
+  }
+  
+  return sanitized;
+}
+
 // A3.5.14b Patch 1: Segmentation Guardrails + Fallback
 // Rejects candidates that are truncated fragments, mid-sentence starts, or too-short anchors
 // Implements strict validation with fallback to full sentences
@@ -1129,7 +1187,9 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
         }
       }
     } else {
-      accepted.push(candidate);
+      // A3.6.71: Sanitize candidate text before accepting
+      const sanitizedCandidate = sanitizeCandidateText(candidate, runId, reqSig);
+      accepted.push(sanitizedCandidate);
     }
   }
   
@@ -1435,8 +1495,8 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
         postFallbackRejected.push(candidate);
       }
     } else {
-      // Candidate is valid, keep it
-      validatedCandidates.push(candidate);
+      // Candidate is valid, keep it (already sanitized)
+      validatedCandidates.push(sanitizedCandidate);
     }
   }
   
@@ -2348,11 +2408,12 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
   }
   
   // A3.6.69: Extract ownership upside percent and mechanism separately
-  // Ownership upside patterns
+  // A3.6.71: Support "approximately 31%" and "c.31%" (normalized to "approximately 31%")
   const upsidePatterns = [
-    /\bincrease\s+.*\s+ownership\s+to\s+(\d+(?:\.\d+)?)\s*%/i,
-    /\b(\d+(?:\.\d+)?)\s*%\s*ownership\s+via/i,
-    /\bto\s+(\d+(?:\.\d+)?)\s*%\s+.*\s+secondary/i
+    /\b(?:potential\s+to\s+increase\s+to|increase\s+.*\s+ownership\s+to)\s+(?:approximately\s+)?(\d+(?:\.\d+)?)\s*%/i,
+    /\b(?:approximately\s+)?(\d+(?:\.\d+)?)\s*%\s*ownership\s+via/i,
+    /\bto\s+(?:approximately\s+)?(\d+(?:\.\d+)?)\s*%\s+.*\s+secondary/i,
+    /\bapproximately\s+(\d+(?:\.\d+)?)\s*%/i // A3.6.71: Standalone "approximately 31%" when in context of ownership upside
   ];
   
   for (const pattern of upsidePatterns) {
@@ -2375,10 +2436,14 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
   }
   
   // A3.6.69: Extract mechanism patterns (search in context of upside if available)
+  // A3.6.71: Support "through a secondary purchase from a former co-founder"
   const mechanismPatterns = [
+    /\bthrough\s+a\s+secondary\s+purchase\s+from\s+a\s+former\s+co-founder\b/i,
+    /\bthrough\s+secondary\s+purchase\s+from\s+.*\s+co-founder\b/i,
     /\bvia\s+secondary\s+purchases\b/i,
     /\bvia\s+secondary\s+shares\b/i,
-    /\bvia\s+secondary\b/i
+    /\bvia\s+secondary\b/i,
+    /\bthrough\s+secondary\s+purchase\b/i
   ];
   
   // If we found an upside percent, search near it for mechanism
@@ -2409,6 +2474,12 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
         break;
       }
     }
+  }
+  
+  // A3.6.71: Log deal terms parsing for diagnostics
+  if (result.ownershipPct || result.ownershipUpsidePct) {
+    const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+    log(`[A3.6.71][DEAL_PARSE_PCT] foundMain=${result.ownershipPct ? result.ownershipPct.pct : "null"} foundUpside=${result.ownershipUpsidePct || "null"} rawMain="${result.ownershipPct ? result.ownershipPct.raw : "null"}" rawUpside="${result.ownershipUpsidePct ? result.ownershipUpsidePct + "%" : "null"}" mechanism="${result.ownershipUpsideMechanism || "null"}"`);
   }
   
   return result;
@@ -2481,11 +2552,23 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploa
   }
   
   // A3.6.66: Try to capture source text as windowed blob (if we have a starting position)
+  // A3.6.71: Expand window backward to capture investment amount
   let backfilledSpan = false;
   if (pmStart != null) {
-    const blobStart = pmStart;
-    const blobEnd = Math.min(blobStart + 260, normalizedDraft.length);
+    // A3.6.71: Expand window start backward by 120-180 chars to capture investment
+    const expandedStart = Math.max(0, pmStart - 150);
+    const blobStart = expandedStart;
+    const blobEnd = Math.min(pmStart + 260, normalizedDraft.length);
     let blob = normalizedDraft.slice(blobStart, blobEnd);
+    
+    // A3.6.71: Re-run investment parsing on expanded window
+    const expandedInvestResults = extractDealTermsFromText(blob, runId, reqSig);
+    if (expandedInvestResults.investment && !dealTerms.investment) {
+      dealTerms.investment = expandedInvestResults.investment;
+      log(`[A3.6.71][DEAL_WINDOW] beforeSpan=(${pmStart},${pmStart + 260}) afterSpan=(${blobStart},${blobEnd}) capturedInvest=true invest=${expandedInvestResults.investment.amount}`);
+    } else {
+      log(`[A3.6.71][DEAL_WINDOW] beforeSpan=(${pmStart},${pmStart + 260}) afterSpan=(${blobStart},${blobEnd}) capturedInvest=${!!expandedInvestResults.investment} invest=${expandedInvestResults.investment ? expandedInvestResults.investment.amount : "null"}`);
+    }
     
     // Truncate blob at first occurrence of ". ", "; ", or "  " AFTER at least 40 chars
     const truncatePatterns = [/\.\s+/, /;\s+/, /\s{2,}/];
@@ -7702,6 +7785,30 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // A3.6.12: Extract and canonicalize anchor - enforce canonical anchor allowlist
     const claimAnchor = aggClaim.anchor || extractAnchor(claimText);
     const canonicalClaimAnchor = canonicalizeAnchor(claimAnchor, claimText);
+    
+    // A3.6.71: Synthesize claimText for pct_* claims if missing
+    if ((!claimText || !claimText.trim()) && canonicalClaimAnchor && /^pct_\d+$/.test(canonicalClaimAnchor)) {
+      const pctMatch = canonicalClaimAnchor.match(/^pct_(\d+)$/);
+      if (pctMatch) {
+        const pctNum = pctMatch[1];
+        // Check statement for context
+        const hasSecondary = /\bsecondary\b/i.test(statementText);
+        const hasCoFounder = /\bformer\s+co-founder\b/i.test(statementText);
+        
+        if (hasSecondary) {
+          claimText = `${pctNum}% ownership via secondary purchase`;
+          if (hasCoFounder) {
+            claimText += ` from a former co-founder`;
+          }
+        } else {
+          claimText = `${pctNum}% ownership`;
+        }
+        
+        if (runId && reqSig) {
+          diag(runId, reqSig, `[A3.6.71][PCT_CLAIM_FALLBACK] idx=${idx} anchor=${canonicalClaimAnchor} synthesized="${claimText}"`);
+        }
+      }
+    }
     
     // A3.6.26: C) Add an "entered qual_valuation claim" checkpoint
     // This must appear BEFORE any rule-chain processing and BEFORE any early-continue
