@@ -2533,7 +2533,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     
     // A3.6.60: Insert investment statement with originalDraftPosition + 0.001
     if (investText) {
-      const investDraftPosition = draftPos != null ? draftPos + 0.001 : firstCorruptedIdx + 0.01;
+      const investDraftPosition = draftPos != null ? draftPos + 0.001 : (statements[firstCorruptedIdx].__draftPosition != null ? statements[firstCorruptedIdx].__draftPosition + 0.001 : firstCorruptedIdx + 0.001);
       const investStmt = {
         text: investText,
         __dealTermsCanonical: true,
@@ -2547,7 +2547,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     
     // A3.6.60: Insert ownership statement with originalDraftPosition + 0.002
     if (ownershipText) {
-      const ownDraftPosition = draftPos != null ? draftPos + 0.002 : firstCorruptedIdx + 0.02;
+      const ownDraftPosition = draftPos != null ? draftPos + 0.002 : (statements[firstCorruptedIdx].__draftPosition != null ? statements[firstCorruptedIdx].__draftPosition + 0.002 : firstCorruptedIdx + 0.002);
       const ownStmt = {
         text: ownershipText,
         __dealTermsCanonical: true,
@@ -2582,7 +2582,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     
     // Insert investment statement
     if (investText) {
-      const investDraftPosition = draftPos != null ? draftPos + 0.001 : replacedStatementIdx + 0.01;
+      const investDraftPosition = draftPos != null ? draftPos + 0.001 : (statements[replacedStatementIdx].__draftPosition != null ? statements[replacedStatementIdx].__draftPosition + 0.001 : replacedStatementIdx + 0.001);
       const investStmt = {
         text: investText,
         __dealTermsCanonical: true,
@@ -2596,7 +2596,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     
     // Insert ownership statement
     if (ownershipText) {
-      const ownDraftPosition = draftPos != null ? draftPos + 0.002 : replacedStatementIdx + 0.02;
+      const ownDraftPosition = draftPos != null ? draftPos + 0.002 : (statements[replacedStatementIdx].__draftPosition != null ? statements[replacedStatementIdx].__draftPosition + 0.002 : replacedStatementIdx + 0.002);
       const ownStmt = {
         text: ownershipText,
         __dealTermsCanonical: true,
@@ -12308,6 +12308,19 @@ ${
       const dedupResult = dropRedundantCombinedDealTerms(statements, dealTerms, runId, reqSig);
       statements = dedupResult.statements;
       dealDedupDropped = dedupResult.droppedCount;
+      
+      // A3.6.60: Sort statements by __draftPosition after canonicalization + dedup to preserve original draft ordering
+      statements.sort((a, b) => {
+        const draftPosA = a.__draftPosition != null ? a.__draftPosition : (a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        const draftPosB = b.__draftPosition != null ? b.__draftPosition : (b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        if (draftPosA !== draftPosB) {
+          return draftPosA - draftPosB;
+        }
+        // Tie-breaker: candidateIndex ASC
+        const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
+        const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
+        return idxA - idxB;
+      });
     }
     
     // B) Citation resolution validation: drop unresolvable citations
@@ -12921,11 +12934,20 @@ ${
     try {
       // Compute extractionQuality first (needed for meta)
       let extractionQualityValue = extractionQuality || "ok";
+      let extractionQualityReasons = [];
       try {
         const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
         const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
         // A3.6.12: Pass dealDedupDropped separately (does not count as degraded)
-        extractionQualityValue = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged, dealDedupDropped);
+        const qualityResult = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged, dealDedupDropped);
+        // A3.6.60: Extract quality and reasons from result object
+        if (typeof qualityResult === "object" && qualityResult !== null) {
+          extractionQualityValue = qualityResult.quality || extractionQualityValue;
+          extractionQualityReasons = Array.isArray(qualityResult.reasons) ? qualityResult.reasons : [];
+        } else {
+          // Fallback for old return format (string)
+          extractionQualityValue = qualityResult || extractionQualityValue;
+        }
       } catch (e) {
         diag(runId, reqSig, `[ERROR] failed computing extractionQuality after FINAL_COUNTS: ${e?.message || String(e)}`);
         extractionQualityValue = extractionQualityValue || "ok";
@@ -12939,6 +12961,7 @@ ${
         meta: {
           webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
           extractionQuality: extractionQualityValue,
+          ...(extractionQualityReasons.length > 0 ? { extractionQualityReasons } : {}),
           uploadedSourcesCount: uploadedReferences?.length || 0,
           webSourcesCount: webReferencesWithIds?.length || 0,
           ...(meta?.verification ? { verification: meta.verification } : {}),
