@@ -2113,34 +2113,42 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   }
   
   // 2) Investment statement: investment only (no ownership inference)
+  // A3.6.54: Preserve "up to" and currency symbol from sourceText
   let investText = null;
   if (dealTerms.investment && sourceText) {
-    // Try to find verbatim investment clause
-    const investPattern = new RegExp(`(?:an?\\s+)?(?:investment\\s+of\\s+)?(?:up\\s+to\\s+)?\\$?\\s*${dealTerms.investment.amount.toString().replace(".", "\\.")}\\s*(?:million|mm|m)\\s*(?:investment)?`, "i");
+    const investAmount = dealTerms.investment.amount.toString();
+    // A3.6.54: Try to extract original "up to $X" substring from sourceText
+    const investPattern = new RegExp(`(?:an?\\s+)?investment\\s+of\\s+(up\\s+to\\s+)?\\$?\\s*${investAmount.replace(".", "\\.")}\\s*(?:million|mm|m)\\b`, "i");
     const investMatch = sourceText.match(investPattern);
     
     if (investMatch) {
-      // Extract verbatim investment clause
+      // Extract verbatim investment clause, preserving "up to" and "$"
       investText = investMatch[0].trim();
-      // Normalize "mm" to "million"
+      // Normalize "mm" to "million" but preserve currency and "up to"
       investText = investText.replace(/\bmm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
       
-      // Ensure it says "investment" somewhere
+      // A3.6.54: Ensure it has "investment" and preserve "up to" if present
       if (!/\binvestment\b/i.test(investText)) {
-        investText = `an investment of ${investText.replace(/^(?:an?|up\s+to)\s+/, "").replace(/\$/, "").trim()}`;
+        const hasUpTo = /\bup\s+to\b/i.test(investText);
+        const hasCurrency = /\$/.test(investText);
+        const amountPart = investText.replace(/^(?:an?|up\s+to)\s+/, "").replace(/\$/, "").trim();
+        investText = `an investment of ${hasUpTo ? "up to " : ""}${hasCurrency ? "$" : ""}${amountPart}`;
       }
     } else {
-      // Fall back to minimal construction
-      const investRaw = dealTerms.investment.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
-      investText = `an investment of up to ${investRaw}`;
+      // A3.6.54: Fall back to reconstruction with "up to" and currency
+      const investAmountNum = dealTerms.investment.amount;
+      const currency = dealTerms.investment.currency === "USD" ? "$" : "";
+      investText = `an investment of up to ${currency}${investAmountNum} million`;
     }
   } else if (dealTerms.investment) {
-    // No sourceText, construct minimal
-    const investRaw = dealTerms.investment.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
-    investText = `an investment of up to ${investRaw}`;
+    // A3.6.54: No sourceText, construct with "up to" and currency
+    const investAmountNum = dealTerms.investment.amount;
+    const currency = dealTerms.investment.currency === "USD" ? "$" : "";
+    investText = `an investment of up to ${currency}${investAmountNum} million`;
   }
   
   // 3) Ownership statement: "a targeted 20% fully diluted ownership" (verbatim if possible)
+  // A3.6.54: Add slice clipping guard to prevent losing first word
   let ownershipText = null;
   if (dealTerms.ownershipPct && sourceText) {
     // Try to find verbatim ownership clause
@@ -2150,6 +2158,35 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     
     if (ownMatch) {
       ownershipText = ownMatch[0].trim();
+      
+      // A3.6.54: Slice clipping guard - check if slice starts with whitespace + lowercase
+      const matchIndex = ownMatch.index;
+      if (matchIndex > 0) {
+        const beforeChar = sourceText[matchIndex - 1];
+        const sliceStart = ownershipText.trim();
+        const startsWithLowercase = /^\s+[a-z]/.test(ownershipText);
+        
+        // If slice starts with whitespace + lowercase AND preceding char was a letter, expand left
+        if (startsWithLowercase && /[a-zA-Z]/.test(beforeChar)) {
+          // Expand left until word boundary (space, punctuation, or start of string)
+          let expandStart = matchIndex;
+          while (expandStart > 0 && /[a-zA-Z]/.test(sourceText[expandStart - 1])) {
+            expandStart--;
+          }
+          // Find the actual word boundary (space or punctuation before the word)
+          while (expandStart > 0 && !/\s/.test(sourceText[expandStart - 1]) && !/[.,;:!?]/.test(sourceText[expandStart - 1])) {
+            expandStart--;
+          }
+          
+          const expandedSlice = sourceText.substring(expandStart, matchIndex + ownMatch[0].length).trim();
+          if (expandedSlice && expandedSlice.length > ownershipText.length) {
+            ownershipText = expandedSlice;
+            if (runId && reqSig) {
+              log(`[A3.6.54][OWNERSHIP_CLIP_GUARD] expanded from ${ownMatch[0].length} to ${ownershipText.length} chars`);
+            }
+          }
+        }
+      }
     } else {
       // Check for "own X%" pattern (only if memo contains "own")
       const ownDirectPattern = new RegExp(`own\\s+${ownPctStr.replace(".", "\\.")}\\s*%`, "i");
@@ -5797,6 +5834,78 @@ const ANCHOR_RULES = {
 
 // A3.6.1: Score reliability for a claim based on matchTypes (claim-aware)
 // A3.6.2 ADDENDUM: Anchor-gated semantic equivalence (not signal count alone)
+// A3.6.54: Helper functions for deal-terms presence checks
+function normalizeMoney(value) {
+  // Normalize "$7mm" / "$7 million" / "7 million" to a canonical form for comparison
+  if (typeof value !== "string") return value;
+  return value
+    .replace(/[$,]/g, "") // Remove currency symbols and commas
+    .replace(/\bmm\b/gi, "million")
+    .replace(/\bm\b(?!\w)/gi, "million")
+    .trim();
+}
+
+function normalizePct(value) {
+  // Normalize "20%" / "20 percent" to a canonical form
+  if (typeof value !== "string") return value;
+  return value
+    .replace(/\s*percent\b/gi, "%")
+    .replace(/\s+/g, "")
+    .trim();
+}
+
+function checkValueInSourceText(value, sourceText, dealTerms, claimRole = null) {
+  // Check if a deal-terms value appears in sourceText (normalized comparison)
+  if (!sourceText || !value) return false;
+  
+  const sourceLower = sourceText.toLowerCase();
+  
+  // For money values (investment, preMoney, EV)
+  if (dealTerms.investment && (claimRole === "investment_amount" || value === dealTerms.investment.amount)) {
+    const investAmount = dealTerms.investment.amount.toString();
+    const normalizedValue = normalizeMoney(value.toString());
+    const normalizedSource = normalizeMoney(sourceText);
+    
+    // Check for exact amount match with various formats
+    const patterns = [
+      new RegExp(`\\b${investAmount.replace(".", "\\.")}\\s*(?:million|mm|m)\\b`, "i"),
+      new RegExp(`\\$${investAmount.replace(".", "\\.")}\\s*(?:million|mm|m)\\b`, "i"),
+      new RegExp(`\\bup\\s+to\\s+\\$?\\s*${investAmount.replace(".", "\\.")}\\s*(?:million|mm|m)\\b`, "i")
+    ];
+    return patterns.some(pattern => pattern.test(sourceText));
+  }
+  
+  // For percentage values (ownership)
+  if (dealTerms.ownershipPct && (claimRole === "ownership_pct" || claimRole === "ownership_upside")) {
+    const ownPct = dealTerms.ownershipPct.pct.toString();
+    const normalizedValue = normalizePct(value.toString());
+    
+    // Check for percentage match
+    const patterns = [
+      new RegExp(`\\b${ownPct.replace(".", "\\.")}\\s*%`, "i"),
+      new RegExp(`\\b${ownPct.replace(".", "\\.")}\\s*percent\\b`, "i")
+    ];
+    return patterns.some(pattern => pattern.test(sourceText));
+  }
+  
+  // For EV and preMoney, check for value + keyword
+  if (dealTerms.enterpriseValue && (claimRole === "enterprise_value" || value === dealTerms.enterpriseValue.amount)) {
+    const evAmount = dealTerms.enterpriseValue.amount.toString();
+    const hasValue = new RegExp(`\\b${evAmount.replace(".", "\\.")}\\s*(?:million|mm|m)\\b`, "i").test(sourceText);
+    const hasKeyword = /\benterprise\s+value\b|\bev\b(?!\w)/i.test(sourceText);
+    return hasValue && hasKeyword;
+  }
+  
+  if (dealTerms.preMoney && (claimRole === "pre_money_valuation" || value === dealTerms.preMoney.amount)) {
+    const pmAmount = dealTerms.preMoney.amount.toString();
+    const hasValue = new RegExp(`\\b${pmAmount.replace(".", "\\.")}\\s*(?:million|mm|m)\\b`, "i").test(sourceText);
+    const hasKeyword = /\bpre[- ]?money\s+valuation\b/i.test(sourceText);
+    return hasValue && hasKeyword;
+  }
+  
+  return false;
+}
+
 // A3.6.11 ADDENDUM: Rule-driven scoring (no topic branching)
 function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityResult, uploadedDocs) {
   if (!corpusSearchResult || !corpusSearchResult.found) {
@@ -5981,12 +6090,51 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
 }
 
 // A3.6.1: Generate comment for a claim using templates (with ambiguity awareness)
-function generateClaimComment(reliability, facet, hasAmbiguityCap, claimText, assessment = null) {
+function generateClaimComment(reliability, facet, hasAmbiguityCap, claimText, assessment = null, claim = null) {
+  // A3.6.54: Check if claim is derived from deal-terms and value is present in sourceText
+  // If __dealTermsConfirmed flag is set, use explicit confirmation language
+  if (claim && claim.__dealTermsConfirmed === true && assessment && assessment.__dealTerms) {
+    const dealTerms = assessment.__dealTerms;
+    const sourceText = dealTerms.sourceText || "";
+    // Value is confirmed in sourceText - use explicit confirmation
+    if (reliability === "High") {
+      return "Confirmed in provided excerpt";
+    } else {
+      // Even if reliability is Medium, if value is in sourceText, treat as confirmed
+      return "Confirmed in provided excerpt";
+    }
+  }
+  
   if (reliability === "High") {
     return "Confirmed in provided source";
   }
   
   if (reliability === "Medium") {
+    // A3.6.54: For deal-terms derived claims, check if value is present in sourceText
+    if (claim && claim.__dealTermsDerived === true && assessment && assessment.__dealTerms) {
+      const dealTerms = assessment.__dealTerms;
+      const sourceText = dealTerms.sourceText || "";
+      const claimRole = claim.role || null;
+      
+      // Extract value from claim for presence check
+      let claimValue = null;
+      if (claimRole === "investment_amount" && dealTerms.investment) {
+        claimValue = dealTerms.investment.amount;
+      } else if (claimRole === "pre_money_valuation" && dealTerms.preMoney) {
+        claimValue = dealTerms.preMoney.amount;
+      } else if (claimRole === "enterprise_value" && dealTerms.enterpriseValue) {
+        claimValue = dealTerms.enterpriseValue.amount;
+      } else if ((claimRole === "ownership_pct" || claimRole === "ownership_upside") && dealTerms.ownershipPct) {
+        claimValue = dealTerms.ownershipPct.pct;
+      }
+      
+      // Check if value is present in sourceText
+      if (claimValue !== null && checkValueInSourceText(claimValue, sourceText, dealTerms, claimRole)) {
+        // Value is present - use "Supported by memo text" instead of "not explicitly confirmed"
+        return "Supported by memo text";
+      }
+    }
+    
     // A3.6.51: For deal-terms canonical pricing statements, use "Supported by memo text" instead of "excerpt not confirmed"
     if (assessment && assessment.__dealTermsCanonical === true && assessment.__dealTermsCanonicalKind === "pricing") {
       const dealTerms = assessment.__dealTerms || null;
@@ -6704,7 +6852,38 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     const ambiguityResult = detectAnchorAmbiguity(claimText, uploadedDocs);
     
     // Score reliability (A3.6.2 ADDENDUM: anchor-gated semantic equivalence)
-    const reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult, uploadedDocs);
+    let reliability = scoreClaimReliability(claimText, facet, searchResult, ambiguityResult, uploadedDocs);
+    
+    // A3.6.54: Check if claim is derived from deal-terms and value is present in sourceText
+    // If so, set reliability floor to "High" and mark for explicit confirmation
+    if (aggClaim.__dealTermsDerived === true && assessment && assessment.__dealTerms) {
+      const dealTerms = assessment.__dealTerms;
+      const sourceText = dealTerms.sourceText || "";
+      const claimRole = aggClaim.role || null;
+      
+      // Extract value from claim text for presence check
+      let claimValue = null;
+      if (claimRole === "investment_amount" && dealTerms.investment) {
+        claimValue = dealTerms.investment.amount;
+      } else if (claimRole === "pre_money_valuation" && dealTerms.preMoney) {
+        claimValue = dealTerms.preMoney.amount;
+      } else if (claimRole === "enterprise_value" && dealTerms.enterpriseValue) {
+        claimValue = dealTerms.enterpriseValue.amount;
+      } else if ((claimRole === "ownership_pct" || claimRole === "ownership_upside") && dealTerms.ownershipPct) {
+        claimValue = dealTerms.ownershipPct.pct;
+      }
+      
+      // Check if value is present in sourceText
+      if (claimValue !== null && checkValueInSourceText(claimValue, sourceText, dealTerms, claimRole)) {
+        // Value is present in sourceText - set reliability to High
+        reliability = "High";
+        // Mark claim for explicit confirmation in comment
+        aggClaim.__dealTermsConfirmed = true;
+        if (runId && reqSig) {
+          diag(runId, reqSig, `[A3.6.54][DEAL_TERMS_CONFIRMED] idx=${idx} role=${claimRole} value=${claimValue} reliability=High`);
+        }
+      }
+    }
     
     // A3.6.11 ADDENDUM: Generic rule-driven diagnostic logging (no topic branching)
     const rules = ANCHOR_RULES[canonicalClaimAnchor] || {};
@@ -6920,7 +7099,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
     
     // A3.6.51: Pass assessment context to generateClaimComment for deal-terms check
-    const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, finalClaimText, assessment);
+    // A3.6.54: Also pass claim object for deal-terms presence check
+    const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, finalClaimText, assessment, aggClaim);
     
     // Build claim object (A3.6.2 PATCH: facet-free output)
     const claim = {
@@ -6931,6 +7111,15 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     // A3.6.12: Always set canonical anchor (enforced above)
     claim.anchor = canonicalClaimAnchor;
+    
+    // A3.6.54: Preserve deal-terms confirmation flag
+    if (aggClaim.__dealTermsConfirmed === true) {
+      claim.__dealTermsConfirmed = true;
+    }
+    if (aggClaim.__dealTermsDerived === true) {
+      claim.__dealTermsDerived = true;
+      claim.role = aggClaim.role || null;
+    }
     
     // A3.6.26: Store keep-alive restoration flag for diagnostics
     if (emitKeepAliveRestored) {
