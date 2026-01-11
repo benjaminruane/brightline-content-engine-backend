@@ -1875,9 +1875,19 @@ function parseMoneyToNumber(valueStr, suffix) {
   return num;
 }
 
-// A3.6.46: Extract DealTerms from draftText (deterministic, no hallucination)
-function extractDealTermsFromDraft(draftText) {
+// A3.6.47: Extract DealTerms from draftText (robust, handles messy text)
+function extractDealTermsFromDraft(draftText, runId = null, reqSig = null) {
   if (typeof draftText !== "string" || !draftText.trim()) return null;
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
+  // A3.6.47: Normalize draftText before regex
+  let normalizedDraft = draftText
+    .replace(/[''']/g, "'")  // Replace unicode apostrophes with standard apostrophe
+    .replace(/[—–−]/g, "-")  // Replace unicode dashes with standard dash
+    .replace(/[…]/g, " ")   // Replace unicode ellipsis with space
+    .replace(/\.\.\./g, " ")  // Replace "..." with space
+    .replace(/[ \t\r\n]+/g, " "); // Collapse whitespace
   
   const dealTerms = {
     preMoney: null,
@@ -1885,169 +1895,281 @@ function extractDealTermsFromDraft(draftText) {
     investment: null,
     ownershipPct: null,
     sourceSpan: null,
-    sourceText: null
+    sourceText: null,
+    sourceKind: null
   };
   
-  // Find sentence A: "The round is priced at a $20mm pre-money valuation ($18.7mm EV)."
-  const sentenceAPattern = /The round is priced at a\s+(\$?\s*\d+(?:\.\d+)?)\s*(m|mm)\s+pre-money valuation\s*\(\s*(\$?\s*\d+(?:\.\d+)?)\s*(m|mm)\s+EV\s*\)\s*\./i;
-  const sentenceAMatch = draftText.match(sentenceAPattern);
+  // A3.6.47: Extract pre-money valuation (required)
+  const preMoneyPattern = /(?:priced\s+at\s+)?a?\s*\$?\s*(\d+(?:\.\d+)?)\s*(mm|m|million)\s*pre[- ]money\s*valuation\b/i;
+  const preMoneyMatch = normalizedDraft.match(preMoneyPattern);
   
-  if (!sentenceAMatch) {
-    return null; // Must have sentence A
+  if (!preMoneyMatch) {
+    // Check if "pre-money" word exists for logging
+    const hasPreMoneyWord = /\bpre[- ]money\b/i.test(normalizedDraft);
+    const preview = normalizedDraft.substring(0, 200);
+    log(`[A3.6.47][DEAL_TERMS] found=false preMoney=nil ev=nil invest=nil ownPct=nil source=none`);
+    if (hasPreMoneyWord) {
+      log(`[A3.6.47][DEAL_TERMS_FAIL] hasPreMoneyWord=true preview="${preview}"`);
+    }
+    return null;
   }
   
-  const preMoneyValue = sentenceAMatch[1].trim();
-  const preMoneySuffix = sentenceAMatch[2];
-  const evValue = sentenceAMatch[3].trim();
-  const evSuffix = sentenceAMatch[4];
-  
+  const preMoneyValue = preMoneyMatch[1].trim();
+  const preMoneySuffix = preMoneyMatch[2].toLowerCase();
   const preMoneyAmount = parseMoneyToNumber(preMoneyValue, preMoneySuffix);
-  const evAmount = parseMoneyToNumber(evValue, evSuffix);
   
-  if (!preMoneyAmount || !evAmount) {
-    return null; // Invalid numbers
+  if (!preMoneyAmount) {
+    log(`[A3.6.47][DEAL_TERMS] found=false preMoney=nil ev=nil invest=nil ownPct=nil source=none`);
+    return null;
   }
   
   dealTerms.preMoney = {
     amount: preMoneyAmount,
     currency: "USD",
-    raw: `$${preMoneyValue.replace(/[$,]/g, "")}${preMoneySuffix}`
+    raw: `$${preMoneyValue.replace(/[$,]/g, "")}${preMoneySuffix === "million" ? "mm" : preMoneySuffix}`
   };
+  
+  // A3.6.47: Extract enterprise value (required, prefer within ~120 chars after pre-money)
+  const pmStart = preMoneyMatch.index;
+  const pmEnd = pmStart + preMoneyMatch[0].length;
+  const evSearchWindow = normalizedDraft.slice(pmEnd, pmEnd + 200);
+  
+  const evPattern = /\$?\s*(\d+(?:\.\d+)?)\s*(mm|m|million)\s*(?:enterprise\s+value|\bEV\b)\b/i;
+  let evMatch = evSearchWindow.match(evPattern);
+  let evSource = "windowed";
+  
+  if (!evMatch) {
+    // Fall back to global search
+    evMatch = normalizedDraft.match(evPattern);
+    evSource = "global_fallback";
+  }
+  
+  if (!evMatch) {
+    log(`[A3.6.47][DEAL_TERMS] found=false preMoney=${preMoneyAmount} ev=nil invest=nil ownPct=nil source=none`);
+    return null; // Must have both preMoney and EV
+  }
+  
+  const evValue = evMatch[1].trim();
+  const evSuffix = evMatch[2].toLowerCase();
+  const evAmount = parseMoneyToNumber(evValue, evSuffix);
+  
+  if (!evAmount) {
+    log(`[A3.6.47][DEAL_TERMS] found=false preMoney=${preMoneyAmount} ev=nil invest=nil ownPct=nil source=none`);
+    return null;
+  }
   
   dealTerms.enterpriseValue = {
     amount: evAmount,
     currency: "USD",
-    raw: `$${evValue.replace(/[$,]/g, "")}${evSuffix}`
+    raw: `$${evValue.replace(/[$,]/g, "")}${evSuffix === "million" ? "mm" : evSuffix}`
   };
   
-  // Find sentence B: "We plan to invest $5mm and thereby own 20% on a fully-diluted basis."
-  const sentenceAEnd = sentenceAMatch.index + sentenceAMatch[0].length;
-  const searchStart = sentenceAEnd;
-  const searchEnd = Math.min(draftText.length, searchStart + 400);
-  const searchWindow = draftText.substring(searchStart, searchEnd);
+  // A3.6.47: Extract investment amount (optional)
+  const investPattern = /\b(?:plan\s+to\s+invest|we\s+plan\s+to\s+invest|invest(?:ment)?(?:\s+of)?(?:\s+up\s+to)?)\s*\$?\s*(\d+(?:\.\d+)?)\s*(mm|m|million)\b/i;
+  const investMatch = normalizedDraft.match(investPattern);
   
-  const sentenceBPattern = /We plan to invest\s+(\$?\s*\d+(?:\.\d+)?)\s*(m|mm)\s+and thereby own\s+(\d+(?:\.\d+)?)%\s+on a fully-diluted basis\s*\./i;
-  const sentenceBMatch = searchWindow.match(sentenceBPattern);
-  
-  if (sentenceBMatch) {
-    const investValue = sentenceBMatch[1].trim();
-    const investSuffix = sentenceBMatch[2];
-    const ownPctStr = sentenceBMatch[3].trim();
-    
+  if (investMatch) {
+    const investValue = investMatch[1].trim();
+    const investSuffix = investMatch[2].toLowerCase();
     const investAmount = parseMoneyToNumber(investValue, investSuffix);
-    const ownPct = parseFloat(ownPctStr);
     
-    if (investAmount && Number.isFinite(ownPct) && ownPct > 0 && ownPct <= 100) {
+    if (investAmount) {
       dealTerms.investment = {
         amount: investAmount,
         currency: "USD",
-        raw: `$${investValue.replace(/[$,]/g, "")}${investSuffix}`
+        raw: `$${investValue.replace(/[$,]/g, "")}${investSuffix === "million" ? "mm" : investSuffix}`
       };
-      
+    }
+  }
+  
+  // A3.6.47: Extract ownership % fully diluted (optional)
+  const ownPattern = /\bown\s*(\d+(?:\.\d+)?)\s*%\s*(?:on\s*)?(?:a\s*)?fully[- ]diluted\b/i;
+  const ownMatch = normalizedDraft.match(ownPattern);
+  
+  if (ownMatch) {
+    const ownPctStr = ownMatch[1].trim();
+    const ownPct = parseFloat(ownPctStr);
+    
+    if (Number.isFinite(ownPct) && ownPct > 0 && ownPct <= 100) {
       dealTerms.ownershipPct = {
         pct: ownPct,
         raw: `${ownPct}%`
       };
-      
-      // Set sourceSpan to cover both sentences
-      const sentenceBEnd = searchStart + sentenceBMatch.index + sentenceBMatch[0].length;
-      dealTerms.sourceSpan = {
-        start: sentenceAMatch.index,
-        end: sentenceBEnd
-      };
-      dealTerms.sourceText = draftText.substring(sentenceAMatch.index, sentenceBEnd);
-    } else {
-      // Sentence B found but invalid - only use sentence A
-      dealTerms.sourceSpan = {
-        start: sentenceAMatch.index,
-        end: sentenceAEnd
-      };
-      dealTerms.sourceText = sentenceAMatch[0];
     }
-  } else {
-    // Only sentence A found
-    dealTerms.sourceSpan = {
-      start: sentenceAMatch.index,
-      end: sentenceAEnd
-    };
-    dealTerms.sourceText = sentenceAMatch[0];
   }
+  
+  // A3.6.47: Capture source text as windowed blob
+  const blobStart = pmStart;
+  const blobEnd = Math.min(blobStart + 260, normalizedDraft.length);
+  let blob = normalizedDraft.slice(blobStart, blobEnd);
+  
+  // Truncate blob at first occurrence of ". ", "; ", or "  " AFTER at least 40 chars
+  const truncatePatterns = [/\.\s+/, /;\s+/, /\s{2,}/];
+  for (const pattern of truncatePatterns) {
+    const match = blob.substring(40).match(pattern);
+    if (match) {
+      const truncateIdx = 40 + match.index;
+      blob = blob.substring(0, truncateIdx);
+      break;
+    }
+  }
+  
+  dealTerms.sourceText = blob.trim();
+  dealTerms.sourceSpan = {
+    start: blobStart,
+    end: blobStart + blob.length
+  };
+  dealTerms.sourceKind = "windowed_blob";
+  
+  // A3.6.47: Log extraction results
+  const preMoneyVal = dealTerms.preMoney ? dealTerms.preMoney.amount : null;
+  const evVal = dealTerms.enterpriseValue ? dealTerms.enterpriseValue.amount : null;
+  const investVal = dealTerms.investment ? dealTerms.investment.amount : null;
+  const ownPctVal = dealTerms.ownershipPct ? dealTerms.ownershipPct.pct : null;
+  log(`[A3.6.47][DEAL_TERMS] found=true preMoney=${preMoneyVal} ev=${evVal} invest=${investVal || 'nil'} ownPct=${ownPctVal || 'nil'} source=${evSource}`);
   
   return dealTerms;
 }
 
-// A3.6.46: Canonicalize Deal Terms statement
-function canonicalizeDealTermsStatement(statements, dealTerms, runId = null, reqSig = null) {
+// A3.6.47: Canonicalize Deal Terms statements (emit TWO statements, suppress corrupted ones)
+function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, reqSig = null) {
   if (!dealTerms || !Array.isArray(statements)) return statements;
+  if (!dealTerms.preMoney || !dealTerms.enterpriseValue) return statements; // Must have both
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
-  // Build canonical text
-  let dealTermsStatementText = null;
-  
-  if (dealTerms.sourceText) {
-    // Use verbatim source text
-    dealTermsStatementText = dealTerms.sourceText;
+  // A3.6.47: Build pricing statement
+  let pricingStatement = null;
+  if (dealTerms.sourceText && 
+      dealTerms.sourceText.toLowerCase().includes(dealTerms.preMoney.raw.toLowerCase().replace("$", "")) &&
+      dealTerms.sourceText.toLowerCase().includes(dealTerms.enterpriseValue.raw.toLowerCase().replace("$", ""))) {
+    // Prefer verbatim pricing clause if it contains both preMoney and EV
+    pricingStatement = dealTerms.sourceText;
   } else {
-    // Construct minimal canonical text
-    const parts = [];
-    
-    if (dealTerms.preMoney && dealTerms.enterpriseValue) {
-      parts.push(`The round is priced at a ${dealTerms.preMoney.raw} pre-money valuation (${dealTerms.enterpriseValue.raw} EV).`);
-    }
-    
-    if (dealTerms.investment && dealTerms.ownershipPct) {
-      parts.push(`We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`);
-    }
-    
-    if (parts.length > 0) {
-      dealTermsStatementText = parts.join(" ");
-    }
+    // Construct pricing statement
+    pricingStatement = `The round is priced at a ${dealTerms.preMoney.raw} pre-money valuation (${dealTerms.enterpriseValue.raw} EV).`;
   }
   
-  if (!dealTermsStatementText) {
-    return statements;
+  // A3.6.47: Build investment statement (only if both investment and ownershipPct found)
+  let investmentStatement = null;
+  if (dealTerms.investment && dealTerms.ownershipPct) {
+    investmentStatement = `We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+  } else if (dealTerms.investment) {
+    investmentStatement = `We plan to invest ${dealTerms.investment.raw}.`;
+  } else if (dealTerms.ownershipPct) {
+    investmentStatement = `We plan to own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
   }
   
-  // Find target statement to replace
-  let targetIdx = -1;
+  // A3.6.47: Identify corrupted deal-terms statements to suppress
+  const evNumberStr = dealTerms.enterpriseValue.amount.toString();
+  const evVariants = [
+    evNumberStr,
+    `${evNumberStr}mm`,
+    `${evNumberStr}m`,
+    `$${evNumberStr}`,
+    `$${evNumberStr}mm`,
+    `$${evNumberStr}m`
+  ];
   
+  const corruptedIndices = [];
   for (let i = 0; i < statements.length; i++) {
     const stmt = statements[i];
     if (!stmt || typeof stmt !== "object") continue;
     
     const text = (stmt.text || "").toLowerCase();
     
-    // Prefer statement containing "pre-money" OR ("valuation" AND "Series A") OR containing the pre-money amount
-    if (text.includes("pre-money") || 
-        (text.includes("valuation") && text.includes("series a")) ||
-        (dealTerms.preMoney && text.includes(dealTerms.preMoney.raw.toLowerCase().replace("$", "")))) {
-      targetIdx = i;
-      break;
+    // Check if statement contains EV/ownership keywords AND a number
+    const hasEVKeywords = /\benterprise\s+value\b|\bev\b(?!\w)|\bfully\s+diluted\b/i.test(text);
+    const hasNumber = /\d+(?:\.\d+)?/.test(text);
+    
+    if (hasEVKeywords && hasNumber) {
+      // Check if it contains the extracted EV number
+      const containsCorrectEV = evVariants.some(variant => 
+        text.includes(variant.toLowerCase())
+      );
+      
+      if (!containsCorrectEV) {
+        // This is a corrupted statement - mark for suppression
+        corruptedIndices.push(i);
+      }
     }
   }
   
-  if (targetIdx >= 0) {
-    // Replace existing statement
-    statements[targetIdx].text = dealTermsStatementText;
-    statements[targetIdx].__dealTermsCanonical = true;
-    statements[targetIdx].__dealTerms = dealTerms;
+  let replacedIdx = null;
+  let droppedCount = 0;
+  
+  if (corruptedIndices.length > 0) {
+    // Replace FIRST corrupted statement with pricing statement
+    const firstCorruptedIdx = corruptedIndices[0];
+    const originalDraftPosition = statements[firstCorruptedIdx].__draftPosition;
     
-    const tail = dealTermsStatementText.length > 120 ? dealTermsStatementText.slice(-120) : dealTermsStatementText;
-    log(`[A3.6.46][DEAL_TERMS_APPLY] action=replaced idx=${targetIdx} tail="${tail}"`);
+    statements[firstCorruptedIdx].text = pricingStatement;
+    statements[firstCorruptedIdx].__dealTermsCanonical = true;
+    statements[firstCorruptedIdx].__dealTermsCanonicalKind = "pricing";
+    statements[firstCorruptedIdx].__dealTerms = dealTerms;
+    if (originalDraftPosition != null) {
+      statements[firstCorruptedIdx].__draftPosition = originalDraftPosition;
+    }
+    
+    replacedIdx = firstCorruptedIdx;
+    
+    // Insert investment statement immediately after (if present)
+    if (investmentStatement) {
+      const investDraftPosition = originalDraftPosition != null ? originalDraftPosition + 0.01 : firstCorruptedIdx + 0.01;
+      const investStmt = {
+        text: investmentStatement,
+        __dealTermsCanonical: true,
+        __dealTermsCanonicalKind: "investment",
+        __dealTerms: dealTerms,
+        __draftPosition: investDraftPosition
+      };
+      statements.splice(firstCorruptedIdx + 1, 0, investStmt);
+    }
+    
+    // Drop remaining corrupted statements (in reverse order to maintain indices)
+    for (let i = corruptedIndices.length - 1; i > 0; i--) {
+      const idx = corruptedIndices[i];
+      statements.splice(idx, 1);
+      droppedCount++;
+    }
   } else {
-    // Insert new statement
-    const newStmt = {
-      text: dealTermsStatementText,
-      __dealTermsCanonicalInserted: true,
-      __dealTerms: dealTerms,
-      __draftPosition: statements.length > 0 ? statements.length - 0.5 : 0.5
-    };
+    // No corrupted statements - insert new ones
+    // Derive draftPosition from sourceSpan if available
+    let draftPosition = statements.length > 0 ? statements.length - 0.5 : 0.5;
+    if (dealTerms.sourceSpan) {
+      // Try to find a reasonable position based on sourceSpan
+      // For now, just append
+    }
     
-    statements.push(newStmt);
-    const tail = dealTermsStatementText.length > 120 ? dealTermsStatementText.slice(-120) : dealTermsStatementText;
-    log(`[A3.6.46][DEAL_TERMS_APPLY] action=inserted idx=${statements.length - 1} tail="${tail}"`);
+    // Insert pricing statement
+    const pricingStmt = {
+      text: pricingStatement,
+      __dealTermsCanonical: true,
+      __dealTermsCanonicalKind: "pricing",
+      __dealTerms: dealTerms,
+      __draftPosition: draftPosition
+    };
+    statements.push(pricingStmt);
+    
+    // Insert investment statement after if present
+    if (investmentStatement) {
+      const investStmt = {
+        text: investmentStatement,
+        __dealTermsCanonical: true,
+        __dealTermsCanonicalKind: "investment",
+        __dealTerms: dealTerms,
+        __draftPosition: draftPosition + 0.01
+      };
+      statements.push(investStmt);
+    }
   }
+  
+  // A3.6.47: Log application results
+  const pricingPreview = pricingStatement.length > 80 ? pricingStatement.substring(0, 80) + "..." : pricingStatement;
+  const investPreview = investmentStatement ? (investmentStatement.length > 80 ? investmentStatement.substring(0, 80) + "..." : investmentStatement) : null;
+  const action = replacedIdx !== null ? "replaced" : (corruptedIndices.length === 0 ? "inserted" : "noop");
+  
+  log(`[A3.6.47][DEAL_TERMS_APPLY] action=${action} replacedIdx=${replacedIdx !== null ? replacedIdx : 'nil'} dropped=${droppedCount} pricingPreview="${pricingPreview}" investPreview="${investPreview || 'nil'}"`);
   
   return statements;
 }
@@ -5810,20 +5932,20 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     diag(runId, reqSig, `[ANCHORS_ALL] idx=${idx} anchors=${JSON.stringify(Array.from(allAnchorsInOriginal))}`);
   }
   
-  // A3.6.46: Inject DealTerms-derived claims if statement has __dealTerms
+  // A3.6.47: Inject DealTerms-derived claims if statement has __dealTerms
   // This must happen BEFORE extractAtomicClaims to ensure DealTerms claims are included
+  // These claims MUST use proper role-based anchors (not generic usd_*)
   const dealTerms = assessment.__dealTerms || null;
   const dealTermsClaims = [];
   
   if (dealTerms) {
-    // Build DealTerms-derived claims with typed roles
+    // Build DealTerms-derived claims with typed roles and proper anchors
     if (dealTerms.preMoney) {
       const claimText = `${dealTerms.preMoney.raw} pre-money valuation`;
-      const anchor = `usd_${dealTerms.preMoney.amount}m`;
       dealTermsClaims.push({
         claimText,
         facet: "Valuation",
-        anchor,
+        anchor: "usd_premoney",
         role: "pre_money_valuation",
         __dealTermsDerived: true
       });
@@ -5831,11 +5953,10 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     if (dealTerms.enterpriseValue) {
       const claimText = `${dealTerms.enterpriseValue.raw} enterprise value`;
-      const anchor = `ev_${dealTerms.enterpriseValue.amount.toString().replace(".", "_")}m`;
       dealTermsClaims.push({
         claimText,
         facet: "Valuation",
-        anchor,
+        anchor: "usd_ev",
         role: "enterprise_value",
         __dealTermsDerived: true
       });
@@ -5843,11 +5964,10 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     if (dealTerms.investment) {
       const claimText = `invest ${dealTerms.investment.raw}`;
-      const anchor = `usd_${dealTerms.investment.amount}m`;
       dealTermsClaims.push({
         claimText,
         facet: "Investment",
-        anchor,
+        anchor: "usd_invest",
         role: "investment_amount",
         __dealTermsDerived: true
       });
@@ -5855,11 +5975,10 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     if (dealTerms.ownershipPct) {
       const claimText = `own ${dealTerms.ownershipPct.raw} fully diluted`;
-      const anchor = `pct_${dealTerms.ownershipPct.pct}_fd`;
       dealTermsClaims.push({
         claimText,
         facet: "Ownership",
-        anchor,
+        anchor: "pct_own",
         role: "ownership_pct",
         __dealTermsDerived: true
       });
@@ -10871,29 +10990,20 @@ ${
     diag(runId, reqSig, `[PIPELINE] phase=filterDraftOnly`);
     statements = filterDraftOnlyStatements(statements, draftText, runId, reqSig, hasReturned);
     
-    // A3.6.46: Extract DealTerms from draftText
+    // A3.6.47: Extract DealTerms from draftText (robust, handles messy text)
     diag(runId, reqSig, `[PIPELINE] phase=extractDealTerms`);
     let dealTerms = null;
     try {
-      dealTerms = extractDealTermsFromDraft(normalizedDraftText);
-      if (dealTerms) {
-        const preMoneyRaw = dealTerms.preMoney ? dealTerms.preMoney.raw : null;
-        const evRaw = dealTerms.enterpriseValue ? dealTerms.enterpriseValue.raw : null;
-        const investRaw = dealTerms.investment ? dealTerms.investment.raw : null;
-        const ownPctRaw = dealTerms.ownershipPct ? dealTerms.ownershipPct.raw : null;
-        const span = dealTerms.sourceSpan ? `${dealTerms.sourceSpan.start}..${dealTerms.sourceSpan.end}` : null;
-        diag(runId, reqSig, `[A3.6.46][DEAL_TERMS] found=true preMoney="${preMoneyRaw || ''}" ev="${evRaw || ''}" invest="${investRaw || ''}" ownPct="${ownPctRaw || ''}" span=${span || ''}`);
-      } else {
-        diag(runId, reqSig, `[A3.6.46][DEAL_TERMS] found=false`);
-      }
+      dealTerms = extractDealTermsFromDraft(normalizedDraftText, runId, reqSig);
+      // Logging is now handled inside extractDealTermsFromDraft
     } catch (e) {
-      diag(runId, reqSig, `[A3.6.46][DEAL_TERMS] error="${e?.message || String(e)}"`);
+      diag(runId, reqSig, `[A3.6.47][DEAL_TERMS] error="${e?.message || String(e)}"`);
     }
     
-    // A3.6.46: Canonicalize Deal Terms statement
+    // A3.6.47: Canonicalize Deal Terms statements (plural - emits TWO statements)
     diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement`);
-    if (dealTerms) {
-      statements = canonicalizeDealTermsStatement(statements, dealTerms, runId, reqSig);
+    if (dealTerms && dealTerms.preMoney && dealTerms.enterpriseValue) {
+      statements = canonicalizeDealTermsStatements(statements, dealTerms, runId, reqSig);
     }
     
     // B) Citation resolution validation: drop unresolvable citations
