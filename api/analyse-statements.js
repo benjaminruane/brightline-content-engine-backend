@@ -12274,10 +12274,79 @@ ${
         }
         const totalCount = hiCount + medCount + lowCount;
         
+        // A3.6.58: Normalize claim comments using corpusSearch support (before reasons generation)
+        // This ensures reasons use normalized comments when reasonsSource="claims"
+        let normalizedClaims = claims;
+        if (claims.length > 0 && uploadedDocs.length > 0) {
+          // Run corpusSearch on statement text to get matchTypes
+          let searchResult;
+          try {
+            searchResult = corpusSearch(text, uploadedDocs);
+          } catch (searchErr) {
+            // If corpusSearch fails, skip normalization
+            searchResult = null;
+          }
+          
+          // Only normalize if corpusSearch found support
+          if (searchResult && searchResult.found) {
+            // Extract matchTypes from hits
+            const hits = searchResult.hits || [];
+            const matchTypes = new Set(hits.map(h => h.matchType).filter(Boolean));
+            const hasNumber = matchTypes.has("number");
+            const hasKeyword = matchTypes.has("keyword");
+            const hasFuzzy = matchTypes.has("fuzzy");
+            const hasNumberOrKeyword = hasNumber || hasKeyword;
+            const isFuzzyOnly = hasFuzzy && !hasNumberOrKeyword;
+            
+            // Normalize claim comments
+            let changedCount = 0;
+            let sampleBefore = null;
+            let sampleAfter = null;
+            normalizedClaims = claims.map(claim => {
+              if (!claim || typeof claim !== "object") return claim;
+              
+              const comment = claim.comment || "";
+              // Check if comment is absence-style
+              const isAbsenceStyle = /not explicitly confirmed|not found in provided sources/i.test(comment);
+              
+              if (!isAbsenceStyle) return claim;
+              
+              // Normalize based on matchTypes
+              let newComment = comment;
+              if (hasNumberOrKeyword) {
+                newComment = "Supported by memo text";
+              } else if (isFuzzyOnly) {
+                newComment = "Paraphrased from memo text (wording not exact)";
+              }
+              
+              if (newComment !== comment) {
+                changedCount++;
+                if (!sampleBefore && idx < 3) {
+                  sampleBefore = comment.substring(0, 60);
+                  sampleAfter = newComment.substring(0, 60);
+                }
+                return {
+                  ...claim,
+                  comment: newComment
+                };
+              }
+              
+              return claim;
+            });
+            
+            // Log normalization if any comments were changed
+            if (changedCount > 0 && idx < 3 && runId && reqSig) {
+              const mode = hasNumberOrKeyword ? "num_keyword" : "fuzzy_only";
+              diag(runId, reqSig, `[A3.6.58][COMMENT_NORM] idx=${idx} changedCount=${changedCount} mode=${mode} sampleBefore="${sampleBefore}" sampleAfter="${sampleAfter}"`);
+            }
+          }
+        }
+        
         // A3.6.9: Generate claim-linked reasons immediately if claims exist AND no error
+        // Use normalized claims so reasons use normalized comments
         let claimLinkedReasons = [];
-        if (claims.length > 0 && !claimsError) {
-          claimLinkedReasons = generateClaimLinkedReasons(claims);
+        if (normalizedClaims.length > 0 && !claimsError) {
+          claimLinkedReasons = generateClaimLinkedReasons(normalizedClaims);
           
           // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
           if (idx < 2 && runId && reqSig) {
@@ -12288,11 +12357,12 @@ ${
         
         // A3.6.9: Add claims to assessment and update reliability
         // If claimsError, force reasons mode to legacy (claims will be empty array)
+        // Use normalizedClaims (with normalized comments) instead of original claims
         return {
           ...stmt,
           assessment: {
             ...assessment,
-            claims,
+            claims: normalizedClaims, // Use normalized claims with updated comments
             reliabilityScore: computedReliability.reliabilityScore,
             reliabilityLabel: computedReliability.reliabilityLabel,
             // A3.6.9: Set claim-linked reasons if available and no error, otherwise keep existing reasons
