@@ -1861,15 +1861,15 @@ function repairDanglingCurrencySingle(statementText, draftText) {
   
   const textFinal = statementText.trim();
   
-  // A3.6.60: Build tailForMatch (remove trailing punctuation/whitespace)
-  const tailForMatch = textFinal.replace(/[,\.;:\s]+$/g, "");
+  // A3.6.61: Check last 60 chars for dangling currency patterns (expanded detection)
+  const tailWindow = textFinal.length > 60 ? textFinal.slice(-60) : textFinal;
+  const tailForMatch = tailWindow.replace(/[,\.;:\s]+$/g, "");
   
-  // A3.6.60: Strengthened dangling detection per spec
-  // Match when connector word appears: ["implying", "at", "of", "for", "valu", "valuation"]
+  // A3.6.61: Strengthened dangling detection - match connector words: ["implying", "at", "of", "for", "valu"]
   // AND followed by: "$", "$<digits>", "$<digits>.", "$<digits>,", "$<digits> m", "$<digits> mi", "$<digits> mil"
   const connectorWords = ["implying", "implies", "implied", "at", "of", "for", "valu", "valuation"];
   
-  // Check if statement ends with connector + dangling currency
+  // Check if statement ends with connector + dangling currency (check last 60 chars)
   const danglingPatterns = [
     /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$\s*$/i, // Just "$"
     /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$(\d+(?:\.\d+)?)\s*$/i, // "$18"
@@ -1894,6 +1894,9 @@ function repairDanglingCurrencySingle(statementText, draftText) {
   
   const nStr = match[3] || ""; // The number part if present
   const connector = match[1]; // The connector word
+  
+  // A3.6.61: Store connector in result for diagnostics
+  const resultConnector = connector;
   
   // A3.6.60: Attempt deterministic completion using draftText
   let completionFound = false;
@@ -1957,7 +1960,7 @@ function repairDanglingCurrencySingle(statementText, draftText) {
     if (lastConnectorIndex >= 0) {
       const beforeConnector = textFinal.substring(0, lastConnectorIndex).trim();
       const fixedText = (beforeConnector + " " + completionText).trim().replace(/[,\.;:\s]+$/, "").trim();
-      return { newText: fixedText, action: "complete" };
+      return { newText: fixedText, action: "complete", connector: resultConnector };
     }
   }
   
@@ -1976,7 +1979,7 @@ function repairDanglingCurrencySingle(statementText, draftText) {
     
     // Check if dropping would leave < 25 chars
     if (beforeConnector.length < 25) {
-      return { newText: textFinal, action: "drop_statement" };
+      return { newText: textFinal, action: "drop_statement", connector: resultConnector };
     }
     
     // Check if we're removing the only numeric content
@@ -1985,12 +1988,12 @@ function repairDanglingCurrencySingle(statementText, draftText) {
     
     if (!hasNumericBefore && hasNumericAfter) {
       // Dropping would remove the only numeric content - drop whole statement
-      return { newText: textFinal, action: "drop_statement" };
+      return { newText: textFinal, action: "drop_statement", connector: resultConnector };
     }
     
     // Safe to drop fragment
     const fixedText = beforeConnector.replace(/[,\.;:\s]+$/, "").trim();
-    return { newText: fixedText, action: "drop" };
+    return { newText: fixedText, action: "drop", connector: resultConnector };
   }
   
   return { newText: textFinal, action: "none" };
@@ -2029,13 +2032,16 @@ function repairDanglingCurrency(statements, draftText, runId = null, reqSig = nu
     }
     
     if (result.action === "drop_statement") {
-      // A3.6.60: Mark for removal and set __dropEarly flag
+      // A3.6.61: Mark for removal and set __dropEarly flag
       statements[i].__dropEarly = true;
+      statements[i].__droppedReason = "dangling_currency_early";
+      const connector = result.connector || "unknown";
       statements[i] = null;
       droppedCount++;
       repairCount++;
       if (phaseName === "early" && runId && reqSig) {
-        log(`[EARLY_DANGLING_DROP_STMT] idx=${i} text="${textFinal.substring(0, 60)}"`);
+        const beforePreview = textFinal.length > 60 ? textFinal.slice(-60) : textFinal;
+        log(`[A3.6.61][DANGLING_EARLY_MATCH] idx=${i} action=drop connector=${connector} beforePreview="${beforePreview}" afterPreview=""`);
       }
       continue;
     }
@@ -2052,14 +2058,13 @@ function repairDanglingCurrency(statements, draftText, runId = null, reqSig = nu
     repairCount++;
     
     if (phaseName === "early" && runId && reqSig) {
+      const connector = result.connector || "unknown";
+      const beforePreview = textFinal.length > 60 ? textFinal.slice(-60) : textFinal;
+      const afterPreview = result.newText.length > 60 ? result.newText.slice(-60) : result.newText;
       if (result.action === "complete") {
-        const beforePreview = textFinal.substring(Math.max(0, textFinal.length - 50));
-        const afterPreview = result.newText.substring(Math.max(0, result.newText.length - 50));
-        log(`[EARLY_DANGLING_COMPLETE] idx=${i} beforePreview="${beforePreview}" afterPreview="${afterPreview}"`);
+        log(`[A3.6.61][DANGLING_EARLY_MATCH] idx=${i} action=trim connector=${connector} beforePreview="${beforePreview}" afterPreview="${afterPreview}"`);
       } else if (result.action === "drop") {
-        const droppedText = textFinal.substring(textFinal.indexOf(result.newText) + result.newText.length);
-        const finalPreview = result.newText.length > 50 ? result.newText.substring(Math.max(0, result.newText.length - 50)) : result.newText;
-        log(`[EARLY_DANGLING_DROP] idx=${i} droppedText="${droppedText.substring(0, 40)}" finalPreview="${finalPreview}"`);
+        log(`[A3.6.61][DANGLING_EARLY_MATCH] idx=${i} action=trim connector=${connector} beforePreview="${beforePreview}" afterPreview="${afterPreview}"`);
       }
     }
   }
@@ -2068,11 +2073,11 @@ function repairDanglingCurrency(statements, draftText, runId = null, reqSig = nu
   const filteredStatements = statements.filter(stmt => stmt !== null);
   const actualDroppedCount = statements.length - filteredStatements.length;
   
-  // A3.6.60: Diagnostic logging
+  // A3.6.61: Diagnostic logging
   if (phaseName === "early" && runId && reqSig) {
-    log(`[A3.6.60][DANGLING_EARLY] repaired=${repairCount} dropped=${actualDroppedCount}`);
+    log(`[A3.6.61][DANGLING_EARLY] repaired=${repairCount} dropped=${actualDroppedCount} total=${filteredStatements.length}`);
   } else if (phaseName === "final" && runId && reqSig) {
-    log(`[A3.6.60][DANGLING_FINAL] repaired=${repairCount}`);
+    log(`[A3.6.61][DANGLING_FINAL] repaired=${repairCount}`);
   }
   
   return filteredStatements;
@@ -2713,12 +2718,12 @@ function dropRedundantCombinedDealTerms(statements, dealTerms, runId = null, req
       continue;
     }
     
-    // A3.6.12: Check if statement contains at least TWO deal-term signals
+    // A3.6.61: Check if statement contains at least TWO deal-term signals
     const dealTermSignals = {
-      investment: /\binvestment\b|\binvest\b|\bfunding\b/i.test(text),
-      preMoney: /\bpre[- ]?money\b|\bpremoney\b/i.test(text),
-      enterpriseValue: /\benterprise\s+value\b|\bev\b(?!\w)/i.test(text),
-      ownership: /\bownership\b|\bown\b|\bfully\s+diluted\b|\bstake\b/i.test(text),
+      investment: /\b(invest|investment|financing)\b/i.test(text),
+      preMoney: /\bpre[- ]money\b/i.test(text),
+      enterpriseValue: /\benterprise value\b/i.test(text),
+      ownership: /\b(fully diluted|ownership|%)\b/i.test(text),
     };
     
     const signalCount = Object.values(dealTermSignals).filter(Boolean).length;
@@ -2729,19 +2734,62 @@ function dropRedundantCombinedDealTerms(statements, dealTerms, runId = null, req
       continue;
     }
     
-    // A3.6.12: Check overlap with sourceText (threshold >= 0.65)
+    // A3.6.61: Check overlap with sourceText (threshold >= 0.65)
     const normalizedStmt = normalizeTextForOverlap(text);
     const stmtTokens = tokenizeForOverlap(text);
     const matchingTokens = stmtTokens.filter(token => sourceTokensSet.has(token));
     const overlapRatio = stmtTokens.length > 0 ? matchingTokens.length / stmtTokens.length : 0;
     
+    let shouldDrop = false;
+    let dropReason = "";
+    
     if (overlapRatio >= 0.65) {
+      shouldDrop = true;
+      dropReason = `overlap=${overlapRatio.toFixed(2)}`;
+    } else {
+      // A3.6.61: Fallback match - check if statement shares >=2 of the canonical numeric anchors
+      const canonicalAnchors = [];
+      if (dealTerms.preMoney && dealTerms.preMoney.amount) {
+        canonicalAnchors.push(dealTerms.preMoney.amount.toString());
+      }
+      if (dealTerms.enterpriseValue && dealTerms.enterpriseValue.amount) {
+        canonicalAnchors.push(dealTerms.enterpriseValue.amount.toString());
+      }
+      if (dealTerms.investment && dealTerms.investment.amount) {
+        canonicalAnchors.push(dealTerms.investment.amount.toString());
+      }
+      if (dealTerms.ownershipPct && dealTerms.ownershipPct.pct) {
+        canonicalAnchors.push(dealTerms.ownershipPct.pct.toString());
+        canonicalAnchors.push(dealTerms.ownershipPct.pct.toString() + "%");
+      }
+      
+      // Extract numeric values from statement text
+      const stmtNumericMatches = text.match(/\b(\d+(?:\.\d+)?)\b/g) || [];
+      const stmtNumerics = stmtNumericMatches.map(m => m.replace(/\.0+$/, "")); // Normalize trailing zeros
+      
+      // Count how many canonical anchors appear in statement
+      let matchingAnchors = 0;
+      for (const anchor of canonicalAnchors) {
+        const anchorNormalized = anchor.replace(/\.0+$/, "");
+        if (stmtNumerics.some(num => num === anchorNormalized || num.includes(anchorNormalized) || anchorNormalized.includes(num))) {
+          matchingAnchors++;
+        }
+      }
+      
+      if (matchingAnchors >= 2) {
+        shouldDrop = true;
+        dropReason = `numeric_anchors=${matchingAnchors}`;
+      }
+    }
+    
+    if (shouldDrop) {
       // Redundant combined deal-terms statement - drop it
       dropped.push({
         index: i,
         text: text.substring(0, 100),
         overlapRatio: overlapRatio.toFixed(2),
-        signalCount
+        signalCount,
+        dropReason
       });
       continue;
     }
@@ -2750,8 +2798,10 @@ function dropRedundantCombinedDealTerms(statements, dealTerms, runId = null, req
   }
   
   if (dropped.length > 0 && runId && reqSig) {
-    const droppedPreviews = dropped.map(d => `idx=${d.index} overlap=${d.overlapRatio} signals=${d.signalCount} preview="${d.text.substring(0, 60)}"`).join("; ");
-    log(`[A3.6.60][DEAL_DEDUP] dropped=${dropped.length} ${droppedPreviews}`);
+    log(`[A3.6.61][DEAL_DEDUP] dropped=${dropped.length}`);
+    for (const d of dropped) {
+      log(`[A3.6.61][DEAL_DEDUP_ITEM] idx=${d.index} overlap=${d.overlapRatio} signals=${d.signalCount} reason=${d.dropReason} preview="${d.text.substring(0, 60)}"`);
+    }
   }
   
   return { statements: kept, droppedCount: dropped.length };
@@ -11209,8 +11259,8 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   if (recombinedCount > 0) reasons.push(`recombined_fragments=${recombinedCount}`);
   if (fragmentDropped > 0) reasons.push(`fragment_dropped=${fragmentDropped}`);
   if (fragmentMerged > 0) reasons.push(`fragment_merged=${fragmentMerged}`);
-  // A3.6.60: Log dealDedupDropped but do NOT include in quality degradation
-  if (dealDedupDropped > 0) reasons.push(`deal_terms_dedup=${dealDedupDropped}`);
+  // A3.6.61: Log dedup_dropped but do NOT include in quality degradation
+  if (dealDedupDropped > 0) reasons.push(`dedup_dropped=${dealDedupDropped}`);
   
   // A3.6.60: Quality must degrade if incomplete_numeric_fragment was NOT repaired
   // Repaired fragments are excluded from quality degradation
@@ -12168,10 +12218,6 @@ ${
       }
     }
     
-    // A3.6.12: Early dangling-currency repair (before corpusSearch, ambiguity detection, and claim generation)
-    diag(runId, reqSig, `[PIPELINE] phase=earlyDanglingCurrencyRepair`);
-    statements = repairDanglingCurrency(statements, normalizedDraftText, runId, reqSig, "early");
-    
     // A3.5.13: Map LLM output back to pre-extracted candidates for stability
     // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
@@ -12288,6 +12334,21 @@ ${
     diag(runId, reqSig, `[PIPELINE] phase=filterDraftOnly`);
     statements = filterDraftOnlyStatements(statements, draftText, runId, reqSig, hasReturned);
     
+    // A3.6.61: Early dangling-currency repair (AFTER ordering/sort, BEFORE extractDealTerms)
+    // Must run on the SAME statement array that is later passed to downstream phases
+    diag(runId, reqSig, `[PIPELINE] phase=earlyDanglingCurrencyRepair`);
+    statements = repairDanglingCurrency(statements, normalizedDraftText, runId, reqSig, "early");
+    
+    // A3.6.61: Checkpoint after earlyDanglingCurrencyRepair
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
+      if (stmt && typeof stmt === "object" && typeof stmt.text === "string") {
+        const text = stmt.text.trim();
+        const tail = text.length <= 80 ? text : text.slice(-80);
+        diag(runId, reqSig, `[CANON_TAIL] checkpoint=after_earlyDanglingCurrencyRepair idx=${i} tail="${tail}"`);
+      }
+    }
+    
     // A3.6.47: Extract DealTerms from draftText (robust, handles messy text)
     diag(runId, reqSig, `[PIPELINE] phase=extractDealTerms`);
     let dealTerms = null;
@@ -12304,7 +12365,8 @@ ${
     if (dealTerms && dealTerms.preMoney && dealTerms.enterpriseValue) {
       statements = canonicalizeDealTermsStatements(statements, dealTerms, runId, reqSig);
       
-      // A3.6.12: Drop redundant combined deal-terms statements after canonical split
+      // A3.6.61: Drop redundant combined deal-terms statements after canonical split
+      diag(runId, reqSig, `[PIPELINE] phase=dedupCombinedDealTermsStatements`);
       const dedupResult = dropRedundantCombinedDealTerms(statements, dealTerms, runId, reqSig);
       statements = dedupResult.statements;
       dealDedupDropped = dedupResult.droppedCount;
