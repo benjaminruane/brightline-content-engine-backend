@@ -1868,7 +1868,6 @@ function repairDanglingCurrencySingle(statementText, draftText) {
   // Match when connector word appears: ["implying", "at", "of", "for", "valu", "valuation"]
   // AND followed by: "$", "$<digits>", "$<digits>.", "$<digits>,", "$<digits> m", "$<digits> mi", "$<digits> mil"
   const connectorWords = ["implying", "implies", "implied", "at", "of", "for", "valu", "valuation"];
-  const connectorPattern = new RegExp(`\\b(${connectorWords.join("|")})\\b`, "i");
   
   // Check if statement ends with connector + dangling currency
   const danglingPatterns = [
