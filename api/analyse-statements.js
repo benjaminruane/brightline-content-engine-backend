@@ -1849,6 +1849,37 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
   return workingStatements;
 }
 
+// A3.6.48: Normalize money text for scoring (mm/m -> million)
+function normalizeMoneyTextForScoring(text, runId = null, reqSig = null) {
+  if (typeof text !== "string") return text;
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
+  let normalized = text;
+  const before = normalized;
+  
+  // Replace "$20mm" -> "$20 million", "$18.7mm" -> "$18.7 million"
+  normalized = normalized.replace(/\$(\d+(?:\.\d+)?)\s*(mm|m)\b/gi, (match, num, suffix) => {
+    return `$${num} million`;
+  });
+  
+  // Replace "20mm" -> "20 million" when followed by valuation/EV context
+  normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*(mm|m)\s+(million\s+)?(pre[- ]?money|valuation|enterprise\s+value|\bev\b)/gi, (match, num, suffix, existingMillion, context) => {
+    return `${num} million ${context}`;
+  });
+  
+  // Replace "$7m" -> "$7 million" (standalone)
+  normalized = normalized.replace(/\$(\d+(?:\.\d+)?)\s*m\b(?!\w)/gi, (match, num) => {
+    return `$${num} million`;
+  });
+  
+  if (normalized !== before && runId && reqSig) {
+    log(`[A3.6.48][MM_NORMALIZE] before="${before.substring(0, 80)}" after="${normalized.substring(0, 80)}"`);
+  }
+  
+  return normalized;
+}
+
 // A3.6.46: Parse money string to number (in millions)
 // "$18.7" + "mm" => 18.7 (store in millions units; DO NOT multiply to absolute dollars)
 function parseMoneyToNumber(valueStr, suffix) {
@@ -1982,12 +2013,24 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null) {
     }
   }
   
-  // A3.6.47: Extract ownership % fully diluted (optional)
+  // A3.6.48: Extract ownership % fully diluted (optional, supports multiple patterns)
+  // Pattern A: "own X% fully diluted"
   const ownPattern = /\bown\s*(\d+(?:\.\d+)?)\s*%\s*(?:on\s*)?(?:a\s*)?fully[- ]diluted\b/i;
   const ownMatch = normalizedDraft.match(ownPattern);
   
-  if (ownMatch) {
-    const ownPctStr = ownMatch[1].trim();
+  // Pattern B: "targeted X% fully diluted ownership"
+  const targetedPattern = /\b(?:targeted|target)\s*(\d+(?:\.\d+)?)\s*%\s*fully[- ]diluted\s*ownership\b/i;
+  const targetedMatch = normalizedDraft.match(targetedPattern);
+  
+  // Pattern C (optional): "potential to increase to X%"
+  const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%\b/i;
+  const potentialMatch = normalizedDraft.match(potentialPattern);
+  
+  // Prefer own% over targeted%, use targeted% if own% not found
+  let ownershipMatch = ownMatch || targetedMatch || potentialMatch;
+  
+  if (ownershipMatch) {
+    const ownPctStr = ownershipMatch[1].trim();
     const ownPct = parseFloat(ownPctStr);
     
     if (Number.isFinite(ownPct) && ownPct > 0 && ownPct <= 100) {
@@ -2038,26 +2081,68 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
-  // A3.6.47: Build pricing statement
+  // A3.6.48: Build pricing statement (prefer verbatim memo clause)
   let pricingStatement = null;
-  if (dealTerms.sourceText && 
-      dealTerms.sourceText.toLowerCase().includes(dealTerms.preMoney.raw.toLowerCase().replace("$", "")) &&
-      dealTerms.sourceText.toLowerCase().includes(dealTerms.enterpriseValue.raw.toLowerCase().replace("$", ""))) {
-    // Prefer verbatim pricing clause if it contains both preMoney and EV
-    pricingStatement = dealTerms.sourceText;
+  if (dealTerms.sourceText) {
+    const sourceLower = dealTerms.sourceText.toLowerCase();
+    const hasPreMoney = sourceLower.includes("pre-money") || sourceLower.includes("premoney");
+    const hasEV = sourceLower.includes("enterprise value") || sourceLower.includes(" ev ") || sourceLower.includes(" ev.");
+    
+    if (hasPreMoney && hasEV) {
+      // Use verbatim source text, lightly trimmed
+      pricingStatement = dealTerms.sourceText.trim();
+      
+      // Remove trailing clause after "ownership" sentence if needed (keep <= ~180 chars)
+      if (pricingStatement.length > 180) {
+        const ownershipIdx = pricingStatement.toLowerCase().indexOf("ownership");
+        if (ownershipIdx > 0 && ownershipIdx < 180) {
+          // Truncate after ownership clause
+          const truncateAt = ownershipIdx + "ownership".length;
+          pricingStatement = pricingStatement.substring(0, truncateAt).trim();
+        } else {
+          // Just truncate at 180 chars
+          pricingStatement = pricingStatement.substring(0, 180).trim();
+        }
+      }
+    } else {
+      // Fall back to constructed sentence
+      pricingStatement = `The round is priced at a ${dealTerms.preMoney.raw} pre-money valuation (${dealTerms.enterpriseValue.raw} EV).`;
+    }
   } else {
     // Construct pricing statement
     pricingStatement = `The round is priced at a ${dealTerms.preMoney.raw} pre-money valuation (${dealTerms.enterpriseValue.raw} EV).`;
   }
   
-  // A3.6.47: Build investment statement (only if both investment and ownershipPct found)
+  // A3.6.48: Build investment statement (prefer memo wording)
   let investmentStatement = null;
-  if (dealTerms.investment && dealTerms.ownershipPct) {
-    investmentStatement = `We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
-  } else if (dealTerms.investment) {
-    investmentStatement = `We plan to invest ${dealTerms.investment.raw}.`;
-  } else if (dealTerms.ownershipPct) {
-    investmentStatement = `We plan to own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+  if (dealTerms.sourceText) {
+    const sourceLower = dealTerms.sourceText.toLowerCase();
+    
+    // Check if memo includes "invest up to" or similar wording
+    if (dealTerms.investment && dealTerms.ownershipPct) {
+      if (sourceLower.includes("up to") && sourceLower.includes(dealTerms.investment.raw.toLowerCase().replace("$", ""))) {
+        investmentStatement = `up to ${dealTerms.investment.raw} investment and ${dealTerms.ownershipPct.raw} fully diluted ownership`;
+      } else {
+        investmentStatement = `We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+      }
+    } else if (dealTerms.investment) {
+      if (sourceLower.includes("up to") && sourceLower.includes(dealTerms.investment.raw.toLowerCase().replace("$", ""))) {
+        investmentStatement = `up to ${dealTerms.investment.raw} investment`;
+      } else {
+        investmentStatement = `We plan to invest ${dealTerms.investment.raw}.`;
+      }
+    } else if (dealTerms.ownershipPct) {
+      investmentStatement = `We plan to own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+    }
+  } else {
+    // Fall back to constructed sentences
+    if (dealTerms.investment && dealTerms.ownershipPct) {
+      investmentStatement = `We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+    } else if (dealTerms.investment) {
+      investmentStatement = `We plan to invest ${dealTerms.investment.raw}.`;
+    } else if (dealTerms.ownershipPct) {
+      investmentStatement = `We plan to own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+    }
   }
   
   // A3.6.47: Identify corrupted deal-terms statements to suppress
@@ -4255,7 +4340,7 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
         // Apply normal capping logic to non-DealTerms claims
         const keptRoles = dealTermsRoles;
         const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-        log(`[A3.6.46][DEAL_TERMS_CAP_BYPASS] idx=${idx} enabled=true keptRoles=[${Array.from(keptRoles).join(',')}] dropped=0`);
+        log(`[A3.6.48][DEAL_TERMS_CAP_BYPASS] idx=${idx} enabled=true keptRoles=[${Array.from(keptRoles).join(',')}] dropped=0`);
         
         // Continue with normal capping for non-DealTerms claims
         const scored = nonDealTermsValuationClaims.map(claim => {
@@ -5704,13 +5789,17 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
     return "Low";
   }
   
+  // A3.6.48: Normalize money text for scoring (mm/m -> million)
+  const scoringText = normalizeMoneyTextForScoring(claimText);
+  
   // A3.6.2 PATCH v2: Enhanced numericMatch (handles percentages)
+  // A3.6.48: Use normalized scoringText for numeric matching
   let numericMatch = 0;
   if (hits.some(h => h.matchType === "number")) {
     numericMatch = 1;
   } else {
     // Check if claim has percentage and corpus has matching percentage
-    const pctMatch = claimText.match(/([\d,]+(?:\.\d+)?)\s*%/);
+    const pctMatch = scoringText.match(/([\d,]+(?:\.\d+)?)\s*%/);
     if (pctMatch) {
       const claimPct = parseFloat(pctMatch[1].replace(/,/g, ""));
       const allExcerpts = hits.map(h => h.excerpt || "").join(" ");
@@ -5722,6 +5811,23 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
         if (Math.abs(claimPct - corpusPct) / Math.max(claimPct, corpusPct) <= 0.05) {
           numericMatch = 1;
           break;
+        }
+      }
+    } else {
+      // A3.6.48: Check for money amounts in normalized text
+      const moneyPattern = /\$?(\d+(?:\.\d+)?)\s*million/i;
+      const claimMoneyMatch = scoringText.match(moneyPattern);
+      if (claimMoneyMatch) {
+        const claimAmount = parseFloat(claimMoneyMatch[1].replace(/,/g, ""));
+        const allExcerpts = hits.map(h => h.excerpt || "").join(" ");
+        const corpusMoneyPattern = /\$?(\d+(?:\.\d+)?)\s*(?:million|mm|m\b)/i;
+        const corpusMoneyMatch = allExcerpts.match(corpusMoneyPattern);
+        if (corpusMoneyMatch) {
+          const corpusAmount = parseFloat(corpusMoneyMatch[1].replace(/,/g, ""));
+          // Allow small tolerance for rounding
+          if (Math.abs(claimAmount - corpusAmount) / Math.max(claimAmount, corpusAmount) <= 0.05) {
+            numericMatch = 1;
+          }
         }
       }
     }
@@ -5932,16 +6038,22 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     diag(runId, reqSig, `[ANCHORS_ALL] idx=${idx} anchors=${JSON.stringify(Array.from(allAnchorsInOriginal))}`);
   }
   
-  // A3.6.47: Inject DealTerms-derived claims if statement has __dealTerms
+  // A3.6.48: Inject DealTerms-derived claims if statement has __dealTerms
   // This must happen BEFORE extractAtomicClaims to ensure DealTerms claims are included
-  // These claims MUST use proper role-based anchors (not generic usd_*)
+  // These claims MUST use proper role-based anchors and "million" (not "mm") for scoring
   const dealTerms = assessment.__dealTerms || null;
   const dealTermsClaims = [];
   
   if (dealTerms) {
+    // Helper to normalize raw to "million" format
+    const normalizeToMillion = (raw) => {
+      return raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
+    };
+    
     // Build DealTerms-derived claims with typed roles and proper anchors
     if (dealTerms.preMoney) {
-      const claimText = `${dealTerms.preMoney.raw} pre-money valuation`;
+      const rawNormalized = normalizeToMillion(dealTerms.preMoney.raw);
+      const claimText = `${rawNormalized} pre-money valuation`;
       dealTermsClaims.push({
         claimText,
         facet: "Valuation",
@@ -5952,7 +6064,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
     
     if (dealTerms.enterpriseValue) {
-      const claimText = `${dealTerms.enterpriseValue.raw} enterprise value`;
+      const rawNormalized = normalizeToMillion(dealTerms.enterpriseValue.raw);
+      const claimText = `${rawNormalized} enterprise value`;
       dealTermsClaims.push({
         claimText,
         facet: "Valuation",
@@ -5963,7 +6076,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
     
     if (dealTerms.investment) {
-      const claimText = `invest ${dealTerms.investment.raw}`;
+      const rawNormalized = normalizeToMillion(dealTerms.investment.raw);
+      const claimText = `${rawNormalized} investment`;
       dealTermsClaims.push({
         claimText,
         facet: "Investment",
@@ -5974,7 +6088,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
     
     if (dealTerms.ownershipPct) {
-      const claimText = `own ${dealTerms.ownershipPct.raw} fully diluted`;
+      const claimText = `${dealTerms.ownershipPct.raw} fully diluted ownership`;
       dealTermsClaims.push({
         claimText,
         facet: "Ownership",
@@ -6409,13 +6523,23 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=enter_claim claimIdx=${claimIdx} anchor=qual_valuation`);
     }
     
-    // A3.6.12: Hard guard - skip non-canonical anchors (including null from qual_ownership)
+    // A3.6.48: Hard guard - skip non-canonical anchors (including null from qual_ownership)
+    // BUT: Never drop DealTerms-derived claims
     if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
-      if (runId && reqSig && statementIdx < 2) {
-        diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${statementIdx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
+      // A3.6.48: Bypass non-canonical check for DealTerms claims
+      if (aggClaim.__dealTermsDerived === true) {
+        // DealTerms claim - allow through even if anchor is non-canonical
+        if (runId && reqSig && statementIdx < 2) {
+          diag(runId, reqSig, `[A3.6.48][DEAL_CLAIMS_SKIP_GUARD] stmtIdx=${statementIdx} anchor=${claimAnchor} reason=deal_terms_bypass`);
+        }
+      } else {
+        // Non-DealTerms claim - apply normal non-canonical guard
+        if (runId && reqSig && statementIdx < 2) {
+          diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${statementIdx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
+        }
+        claimIdx++;
+        continue; // Skip this claim
       }
-      claimIdx++;
-      continue; // Skip this claim
     }
     
     // A3.6.26: D) Ensure pre_rules_emit is captured from the actual candidate claimText for this claim
@@ -6652,6 +6776,44 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     finalClaims.push(claim);
     claimIdx++;
+  }
+  
+  // A3.6.48: Force-emit all DealTerms claims for canonical statements
+  // After dedup + filtering, ensure ALL deal-term numeric claims are included
+  const isCanonicalStatement = assessment.__dealTermsCanonical === true;
+  if (isCanonicalStatement && dealTerms) {
+    const dealTermsClaimsInFinal = finalClaims.filter(c => c.__dealTermsDerived === true);
+    const dealTermsRolesInFinal = new Set(dealTermsClaimsInFinal.map(c => c.role).filter(Boolean));
+    
+    // Check which DealTerms claims are missing
+    const expectedRoles = [];
+    if (dealTerms.preMoney) expectedRoles.push("pre_money_valuation");
+    if (dealTerms.enterpriseValue) expectedRoles.push("enterprise_value");
+    if (dealTerms.investment) expectedRoles.push("investment_amount");
+    if (dealTerms.ownershipPct) expectedRoles.push("ownership_pct");
+    
+    const missingRoles = expectedRoles.filter(role => !dealTermsRolesInFinal.has(role));
+    
+    if (missingRoles.length > 0 && runId && reqSig) {
+      // Some DealTerms claims are missing - they should have been in rawCandidates
+      // Re-inject them from dealTermsClaims
+      for (const missingRole of missingRoles) {
+        const missingClaim = dealTermsClaims.find(c => c.role === missingRole);
+        if (missingClaim) {
+          // Force-add the missing claim
+          finalClaims.push({
+            ...missingClaim,
+            reliability: "Medium", // Default to Medium for deal terms
+            comment: "Supported by memo text"
+          });
+        }
+      }
+      
+      const keptCount = finalClaims.filter(c => c.__dealTermsDerived === true).length;
+      const keptRoles = Array.from(new Set(finalClaims.filter(c => c.__dealTermsDerived === true).map(c => c.role).filter(Boolean)));
+      const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+      log(`[A3.6.48][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kept=${keptCount} roles=[${keptRoles.join(',')}]`);
+    }
   }
   
   // A3.6.12: Anchor coverage logging - post-condition check (using canonical anchors only)
