@@ -4442,7 +4442,7 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
   if (keepAlways.length > 0 && runId && reqSig) {
     const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
     const keptRoles = Array.from(new Set(keepAlways.map(c => c.role).filter(Boolean)));
-    log(`[A3.6.50][DEAL_TERMS_CAP_BYPASS] idx=${idx} enabled=true keptRoles=[${keptRoles.join(',')}] dropped=0`);
+    log(`[A3.6.51][CAP_EXEMPT] idx=${idx} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} keptRoles=[${keptRoles.join(',')}]`);
   }
   
   return result;
@@ -5904,12 +5904,39 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
 }
 
 // A3.6.1: Generate comment for a claim using templates (with ambiguity awareness)
-function generateClaimComment(reliability, facet, hasAmbiguityCap, claimText) {
+function generateClaimComment(reliability, facet, hasAmbiguityCap, claimText, assessment = null) {
   if (reliability === "High") {
     return "Confirmed in provided source";
   }
   
   if (reliability === "Medium") {
+    // A3.6.51: For deal-terms canonical pricing statements, use "Supported by memo text" instead of "excerpt not confirmed"
+    if (assessment && assessment.__dealTermsCanonical === true && assessment.__dealTermsCanonicalKind === "pricing") {
+      const dealTerms = assessment.__dealTerms || null;
+      if (dealTerms && dealTerms.sourceText && dealTerms.sourceKind === "windowed_blob") {
+        // Check if sourceText contains the claim text (case-insensitive)
+        const sourceLower = dealTerms.sourceText.toLowerCase();
+        const claimLower = (claimText || "").toLowerCase();
+        
+        // Check for pricing-related anchors
+        const anchor = extractAnchor(claimText);
+        const canonicalAnchor = canonicalizeAnchor(anchor, claimText);
+        const isPricingAnchor = ["qual_valuation", "usd_premoney", "usd_ev"].includes(canonicalAnchor) ||
+                                /usd_\d+m|qual_premoney/i.test(canonicalAnchor);
+        
+        if (isPricingAnchor) {
+          // Check if sourceText contains key pricing terms
+          const hasPreMoney = sourceLower.includes("pre-money") || sourceLower.includes("premoney");
+          const hasEV = sourceLower.includes("enterprise value") || sourceLower.includes(" ev ") || sourceLower.includes(" ev.");
+          
+          // If sourceText contains both pre-money and EV, or contains the claim text, use "Supported"
+          if ((hasPreMoney && hasEV) || sourceLower.includes(claimLower.substring(0, Math.min(claimLower.length, 40)))) {
+            return "Supported by memo text";
+          }
+        }
+      }
+    }
+    
     // Valuation: "Multiple figures present; verify which applies" ONLY if ambiguity cap applied
     if (facet === "Valuation" && hasAmbiguityCap) {
       return "Multiple figures present; verify which applies";
@@ -6502,15 +6529,15 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=enter_claim claimIdx=${claimIdx} anchor=qual_valuation`);
     }
     
-    // A3.6.50: Hard guard - skip non-canonical anchors (including null from qual_ownership)
+    // A3.6.51: Hard guard - skip non-canonical anchors (including null from qual_ownership)
     // BUT: Never drop DealTerms-derived claims (early return to prevent any drop logic)
     if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
-      // A3.6.50: Bypass non-canonical check for DealTerms claims (early return)
+      // A3.6.51: Bypass non-canonical check for DealTerms claims (early return)
       if (aggClaim.__dealTermsDerived === true) {
         // DealTerms claim - allow through even if anchor is non-canonical
         const dealRole = aggClaim.__dealTermsRole || "unknown";
         if (runId && reqSig) {
-          diag(runId, reqSig, `[A3.6.50][NONCANONICAL_SKIP] idx=${statementIdx} anchor=${claimAnchor} reason=deal_terms_derived role=${dealRole}`);
+          diag(runId, reqSig, `[A3.6.51][NONCANONICAL_SKIP] idx=${statementIdx} anchor=${claimAnchor} reason=deal_terms_derived role=${dealRole}`);
         }
         // Continue to process this claim (don't skip)
       } else {
@@ -6772,7 +6799,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       }
     }
     
-    const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, finalClaimText);
+    // A3.6.51: Pass assessment context to generateClaimComment for deal-terms check
+    const comment = generateClaimComment(reliability, facet, hasAmbiguityCap, finalClaimText, assessment);
     
     // Build claim object (A3.6.2 PATCH: facet-free output)
     const claim = {
@@ -6855,13 +6883,13 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       const keptCount = finalClaims.filter(c => c.__dealTermsDerived === true).length;
       const keptRoles = Array.from(new Set(finalClaims.filter(c => c.__dealTermsDerived === true).map(c => c.role).filter(Boolean)));
       const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-      log(`[A3.6.49][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} kept=${keptCount} roles=[${keptRoles.join(',')}]`);
+      log(`[A3.6.51][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} ran=true missingRoles=[${missingRoles.join(',')}] kept=${keptCount} roles=[${keptRoles.join(',')}]`);
     } else if (isCanonicalStatement && runId && reqSig) {
-      // Log even when all expected claims are present
+      // Log even when all expected claims are present (no force-back needed)
       const keptCount = finalClaims.filter(c => c.__dealTermsDerived === true).length;
       const keptRoles = Array.from(new Set(finalClaims.filter(c => c.__dealTermsDerived === true).map(c => c.role).filter(Boolean)));
       const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-      log(`[A3.6.49][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} kept=${keptCount} roles=[${keptRoles.join(',')}]`);
+      log(`[A3.6.51][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} ran=false missingRoles=[] kept=${keptCount} roles=[${keptRoles.join(',')}]`);
     }
   }
   
@@ -7133,10 +7161,15 @@ function computeStatementReliabilityFromClaims(claims, existingScore, existingLa
 // - Strip all prefixes/facets/tags
 // Each bullet < 120 chars, no facet tags, no "[Other]" prefix, includes citations from claims
 // Prefer including the anchor-bearing substring rather than long claimText
-function generateClaimLinkedReasons(claims) {
+function generateClaimLinkedReasons(claims, statement = null) {
   if (!Array.isArray(claims) || claims.length === 0) {
     return [];
   }
+  
+  // A3.6.51: Extract deal-terms context from statement if available
+  const dealTerms = statement?.__dealTerms || null;
+  const isCanonicalPricing = statement?.__dealTermsCanonical === true && 
+                             statement?.__dealTermsCanonicalKind === "pricing";
   
   // A3.6.11: Deduplicate by canonical anchor - one bullet per distinct canonical anchor
   const seenCanonicalAnchors = new Set();
@@ -7266,7 +7299,29 @@ function generateClaimLinkedReasons(claims) {
     const claimText = claim?.claimText || "";
     const anchor = claim?.anchor || extractAnchor(claimText);
     
-    const comment = claim?.comment || "Not found in sources";
+    // A3.6.51: Rewrite comment for deal-terms pricing claims if needed
+    let comment = claim?.comment || "Not found in sources";
+    if (claim?.__dealTermsDerived === true && isCanonicalPricing && dealTerms) {
+      // Check if comment is the misleading "excerpt not confirmed" one
+      if (comment === "Mentioned but not explicitly confirmed in excerpt") {
+        // Check if sourceText contains the claim or pricing terms
+        const sourceLower = (dealTerms.sourceText || "").toLowerCase();
+        const claimLower = claimText.toLowerCase();
+        const hasPreMoney = sourceLower.includes("pre-money") || sourceLower.includes("premoney");
+        const hasEV = sourceLower.includes("enterprise value") || sourceLower.includes(" ev ") || sourceLower.includes(" ev.");
+        
+        const canonicalAnchor = canonicalizeAnchor(anchor, claimText);
+        const isPricingAnchor = ["qual_valuation", "usd_premoney", "usd_ev"].includes(canonicalAnchor) ||
+                                /usd_\d+m|qual_premoney/i.test(canonicalAnchor);
+        
+        if (isPricingAnchor && ((hasPreMoney && hasEV) || sourceLower.includes(claimLower.substring(0, Math.min(claimLower.length, 40))))) {
+          comment = "Supported by memo text";
+          // Log the rewrite
+          console.log(`[A3.6.51][EXCERPT_REASON_SUPPRESS] idx=0 anchor=${canonicalAnchor} action=rewrite_to_supported`);
+        }
+      }
+    }
+    
     const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
       ? ` [${claim.citations.join(", ")}]`
       : "";
