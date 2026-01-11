@@ -56,7 +56,8 @@ function safeJsonParse(s) {
   }
 }
 
-// A3.7.2: Split selection text into atomic candidate statements
+// A3.7.3: Deterministic splitting into 2-5 statement rows (verbatim slices)
+// Returns array of objects with { text, selectionGroupId, selectionIndex, selectionTotal }
 function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null) {
   if (typeof selectionText !== "string" || !selectionText.trim()) {
     return [];
@@ -64,112 +65,242 @@ function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
-  // 1. Normalize whitespace
-  let normalized = selectionText
-    .replace(/\r\n/g, "\n")
-    .replace(/\r/g, "\n")
-    .replace(/[ \t]+/g, " ")
-    .trim();
+  // Work on a copy; output must be verbatim slices (only whitespace trimming allowed)
+  const originalText = selectionText;
+  const charLen = originalText.length;
   
-  if (!normalized) return [];
+  // A3.7.3: Split trigger - if <= 280 chars, return single row
+  if (charLen <= 280) {
+    const trimmed = originalText.trim();
+    // Generate stable deterministic ID (hash of full selectedText)
+    const crypto = require("crypto");
+    const selectionGroupId = crypto.createHash("sha256").update(originalText).digest("hex").substring(0, 16);
+    
+    log(`[A3.7.3][SPLIT_SELECTION] mode=selection selectionSplitApplied=false charLen=${charLen} N=1`);
+    log(`[A3.7.3][SPLIT_SELECTION] extractCandidates skipped (selection mode)`);
+    
+    return [{
+      text: trimmed,
+      selectionGroupId,
+      selectionIndex: 1,
+      selectionTotal: 1,
+    }];
+  }
   
-  // 2. Split using sentence boundaries and semicolons
-  const candidates = [];
+  // A3.7.3: Determine target N by length
+  let targetN = 2;
+  if (charLen > 1100) {
+    targetN = 5;
+  } else if (charLen > 800) {
+    targetN = 4;
+  } else if (charLen > 520) {
+    targetN = 3;
+  } else {
+    targetN = 2;
+  }
   
-  // First, split by sentence boundaries (. ? !)
-  const sentenceSplit = normalized.split(/([.!?]+(?:\s+|$))/);
-  const sentences = [];
-  for (let i = 0; i < sentenceSplit.length; i += 2) {
-    if (sentenceSplit[i]) {
-      const text = sentenceSplit[i].trim();
-      if (text) {
-        sentences.push(text + (sentenceSplit[i + 1] || ""));
+  // Generate stable deterministic ID (hash of full selectedText)
+  const crypto = require("crypto");
+  const selectionGroupId = crypto.createHash("sha256").update(originalText).digest("hex").substring(0, 16);
+  
+  // A3.7.3: Deterministic split algorithm (no LLM)
+  // Boundary priority: a) "\n\n" b) "\n" c) sentence enders [.!?] d) ";" e) comma
+  const rows = [];
+  
+  // Step 1: Find all potential boundaries with priority
+  const boundaries = [];
+  let pos = 0;
+  
+  // Priority a: "\n\n" paragraph breaks
+  const paraBreakPattern = /\n\n/g;
+  const paraBreakPositions = new Set();
+  let match;
+  while ((match = paraBreakPattern.exec(originalText)) !== null) {
+    const pos = match.index + 2;
+    boundaries.push({ pos, priority: 1, type: "para" });
+    paraBreakPositions.add(pos - 2); // Mark the start of "\n\n"
+    paraBreakPositions.add(pos - 1); // Mark the second "\n"
+  }
+  
+  // Priority b: "\n" (but not "\n\n" which we already captured)
+  const newlinePattern = /\n/g;
+  while ((match = newlinePattern.exec(originalText)) !== null) {
+    // Skip if this newline is part of "\n\n"
+    if (!paraBreakPositions.has(match.index)) {
+      boundaries.push({ pos: match.index + 1, priority: 2, type: "newline" });
+    }
+  }
+  
+  // Priority c: sentence enders [.!?] followed by space/newline
+  const sentencePattern = /[.!?]+(?:\s+|\n)/g;
+  while ((match = sentencePattern.exec(originalText)) !== null) {
+    boundaries.push({ pos: match.index + match[0].length, priority: 3, type: "sentence" });
+  }
+  
+  // Priority d: ";" as soft boundary
+  const semicolonPattern = /;/g;
+  while ((match = semicolonPattern.exec(originalText)) !== null) {
+    boundaries.push({ pos: match.index + 1, priority: 4, type: "semicolon" });
+  }
+  
+  // Priority e: comma (last resort)
+  const commaPattern = /,\s+/g;
+  while ((match = commaPattern.exec(originalText)) !== null) {
+    boundaries.push({ pos: match.index + match[0].length, priority: 5, type: "comma" });
+  }
+  
+  // Sort boundaries by position
+  boundaries.sort((a, b) => a.pos - b.pos);
+  
+  // Step 2: Split into targetN rows using boundaries
+  const targetLength = Math.floor(charLen / targetN);
+  const minRowLength = 80;
+  const maxRowLength = 520;
+  
+  let currentStart = 0;
+  const splits = [];
+  
+  for (let i = 0; i < targetN - 1; i++) {
+    const idealEnd = currentStart + targetLength;
+    
+    // Find best boundary near idealEnd
+    let bestBoundary = null;
+    let bestDistance = Infinity;
+    
+    for (const boundary of boundaries) {
+      if (boundary.pos <= currentStart) continue;
+      if (boundary.pos > charLen) break;
+      
+      const distance = Math.abs(boundary.pos - idealEnd);
+      if (distance < bestDistance && boundary.pos > currentStart + minRowLength) {
+        bestDistance = distance;
+        bestBoundary = boundary;
       }
     }
-  }
-  
-  // Also split by semicolons
-  const semicolonSplit = [];
-  for (const sent of sentences) {
-    if (sent.includes(";")) {
-      const parts = sent.split(";").map(s => s.trim()).filter(s => s);
-      semicolonSplit.push(...parts);
-    } else {
-      semicolonSplit.push(sent);
-    }
-  }
-  
-  // 3. Detect numeric/financial anchors for conjunction splitting
-  const hasNumericAnchor = (text) => {
-    // Check for currency, percentages, multipliers, or financial terms
-    return /\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b|thousand|k)/i.test(text) ||
-           /\d+(?:\.\d+)?\s*%/i.test(text) ||
-           /\b[\d,]+(?:\.\d+)?\s*x\b/i.test(text) ||
-           /\b(?:pre-?money|post-?money|valuation|investment|ownership|equity|stake)\b/i.test(text);
-  };
-  
-  // 4. Split long conjunctions if numeric anchors detected
-  for (const fragment of semicolonSplit) {
-    const trimmed = fragment.trim();
-    if (!trimmed || trimmed.length < 12) continue;
     
-    // Check if fragment has numeric anchors and contains conjunctions
-    if (hasNumericAnchor(trimmed) && /\b(and|with)\b/i.test(trimmed)) {
-      // Split on "and" or "with" if they appear near numeric anchors
-      const parts = trimmed.split(/\b(and|with)\b/i);
-      let currentPart = "";
-      
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i].trim();
-        if (!part) continue;
-        
-        // Check if this part or next part has numeric anchor
-        const nextPart = i + 1 < parts.length ? parts[i + 1].trim() : "";
-        const combined = (currentPart + " " + part).trim();
-        
-        if (hasNumericAnchor(part) || hasNumericAnchor(combined)) {
-          // If current part is substantial, emit it
-          if (currentPart.length >= 12) {
-            candidates.push(currentPart);
-            currentPart = part;
-          } else {
-            currentPart = combined;
-          }
-        } else {
-          currentPart = combined;
+    // If no good boundary found, try to find any boundary that gives us at least minRowLength
+    if (!bestBoundary) {
+      for (const boundary of boundaries) {
+        if (boundary.pos <= currentStart) continue;
+        if (boundary.pos > charLen) break;
+        if (boundary.pos >= currentStart + minRowLength) {
+          bestBoundary = boundary;
+          break;
         }
       }
-      
-      // Emit remaining part
-      if (currentPart.length >= 12) {
-        candidates.push(currentPart);
-      }
+    }
+    
+    // If still no boundary, use idealEnd (will be adjusted later)
+    if (!bestBoundary) {
+      splits.push(idealEnd);
+      currentStart = idealEnd;
     } else {
-      // No splitting needed, add fragment as-is
-      candidates.push(trimmed);
+      splits.push(bestBoundary.pos);
+      currentStart = bestBoundary.pos;
     }
   }
   
-  // 5. Discard fragments < 12 characters
-  const filtered = candidates.filter(c => c && c.trim().length >= 12);
+  // Step 3: Extract rows from splits
+  let startPos = 0;
+  for (let i = 0; i < splits.length; i++) {
+    const endPos = splits[i];
+    let rowText = originalText.substring(startPos, endPos).trim();
+    
+    // Check if row exceeds maxRowLength - if so, try to re-split using next boundary type
+    if (rowText.length > maxRowLength) {
+      // Find a boundary within this row to split further
+      const rowBoundaries = boundaries.filter(b => b.pos > startPos && b.pos < endPos);
+      if (rowBoundaries.length > 0) {
+        // Use the boundary closest to maxRowLength
+        const targetSplit = startPos + maxRowLength;
+        let bestSplit = null;
+        let bestDist = Infinity;
+        for (const b of rowBoundaries) {
+          if (b.pos > startPos + minRowLength && b.pos < endPos) {
+            const dist = Math.abs(b.pos - targetSplit);
+            if (dist < bestDist) {
+              bestDist = dist;
+              bestSplit = b.pos;
+            }
+          }
+        }
+        if (bestSplit) {
+          rowText = originalText.substring(startPos, bestSplit).trim();
+          splits[i] = bestSplit;
+        }
+      }
+    }
+    
+    if (rowText.length >= minRowLength || i === 0) {
+      rows.push({
+        text: rowText,
+        startPos,
+        endPos: splits[i],
+      });
+    }
+    
+    startPos = splits[i];
+  }
   
-  // 6. Deduplicate identical fragments (case-insensitive, normalized whitespace)
-  const seen = new Set();
-  const deduplicated = [];
-  for (const candidate of filtered) {
-    const normalized = candidate.toLowerCase().replace(/\s+/g, " ").trim();
-    if (!seen.has(normalized)) {
-      seen.add(normalized);
-      deduplicated.push(candidate);
+  // Add final row
+  const finalRowText = originalText.substring(startPos).trim();
+  if (finalRowText.length > 0) {
+    rows.push({
+      text: finalRowText,
+      startPos,
+      endPos: charLen,
+    });
+  }
+  
+  // Step 4: Merge adjacent pieces if needed to reach targetN with constraints
+  // If we have too many rows, merge smallest adjacent pairs
+  while (rows.length > targetN && rows.length > 1) {
+    // Find smallest adjacent pair
+    let minPairSize = Infinity;
+    let minPairIdx = 0;
+    for (let i = 0; i < rows.length - 1; i++) {
+      const pairSize = rows[i].text.length + rows[i + 1].text.length;
+      if (pairSize < minPairSize && pairSize <= maxRowLength) {
+        minPairSize = pairSize;
+        minPairIdx = i;
+      }
+    }
+    
+    if (minPairSize < Infinity) {
+      // Merge rows[minPairIdx] and rows[minPairIdx + 1]
+      const mergedText = originalText.substring(rows[minPairIdx].startPos, rows[minPairIdx + 1].endPos).trim();
+      rows[minPairIdx] = {
+        text: mergedText,
+        startPos: rows[minPairIdx].startPos,
+        endPos: rows[minPairIdx + 1].endPos,
+      };
+      rows.splice(minPairIdx + 1, 1);
+    } else {
+      break; // Can't merge without exceeding maxRowLength
     }
   }
   
-  // 7. Cap at 6 statements (safety)
-  const capped = deduplicated.slice(0, 6);
+  // Step 5: Build final result with metadata
+  const result = rows.map((row, idx) => ({
+    text: row.text,
+    selectionGroupId,
+    selectionIndex: idx + 1,
+    selectionTotal: rows.length,
+  }));
   
-  log(`[A3.7.2][SPLIT_SELECTION] inputLen=${selectionText.length} candidates=${capped.length} (from ${deduplicated.length} after dedup, ${filtered.length} after length filter)`);
+  // Logging
+  const rowLengths = result.map(r => r.text.length);
+  const rowPreviews = result.map(r => {
+    const preview = r.text.substring(0, 60);
+    return preview.length < r.text.length ? preview + "..." : preview;
+  });
   
-  return capped;
+  log(`[A3.7.3][SPLIT_SELECTION] mode=selection selectionSplitApplied=true charLen=${charLen} N=${result.length}`);
+  log(`[A3.7.3][SPLIT_SELECTION] rowLengths=[${rowLengths.join(",")}]`);
+  log(`[A3.7.3][SPLIT_SELECTION] rowPreviews=[${rowPreviews.map(p => JSON.stringify(p)).join(",")}]`);
+  log(`[A3.7.3][SPLIT_SELECTION] extractCandidates skipped (selection mode)`);
+  
+  return result;
 }
 
 // Extract first valid JSON from raw text (handles markdown/prose wrappers)
@@ -13064,19 +13195,37 @@ export default async function handler(req, res) {
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
     // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
-    // A3.7.2: In selection mode, split selection into atomic candidates
+    // A3.7.3: In selection mode, split selection into atomic candidates with metadata
     let rawExtractionCandidates = [];
+    let selectionMetadataMap = new Map(); // Map candidate text -> { selectionGroupId, selectionIndex, selectionTotal }
+    let selectionStatementCountReturned = null; // A3.7.3: Store N from split
     if (!isSelectionMode) {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
       rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
     } else {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates (selection mode - splitting)`);
-      // A3.7.2: Split selection into atomic candidates
-      rawExtractionCandidates = splitSelectionIntoCandidates(selectionText, runId, reqSig);
-      // Fallback: if split returns empty, use selection as single candidate (backward compat)
-      if (rawExtractionCandidates.length === 0) {
+      // A3.7.3: Split selection into atomic candidates (returns objects with text + metadata)
+      const splitResult = splitSelectionIntoCandidates(selectionText, runId, reqSig);
+      if (splitResult.length === 0) {
+        // Fallback: if split returns empty, use selection as single candidate (backward compat)
         rawExtractionCandidates = [normalizedSelection || selectionText];
+        selectionStatementCountReturned = 1; // A3.7.3: Single row fallback
         diag(runId, reqSig, `[PIPELINE] selection split returned 0 candidates, using selection as single candidate`);
+      } else {
+        // A3.7.3: Store N from split
+        selectionStatementCountReturned = splitResult.length;
+        // Extract metadata and text separately
+        rawExtractionCandidates = splitResult.map(item => {
+          const text = typeof item === "string" ? item : (item.text || String(item));
+          if (typeof item === "object" && item.selectionGroupId) {
+            selectionMetadataMap.set(text.trim(), {
+              selectionGroupId: item.selectionGroupId,
+              selectionIndex: item.selectionIndex,
+              selectionTotal: item.selectionTotal,
+            });
+          }
+          return text;
+        });
       }
     }
     
@@ -13172,11 +13321,11 @@ export default async function handler(req, res) {
     
     // A3.5.27: Use candidateObjects to preserve candidateIndex for draft order
     // A3.6.6: Also preserve draftPosition
-    // A3.7.2: In selection mode, map draft positions for each split candidate
+    // A3.7.3: In selection mode, map draft positions and attach selection metadata
     const candidateIndexMap = new Map();
     let candidateObjects = fragFilterResult.candidateObjects || [];
     
-    // A3.7.2: Map draft positions for selection mode candidates
+    // A3.7.3: Map draft positions and attach selection metadata for selection mode candidates
     if (isSelectionMode && selectionStartPosition !== null) {
       candidateObjects = candidateObjects.map((candidateObj, idx) => {
         const candidate = candidateObj.text;
@@ -13199,14 +13348,26 @@ export default async function handler(req, res) {
           candidateDraftPosition = selectionStartPosition + idx * 10;
         }
         
-        return {
+        // A3.7.3: Attach selection metadata if available
+        const selectionMetadata = selectionMetadataMap.get(candidate.trim()) || 
+                                  selectionMetadataMap.get(candidate.replace(/\s+/g, " ").trim());
+        
+        const result = {
           ...candidateObj,
           draftPosition: candidateDraftPosition,
           candidateIndex: idx,
         };
+        
+        if (selectionMetadata) {
+          result.selectionGroupId = selectionMetadata.selectionGroupId;
+          result.selectionIndex = selectionMetadata.selectionIndex;
+          result.selectionTotal = selectionMetadata.selectionTotal;
+        }
+        
+        return result;
       });
       
-      diag(runId, reqSig, `[A3.7.2][DRAFT_POS_MAP] mapped ${candidateObjects.length} selection candidates to draft positions`);
+      diag(runId, reqSig, `[A3.7.3][DRAFT_POS_MAP] mapped ${candidateObjects.length} selection candidates to draft positions`);
     }
     
     // Store original candidate list with indices for later matching
@@ -13427,16 +13588,23 @@ ${
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
     if (statements.length > 0 && finalExtractionCandidates.length > 0) {
       // Build a map of normalized candidates for matching using preserved candidateIndex and draftPosition
-      // A3.7.2: Use the candidateObjects we already created (with draft positions mapped for selection mode)
+      // A3.7.3: Use the candidateObjects we already created (with draft positions and selection metadata mapped for selection mode)
       const candidateMap = new Map();
-      // candidateObjects was already created above with draft positions mapped for selection mode
+      // candidateObjects was already created above with draft positions and selection metadata mapped for selection mode
       candidateObjects.forEach((candidateObj) => {
         const candidate = candidateObj.text;
         const candidateIndex = candidateObj.candidateIndex != null ? candidateObj.candidateIndex : candidateObjects.indexOf(candidateObj);
         const draftPosition = candidateObj.draftPosition != null ? candidateObj.draftPosition : candidateIndex;
         const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
         if (!candidateMap.has(normalized)) {
-          candidateMap.set(normalized, { candidate, index: candidateIndex, draftPosition });
+          const candidateData = { candidate, index: candidateIndex, draftPosition };
+          // A3.7.3: Attach selection metadata if available
+          if (candidateObj.selectionGroupId) {
+            candidateData.selectionGroupId = candidateObj.selectionGroupId;
+            candidateData.selectionIndex = candidateObj.selectionIndex;
+            candidateData.selectionTotal = candidateObj.selectionTotal;
+          }
+          candidateMap.set(normalized, candidateData);
         }
       });
       // Fallback: if candidateObjects not available, use finalExtractionCandidates with idx
@@ -13461,6 +13629,7 @@ ${
         let bestIndex = null;
         let bestDraftPosition = null;
         let bestScore = 0;
+        let bestCandidateData = null; // A3.7.3: Store candidateData for metadata
         
         for (const [normCandidate, candidateData] of candidateMap.entries()) {
           // Allow 80% token overlap for minor rewording
@@ -13483,6 +13652,8 @@ ${
             bestMatch = candidateData.candidate;
             bestIndex = candidateData.index;
             bestDraftPosition = candidateData.draftPosition != null ? candidateData.draftPosition : candidateData.index;
+            // A3.7.3: Store candidateData for metadata attachment
+            bestCandidateData = candidateData;
             matched = true;
           }
         }
@@ -13490,12 +13661,20 @@ ${
         if (matched && bestMatch) {
           // Use original candidate text for stability and assign candidateIndex and draftPosition
           // A3.6.6: Preserve draftPosition from candidateData
-          matchedStatements.push({
+          // A3.7.3: Attach selection metadata if available
+          const statementObj = {
             ...stmt,
             text: bestMatch, // Use deterministic candidate text
             __candidateIndex: bestIndex, // A3.5.26 Fix B: Preserve draft order
             __draftPosition: bestDraftPosition, // A3.6.6: Preserve draftPosition
-          });
+          };
+          // A3.7.3: Attach selection metadata from bestCandidateData
+          if (bestCandidateData && bestCandidateData.selectionGroupId) {
+            statementObj.selectionGroupId = bestCandidateData.selectionGroupId;
+            statementObj.selectionIndex = bestCandidateData.selectionIndex;
+            statementObj.selectionTotal = bestCandidateData.selectionTotal;
+          }
+          matchedStatements.push(statementObj);
         }
       }
       
@@ -14261,8 +14440,8 @@ ${
           // A3.7.0: Selection mode metadata
           selectionUsed: isSelectionMode || false,
           selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
-          // A3.7.1: Selection statement count
-          selectionStatementCountReturned: isSelectionMode ? statements.length : undefined,
+          // A3.7.3: Selection statement count (N from split)
+          selectionStatementCountReturned: isSelectionMode && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (isSelectionMode ? statements.length : undefined),
         },
       };
     } catch (e) {
@@ -14282,8 +14461,8 @@ ${
           // A3.7.0: Selection mode metadata
           selectionUsed: isSelectionMode || false,
           selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
-          // A3.7.1: Selection statement count
-          selectionStatementCountReturned: isSelectionMode ? (statements?.length || 0) : undefined,
+          // A3.7.3: Selection statement count (N from split)
+          selectionStatementCountReturned: isSelectionMode && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (isSelectionMode ? (statements?.length || 0) : undefined),
         },
       };
     }
