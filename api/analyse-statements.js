@@ -1849,6 +1849,149 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
   return workingStatements;
 }
 
+// A3.6.44: Final-pass dangling-currency repair on canonical return statements
+// This runs immediately before the response is returned to catch any dangling fragments
+// that may have been reintroduced by downstream phases (e.g., generateClaims, VAL_SNIP_SAN)
+function finalDanglingCurrencyRepair(statements, draftText, runId = null, reqSig = null) {
+  if (!Array.isArray(statements) || statements.length === 0) return statements;
+  if (typeof draftText !== "string" || !draftText.trim()) return statements;
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
+  log(`[PIPELINE] phase=finalDanglingCurrencyRepair`);
+  
+  for (let i = 0; i < statements.length; i++) {
+    const stmt = statements[i];
+    if (!stmt || typeof stmt !== "object") {
+      continue;
+    }
+    
+    // A3.6.44: Get FINAL text (canonical, what will be returned)
+    const textFinal = (stmt.text || "").trim();
+    if (!textFinal) {
+      continue;
+    }
+    
+    // A3.6.44: Build tailForMatch exactly as specified
+    const tailForMatch = textFinal.replace(/[,\.;:\s]+$/g, "");
+    
+    // A3.6.44: tailPreview = tailForMatch.length <= 80 ? tailForMatch : tailForMatch.slice(-80)
+    const tailPreview = tailForMatch.length <= 80 ? tailForMatch : tailForMatch.slice(-80);
+    
+    // A3.6.44: End-anchored regex (same intent as A3.6.43)
+    const danglingPattern = /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i;
+    const match = tailForMatch.match(danglingPattern);
+    
+    let fixedText = textFinal;
+    let danglingAction = "none";
+    
+    if (match) {
+      const nStr = match[3]; // The number part (e.g., "18" or "18.7")
+      
+      // A3.6.44: Attempt deterministic completion using draftText (same as A3.6.43)
+      let completionFound = false;
+      let completionText = null;
+      let completionSource = null;
+      
+      // Find best position in draftText using full textFinal; fallback to prefix (first 80 chars)
+      let searchStartIndex = draftText.indexOf(textFinal);
+      let statementEndOffset = textFinal.length;
+      
+      if (searchStartIndex < 0) {
+        const prefix = textFinal.substring(0, Math.min(80, textFinal.length));
+        searchStartIndex = draftText.indexOf(prefix);
+        statementEndOffset = prefix.length;
+      }
+      
+      if (searchStartIndex >= 0) {
+        // Search forward for: $<n> million | $<n>m | $<n>mm (case-insensitive; allow whitespace)
+        const afterStatement = draftText.substring(searchStartIndex + statementEndOffset);
+        const completionPatterns = [
+          new RegExp(`\\$${nStr}\\s+million`, "i"),
+          new RegExp(`\\$${nStr}\\s*mm`, "i"),
+          new RegExp(`\\$${nStr}\\s*m\\b`, "i")
+        ];
+        
+        for (const pattern of completionPatterns) {
+          const completionMatch = afterStatement.match(pattern);
+          if (completionMatch) {
+            completionText = completionMatch[0];
+            completionSource = "next_sentence";
+            completionFound = true;
+            break;
+          }
+        }
+      }
+      
+      // A3.6.44: If not found, search a ±200 char window around best-known position
+      if (!completionFound && searchStartIndex >= 0) {
+        const searchStart = Math.max(0, searchStartIndex - 200);
+        const searchEnd = Math.min(draftText.length, searchStartIndex + statementEndOffset + 200);
+        const searchWindow = draftText.substring(searchStart, searchEnd);
+        
+        const amountPattern = new RegExp(`\\$${nStr}\\s+(million|mm|m\\b)`, "i");
+        const contextMatch = searchWindow.match(amountPattern);
+        if (contextMatch) {
+          completionText = contextMatch[0];
+          completionSource = "fallback";
+          completionFound = true;
+        }
+      }
+      
+      if (completionFound && completionText) {
+        // A3.6.44: Replace from the LAST occurrence of implying|implies|implied to end with the matched completion phrase
+        const implyingPattern = /\b(implying|implies|implied)\b/gi;
+        let lastImplyingIndex = -1;
+        let matchResult;
+        while ((matchResult = implyingPattern.exec(textFinal)) !== null) {
+          lastImplyingIndex = matchResult.index;
+        }
+        
+        if (lastImplyingIndex >= 0) {
+          const beforeImplying = textFinal.substring(0, lastImplyingIndex).trim();
+          fixedText = beforeImplying + " " + completionText;
+          fixedText = fixedText.trim().replace(/[,\.;:\s]+$/, "").trim();
+          danglingAction = "complete";
+          
+          const beforePreview = textFinal.substring(Math.max(0, textFinal.length - 50));
+          const afterPreview = fixedText.substring(Math.max(0, fixedText.length - 50));
+          log(`[FINAL_DANGLING_COMPLETE] idx=${i} source=${completionSource} beforePreview="${beforePreview}" afterPreview="${afterPreview}" completion="${completionText}"`);
+        }
+      } else {
+        // A3.6.44: DROP clause: remove from last implying|implies|implied to end; trim trailing punctuation/whitespace
+        const implyingPattern = /\b(implying|implies|implied)\b/gi;
+        let lastImplyingIndex = -1;
+        let matchResult;
+        while ((matchResult = implyingPattern.exec(textFinal)) !== null) {
+          lastImplyingIndex = matchResult.index;
+        }
+        
+        if (lastImplyingIndex > 0) {
+          fixedText = textFinal.substring(0, lastImplyingIndex).trim();
+          fixedText = fixedText.replace(/[,\.;:\s]+$/, "").trim();
+          danglingAction = "drop";
+          
+          const droppedText = textFinal.substring(lastImplyingIndex);
+          const finalPreview = fixedText.length > 50 ? fixedText.substring(Math.max(0, fixedText.length - 50)) : fixedText;
+          log(`[FINAL_DANGLING_DROP] idx=${i} droppedText="${droppedText}" finalPreview="${finalPreview}"`);
+        }
+      }
+    }
+    
+    // A3.6.44: Always emit FINAL_DANGLING_CHECK log
+    log(`[FINAL_DANGLING_CHECK] idx=${i} matched=${match ? "true" : "false"} action=${danglingAction} tailPreview="${tailPreview}"`);
+    
+    // A3.6.44: Always write back if action occurs
+    if (danglingAction === "complete" || danglingAction === "drop") {
+      statements[i].text = fixedText;
+      statements[i].__repairedDanglingCurrencyFinal = true;
+      statements[i].__danglingCurrencyFinalAction = danglingAction;
+    }
+  }
+  
+  return statements;
+}
+
 // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
 // Detects and filters/merges fragment-like candidates that shouldn't appear as standalone statements
 // Supports candidate objects with candidateIndex and rejectionReason metadata
@@ -10167,6 +10310,16 @@ ${
     diag(runId, reqSig, `[PIPELINE] phase=repairNumericFragments`);
     statements = repairNumericFragments(statements, normalizedDraftText, runId, reqSig);
     
+    // A3.6.44: Checkpoint A - right after repairNumericFragments
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
+      if (stmt && typeof stmt === "object" && typeof stmt.text === "string") {
+        const text = stmt.text.trim();
+        const tail = text.length <= 80 ? text : text.slice(-80);
+        diag(runId, reqSig, `[CANON_TAIL] checkpoint=after_repairNumericFragments idx=${i} tail="${tail}"`);
+      }
+    }
+    
     // A3.5.13: Map LLM output back to pre-extracted candidates for stability
     // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
@@ -10451,6 +10604,16 @@ ${
     // Must run AFTER all injections (anchor enforcement, corpus verification, backfill)
     statements = enforceFacetScopedBullets(statements);
 
+    // A3.6.44: Checkpoint B - right before generateClaims
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
+      if (stmt && typeof stmt === "object" && typeof stmt.text === "string") {
+        const text = stmt.text.trim();
+        const tail = text.length <= 80 ? text : text.slice(-80);
+        diag(runId, reqSig, `[CANON_TAIL] checkpoint=before_generateClaims idx=${i} tail="${tail}"`);
+      }
+    }
+    
     // A3.6.7: Generate claims BEFORE reasons-mode decision and BEFORE FINAL_COUNTS
     // This ensures assessment.claims is available when deciding on reasons mode
     diag(runId, reqSig, `[PIPELINE] phase=generateClaims`);
@@ -10852,6 +11015,16 @@ ${
     
     // NOTE: finalResponseObject is now built immediately after FINAL_COUNTS (see above)
     // After this point, finalResponseObject must never be null.
+    
+    // A3.6.44: Final-pass dangling currency repair on canonical return statements
+    // This must run immediately before RETURN_SNAPSHOT to catch any dangling fragments
+    // that may have been reintroduced by downstream phases
+    finalResponseObject.statements = finalDanglingCurrencyRepair(
+      finalResponseObject.statements,
+      normalizedDraftText,
+      runId,
+      reqSig
+    );
     
     // A3.5.19 Fix 3: Log return snapshot from the SAME object being returned
     const firstStmt = finalResponseObject.statements[0];
