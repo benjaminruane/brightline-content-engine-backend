@@ -12602,6 +12602,48 @@ ${
       reqSig
     );
     
+    // A3.6.57: Prune duplicate deal-term claims for canonical statements
+    // This removes overlapping variants and keeps only protected canonical deal-role claims
+    function pruneCanonicalDealClaims(stmt) {
+      const claims = stmt?.assessment?.claims;
+      if (!Array.isArray(claims) || claims.length === 0) return false;
+
+      const isCanonical = stmt?.assessment?.__dealTermsCanonical === true
+        || stmt?.__dealTermsCanonical === true;
+      if (!isCanonical) return false;
+
+      // Prefer protected canonical deal-role claims only
+      const protectedCanon = claims.filter(c => c && c.__protected === true);
+
+      // If we have protected claims, drop all non-protected.
+      // This keeps only the canonical deal-role claims, which are the ones we intended to expose.
+      if (protectedCanon.length > 0) {
+        stmt.assessment.claims = protectedCanon;
+        return true;
+      }
+
+      // If there are no protected claims, leave claims unchanged.
+      return false;
+    }
+    
+    // Apply pruning to all statements
+    for (let idx = 0; idx < finalResponseObject.statements.length; idx++) {
+      const stmt = finalResponseObject.statements[idx];
+      if (!stmt || typeof stmt !== "object") continue;
+      
+      const beforeCount = Array.isArray(stmt?.assessment?.claims) ? stmt.assessment.claims.length : 0;
+      const wasPruned = pruneCanonicalDealClaims(stmt);
+      
+      if (wasPruned && idx < 3 && runId && reqSig) {
+        const afterCount = Array.isArray(stmt?.assessment?.claims) ? stmt.assessment.claims.length : 0;
+        const protectedCount = Array.isArray(stmt?.assessment?.claims) 
+          ? stmt.assessment.claims.filter(c => c && c.__protected === true).length 
+          : 0;
+        const canonicalKind = stmt?.assessment?.__dealTermsCanonicalKind || stmt?.__dealTermsCanonicalKind || 'unknown';
+        diag(runId, reqSig, `[A3.6.57][PRUNE_CLAIMS] idx=${idx} canonical=true kind=${canonicalKind} before=${beforeCount} protected=${protectedCount} after=${afterCount}`);
+      }
+    }
+    
     // A3.5.19 Fix 3: Log return snapshot from the SAME object being returned
     const firstStmt = finalResponseObject.statements[0];
     const firstAssessCites = firstStmt?.assessment?.citations?.length || 0;
