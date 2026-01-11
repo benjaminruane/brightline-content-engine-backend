@@ -7463,6 +7463,93 @@ function computeStatementReliabilityFromClaims(claims, existingScore, existingLa
 // - Strip all prefixes/facets/tags
 // Each bullet < 120 chars, no facet tags, no "[Other]" prefix, includes citations from claims
 // Prefer including the anchor-bearing substring rather than long claimText
+// A3.6.56: Get canonical reason family key for deduplication
+function getCanonicalReasonFamilyKey(stmt, claim) {
+  // Only apply when statement is canonical deal-terms
+  if (!stmt || stmt.__dealTermsCanonical !== true) {
+    return null;
+  }
+  
+  const canonicalKind = stmt.__dealTermsCanonicalKind || null;
+  if (!canonicalKind) {
+    return null;
+  }
+  
+  // If claim has __dealTermsRole, use it directly
+  if (claim.__dealTermsRole) {
+    // Map role to canonical family key
+    const roleToFamily = {
+      "preMoney": "deal:preMoney",
+      "enterpriseValue": "deal:enterpriseValue",
+      "investment": "deal:investment",
+      "ownershipPct": "deal:ownershipPct",
+      "ownershipUpside": "deal:ownershipUpside"
+    };
+    return roleToFamily[claim.__dealTermsRole] || null;
+  }
+  
+  // No __dealTermsRole - map by anchor based on canonical kind
+  const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
+  const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
+  
+  if (!canonicalAnchor) {
+    return null;
+  }
+  
+  // Map anchors to families by kind
+  if (canonicalKind === "investment") {
+    // Investment anchors: usd_invest, usd_7m, usd_10m, etc.
+    if (canonicalAnchor === "usd_invest") {
+      return "deal:investment";
+    }
+    // Check for numeric investment anchors (usd_7m, usd_10m, etc.)
+    const investNumericMatch = canonicalAnchor.match(/^usd_(\d+(?:\.\d+)?)m$/);
+    if (investNumericMatch) {
+      return "deal:investment";
+    }
+  } else if (canonicalKind === "pricing") {
+    // Pre-money anchors: usd_premoney, usd_20m (when in pre-money context)
+    if (canonicalAnchor === "usd_premoney") {
+      return "deal:preMoney";
+    }
+    // Check for numeric pre-money anchors (usd_20m, etc.) - must have "pre" in claim text
+    const preMoneyNumericMatch = canonicalAnchor.match(/^usd_(\d+(?:\.\d+)?)m$/);
+    if (preMoneyNumericMatch && (claim.claimText || "").toLowerCase().includes("pre")) {
+      return "deal:preMoney";
+    }
+    
+    // Enterprise value anchors: usd_ev, usd_18.7m (when in EV context)
+    if (canonicalAnchor === "usd_ev") {
+      return "deal:enterpriseValue";
+    }
+    // Check for numeric EV anchors (usd_18.7m, etc.) - must have "enterprise" in claim text
+    const evNumericMatch = canonicalAnchor.match(/^usd_(\d+(?:\.\d+)?)m$/);
+    if (evNumericMatch && (claim.claimText || "").toLowerCase().includes("enterprise")) {
+      return "deal:enterpriseValue";
+    }
+  } else if (canonicalKind === "ownership") {
+    // Ownership percentage anchors: pct_own, pct_20, pct_31 (when not upside)
+    if (canonicalAnchor === "pct_own" || canonicalAnchor === "pct_20" || canonicalAnchor === "pct_31") {
+      // Check if it's upside by looking at claim text
+      const claimLower = (claim.claimText || "").toLowerCase();
+      if (!claimLower.includes("upside")) {
+        return "deal:ownershipPct";
+      }
+    }
+    
+    // Ownership upside anchors: pct_own_upside_31, pct_31 (when upside context)
+    if (canonicalAnchor.startsWith("pct_own_upside_")) {
+      return "deal:ownershipUpside";
+    }
+    // pct_31 can be upside if claim text mentions upside
+    if (canonicalAnchor === "pct_31" && (claim.claimText || "").toLowerCase().includes("upside")) {
+      return "deal:ownershipUpside";
+    }
+  }
+  
+  return null;
+}
+
 // A3.6.55: Rank claims for reasons selection (not for scoring)
 function rankClaimForReasons(claim, stmt) {
   // Returns a sortable tuple (lower is better): [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3]
@@ -7686,23 +7773,81 @@ function generateClaimLinkedReasons(claims, statement = null) {
   const hasMediumOrLow = claims.some(c => c.reliability === "Medium" || c.reliability === "Low");
   const maxReasons = (hasHigh && hasMediumOrLow) ? 3 : 2;
   
-  // A3.6.55: Select reasons from ranked claims, deduplicating by reason key
+  // A3.6.56: Select reasons from ranked claims, deduplicating by canonical family key
   const reasons = [];
   const seenReasonKeys = new Set();
+  const seenFamilyKeys = new Map(); // Map familyKey -> best claim (for protected dominance)
   const chosenReasons = [];
   let droppedReasonDuplicates = 0;
+  let droppedCanonicalFamilyDuplicates = 0;
   
+  // A3.6.56: First pass - collect claims by family, ensuring protected claims dominate
+  const claimsByFamily = new Map();
+  for (const { claim } of rankedClaims) {
+    const familyKey = getCanonicalReasonFamilyKey(statement, claim);
+    
+    if (familyKey) {
+      // Canonical family claim - check for protected dominance
+      if (!claimsByFamily.has(familyKey)) {
+        claimsByFamily.set(familyKey, []);
+      }
+      claimsByFamily.get(familyKey).push(claim);
+    }
+  }
+  
+  // A3.6.56: Within each family, ensure protected canonical claims dominate
+  const bestClaimsByFamily = new Map();
+  for (const [familyKey, familyClaims] of claimsByFamily.entries()) {
+    // Find protected canonical claim if any
+    const protectedClaim = familyClaims.find(c => 
+      c.__protected === true && c.__dealTermsDerived === true
+    );
+    
+    if (protectedClaim) {
+      // Protected claim wins - drop all others in this family
+      bestClaimsByFamily.set(familyKey, protectedClaim);
+      droppedCanonicalFamilyDuplicates += familyClaims.length - 1;
+    } else {
+      // No protected claim - use highest ranked (first in sorted list)
+      bestClaimsByFamily.set(familyKey, familyClaims[0]);
+      if (familyClaims.length > 1) {
+        droppedCanonicalFamilyDuplicates += familyClaims.length - 1;
+      }
+    }
+  }
+  
+  // A3.6.56: Second pass - select reasons, using family keys as primary dedupe key
   for (const { claim } of rankedClaims) {
     if (reasons.length >= maxReasons) break;
     
-    // A3.6.55: Dedupe by reason key (__dealTermsRole or anchor)
-    const reasonKey = claim.__dealTermsRole || claim.anchor || extractAnchor(claim.claimText || "") || "no_key";
+    // A3.6.56: Get family key - use as primary dedupe key when present
+    const familyKey = getCanonicalReasonFamilyKey(statement, claim);
     
-    if (seenReasonKeys.has(reasonKey)) {
-      droppedReasonDuplicates++;
-      continue;
+    if (familyKey) {
+      // Canonical family claim - check if we already have the best claim for this family
+      const bestClaim = bestClaimsByFamily.get(familyKey);
+      if (bestClaim !== claim) {
+        // Not the best claim for this family - skip
+        droppedReasonDuplicates++;
+        continue;
+      }
+      
+      // This is the best claim for this family - check if we've already added it
+      if (seenFamilyKeys.has(familyKey)) {
+        droppedReasonDuplicates++;
+        continue;
+      }
+      seenFamilyKeys.set(familyKey, claim);
+    } else {
+      // Non-canonical claim - use existing dedupe logic
+      const reasonKey = claim.__dealTermsRole || claim.anchor || extractAnchor(claim.claimText || "") || "no_key";
+      
+      if (seenReasonKeys.has(reasonKey)) {
+        droppedReasonDuplicates++;
+        continue;
+      }
+      seenReasonKeys.add(reasonKey);
     }
-    seenReasonKeys.add(reasonKey);
     
     const claimText = claim?.claimText || "";
     const anchor = claim?.anchor || extractAnchor(claimText);
@@ -7768,9 +7913,11 @@ function generateClaimLinkedReasons(claims, statement = null) {
       }
     }
     
-    // A3.6.55: Track chosen reason for diagnostics
+    // A3.6.56: Track chosen reason for diagnostics (include familyKey)
+    const familyKeyForClaim = getCanonicalReasonFamilyKey(statement, claim);
     chosenReasons.push({
       anchor: claim.anchor || canonicalAnchor,
+      familyKey: familyKeyForClaim || null,
       __protected: claim.__protected || false,
       __dealTermsRole: claim.__dealTermsRole || null,
       reliability: claim.reliability || "Unknown"
@@ -7814,7 +7961,126 @@ function generateClaimLinkedReasons(claims, statement = null) {
     reasons.push(reason);
   }
   
-  // A3.6.55: Diagnostic logging for reasons selection
+  // A3.6.56: Clamp canonical statements to canonical families (ensure coverage)
+  if (statement && statement.__dealTermsCanonical === true && dealTerms) {
+    const canonicalKind = statement.__dealTermsCanonicalKind || null;
+    const requiredFamilies = new Set();
+    
+    // Determine required families based on canonical kind and deal terms
+    if (canonicalKind === "pricing") {
+      if (dealTerms.preMoney) requiredFamilies.add("deal:preMoney");
+      if (dealTerms.enterpriseValue) requiredFamilies.add("deal:enterpriseValue");
+    } else if (canonicalKind === "investment") {
+      if (dealTerms.investment) requiredFamilies.add("deal:investment");
+    } else if (canonicalKind === "ownership") {
+      if (dealTerms.ownershipPct) requiredFamilies.add("deal:ownershipPct");
+      // Check for ownership upside in sourceText
+      if (dealTerms.sourceText) {
+        const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%/i;
+        if (potentialPattern.test(dealTerms.sourceText)) {
+          requiredFamilies.add("deal:ownershipUpside");
+        }
+      }
+    }
+    
+    // Check which families are already covered
+    const coveredFamilies = new Set();
+    for (const reason of chosenReasons) {
+      if (reason.familyKey && requiredFamilies.has(reason.familyKey)) {
+        coveredFamilies.add(reason.familyKey);
+      }
+    }
+    
+    // Find missing families and add best claim for each (only if it won't reduce coverage)
+    const missingFamilies = Array.from(requiredFamilies).filter(f => !coveredFamilies.has(f));
+    for (const missingFamily of missingFamilies) {
+      // Find best claim for this family from ranked claims
+      for (const { claim } of rankedClaims) {
+        const claimFamilyKey = getCanonicalReasonFamilyKey(statement, claim);
+        if (claimFamilyKey === missingFamily && reasons.length < maxReasons) {
+          // Add this claim as a reason (reuse existing processing logic from above)
+          const claimText = claim?.claimText || "";
+          const anchor = claim?.anchor || extractAnchor(claimText);
+          const canonicalAnchor = canonicalizeAnchor(anchor, claimText) || "no_anchor";
+          
+          if (seenCanonicalAnchors.has(canonicalAnchor)) continue;
+          seenCanonicalAnchors.add(canonicalAnchor);
+          
+          let comment = claim?.comment || "Not found in sources";
+          const isProtectedCanonical = claim.__protected === true && 
+                                        (claim.__dealTermsDerived === true || claim.__dealTermsRole);
+          
+          if (isProtectedCanonical && /not explicitly confirmed/i.test(comment)) {
+            const sourceText = dealTerms?.sourceText || "";
+            const claimRole = claim.role || claim.__dealTermsRole || null;
+            let valueInSource = false;
+            
+            if (sourceText && claimRole) {
+              let claimValue = null;
+              if (claimRole === "investment_amount" && dealTerms?.investment) {
+                claimValue = dealTerms.investment.amount;
+              } else if (claimRole === "pre_money_valuation" && dealTerms?.preMoney) {
+                claimValue = dealTerms.preMoney.amount;
+              } else if (claimRole === "enterprise_value" && dealTerms?.enterpriseValue) {
+                claimValue = dealTerms.enterpriseValue.amount;
+              } else if ((claimRole === "ownership_pct" || claimRole === "ownership_upside") && dealTerms?.ownershipPct) {
+                claimValue = dealTerms.ownershipPct.pct;
+              }
+              
+              if (claimValue !== null) {
+                valueInSource = checkValueInSourceText(claimValue, sourceText, dealTerms, claimRole);
+              }
+            }
+            
+            if (valueInSource || claim.reliability === "High") {
+              comment = "Confirmed in provided source";
+            } else {
+              comment = "Supported by provided source";
+            }
+          }
+          
+          const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+            ? ` [${claim.citations.join(", ")}]`
+            : "";
+          
+          let snippet = extractAnchorSubstring(claimText);
+          if (snippet.length > 50) {
+            const truncateAt = snippet.lastIndexOf(" ", 50);
+            if (truncateAt > 20) {
+              snippet = snippet.substring(0, truncateAt) + "...";
+            } else {
+              snippet = snippet.substring(0, 47) + "...";
+            }
+          }
+          
+          let reason = `"${snippet}" ${comment}${citations}`;
+          if (reason.length > 120) {
+            const truncateAt = reason.lastIndexOf(" ", 117);
+            if (truncateAt > 80) {
+              reason = reason.substring(0, truncateAt) + "...";
+            } else {
+              reason = reason.substring(0, 117) + "...";
+            }
+          }
+          
+          reason = stripReasonTags([reason])[0];
+          reasons.push(reason);
+          
+          chosenReasons.push({
+            anchor: claim.anchor || canonicalAnchor,
+            familyKey: claimFamilyKey,
+            __protected: claim.__protected || false,
+            __dealTermsRole: claim.__dealTermsRole || null,
+            reliability: claim.reliability || "Unknown"
+          });
+          
+          break; // Only add one claim per missing family
+        }
+      }
+    }
+  }
+  
+  // A3.6.56: Diagnostic logging for reasons selection (enhanced with family info)
   const hasNotConfirmedWithProtected = chosenReasons.some(r => 
     r.__protected === true && reasons.some(reason => 
       typeof reason === "string" && /not explicitly confirmed/i.test(reason)
@@ -7823,7 +8089,7 @@ function generateClaimLinkedReasons(claims, statement = null) {
   
   if (statement && statement.__dealTermsCanonical) {
     const log = console.log; // Could be enhanced to use diag if runId/reqSig available
-    log(`[A3.6.55][REASONS_SELECTION] kind=${statement.__dealTermsCanonicalKind || 'unknown'} chosenReasons=${JSON.stringify(chosenReasons)} droppedDuplicates=${droppedReasonDuplicates} hasNotConfirmedWithProtected=${hasNotConfirmedWithProtected ? 1 : 0}`);
+    log(`[A3.6.56][REASONS_SELECTION] kind=${statement.__dealTermsCanonicalKind || 'unknown'} chosenReasons=${JSON.stringify(chosenReasons)} droppedDuplicates=${droppedReasonDuplicates} droppedCanonicalFamilyDuplicates=${droppedCanonicalFamilyDuplicates} hasNotConfirmedWithProtected=${hasNotConfirmedWithProtected ? 1 : 0}`);
   }
   
   // A3.6.12: Final post-pass to dedupe reasons by canonical anchor or uniquenessKey
