@@ -1849,6 +1849,208 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
   return workingStatements;
 }
 
+// A3.6.12: Shared helper for dangling-currency repair (used by both early and final passes)
+function repairDanglingCurrency(statements, draftText, runId = null, reqSig = null, phaseName = "early") {
+  if (!Array.isArray(statements) || statements.length === 0) return statements;
+  if (typeof draftText !== "string" || !draftText.trim()) return statements;
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  let repairCount = 0;
+  
+  for (let i = 0; i < statements.length; i++) {
+    const stmt = statements[i];
+    if (!stmt || typeof stmt !== "object") {
+      continue;
+    }
+    
+    const textFinal = (stmt.text || "").trim();
+    if (!textFinal) {
+      continue;
+    }
+    
+    // A3.6.12: Build tailForMatch (remove trailing punctuation/whitespace)
+    const tailForMatch = textFinal.replace(/[,\.;:\s]+$/g, "");
+    
+    // A3.6.12: Strengthened dangling detection - catch more truncation cases
+    // Patterns: "implying an $", "implying an $18", "implying an $18.", "$18,", "$18 m" (incomplete unit)
+    // Also check for connectors: "implying", "at", "of", "for", "valu"
+    const danglingPatterns = [
+      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i, // Original pattern
+      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$\s*$/i, // Just "$"
+      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$(\d+(?:\.\d+)?)\s*[.,]\s*$/i, // "$18." or "$18,"
+      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$(\d+(?:\.\d+)?)\s+m\s*$/i, // "$18 m" (incomplete)
+      /(\bat\b|\bof\b|\bfor\b)\s*(a\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i, // "at $18", "of $18", "for $18"
+      /(\bvalu\w*)\s*(a\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i, // "valuing $18"
+    ];
+    
+    let match = null;
+    let matchedPattern = null;
+    for (const pattern of danglingPatterns) {
+      const patternMatch = tailForMatch.match(pattern);
+      if (patternMatch) {
+        match = patternMatch;
+        matchedPattern = pattern;
+        break;
+      }
+    }
+    
+    let fixedText = textFinal;
+    let danglingAction = "none";
+    
+    if (match) {
+      const nStr = match[3] || match[2] || ""; // The number part if present
+      const connector = match[1]; // The connector word
+      
+      // A3.6.12: Attempt deterministic completion using draftText
+      let completionFound = false;
+      let completionText = null;
+      let completionSource = null;
+      
+      // Find best position in draftText
+      let searchStartIndex = draftText.indexOf(textFinal);
+      let statementEndOffset = textFinal.length;
+      
+      if (searchStartIndex < 0) {
+        const prefix = textFinal.substring(0, Math.min(80, textFinal.length));
+        searchStartIndex = draftText.indexOf(prefix);
+        statementEndOffset = prefix.length;
+      }
+      
+      if (searchStartIndex >= 0 && nStr) {
+        // Search forward for: $<n> million | $<n>m | $<n>mm
+        const afterStatement = draftText.substring(searchStartIndex + statementEndOffset);
+        const completionPatterns = [
+          new RegExp(`\\$${nStr.replace(".", "\\.")}\\s+million`, "i"),
+          new RegExp(`\\$${nStr.replace(".", "\\.")}\\s*mm`, "i"),
+          new RegExp(`\\$${nStr.replace(".", "\\.")}\\s*m\\b`, "i")
+        ];
+        
+        for (const pattern of completionPatterns) {
+          const completionMatch = afterStatement.match(pattern);
+          if (completionMatch) {
+            completionText = completionMatch[0];
+            completionSource = "next_sentence";
+            completionFound = true;
+            break;
+          }
+        }
+      }
+      
+      // A3.6.12: If not found, search a ±200 char window around best-known position
+      if (!completionFound && searchStartIndex >= 0 && nStr) {
+        const searchStart = Math.max(0, searchStartIndex - 200);
+        const searchEnd = Math.min(draftText.length, searchStartIndex + statementEndOffset + 200);
+        const searchWindow = draftText.substring(searchStart, searchEnd);
+        
+        const amountPattern = new RegExp(`\\$${nStr.replace(".", "\\.")}\\s+(million|mm|m\\b)`, "i");
+        const contextMatch = searchWindow.match(amountPattern);
+        if (contextMatch) {
+          completionText = contextMatch[0];
+          completionSource = "fallback";
+          completionFound = true;
+        }
+      }
+      
+      if (completionFound && completionText) {
+        // A3.6.12: Replace from the LAST occurrence of connector to end with the matched completion phrase
+        const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
+        let lastConnectorIndex = -1;
+        let matchResult;
+        while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
+          lastConnectorIndex = matchResult.index;
+        }
+        
+        if (lastConnectorIndex >= 0) {
+          const beforeConnector = textFinal.substring(0, lastConnectorIndex).trim();
+          fixedText = beforeConnector + " " + completionText;
+          fixedText = fixedText.trim().replace(/[,\.;:\s]+$/, "").trim();
+          danglingAction = "complete";
+          repairCount++;
+          
+          if (phaseName === "early" && runId && reqSig) {
+            const beforePreview = textFinal.substring(Math.max(0, textFinal.length - 50));
+            const afterPreview = fixedText.substring(Math.max(0, fixedText.length - 50));
+            log(`[EARLY_DANGLING_COMPLETE] idx=${i} source=${completionSource} beforePreview="${beforePreview}" afterPreview="${afterPreview}" completion="${completionText}"`);
+          }
+        }
+      } else {
+        // A3.6.12: DROP clause - remove from last connector to end
+        // Rules: If dropping would leave < 25 chars OR removes the only numeric content, drop the whole statement
+        const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
+        let lastConnectorIndex = -1;
+        let matchResult;
+        while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
+          lastConnectorIndex = matchResult.index;
+        }
+        
+        if (lastConnectorIndex > 0) {
+          const beforeConnector = textFinal.substring(0, lastConnectorIndex).trim();
+          const afterConnector = textFinal.substring(lastConnectorIndex);
+          
+          // Check if dropping would leave < 25 chars
+          if (beforeConnector.length < 25) {
+            // Drop the whole statement
+            statements[i] = null; // Mark for removal
+            danglingAction = "drop_statement";
+            repairCount++;
+            if (phaseName === "early" && runId && reqSig) {
+              log(`[EARLY_DANGLING_DROP_STMT] idx=${i} reason=too_short_after_drop text="${textFinal.substring(0, 60)}"`);
+            }
+          } else {
+            // Check if we're removing the only numeric content
+            const hasNumericBefore = /\d/.test(beforeConnector);
+            const hasNumericAfter = /\d/.test(afterConnector);
+            
+            if (!hasNumericBefore && hasNumericAfter) {
+              // Dropping would remove the only numeric content - drop whole statement
+              statements[i] = null;
+              danglingAction = "drop_statement";
+              repairCount++;
+              if (phaseName === "early" && runId && reqSig) {
+                log(`[EARLY_DANGLING_DROP_STMT] idx=${i} reason=removes_only_numeric text="${textFinal.substring(0, 60)}"`);
+              }
+            } else {
+              // Safe to drop fragment
+              fixedText = beforeConnector;
+              fixedText = fixedText.replace(/[,\.;:\s]+$/, "").trim();
+              danglingAction = "drop";
+              repairCount++;
+              
+              if (phaseName === "early" && runId && reqSig) {
+                const droppedText = afterConnector;
+                const finalPreview = fixedText.length > 50 ? fixedText.substring(Math.max(0, fixedText.length - 50)) : fixedText;
+                log(`[EARLY_DANGLING_DROP] idx=${i} droppedText="${droppedText.substring(0, 40)}" finalPreview="${finalPreview}"`);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // A3.6.12: Write back if action occurred (and statement wasn't dropped)
+    if (danglingAction === "complete" || (danglingAction === "drop" && statements[i] !== null)) {
+      statements[i].text = fixedText;
+      if (phaseName === "early") {
+        statements[i].__repairedDanglingCurrencyEarly = true;
+        statements[i].__danglingCurrencyEarlyAction = danglingAction;
+      } else {
+        statements[i].__repairedDanglingCurrencyFinal = true;
+        statements[i].__danglingCurrencyFinalAction = danglingAction;
+      }
+    }
+  }
+  
+  // A3.6.12: Remove dropped statements (marked as null)
+  const filteredStatements = statements.filter(stmt => stmt !== null);
+  const droppedCount = statements.length - filteredStatements.length;
+  
+  if (repairCount > 0 && phaseName === "early" && runId && reqSig) {
+    log(`[EARLY_DANGLING_REPAIR] phase=${phaseName} repaired=${repairCount} dropped=${droppedCount}`);
+  }
+  
+  return filteredStatements;
+}
+
 // A3.6.48: Normalize money text for scoring (mm/m -> million)
 function normalizeMoneyTextForScoring(text, runId = null, reqSig = null) {
   if (typeof text !== "string") return text;
@@ -2357,147 +2559,123 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   return statements;
 }
 
-// A3.6.44: Final-pass dangling-currency repair on canonical return statements
-// This runs immediately before the response is returned to catch any dangling fragments
-// that may have been reintroduced by downstream phases (e.g., generateClaims, VAL_SNIP_SAN)
-function finalDanglingCurrencyRepair(statements, draftText, runId = null, reqSig = null) {
-  if (!Array.isArray(statements) || statements.length === 0) return statements;
-  if (typeof draftText !== "string" || !draftText.trim()) return statements;
+// A3.6.12: Drop redundant combined deal-terms statements after canonical split
+// Returns { statements, droppedCount } to track dedup drops separately from extraction failures
+function dropRedundantCombinedDealTerms(statements, dealTerms, runId = null, reqSig = null) {
+  if (!Array.isArray(statements) || statements.length === 0) {
+    return { statements, droppedCount: 0 };
+  }
+  if (!dealTerms) {
+    return { statements, droppedCount: 0 };
+  }
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
-  log(`[PIPELINE] phase=finalDanglingCurrencyRepair`);
+  // Check if we have canonical deal terms present
+  const hasCanonical = statements.some(stmt => 
+    stmt?.__dealTermsCanonical === true || stmt?.assessment?.__dealTermsCanonical === true
+  );
+  
+  if (!hasCanonical) {
+    return { statements, droppedCount: 0 };
+  }
+  
+  const sourceText = dealTerms.sourceText || "";
+  if (!sourceText) {
+    return { statements, droppedCount: 0 };
+  }
+  
+  // Normalize sourceText for overlap comparison
+  const normalizedSource = normalizeTextForOverlap(sourceText);
+  const sourceTokens = tokenizeForOverlap(sourceText);
+  const sourceTokensSet = new Set(sourceTokens);
+  
+  const dropped = [];
+  const kept = [];
   
   for (let i = 0; i < statements.length; i++) {
     const stmt = statements[i];
     if (!stmt || typeof stmt !== "object") {
+      kept.push(stmt);
       continue;
     }
     
-    // A3.6.44: Get FINAL text (canonical, what will be returned)
-    const textFinal = (stmt.text || "").trim();
-    if (!textFinal) {
+    // Skip canonical statements themselves
+    if (stmt.__dealTermsCanonical === true || stmt.assessment?.__dealTermsCanonical === true) {
+      kept.push(stmt);
       continue;
     }
     
-    // A3.6.44: Build tailForMatch exactly as specified
-    const tailForMatch = textFinal.replace(/[,\.;:\s]+$/g, "");
-    
-    // A3.6.44: tailPreview = tailForMatch.length <= 80 ? tailForMatch : tailForMatch.slice(-80)
-    const tailPreview = tailForMatch.length <= 80 ? tailForMatch : tailForMatch.slice(-80);
-    
-    // A3.6.44: End-anchored regex (same intent as A3.6.43)
-    const danglingPattern = /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i;
-    const match = tailForMatch.match(danglingPattern);
-    
-    let fixedText = textFinal;
-    let danglingAction = "none";
-    
-    if (match) {
-      const nStr = match[3]; // The number part (e.g., "18" or "18.7")
-      
-      // A3.6.44: Attempt deterministic completion using draftText (same as A3.6.43)
-      let completionFound = false;
-      let completionText = null;
-      let completionSource = null;
-      
-      // Find best position in draftText using full textFinal; fallback to prefix (first 80 chars)
-      let searchStartIndex = draftText.indexOf(textFinal);
-      let statementEndOffset = textFinal.length;
-      
-      if (searchStartIndex < 0) {
-        const prefix = textFinal.substring(0, Math.min(80, textFinal.length));
-        searchStartIndex = draftText.indexOf(prefix);
-        statementEndOffset = prefix.length;
-      }
-      
-      if (searchStartIndex >= 0) {
-        // Search forward for: $<n> million | $<n>m | $<n>mm (case-insensitive; allow whitespace)
-        const afterStatement = draftText.substring(searchStartIndex + statementEndOffset);
-        const completionPatterns = [
-          new RegExp(`\\$${nStr}\\s+million`, "i"),
-          new RegExp(`\\$${nStr}\\s*mm`, "i"),
-          new RegExp(`\\$${nStr}\\s*m\\b`, "i")
-        ];
-        
-        for (const pattern of completionPatterns) {
-          const completionMatch = afterStatement.match(pattern);
-          if (completionMatch) {
-            completionText = completionMatch[0];
-            completionSource = "next_sentence";
-            completionFound = true;
-            break;
-          }
-        }
-      }
-      
-      // A3.6.44: If not found, search a ±200 char window around best-known position
-      if (!completionFound && searchStartIndex >= 0) {
-        const searchStart = Math.max(0, searchStartIndex - 200);
-        const searchEnd = Math.min(draftText.length, searchStartIndex + statementEndOffset + 200);
-        const searchWindow = draftText.substring(searchStart, searchEnd);
-        
-        const amountPattern = new RegExp(`\\$${nStr}\\s+(million|mm|m\\b)`, "i");
-        const contextMatch = searchWindow.match(amountPattern);
-        if (contextMatch) {
-          completionText = contextMatch[0];
-          completionSource = "fallback";
-          completionFound = true;
-        }
-      }
-      
-      if (completionFound && completionText) {
-        // A3.6.44: Replace from the LAST occurrence of implying|implies|implied to end with the matched completion phrase
-        const implyingPattern = /\b(implying|implies|implied)\b/gi;
-        let lastImplyingIndex = -1;
-        let matchResult;
-        while ((matchResult = implyingPattern.exec(textFinal)) !== null) {
-          lastImplyingIndex = matchResult.index;
-        }
-        
-        if (lastImplyingIndex >= 0) {
-          const beforeImplying = textFinal.substring(0, lastImplyingIndex).trim();
-          fixedText = beforeImplying + " " + completionText;
-          fixedText = fixedText.trim().replace(/[,\.;:\s]+$/, "").trim();
-          danglingAction = "complete";
-          
-          const beforePreview = textFinal.substring(Math.max(0, textFinal.length - 50));
-          const afterPreview = fixedText.substring(Math.max(0, fixedText.length - 50));
-          log(`[FINAL_DANGLING_COMPLETE] idx=${i} source=${completionSource} beforePreview="${beforePreview}" afterPreview="${afterPreview}" completion="${completionText}"`);
-        }
-      } else {
-        // A3.6.44: DROP clause: remove from last implying|implies|implied to end; trim trailing punctuation/whitespace
-        const implyingPattern = /\b(implying|implies|implied)\b/gi;
-        let lastImplyingIndex = -1;
-        let matchResult;
-        while ((matchResult = implyingPattern.exec(textFinal)) !== null) {
-          lastImplyingIndex = matchResult.index;
-        }
-        
-        if (lastImplyingIndex > 0) {
-          fixedText = textFinal.substring(0, lastImplyingIndex).trim();
-          fixedText = fixedText.replace(/[,\.;:\s]+$/, "").trim();
-          danglingAction = "drop";
-          
-          const droppedText = textFinal.substring(lastImplyingIndex);
-          const finalPreview = fixedText.length > 50 ? fixedText.substring(Math.max(0, fixedText.length - 50)) : fixedText;
-          log(`[FINAL_DANGLING_DROP] idx=${i} droppedText="${droppedText}" finalPreview="${finalPreview}"`);
-        }
-      }
+    const text = typeof stmt.text === "string" ? stmt.text.trim() : "";
+    if (!text) {
+      kept.push(stmt);
+      continue;
     }
     
-    // A3.6.44: Always emit FINAL_DANGLING_CHECK log
-    log(`[FINAL_DANGLING_CHECK] idx=${i} matched=${match ? "true" : "false"} action=${danglingAction} tailPreview="${tailPreview}"`);
+    // A3.6.12: Check if statement contains at least TWO deal-term signals
+    const dealTermSignals = {
+      investment: /\binvestment\b|\binvest\b|\bfunding\b/i.test(text),
+      preMoney: /\bpre[- ]?money\b|\bpremoney\b/i.test(text),
+      enterpriseValue: /\benterprise\s+value\b|\bev\b(?!\w)/i.test(text),
+      ownership: /\bownership\b|\bown\b|\bfully\s+diluted\b|\bstake\b/i.test(text),
+    };
     
-    // A3.6.44: Always write back if action occurs
-    if (danglingAction === "complete" || danglingAction === "drop") {
-      statements[i].text = fixedText;
-      statements[i].__repairedDanglingCurrencyFinal = true;
-      statements[i].__danglingCurrencyFinalAction = danglingAction;
+    const signalCount = Object.values(dealTermSignals).filter(Boolean).length;
+    
+    if (signalCount < 2) {
+      // Not a combined deal-terms statement
+      kept.push(stmt);
+      continue;
     }
+    
+    // A3.6.12: Check overlap with sourceText (threshold >= 0.65)
+    const normalizedStmt = normalizeTextForOverlap(text);
+    const stmtTokens = tokenizeForOverlap(text);
+    const matchingTokens = stmtTokens.filter(token => sourceTokensSet.has(token));
+    const overlapRatio = stmtTokens.length > 0 ? matchingTokens.length / stmtTokens.length : 0;
+    
+    if (overlapRatio >= 0.65) {
+      // Redundant combined deal-terms statement - drop it
+      dropped.push({
+        index: i,
+        text: text.substring(0, 100),
+        overlapRatio: overlapRatio.toFixed(2),
+        signalCount
+      });
+      continue;
+    }
+    
+    kept.push(stmt);
   }
   
-  return statements;
+  if (dropped.length > 0 && runId && reqSig) {
+    const droppedPreviews = dropped.map(d => `idx=${d.index} overlap=${d.overlapRatio} signals=${d.signalCount} preview="${d.text.substring(0, 60)}"`).join("; ");
+    log(`[A3.6.12][DEAL_DEDUP] dropped=${dropped.length} ${droppedPreviews}`);
+  }
+  
+  return { statements: kept, droppedCount: dropped.length };
+}
+
+// A3.6.44: Final-pass dangling-currency repair on canonical return statements
+// A3.6.12: Now uses shared helper - should be mostly a no-op since early pass already handled it
+// This runs immediately before the response is returned to catch any dangling fragments
+// that may have been reintroduced by downstream phases (e.g., generateClaims, VAL_SNIP_SAN)
+function finalDanglingCurrencyRepair(statements, draftText, runId = null, reqSig = null) {
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  log(`[PIPELINE] phase=finalDanglingCurrencyRepair`);
+  
+  // A3.6.12: Use shared helper for consistency
+  const beforeCount = statements.length;
+  const repaired = repairDanglingCurrency(statements, draftText, runId, reqSig, "final");
+  const afterCount = repaired.length;
+  const finalRepairCount = beforeCount !== afterCount ? beforeCount - afterCount : 0;
+  
+  // A3.6.12: Diagnostic counter to confirm final pass is mostly no-op
+  if (runId && reqSig) {
+    log(`[FINAL_DANGLING_STATS] before=${beforeCount} after=${afterCount} dropped=${finalRepairCount} (should be 0 if early pass worked)`);
+  }
+  
+  return repaired;
 }
 
 // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
@@ -10854,7 +11032,7 @@ function backfillCitations(statements, uploadedSources, unifiedReferences, runId
   return { statements: updatedStatements, attempted, injected, skippedShort };
 }
 
-function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0, fragmentDropped = 0, fragmentMerged = 0) {
+function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0, fragmentDropped = 0, fragmentMerged = 0, dealDedupDropped = 0) {
   if (!Array.isArray(statements) || statements.length === 0) {
     return "failed";
   }
@@ -10930,15 +11108,19 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   if (recombinedCount > 0) reasons.push(`recombined_fragments=${recombinedCount}`);
   if (fragmentDropped > 0) reasons.push(`fragment_dropped=${fragmentDropped}`);
   if (fragmentMerged > 0) reasons.push(`fragment_merged=${fragmentMerged}`);
+  // A3.6.12: Log dealDedupDropped but do NOT include in quality degradation
+  if (dealDedupDropped > 0) reasons.push(`deal_dedup_dropped=${dealDedupDropped}`);
   
   // A3.6.12: Quality must degrade if incomplete_numeric_fragment was NOT repaired
   // Repaired fragments are excluded from quality degradation
+  // A3.6.12: Deal dedup drops are NOT counted as degraded (they're intentional deduplication)
   let quality = "ok";
   if (hasTruncation || hasUnbalancedParens || hasIncompleteNumeric) {
     quality = "failed";
   } else if (rejectedCount > 0 || fallbackCount > 0 || unrepairedIncompleteCount > 0 || recombinedCount > 0) {
     quality = "degraded";
   }
+  // Note: dealDedupDropped is logged but does NOT cause quality degradation
   
   console.log(`[DIAG][QUALITY] extractionQuality=${quality} reasons=${JSON.stringify(reasons)}`);
   
@@ -11872,6 +12054,10 @@ ${
       }
     }
     
+    // A3.6.12: Early dangling-currency repair (before corpusSearch, ambiguity detection, and claim generation)
+    diag(runId, reqSig, `[PIPELINE] phase=earlyDanglingCurrencyRepair`);
+    statements = repairDanglingCurrency(statements, normalizedDraftText, runId, reqSig, "early");
+    
     // A3.5.13: Map LLM output back to pre-extracted candidates for stability
     // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
@@ -12000,8 +12186,14 @@ ${
     
     // A3.6.47: Canonicalize Deal Terms statements (plural - emits TWO statements)
     diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement`);
+    let dealDedupDropped = 0;
     if (dealTerms && dealTerms.preMoney && dealTerms.enterpriseValue) {
       statements = canonicalizeDealTermsStatements(statements, dealTerms, runId, reqSig);
+      
+      // A3.6.12: Drop redundant combined deal-terms statements after canonical split
+      const dedupResult = dropRedundantCombinedDealTerms(statements, dealTerms, runId, reqSig);
+      statements = dedupResult.statements;
+      dealDedupDropped = dedupResult.droppedCount;
     }
     
     // B) Citation resolution validation: drop unresolvable citations
@@ -12618,7 +12810,8 @@ ${
       try {
         const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
         const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
-        extractionQualityValue = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged);
+        // A3.6.12: Pass dealDedupDropped separately (does not count as degraded)
+        extractionQualityValue = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged, dealDedupDropped);
       } catch (e) {
         diag(runId, reqSig, `[ERROR] failed computing extractionQuality after FINAL_COUNTS: ${e?.message || String(e)}`);
         extractionQualityValue = extractionQualityValue || "ok";
