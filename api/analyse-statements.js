@@ -2362,18 +2362,24 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploa
   }
   
   // A3.6.66: Log extraction results with new diagnostics
+  // A3.6.67: Enhanced diagnostics with per-statement info
   const preMoneyVal = dealTerms.preMoney ? dealTerms.preMoney.amount : null;
   const evVal = dealTerms.enterpriseValue ? dealTerms.enterpriseValue.amount : null;
   const investVal = dealTerms.investment ? dealTerms.investment.amount : null;
   const ownPctVal = dealTerms.ownershipPct ? dealTerms.ownershipPct.pct : null;
   const ownUpsideVal = dealTerms.ownershipUpside ? dealTerms.ownershipUpside.pct : null;
+  const secondaryVal = null; // Placeholder for future secondary details
+  const upsidesVal = null; // Placeholder for future upside terms
   const fields = {
     preMoney: preMoneyVal,
     ev: evVal,
     invest: investVal,
     ownPct: ownPctVal,
-    ownUpside: ownUpsideVal
+    secondary: secondaryVal,
+    upsides: upsidesVal
   };
+  const hasWindow = dealTerms.sourceSpan != null && dealTerms.sourceKind === "windowed_blob";
+  log(`[A3.6.67][DEAL_TERMS_GATE] idx=0 found=true fields=${JSON.stringify(fields)} sourceKind=${dealTerms.sourceKind} hasWindow=${hasWindow}`);
   log(`[A3.6.66][DEAL_TERMS_GATE] found=true sourceKind=${dealTerms.sourceKind} fields=${JSON.stringify(fields)} backfilledSpan=${backfilledSpan}`);
   
   return dealTerms;
@@ -2592,15 +2598,19 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   }
   
   // A3.6.49: Identify corrupted deal-terms statements to suppress
-  const evNumberStr = dealTerms.enterpriseValue.amount.toString();
-  const evVariants = [
-    evNumberStr,
-    `${evNumberStr}mm`,
-    `${evNumberStr}m`,
-    `$${evNumberStr}`,
-    `$${evNumberStr}mm`,
-    `$${evNumberStr}m`
-  ];
+  // A3.6.67: Only check for corrupted statements if enterpriseValue exists
+  const evVariants = [];
+  if (dealTerms.enterpriseValue) {
+    const evNumberStr = dealTerms.enterpriseValue.amount.toString();
+    evVariants.push(
+      evNumberStr,
+      `${evNumberStr}mm`,
+      `${evNumberStr}m`,
+      `$${evNumberStr}`,
+      `$${evNumberStr}mm`,
+      `$${evNumberStr}m`
+    );
+  }
   
   const corruptedIndices = [];
   for (let i = 0; i < statements.length; i++) {
@@ -2613,7 +2623,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     const hasEVKeywords = /\benterprise\s+value\b|\bev\b(?!\w)|\bfully\s+diluted\b/i.test(text);
     const hasNumber = /\d+(?:\.\d+)?/.test(text);
     
-    if (hasEVKeywords && hasNumber) {
+    if (hasEVKeywords && hasNumber && evVariants.length > 0) {
       // Check if it contains the extracted EV number
       const containsCorrectEV = evVariants.some(variant => 
         text.includes(variant.toLowerCase())
@@ -2630,6 +2640,24 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   let droppedCount = 0;
   let insertOffset = 0;
   
+  // A3.6.67: Capture citations/evidence from original statement before canonicalization
+  let originalCitations = [];
+  let originalEvidence = [];
+  let originalAssessmentCitations = [];
+  let originalAssessmentEvidence = [];
+  
+  // Find the statement that will be replaced (if any)
+  const statementToReplace = replacedStatementIdx != null ? statements[replacedStatementIdx] : 
+                            (corruptedIndices.length > 0 ? statements[corruptedIndices[0]] : null);
+  
+  if (statementToReplace) {
+    originalCitations = Array.isArray(statementToReplace.citations) ? statementToReplace.citations : [];
+    originalEvidence = Array.isArray(statementToReplace.evidence) ? statementToReplace.evidence : [];
+    const assessment = statementToReplace.assessment || {};
+    originalAssessmentCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    originalAssessmentEvidence = Array.isArray(assessment.evidence) ? assessment.evidence : [];
+  }
+  
   // A3.6.60: Use originalDraftPosition if found, otherwise use corrupted statement position
   if (originalDraftPosition == null && corruptedIndices.length > 0) {
     originalDraftPosition = statements[corruptedIndices[0]].__draftPosition;
@@ -2641,11 +2669,26 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     const draftPos = originalDraftPosition != null ? originalDraftPosition : statements[firstCorruptedIdx].__draftPosition;
     
     if (pricingText) {
+      // A3.6.67: Preserve citations/evidence from original statement
       statements[firstCorruptedIdx].text = pricingText;
       statements[firstCorruptedIdx].__dealTermsCanonical = true;
       statements[firstCorruptedIdx].__dealTermsCanonicalKind = "pricing";
       statements[firstCorruptedIdx].__dealTerms = dealTerms;
       statements[firstCorruptedIdx].__draftPosition = draftPos;
+      // Preserve citations/evidence
+      if (originalCitations.length > 0) {
+        statements[firstCorruptedIdx].citations = [...originalCitations];
+      }
+      if (originalEvidence.length > 0) {
+        statements[firstCorruptedIdx].evidence = [...originalEvidence];
+      }
+      if (originalAssessmentCitations.length > 0 || originalAssessmentEvidence.length > 0) {
+        statements[firstCorruptedIdx].assessment = {
+          ...(statements[firstCorruptedIdx].assessment || {}),
+          citations: originalAssessmentCitations.length > 0 ? [...originalAssessmentCitations] : undefined,
+          evidence: originalAssessmentEvidence.length > 0 ? [...originalAssessmentEvidence] : undefined
+        };
+      }
       
       replacedIdx = firstCorruptedIdx;
       insertOffset = 1;
@@ -2657,6 +2700,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     }
     
     // A3.6.60: Insert investment statement with originalDraftPosition + 0.001
+    // A3.6.67: Preserve citations/evidence
     if (investText) {
       const investDraftPosition = draftPos != null ? draftPos + 0.001 : (statements[firstCorruptedIdx].__draftPosition != null ? statements[firstCorruptedIdx].__draftPosition + 0.001 : firstCorruptedIdx + 0.001);
       const investStmt = {
@@ -2664,13 +2708,20 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "investment",
         __dealTerms: dealTerms,
-        __draftPosition: investDraftPosition
+        __draftPosition: investDraftPosition,
+        citations: originalCitations.length > 0 ? [...originalCitations] : undefined,
+        evidence: originalEvidence.length > 0 ? [...originalEvidence] : undefined,
+        assessment: originalAssessmentCitations.length > 0 || originalAssessmentEvidence.length > 0 ? {
+          citations: originalAssessmentCitations.length > 0 ? [...originalAssessmentCitations] : undefined,
+          evidence: originalAssessmentEvidence.length > 0 ? [...originalAssessmentEvidence] : undefined
+        } : undefined
       };
       statements.splice(firstCorruptedIdx + insertOffset, 0, investStmt);
       insertOffset++;
     }
     
     // A3.6.60: Insert ownership statement with originalDraftPosition + 0.002
+    // A3.6.67: Preserve citations/evidence
     if (ownershipText) {
       const ownDraftPosition = draftPos != null ? draftPos + 0.002 : (statements[firstCorruptedIdx].__draftPosition != null ? statements[firstCorruptedIdx].__draftPosition + 0.002 : firstCorruptedIdx + 0.002);
       const ownStmt = {
@@ -2678,7 +2729,13 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "ownership",
         __dealTerms: dealTerms,
-        __draftPosition: ownDraftPosition
+        __draftPosition: ownDraftPosition,
+        citations: originalCitations.length > 0 ? [...originalCitations] : undefined,
+        evidence: originalEvidence.length > 0 ? [...originalEvidence] : undefined,
+        assessment: originalAssessmentCitations.length > 0 || originalAssessmentEvidence.length > 0 ? {
+          citations: originalAssessmentCitations.length > 0 ? [...originalAssessmentCitations] : undefined,
+          evidence: originalAssessmentEvidence.length > 0 ? [...originalAssessmentEvidence] : undefined
+        } : undefined
       };
       statements.splice(firstCorruptedIdx + insertOffset, 0, ownStmt);
       insertOffset++;
@@ -2697,11 +2754,13 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     const draftPos = originalDraftPosition != null ? originalDraftPosition : replacedStatementIdx;
     
     if (pricingText) {
+      // A3.6.67: Preserve citations/evidence from original statement
       statements[replacedStatementIdx].text = pricingText;
       statements[replacedStatementIdx].__dealTermsCanonical = true;
       statements[replacedStatementIdx].__dealTermsCanonicalKind = "pricing";
       statements[replacedStatementIdx].__dealTerms = dealTerms;
       statements[replacedStatementIdx].__draftPosition = draftPos;
+      // Citations/evidence already preserved from original statement
       
       replacedIdx = replacedStatementIdx;
       insertOffset = 1;
@@ -2713,6 +2772,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     }
     
     // Insert investment statement
+    // A3.6.67: Preserve citations/evidence
     if (investText) {
       const investDraftPosition = draftPos != null ? draftPos + 0.001 : (statements[replacedStatementIdx].__draftPosition != null ? statements[replacedStatementIdx].__draftPosition + 0.001 : replacedStatementIdx + 0.001);
       const investStmt = {
@@ -2720,13 +2780,20 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "investment",
         __dealTerms: dealTerms,
-        __draftPosition: investDraftPosition
+        __draftPosition: investDraftPosition,
+        citations: originalCitations.length > 0 ? [...originalCitations] : undefined,
+        evidence: originalEvidence.length > 0 ? [...originalEvidence] : undefined,
+        assessment: originalAssessmentCitations.length > 0 || originalAssessmentEvidence.length > 0 ? {
+          citations: originalAssessmentCitations.length > 0 ? [...originalAssessmentCitations] : undefined,
+          evidence: originalAssessmentEvidence.length > 0 ? [...originalAssessmentEvidence] : undefined
+        } : undefined
       };
       statements.splice(replacedStatementIdx + insertOffset, 0, investStmt);
       insertOffset++;
     }
     
     // Insert ownership statement
+    // A3.6.67: Preserve citations/evidence
     if (ownershipText) {
       const ownDraftPosition = draftPos != null ? draftPos + 0.002 : (statements[replacedStatementIdx].__draftPosition != null ? statements[replacedStatementIdx].__draftPosition + 0.002 : replacedStatementIdx + 0.002);
       const ownStmt = {
@@ -2734,7 +2801,13 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "ownership",
         __dealTerms: dealTerms,
-        __draftPosition: ownDraftPosition
+        __draftPosition: ownDraftPosition,
+        citations: originalCitations.length > 0 ? [...originalCitations] : undefined,
+        evidence: originalEvidence.length > 0 ? [...originalEvidence] : undefined,
+        assessment: originalAssessmentCitations.length > 0 || originalAssessmentEvidence.length > 0 ? {
+          citations: originalAssessmentCitations.length > 0 ? [...originalAssessmentCitations] : undefined,
+          evidence: originalAssessmentEvidence.length > 0 ? [...originalAssessmentEvidence] : undefined
+        } : undefined
       };
       statements.splice(replacedStatementIdx + insertOffset, 0, ownStmt);
       insertOffset++;
@@ -2798,6 +2871,30 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     ownership: ownershipText != null
   };
   log(`[A3.6.66][CANON_RUN] ran=true reason=ok emitted=${JSON.stringify(emitted)}`);
+  
+  // A3.6.67: Add enhanced diagnostics
+  const beforeLen = statements.length - (pricingText ? 1 : 0) - (investText ? 1 : 0) - (ownershipText ? 1 : 0) + (replacedIdx !== null ? 1 : 0);
+  const afterCount = statements.length;
+  const idx = replacedIdx !== null ? replacedIdx : (corruptedIndices.length > 0 ? corruptedIndices[0] : 0);
+  log(`[A3.6.67][CANON_RUN] idx=${idx} ran=true reason=ran sourceKind=${dealTerms.sourceKind} beforeLen=${beforeLen} afterCount=${afterCount}`);
+  
+  // A3.6.67: Log citation/evidence preservation
+  const beforeCites = originalCitations.length;
+  const beforeEvidence = originalEvidence.length;
+  const afterCitesEach = [];
+  const afterEvidenceEach = [];
+  
+  // Count citations/evidence in canonical statements
+  for (const stmt of statements) {
+    if (stmt && stmt.__dealTermsCanonical) {
+      const cites = Array.isArray(stmt.citations) ? stmt.citations.length : 0;
+      const evidence = Array.isArray(stmt.evidence) ? stmt.evidence.length : 0;
+      afterCitesEach.push(cites);
+      afterEvidenceEach.push(evidence);
+    }
+  }
+  
+  log(`[A3.6.67][CANON_CITES] idx=${idx} beforeCites=${beforeCites} afterCitesEach=${JSON.stringify(afterCitesEach)} beforeEvidence=${beforeEvidence} afterEvidenceEach=${JSON.stringify(afterEvidenceEach)}`);
   
   return statements;
 }
@@ -12640,9 +12737,24 @@ ${
       }
     }
     
+    // A3.6.67: Initialize uploadedDocs BEFORE extractDealTerms phase to avoid TDZ error
+    const docsWithFullText = Array.isArray(uploadedSources) ? uploadedSources.filter(s => 
+      typeof s.text === "string" && s.text.trim().length > 0
+    ) : [];
+    let uploadedDocs = docsWithFullText.map(s => ({
+      id: s.id || s.name || `doc_${Math.random()}`,
+      title: s.name || s.title || "Untitled source",
+      text: s.text || "",
+    }));
+    
     // A3.6.47: Extract DealTerms from draftText (robust, handles messy text)
     // A3.6.66: Pass uploadedDocs and find statement text for backfill
+    // A3.6.67: Add error handling and diagnostics
     diag(runId, reqSig, `[PIPELINE] phase=extractDealTerms`);
+    
+    // A3.6.67: Input diagnostics
+    diag(runId, reqSig, `[A3.6.67][DEAL_TERMS_INPUT] stmtCount=${statements.length} uploadedSourcesCount=${uploadedSources.length} hasUploadedDocs=${uploadedDocs.length > 0} uploadedDocsLen=${uploadedDocs.length}`);
+    
     let dealTerms = null;
     try {
       // A3.6.66: Find a statement that might contain deal terms for backfill
@@ -12659,7 +12771,10 @@ ${
       dealTerms = extractDealTermsFromDraft(normalizedDraftText, runId, reqSig, uploadedDocs, statementTextForBackfill);
       // Logging is now handled inside extractDealTermsFromDraft
     } catch (e) {
-      diag(runId, reqSig, `[A3.6.47][DEAL_TERMS] error="${e?.message || String(e)}"`);
+      const errorMessage = e?.message || String(e);
+      const errorStack = e?.stack ? e.stack.split('\n').slice(0, 2).join(' | ') : '';
+      diag(runId, reqSig, `[A3.6.67][DEAL_TERMS_ERROR] message="${errorMessage}" stack="${errorStack}" idx=null`);
+      diag(runId, reqSig, `[A3.6.47][DEAL_TERMS] error="${errorMessage}"`);
     }
     
     // A3.6.47: Canonicalize Deal Terms statements (plural - emits TWO statements)
@@ -12869,13 +12984,16 @@ ${
     // A3.6.7: Generate claims BEFORE reasons-mode decision and BEFORE FINAL_COUNTS
     // This ensures assessment.claims is available when deciding on reasons mode
     diag(runId, reqSig, `[PIPELINE] phase=generateClaims`);
-    const uploadedDocs = Array.isArray(uploadedSources) && uploadedSources.length > 0
-      ? uploadedSources.map((src) => ({
-          id: src.id || src.name || "unknown",
-          title: src.title || src.name || "Untitled",
-          text: src.text || "",
-        }))
-      : [];
+    // A3.6.67: Reuse uploadedDocs initialized earlier (avoid redeclaration)
+    if (!uploadedDocs || uploadedDocs.length === 0) {
+      uploadedDocs = Array.isArray(uploadedSources) && uploadedSources.length > 0
+        ? uploadedSources.map((src) => ({
+            id: src.id || src.name || "unknown",
+            title: src.title || src.name || "Untitled",
+            text: src.text || "",
+          }))
+        : [];
+    }
     
     // A3.6.9: Track claims failures for meta
     let claimsFailures = 0;
