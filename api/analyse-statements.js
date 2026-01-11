@@ -12786,6 +12786,27 @@ export default async function handler(req, res) {
     const sources = Array.isArray(body.sources) ? body.sources : [];
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
+    // A3.7.0: Selection mode support
+    const selectionTextRaw = typeof body.selectionText === "string" ? body.selectionText : null;
+    const selectionText = selectionTextRaw ? selectionTextRaw.trim() : null;
+
+    // A3.7.0: Validate selectionText if provided
+    if (selectionText !== null) {
+      if (selectionText.length < 3) {
+        hasReturned = true;
+        try {
+          diag("early", "validation", `END_DIAG path=selection_validation_error status=400 returningNow=true`);
+        } catch {}
+        return res.status(400).json({ ok: false, error: "selectionText too short" });
+      }
+      if (selectionText.length > 8000) {
+        hasReturned = true;
+        try {
+          diag("early", "validation", `END_DIAG path=selection_validation_error status=400 returningNow=true`);
+        } catch {}
+        return res.status(400).json({ ok: false, error: "selectionText too long" });
+      }
+    }
 
     if (!draftText.trim()) {
       hasReturned = true;
@@ -12885,11 +12906,59 @@ export default async function handler(req, res) {
     diag(runId, reqSig, `[PIPELINE] phase=mergeContinuationFragments`);
     const normalizedDraftText = mergeContinuationFragments(draftText, runId, reqSig);
     
+    // A3.7.0: Selection mode branch - if selectionText is provided, use it as single candidate
+    let isSelectionMode = false;
+    let normalizedSelection = null;
+    let draftPosition = null;
+    
+    if (selectionText !== null && selectionText.length >= 3) {
+      isSelectionMode = true;
+      // Normalize line breaks to "\n" and collapse excessive whitespace for indexing
+      normalizedSelection = selectionText
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        .replace(/\s+/g, " ")
+        .trim();
+      
+      // Compute draftPosition: find selection in draftText
+      // Try exact match first, then try trimmed match
+      let startIndex = normalizedDraftText.indexOf(selectionText);
+      if (startIndex === -1) {
+        startIndex = normalizedDraftText.indexOf(normalizedSelection);
+      }
+      // If still not found, try with normalized whitespace
+      if (startIndex === -1) {
+        const normalizedDraftForSearch = normalizedDraftText.replace(/\s+/g, " ");
+        const normalizedSelectionForSearch = normalizedSelection.replace(/\s+/g, " ");
+        startIndex = normalizedDraftForSearch.indexOf(normalizedSelectionForSearch);
+        if (startIndex >= 0) {
+          // Map back to original draftText position (approximate)
+          draftPosition = startIndex;
+        }
+      } else {
+        draftPosition = startIndex;
+      }
+      
+      if (draftPosition === null || draftPosition < 0) {
+        draftPosition = null;
+      }
+      
+      diag(runId, reqSig, `[PIPELINE] mode=selection selectionLen=${selectionText.length} foundDraftPos=${draftPosition !== null ? draftPosition : "null"}`);
+    }
+    
     // A3.5.13: Deterministic statement extraction (Part B)
     // Extract candidate statements BEFORE LLM call
     // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
-    diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
-    const rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
+    // A3.7.0: Skip extraction in selection mode
+    let rawExtractionCandidates = [];
+    if (!isSelectionMode) {
+      diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
+      rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
+    } else {
+      diag(runId, reqSig, `[PIPELINE] phase=extractCandidates SKIPPED (selection mode)`);
+      // In selection mode, use the selection as the single candidate
+      rawExtractionCandidates = [normalizedSelection || selectionText];
+    }
     
     // A3.5.14 Part A: Filter candidates for quality (extraction stability)
     // Get raw sentences for context (we need to pass them to the filter)
@@ -13173,6 +13242,12 @@ ${
     
     // Coerce and validate statements (using unified references count)
     let statements = coerceStatements(parsed, maxRefIndex);
+    
+    // A3.7.0: In selection mode, assign draftPosition to the single statement
+    if (isSelectionMode && statements.length > 0 && draftPosition !== null) {
+      statements[0].__draftPosition = draftPosition;
+      statements[0].__candidateIndex = 0;
+    }
     
     // A3.6.11: Repair numeric fragments after filterCandidateQuality
     diag(runId, reqSig, `[PIPELINE] phase=repairNumericFragments`);
@@ -14018,6 +14093,9 @@ ${
           webSourcesCount: webReferencesWithIds?.length || 0,
           ...(meta?.verification ? { verification: meta.verification } : {}),
           ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
+          // A3.7.0: Selection mode metadata
+          selectionUsed: isSelectionMode || false,
+          selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
         },
       };
     } catch (e) {
@@ -14034,6 +14112,9 @@ ${
           webSourcesCount: webReferencesWithIds?.length || 0,
           ...(meta?.verification ? { verification: meta.verification } : {}),
           ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
+          // A3.7.0: Selection mode metadata
+          selectionUsed: isSelectionMode || false,
+          selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
         },
       };
     }
