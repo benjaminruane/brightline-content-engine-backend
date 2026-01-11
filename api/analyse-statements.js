@@ -1553,27 +1553,28 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
   if (typeof draftText !== "string" || !draftText.trim()) return statements;
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-  const repaired = [];
+  
+  // A3.6.43: Create a working copy to mutate
+  const workingStatements = statements.map(stmt => ({ ...stmt }));
+  
+  // ============================================================
+  // PASS A: NUMERIC_FRAGMENT_REPAIR (runs first, no interleaving)
+  // ============================================================
+  log(`[PASS_A_START] phase=repairNumericFragments`);
   let repairCount = 0;
   
-  for (let idx = 0; idx < statements.length; idx++) {
-    const stmt = statements[idx];
+  for (let i = 0; i < workingStatements.length; i++) {
+    const stmt = workingStatements[i];
     if (!stmt || typeof stmt !== "object") {
-      repaired.push(stmt);
       continue;
     }
     
     const text = typeof stmt.text === "string" ? stmt.text : "";
     if (!text.trim()) {
-      repaired.push(stmt);
       continue;
     }
     
     const trimmed = text.trim();
-    
-    // ============================================================
-    // PHASE A: NUMERIC_FRAGMENT_REPAIR (runs first)
-    // ============================================================
     let needsRepair = false;
     
     // Detect trailing fragments:
@@ -1680,48 +1681,83 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
         }
       }
       
-      // Log NUMERIC_FRAGMENT_REPAIR
+      // A3.6.43: Write back to workingStatements[i] if changed
       if (changed && repairedText) {
+        workingStatements[i].text = repairedText;
+        workingStatements[i].__repairedNumericFragment = true;
+        repairCount++;
+        
         const originalPreview = trimmed.length > 50 ? trimmed.substring(0, 50) + "..." : trimmed;
         const repairedPreview = repairedText.length > 50 ? repairedText.substring(0, 50) + "..." : repairedText;
-        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${idx} changed=true originalPreview="${originalPreview}" repairedPreview="${repairedPreview}"`);
+        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${i} changed=true originalPreview="${originalPreview}" repairedPreview="${repairedPreview}"`);
       } else if (needsRepair) {
-        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${idx} changed=false originalPreview="${trimmed.substring(0, 50)}..." (could not repair)`);
+        workingStatements[i].__repairedNumericFragment = true;
+        repairCount++;
+        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${i} changed=false originalPreview="${trimmed.substring(0, 50)}..." (could not repair)`);
       }
     }
+  }
+  
+  if (repairCount > 0) {
+    log(`[NUMERIC_FRAGMENT_REPAIR] repaired=${repairCount} total=${workingStatements.length}`);
+  }
+  log(`[PASS_A_END] phase=repairNumericFragments`);
+  
+  // ============================================================
+  // PASS B: NUMERIC_DANGLING_CHECK (runs AFTER repair, on post-repair text)
+  // ============================================================
+  log(`[PASS_B_START] phase=repairNumericFragments`);
+  
+  for (let i = 0; i < workingStatements.length; i++) {
+    const stmt = workingStatements[i];
+    if (!stmt || typeof stmt !== "object") {
+      continue;
+    }
     
-    // ============================================================
-    // PHASE B: NUMERIC_DANGLING_CHECK (runs AFTER repair, on post-repair text)
-    // ============================================================
-    // A3.6.42: Get text AFTER repair for dangling check
-    const textAfterRepair = repairedText || trimmed;
+    // A3.6.43: Get text AFTER repair (from PASS A)
+    const textAfterRepair = (stmt.text || "").trim();
+    if (!textAfterRepair) {
+      continue;
+    }
+    
+    // A3.6.43: Build tailForMatch exactly as specified
     const tailForMatch = textAfterRepair.trim().replace(/[,\.;:\s]+$/g, "");
     
-    // Detect dangling currency fragment pattern
+    // A3.6.43: Detect dangling currency fragment pattern (end-anchored, on tailForMatch)
     const danglingPattern = /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i;
     const match = tailForMatch.match(danglingPattern);
     
-    let finalRepairedText = textAfterRepair;
+    let fixedText = textAfterRepair;
     let danglingAction = "none";
     
     if (match) {
-      const impliedAmount = match[3]; // The number part (e.g., "18" or "18.7")
+      const nStr = match[3]; // The number part (e.g., "18" or "18.7")
       
-      // Try to find completion in draftText
+      // A3.6.43: Try to find completion in draftText
       let completionFound = false;
       let completionText = null;
       let completionSource = null;
       
-      // A3.6.42: Prefer next sentence completion - search draftText AFTER the statement's end position
-      // Use original trimmed text to find position (repaired text might not exist in draftText if truncated)
-      const originalTextIndex = draftText.indexOf(trimmed);
-      if (originalTextIndex >= 0) {
-        // Look ahead in draftText for completion patterns after the original statement
-        const afterStatement = draftText.substring(originalTextIndex + trimmed.length);
-        // Search for patterns like "$18 million", "$18m", "$18mm" where <n> is the captured numeric value
+      // Determine start index in draftText
+      // Prefer using CURRENT statements[i].text (post-repair) to locate its first occurrence
+      let searchStartIndex = draftText.indexOf(textAfterRepair);
+      let statementEndOffset = textAfterRepair.length;
+      
+      // If not found, fall back to searching using a shorter prefix (first 80 chars)
+      if (searchStartIndex < 0) {
+        const prefix = textAfterRepair.substring(0, Math.min(80, textAfterRepair.length));
+        searchStartIndex = draftText.indexOf(prefix);
+        statementEndOffset = prefix.length; // Use prefix length when full text not found
+      }
+      
+      if (searchStartIndex >= 0) {
+        // Search forward in draftText from that position for completion patterns
+        const afterStatement = draftText.substring(searchStartIndex + statementEndOffset);
+        // Search for: $<n> million, $<n>m, $<n>mm (case-insensitive, allow whitespace)
         const completionPatterns = [
-          new RegExp(`\\$${impliedAmount}\\s+(million|mm|m)`, "i"),
-          new RegExp(`\\$${impliedAmount}\\s+(billion|b)`, "i")
+          new RegExp(`\\$${nStr}\\s+million`, "i"),
+          new RegExp(`\\$${nStr}\\s*mm`, "i"),
+          new RegExp(`\\$${nStr}\\s*m\\b`, "i")
         ];
         
         for (const pattern of completionPatterns) {
@@ -1735,14 +1771,14 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
         }
       }
       
-      // A3.6.42: If not found, attempt local window completion (200-char window around the statement)
-      if (!completionFound && originalTextIndex >= 0) {
-        const searchStart = Math.max(0, originalTextIndex - 200);
-        const searchEnd = Math.min(draftText.length, originalTextIndex + trimmed.length + 200);
+      // A3.6.43: If not found, search a 200-char window around the best-known position as fallback
+      if (!completionFound && searchStartIndex >= 0) {
+        const searchStart = Math.max(0, searchStartIndex - 200);
+        const searchEnd = Math.min(draftText.length, searchStartIndex + statementEndOffset + 200);
         const searchWindow = draftText.substring(searchStart, searchEnd);
         
         // Find the amount in context
-        const amountPattern = new RegExp(`\\$${impliedAmount}\\s+(million|mm|m|billion|b)`, "i");
+        const amountPattern = new RegExp(`\\$${nStr}\\s+(million|mm|m\\b)`, "i");
         const contextMatch = searchWindow.match(amountPattern);
         if (contextMatch) {
           completionText = contextMatch[0];
@@ -1752,77 +1788,65 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
       }
       
       if (completionFound && completionText) {
-        // Replace the dangling fragment with the completed phrase
-        // Find the last occurrence of "implying|implies|implied" in the text
-        const implyingWord = match[1]; // "implying", "implies", or "implied"
+        // A3.6.43: Replace the trailing dangling fragment with the matched completion phrase
+        // Find last occurrence of /\b(implying|implies|implied)\b/i in textAfterRepair
+        const implyingPattern = /\b(implying|implies|implied)\b/gi;
         let lastImplyingIndex = -1;
-        const implyingPattern = new RegExp(`\\b${implyingWord}\\b`, "gi");
         let matchResult;
-        const textForSearch = textAfterRepair.trim();
-        while ((matchResult = implyingPattern.exec(textForSearch)) !== null) {
+        while ((matchResult = implyingPattern.exec(textAfterRepair)) !== null) {
           lastImplyingIndex = matchResult.index;
         }
         
         if (lastImplyingIndex >= 0) {
-          const beforeImplying = textForSearch.substring(0, lastImplyingIndex).trim();
-          finalRepairedText = beforeImplying + " " + completionText;
+          const beforeImplying = textAfterRepair.substring(0, lastImplyingIndex).trim();
+          fixedText = beforeImplying + " " + completionText;
+          // Ensure final text is trimmed and does not end with dangling punctuation
+          fixedText = fixedText.trim().replace(/[,\.;:\s]+$/, "").trim();
           danglingAction = "complete";
           
-          const beforePreview = textForSearch.substring(Math.max(0, textForSearch.length - 50));
-          const afterPreview = finalRepairedText.substring(Math.max(0, finalRepairedText.length - 50));
-          const completionPreview = completionText;
-          log(`[NUMERIC_DANGLING_COMPLETE] idx=${idx} source=${completionSource} beforePreview="${beforePreview}" afterPreview="${afterPreview}" completionPreview="${completionPreview}"`);
+          const beforePreview = textAfterRepair.substring(Math.max(0, textAfterRepair.length - 50));
+          const afterPreview = fixedText.substring(Math.max(0, fixedText.length - 50));
+          log(`[NUMERIC_DANGLING_COMPLETE] idx=${i} source=${completionSource} beforePreview="${beforePreview}" afterPreview="${afterPreview}" completion="${completionText}"`);
         }
       } else {
-        // A3.6.42: Drop the dangling clause rather than hallucinating units
-        // Remove from the last occurrence of "implying|implies|implied" to end of string
-        const implyingWord = match[1]; // "implying", "implies", or "implied"
+        // A3.6.43: DROP clause - no completion found
+        // Find last occurrence of /\b(implying|implies|implied)\b/i in textAfterRepair
+        const implyingPattern = /\b(implying|implies|implied)\b/gi;
         let lastImplyingIndex = -1;
-        const implyingPattern = new RegExp(`\\b${implyingWord}\\b`, "gi");
         let matchResult;
-        const textForSearch = textAfterRepair.trim();
-        while ((matchResult = implyingPattern.exec(textForSearch)) !== null) {
+        while ((matchResult = implyingPattern.exec(textAfterRepair)) !== null) {
           lastImplyingIndex = matchResult.index;
         }
         
         if (lastImplyingIndex > 0) {
-          finalRepairedText = textForSearch.substring(0, lastImplyingIndex).trim();
+          fixedText = textAfterRepair.substring(0, lastImplyingIndex).trim();
           // Trim trailing punctuation/whitespace
-          finalRepairedText = finalRepairedText.replace(/[,\.;:\s]+$/, "").trim();
+          fixedText = fixedText.replace(/[,\.;:\s]+$/, "").trim();
           danglingAction = "drop";
           
-          const droppedTextPreview = textForSearch.substring(Math.max(0, lastImplyingIndex - 20));
-          const finalPreview = finalRepairedText.length > 50 ? finalRepairedText.substring(Math.max(0, finalRepairedText.length - 50)) : finalRepairedText;
-          log(`[NUMERIC_DANGLING_DROP] idx=${idx} droppedTextPreview="${droppedTextPreview}" finalPreview="${finalPreview}"`);
+          const droppedText = textAfterRepair.substring(lastImplyingIndex);
+          const finalPreview = fixedText.length > 50 ? fixedText.substring(Math.max(0, fixedText.length - 50)) : fixedText;
+          log(`[NUMERIC_DANGLING_DROP] idx=${i} droppedText="${droppedText}" finalPreview="${finalPreview}"`);
         }
       }
     }
     
-    // A3.6.42: Always emit NUMERIC_DANGLING_CHECK log reflecting post-repair state
-    const tailPreview = textAfterRepair.trim().substring(Math.max(0, textAfterRepair.trim().length - 50));
-    log(`[NUMERIC_DANGLING_CHECK] idx=${idx} matched=${match ? "true" : "false"} action=${danglingAction} tailPreview="${tailPreview}"`);
+    // A3.6.43: Always emit NUMERIC_DANGLING_CHECK log
+    // tailPreview = tailForMatch.length <= 80 ? tailForMatch : tailForMatch.slice(-80)
+    const tailPreview = tailForMatch.length <= 80 ? tailForMatch : tailForMatch.slice(-80);
+    log(`[NUMERIC_DANGLING_CHECK] idx=${i} matched=${match ? "true" : "false"} action=${danglingAction} tailPreview="${tailPreview}"`);
     
-    // Push final result
-    if (finalRepairedText !== trimmed) {
-      repaired.push({
-        ...stmt,
-        text: finalRepairedText,
-        __repairedNumericFragment: true,
-      });
-      repairCount++;
-    } else {
-      repaired.push({
-        ...stmt,
-        __repairedNumericFragment: false,
-      });
+    // A3.6.43: Always write back the fixed text if action is "complete" or "drop"
+    if (danglingAction === "complete" || danglingAction === "drop") {
+      workingStatements[i].text = fixedText;
+      workingStatements[i].__repairedDanglingCurrency = true;
+      workingStatements[i].__danglingCurrencyAction = danglingAction;
     }
   }
   
-  if (repairCount > 0) {
-    log(`[NUMERIC_FRAGMENT_REPAIR] repaired=${repairCount} total=${statements.length}`);
-  }
+  log(`[PASS_B_END] phase=repairNumericFragments`);
   
-  return repaired;
+  return workingStatements;
 }
 
 // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
