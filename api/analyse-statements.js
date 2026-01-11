@@ -1570,6 +1570,10 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
     }
     
     const trimmed = text.trim();
+    
+    // ============================================================
+    // PHASE A: NUMERIC_FRAGMENT_REPAIR (runs first)
+    // ============================================================
     let needsRepair = false;
     
     // Detect trailing fragments:
@@ -1588,128 +1592,136 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
       needsRepair = true;
     }
     
-    if (!needsRepair) {
-      repaired.push(stmt);
-      continue;
-    }
-    
-    // A3.6.12: Repair strategy: extend to nearest valid sentence boundary from original draft text
-    const textIndex = draftText.indexOf(trimmed);
     let repairedText = null;
     let changed = false;
     
-    if (textIndex >= 0) {
-      // Find sentence boundary after the statement
-      const sentenceEnd = draftText.indexOf(".", textIndex + trimmed.length);
-      if (sentenceEnd >= 0) {
-        const extended = draftText.substring(textIndex, sentenceEnd + 1).trim();
-        // A3.6.12: Only use extension if it actually completes the number/paren
-        if (extended.length > trimmed.length) {
-          // Verify the extension completes the fragment
-          const hasCompleteNumber = !/\$\d+$/.test(extended) && !/\d+\.\d*$/.test(extended);
-          const hasBalancedParens = (extended.match(/\(/g) || []).length === (extended.match(/\)/g) || []).length;
-          const hasNoDanglingCurrency = !/\$$/.test(extended);
-          
-          if (hasCompleteNumber && hasBalancedParens && hasNoDanglingCurrency) {
-            repairedText = extended;
-            changed = true;
+    if (needsRepair) {
+      // A3.6.12: Repair strategy: extend to nearest valid sentence boundary from original draft text
+      const textIndex = draftText.indexOf(trimmed);
+      
+      if (textIndex >= 0) {
+        // Find sentence boundary after the statement
+        const sentenceEnd = draftText.indexOf(".", textIndex + trimmed.length);
+        if (sentenceEnd >= 0) {
+          const extended = draftText.substring(textIndex, sentenceEnd + 1).trim();
+          // A3.6.12: Only use extension if it actually completes the number/paren
+          if (extended.length > trimmed.length) {
+            // Verify the extension completes the fragment
+            const hasCompleteNumber = !/\$\d+$/.test(extended) && !/\d+\.\d*$/.test(extended);
+            const hasBalancedParens = (extended.match(/\(/g) || []).length === (extended.match(/\)/g) || []).length;
+            const hasNoDanglingCurrency = !/\$$/.test(extended);
+            
+            if (hasCompleteNumber && hasBalancedParens && hasNoDanglingCurrency) {
+              repairedText = extended;
+              changed = true;
+            }
           }
         }
       }
-    }
-    
-    // A3.6.12: If extension not possible or didn't work, truncate the fragment entirely
-    if (!changed) {
-      // Find last complete sentence or word boundary before the fragment
-      // Try to find sentence boundary first
-      const lastSentenceEnd = trimmed.lastIndexOf(".");
-      if (lastSentenceEnd > 0) {
-        const truncated = trimmed.substring(0, lastSentenceEnd + 1).trim();
-        if (truncated.length >= 10) {
-          repairedText = truncated;
-          changed = true;
-        }
-      }
       
-      // If no sentence boundary, find last complete word
+      // A3.6.12: If extension not possible or didn't work, truncate the fragment entirely
       if (!changed) {
-        const lastCompleteWord = trimmed.match(/\b\w+\b(?=\s*$)/);
-        if (lastCompleteWord && lastCompleteWord.index > 0) {
-          const truncated = trimmed.substring(0, lastCompleteWord.index).trim();
+        // Find last complete sentence or word boundary before the fragment
+        // Try to find sentence boundary first
+        const lastSentenceEnd = trimmed.lastIndexOf(".");
+        if (lastSentenceEnd > 0) {
+          const truncated = trimmed.substring(0, lastSentenceEnd + 1).trim();
           if (truncated.length >= 10) {
             repairedText = truncated;
             changed = true;
           }
         }
-      }
-      
-      // A3.6.12: If still no repair, remove trailing fragment entirely
-      if (!changed) {
-        // Remove everything from the last complete clause
-        const clauseEnd = trimmed.lastIndexOf(/\s+(?:and|with|at|for|to)\s+/i);
-        if (clauseEnd > 0) {
-          const truncated = trimmed.substring(0, clauseEnd).trim();
-          if (truncated.length >= 10) {
-            repairedText = truncated;
-            changed = true;
+        
+        // If no sentence boundary, find last complete word
+        if (!changed) {
+          const lastCompleteWord = trimmed.match(/\b\w+\b(?=\s*$)/);
+          if (lastCompleteWord && lastCompleteWord.index > 0) {
+            const truncated = trimmed.substring(0, lastCompleteWord.index).trim();
+            if (truncated.length >= 10) {
+              repairedText = truncated;
+              changed = true;
+            }
+          }
+        }
+        
+        // A3.6.12: If still no repair, remove trailing fragment entirely
+        if (!changed) {
+          // Remove everything from the last complete clause
+          const clauseEnd = trimmed.lastIndexOf(/\s+(?:and|with|at|for|to)\s+/i);
+          if (clauseEnd > 0) {
+            const truncated = trimmed.substring(0, clauseEnd).trim();
+            if (truncated.length >= 10) {
+              repairedText = truncated;
+              changed = true;
+            }
           }
         }
       }
-    }
-    
-    // A3.6.12: Postcondition check - repaired text must not end with dangling fragments
-    if (repairedText) {
-      const endsWithDangling = /\$$/.test(repairedText) || 
-                               /\$\d+$/.test(repairedText) || 
-                               /\d+\.\d*$/.test(repairedText) ||
-                               (repairedText.match(/\(/g) || []).length > (repairedText.match(/\)/g) || []).length;
       
-      if (endsWithDangling) {
-        // Still has dangling fragment - truncate more aggressively
-        const lastGoodEnd = repairedText.search(/\b\w+\s*[.!?]\s*$/);
-        if (lastGoodEnd > 0) {
-          repairedText = repairedText.substring(0, lastGoodEnd + 1).trim();
-        } else {
-          // Fallback: remove last 20 chars if they contain the fragment
-          const beforeFragment = repairedText.substring(0, Math.max(10, repairedText.length - 20)).trim();
-          if (beforeFragment.length >= 10) {
-            repairedText = beforeFragment;
+      // A3.6.12: Postcondition check - repaired text must not end with dangling fragments
+      if (repairedText) {
+        const endsWithDangling = /\$$/.test(repairedText) || 
+                                 /\$\d+$/.test(repairedText) || 
+                                 /\d+\.\d*$/.test(repairedText) ||
+                                 (repairedText.match(/\(/g) || []).length > (repairedText.match(/\)/g) || []).length;
+        
+        if (endsWithDangling) {
+          // Still has dangling fragment - truncate more aggressively
+          const lastGoodEnd = repairedText.search(/\b\w+\s*[.!?]\s*$/);
+          if (lastGoodEnd > 0) {
+            repairedText = repairedText.substring(0, lastGoodEnd + 1).trim();
+          } else {
+            // Fallback: remove last 20 chars if they contain the fragment
+            const beforeFragment = repairedText.substring(0, Math.max(10, repairedText.length - 20)).trim();
+            if (beforeFragment.length >= 10) {
+              repairedText = beforeFragment;
+            }
           }
         }
       }
+      
+      // Log NUMERIC_FRAGMENT_REPAIR
+      if (changed && repairedText) {
+        const originalPreview = trimmed.length > 50 ? trimmed.substring(0, 50) + "..." : trimmed;
+        const repairedPreview = repairedText.length > 50 ? repairedText.substring(0, 50) + "..." : repairedText;
+        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${idx} changed=true originalPreview="${originalPreview}" repairedPreview="${repairedPreview}"`);
+      } else if (needsRepair) {
+        log(`[NUMERIC_FRAGMENT_REPAIR] idx=${idx} changed=false originalPreview="${trimmed.substring(0, 50)}..." (could not repair)`);
+      }
     }
     
-    // A3.6.41: Post-repair dangling fragment check - detect and fix "... implying an $18" patterns
-    const finalText = repairedText || trimmed;
-    const trimmedFinal = finalText.trim();
-    // Remove trailing punctuation for pattern matching
-    const trimmedForPattern = trimmedFinal.replace(/[.,;:!?]+$/, "").trim();
+    // ============================================================
+    // PHASE B: NUMERIC_DANGLING_CHECK (runs AFTER repair, on post-repair text)
+    // ============================================================
+    // A3.6.42: Get text AFTER repair for dangling check
+    const textAfterRepair = repairedText || trimmed;
+    const tailForMatch = textAfterRepair.trim().replace(/[,\.;:\s]+$/g, "");
     
     // Detect dangling currency fragment pattern
     const danglingPattern = /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i;
-    const match = trimmedForPattern.match(danglingPattern);
+    const match = tailForMatch.match(danglingPattern);
     
-    let finalRepairedText = finalText;
+    let finalRepairedText = textAfterRepair;
     let danglingAction = "none";
     
     if (match) {
-      const impliedAmount = match[3]; // The number part (e.g., "18")
-      const impliedPrefix = match[0]; // Full match including "implying an $18"
+      const impliedAmount = match[3]; // The number part (e.g., "18" or "18.7")
       
       // Try to find completion in draftText
       let completionFound = false;
       let completionText = null;
       let completionSource = null;
       
-      // Look for completion patterns in draftText after the statement
-      const textIndex = draftText.indexOf(trimmedFinal);
-      if (textIndex >= 0) {
-        // Look ahead in draftText for completion patterns
-        const afterStatement = draftText.substring(textIndex + trimmedFinal.length);
-        // Search for patterns like "$18 million", "$18mm", "$18m", "$18 million enterprise value"
+      // A3.6.42: Prefer next sentence completion - search draftText AFTER the statement's end position
+      // Use original trimmed text to find position (repaired text might not exist in draftText if truncated)
+      const originalTextIndex = draftText.indexOf(trimmed);
+      if (originalTextIndex >= 0) {
+        // Look ahead in draftText for completion patterns after the original statement
+        const afterStatement = draftText.substring(originalTextIndex + trimmed.length);
+        // Search for patterns like "$18 million", "$18m", "$18mm" where <n> is the captured numeric value
         const completionPatterns = [
-          new RegExp(`\\$${impliedAmount}\\s+(million|mm|m|billion|b)(?:\\s+enterprise\\s+value)?`, "i"),
-          new RegExp(`\\$${impliedAmount}\\s+enterprise\\s+value`, "i")
+          new RegExp(`\\$${impliedAmount}\\s+(million|mm|m)`, "i"),
+          new RegExp(`\\$${impliedAmount}\\s+(billion|b)`, "i")
         ];
         
         for (const pattern of completionPatterns) {
@@ -1723,15 +1735,14 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
         }
       }
       
-      // If not found in next sentence, try searching in the full draftText around the statement
-      if (!completionFound && textIndex >= 0) {
-        // Look in a window around the statement
-        const searchStart = Math.max(0, textIndex - 200);
-        const searchEnd = Math.min(draftText.length, textIndex + trimmedFinal.length + 200);
+      // A3.6.42: If not found, attempt local window completion (200-char window around the statement)
+      if (!completionFound && originalTextIndex >= 0) {
+        const searchStart = Math.max(0, originalTextIndex - 200);
+        const searchEnd = Math.min(draftText.length, originalTextIndex + trimmed.length + 200);
         const searchWindow = draftText.substring(searchStart, searchEnd);
         
         // Find the amount in context
-        const amountPattern = new RegExp(`\\$${impliedAmount}\\s+(million|mm|m|billion|b)(?:\\s+enterprise\\s+value)?`, "i");
+        const amountPattern = new RegExp(`\\$${impliedAmount}\\s+(million|mm|m|billion|b)`, "i");
         const contextMatch = searchWindow.match(amountPattern);
         if (contextMatch) {
           completionText = contextMatch[0];
@@ -1742,73 +1753,68 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
       
       if (completionFound && completionText) {
         // Replace the dangling fragment with the completed phrase
-        // Find the last occurrence of "implying"/"implies"/"implied" in the original text
+        // Find the last occurrence of "implying|implies|implied" in the text
         const implyingWord = match[1]; // "implying", "implies", or "implied"
         let lastImplyingIndex = -1;
         const implyingPattern = new RegExp(`\\b${implyingWord}\\b`, "gi");
         let matchResult;
-        while ((matchResult = implyingPattern.exec(trimmedFinal)) !== null) {
+        const textForSearch = textAfterRepair.trim();
+        while ((matchResult = implyingPattern.exec(textForSearch)) !== null) {
           lastImplyingIndex = matchResult.index;
         }
         
         if (lastImplyingIndex >= 0) {
-          const beforeImplying = trimmedFinal.substring(0, lastImplyingIndex).trim();
+          const beforeImplying = textForSearch.substring(0, lastImplyingIndex).trim();
           finalRepairedText = beforeImplying + " " + completionText;
-          danglingAction = "completed";
+          danglingAction = "complete";
           
-          const tailBefore = trimmedFinal.substring(Math.max(0, trimmedFinal.length - 40));
-          const tailAfter = finalRepairedText.substring(Math.max(0, finalRepairedText.length - 40));
-          log(`[NUMERIC_DANGLING_COMPLETE] idx=${idx} before="${tailBefore}" after="${tailAfter}" source=${completionSource}`);
+          const beforePreview = textForSearch.substring(Math.max(0, textForSearch.length - 50));
+          const afterPreview = finalRepairedText.substring(Math.max(0, finalRepairedText.length - 50));
+          const completionPreview = completionText;
+          log(`[NUMERIC_DANGLING_COMPLETE] idx=${idx} source=${completionSource} beforePreview="${beforePreview}" afterPreview="${afterPreview}" completionPreview="${completionPreview}"`);
         }
       } else {
-        // Drop the entire dangling clause
-        // Find the last occurrence of "implying"/"implies"/"implied" in the original text
+        // A3.6.42: Drop the dangling clause rather than hallucinating units
+        // Remove from the last occurrence of "implying|implies|implied" to end of string
         const implyingWord = match[1]; // "implying", "implies", or "implied"
         let lastImplyingIndex = -1;
         const implyingPattern = new RegExp(`\\b${implyingWord}\\b`, "gi");
         let matchResult;
-        while ((matchResult = implyingPattern.exec(trimmedFinal)) !== null) {
+        const textForSearch = textAfterRepair.trim();
+        while ((matchResult = implyingPattern.exec(textForSearch)) !== null) {
           lastImplyingIndex = matchResult.index;
         }
         
         if (lastImplyingIndex > 0) {
-          finalRepairedText = trimmedFinal.substring(0, lastImplyingIndex).trim();
-          danglingAction = "dropped_clause";
+          finalRepairedText = textForSearch.substring(0, lastImplyingIndex).trim();
+          // Trim trailing punctuation/whitespace
+          finalRepairedText = finalRepairedText.replace(/[,\.;:\s]+$/, "").trim();
+          danglingAction = "drop";
           
-          const droppedFrom = trimmedFinal.substring(Math.max(0, lastImplyingIndex - 20));
-          const finalPreview = finalRepairedText.length > 60 ? finalRepairedText.substring(0, 60) + "..." : finalRepairedText;
-          log(`[NUMERIC_DANGLING_DROP] idx=${idx} droppedFrom="${droppedFrom}" finalPreview="${finalPreview}"`);
+          const droppedTextPreview = textForSearch.substring(Math.max(0, lastImplyingIndex - 20));
+          const finalPreview = finalRepairedText.length > 50 ? finalRepairedText.substring(Math.max(0, finalRepairedText.length - 50)) : finalRepairedText;
+          log(`[NUMERIC_DANGLING_DROP] idx=${idx} droppedTextPreview="${droppedTextPreview}" finalPreview="${finalPreview}"`);
         }
-      }
-      
-      const tailPreview = trimmedFinal.substring(Math.max(0, trimmedFinal.length - 40));
-      log(`[NUMERIC_DANGLING_CHECK] idx=${idx} matched=true action=${danglingAction} tailPreview="${tailPreview}"`);
-    } else {
-      // No match - log that we checked
-      if (runId && reqSig) {
-        const tailPreview = trimmedFinal.substring(Math.max(0, trimmedFinal.length - 40));
-        log(`[NUMERIC_DANGLING_CHECK] idx=${idx} matched=false action=none tailPreview="${tailPreview}"`);
       }
     }
     
-    if (finalRepairedText && finalRepairedText !== trimmed) {
+    // A3.6.42: Always emit NUMERIC_DANGLING_CHECK log reflecting post-repair state
+    const tailPreview = textAfterRepair.trim().substring(Math.max(0, textAfterRepair.trim().length - 50));
+    log(`[NUMERIC_DANGLING_CHECK] idx=${idx} matched=${match ? "true" : "false"} action=${danglingAction} tailPreview="${tailPreview}"`);
+    
+    // Push final result
+    if (finalRepairedText !== trimmed) {
       repaired.push({
         ...stmt,
         text: finalRepairedText,
         __repairedNumericFragment: true,
       });
       repairCount++;
-      const originalPreview = trimmed.length > 50 ? trimmed.substring(0, 50) + "..." : trimmed;
-      const repairedPreview = finalRepairedText.length > 50 ? finalRepairedText.substring(0, 50) + "..." : finalRepairedText;
-      log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} changed=true originalPreview="${originalPreview}" repairedPreview="${repairedPreview}"`);
     } else {
-      // A3.6.12: If we couldn't repair, still mark as repaired but keep original (shouldn't happen often)
       repaired.push({
         ...stmt,
-        __repairedNumericFragment: true,
+        __repairedNumericFragment: false,
       });
-      repairCount++;
-      log(`[NUMERIC_FRAGMENT_REPAIR] idx=${repaired.length - 1} changed=false originalPreview="${trimmed.substring(0, 50)}..." (could not repair)`);
     }
   }
   
