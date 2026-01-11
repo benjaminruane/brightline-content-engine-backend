@@ -4344,6 +4344,27 @@ function selectBestClaimText(candidates) {
   return scored[0].text;
 }
 
+// A3.6.52: Protect deal-terms-derived claims (mark with __protected flag)
+function protectDealTermsDerivedClaims(claims, stmtIdx, runId = null, reqSig = null) {
+  if (!Array.isArray(claims)) {
+    return [];
+  }
+  
+  let protectedCount = 0;
+  for (const claim of claims) {
+    if (claim.__dealTermsDerived === true) {
+      claim.__protected = true;
+      protectedCount++;
+    }
+  }
+  
+  if (protectedCount > 0 && runId && reqSig) {
+    diag(runId, reqSig, `[A3.6.52][PROTECT_DERIVED] idx=${stmtIdx} protected=${protectedCount}`);
+  }
+  
+  return claims;
+}
+
 // A3.6.1: Apply facet caps to claims
 function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
   if (!Array.isArray(claims)) {
@@ -4359,10 +4380,10 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
     Other: 1,
   };
   
-  // A3.6.50: Separate deal-terms claims (keepAlways) from cap candidates
-  // Deal-terms claims are NEVER capped, regardless of facet
-  const keepAlways = claims.filter(c => c.__dealTermsDerived === true);
-  const capCandidates = claims.filter(c => !c.__dealTermsDerived);
+  // A3.6.52: Separate protected claims (keepAlways) from cap candidates
+  // Protected claims (deal-terms-derived) are NEVER capped, regardless of facet
+  const keepAlways = claims.filter(c => c.__protected === true);
+  const capCandidates = claims.filter(c => !c.__protected);
   
   // Group capCandidates by facet
   const byFacet = new Map();
@@ -4433,16 +4454,16 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
       result.push(...kept);
       
       if (dropped.length > 0 && runId && reqSig) {
-        diag(runId, reqSig, `[CLAIMS_CAP] idx=${idx} facet=${facet} kept=${kept.length} dropped=${dropped.length}`);
+        diag(runId, reqSig, `[A3.6.52][CAP] idx=${idx} facet=${facet} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} kept=${kept.length} dropped=${dropped.length}`);
       }
     }
   }
   
-  // A3.6.50: Log cap bypass for deal-terms claims
+  // A3.6.52: Log cap exemption for protected claims
   if (keepAlways.length > 0 && runId && reqSig) {
     const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
     const keptRoles = Array.from(new Set(keepAlways.map(c => c.role).filter(Boolean)));
-    log(`[A3.6.51][CAP_EXEMPT] idx=${idx} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} keptRoles=[${keptRoles.join(',')}]`);
+    log(`[A3.6.52][CAP] idx=${idx} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} protectedRoles=[${keptRoles.join(',')}]`);
   }
   
   return result;
@@ -6447,6 +6468,9 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
   }
   
+  // A3.6.52: Protect deal-terms-derived claims BEFORE caps/non-canonical filtering
+  const protectedClaims = protectDealTermsDerivedClaims(aggregatedClaims, idx, runId, reqSig);
+  
   // A3.6.9: Check for missing anchors and log dedupe stats
   const emittedAnchors = new Set(aggregatedClaims.map(c => {
     const anchor = extractAnchor(c.claimText);
@@ -6498,8 +6522,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
   }
   
-  // A3.6.1: Apply facet caps
-  const cappedClaims = applyFacetCaps(aggregatedClaims, runId, reqSig, idx);
+  // A3.6.1: Apply facet caps (protected claims will bypass)
+  const cappedClaims = applyFacetCaps(protectedClaims, runId, reqSig, idx);
   
   // Get existing citations if available
   const citations = Array.isArray(assessment?.citations) ? assessment.citations : [];
@@ -6529,19 +6553,19 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=enter_claim claimIdx=${claimIdx} anchor=qual_valuation`);
     }
     
-    // A3.6.51: Hard guard - skip non-canonical anchors (including null from qual_ownership)
-    // BUT: Never drop DealTerms-derived claims (early return to prevent any drop logic)
+    // A3.6.52: Hard guard - skip non-canonical anchors (including null from qual_ownership)
+    // BUT: Never drop protected claims (deal-terms-derived)
     if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
-      // A3.6.51: Bypass non-canonical check for DealTerms claims (early return)
-      if (aggClaim.__dealTermsDerived === true) {
-        // DealTerms claim - allow through even if anchor is non-canonical
+      // A3.6.52: Bypass non-canonical check for protected claims
+      if (aggClaim.__protected === true) {
+        // Protected claim - allow through even if anchor is non-canonical
         const dealRole = aggClaim.__dealTermsRole || "unknown";
         if (runId && reqSig) {
-          diag(runId, reqSig, `[A3.6.51][NONCANONICAL_SKIP] idx=${statementIdx} anchor=${claimAnchor} reason=deal_terms_derived role=${dealRole}`);
+          diag(runId, reqSig, `[A3.6.52][NONCANONICAL_SKIP] idx=${statementIdx} anchor=${claimAnchor} reason=protected_deal_terms role=${dealRole}`);
         }
         // Continue to process this claim (don't skip)
       } else {
-        // Non-DealTerms claim - apply normal non-canonical guard
+        // Non-protected claim - apply normal non-canonical guard
         if (runId && reqSig && statementIdx < 2) {
           diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${statementIdx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
         }
@@ -6883,13 +6907,13 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       const keptCount = finalClaims.filter(c => c.__dealTermsDerived === true).length;
       const keptRoles = Array.from(new Set(finalClaims.filter(c => c.__dealTermsDerived === true).map(c => c.role).filter(Boolean)));
       const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-      log(`[A3.6.51][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} ran=true missingRoles=[${missingRoles.join(',')}] kept=${keptCount} roles=[${keptRoles.join(',')}]`);
+      log(`[A3.6.52][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} ran=true missingRoles=[${missingRoles.join(',')}] kept=${keptCount} roles=[${keptRoles.join(',')}]`);
     } else if (isCanonicalStatement && runId && reqSig) {
       // Log even when all expected claims are present (no force-back needed)
       const keptCount = finalClaims.filter(c => c.__dealTermsDerived === true).length;
       const keptRoles = Array.from(new Set(finalClaims.filter(c => c.__dealTermsDerived === true).map(c => c.role).filter(Boolean)));
       const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-      log(`[A3.6.51][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} ran=false missingRoles=[] kept=${keptCount} roles=[${keptRoles.join(',')}]`);
+      log(`[A3.6.52][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} ran=false missingRoles=[] kept=${keptCount} roles=[${keptRoles.join(',')}]`);
     }
   }
   
