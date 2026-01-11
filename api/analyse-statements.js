@@ -5243,7 +5243,7 @@ const CANON_KIND_ALLOW = {
     anchors: new Set(["usd_invest"])
   },
   ownership: {
-    roles: new Set(["ownership_pct", "ownership_upside"]),
+    roles: new Set(["ownership_pct", "ownership_upside", "ownership_upside_pct"]), // A3.6.70: Add ownership_upside_pct
     anchors: new Set(["pct_own", "pct_own_upside_31", "pct_20", "pct_31"])
   }
 };
@@ -7151,7 +7151,23 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
     
     if (dealTerms.ownershipPct) {
-      const claimText = `targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
+      // A3.6.70: Generate ownership claimText using modality
+      const modality = dealTerms.ownershipModality;
+      let claimText = "";
+      
+      if (modality === "expected") {
+        claimText = `expected ${dealTerms.ownershipPct.raw} fully diluted ownership`;
+      } else if (modality === "plan") {
+        claimText = `plan to own ${dealTerms.ownershipPct.raw} on a fully diluted basis`;
+      } else if (modality === "targeted") {
+        claimText = `targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
+      } else if (modality === "actual") {
+        claimText = `${dealTerms.ownershipPct.raw} fully diluted ownership`;
+      } else {
+        // Fallback: no modality detected
+        claimText = `${dealTerms.ownershipPct.raw} fully diluted ownership`;
+      }
+      
       dealTermsClaims.push({
         claimText,
         facet: "Ownership",
@@ -7161,18 +7177,63 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         __dealTermsRole: "ownershipPct"
       });
       
-      // A3.6.49: Check for ownership upside (potential to increase)
-      if (dealTerms.sourceText) {
+      // A3.6.70: Log ownership claim text generation
+      if (runId && reqSig) {
+        const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+        log(`[A3.6.70][OWN_CLAIM_TEXT] idx=${idx} modality=${modality || "null"} pct=${dealTerms.ownershipPct.pct} claimText="${claimText}"`);
+      }
+      
+      // A3.6.70: Add explicit upside ownership claim when ownershipUpsidePct exists
+      if (dealTerms.ownershipUpsidePct) {
+        let upsideClaimText = `potential to increase to ${dealTerms.ownershipUpsidePct}% ownership`;
+        
+        // Add mechanism if available
+        if (dealTerms.ownershipUpsideMechanism) {
+          upsideClaimText += ` ${dealTerms.ownershipUpsideMechanism}`;
+        } else {
+          // Default mechanism if not specified
+          upsideClaimText += ` via secondary purchases`;
+        }
+        
+        dealTermsClaims.push({
+          claimText: upsideClaimText,
+          facet: "Ownership",
+          anchor: `pct_own_upside_${dealTerms.ownershipUpsidePct}`,
+          role: "ownership_upside_pct", // A3.6.70: New role for explicit upside claim
+          __dealTermsDerived: true,
+          __dealTermsRole: "ownershipUpsidePct"
+        });
+        
+        // A3.6.70: Log upside claim generation
+        if (runId && reqSig) {
+          const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+          // Reliability will be computed later in corpusSearch phase
+          log(`[A3.6.70][OWN_UPSIDE_CLAIM] idx=${idx} pct=${dealTerms.ownershipUpsidePct} mechanism="${dealTerms.ownershipUpsideMechanism || "null"}" claimText="${upsideClaimText}"`);
+        }
+      } else if (dealTerms.ownershipUpside && dealTerms.ownershipUpside.pct) {
+        // A3.6.49: Fallback to ownershipUpside if ownershipUpsidePct not set
+        const upsideText = `potential to increase to ${dealTerms.ownershipUpside.raw} ownership`;
+        const mechanism = dealTerms.ownershipUpsideMechanism || "via secondary purchases";
+        dealTermsClaims.push({
+          claimText: `${upsideText} ${mechanism}`,
+          facet: "Ownership",
+          anchor: `pct_own_upside_${dealTerms.ownershipUpside.pct}`,
+          role: "ownership_upside_pct",
+          __dealTermsDerived: true,
+          __dealTermsRole: "ownershipUpside"
+        });
+      } else if (dealTerms.sourceText) {
+        // A3.6.49: Legacy check for ownership upside (potential to increase)
         const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%/i;
         const potentialMatch = dealTerms.sourceText.match(potentialPattern);
         if (potentialMatch) {
           const increasePct = potentialMatch[1];
-          const upsideText = `potential to increase to ${increasePct}% through secondary purchases`;
+          const upsideText = `potential to increase to ${increasePct}% ownership via secondary purchases`;
           dealTermsClaims.push({
             claimText: upsideText,
             facet: "Ownership",
             anchor: `pct_own_upside_${increasePct}`,
-            role: "ownership_upside",
+            role: "ownership_upside_pct",
             __dealTermsDerived: true,
             __dealTermsRole: "ownershipUpside"
           });
@@ -7980,6 +8041,14 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // Add citations if available
     if (citations.length > 0) {
       claim.citations = citations;
+    }
+    
+    // A3.6.70: Log upside claim reliability after it's computed
+    if (aggClaim.role === "ownership_upside_pct" && runId && reqSig) {
+      const dealTerms = assessment?.__dealTerms || null;
+      const upsidePct = dealTerms?.ownershipUpsidePct || null;
+      const mechanism = dealTerms?.ownershipUpsideMechanism || null;
+      diag(runId, reqSig, `[A3.6.70][OWN_UPSIDE_CLAIM] idx=${idx} pct=${upsidePct || "null"} mechanism="${mechanism || "null"}" reliability=${reliability}`);
     }
     
     finalClaims.push(claim);
@@ -8825,8 +8894,13 @@ function generateClaimLinkedReasons(claims, statement = null) {
       if (dealTerms.investment) requiredFamilies.add("deal:investment");
     } else if (canonicalKind === "ownership") {
       if (dealTerms.ownershipPct) requiredFamilies.add("deal:ownershipPct");
-      // Check for ownership upside in sourceText
-      if (dealTerms.sourceText) {
+      // A3.6.70: Check for ownership upside using ownershipUpsidePct
+      if (dealTerms.ownershipUpsidePct) {
+        requiredFamilies.add("deal:ownershipUpsidePct");
+      } else if (dealTerms.ownershipUpside && dealTerms.ownershipUpside.pct) {
+        requiredFamilies.add("deal:ownershipUpside");
+      } else if (dealTerms.sourceText) {
+        // Fallback: Check for ownership upside in sourceText
         const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%/i;
         if (potentialPattern.test(dealTerms.sourceText)) {
           requiredFamilies.add("deal:ownershipUpside");
