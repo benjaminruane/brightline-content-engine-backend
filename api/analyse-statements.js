@@ -1849,17 +1849,171 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
   return workingStatements;
 }
 
-// A3.6.12: Shared helper for dangling-currency repair (used by both early and final passes)
+// A3.6.60: Single-statement helper for dangling-currency repair
+// Returns { newText, action } where action is "none" | "complete" | "drop" | "drop_statement"
+function repairDanglingCurrencySingle(statementText, draftText) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return { newText: statementText, action: "none" };
+  }
+  if (typeof draftText !== "string" || !draftText.trim()) {
+    return { newText: statementText, action: "none" };
+  }
+  
+  const textFinal = statementText.trim();
+  
+  // A3.6.60: Build tailForMatch (remove trailing punctuation/whitespace)
+  const tailForMatch = textFinal.replace(/[,\.;:\s]+$/g, "");
+  
+  // A3.6.60: Strengthened dangling detection per spec
+  // Match when connector word appears: ["implying", "at", "of", "for", "valu", "valuation"]
+  // AND followed by: "$", "$<digits>", "$<digits>.", "$<digits>,", "$<digits> m", "$<digits> mi", "$<digits> mil"
+  const connectorWords = ["implying", "implies", "implied", "at", "of", "for", "valu", "valuation"];
+  const connectorPattern = new RegExp(`\\b(${connectorWords.join("|")})\\b`, "i");
+  
+  // Check if statement ends with connector + dangling currency
+  const danglingPatterns = [
+    /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$\s*$/i, // Just "$"
+    /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$(\d+(?:\.\d+)?)\s*$/i, // "$18"
+    /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$(\d+(?:\.\d+)?)\s*[.,]\s*$/i, // "$18." or "$18,"
+    /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$(\d+(?:\.\d+)?)\s+m\s*$/i, // "$18 m"
+    /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$(\d+(?:\.\d+)?)\s+mi\s*$/i, // "$18 mi"
+    /(\bimplying\b|\bimplies\b|\bimplied\b|\bat\b|\bof\b|\bfor\b|\bvalu\w*)\s*(an?\s+)?\$(\d+(?:\.\d+)?)\s+mil\s*$/i, // "$18 mil"
+  ];
+  
+  let match = null;
+  for (const pattern of danglingPatterns) {
+    const patternMatch = tailForMatch.match(pattern);
+    if (patternMatch) {
+      match = patternMatch;
+      break;
+    }
+  }
+  
+  if (!match) {
+    return { newText: textFinal, action: "none" };
+  }
+  
+  const nStr = match[3] || ""; // The number part if present
+  const connector = match[1]; // The connector word
+  
+  // A3.6.60: Attempt deterministic completion using draftText
+  let completionFound = false;
+  let completionText = null;
+  let completionSource = null;
+  
+  // Find best position in draftText
+  let searchStartIndex = draftText.indexOf(textFinal);
+  let statementEndOffset = textFinal.length;
+  
+  if (searchStartIndex < 0) {
+    const prefix = textFinal.substring(0, Math.min(80, textFinal.length));
+    searchStartIndex = draftText.indexOf(prefix);
+    statementEndOffset = prefix.length;
+  }
+  
+  if (searchStartIndex >= 0 && nStr) {
+    // Search forward for: $<n> million | $<n>m | $<n>mm
+    const afterStatement = draftText.substring(searchStartIndex + statementEndOffset);
+    const completionPatterns = [
+      new RegExp(`\\$${nStr.replace(".", "\\.")}\\s+million`, "i"),
+      new RegExp(`\\$${nStr.replace(".", "\\.")}\\s*mm`, "i"),
+      new RegExp(`\\$${nStr.replace(".", "\\.")}\\s*m\\b`, "i")
+    ];
+    
+    for (const pattern of completionPatterns) {
+      const completionMatch = afterStatement.match(pattern);
+      if (completionMatch) {
+        completionText = completionMatch[0];
+        completionSource = "next_sentence";
+        completionFound = true;
+        break;
+      }
+    }
+  }
+  
+  // A3.6.60: If not found, search a ±200 char window around best-known position
+  if (!completionFound && searchStartIndex >= 0 && nStr) {
+    const searchStart = Math.max(0, searchStartIndex - 200);
+    const searchEnd = Math.min(draftText.length, searchStartIndex + statementEndOffset + 200);
+    const searchWindow = draftText.substring(searchStart, searchEnd);
+    
+    const amountPattern = new RegExp(`\\$${nStr.replace(".", "\\.")}\\s+(million|mm|m\\b)`, "i");
+    const contextMatch = searchWindow.match(amountPattern);
+    if (contextMatch) {
+      completionText = contextMatch[0];
+      completionSource = "fallback";
+      completionFound = true;
+    }
+  }
+  
+  if (completionFound && completionText) {
+    // A3.6.60: Replace from the LAST occurrence of connector to end with the matched completion phrase
+    const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
+    let lastConnectorIndex = -1;
+    let matchResult;
+    while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
+      lastConnectorIndex = matchResult.index;
+    }
+    
+    if (lastConnectorIndex >= 0) {
+      const beforeConnector = textFinal.substring(0, lastConnectorIndex).trim();
+      const fixedText = (beforeConnector + " " + completionText).trim().replace(/[,\.;:\s]+$/, "").trim();
+      return { newText: fixedText, action: "complete" };
+    }
+  }
+  
+  // A3.6.60: DROP clause - remove from last connector to end
+  // Rules: If dropping would leave < 25 chars OR removes the only numeric content, drop the whole statement
+  const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
+  let lastConnectorIndex = -1;
+  let matchResult;
+  while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
+    lastConnectorIndex = matchResult.index;
+  }
+  
+  if (lastConnectorIndex > 0) {
+    const beforeConnector = textFinal.substring(0, lastConnectorIndex).trim();
+    const afterConnector = textFinal.substring(lastConnectorIndex);
+    
+    // Check if dropping would leave < 25 chars
+    if (beforeConnector.length < 25) {
+      return { newText: textFinal, action: "drop_statement" };
+    }
+    
+    // Check if we're removing the only numeric content
+    const hasNumericBefore = /\d/.test(beforeConnector);
+    const hasNumericAfter = /\d/.test(afterConnector);
+    
+    if (!hasNumericBefore && hasNumericAfter) {
+      // Dropping would remove the only numeric content - drop whole statement
+      return { newText: textFinal, action: "drop_statement" };
+    }
+    
+    // Safe to drop fragment
+    const fixedText = beforeConnector.replace(/[,\.;:\s]+$/, "").trim();
+    return { newText: fixedText, action: "drop" };
+  }
+  
+  return { newText: textFinal, action: "none" };
+}
+
+// A3.6.60: Shared helper for dangling-currency repair (used by both early and final passes)
 function repairDanglingCurrency(statements, draftText, runId = null, reqSig = null, phaseName = "early") {
   if (!Array.isArray(statements) || statements.length === 0) return statements;
   if (typeof draftText !== "string" || !draftText.trim()) return statements;
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   let repairCount = 0;
+  let droppedCount = 0;
   
   for (let i = 0; i < statements.length; i++) {
     const stmt = statements[i];
     if (!stmt || typeof stmt !== "object") {
+      continue;
+    }
+    
+    // A3.6.60: Final phase should only operate on statements WITHOUT __earlyDanglingCurrencyRepaired
+    if (phaseName === "final" && stmt.__earlyDanglingCurrencyRepaired === true) {
       continue;
     }
     
@@ -1868,184 +2022,58 @@ function repairDanglingCurrency(statements, draftText, runId = null, reqSig = nu
       continue;
     }
     
-    // A3.6.12: Build tailForMatch (remove trailing punctuation/whitespace)
-    const tailForMatch = textFinal.replace(/[,\.;:\s]+$/g, "");
+    // A3.6.60: Use single-statement helper
+    const result = repairDanglingCurrencySingle(textFinal, draftText);
     
-    // A3.6.12: Strengthened dangling detection - catch more truncation cases
-    // Patterns: "implying an $", "implying an $18", "implying an $18.", "$18,", "$18 m" (incomplete unit)
-    // Also check for connectors: "implying", "at", "of", "for", "valu"
-    const danglingPatterns = [
-      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i, // Original pattern
-      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$\s*$/i, // Just "$"
-      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$(\d+(?:\.\d+)?)\s*[.,]\s*$/i, // "$18." or "$18,"
-      /(\bimplying\b|\bimplies\b|\bimplied\b)\s*(an\s*)?\$(\d+(?:\.\d+)?)\s+m\s*$/i, // "$18 m" (incomplete)
-      /(\bat\b|\bof\b|\bfor\b)\s*(a\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i, // "at $18", "of $18", "for $18"
-      /(\bvalu\w*)\s*(a\s*)?\$?\s*(\d+(?:\.\d+)?)\s*$/i, // "valuing $18"
-    ];
-    
-    let match = null;
-    let matchedPattern = null;
-    for (const pattern of danglingPatterns) {
-      const patternMatch = tailForMatch.match(pattern);
-      if (patternMatch) {
-        match = patternMatch;
-        matchedPattern = pattern;
-        break;
-      }
+    if (result.action === "none") {
+      continue;
     }
     
-    let fixedText = textFinal;
-    let danglingAction = "none";
-    
-    if (match) {
-      const nStr = match[3] || match[2] || ""; // The number part if present
-      const connector = match[1]; // The connector word
-      
-      // A3.6.12: Attempt deterministic completion using draftText
-      let completionFound = false;
-      let completionText = null;
-      let completionSource = null;
-      
-      // Find best position in draftText
-      let searchStartIndex = draftText.indexOf(textFinal);
-      let statementEndOffset = textFinal.length;
-      
-      if (searchStartIndex < 0) {
-        const prefix = textFinal.substring(0, Math.min(80, textFinal.length));
-        searchStartIndex = draftText.indexOf(prefix);
-        statementEndOffset = prefix.length;
+    if (result.action === "drop_statement") {
+      // A3.6.60: Mark for removal and set __dropEarly flag
+      statements[i].__dropEarly = true;
+      statements[i] = null;
+      droppedCount++;
+      repairCount++;
+      if (phaseName === "early" && runId && reqSig) {
+        log(`[EARLY_DANGLING_DROP_STMT] idx=${i} text="${textFinal.substring(0, 60)}"`);
       }
-      
-      if (searchStartIndex >= 0 && nStr) {
-        // Search forward for: $<n> million | $<n>m | $<n>mm
-        const afterStatement = draftText.substring(searchStartIndex + statementEndOffset);
-        const completionPatterns = [
-          new RegExp(`\\$${nStr.replace(".", "\\.")}\\s+million`, "i"),
-          new RegExp(`\\$${nStr.replace(".", "\\.")}\\s*mm`, "i"),
-          new RegExp(`\\$${nStr.replace(".", "\\.")}\\s*m\\b`, "i")
-        ];
-        
-        for (const pattern of completionPatterns) {
-          const completionMatch = afterStatement.match(pattern);
-          if (completionMatch) {
-            completionText = completionMatch[0];
-            completionSource = "next_sentence";
-            completionFound = true;
-            break;
-          }
-        }
-      }
-      
-      // A3.6.12: If not found, search a ±200 char window around best-known position
-      if (!completionFound && searchStartIndex >= 0 && nStr) {
-        const searchStart = Math.max(0, searchStartIndex - 200);
-        const searchEnd = Math.min(draftText.length, searchStartIndex + statementEndOffset + 200);
-        const searchWindow = draftText.substring(searchStart, searchEnd);
-        
-        const amountPattern = new RegExp(`\\$${nStr.replace(".", "\\.")}\\s+(million|mm|m\\b)`, "i");
-        const contextMatch = searchWindow.match(amountPattern);
-        if (contextMatch) {
-          completionText = contextMatch[0];
-          completionSource = "fallback";
-          completionFound = true;
-        }
-      }
-      
-      if (completionFound && completionText) {
-        // A3.6.12: Replace from the LAST occurrence of connector to end with the matched completion phrase
-        const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
-        let lastConnectorIndex = -1;
-        let matchResult;
-        while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
-          lastConnectorIndex = matchResult.index;
-        }
-        
-        if (lastConnectorIndex >= 0) {
-          const beforeConnector = textFinal.substring(0, lastConnectorIndex).trim();
-          fixedText = beforeConnector + " " + completionText;
-          fixedText = fixedText.trim().replace(/[,\.;:\s]+$/, "").trim();
-          danglingAction = "complete";
-          repairCount++;
-          
-          if (phaseName === "early" && runId && reqSig) {
-            const beforePreview = textFinal.substring(Math.max(0, textFinal.length - 50));
-            const afterPreview = fixedText.substring(Math.max(0, fixedText.length - 50));
-            log(`[EARLY_DANGLING_COMPLETE] idx=${i} source=${completionSource} beforePreview="${beforePreview}" afterPreview="${afterPreview}" completion="${completionText}"`);
-          }
-        }
-      } else {
-        // A3.6.12: DROP clause - remove from last connector to end
-        // Rules: If dropping would leave < 25 chars OR removes the only numeric content, drop the whole statement
-        const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
-        let lastConnectorIndex = -1;
-        let matchResult;
-        while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
-          lastConnectorIndex = matchResult.index;
-        }
-        
-        if (lastConnectorIndex > 0) {
-          const beforeConnector = textFinal.substring(0, lastConnectorIndex).trim();
-          const afterConnector = textFinal.substring(lastConnectorIndex);
-          
-          // Check if dropping would leave < 25 chars
-          if (beforeConnector.length < 25) {
-            // Drop the whole statement
-            statements[i] = null; // Mark for removal
-            danglingAction = "drop_statement";
-            repairCount++;
-            if (phaseName === "early" && runId && reqSig) {
-              log(`[EARLY_DANGLING_DROP_STMT] idx=${i} reason=too_short_after_drop text="${textFinal.substring(0, 60)}"`);
-            }
-          } else {
-            // Check if we're removing the only numeric content
-            const hasNumericBefore = /\d/.test(beforeConnector);
-            const hasNumericAfter = /\d/.test(afterConnector);
-            
-            if (!hasNumericBefore && hasNumericAfter) {
-              // Dropping would remove the only numeric content - drop whole statement
-              statements[i] = null;
-              danglingAction = "drop_statement";
-              repairCount++;
-              if (phaseName === "early" && runId && reqSig) {
-                log(`[EARLY_DANGLING_DROP_STMT] idx=${i} reason=removes_only_numeric text="${textFinal.substring(0, 60)}"`);
-              }
-            } else {
-              // Safe to drop fragment
-              fixedText = beforeConnector;
-              fixedText = fixedText.replace(/[,\.;:\s]+$/, "").trim();
-              danglingAction = "drop";
-              repairCount++;
-              
-              if (phaseName === "early" && runId && reqSig) {
-                const droppedText = afterConnector;
-                const finalPreview = fixedText.length > 50 ? fixedText.substring(Math.max(0, fixedText.length - 50)) : fixedText;
-                log(`[EARLY_DANGLING_DROP] idx=${i} droppedText="${droppedText.substring(0, 40)}" finalPreview="${finalPreview}"`);
-              }
-            }
-          }
-        }
-      }
+      continue;
     }
     
-    // A3.6.12: Write back if action occurred (and statement wasn't dropped)
-    if (danglingAction === "complete" || (danglingAction === "drop" && statements[i] !== null)) {
-      statements[i].text = fixedText;
-      if (phaseName === "early") {
-        statements[i].__repairedDanglingCurrencyEarly = true;
-        statements[i].__danglingCurrencyEarlyAction = danglingAction;
-      } else {
-        statements[i].__repairedDanglingCurrencyFinal = true;
-        statements[i].__danglingCurrencyFinalAction = danglingAction;
+    // Write back the fixed text
+    statements[i].text = result.newText;
+    if (phaseName === "early") {
+      statements[i].__earlyDanglingCurrencyRepaired = true;
+      statements[i].__earlyDanglingCurrencyAction = result.action;
+    } else {
+      statements[i].__repairedDanglingCurrencyFinal = true;
+      statements[i].__danglingCurrencyFinalAction = result.action;
+    }
+    repairCount++;
+    
+    if (phaseName === "early" && runId && reqSig) {
+      if (result.action === "complete") {
+        const beforePreview = textFinal.substring(Math.max(0, textFinal.length - 50));
+        const afterPreview = result.newText.substring(Math.max(0, result.newText.length - 50));
+        log(`[EARLY_DANGLING_COMPLETE] idx=${i} beforePreview="${beforePreview}" afterPreview="${afterPreview}"`);
+      } else if (result.action === "drop") {
+        const droppedText = textFinal.substring(textFinal.indexOf(result.newText) + result.newText.length);
+        const finalPreview = result.newText.length > 50 ? result.newText.substring(Math.max(0, result.newText.length - 50)) : result.newText;
+        log(`[EARLY_DANGLING_DROP] idx=${i} droppedText="${droppedText.substring(0, 40)}" finalPreview="${finalPreview}"`);
       }
     }
   }
   
-  // A3.6.12: Remove dropped statements (marked as null)
+  // A3.6.60: Remove dropped statements (marked as null)
   const filteredStatements = statements.filter(stmt => stmt !== null);
-  const droppedCount = statements.length - filteredStatements.length;
+  const actualDroppedCount = statements.length - filteredStatements.length;
   
-  if (repairCount > 0 && phaseName === "early" && runId && reqSig) {
-    log(`[EARLY_DANGLING_REPAIR] phase=${phaseName} repaired=${repairCount} dropped=${droppedCount}`);
+  // A3.6.60: Diagnostic logging
+  if (phaseName === "early" && runId && reqSig) {
+    log(`[A3.6.60][DANGLING_EARLY] repaired=${repairCount} dropped=${actualDroppedCount}`);
+  } else if (phaseName === "final" && runId && reqSig) {
+    log(`[A3.6.60][DANGLING_FINAL] repaired=${repairCount}`);
   }
   
   return filteredStatements;
@@ -2415,6 +2443,37 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     ownershipText = `a targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
   }
   
+  // A3.6.60: Find original deal-terms statement that matches sourceText to capture draftPosition
+  let originalDraftPosition = null;
+  let replacedStatementIdx = null;
+  
+  if (sourceText) {
+    // Try to find statement that overlaps significantly with sourceText
+    const sourceTextLower = sourceText.toLowerCase();
+    const sourceTokens = sourceTextLower.split(/\s+/).filter(t => t.length > 2);
+    const sourceTokensSet = new Set(sourceTokens);
+    
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
+      if (!stmt || typeof stmt !== "object") continue;
+      if (stmt.__dealTermsCanonical === true) continue; // Skip already canonical
+      
+      const stmtText = (stmt.text || "").toLowerCase();
+      const stmtTokens = stmtText.split(/\s+/).filter(t => t.length > 2);
+      const matchingTokens = stmtTokens.filter(token => sourceTokensSet.has(token));
+      const overlapRatio = stmtTokens.length > 0 ? matchingTokens.length / stmtTokens.length : 0;
+      
+      // Check if statement contains deal-terms signals
+      const hasDealTermsSignals = /\bpre[- ]?money\b|\benterprise\s+value\b|\binvestment\b|\bownership\b/i.test(stmtText);
+      
+      if (hasDealTermsSignals && overlapRatio >= 0.5) {
+        originalDraftPosition = stmt.__draftPosition;
+        replacedStatementIdx = i;
+        break;
+      }
+    }
+  }
+  
   // A3.6.49: Identify corrupted deal-terms statements to suppress
   const evNumberStr = dealTerms.enterpriseValue.amount.toString();
   const evVariants = [
@@ -2454,25 +2513,28 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   let droppedCount = 0;
   let insertOffset = 0;
   
+  // A3.6.60: Use originalDraftPosition if found, otherwise use corrupted statement position
+  if (originalDraftPosition == null && corruptedIndices.length > 0) {
+    originalDraftPosition = statements[corruptedIndices[0]].__draftPosition;
+  }
+  
   if (corruptedIndices.length > 0) {
     // Replace FIRST corrupted statement with pricing statement
     const firstCorruptedIdx = corruptedIndices[0];
-    const originalDraftPosition = statements[firstCorruptedIdx].__draftPosition;
+    const draftPos = originalDraftPosition != null ? originalDraftPosition : statements[firstCorruptedIdx].__draftPosition;
     
     statements[firstCorruptedIdx].text = pricingText;
     statements[firstCorruptedIdx].__dealTermsCanonical = true;
     statements[firstCorruptedIdx].__dealTermsCanonicalKind = "pricing";
     statements[firstCorruptedIdx].__dealTerms = dealTerms;
-    if (originalDraftPosition != null) {
-      statements[firstCorruptedIdx].__draftPosition = originalDraftPosition;
-    }
+    statements[firstCorruptedIdx].__draftPosition = draftPos;
     
     replacedIdx = firstCorruptedIdx;
     insertOffset = 1;
     
-    // Insert investment statement immediately after pricing (if present)
+    // A3.6.60: Insert investment statement with originalDraftPosition + 0.001
     if (investText) {
-      const investDraftPosition = originalDraftPosition != null ? originalDraftPosition + 0.01 : firstCorruptedIdx + 0.01;
+      const investDraftPosition = draftPos != null ? draftPos + 0.001 : firstCorruptedIdx + 0.01;
       const investStmt = {
         text: investText,
         __dealTermsCanonical: true,
@@ -2484,9 +2546,9 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
       insertOffset++;
     }
     
-    // Insert ownership statement immediately after investment (if present)
+    // A3.6.60: Insert ownership statement with originalDraftPosition + 0.002
     if (ownershipText) {
-      const ownDraftPosition = originalDraftPosition != null ? originalDraftPosition + 0.02 : firstCorruptedIdx + 0.02;
+      const ownDraftPosition = draftPos != null ? draftPos + 0.002 : firstCorruptedIdx + 0.02;
       const ownStmt = {
         text: ownershipText,
         __dealTermsCanonical: true,
@@ -2506,9 +2568,49 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         droppedCount++;
       }
     }
+  } else if (replacedStatementIdx != null) {
+    // A3.6.60: Replace the original statement we found
+    const draftPos = originalDraftPosition != null ? originalDraftPosition : replacedStatementIdx;
+    
+    statements[replacedStatementIdx].text = pricingText;
+    statements[replacedStatementIdx].__dealTermsCanonical = true;
+    statements[replacedStatementIdx].__dealTermsCanonicalKind = "pricing";
+    statements[replacedStatementIdx].__dealTerms = dealTerms;
+    statements[replacedStatementIdx].__draftPosition = draftPos;
+    
+    replacedIdx = replacedStatementIdx;
+    insertOffset = 1;
+    
+    // Insert investment statement
+    if (investText) {
+      const investDraftPosition = draftPos != null ? draftPos + 0.001 : replacedStatementIdx + 0.01;
+      const investStmt = {
+        text: investText,
+        __dealTermsCanonical: true,
+        __dealTermsCanonicalKind: "investment",
+        __dealTerms: dealTerms,
+        __draftPosition: investDraftPosition
+      };
+      statements.splice(replacedStatementIdx + insertOffset, 0, investStmt);
+      insertOffset++;
+    }
+    
+    // Insert ownership statement
+    if (ownershipText) {
+      const ownDraftPosition = draftPos != null ? draftPos + 0.002 : replacedStatementIdx + 0.02;
+      const ownStmt = {
+        text: ownershipText,
+        __dealTermsCanonical: true,
+        __dealTermsCanonicalKind: "ownership",
+        __dealTerms: dealTerms,
+        __draftPosition: ownDraftPosition
+      };
+      statements.splice(replacedStatementIdx + insertOffset, 0, ownStmt);
+      insertOffset++;
+    }
   } else {
-    // No corrupted statements - insert new ones
-    // Derive draftPosition from sourceSpan if available
+    // No corrupted statements or original found - insert new ones
+    // A3.6.60: Derive draftPosition from sourceSpan or use fallback
     let draftPosition = statements.length > 0 ? statements.length - 0.5 : 0.5;
     if (dealTerms.sourceSpan) {
       // Try to find a reasonable position based on sourceSpan
@@ -2532,7 +2634,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "investment",
         __dealTerms: dealTerms,
-        __draftPosition: draftPosition + 0.01
+        __draftPosition: draftPosition + 0.001
       };
       statements.push(investStmt);
     }
@@ -2544,7 +2646,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "ownership",
         __dealTerms: dealTerms,
-        __draftPosition: draftPosition + 0.02
+        __draftPosition: draftPosition + 0.002
       };
       statements.push(ownStmt);
     }
@@ -2650,7 +2752,7 @@ function dropRedundantCombinedDealTerms(statements, dealTerms, runId = null, req
   
   if (dropped.length > 0 && runId && reqSig) {
     const droppedPreviews = dropped.map(d => `idx=${d.index} overlap=${d.overlapRatio} signals=${d.signalCount} preview="${d.text.substring(0, 60)}"`).join("; ");
-    log(`[A3.6.12][DEAL_DEDUP] dropped=${dropped.length} ${droppedPreviews}`);
+    log(`[A3.6.60][DEAL_DEDUP] dropped=${dropped.length} ${droppedPreviews}`);
   }
   
   return { statements: kept, droppedCount: dropped.length };
@@ -11108,23 +11210,36 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   if (recombinedCount > 0) reasons.push(`recombined_fragments=${recombinedCount}`);
   if (fragmentDropped > 0) reasons.push(`fragment_dropped=${fragmentDropped}`);
   if (fragmentMerged > 0) reasons.push(`fragment_merged=${fragmentMerged}`);
-  // A3.6.12: Log dealDedupDropped but do NOT include in quality degradation
-  if (dealDedupDropped > 0) reasons.push(`deal_dedup_dropped=${dealDedupDropped}`);
+  // A3.6.60: Log dealDedupDropped but do NOT include in quality degradation
+  if (dealDedupDropped > 0) reasons.push(`deal_terms_dedup=${dealDedupDropped}`);
   
-  // A3.6.12: Quality must degrade if incomplete_numeric_fragment was NOT repaired
+  // A3.6.60: Quality must degrade if incomplete_numeric_fragment was NOT repaired
   // Repaired fragments are excluded from quality degradation
-  // A3.6.12: Deal dedup drops are NOT counted as degraded (they're intentional deduplication)
+  // A3.6.60: Deal dedup drops are NOT counted as degraded (they're intentional deduplication)
+  // A3.6.60: If statements dropped ONLY due to deal-term dedup, do NOT mark as degraded
   let quality = "ok";
+  const hasOnlyDealDedup = dealDedupDropped > 0 && 
+    rejectedCount === 0 && 
+    fallbackCount === 0 && 
+    unrepairedIncompleteCount === 0 && 
+    recombinedCount === 0 && 
+    fragmentDropped === 0 && 
+    fragmentMerged === 0 &&
+    !hasTruncation && 
+    !hasUnbalancedParens && 
+    !hasIncompleteNumeric;
+  
   if (hasTruncation || hasUnbalancedParens || hasIncompleteNumeric) {
     quality = "failed";
-  } else if (rejectedCount > 0 || fallbackCount > 0 || unrepairedIncompleteCount > 0 || recombinedCount > 0) {
+  } else if (!hasOnlyDealDedup && (rejectedCount > 0 || fallbackCount > 0 || unrepairedIncompleteCount > 0 || recombinedCount > 0)) {
     quality = "degraded";
   }
-  // Note: dealDedupDropped is logged but does NOT cause quality degradation
+  // Note: dealDedupDropped is logged but does NOT cause quality degradation if it's the only issue
   
   console.log(`[DIAG][QUALITY] extractionQuality=${quality} reasons=${JSON.stringify(reasons)}`);
   
-  return quality;
+  // A3.6.60: Return both quality and reasons
+  return { quality, reasons };
 }
 
 // Fix anchor-fact reasons: detect and correct false "not mentioned" claims
