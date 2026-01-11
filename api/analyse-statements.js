@@ -7463,6 +7463,102 @@ function computeStatementReliabilityFromClaims(claims, existingScore, existingLa
 // - Strip all prefixes/facets/tags
 // Each bullet < 120 chars, no facet tags, no "[Other]" prefix, includes citations from claims
 // Prefer including the anchor-bearing substring rather than long claimText
+// A3.6.55: Rank claims for reasons selection (not for scoring)
+function rankClaimForReasons(claim, stmt) {
+  // Returns a sortable tuple (lower is better): [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3]
+  
+  // Priority bucket A: Protected canonical deal-term claims
+  const isProtectedCanonical = claim.__protected === true && 
+                                (claim.__dealTermsDerived === true || claim.__dealTermsRole);
+  if (isProtectedCanonical) {
+    const priorityBucket = 0; // Highest priority
+    
+    // Evidence score: prefer keyword/fuzzy > number > entity
+    let evidenceScore = 3; // Default (lowest)
+    // Note: We don't have direct access to matchTypes here, so we'll use reliability as proxy
+    // High reliability often correlates with keyword/fuzzy matches
+    if (claim.reliability === "High") {
+      evidenceScore = 0; // Best evidence
+    } else if (claim.reliability === "Medium") {
+      evidenceScore = 1; // Medium evidence
+    } else {
+      evidenceScore = 2; // Lower evidence
+    }
+    
+    // Tie-breakers
+    const hasFacet = claim.facet ? 0 : 1;
+    const hasRole = claim.role ? 0 : 1;
+    const claimTextLen = Math.min((claim.claimText || "").length, 90);
+    const tieBreaker1 = hasFacet + hasRole; // Lower is better (prefer both facet and role)
+    const tieBreaker2 = 90 - claimTextLen; // Prefer longer (but capped at 90)
+    const tieBreaker3 = (claim.anchor || "").localeCompare("zzz"); // Lexicographic anchor
+    
+    return [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3];
+  }
+  
+  // Priority bucket B: Non-protected but canonical anchor claims that match deal-term anchors
+  const isCanonicalStmt = stmt?.__dealTermsCanonical === true;
+  const canonicalKind = stmt?.__dealTermsCanonicalKind || null;
+  let isCanonicalAnchor = false;
+  
+  if (isCanonicalStmt && canonicalKind && CANON_KIND_ALLOW[canonicalKind]) {
+    const allow = CANON_KIND_ALLOW[canonicalKind];
+    const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
+    const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
+    isCanonicalAnchor = canonicalAnchor && (
+      allow.anchors.has(canonicalAnchor) ||
+      Array.from(allow.anchors).some(anchor => canonicalAnchor.startsWith(anchor + "_") || anchor.startsWith(canonicalAnchor + "_"))
+    );
+  }
+  
+  if (isCanonicalAnchor) {
+    const priorityBucket = 1; // Second priority
+    
+    // Evidence score
+    let evidenceScore = 3;
+    if (claim.reliability === "High") {
+      evidenceScore = 0;
+    } else if (claim.reliability === "Medium") {
+      evidenceScore = 1;
+    } else {
+      evidenceScore = 2;
+    }
+    
+    // Tie-breakers
+    const hasFacet = claim.facet ? 0 : 1;
+    const hasRole = claim.role ? 0 : 1;
+    const claimTextLen = Math.min((claim.claimText || "").length, 90);
+    const tieBreaker1 = hasFacet + hasRole;
+    const tieBreaker2 = 90 - claimTextLen;
+    const tieBreaker3 = (claim.anchor || "").localeCompare("zzz");
+    
+    return [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3];
+  }
+  
+  // Priority bucket C: Everything else
+  const priorityBucket = 2; // Lowest priority
+  
+  // Evidence score
+  let evidenceScore = 3;
+  if (claim.reliability === "High") {
+    evidenceScore = 0;
+  } else if (claim.reliability === "Medium") {
+    evidenceScore = 1;
+  } else {
+    evidenceScore = 2;
+  }
+  
+  // Tie-breakers
+  const hasFacet = claim.facet ? 0 : 1;
+  const hasRole = claim.role ? 0 : 1;
+  const claimTextLen = Math.min((claim.claimText || "").length, 90);
+  const tieBreaker1 = hasFacet + hasRole;
+  const tieBreaker2 = 90 - claimTextLen;
+  const tieBreaker3 = (claim.anchor || "").localeCompare("zzz");
+  
+  return [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3];
+}
+
 function generateClaimLinkedReasons(claims, statement = null) {
   if (!Array.isArray(claims) || claims.length === 0) {
     return [];
@@ -7567,43 +7663,93 @@ function generateClaimLinkedReasons(claims, statement = null) {
     return text.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
   }
   
-  // A3.6.11: Group claims by canonical anchor, then select one per anchor
-  const claimsByAnchor = new Map();
-  for (const claim of claims) {
+  // A3.6.55: Rank all claims for reasons selection
+  const rankedClaims = claims.map(claim => ({
+    claim,
+    rank: rankClaimForReasons(claim, statement)
+  }));
+  
+  // Sort by rank (lower is better)
+  rankedClaims.sort((a, b) => {
+    for (let i = 0; i < Math.max(a.rank.length, b.rank.length); i++) {
+      const aVal = a.rank[i] || 0;
+      const bVal = b.rank[i] || 0;
+      if (aVal !== bVal) {
+        return aVal - bVal;
+      }
+    }
+    return 0;
+  });
+  
+  // A3.6.55: Determine max reasons (2 default, 3 if mix of High and Medium/Low)
+  const hasHigh = claims.some(c => c.reliability === "High");
+  const hasMediumOrLow = claims.some(c => c.reliability === "Medium" || c.reliability === "Low");
+  const maxReasons = (hasHigh && hasMediumOrLow) ? 3 : 2;
+  
+  // A3.6.55: Select reasons from ranked claims, deduplicating by reason key
+  const reasons = [];
+  const seenReasonKeys = new Set();
+  const chosenReasons = [];
+  let droppedReasonDuplicates = 0;
+  
+  for (const { claim } of rankedClaims) {
+    if (reasons.length >= maxReasons) break;
+    
+    // A3.6.55: Dedupe by reason key (__dealTermsRole or anchor)
+    const reasonKey = claim.__dealTermsRole || claim.anchor || extractAnchor(claim.claimText || "") || "no_key";
+    
+    if (seenReasonKeys.has(reasonKey)) {
+      droppedReasonDuplicates++;
+      continue;
+    }
+    seenReasonKeys.add(reasonKey);
+    
     const claimText = claim?.claimText || "";
     const anchor = claim?.anchor || extractAnchor(claimText);
     const canonicalAnchor = canonicalizeAnchor(anchor, claimText) || "no_anchor";
     
-    if (!claimsByAnchor.has(canonicalAnchor)) {
-      claimsByAnchor.set(canonicalAnchor, []);
-    }
-    claimsByAnchor.get(canonicalAnchor).push(claim);
-  }
-  
-  // A3.6.11: Select one claim per canonical anchor (prefer High > Medium > Low)
-  const selectedClaims = [];
-  for (const [canonicalAnchor, anchorClaims] of claimsByAnchor.entries()) {
-    // Sort by reliability (High > Medium > Low)
-    anchorClaims.sort((a, b) => {
-      const order = { High: 3, Medium: 2, Low: 1 };
-      return (order[b?.reliability] || 0) - (order[a?.reliability] || 0);
-    });
-    // Take the first (best) claim for this anchor
-    selectedClaims.push({ claim: anchorClaims[0], canonicalAnchor });
-  }
-  
-  // A3.6.11: Limit to max 2 bullets
-  const reasons = [];
-  for (const { claim, canonicalAnchor } of selectedClaims.slice(0, 2)) {
     if (seenCanonicalAnchors.has(canonicalAnchor)) continue;
     seenCanonicalAnchors.add(canonicalAnchor);
     
-    const claimText = claim?.claimText || "";
-    const anchor = claim?.anchor || extractAnchor(claimText);
-    
-    // A3.6.51: Rewrite comment for deal-terms pricing claims if needed
+    // A3.6.55: Overwrite "not explicitly confirmed" comments for protected canonical deal-term claims
     let comment = claim?.comment || "Not found in sources";
-    if (claim?.__dealTermsDerived === true && isCanonicalPricing && dealTerms) {
+    const isProtectedCanonical = claim.__protected === true && 
+                                  (claim.__dealTermsDerived === true || claim.__dealTermsRole);
+    
+    if (isProtectedCanonical && /not explicitly confirmed/i.test(comment)) {
+      // Check if sourceText contains the term/number or if we have strong evidence
+      const sourceText = dealTerms?.sourceText || "";
+      const claimRole = claim.role || claim.__dealTermsRole || null;
+      let valueInSource = false;
+      
+      if (sourceText && claimRole) {
+        // Check if value is present in sourceText using helper
+        let claimValue = null;
+        if (claimRole === "investment_amount" && dealTerms?.investment) {
+          claimValue = dealTerms.investment.amount;
+        } else if (claimRole === "pre_money_valuation" && dealTerms?.preMoney) {
+          claimValue = dealTerms.preMoney.amount;
+        } else if (claimRole === "enterprise_value" && dealTerms?.enterpriseValue) {
+          claimValue = dealTerms.enterpriseValue.amount;
+        } else if ((claimRole === "ownership_pct" || claimRole === "ownership_upside") && dealTerms?.ownershipPct) {
+          claimValue = dealTerms.ownershipPct.pct;
+        }
+        
+        if (claimValue !== null) {
+          valueInSource = checkValueInSourceText(claimValue, sourceText, dealTerms, claimRole);
+        }
+      }
+      
+      // Overwrite comment based on evidence strength
+      if (valueInSource || claim.reliability === "High") {
+        comment = "Confirmed in provided source";
+      } else {
+        comment = "Supported by provided source";
+      }
+    }
+    
+    // A3.6.51: Legacy rewrite for deal-terms pricing claims (keep for backward compatibility)
+    if (claim?.__dealTermsDerived === true && isCanonicalPricing && dealTerms && !isProtectedCanonical) {
       // Check if comment is the misleading "excerpt not confirmed" one
       if (comment === "Mentioned but not explicitly confirmed in excerpt") {
         // Check if sourceText contains the claim or pricing terms
@@ -7618,11 +7764,17 @@ function generateClaimLinkedReasons(claims, statement = null) {
         
         if (isPricingAnchor && ((hasPreMoney && hasEV) || sourceLower.includes(claimLower.substring(0, Math.min(claimLower.length, 40))))) {
           comment = "Supported by memo text";
-          // Log the rewrite
-          console.log(`[A3.6.51][EXCERPT_REASON_SUPPRESS] idx=0 anchor=${canonicalAnchor} action=rewrite_to_supported`);
         }
       }
     }
+    
+    // A3.6.55: Track chosen reason for diagnostics
+    chosenReasons.push({
+      anchor: claim.anchor || canonicalAnchor,
+      __protected: claim.__protected || false,
+      __dealTermsRole: claim.__dealTermsRole || null,
+      reliability: claim.reliability || "Unknown"
+    });
     
     const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
       ? ` [${claim.citations.join(", ")}]`
@@ -7662,10 +7814,22 @@ function generateClaimLinkedReasons(claims, statement = null) {
     reasons.push(reason);
   }
   
+  // A3.6.55: Diagnostic logging for reasons selection
+  const hasNotConfirmedWithProtected = chosenReasons.some(r => 
+    r.__protected === true && reasons.some(reason => 
+      typeof reason === "string" && /not explicitly confirmed/i.test(reason)
+    )
+  );
+  
+  if (statement && statement.__dealTermsCanonical) {
+    const log = console.log; // Could be enhanced to use diag if runId/reqSig available
+    log(`[A3.6.55][REASONS_SELECTION] kind=${statement.__dealTermsCanonicalKind || 'unknown'} chosenReasons=${JSON.stringify(chosenReasons)} droppedDuplicates=${droppedReasonDuplicates} hasNotConfirmedWithProtected=${hasNotConfirmedWithProtected ? 1 : 0}`);
+  }
+  
   // A3.6.12: Final post-pass to dedupe reasons by canonical anchor or uniquenessKey
   // This ensures no duplicate reasons differing only by trivial prefixes
   const dedupedReasons = [];
-  const seenReasonKeys = new Set();
+  const seenReasonKeysFinal = new Set();
   
   for (const reason of reasons) {
     if (typeof reason !== "string") {
