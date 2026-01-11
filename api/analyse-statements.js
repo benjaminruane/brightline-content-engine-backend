@@ -2074,78 +2074,109 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null) {
   return dealTerms;
 }
 
-// A3.6.47: Canonicalize Deal Terms statements (emit TWO statements, suppress corrupted ones)
+// A3.6.49: Canonicalize Deal Terms statements (split into 3: pricing, investment, ownership)
 function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, reqSig = null) {
   if (!dealTerms || !Array.isArray(statements)) return statements;
   if (!dealTerms.preMoney || !dealTerms.enterpriseValue) return statements; // Must have both
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
-  // A3.6.48: Build pricing statement (prefer verbatim memo clause)
-  let pricingStatement = null;
-  if (dealTerms.sourceText) {
-    const sourceLower = dealTerms.sourceText.toLowerCase();
-    const hasPreMoney = sourceLower.includes("pre-money") || sourceLower.includes("premoney");
-    const hasEV = sourceLower.includes("enterprise value") || sourceLower.includes(" ev ") || sourceLower.includes(" ev.");
+  // A3.6.49: Extract verbatim clauses from sourceText (no invented phrasing)
+  const sourceText = dealTerms.sourceText || "";
+  const sourceLower = sourceText.toLowerCase();
+  
+  // 1) Pricing statement: "a $20 million pre-money valuation, implying an $18.7 million enterprise value"
+  let pricingText = null;
+  if (sourceText) {
+    // Try to extract verbatim pricing clause
+    const preMoneyPattern = new RegExp(`a?\\s*\\$?\\s*${dealTerms.preMoney.amount.toString().replace(".", "\\.")}\\s*(?:million|mm|m)\\s*pre[- ]?money\\s*valuation`, "i");
+    const evPattern = new RegExp(`\\$?\\s*${dealTerms.enterpriseValue.amount.toString().replace(".", "\\.")}\\s*(?:million|mm|m)\\s*(?:enterprise\\s+value|ev)`, "i");
     
-    if (hasPreMoney && hasEV) {
-      // Use verbatim source text, lightly trimmed
-      pricingStatement = dealTerms.sourceText.trim();
+    const preMoneyMatch = sourceText.match(preMoneyPattern);
+    const evMatch = sourceText.match(evPattern);
+    
+    if (preMoneyMatch && evMatch) {
+      // Extract from preMoney match start to ev match end
+      const start = preMoneyMatch.index;
+      const end = evMatch.index + evMatch[0].length;
+      pricingText = sourceText.substring(start, end).trim();
       
-      // Remove trailing clause after "ownership" sentence if needed (keep <= ~180 chars)
-      if (pricingStatement.length > 180) {
-        const ownershipIdx = pricingStatement.toLowerCase().indexOf("ownership");
-        if (ownershipIdx > 0 && ownershipIdx < 180) {
-          // Truncate after ownership clause
-          const truncateAt = ownershipIdx + "ownership".length;
-          pricingStatement = pricingStatement.substring(0, truncateAt).trim();
-        } else {
-          // Just truncate at 180 chars
-          pricingStatement = pricingStatement.substring(0, 180).trim();
-        }
+      // Normalize "mm" to "million" for consistency
+      pricingText = pricingText.replace(/\bmm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
+    } else {
+      // Fall back to constructed (but avoid "thereby own")
+      pricingText = `a ${dealTerms.preMoney.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million")} pre-money valuation, implying an ${dealTerms.enterpriseValue.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million")} enterprise value`;
+    }
+  } else {
+    // Construct minimal pricing text
+    pricingText = `a ${dealTerms.preMoney.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million")} pre-money valuation, implying an ${dealTerms.enterpriseValue.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million")} enterprise value`;
+  }
+  
+  // 2) Investment statement: investment only (no ownership inference)
+  let investText = null;
+  if (dealTerms.investment && sourceText) {
+    // Try to find verbatim investment clause
+    const investPattern = new RegExp(`(?:an?\\s+)?(?:investment\\s+of\\s+)?(?:up\\s+to\\s+)?\\$?\\s*${dealTerms.investment.amount.toString().replace(".", "\\.")}\\s*(?:million|mm|m)\\s*(?:investment)?`, "i");
+    const investMatch = sourceText.match(investPattern);
+    
+    if (investMatch) {
+      // Extract verbatim investment clause
+      investText = investMatch[0].trim();
+      // Normalize "mm" to "million"
+      investText = investText.replace(/\bmm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
+      
+      // Ensure it says "investment" somewhere
+      if (!/\binvestment\b/i.test(investText)) {
+        investText = `an investment of ${investText.replace(/^(?:an?|up\s+to)\s+/, "").replace(/\$/, "").trim()}`;
       }
     } else {
-      // Fall back to constructed sentence
-      pricingStatement = `The round is priced at a ${dealTerms.preMoney.raw} pre-money valuation (${dealTerms.enterpriseValue.raw} EV).`;
+      // Fall back to minimal construction
+      const investRaw = dealTerms.investment.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
+      investText = `an investment of up to ${investRaw}`;
     }
-  } else {
-    // Construct pricing statement
-    pricingStatement = `The round is priced at a ${dealTerms.preMoney.raw} pre-money valuation (${dealTerms.enterpriseValue.raw} EV).`;
+  } else if (dealTerms.investment) {
+    // No sourceText, construct minimal
+    const investRaw = dealTerms.investment.raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
+    investText = `an investment of up to ${investRaw}`;
   }
   
-  // A3.6.48: Build investment statement (prefer memo wording)
-  let investmentStatement = null;
-  if (dealTerms.sourceText) {
-    const sourceLower = dealTerms.sourceText.toLowerCase();
+  // 3) Ownership statement: "a targeted 20% fully diluted ownership" (verbatim if possible)
+  let ownershipText = null;
+  if (dealTerms.ownershipPct && sourceText) {
+    // Try to find verbatim ownership clause
+    const ownPctStr = dealTerms.ownershipPct.pct.toString();
+    const ownPattern = new RegExp(`(?:a\\s+)?(?:targeted|target)\\s+${ownPctStr.replace(".", "\\.")}\\s*%\\s*fully[- ]?diluted\\s*ownership`, "i");
+    const ownMatch = sourceText.match(ownPattern);
     
-    // Check if memo includes "invest up to" or similar wording
-    if (dealTerms.investment && dealTerms.ownershipPct) {
-      if (sourceLower.includes("up to") && sourceLower.includes(dealTerms.investment.raw.toLowerCase().replace("$", ""))) {
-        investmentStatement = `up to ${dealTerms.investment.raw} investment and ${dealTerms.ownershipPct.raw} fully diluted ownership`;
+    if (ownMatch) {
+      ownershipText = ownMatch[0].trim();
+    } else {
+      // Check for "own X%" pattern (only if memo contains "own")
+      const ownDirectPattern = new RegExp(`own\\s+${ownPctStr.replace(".", "\\.")}\\s*%`, "i");
+      if (ownDirectPattern.test(sourceText)) {
+        const ownDirectMatch = sourceText.match(ownDirectPattern);
+        if (ownDirectMatch) {
+          ownershipText = ownDirectMatch[0].trim() + " fully diluted ownership";
+        }
       } else {
-        investmentStatement = `We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+        // Fall back to "targeted X%" (no "thereby own")
+        ownershipText = `a targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
       }
-    } else if (dealTerms.investment) {
-      if (sourceLower.includes("up to") && sourceLower.includes(dealTerms.investment.raw.toLowerCase().replace("$", ""))) {
-        investmentStatement = `up to ${dealTerms.investment.raw} investment`;
-      } else {
-        investmentStatement = `We plan to invest ${dealTerms.investment.raw}.`;
-      }
-    } else if (dealTerms.ownershipPct) {
-      investmentStatement = `We plan to own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
     }
-  } else {
-    // Fall back to constructed sentences
-    if (dealTerms.investment && dealTerms.ownershipPct) {
-      investmentStatement = `We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
-    } else if (dealTerms.investment) {
-      investmentStatement = `We plan to invest ${dealTerms.investment.raw}.`;
-    } else if (dealTerms.ownershipPct) {
-      investmentStatement = `We plan to own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`;
+    
+    // Check for "potential to increase to X%" clause
+    const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%/i;
+    const potentialMatch = sourceText.match(potentialPattern);
+    if (potentialMatch) {
+      const increasePct = potentialMatch[1];
+      ownershipText += ` with potential to increase to ${increasePct}% through secondary purchases`;
     }
+  } else if (dealTerms.ownershipPct) {
+    // No sourceText, construct minimal
+    ownershipText = `a targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
   }
   
-  // A3.6.47: Identify corrupted deal-terms statements to suppress
+  // A3.6.49: Identify corrupted deal-terms statements to suppress
   const evNumberStr = dealTerms.enterpriseValue.amount.toString();
   const evVariants = [
     evNumberStr,
@@ -2182,13 +2213,14 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   
   let replacedIdx = null;
   let droppedCount = 0;
+  let insertOffset = 0;
   
   if (corruptedIndices.length > 0) {
     // Replace FIRST corrupted statement with pricing statement
     const firstCorruptedIdx = corruptedIndices[0];
     const originalDraftPosition = statements[firstCorruptedIdx].__draftPosition;
     
-    statements[firstCorruptedIdx].text = pricingStatement;
+    statements[firstCorruptedIdx].text = pricingText;
     statements[firstCorruptedIdx].__dealTermsCanonical = true;
     statements[firstCorruptedIdx].__dealTermsCanonicalKind = "pricing";
     statements[firstCorruptedIdx].__dealTerms = dealTerms;
@@ -2197,25 +2229,43 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     }
     
     replacedIdx = firstCorruptedIdx;
+    insertOffset = 1;
     
-    // Insert investment statement immediately after (if present)
-    if (investmentStatement) {
+    // Insert investment statement immediately after pricing (if present)
+    if (investText) {
       const investDraftPosition = originalDraftPosition != null ? originalDraftPosition + 0.01 : firstCorruptedIdx + 0.01;
       const investStmt = {
-        text: investmentStatement,
+        text: investText,
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "investment",
         __dealTerms: dealTerms,
         __draftPosition: investDraftPosition
       };
-      statements.splice(firstCorruptedIdx + 1, 0, investStmt);
+      statements.splice(firstCorruptedIdx + insertOffset, 0, investStmt);
+      insertOffset++;
+    }
+    
+    // Insert ownership statement immediately after investment (if present)
+    if (ownershipText) {
+      const ownDraftPosition = originalDraftPosition != null ? originalDraftPosition + 0.02 : firstCorruptedIdx + 0.02;
+      const ownStmt = {
+        text: ownershipText,
+        __dealTermsCanonical: true,
+        __dealTermsCanonicalKind: "ownership",
+        __dealTerms: dealTerms,
+        __draftPosition: ownDraftPosition
+      };
+      statements.splice(firstCorruptedIdx + insertOffset, 0, ownStmt);
+      insertOffset++;
     }
     
     // Drop remaining corrupted statements (in reverse order to maintain indices)
     for (let i = corruptedIndices.length - 1; i > 0; i--) {
-      const idx = corruptedIndices[i];
-      statements.splice(idx, 1);
-      droppedCount++;
+      const idx = corruptedIndices[i] + insertOffset; // Adjust for inserted statements
+      if (idx < statements.length) {
+        statements.splice(idx, 1);
+        droppedCount++;
+      }
     }
   } else {
     // No corrupted statements - insert new ones
@@ -2228,7 +2278,7 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     
     // Insert pricing statement
     const pricingStmt = {
-      text: pricingStatement,
+      text: pricingText,
       __dealTermsCanonical: true,
       __dealTermsCanonicalKind: "pricing",
       __dealTerms: dealTerms,
@@ -2237,9 +2287,9 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
     statements.push(pricingStmt);
     
     // Insert investment statement after if present
-    if (investmentStatement) {
+    if (investText) {
       const investStmt = {
-        text: investmentStatement,
+        text: investText,
         __dealTermsCanonical: true,
         __dealTermsCanonicalKind: "investment",
         __dealTerms: dealTerms,
@@ -2247,14 +2297,25 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
       };
       statements.push(investStmt);
     }
+    
+    // Insert ownership statement after if present
+    if (ownershipText) {
+      const ownStmt = {
+        text: ownershipText,
+        __dealTermsCanonical: true,
+        __dealTermsCanonicalKind: "ownership",
+        __dealTerms: dealTerms,
+        __draftPosition: draftPosition + 0.02
+      };
+      statements.push(ownStmt);
+    }
   }
   
-  // A3.6.47: Log application results
-  const pricingPreview = pricingStatement.length > 80 ? pricingStatement.substring(0, 80) + "..." : pricingStatement;
-  const investPreview = investmentStatement ? (investmentStatement.length > 80 ? investmentStatement.substring(0, 80) + "..." : investmentStatement) : null;
-  const action = replacedIdx !== null ? "replaced" : (corruptedIndices.length === 0 ? "inserted" : "noop");
-  
-  log(`[A3.6.47][DEAL_TERMS_APPLY] action=${action} replacedIdx=${replacedIdx !== null ? replacedIdx : 'nil'} dropped=${droppedCount} pricingPreview="${pricingPreview}" investPreview="${investPreview || 'nil'}"`);
+  // A3.6.49: Log split results
+  const pricingLen = pricingText ? pricingText.length : 0;
+  const investLen = investText ? investText.length : 0;
+  const ownLen = ownershipText ? ownershipText.length : 0;
+  log(`[A3.6.49][CANON_SPLIT] pricingLen=${pricingLen} investLen=${investLen} ownLen=${ownLen} replacedIdx=${replacedIdx !== null ? replacedIdx : 'nil'} dropped=${droppedCount}`);
   
   return statements;
 }
@@ -4340,7 +4401,7 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
         // Apply normal capping logic to non-DealTerms claims
         const keptRoles = dealTermsRoles;
         const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-        log(`[A3.6.48][DEAL_TERMS_CAP_BYPASS] idx=${idx} enabled=true keptRoles=[${Array.from(keptRoles).join(',')}] dropped=0`);
+        log(`[A3.6.49][DEAL_TERMS_CAP_BYPASS] idx=${idx} enabled=true keptRoles=[${Array.from(keptRoles).join(',')}] dropped=0`);
         
         // Continue with normal capping for non-DealTerms claims
         const scored = nonDealTermsValuationClaims.map(claim => {
@@ -5793,25 +5854,39 @@ function scoreClaimReliability(claimText, facet, corpusSearchResult, ambiguityRe
   const scoringText = normalizeMoneyTextForScoring(claimText);
   
   // A3.6.2 PATCH v2: Enhanced numericMatch (handles percentages)
-  // A3.6.48: Use normalized scoringText for numeric matching
+  // A3.6.49: Use normalized scoringText for numeric matching, extract percent numbers for logging
   let numericMatch = 0;
+  let pctNums = [];
+  
   if (hits.some(h => h.matchType === "number")) {
     numericMatch = 1;
   } else {
-    // Check if claim has percentage and corpus has matching percentage
+    // A3.6.49: Check if claim has percentage and corpus has matching percentage
     const pctMatch = scoringText.match(/([\d,]+(?:\.\d+)?)\s*%/);
     if (pctMatch) {
       const claimPct = parseFloat(pctMatch[1].replace(/,/g, ""));
+      pctNums.push(claimPct);
+      
       const allExcerpts = hits.map(h => h.excerpt || "").join(" ");
       const pctPattern = /([\d,]+(?:\.\d+)?)\s*%/g;
       let match;
       while ((match = pctPattern.exec(allExcerpts)) !== null) {
         const corpusPct = parseFloat(match[1].replace(/,/g, ""));
+        if (!pctNums.includes(corpusPct)) {
+          pctNums.push(corpusPct);
+        }
         // Allow 5% tolerance for rounding
         if (Math.abs(claimPct - corpusPct) / Math.max(claimPct, corpusPct) <= 0.05) {
           numericMatch = 1;
           break;
         }
+      }
+      
+      // A3.6.49: Log percent normalization (only for ownership claims to avoid noise)
+      if (pctNums.length > 0 && facet === "Ownership" && uploadedDocs && uploadedDocs.length > 0) {
+        const textPreview = scoringText.length > 60 ? scoringText.substring(0, 60) + "..." : scoringText;
+        // Use console.log since we don't have runId/reqSig here
+        console.log(`[A3.6.49][PCT_NUM_NORMALIZE] textPreview="${textPreview}" pctNums=[${pctNums.join(',')}]`);
       }
     } else {
       // A3.6.48: Check for money amounts in normalized text
@@ -6038,11 +6113,12 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     diag(runId, reqSig, `[ANCHORS_ALL] idx=${idx} anchors=${JSON.stringify(Array.from(allAnchorsInOriginal))}`);
   }
   
-  // A3.6.48: Inject DealTerms-derived claims if statement has __dealTerms
+  // A3.6.49: Inject DealTerms-derived claims if statement has __dealTerms
   // This must happen BEFORE extractAtomicClaims to ensure DealTerms claims are included
   // These claims MUST use proper role-based anchors and "million" (not "mm") for scoring
   const dealTerms = assessment.__dealTerms || null;
   const dealTermsClaims = [];
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
   if (dealTerms) {
     // Helper to normalize raw to "million" format
@@ -6050,7 +6126,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       return raw.replace(/mm\b/g, "million").replace(/\bm\b(?!\w)/g, "million");
     };
     
-    // Build DealTerms-derived claims with typed roles and proper anchors
+    // A3.6.49: Build DealTerms-derived claims with proper roles (preMoney, enterpriseValue, investment, ownershipPct, ownershipUpside)
     if (dealTerms.preMoney) {
       const rawNormalized = normalizeToMillion(dealTerms.preMoney.raw);
       const claimText = `${rawNormalized} pre-money valuation`;
@@ -6059,7 +6135,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         facet: "Valuation",
         anchor: "usd_premoney",
         role: "pre_money_valuation",
-        __dealTermsDerived: true
+        __dealTermsDerived: true,
+        __dealTermsRole: "preMoney"
       });
     }
     
@@ -6071,31 +6148,52 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         facet: "Valuation",
         anchor: "usd_ev",
         role: "enterprise_value",
-        __dealTermsDerived: true
+        __dealTermsDerived: true,
+        __dealTermsRole: "enterpriseValue"
       });
     }
     
     if (dealTerms.investment) {
       const rawNormalized = normalizeToMillion(dealTerms.investment.raw);
-      const claimText = `${rawNormalized} investment`;
+      const claimText = `up to ${rawNormalized} investment`;
       dealTermsClaims.push({
         claimText,
         facet: "Investment",
         anchor: "usd_invest",
         role: "investment_amount",
-        __dealTermsDerived: true
+        __dealTermsDerived: true,
+        __dealTermsRole: "investment"
       });
     }
     
     if (dealTerms.ownershipPct) {
-      const claimText = `${dealTerms.ownershipPct.raw} fully diluted ownership`;
+      const claimText = `targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
       dealTermsClaims.push({
         claimText,
         facet: "Ownership",
         anchor: "pct_own",
         role: "ownership_pct",
-        __dealTermsDerived: true
+        __dealTermsDerived: true,
+        __dealTermsRole: "ownershipPct"
       });
+      
+      // A3.6.49: Check for ownership upside (potential to increase)
+      if (dealTerms.sourceText) {
+        const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%/i;
+        const potentialMatch = dealTerms.sourceText.match(potentialPattern);
+        if (potentialMatch) {
+          const increasePct = potentialMatch[1];
+          const upsideText = `potential to increase to ${increasePct}% through secondary purchases`;
+          dealTermsClaims.push({
+            claimText: upsideText,
+            facet: "Ownership",
+            anchor: `pct_own_upside_${increasePct}`,
+            role: "ownership_upside",
+            __dealTermsDerived: true,
+            __dealTermsRole: "ownershipUpside"
+          });
+        }
+      }
     }
   }
   
@@ -6523,14 +6621,15 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=enter_claim claimIdx=${claimIdx} anchor=qual_valuation`);
     }
     
-    // A3.6.48: Hard guard - skip non-canonical anchors (including null from qual_ownership)
+    // A3.6.49: Hard guard - skip non-canonical anchors (including null from qual_ownership)
     // BUT: Never drop DealTerms-derived claims
     if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
-      // A3.6.48: Bypass non-canonical check for DealTerms claims
+      // A3.6.49: Bypass non-canonical check for DealTerms claims
       if (aggClaim.__dealTermsDerived === true) {
         // DealTerms claim - allow through even if anchor is non-canonical
-        if (runId && reqSig && statementIdx < 2) {
-          diag(runId, reqSig, `[A3.6.48][DEAL_CLAIMS_SKIP_GUARD] stmtIdx=${statementIdx} anchor=${claimAnchor} reason=deal_terms_bypass`);
+        const dealRole = aggClaim.__dealTermsRole || "unknown";
+        if (runId && reqSig) {
+          diag(runId, reqSig, `[A3.6.49][DEAL_CLAIM_PROTECT] stmtIdx=${statementIdx} role=${dealRole} kept=true reason=noncanonical_bypass`);
         }
       } else {
         // Non-DealTerms claim - apply normal non-canonical guard
@@ -6778,19 +6877,42 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     claimIdx++;
   }
   
-  // A3.6.48: Force-emit all DealTerms claims for canonical statements
+  // A3.6.49: Force-emit all DealTerms claims for canonical statements
   // After dedup + filtering, ensure ALL deal-term numeric claims are included
+  // A3.6.49: Only expect claims relevant to the statement kind (pricing/investment/ownership)
   const isCanonicalStatement = assessment.__dealTermsCanonical === true;
+  const canonicalKind = assessment.__dealTermsCanonicalKind || null;
+  
   if (isCanonicalStatement && dealTerms) {
     const dealTermsClaimsInFinal = finalClaims.filter(c => c.__dealTermsDerived === true);
     const dealTermsRolesInFinal = new Set(dealTermsClaimsInFinal.map(c => c.role).filter(Boolean));
     
-    // Check which DealTerms claims are missing
+    // A3.6.49: Check which DealTerms claims are missing based on statement kind
     const expectedRoles = [];
-    if (dealTerms.preMoney) expectedRoles.push("pre_money_valuation");
-    if (dealTerms.enterpriseValue) expectedRoles.push("enterprise_value");
-    if (dealTerms.investment) expectedRoles.push("investment_amount");
-    if (dealTerms.ownershipPct) expectedRoles.push("ownership_pct");
+    if (canonicalKind === "pricing") {
+      // Pricing statement: expect preMoney and EV
+      if (dealTerms.preMoney) expectedRoles.push("pre_money_valuation");
+      if (dealTerms.enterpriseValue) expectedRoles.push("enterprise_value");
+    } else if (canonicalKind === "investment") {
+      // Investment statement: expect investment only
+      if (dealTerms.investment) expectedRoles.push("investment_amount");
+    } else if (canonicalKind === "ownership") {
+      // Ownership statement: expect ownershipPct and optionally ownershipUpside
+      if (dealTerms.ownershipPct) expectedRoles.push("ownership_pct");
+      // Check for ownershipUpside in sourceText
+      if (dealTerms.sourceText) {
+        const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%/i;
+        if (potentialPattern.test(dealTerms.sourceText)) {
+          expectedRoles.push("ownership_upside");
+        }
+      }
+    } else {
+      // Fallback: expect all (for backward compatibility)
+      if (dealTerms.preMoney) expectedRoles.push("pre_money_valuation");
+      if (dealTerms.enterpriseValue) expectedRoles.push("enterprise_value");
+      if (dealTerms.investment) expectedRoles.push("investment_amount");
+      if (dealTerms.ownershipPct) expectedRoles.push("ownership_pct");
+    }
     
     const missingRoles = expectedRoles.filter(role => !dealTermsRolesInFinal.has(role));
     
@@ -6812,7 +6934,13 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       const keptCount = finalClaims.filter(c => c.__dealTermsDerived === true).length;
       const keptRoles = Array.from(new Set(finalClaims.filter(c => c.__dealTermsDerived === true).map(c => c.role).filter(Boolean)));
       const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
-      log(`[A3.6.48][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kept=${keptCount} roles=[${keptRoles.join(',')}]`);
+      log(`[A3.6.49][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} kept=${keptCount} roles=[${keptRoles.join(',')}]`);
+    } else if (isCanonicalStatement && runId && reqSig) {
+      // Log even when all expected claims are present
+      const keptCount = finalClaims.filter(c => c.__dealTermsDerived === true).length;
+      const keptRoles = Array.from(new Set(finalClaims.filter(c => c.__dealTermsDerived === true).map(c => c.role).filter(Boolean)));
+      const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+      log(`[A3.6.49][DEAL_CLAIMS_FORCE] stmtIdx=${idx} kind=${canonicalKind || 'unknown'} kept=${keptCount} roles=[${keptRoles.join(',')}]`);
     }
   }
   
@@ -11372,9 +11500,13 @@ ${
         let uniqueAnchors = new Set();
         
         try {
-          // A3.6.46: Pass __dealTerms from statement to assessment for claim generation
+          // A3.6.49: Pass __dealTerms and __dealTermsCanonicalKind from statement to assessment for claim generation
           if (stmt.__dealTerms) {
             assessment.__dealTerms = stmt.__dealTerms;
+          }
+          if (stmt.__dealTermsCanonical === true) {
+            assessment.__dealTermsCanonical = true;
+            assessment.__dealTermsCanonicalKind = stmt.__dealTermsCanonicalKind || null;
           }
           
           // Generate claims (with aggregation, capping, and claim-aware scoring)
