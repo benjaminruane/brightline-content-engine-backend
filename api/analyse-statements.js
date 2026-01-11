@@ -12455,4 +12455,2283 @@ function fixAnchorFactReasons(statements, unifiedReferences) {
 // This is the absolute final check before returning response
 // Uses centralized provenance classification
 function applyFinalPostCheck(statements, unifiedReferences) {
-  if (!Array.isArray(statements)) return state
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const score = typeof assessment.reliabilityScore === "number" ? assessment.reliabilityScore : 30;
+    
+    // Use centralized classification
+    const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
+    const { provenance, resolvedCitations, memoReference, category } = classification;
+    
+    // DIAGNOSTIC: Log final post-check for high scores
+    if (score > 35) {
+    }
+    
+    // Allow >35 only if provenance is valid (CITED_OK or MEMO_OK)
+    const canBeHighMedium = provenance === "CITED_OK" || provenance === "MEMO_OK";
+    
+    // If score >35 but no valid provenance, force Low
+    if (score > 35 && !canBeHighMedium) {
+      console.log(`[DIAG] applyFinalPostCheck: clamping High/Medium to Low:`, {
+        text: text.substring(0, 60),
+        originalScore: score,
+        provenance,
+        resolvedCitations,
+        category,
+      });
+      const forcedScore = Math.min(score, 35);
+      let updatedReasons = [...reasons];
+      const verificationReason = "No verifiable sources cited.";
+      
+      // Ensure verification reason is present
+      if (!updatedReasons.some((r) => r && r.includes("No verifiable sources"))) {
+        updatedReasons = [verificationReason, ...updatedReasons].slice(0, 4);
+      }
+      
+      console.log(`[Review] Final clamp: forced Low (${forcedScore}) for statement with score ${score} (provenance: ${provenance}): "${text.substring(0, 50)}..."`);
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reliabilityLabel: "Low",
+          reliabilityScore: forcedScore,
+          reasons: updatedReasons.length > 0 ? updatedReasons : [verificationReason],
+          citations: [], // Ensure empty
+        },
+      };
+    }
+    
+    // For MEMO_OK document-descriptive statements without citations, ensure memo citation is present
+    if (provenance === "MEMO_OK" && resolvedCitations.length === 0 && memoReference) {
+      const injectedId = memoReference.id;
+      const idExists = unifiedReferences.some(r => r.id === injectedId);
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          citations: [injectedId], // Inject memo citation for evidence rendering
+        },
+      };
+    }
+    
+    return stmt;
+  });
+}
+
+// Detect if reasons indicate strong unverifiability (blocks Medium calibration)
+// Only strong signals that indicate the claim cannot be validated, not merely uncited
+function isUncertaintyReason(reasons) {
+  if (!Array.isArray(reasons) || reasons.length === 0) return false;
+  
+  // Strong unverifiability keywords only (exclude generic "no supporting source" etc.)
+  const strongUnverifiabilityKeywords = [
+    "unnamed",
+    "not identified",
+    "no identifying details",
+    "cannot verify",
+    "cannot be verified",
+    "not verifiable",
+    "cannot corroborate",
+    "unverifiable",
+    "insufficient information",
+    "cannot be validated",
+    "cannot be confirmed",
+    "no way to verify",
+  ];
+  
+  const reasonsText = reasons
+    .filter((r) => typeof r === "string")
+    .join(" ")
+    .toLowerCase();
+  
+  return strongUnverifiabilityKeywords.some((keyword) => reasonsText.includes(keyword));
+}
+
+// Calibrate non-anchor statements: allow Medium for uncited synthesis unless uncertain
+// Only processes statements that passed dual-axis verification (have citations or are doc-descriptive with memo support)
+function applyNonAnchorCalibration(statements) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    const hasCitations = citations.length > 0;
+    const isAnchor = isAnchorFact(text);
+    const isUncertain = isUncertaintyReason(reasons);
+    
+    // Skip anchor facts (already handled by anchor gating)
+    if (isAnchor) return stmt;
+    
+    // Skip statements with citations (respect model scoring)
+    if (hasCitations) return stmt;
+    
+    // Skip statements forced Low by dual-axis verification gate
+    // Check if reasons indicate this was forced Low due to missing provenance
+    const hasVerificationReason = reasons.some((r) => 
+      r && (r.includes("No verifiable sources") || r.includes("could not be verified against provided sources"))
+    );
+    if (hasVerificationReason) return stmt; // Already forced Low by dual-axis gate
+    
+    // Only process non-anchor, uncited statements that weren't forced Low
+    // These should only be document-descriptive with memo support (which passed dual-axis)
+    let score = typeof assessment.reliabilityScore === "number"
+      ? Math.max(0, Math.min(100, assessment.reliabilityScore))
+      : 30;
+    let label = typeof assessment.reliabilityLabel === "string"
+      ? assessment.reliabilityLabel
+      : score >= 80 ? "High" : score >= 60 ? "Medium" : "Low";
+    
+    if (isUncertain) {
+      // Keep Low if uncertain (do not inflate)
+      if (score > 35) {
+        score = 35;
+        label = "Low";
+      }
+    } else {
+      // Not uncertain: raise to Medium default if too low
+      if (score < 55) {
+        score = 65;
+        label = "Medium";
+      } else if (score >= 60 && label !== "High" && label !== "Medium") {
+        // Ensure label matches score if already in Medium/High range
+        label = score >= 80 ? "High" : "Medium";
+      }
+      
+      // Add calibrated note only if reasons are empty
+      let updatedReasons = [...reasons];
+      if (updatedReasons.length === 0) {
+        updatedReasons = ["No supporting source was cited; assessment reflects internal consistency of the draft."];
+      }
+      updatedReasons = updatedReasons.slice(0, 4); // Cap at 4
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reliabilityScore: score,
+          reliabilityLabel: label,
+          reasons: updatedReasons,
+        },
+      };
+    }
+    
+    // If uncertain, return with adjusted score/label
+    return {
+      ...stmt,
+      assessment: {
+        ...assessment,
+        reliabilityScore: score,
+        reliabilityLabel: label,
+      },
+    };
+  });
+}
+
+// Apply paraphrase tolerance: raise scores when substance is strongly supported but exact phrases don't match
+// Invariant 1: Paraphrase should not be a penalty by default
+// Invariant 2: Bundled-claim coverage governs score
+// Invariant 3: Penalize evaluative/interpretive framing only if sources don't support it
+function applyParaphraseTolerance(statements, unifiedReferences) {
+  if (!Array.isArray(statements)) return statements;
+  
+  return statements.map((stmt) => {
+    if (!stmt || typeof stmt !== "object") return stmt;
+    
+    const text = typeof stmt.text === "string" ? stmt.text : "";
+    const assessment = stmt.assessment || {};
+    const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    let score = typeof assessment.reliabilityScore === "number"
+      ? Math.max(0, Math.min(100, assessment.reliabilityScore))
+      : 30;
+    let label = typeof assessment.reliabilityLabel === "string"
+      ? assessment.reliabilityLabel
+      : score >= 80 ? "High" : score >= 60 ? "Medium" : "Low";
+    
+    // Normalize citations from both locations
+    const citations = 
+      (Array.isArray(stmt?.citations) && stmt.citations.length > 0) ? stmt.citations :
+      (Array.isArray(assessment?.citations) && assessment.citations.length > 0) ? assessment.citations :
+      [];
+    
+    // Check if statement has resolved citations/evidence
+    const hasResolvedCitations = citations.length > 0;
+    
+    // Use centralized classification to get provenance
+    const classification = classifyStatementAndProvenance(stmt, unifiedReferences);
+    const { provenance, category } = classification;
+    
+    // Only apply to statements with citations and valid provenance
+    if (!hasResolvedCitations || (provenance !== "CITED_OK" && provenance !== "MEMO_OK")) {
+      return stmt;
+    }
+    
+    // Detect phrase-mismatch penalty patterns in reasons
+    const phraseMismatchPatterns = [
+      /does not use the exact phrase/i,
+      /exact phrase.*missing/i,
+      /exact wording.*not found/i,
+      /phrase.*does not appear/i,
+      /wording.*differs/i,
+    ];
+    
+    const hasPhraseMismatchPenalty = reasons.some((reason) => {
+      if (typeof reason !== "string") return false;
+      return phraseMismatchPatterns.some((pattern) => pattern.test(reason));
+    });
+    
+    // Detect if reasons indicate missing facts vs just phrase mismatch
+    const missingFactPatterns = [
+      /not (?:explicitly )?(?:stated|mentioned|found|present|supported)/i,
+      /(?:lacks?|missing|absent|no evidence for|unsupported).*(?:fact|claim|element|detail|information)/i,
+      /cannot (?:be )?(?:verified|confirmed|validated|corroborated)/i,
+    ];
+    
+    const hasMissingFactPenalty = reasons.some((reason) => {
+      if (typeof reason !== "string") return false;
+      // Exclude phrase-mismatch reasons from missing-fact detection
+      if (phraseMismatchPatterns.some((pattern) => pattern.test(reason))) return false;
+      return missingFactPatterns.some((pattern) => pattern.test(reason));
+    });
+    
+    // Detect evaluative/interpretive framing phrases in statement
+    const evaluativePhrases = [
+      /\binvestment thesis (?:rests on|is based on)/i,
+      /\battractive (?:unit economics|position|prospects)/i,
+      /\bpositioned to (?:consolidate|dominate|succeed)/i,
+      /\bdifferentiated/i,
+      /\bcompelling/i,
+      /\bstrong (?:thesis|position|advantage)/i,
+    ];
+    
+    const hasEvaluativeFraming = evaluativePhrases.some((pattern) => pattern.test(text));
+    
+    // Detect bundled claims (multiple sub-claims)
+    const bundledClaimIndicators = [
+      /,.*and/i,  // comma followed by "and"
+      / and /i,   // standalone "and"
+      / with /i,  // "with"
+      / which /i, // "which"
+      / under /i, // "under"
+    ];
+    
+    const isBundledClaim = bundledClaimIndicators.some((pattern) => pattern.test(text));
+    
+    // Track if we need to update the statement
+    let needsUpdate = false;
+    let updatedReasons = [...reasons];
+    
+    // Invariant 1: If only phrase mismatch penalty exists (no missing facts), adjust score upward
+    if (hasPhraseMismatchPenalty && !hasMissingFactPenalty && hasResolvedCitations) {
+      // Apply modest score uplift for phrase mismatch alone
+      // Only if current score is below what it should be for supported substance
+      if (score < 70 && category === "DOCUMENT_DESCRIPTIVE") {
+        // For document-descriptive with phrase mismatch only, raise to Medium-High range
+        score = Math.min(75, score + 15);
+        label = score >= 80 ? "High" : score >= 60 ? "Medium" : "Low";
+        needsUpdate = true;
+        
+        // Replace phrase-mismatch reasons with accurate explanation
+        updatedReasons = updatedReasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          if (phraseMismatchPatterns.some((pattern) => pattern.test(reason))) {
+            return "Sources support the underlying facts but not the exact phrasing used in the statement.";
+          }
+          return reason;
+        });
+      } else if (score < 60 && category !== "DOCUMENT_DESCRIPTIVE") {
+        // For world-fact with phrase mismatch only, raise modestly
+        score = Math.min(70, score + 10);
+        label = score >= 80 ? "High" : score >= 60 ? "Medium" : "Low";
+        needsUpdate = true;
+        
+        updatedReasons = updatedReasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          if (phraseMismatchPatterns.some((pattern) => pattern.test(reason))) {
+            return "Sources support the underlying facts but not the exact phrasing used in the statement.";
+          }
+          return reason;
+        });
+      }
+    }
+    
+    // Invariant 2: For bundled claims, assess support coverage
+    if (isBundledClaim && hasResolvedCitations) {
+      // Count sub-claims (rough heuristic: count conjunctions and commas)
+      const conjunctionCount = (text.match(/\b(and|with|which|under)\b/gi) || []).length;
+      const commaCount = (text.match(/,/g) || []).length;
+      const estimatedSubClaims = Math.max(2, Math.min(5, conjunctionCount + commaCount / 2));
+      
+      // Check if reasons indicate unsupported sub-claims
+      const unsupportedElementCount = updatedReasons.filter((reason) => {
+        if (typeof reason !== "string") return false;
+        // Count reasons that mention unsupported elements (excluding phrase mismatch)
+        if (phraseMismatchPatterns.some((pattern) => pattern.test(reason))) return false;
+        return missingFactPatterns.some((pattern) => pattern.test(reason));
+      }).length;
+      
+      // Estimate support coverage
+      const supportedSubClaims = estimatedSubClaims - unsupportedElementCount;
+      const coverageRatio = supportedSubClaims / Math.max(1, estimatedSubClaims);
+      
+      // Adjust score based on coverage
+      if (coverageRatio >= 0.8 && score < 75) {
+        // High coverage: raise to High-Medium range
+        score = Math.min(80, Math.max(score, 70));
+        label = score >= 80 ? "High" : "Medium";
+        needsUpdate = true;
+        
+        // Add coverage explanation if not already present
+        const hasCoverageExplanation = updatedReasons.some((r) => 
+          typeof r === "string" && (r.includes("coverage") || r.includes("sub-claims") || r.includes("elements"))
+        );
+        if (!hasCoverageExplanation) {
+          updatedReasons = ["Most sub-claims are directly supported by sources.", ...updatedReasons].slice(0, 4);
+        }
+      } else if (coverageRatio >= 0.5 && score < 60) {
+        // Medium coverage: raise to Medium range
+        score = Math.min(70, Math.max(score, 55));
+        label = "Medium";
+        needsUpdate = true;
+        
+        // Add coverage explanation if not already present
+        const hasCoverageExplanation = updatedReasons.some((r) => 
+          typeof r === "string" && (r.includes("coverage") || r.includes("sub-claims") || r.includes("elements"))
+        );
+        if (!hasCoverageExplanation) {
+          updatedReasons = ["Some sub-claims are supported, but others are inferential or not explicitly stated.", ...updatedReasons].slice(0, 4);
+        }
+      }
+      // Low coverage: keep existing score (likely already Low)
+    }
+    
+    // Invariant 3: For evaluative framing, only penalize if sources don't support it
+    if (hasEvaluativeFraming && hasResolvedCitations) {
+      // If score is Low but only due to evaluative framing (not missing facts), raise to Medium
+      if (score < 60 && !hasMissingFactPenalty && hasPhraseMismatchPenalty) {
+        score = Math.min(65, score + 10);
+        label = "Medium";
+        needsUpdate = true;
+        
+        // Update reasons to reflect evaluative framing issue
+        updatedReasons = updatedReasons.map((reason) => {
+          if (typeof reason !== "string") return reason;
+          if (phraseMismatchPatterns.some((pattern) => pattern.test(reason))) {
+            return "Sources support underlying facts but not the evaluative framing or strength of conclusion.";
+          }
+          return reason;
+        });
+      }
+    }
+    
+    // Return updated statement if any adjustments were made
+    if (needsUpdate) {
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reliabilityScore: score,
+          reliabilityLabel: label,
+          reasons: updatedReasons.slice(0, 4),
+        },
+      };
+    }
+    
+    return stmt;
+  });
+}
+
+export default async function handler(req, res) {
+  setCorsHeaders(req, res);
+
+  // A3.5.22 Fix: Hoist hasReturned, runId, reqSig, and finalResponseObject to top of handler scope
+  // to prevent TDZ ReferenceError when early returns access hasReturned before declaration
+  let hasReturned = false;
+  let runId = null;
+  let reqSig = null;
+  let finalResponseObject = null;
+  
+  // A3.6.63: Initialize repair/fallback counters upfront to prevent TDZ errors
+  let numericFragmentRepairCount = 0;
+  let numericFragmentFallbackCount = 0;
+  let earlyDanglingRepairCount = 0;
+  let finalDanglingRepairCount = 0;
+  // A3.6.64: Initialize rejection reason counter
+  let rejectedByReasonIncompleteNumericFragment = 0;
+
+  if (req.method === "OPTIONS") {
+    hasReturned = true;
+    try {
+      diag("options", "preflight", `END_DIAG path=options status=200 returningNow=true`);
+    } catch {}
+    return res.status(200).end();
+  }
+  if (req.method !== "POST") {
+    hasReturned = true;
+    try {
+      diag("unknown", "method", `END_DIAG path=method_error status=405 returningNow=true`);
+    } catch {}
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    hasReturned = true;
+    try {
+      diag("early", "config", `END_DIAG path=config_error status=500 returningNow=true`);
+    } catch {}
+    return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
+  }
+
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  try {
+    const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+    const draftText = typeof body.draftText === "string" ? body.draftText : "";
+    const versionId = typeof body.versionId === "string" ? body.versionId : null;
+    const sources = Array.isArray(body.sources) ? body.sources : [];
+    const modelId =
+      typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
+    // A3.7.0: Selection mode support
+    const selectionTextRaw = typeof body.selectionText === "string" ? body.selectionText : null;
+    const selectionText = selectionTextRaw ? selectionTextRaw.trim() : null;
+
+    // A3.7.0: Validate selectionText if provided
+    if (selectionText !== null) {
+      if (selectionText.length < 3) {
+        hasReturned = true;
+        try {
+          diag("early", "validation", `END_DIAG path=selection_validation_error status=400 returningNow=true`);
+        } catch {}
+        return res.status(400).json({ ok: false, error: "selectionText too short" });
+      }
+      if (selectionText.length > 8000) {
+        hasReturned = true;
+        try {
+          diag("early", "validation", `END_DIAG path=selection_validation_error status=400 returningNow=true`);
+        } catch {}
+        return res.status(400).json({ ok: false, error: "selectionText too long" });
+      }
+    }
+
+    if (!draftText.trim()) {
+      hasReturned = true;
+      try {
+        diag("early", "validation", `END_DIAG path=validation_error status=400 returningNow=true`);
+      } catch {}
+      return res.status(400).json({ error: "Missing draftText" });
+    }
+    
+    // A3.5.20 Fix 1 & 2: Generate runId and reqSig early for unambiguous logging
+    runId = Math.random().toString(36).substring(2, 15);
+    const publicSearch = true; // Analysis always uses web search
+    reqSig = generateReqSig(draftText, sources, publicSearch);
+    
+    // A3.5.21 Diagnostic: Initialize run state for this RID
+    if (runId) {
+      runStateByRid[runId] = { finalCountsReached: false };
+    }
+    
+    // A3.5.20 Fix 2: Request start sentinel
+    const bodySize = typeof req.body === "string" ? req.body.length : JSON.stringify(req.body || {}).length;
+    diag(runId, reqSig, `START method=${req.method} webSearchEnabled=${publicSearch} bodySize=${bodySize}`);
+
+    // Format uploaded sources for prompt (version-scoped)
+    const uploadedSources = sources.map((s) => ({
+      id: s?.id || null,
+      name: s?.name || s?.title || "Untitled source",
+      text: s?.text || "",
+      kind: s?.kind || s?.sourceType || "file",
+      url: s?.url || null,
+    }));
+
+    // Build uploaded sources context for prompt
+    let uploadedSourcesBlock = "";
+    if (uploadedSources.length > 0) {
+      const sourcesList = uploadedSources.map((s, idx) => {
+        const name = s.name || "Untitled source";
+        const text = s.text || "";
+        const excerpt = text.length > 2000 ? text.substring(0, 2000) + "..." : text;
+        return `[UPLOADED ${idx + 1}] ${name}\n${excerpt || "(no text content)"}`;
+      }).join("\n\n");
+      uploadedSourcesBlock = sourcesList;
+    } else {
+      uploadedSourcesBlock = "(none)";
+    }
+
+    // Analysis always uses web search
+    // Force publicSearch = true regardless of client request (publicSearch from body is ignored)
+    // publicSearch already declared above
+    const query = deriveQueryFromDraft(draftText);
+    
+    let search = { ok: false, results: [] };
+    let webBlock = "";
+    let webReferences = [];
+    
+    try {
+      search = await tavilySearch({ query, maxResults: 6 });
+      
+      // A3.5.14b Patch 4: Web Reference Hygiene - filter BEFORE reference construction
+      // Filter raw search results to prevent irrelevant results from being converted to references
+      diag(runId, reqSig, `[PIPELINE] phase=filterWebSearchResults`);
+      const rawResults = search?.results || [];
+      const filteredResults = filterWebSearchResults(rawResults, draftText, runId, reqSig);
+      
+      // Now convert filtered results to references
+      webReferences = webResultsToReferences(filteredResults);
+      webBlock = formatWebResultsForPrompt({ ...search, results: filteredResults });
+    } catch (searchErr) {
+      // Continue with empty web results - analysis can still proceed
+      search = { ok: false, results: [], error: searchErr?.message };
+      webBlock = "(none)";
+      webReferences = [];
+    }
+
+    // Create unified references list: uploaded first, then web
+    // Uploaded references get IDs 1..N, web references get IDs (N+1)..(N+M)
+    const uploadedReferences = uploadedSources.map((s, idx) => ({
+      id: idx + 1,
+      title: s.name || "Untitled source",
+      url: s.url || null,
+      type: "uploaded",
+    }));
+
+    const webRefStartId = uploadedReferences.length + 1;
+    const webReferencesWithIds = webReferences.map((ref, idx) => ({
+      ...ref,
+      id: webRefStartId + idx,
+      type: "web",
+    }));
+
+    const unifiedReferences = [...uploadedReferences, ...webReferencesWithIds];
+    const maxRefIndex = unifiedReferences.length;
+    
+
+    // A3.5.16: Pre-merge continuation fragments before sentence splitting
+    // This fixes fragmentation issues where rawSentences are already broken
+    diag(runId, reqSig, `[PIPELINE] phase=mergeContinuationFragments`);
+    const normalizedDraftText = mergeContinuationFragments(draftText, runId, reqSig);
+    
+    // A3.7.0/A3.7.2: Selection mode branch - if selectionText is provided, split into candidates
+    let isSelectionMode = false;
+    let normalizedSelection = null;
+    let selectionStartPosition = null;
+    
+    if (selectionText !== null && selectionText.length >= 3) {
+      isSelectionMode = true;
+      // Normalize line breaks to "\n" and collapse excessive whitespace for indexing
+      normalizedSelection = selectionText
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        .replace(/\s+/g, " ")
+        .trim();
+      
+      // Compute selectionStartPosition: find selection in draftText
+      // Try exact match first, then try trimmed match
+      let startIndex = normalizedDraftText.indexOf(selectionText);
+      if (startIndex === -1) {
+        startIndex = normalizedDraftText.indexOf(normalizedSelection);
+      }
+      // If still not found, try with normalized whitespace
+      if (startIndex === -1) {
+        const normalizedDraftForSearch = normalizedDraftText.replace(/\s+/g, " ");
+        const normalizedSelectionForSearch = normalizedSelection.replace(/\s+/g, " ");
+        startIndex = normalizedDraftForSearch.indexOf(normalizedSelectionForSearch);
+        if (startIndex >= 0) {
+          selectionStartPosition = startIndex;
+        }
+      } else {
+        selectionStartPosition = startIndex;
+      }
+      
+      if (selectionStartPosition === null || selectionStartPosition < 0) {
+        selectionStartPosition = null;
+      }
+      
+      diag(runId, reqSig, `[PIPELINE] mode=selection selectionLen=${selectionText.length} foundSelectionStartPos=${selectionStartPosition !== null ? selectionStartPosition : "null"}`);
+    }
+    
+    // A3.5.13: Deterministic statement extraction (Part B)
+    // Extract candidate statements BEFORE LLM call
+    // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
+    // A3.7.2: In selection mode, split selection into atomic candidates
+    let rawExtractionCandidates = [];
+    if (!isSelectionMode) {
+      diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
+      rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
+    } else {
+      diag(runId, reqSig, `[PIPELINE] phase=extractCandidates (selection mode - splitting)`);
+      // A3.7.2: Split selection into atomic candidates
+      rawExtractionCandidates = splitSelectionIntoCandidates(selectionText, runId, reqSig);
+      // Fallback: if split returns empty, use selection as single candidate (backward compat)
+      if (rawExtractionCandidates.length === 0) {
+        rawExtractionCandidates = [normalizedSelection || selectionText];
+        diag(runId, reqSig, `[PIPELINE] selection split returned 0 candidates, using selection as single candidate`);
+      }
+    }
+    
+    // A3.5.14 Part A: Filter candidates for quality (extraction stability)
+    // Get raw sentences for context (we need to pass them to the filter)
+    // Use normalized text to ensure consistent sentence boundaries
+    const sentenceBoundaryPattern = /[.!?\n]+/;
+    const rawSentences = normalizedDraftText
+      .split(sentenceBoundaryPattern)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    diag(runId, reqSig, `[PIPELINE] phase=filterCandidateQuality`);
+    // A3.6.72: Wrap filterCandidateQuality in try/catch to handle errors gracefully
+    let filterResult = null;
+    let segGuardError = false;
+    let segGuardErrorDetails = null;
+    try {
+      filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedDraftText, runId, reqSig);
+    } catch (segGuardErr) {
+      // A3.6.72: Log seg-guard error but continue pipeline with original candidates
+      segGuardError = true;
+      segGuardErrorDetails = {
+        message: segGuardErr?.message || String(segGuardErr),
+        name: segGuardErr?.name || "Error",
+        stack: segGuardErr?.stack ? segGuardErr.stack.split('\n').slice(0, 2).join('\n') : null
+      };
+      const candidatePreviews = rawExtractionCandidates.slice(0, 2).map(c => {
+        const preview = typeof c === "string" ? c.substring(0, 60) : String(c).substring(0, 60);
+        return preview.length < (typeof c === "string" ? c.length : String(c).length) ? preview + "..." : preview;
+      });
+      diag(runId, reqSig, `[SEG_GUARD_ERROR] message="${segGuardErrorDetails.message}" name="${segGuardErrorDetails.name}" rawCandidateCount=${rawExtractionCandidates.length} candidatePreviews=${JSON.stringify(candidatePreviews)}`);
+      diag(runId, reqSig, `[A3.6.72][SEG_GUARD_ERROR_HANDLED] handled=true continuingWithOriginalCandidates`);
+      
+      // A3.6.72: Continue with original candidates (before filtering)
+      filterResult = {
+        candidates: rawExtractionCandidates,
+        rejectedCount: 0,
+        fallbackCount: 0,
+        incompleteNumericFragmentCount: 0,
+        recombinedCount: 0,
+        rejectedByReasonIncompleteNumericFragment: 0,
+        segGuardFallback: false,
+        segGuardError: true,
+        candidatesWithReasons: []
+      };
+    }
+    
+    const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
+    const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
+    const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
+    // A3.6.72: Track segGuardFallback flag for quality reasons
+    const segGuardFallback = typeof filterResult === "object" && filterResult.segGuardFallback === true;
+    // A3.6.72: Track segGuardError flag for quality reasons
+    const segGuardErrorFlag = typeof filterResult === "object" && filterResult.segGuardError === true || segGuardError;
+    // A3.5.26 Fix C: Extract incompleteNumericFragmentCount and recombinedCount from filterResult
+    const incompleteNumericFragmentCount = typeof filterResult === "object" && filterResult.incompleteNumericFragmentCount != null ? filterResult.incompleteNumericFragmentCount : 0;
+    const recombinedCount = typeof filterResult === "object" && filterResult.recombinedCount != null ? filterResult.recombinedCount : 0;
+    // A3.6.64: Track rejectedByReasonIncompleteNumericFragment from filterResult
+    rejectedByReasonIncompleteNumericFragment = typeof filterResult === "object" && filterResult.rejectedByReasonIncompleteNumericFragment != null ? filterResult.rejectedByReasonIncompleteNumericFragment : 0;
+    // A3.6.63: Track numeric fragment fallback count (fallback due to incomplete_numeric_fragment)
+    numericFragmentFallbackCount = incompleteNumericFragmentCount > 0 && fallbackCount > 0 ? Math.min(incompleteNumericFragmentCount, fallbackCount) : 0;
+    
+    // A3.6.72: Log that pipeline continued past filterCandidateQuality
+    if (segGuardErrorFlag) {
+      diag(runId, reqSig, `[A3.6.72][CONTINUED_AFTER_SEG_GUARD] continued=true nextPhase=filterFragmentCandidates`);
+    }
+    diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount}${segGuardFallback ? ", segGuardFallback=true" : ""})`);
+    
+    // A3.6.72: Ensure pipeline continues even if extractionCandidates is empty (use best-effort)
+    if (extractionCandidates.length === 0 && typeof normalizedDraftText === "string" && normalizedDraftText.trim()) {
+      // Last resort: permissive sentence split
+      const permissiveSplit = normalizedDraftText
+        .split(/[.!?\n]+/)
+        .map(s => s.trim())
+        .filter(s => s.length >= 20)
+        .map(s => sanitizeCandidateText(s, runId, reqSig))
+        .filter(s => s && s.trim().length >= 20)
+        .slice(0, 25);
+      if (permissiveSplit.length > 0) {
+        extractionCandidates.push(...permissiveSplit);
+        diag(runId, reqSig, `[A3.6.72][PIPELINE_CONTINUE] extractionCandidates was empty, using ${permissiveSplit.length} permissive split candidates`);
+      }
+    }
+    
+    // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
+    diag(runId, reqSig, `[PIPELINE] phase=filterFragmentCandidates`);
+    const segGuardMetadata = {
+      candidatesWithReasons: filterResult.candidatesWithReasons || []
+    };
+    const fragFilterResult = filterFragmentCandidates(extractionCandidates, runId, reqSig, segGuardMetadata);
+    const finalExtractionCandidates = fragFilterResult.candidates;
+    diag(runId, reqSig, `A3.5.27: After fragment filter: ${finalExtractionCandidates.length} candidates (dropped=${fragFilterResult.dropped}, mergedPrev=${fragFilterResult.mergedPrev}, mergedNext=${fragFilterResult.mergedNext})`);
+    
+    // A3.5.27: Use candidateObjects to preserve candidateIndex for draft order
+    // A3.6.6: Also preserve draftPosition
+    // A3.7.2: In selection mode, map draft positions for each split candidate
+    const candidateIndexMap = new Map();
+    let candidateObjects = fragFilterResult.candidateObjects || [];
+    
+    // A3.7.2: Map draft positions for selection mode candidates
+    if (isSelectionMode && selectionStartPosition !== null) {
+      candidateObjects = candidateObjects.map((candidateObj, idx) => {
+        const candidate = candidateObj.text;
+        // Try to find this candidate within the draft text
+        let candidateDraftPosition = null;
+        
+        // Try exact match first
+        let pos = normalizedDraftText.indexOf(candidate);
+        if (pos === -1) {
+          // Try normalized match (collapse whitespace)
+          const normalizedCandidate = candidate.replace(/\s+/g, " ").trim();
+          const normalizedDraft = normalizedDraftText.replace(/\s+/g, " ");
+          pos = normalizedDraft.indexOf(normalizedCandidate);
+        }
+        
+        if (pos >= 0) {
+          candidateDraftPosition = pos;
+        } else if (selectionStartPosition !== null) {
+          // Fallback: use selection start position + offset (approximate)
+          candidateDraftPosition = selectionStartPosition + idx * 10;
+        }
+        
+        return {
+          ...candidateObj,
+          draftPosition: candidateDraftPosition,
+          candidateIndex: idx,
+        };
+      });
+      
+      diag(runId, reqSig, `[A3.7.2][DRAFT_POS_MAP] mapped ${candidateObjects.length} selection candidates to draft positions`);
+    }
+    
+    // Store original candidate list with indices for later matching
+    candidateObjects.forEach((candidateObj, idx) => {
+      const candidate = candidateObj.text;
+      const candidateIndex = candidateObj.candidateIndex != null ? candidateObj.candidateIndex : idx;
+      const draftPosition = candidateObj.draftPosition != null ? candidateObj.draftPosition : candidateIndex;
+      const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+      // Store both exact and normalized for matching, using preserved candidateIndex and draftPosition
+      candidateIndexMap.set(candidate, { candidateIndex, draftPosition });
+      candidateIndexMap.set(normalized, { candidateIndex, draftPosition });
+    });
+    
+    // Build candidate statements block for prompt
+    const candidatesBlock = finalExtractionCandidates.length > 0
+      ? finalExtractionCandidates.map((c, idx) => `${idx + 1}. ${c}`).join("\n")
+      : "(no extractable statements found)";
+
+    const system = `
+You are the "Review" engine inside Content Engine.
+
+STATEMENT EXTRACTION (A3.5.13 - CRITICAL):
+- You MUST ONLY score and classify the PRE-EXTRACTED candidate statements listed below.
+- Do NOT invent new statements or extract additional statements from the draft.
+- Do NOT create statements derived from source documents.
+- Your job is to ASSESS each pre-extracted candidate, not to extract new ones.
+- For each candidate statement, provide:
+  - reliabilityScore (0-100)
+  - reliabilityLabel (High|Medium|Low)
+  - reasons (array of up to 4 strings explaining the assessment)
+  - citations (array of reference IDs from the REFERENCES list, empty if unsupported)
+
+PRE-EXTRACTED CANDIDATE STATEMENTS (you must assess these):
+${candidatesBlock}
+
+If the candidate list is empty or you cannot assess any candidates, return: {"statements": []}
+
+DUAL-AXIS VERIFICATION (MANDATORY):
+A statement is only verified if BOTH are true:
+1) The statement is factually correct
+2) The statement can be traced to specific, known sources
+
+STATEMENT CLASSIFICATION:
+Classify each statement as one of:
+1) World-Fact Statement: Claims about the company, metrics, performance, pricing, growth, history, etc.
+   - MUST have resolvable citations to uploaded or web sources
+   - No citations → force Low (≤35)
+2) Document-Descriptive Statement: Claims describing what the uploaded memo does, proposes, evaluates, or recommends
+   - MAY be verified against the uploaded memo itself (memo counts as valid provenance)
+   - Should NOT be treated as uncited if supported by memo
+3) Unsupported/Speculative Statement: Claims with no support in provided sources
+   - Must be scored Low with clear explanation
+
+VERIFICATION RULES:
+- World-fact claims MUST include at least one citation to a source from the REFERENCES list.
+- Document-descriptive claims MAY cite the uploaded memo (if it supports the claim).
+- High/Medium reliability (score >35) is ONLY allowed if the statement has at least one valid citation.
+- If you cannot cite a claim to a provided source:
+  - Set citations: []
+  - Set reliabilityLabel: "Low"
+  - Set reliabilityScore: 20-35
+  - Include in reasons: "No verifiable sources cited." and "This statement could not be verified against provided sources."
+- The draft text itself is NEVER a source. "Directly stated in the draft" describes where a claim appears, but is NOT evidence.
+- Do NOT treat the draft or generated text as a citable source.
+
+ABSENCE CLAIMS (A3.5.11 - CRITICAL):
+- NEVER claim that a fact is "not mentioned", "not specified", or "not supported" by uploaded sources unless you have considered the FULL uploaded document corpus.
+- The uploaded sources excerpts shown here are truncated (first 2000 chars). The full corpus may contain information not visible in these excerpts.
+- Before asserting absence:
+  - Consider numeric variations (e.g., "$25mm" vs "25 million" vs "$25m")
+  - Consider key term variations (e.g., "valuation" vs "pre-money valuation")
+  - Consider phrasing variations (e.g., "board seats" vs "board representation")
+- If you find related information in uploaded sources (even with different phrasing), do NOT claim absence.
+- If you must assert absence after considering the full context:
+  - Use explicit language: "not found in the uploaded memo after review"
+  - Do NOT use vague language like "no sources were provided" when sources exist
+  - Do NOT imply system ignorance or incomplete review
+
+ATTRIBUTION RULES:
+- Statements may be supported by EITHER uploaded sources OR web sources (or both).
+- Uploaded sources are authoritative for memo facts and internal claims.
+- Web sources provide external verification and public information.
+- Synthesis is allowed if supported by uploaded sources OR web sources (citable with [n]).
+- Numeric paraphrase allowed if consistent with uploaded sources OR web sources (citable).
+- Anchor facts (years/dates, exchange/tickers, specific numbers) REQUIRE at least ONE citation [n] to either an uploaded source or a web reference.
+- Statements supported by uploaded sources alone (no web citations) can still be scored High/Medium if directly supported AND properly cited.
+
+CITATIONS (STRICT):
+- Use bracket citations [1], [2], ... referencing ONLY the unified REFERENCES list provided below.
+- Citations must be integers within the range 1..${maxRefIndex}${uploadedReferences.length > 0 ? ` (where 1..${uploadedReferences.length} are uploaded sources${webReferencesWithIds.length > 0 ? `, ${uploadedReferences.length + 1}..${maxRefIndex} are web references` : ''})` : ''}.
+- You may ONLY cite sources from the provided REFERENCES list.
+- Do NOT invent citation IDs.
+- Do NOT cite the draft or the generated text as evidence.
+- If no sources are available or a claim cannot be cited, set citations: [] and mark as Low.
+
+ASSESSMENT REASONS - FACET-SCOPED BULLETS (A3.5.29):
+- If a statement contains 2+ numeric anchors OR multiple clauses (commas / "at a" / "structured as" / "for roughly"),
+  then you MUST write reasons as facet-scoped bullets.
+- Facet-scoped bullet format (strict):
+  - Start each bullet with a short facet label in brackets: [Investment], [Valuation], [Structure], [Ownership], [Timing], [Other]
+  - Include a short quoted snippet (<= 10 words) from the statement showing what the bullet refers to.
+    Example: [Valuation] "$20 million pre-money" not confirmed in sources...
+  - Then provide the actual reasoning.
+- Cap bullets: Max 4 bullets total per statement.
+- Prefer covering the highest-impact facets first (investment amount, valuation, ownership).
+- Eliminate "global" bullets that don't point to a clause.
+  - No bullets like "No verifiable sources cited" unless also tied to a facet:
+    [Structure] "structured as 1x straight preferred" not confirmed...
+- Do NOT repeat the same bullet. Each bullet must cover a DIFFERENT facet.
+- Never output a generic bullet like "All anchor facts are supported" more than once; prefer facet bullets.
+- For single-claim statements, you may use standard format without facet tags.
+
+OUTPUT FORMAT:
+Return ONLY valid JSON matching this exact schema:
+{
+  "statements": [
+    {
+      "text": "string (must match one of the pre-extracted candidates exactly or be a close paraphrase)",
+      "assessment": {
+        "reliabilityScore": number (0-100),
+        "reliabilityLabel": "High|Medium|Low",
+        "reasons": ["string", ...] (up to 4 reasons),
+        "citations": [1,2] (array of integers, empty if unsupported)
+      }
+    }
+  ]
+}
+
+CRITICAL: Each statement.text in your output MUST correspond to one of the pre-extracted candidates above.
+Do NOT add new statements that are not in the candidate list.
+If you cannot assess any candidates, return: {"statements": []}
+`.trim();
+
+    const user = `
+DRAFT:
+${draftText}
+
+UPLOADED SOURCES (used for this version):
+${uploadedSourcesBlock}
+
+UPLOADED REFERENCES:
+${
+  uploadedReferences.length > 0
+    ? uploadedReferences.map((r) => `[${r.id}] ${r.title}${r.url ? ` — ${r.url}` : ""}`).join("\n")
+    : "(none)"
+}
+
+WEB RESULTS:
+${webBlock || "(none)"}
+
+WEB REFERENCES:
+${
+  webReferencesWithIds.length > 0
+    ? webReferencesWithIds.map((r) => `[${r.id}] ${r.title} — ${r.url}`).join("\n")
+    : "(none)"
+}
+
+ALL REFERENCES (unified, for citation):
+${
+  unifiedReferences.length > 0
+    ? unifiedReferences.map((r) => `[${r.id}] ${r.title}${r.url ? ` — ${r.url}` : ""} (${r.type})`).join("\n")
+    : "(none)"
+}
+`.trim();
+
+    const completion = await client.chat.completions.create({
+      model: modelId,
+      temperature: 0.2,
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+    });
+
+    const raw = completion?.choices?.[0]?.message?.content || "";
+    
+    // Extract JSON robustly
+    let parsed = extractFirstJson(raw);
+    let extractionQuality = "ok";
+    
+    // DIAGNOSTIC: Log model output summary
+    if (parsed && typeof parsed === "object") {
+      const rawStatements = Array.isArray(parsed.statements) ? parsed.statements : [];
+      diag(runId, reqSig, `Model output: ${rawStatements.length} statements`);
+    } else {
+      diag(runId, reqSig, `Model output: parsed is null or invalid, type=${typeof parsed}`);
+    }
+    
+    // Coerce and validate statements (using unified references count)
+    let statements = coerceStatements(parsed, maxRefIndex);
+    
+    // A3.7.2: In selection mode, draft positions are already mapped in candidateObjects
+    // They will be assigned during candidate matching below
+    
+    // A3.6.11: Repair numeric fragments after filterCandidateQuality
+    diag(runId, reqSig, `[PIPELINE] phase=repairNumericFragments`);
+    // A3.6.63: Track repair counts for quality classification
+    const numericRepairResult = repairNumericFragments(statements, normalizedDraftText, runId, reqSig);
+    statements = numericRepairResult.statements;
+    numericFragmentRepairCount = numericRepairResult.repairCount || 0;
+    
+    // A3.6.44: Checkpoint A - right after repairNumericFragments
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
+      if (stmt && typeof stmt === "object" && typeof stmt.text === "string") {
+        const text = stmt.text.trim();
+        const tail = text.length <= 80 ? text : text.slice(-80);
+        diag(runId, reqSig, `[CANON_TAIL] checkpoint=after_repairNumericFragments idx=${i} tail="${tail}"`);
+      }
+    }
+    
+    // A3.7.2: In selection mode, preserve split candidate texts (handled during candidate matching)
+    // No need to override here as candidate matching will use the split candidates
+    
+    // A3.5.13: Map LLM output back to pre-extracted candidates for stability
+    // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
+    // A3.7.2: In selection mode, we still need candidate matching for split candidates
+    // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
+    if (statements.length > 0 && finalExtractionCandidates.length > 0) {
+      // Build a map of normalized candidates for matching using preserved candidateIndex and draftPosition
+      // A3.7.2: Use the candidateObjects we already created (with draft positions mapped for selection mode)
+      const candidateMap = new Map();
+      // candidateObjects was already created above with draft positions mapped for selection mode
+      candidateObjects.forEach((candidateObj) => {
+        const candidate = candidateObj.text;
+        const candidateIndex = candidateObj.candidateIndex != null ? candidateObj.candidateIndex : candidateObjects.indexOf(candidateObj);
+        const draftPosition = candidateObj.draftPosition != null ? candidateObj.draftPosition : candidateIndex;
+        const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+        if (!candidateMap.has(normalized)) {
+          candidateMap.set(normalized, { candidate, index: candidateIndex, draftPosition });
+        }
+      });
+      // Fallback: if candidateObjects not available, use finalExtractionCandidates with idx
+      if (candidateObjects.length === 0) {
+        finalExtractionCandidates.forEach((candidate, idx) => {
+          const normalized = candidate.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+          if (!candidateMap.has(normalized)) {
+            candidateMap.set(normalized, { candidate, index: idx, draftPosition: idx });
+          }
+        });
+      }
+      
+      // Filter statements to only include those matching candidates and assign candidateIndex
+      const matchedStatements = [];
+      for (const stmt of statements) {
+        const stmtText = typeof stmt.text === "string" ? stmt.text : "";
+        const normalized = stmtText.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+        
+        // Check for exact or close match
+        let matched = false;
+        let bestMatch = null;
+        let bestIndex = null;
+        let bestDraftPosition = null;
+        let bestScore = 0;
+        
+        for (const [normCandidate, candidateData] of candidateMap.entries()) {
+          // Allow 80% token overlap for minor rewording
+          const stmtTokens = normalized.split(/\s+/).filter(t => t.length > 2);
+          const candidateTokens = normCandidate.split(/\s+/).filter(t => t.length > 2);
+          const overlap = stmtTokens.filter(t => candidateTokens.includes(t)).length;
+          const overlapRatio = candidateTokens.length > 0 ? overlap / candidateTokens.length : 0;
+          
+          let score = 0;
+          if (normalized === normCandidate) {
+            score = 1.0; // Exact match
+          } else if (overlapRatio >= 0.8) {
+            score = overlapRatio; // High overlap
+          } else if (normalized.includes(normCandidate) || normCandidate.includes(normalized)) {
+            score = 0.7; // Substring match
+          }
+          
+          if (score > bestScore) {
+            bestScore = score;
+            bestMatch = candidateData.candidate;
+            bestIndex = candidateData.index;
+            bestDraftPosition = candidateData.draftPosition != null ? candidateData.draftPosition : candidateData.index;
+            matched = true;
+          }
+        }
+        
+        if (matched && bestMatch) {
+          // Use original candidate text for stability and assign candidateIndex and draftPosition
+          // A3.6.6: Preserve draftPosition from candidateData
+          matchedStatements.push({
+            ...stmt,
+            text: bestMatch, // Use deterministic candidate text
+            __candidateIndex: bestIndex, // A3.5.26 Fix B: Preserve draft order
+            __draftPosition: bestDraftPosition, // A3.6.6: Preserve draftPosition
+          });
+        }
+      }
+      
+      statements = matchedStatements;
+      
+      // A3.5.27: Sort statements by candidateIndex to preserve draft order
+      // A3.6.6: Final ordering sort key: draftPosition ASC (tie-breaker: candidateIndex ASC)
+      statements.sort((a, b) => {
+        const draftPosA = a.__draftPosition != null ? a.__draftPosition : (a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        const draftPosB = b.__draftPosition != null ? b.__draftPosition : (b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        
+        if (draftPosA !== draftPosB) {
+          return draftPosA - draftPosB;
+        }
+        
+        // Tie-breaker: candidateIndex ASC
+        const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
+        const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
+        return idxA - idxB;
+      });
+      
+      // A3.6.6: Log first 5 draftPositions + candidateIndex
+      const firstFiveOrdering = statements.slice(0, 5).map(s => ({
+        draftPos: s.__draftPosition != null ? s.__draftPosition : (s.__candidateIndex != null ? s.__candidateIndex : "null"),
+        candidateIdx: s.__candidateIndex != null ? s.__candidateIndex : "null"
+      }));
+      diag(runId, reqSig, `[ORDERING] sorted ${statements.length} statements by draftPosition, first5=${JSON.stringify(firstFiveOrdering)}`);
+    }
+    
+    // Graceful fallback if model output is invalid or empty
+    if (statements.length === 0) {
+      // A3.5.21 Fix: Pass runId and reqSig for proper context
+      statements = fallbackExtractAtomicStatements(draftText, hasReturned, runId, reqSig);
+      extractionQuality = "degraded";
+      diag(runId, reqSig, `A3.5.13: Using fallback extraction, produced ${statements.length} statements`);
+    }
+    
+    // A) Draft-only filter: enforce statements must appear in draft text (hard gate)
+    // Note: This should be redundant now since candidates come from draft, but keep for safety
+    // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
+    diag(runId, reqSig, `[PIPELINE] phase=filterDraftOnly`);
+    statements = filterDraftOnlyStatements(statements, draftText, runId, reqSig, hasReturned);
+    
+    // A3.6.61: Early dangling-currency repair (AFTER ordering/sort, BEFORE extractDealTerms)
+    // Must run on the SAME statement array that is later passed to downstream phases
+    diag(runId, reqSig, `[PIPELINE] phase=earlyDanglingCurrencyRepair`);
+    // A3.6.63: Track repair counts for quality classification
+    const earlyDanglingResult = repairDanglingCurrency(statements, normalizedDraftText, runId, reqSig, "early");
+    statements = earlyDanglingResult.statements;
+    earlyDanglingRepairCount = earlyDanglingResult.repairCount || 0;
+    
+    // A3.6.61: Checkpoint after earlyDanglingCurrencyRepair
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
+      if (stmt && typeof stmt === "object" && typeof stmt.text === "string") {
+        const text = stmt.text.trim();
+        const tail = text.length <= 80 ? text : text.slice(-80);
+        diag(runId, reqSig, `[CANON_TAIL] checkpoint=after_earlyDanglingCurrencyRepair idx=${i} tail="${tail}"`);
+      }
+    }
+    
+    // A3.6.67: Initialize uploadedDocs BEFORE extractDealTerms phase to avoid TDZ error
+    const docsWithFullText = Array.isArray(uploadedSources) ? uploadedSources.filter(s => 
+      typeof s.text === "string" && s.text.trim().length > 0
+    ) : [];
+    let uploadedDocs = docsWithFullText.map(s => ({
+      id: s.id || s.name || `doc_${Math.random()}`,
+      title: s.name || s.title || "Untitled source",
+      text: s.text || "",
+    }));
+    
+    // A3.6.47: Extract DealTerms from draftText (robust, handles messy text)
+    // A3.6.66: Pass uploadedDocs and find statement text for backfill
+    // A3.6.67: Add error handling and diagnostics
+    diag(runId, reqSig, `[PIPELINE] phase=extractDealTerms`);
+    
+    // A3.6.67: Input diagnostics
+    diag(runId, reqSig, `[A3.6.67][DEAL_TERMS_INPUT] stmtCount=${statements.length} uploadedSourcesCount=${uploadedSources.length} hasUploadedDocs=${uploadedDocs.length > 0} uploadedDocsLen=${uploadedDocs.length}`);
+    
+    let dealTerms = null;
+    try {
+      // A3.6.68: Find statement(s) that might contain deal terms for extraction
+      // Extract from both draftText and statement text, then merge
+      let statementTextsForExtraction = [];
+      for (const stmt of statements) {
+        if (stmt && typeof stmt === "object" && stmt.text) {
+          const stmtText = stmt.text.toLowerCase();
+          if (/\bpre[- ]?money\b|\benterprise\s+value\b|\binvestment\b|\bownership\b/i.test(stmtText)) {
+            statementTextsForExtraction.push(stmt.text);
+          }
+        }
+      }
+      // A3.6.68: Use first matching statement text (or all if needed)
+      const statementTextForExtraction = statementTextsForExtraction.length > 0 ? statementTextsForExtraction[0] : null;
+      dealTerms = extractDealTermsFromDraft(normalizedDraftText, runId, reqSig, uploadedDocs, statementTextForExtraction);
+      // Logging is now handled inside extractDealTermsFromDraft
+    } catch (e) {
+      const errorMessage = e?.message || String(e);
+      const errorStack = e?.stack ? e.stack.split('\n').slice(0, 2).join(' | ') : '';
+      diag(runId, reqSig, `[A3.6.67][DEAL_TERMS_ERROR] message="${errorMessage}" stack="${errorStack}" idx=null`);
+      diag(runId, reqSig, `[A3.6.47][DEAL_TERMS] error="${errorMessage}"`);
+    }
+    
+    // A3.6.47: Canonicalize Deal Terms statements (plural - emits TWO statements)
+    // A3.6.66: Run whenever found=true (not just when both preMoney and enterpriseValue exist)
+    // A3.7.1: Skip canonicalization in selection mode to keep selection as primary statement
+    let dealDedupDropped = 0;
+    if (!isSelectionMode) {
+      diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement`);
+      if (dealTerms) {
+        statements = canonicalizeDealTermsStatements(statements, dealTerms, runId, reqSig);
+        
+        // A3.6.61: Drop redundant combined deal-terms statements after canonical split
+        diag(runId, reqSig, `[PIPELINE] phase=dedupCombinedDealTermsStatements`);
+        const dedupResult = dropRedundantCombinedDealTerms(statements, dealTerms, runId, reqSig);
+        statements = dedupResult.statements;
+        dealDedupDropped = dedupResult.droppedCount;
+        
+        // A3.6.60: Sort statements by __draftPosition after canonicalization + dedup to preserve original draft ordering
+        statements.sort((a, b) => {
+          const draftPosA = a.__draftPosition != null ? a.__draftPosition : (a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER);
+          const draftPosB = b.__draftPosition != null ? b.__draftPosition : (b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER);
+          if (draftPosA !== draftPosB) {
+            return draftPosA - draftPosB;
+          }
+          // Tie-breaker: candidateIndex ASC
+          const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
+          const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
+          return idxA - idxB;
+        });
+      }
+    } else {
+      diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement SKIPPED (selection mode)`);
+    }
+    
+    // B) Citation resolution validation: drop unresolvable citations
+    statements = resolveCitations(statements, unifiedReferences);
+    
+    // C) Dual-axis verification gate: force Low if no resolvable citations
+    // Runs BEFORE calibration to prevent score inflation of unverifiable statements
+    statements = applyDualAxisVerification(statements, unifiedReferences);
+    
+    // D) Apply non-anchor calibration: allow Medium for uncited synthesis unless uncertain
+    // Only processes statements that passed dual-axis (have citations or doc-descriptive with memo support)
+    statements = applyNonAnchorCalibration(statements);
+    
+    // D.5) Apply paraphrase tolerance: raise scores when substance is supported but exact phrases don't match
+    statements = applyParaphraseTolerance(statements, unifiedReferences);
+    
+    // E) Apply anchor-fact gating: force Low if anchor facts lack citations
+    // A3.5.13 Addendum: Pass uploadedSources to respect anchor absence precedence
+    statements = applyAnchorGating(statements, uploadedSources);
+    
+    // F) Final post-condition clamp: ensure no High/Medium with missing citations
+    statements = applyFinalPostCheck(statements, unifiedReferences);
+    
+    // G) Normalize response structure: ensure citations and evidence are at top-level
+    // This enforces the response contract that the Review UI expects
+    statements = normalizeResponseStructure(statements, unifiedReferences);
+    
+    // A3.5.15 Fix 3: Deduplicate statements by exact text match
+    // A3.6.6: When deduping, keep the earliest draftPosition
+    const statementTextMap = new Map(); // Map text -> statement with earliest draftPosition
+    const deduplicatedStatements = [];
+    let dedupeRemoved = 0;
+    
+    for (const stmt of statements) {
+      if (!stmt || typeof stmt !== "object") {
+        deduplicatedStatements.push(stmt);
+        continue;
+      }
+      
+      const stmtText = typeof stmt.text === "string" ? stmt.text.trim() : "";
+      if (!stmtText) {
+        deduplicatedStatements.push(stmt);
+        continue;
+      }
+      
+      // A3.6.6: Use exact text match for deduplication, keep earliest draftPosition
+      const existingStmt = statementTextMap.get(stmtText);
+      const stmtDraftPos = stmt.__draftPosition != null ? stmt.__draftPosition : (stmt.__candidateIndex != null ? stmt.__candidateIndex : Number.MAX_SAFE_INTEGER);
+      
+      if (!existingStmt) {
+        statementTextMap.set(stmtText, stmt);
+        deduplicatedStatements.push(stmt);
+      } else {
+        const existingDraftPos = existingStmt.__draftPosition != null ? existingStmt.__draftPosition : (existingStmt.__candidateIndex != null ? existingStmt.__candidateIndex : Number.MAX_SAFE_INTEGER);
+        // Keep the one with earlier draftPosition
+        if (stmtDraftPos < existingDraftPos) {
+          // Replace with earlier one
+          const idx = deduplicatedStatements.indexOf(existingStmt);
+          if (idx >= 0) {
+            deduplicatedStatements[idx] = stmt;
+            statementTextMap.set(stmtText, stmt);
+          }
+        }
+        dedupeRemoved++;
+      }
+    }
+    
+    if (dedupeRemoved > 0) {
+      diag(runId, reqSig, `[DEDUP] input=${statements.length} output=${deduplicatedStatements.length} removed=${dedupeRemoved}`);
+    }
+    
+    statements = deduplicatedStatements;
+    
+    // H) Sanitize reasons: remove misleading "no sources cited" messages when citations/evidence exist
+    // Also improve language when web search is enabled (A3.5.8)
+    const webSearchEnabled = publicSearch === true;
+    const webSearchUsed = Boolean(search?.ok && (search?.results || []).length);
+    statements = sanitizeReasons(statements, webSearchEnabled, webSearchUsed);
+    
+    // I) Enforce reason specificity: require explicit enumeration for partial support and contradiction cases (A3.5.9)
+    statements = enforceReasonSpecificity(statements);
+    
+    // I.5) A3.5.28: Enforce facet-scoped bullets for multi-claim statements
+    // A3.5.30: MOVED to final cleanup block (after all injections) to avoid missing later-injected reasons
+    // statements = enforceFacetScopedBullets(statements);
+    
+    // I.6) A3.5.29: Normalize assessment reasons - dedupe, ban generic bullets, enforce facet diversity
+    // A3.5.30: MOVED to final cleanup block (after all injections) to avoid missing later-injected reasons
+    // let firstStmtNormStats = null;
+    // statements = statements.map((stmt, idx) => {
+    //   if (!stmt || typeof stmt !== "object") return stmt;
+    //   
+    //   const assessment = stmt.assessment || {};
+    //   const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+    //   const text = typeof stmt.text === "string" ? stmt.text : "";
+    //   
+    //   const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons);
+    //   
+    //   // Log normalization stats for first statement only
+    //   if (idx === 0) {
+    //     firstStmtNormStats = stats;
+    //   }
+    //   
+    //   return {
+    //     ...stmt,
+    //     assessment: {
+    //       ...assessment,
+    //       reasons: normalizedReasons,
+    //     },
+    //   };
+    // });
+    // 
+    // // Log normalization stats for first statement
+    // if (firstStmtNormStats) {
+    //   diag(runId, reqSig, `[REASONS_NORM] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic}`);
+    // }
+    
+    // J) Fix anchor-fact reasons: detect and correct false "not mentioned" claims with semantic matching (A3.5.10)
+    statements = fixAnchorFactReasons(statements, unifiedReferences);
+    
+    // K) Enforce corpus-level verification before absence claims (A3.5.11)
+    // A3.5.13b: Pass unifiedReferences to inject citations and build evidence when corpusSearch finds support
+    // MUST perform corpus search before allowing "not mentioned" / "not supported" claims
+    // A3.6.3: Harden error handling with proper logging and meta flag
+    diag(runId, reqSig, `[PIPELINE] phase=enforceCorpusVerification`);
+    let verificationOk = true;
+    try {
+      statements = enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, unifiedReferences, runId, reqSig);
+    } catch (corpusErr) {
+      verificationOk = false;
+      const errorMessage = corpusErr?.message || String(corpusErr) || "Unknown error";
+      const errorStack = corpusErr?.stack || "No stack trace";
+      diag(runId, reqSig, `[ERROR][CORPUS_VERIFY] rid=${runId || 'unknown'} message=${errorMessage} stack=${errorStack.substring(0, 500)}`);
+      // Continue with statements as-is rather than losing them
+    }
+    
+    // A3.6.3: Initialize meta object for verification status (will be merged into finalResponseObject.meta)
+    let meta = {};
+    if (!meta.verification) meta.verification = {};
+    meta.verification.ok = verificationOk;
+    if (!verificationOk) {
+      meta.verification.phase = "enforceCorpusVerificationBeforeAbsence";
+    }
+    
+    // A3.5.14b Patch 2 & 3: Anchor Enforcement + Ambiguity Routing (LAST MUTATION STEP)
+    // Must run AFTER all other processing to ensure citations/evidence are not overwritten
+    diag(runId, reqSig, `[PIPELINE] phase=enforceAnchorCitations`);
+    try {
+      statements = enforceAnchorCitationsAndAmbiguity(statements, uploadedSources, unifiedReferences);
+    } catch (anchorErr) {
+      diag(runId, reqSig, `[ERROR] enforceAnchorCitationsAndAmbiguity failed:`, anchorErr);
+      // Continue with statements as-is
+    }
+    
+    // A3.5.27: Citation backfill for supported-but-non-anchored clauses
+    // Run AFTER enforceAnchorCitationsAndAmbiguity, BEFORE FINAL_COUNTS
+    diag(runId, reqSig, `[PIPELINE] phase=citationBackfill`);
+    try {
+      const backfillResult = backfillCitations(statements, uploadedSources, unifiedReferences, runId, reqSig);
+      statements = backfillResult.statements;
+    } catch (backfillErr) {
+      diag(runId, reqSig, `[ERROR] backfillCitations failed:`, backfillErr);
+      // Continue with statements as-is
+    }
+    
+    // FINAL REASONS CLEANUP (A3.5.30):
+    // Must run AFTER all injections (anchor enforcement, corpus verification, backfill)
+    statements = enforceFacetScopedBullets(statements);
+
+    // A3.6.44: Checkpoint B - right before generateClaims
+    for (let i = 0; i < statements.length; i++) {
+      const stmt = statements[i];
+      if (stmt && typeof stmt === "object" && typeof stmt.text === "string") {
+        const text = stmt.text.trim();
+        const tail = text.length <= 80 ? text : text.slice(-80);
+        diag(runId, reqSig, `[CANON_TAIL] checkpoint=before_generateClaims idx=${i} tail="${tail}"`);
+      }
+    }
+    
+    // A3.6.7: Generate claims BEFORE reasons-mode decision and BEFORE FINAL_COUNTS
+    // This ensures assessment.claims is available when deciding on reasons mode
+    diag(runId, reqSig, `[PIPELINE] phase=generateClaims`);
+    // A3.6.67: Reuse uploadedDocs initialized earlier (avoid redeclaration)
+    if (!uploadedDocs || uploadedDocs.length === 0) {
+      uploadedDocs = Array.isArray(uploadedSources) && uploadedSources.length > 0
+        ? uploadedSources.map((src) => ({
+            id: src.id || src.name || "unknown",
+            title: src.title || src.name || "Untitled",
+            text: src.text || "",
+          }))
+        : [];
+    }
+    
+    // A3.6.9: Track claims failures for meta
+    let claimsFailures = 0;
+    
+    if (uploadedDocs.length > 0) {
+      statements = statements.map((stmt, idx) => {
+        if (!stmt || typeof stmt !== "object") return stmt;
+        
+        const text = typeof stmt.text === "string" ? stmt.text : "";
+        const assessment = stmt.assessment || {};
+        
+        // A3.6.9: Per-statement guard around claim generation - never trigger global fallback
+        let claims = [];
+        let claimsError = false;
+        let uniqueAnchors = new Set();
+        
+        try {
+          // A3.6.49: Pass __dealTerms and __dealTermsCanonicalKind from statement to assessment for claim generation
+          if (stmt.__dealTerms) {
+            assessment.__dealTerms = stmt.__dealTerms;
+          }
+          if (stmt.__dealTermsCanonical === true) {
+            assessment.__dealTermsCanonical = true;
+            assessment.__dealTermsCanonicalKind = stmt.__dealTermsCanonicalKind || null;
+          }
+          
+          // Generate claims (with aggregation, capping, and claim-aware scoring)
+          claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
+          
+          // Extract unique anchors for logging
+          uniqueAnchors = new Set(claims.map(c => {
+            const anchor = extractAnchor(c.claimText);
+            return anchor || "no_anchor";
+          }));
+        } catch (claimsErr) {
+          // A3.6.10: Log structured error but continue pipeline
+          const errorMessage = claimsErr?.message || String(claimsErr) || "Unknown error";
+          const errorStack = claimsErr?.stack || "No stack trace";
+          diag(runId, reqSig, `[ERROR][CLAIMS] rid=${runId || 'unknown'} idx=${idx} message=${errorMessage} stack=${errorStack.substring(0, 500)}`);
+          
+          // A3.6.10: Optional error site logging to pinpoint failing block
+          let errorSite = "unknown";
+          if (errorMessage.includes("match is not defined")) {
+            errorSite = "pct_pattern_match";
+          } else if (errorMessage.includes("Cannot read property") || errorMessage.includes("Cannot read")) {
+            errorSite = "property_access";
+          } else if (errorMessage.includes("is not a function")) {
+            errorSite = "function_call";
+          }
+          if (errorSite !== "unknown") {
+            diag(runId, reqSig, `[CLAIMS_ERR_SITE] idx=${idx} site=${errorSite}`);
+          }
+          
+          claims = [];
+          claimsError = true;
+          claimsFailures++;
+        }
+        
+        // A3.6.9: Log claims phase status (idx<2)
+        if (idx < 2 && runId && reqSig) {
+          diag(runId, reqSig, `[CLAIMS_PHASE] idx=${idx} ok=${!claimsError} claimsCount=${claims.length} anchors=${JSON.stringify(Array.from(uniqueAnchors).slice(0, 5))}`);
+        }
+        
+        // A3.6.3: Compute statement reliability from claims (deterministic)
+        const existingScore = typeof assessment.reliabilityScore === "number" 
+          ? assessment.reliabilityScore 
+          : 30;
+        const existingLabel = typeof assessment.reliabilityLabel === "string"
+          ? assessment.reliabilityLabel
+          : existingScore >= 80 ? "High" : existingScore >= 60 ? "Medium" : "Low";
+        
+        const computedReliability = computeStatementReliabilityFromClaims(claims, existingScore, existingLabel);
+        
+        // A3.6.5: Count claim reliabilities for logging
+        let hiCount = 0, medCount = 0, lowCount = 0;
+        for (const claim of claims) {
+          const reliability = claim?.reliability;
+          if (reliability === "High") hiCount++;
+          else if (reliability === "Medium") medCount++;
+          else if (reliability === "Low") lowCount++;
+        }
+        const totalCount = hiCount + medCount + lowCount;
+        
+        // A3.6.58: Normalize claim comments using corpusSearch support (before reasons generation)
+        // This ensures reasons use normalized comments when reasonsSource="claims"
+        let normalizedClaims = claims;
+        if (claims.length > 0 && uploadedDocs.length > 0) {
+          // Run corpusSearch on statement text to get matchTypes
+          let searchResult;
+          try {
+            searchResult = corpusSearch(text, uploadedDocs);
+          } catch (searchErr) {
+            // If corpusSearch fails, skip normalization
+            searchResult = null;
+          }
+          
+          // Only normalize if corpusSearch found support
+          if (searchResult && searchResult.found) {
+            // Extract matchTypes from hits
+            const hits = searchResult.hits || [];
+            const matchTypes = new Set(hits.map(h => h.matchType).filter(Boolean));
+            const hasNumber = matchTypes.has("number");
+            const hasKeyword = matchTypes.has("keyword");
+            const hasFuzzy = matchTypes.has("fuzzy");
+            const hasNumberOrKeyword = hasNumber || hasKeyword;
+            const isFuzzyOnly = hasFuzzy && !hasNumberOrKeyword;
+            
+            // Normalize claim comments
+            let changedCount = 0;
+            let sampleBefore = null;
+            let sampleAfter = null;
+            normalizedClaims = claims.map(claim => {
+              if (!claim || typeof claim !== "object") return claim;
+              
+              const comment = claim.comment || "";
+              // Check if comment is absence-style
+              const isAbsenceStyle = /not explicitly confirmed|not found in provided sources/i.test(comment);
+              
+              if (!isAbsenceStyle) return claim;
+              
+              // Normalize based on matchTypes
+              let newComment = comment;
+              if (hasNumberOrKeyword) {
+                newComment = "Supported by memo text";
+              } else if (isFuzzyOnly) {
+                newComment = "Paraphrased from memo text (wording not exact)";
+              }
+              
+              if (newComment !== comment) {
+                changedCount++;
+                if (!sampleBefore && idx < 3) {
+                  sampleBefore = comment.substring(0, 60);
+                  sampleAfter = newComment.substring(0, 60);
+                }
+                return {
+                  ...claim,
+                  comment: newComment
+                };
+              }
+              
+              return claim;
+            });
+            
+            // Log normalization if any comments were changed
+            if (changedCount > 0 && idx < 3 && runId && reqSig) {
+              const mode = hasNumberOrKeyword ? "num_keyword" : "fuzzy_only";
+              diag(runId, reqSig, `[A3.6.58][COMMENT_NORM] idx=${idx} changedCount=${changedCount} mode=${mode} sampleBefore="${sampleBefore}" sampleAfter="${sampleAfter}"`);
+            }
+          }
+        }
+        
+        // A3.6.9: Generate claim-linked reasons immediately if claims exist AND no error
+        // Use normalized claims so reasons use normalized comments
+        let claimLinkedReasons = [];
+        if (normalizedClaims.length > 0 && !claimsError) {
+          claimLinkedReasons = generateClaimLinkedReasons(normalizedClaims);
+          
+          // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
+          if (idx < 2 && runId && reqSig) {
+            const branch = computedReliability._branch || "UNKNOWN";
+            diag(runId, reqSig, `[STMT_FROM_CLAIMS] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount} total=${totalCount} score=${computedReliability.reliabilityScore} label=${computedReliability.reliabilityLabel} branch=${branch}`);
+          }
+        }
+        
+        // A3.6.9: Add claims to assessment and update reliability
+        // If claimsError, force reasons mode to legacy (claims will be empty array)
+        // Use normalizedClaims (with normalized comments) instead of original claims
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            claims: normalizedClaims, // Use normalized claims with updated comments
+            reliabilityScore: computedReliability.reliabilityScore,
+            reliabilityLabel: computedReliability.reliabilityLabel,
+            // A3.6.9: Set claim-linked reasons if available and no error, otherwise keep existing reasons
+            reasons: (claimLinkedReasons.length > 0 && !claimsError) ? claimLinkedReasons : assessment.reasons,
+            reasonsSource: (claimLinkedReasons.length > 0 && !claimsError) ? "claims" : "legacy",
+            _claimsError: claimsError, // Internal flag for later phases
+          },
+        };
+      });
+    }
+    
+    // A3.6.9: Store claims failures in meta
+    if (claimsFailures > 0 && !meta.claimsFailures) {
+      meta.claimsFailures = claimsFailures;
+    }
+
+    let firstStmtNormStats = null;
+    statements = statements.map((stmt, idx) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+
+      const assessment = stmt.assessment || {};
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const text = typeof stmt.text === "string" ? stmt.text : "";
+      const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
+      
+      // A3.6.9: If claims exist AND no claimsError, ONLY use claim-linked reasons. Do not generate old reasons at all.
+      const claimsError = assessment._claimsError || false;
+      if (claims.length > 0 && !claimsError) {
+        // Skip normalization entirely - claim-linked reasons already set in claims generation phase
+        const reasonsSource = "claims";
+        
+        // A3.6.9: Log reasons mode (idx<2)
+        if (idx < 2 && runId && reqSig) {
+          diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=claims claimsCount=${claims.length}`);
+        }
+        
+        // A3.6.9: Return as-is - claim-linked reasons already set in claims generation phase
+        // DO NOT call normalizeAssessmentReasons() - skip legacy reason generation entirely
+        return stmt;
+      }
+      
+      // A3.6.9: If claimsError or no claims, use legacy reasons
+      if (idx < 2 && runId && reqSig) {
+        diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=legacy claimsCount=${claims.length} claimsError=${claimsError}`);
+      }
+      
+      // A3.5.31: Pass statement context into normalization
+      // A3.6.5: Pass reasonsSource to prevent overwriting claim-linked reasons
+      // A3.6.6: Legacy reasons only run when claims.length === 0
+      const hasCitations = (assessment.citations?.length > 0) || (stmt.citations?.length > 0);
+      const hasEvidence = (stmt.evidence?.length > 0) || (assessment.evidence?.length > 0);
+      const facetsDetected = detectFacetsInStatement(text);
+      const reasonsSource = assessment.reasonsSource || null;
+      
+      // Log reasons mode (idx<2)
+      if (idx < 2 && runId && reqSig) {
+        diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=legacy claimsCount=0`);
+      }
+      
+      const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons, {
+        hasCitations,
+        hasEvidence,
+        facetsDetected,
+        reasonsSource,
+      });
+
+      if (idx === 0) firstStmtNormStats = stats;
+
+      return {
+        ...stmt,
+        assessment: { ...assessment, reasons: normalizedReasons },
+      };
+    });
+
+    if (firstStmtNormStats) {
+      diag(runId, reqSig,
+        `[REASONS_NORM_FINAL] idx=0 before=${firstStmtNormStats.before} after=${firstStmtNormStats.after} deduped=${firstStmtNormStats.deduped} autoFacet=${firstStmtNormStats.autoFacet} autoSnippet=${firstStmtNormStats.autoSnippet} addedDeterministic=${firstStmtNormStats.addedDeterministic} removedAnchorBoilerplate=${firstStmtNormStats.removedAnchorBoilerplate || 0} replacedWeakestForFacet=${firstStmtNormStats.replacedWeakestForFacet || 0} usedDeterministicSet=${firstStmtNormStats.usedDeterministicSet || false}`
+      );
+    }
+    
+    // A3.6.7: Claim-linked reasons are now generated earlier (in claims generation phase)
+    // This redundant section is removed - claims and reasons are set before normalization
+    
+    // A3.5.31: Add observability log for idx=0 after final normalization
+    if (statements.length > 0) {
+      const firstStmt = statements[0];
+      if (firstStmt && typeof firstStmt === "object") {
+        const assessment = firstStmt.assessment || {};
+        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        // Truncate each bullet to ~120 chars for readability
+        const truncatedReasons = reasons.map(r => {
+          if (typeof r !== "string") return String(r);
+          return r.length > 120 ? r.substring(0, 117) + "..." : r;
+        });
+        diag(runId, reqSig, `[REASONS_FINAL_SAMPLE] idx=0 reasons=${JSON.stringify(truncatedReasons)}`);
+      }
+    }
+    
+    // A3.6.10: Universal bracket-tag stripping BEFORE FINAL_COUNTS
+    // Apply stripReasonTags to every statement's reasons (legacy + claims mode)
+    statements = statements.map((stmt) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const cleanedReasons = stripReasonTags(reasons);
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: cleanedReasons,
+        },
+      };
+    });
+    
+    // A3.6.13: Final universal reason normalizer at output boundary
+    // Strips tags, dedupes, and applies caps for ALL statements (claims + legacy)
+    statements = statements.map((stmt, idx) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const reasonsSource = assessment.reasonsSource || null;
+      
+      const { reasons: normalizedReasons, stats } = normalizeFinalReasons(reasons, reasonsSource);
+      
+      // A3.6.13: Diagnostic log for first 2 statements
+      if (idx < 2 && runId && reqSig) {
+        diag(runId, reqSig, `[REASONS_FINAL_NORMALIZED] idx=${idx} mode=${reasonsSource || "legacy"} before=${stats.before} after=${stats.after} strippedTags=${stats.strippedTags} deduped=${stats.deduped}`);
+      }
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: normalizedReasons,
+        },
+      };
+    });
+    
+    // A3.6.9: Ensure top-level citations/evidence are mirrored before FINAL_COUNTS
+    // For each statement: if statement.citations is missing/empty and assessment.citations exists → copy it
+    // If statement.evidence is missing/empty and assessment.citations exists → derive evidence from citations + references map
+    statements = statements.map((stmt) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      const assessmentCitations = Array.isArray(assessment.citations) ? assessment.citations : [];
+      const statementCitations = Array.isArray(stmt.citations) ? stmt.citations : [];
+      
+      // Mirror assessment.citations to statement.citations if missing
+      const citations = statementCitations.length > 0 ? statementCitations : assessmentCitations;
+      
+      // Derive evidence from citations if missing
+      let evidence = Array.isArray(stmt.evidence) ? stmt.evidence : [];
+      if (evidence.length === 0 && citations.length > 0 && Array.isArray(unifiedReferences)) {
+        const referencesById = new Map();
+        unifiedReferences.forEach((ref) => {
+          const id = ref?.id;
+          if (id != null) {
+            referencesById.set(String(id), ref);
+          }
+        });
+        
+        evidence = citations.map((citationId) => {
+          const citationKey = citationId != null ? String(citationId) : null;
+          if (citationKey && referencesById.has(citationKey)) {
+            const ref = referencesById.get(citationKey);
+            const refType = ref?.type || (ref?.url ? "web" : "uploaded");
+            return {
+              title: ref?.title || "Untitled source",
+              url: ref?.url || null,
+              sourceType: refType,
+            };
+          }
+          return {
+            title: "Unresolved citation",
+            url: null,
+            sourceType: "unresolved",
+          };
+        });
+      }
+      
+      return {
+        ...stmt,
+        citations,
+        evidence,
+      };
+    });
+    
+    // A3.5.18 Fix 2: Hard invariant at return time - ensure citations/evidence are preserved
+    let totalAssessmentCites = 0;
+    let totalTopCites = 0;
+    let totalEvidence = 0;
+    let hasCorpusSearchFound = false;
+    let hasAnchorEnforcementInjected = false;
+    
+    // A3.5.29: Log facet detection for first statement (diagnostic)
+    if (statements.length > 0) {
+      const firstStmt = statements[0];
+      if (firstStmt && typeof firstStmt === "object") {
+        const text = typeof firstStmt.text === "string" ? firstStmt.text : "";
+        const assessment = firstStmt.assessment || {};
+        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        const facetsDetected = detectFacetsInStatement(text);
+        const bulletsCount = reasons.length;
+        // A3.6.2 PATCH v2: Disable facet detection
+        const facetsDetectedEmpty = []; // Always empty in facet-free mode
+        diag(runId, reqSig, `[FACET_REASONS] idx=0 facetsDetected=${JSON.stringify(facetsDetectedEmpty)} bullets=${bulletsCount}`);
+      }
+    }
+    
+    for (const stmt of statements) {
+      if (!stmt || typeof stmt !== "object") continue;
+      
+      const assessment = stmt.assessment || {};
+      const assessCites = Array.isArray(assessment.citations) ? assessment.citations.length : 0;
+      const topCites = Array.isArray(stmt.citations) ? stmt.citations.length : 0;
+      const evidence = Array.isArray(stmt.evidence) ? stmt.evidence.length : 0;
+      
+      totalAssessmentCites += assessCites;
+      totalTopCites += topCites;
+      totalEvidence += evidence;
+      
+      // Check if this statement had corpusSearch find or anchor enforcement
+      const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const reasonsStr = reasons.join(" ").toLowerCase();
+      if (reasonsStr.includes("memo contains related support") || reasonsStr.includes("citation added via invariant")) {
+        hasAnchorEnforcementInjected = true;
+      }
+      if (reasonsStr.includes("corpus search") || reasonsStr.includes("found in memo")) {
+        hasCorpusSearchFound = true;
+      }
+    }
+    
+    // A3.7.2: Selection mode statements are already preserved via candidate matching
+    // No final override needed as split candidates maintain their text
+    
+    diag(runId, reqSig, `[FINAL_COUNTS] statements=${statements.length} assessCites=${totalAssessmentCites} topCites=${totalTopCites} evidence=${totalEvidence}`);
+    
+    // A3.5.21 Diagnostic: Mark that FINAL_COUNTS has been reached for this RID
+    if (runId) {
+      if (!runStateByRid[runId]) {
+        runStateByRid[runId] = {};
+      }
+      runStateByRid[runId].finalCountsReached = true;
+    }
+    
+    // A3.5.18 Fix 2: Warn if citations/evidence were lost
+    if ((hasCorpusSearchFound || hasAnchorEnforcementInjected) && totalAssessmentCites === 0 && totalTopCites === 0 && totalEvidence === 0) {
+      diag(runId, reqSig, `[FINAL_COUNTS][ERROR] citations lost after enforcement`);
+    }
+    
+    // HOTFIX: Build finalResponseObject IMMEDIATELY after FINAL_COUNTS to ensure it's always set
+    // This must happen before any code that might throw, so it's available in error paths
+    // A3.6.64: Build initial finalResponseObject without extractionQuality (will be computed after finalDanglingCurrencyRepair)
+    try {
+      finalResponseObject = {
+        ok: true,
+        statements, // Use the exact statements array that was counted
+        references: unifiedReferences || [],
+        meta: {
+          webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
+          extractionQuality: "ok", // Temporary, will be updated after finalDanglingCurrencyRepair
+          uploadedSourcesCount: uploadedReferences?.length || 0,
+          webSourcesCount: webReferencesWithIds?.length || 0,
+          ...(meta?.verification ? { verification: meta.verification } : {}),
+          ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
+          // A3.7.0: Selection mode metadata
+          selectionUsed: isSelectionMode || false,
+          selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
+          // A3.7.1: Selection statement count
+          selectionStatementCountReturned: isSelectionMode ? statements.length : undefined,
+        },
+      };
+    } catch (e) {
+      diag(runId, reqSig, `[ERROR] failed building finalResponseObject immediately after FINAL_COUNTS: ${e?.message || String(e)}`);
+      // Fallback: build minimal finalResponseObject
+      finalResponseObject = {
+        ok: true,
+        statements: statements || [],
+        references: unifiedReferences || [],
+        meta: {
+          webSearch: { enabled: true, used: false },
+          extractionQuality: "error",
+          uploadedSourcesCount: uploadedReferences?.length || 0,
+          webSourcesCount: webReferencesWithIds?.length || 0,
+          ...(meta?.verification ? { verification: meta.verification } : {}),
+          ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
+          // A3.7.0: Selection mode metadata
+          selectionUsed: isSelectionMode || false,
+          selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
+          // A3.7.1: Selection statement count
+          selectionStatementCountReturned: isSelectionMode ? (statements?.length || 0) : undefined,
+        },
+      };
+    }
+    
+    // A3.6.7: Claims generation moved earlier (before reasons normalization and FINAL_COUNTS)
+    // Bracket stripping also moved earlier (before FINAL_COUNTS)
+    
+    // NOTE: finalResponseObject is now built immediately after FINAL_COUNTS (see above)
+    // After this point, finalResponseObject must never be null.
+    
+    // A3.6.44: Final-pass dangling currency repair on canonical return statements
+    // This must run immediately before RETURN_SNAPSHOT to catch any dangling fragments
+    // that may have been reintroduced by downstream phases
+    // A3.6.64: Track final repair count for quality classification (must run before extractionQuality computation)
+    const finalDanglingResult = finalDanglingCurrencyRepair(
+      finalResponseObject.statements,
+      normalizedDraftText,
+      runId,
+      reqSig
+    );
+    finalResponseObject.statements = finalDanglingResult.statements;
+    finalDanglingRepairCount = finalDanglingResult.repairCount || 0;
+    
+    // A3.6.64: Compute extractionQuality AFTER finalDanglingCurrencyRepair (so finalDanglingRepairCount is accurate)
+    let extractionQualityValue = extractionQuality || "ok";
+    let extractionQualityReasons = [];
+    try {
+      const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
+      const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
+      // A3.6.65: Build qualityPatch with all repair counts (including finalDanglingRepairCount and rejectedCandidatesCount)
+      const qualityPatch = {
+        numericFragmentFallbackCount,
+        numericFragmentRepairCount,
+        earlyDanglingRepairCount,
+        finalDanglingRepairCount,
+        rejectedByReasonIncompleteNumericFragment,
+        rejectedCandidatesCount: rejectedCount,
+        segGuardFallback: segGuardFallback, // A3.6.72: Track seg guard fallback
+        segGuardError: segGuardErrorFlag // A3.6.72: Track seg guard error
+      };
+      // A3.6.64: Diagnostic logging before computeExtractionQuality
+      diag(runId, reqSig, `[A3.6.64][QUALITY_COUNTS] numericFragmentRepairCount=${numericFragmentRepairCount} numericFragmentFallbackCount=${numericFragmentFallbackCount} rejectedCandidatesCount=${rejectedCount} rejectedByReasonIncompleteNumericFragment=${rejectedByReasonIncompleteNumericFragment} earlyDanglingRepairCount=${earlyDanglingRepairCount} finalDanglingRepairCount=${finalDanglingRepairCount}`);
+      // A3.6.12: Pass dealDedupDropped separately (does not count as degraded)
+      const beforeQuality = extractionQualityValue;
+      const beforeReasons = extractionQualityReasons.slice(); // Save for diagnostics
+      const qualityResult = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged, dealDedupDropped, qualityPatch, runId, reqSig);
+      // A3.6.60: Extract quality and reasons from result object
+      if (typeof qualityResult === "object" && qualityResult !== null) {
+        extractionQualityValue = qualityResult.quality || extractionQualityValue;
+        extractionQualityReasons = Array.isArray(qualityResult.reasons) ? qualityResult.reasons : [];
+        // A3.6.65: Diagnostic logging
+        diag(runId, reqSig, `[A3.6.65][QUALITY_PATCH] beforeQuality=${beforeQuality} afterQuality=${extractionQualityValue} beforeReasons=${JSON.stringify(beforeReasons)} afterReasons=${JSON.stringify(extractionQualityReasons)} patch=${JSON.stringify(qualityPatch)}`);
+        // A3.6.64: Log if rejections were resolved
+        const allRejectionsWereNumericFragment = rejectedCount > 0 && rejectedCount === rejectedByReasonIncompleteNumericFragment;
+        if (allRejectionsWereNumericFragment && numericFragmentRepairCount > 0) {
+          diag(runId, reqSig, `[A3.6.64][REJECTED_RESOLVED] totalRejectedCandidates=${rejectedCount} rejectedByReasonIncompleteNumericFragment=${rejectedByReasonIncompleteNumericFragment} numericFragmentRepairCount=${numericFragmentRepairCount} fallbackCount=${fallbackCount}`);
+        }
+        // A3.6.62: Log if fallback was resolved
+        if (numericFragmentFallbackCount > 0 && numericFragmentRepairCount > 0) {
+          diag(runId, reqSig, `[A3.6.62][FALLBACK_RESOLVED] reason=incomplete_numeric_fragment fallback=${numericFragmentFallbackCount} repaired=${numericFragmentRepairCount}`);
+        }
+      } else {
+        // Fallback for old return format (string)
+        extractionQualityValue = qualityResult || extractionQualityValue;
+      }
+    } catch (e) {
+      diag(runId, reqSig, `[ERROR] failed computing extractionQuality after finalDanglingCurrencyRepair: ${e?.message || String(e)}`);
+      extractionQualityValue = extractionQualityValue || "ok";
+    }
+    
+    // A3.6.64: Update finalResponseObject with computed extractionQuality
+    finalResponseObject.meta.extractionQuality = extractionQualityValue;
+    if (extractionQualityReasons.length > 0) {
+      finalResponseObject.meta.extractionQualityReasons = extractionQualityReasons;
+    }
+    
+    // A3.6.57: Prune duplicate deal-term claims for canonical statements
+    // This removes overlapping variants and keeps only protected canonical deal-role claims
+    function pruneCanonicalDealClaims(stmt) {
+      const claims = stmt?.assessment?.claims;
+      if (!Array.isArray(claims) || claims.length === 0) return false;
+
+      const isCanonical = stmt?.assessment?.__dealTermsCanonical === true
+        || stmt?.__dealTermsCanonical === true;
+      if (!isCanonical) return false;
+
+      // Prefer protected canonical deal-role claims only
+      const protectedCanon = claims.filter(c => c && c.__protected === true);
+
+      // If we have protected claims, drop all non-protected.
+      // This keeps only the canonical deal-role claims, which are the ones we intended to expose.
+      if (protectedCanon.length > 0) {
+        stmt.assessment.claims = protectedCanon;
+        return true;
+      }
+
+      // If there are no protected claims, leave claims unchanged.
+      return false;
+    }
+    
+    // Apply pruning to all statements
+    for (let idx = 0; idx < finalResponseObject.statements.length; idx++) {
+      const stmt = finalResponseObject.statements[idx];
+      if (!stmt || typeof stmt !== "object") continue;
+      
+      const beforeCount = Array.isArray(stmt?.assessment?.claims) ? stmt.assessment.claims.length : 0;
+      const wasPruned = pruneCanonicalDealClaims(stmt);
+      
+      if (wasPruned && idx < 3 && runId && reqSig) {
+        const afterCount = Array.isArray(stmt?.assessment?.claims) ? stmt.assessment.claims.length : 0;
+        const protectedCount = Array.isArray(stmt?.assessment?.claims) 
+          ? stmt.assessment.claims.filter(c => c && c.__protected === true).length 
+          : 0;
+        const canonicalKind = stmt?.assessment?.__dealTermsCanonicalKind || stmt?.__dealTermsCanonicalKind || 'unknown';
+        diag(runId, reqSig, `[A3.6.57][PRUNE_CLAIMS] idx=${idx} canonical=true kind=${canonicalKind} before=${beforeCount} protected=${protectedCount} after=${afterCount}`);
+      }
+    }
+    
+    // A3.5.19 Fix 3: Log return snapshot from the SAME object being returned
+    const firstStmt = finalResponseObject.statements[0];
+    const firstAssessCites = firstStmt?.assessment?.citations?.length || 0;
+    const firstTopCites = firstStmt?.citations?.length || 0;
+    const firstEvidence = firstStmt?.evidence?.length || 0;
+    diag(runId, reqSig, `[RETURN_SNAPSHOT] statements=${finalResponseObject.statements.length} firstAssessCites=${firstAssessCites} firstTopCites=${firstTopCites} firstEvidence=${firstEvidence}`);
+    
+    // DIAGNOSTIC: Log final summary
+    diag(runId, reqSig, `[PIPELINE] phase=complete`);
+    diag(runId, reqSig, `Review complete: ${statements.length} statements, ${unifiedReferences.length} references`);
+    
+    // A3.5.19 Fix 1 & 2: Return immediately after FINAL_COUNTS - no code after this point should run
+    // A3.5.20 Fix 2: Request end sentinel
+    // A3.5.21 Step 2: Set hasReturned flag before return to prevent any further Review pipeline execution
+    hasReturned = true;
+    diag(runId, reqSig, `END returningNow=true status=200`);
+    // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+    try {
+      diag(runId, reqSig, `RETURN_PAYLOAD statements=${finalResponseObject?.statements?.length ?? -1} refs=${finalResponseObject?.references?.length ?? -1}`);
+      diag(runId, reqSig, `END_DIAG path=success status=200 returningNow=true`);
+      if (runId && runStateByRid[runId]) {
+        delete runStateByRid[runId];
+      }
+    } catch (logErr) {
+      // Best-effort logging; don't crash on cleanup
+    }
+    return res.status(200).json(finalResponseObject);
+  } catch (err) {
+      // Graceful degradation: even on error, return valid JSON with fallback statements
+    // A3.5.22 Fix: Unconditional hard stop after FINAL_COUNTS - absolutely no fallback execution
+    if (runId && runStateByRid[runId]?.finalCountsReached) {
+      hasReturned = true;
+      try {
+        diag(runId, reqSig, `SKIP_FALLBACK_AFTER_FINAL_COUNTS finalResponseObjectPresent=${Boolean(finalResponseObject)}`);
+        if (!finalResponseObject) {
+          diag(runId, reqSig, `[ERROR] finalResponseObject missing after FINAL_COUNTS — building safe fallback`);
+        }
+      } catch (logErr) {
+        // Best-effort logging
+      }
+      try {
+        diag(runId, reqSig, `END_DIAG path=success_after_final_hardstop status=200 returningNow=true`);
+        if (runId && runStateByRid[runId]) {
+          delete runStateByRid[runId];
+        }
+      } catch (logErr) {
+        // Best-effort logging
+      }
+      // HOTFIX: finalResponseObject should always be set after FINAL_COUNTS
+      // If it's missing, build a safe fallback that doesn't reference undefined variables
+      if (finalResponseObject) {
+        try {
+          diag(runId, reqSig, `RETURN_PAYLOAD statements=${finalResponseObject?.statements?.length ?? -1} refs=${finalResponseObject?.references?.length ?? -1}`);
+        } catch (logErr) {
+          // Best-effort logging
+        }
+        return res.status(200).json(finalResponseObject);
+      } else {
+        // HOTFIX: Build safe fallback without referencing undefined 'statements'
+        // This should never happen if finalResponseObject was built correctly after FINAL_COUNTS
+        diag(runId, reqSig, `[ERROR] finalResponseObject missing after FINAL_COUNTS — building safe fallback`);
+        const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+        const sources = Array.isArray(body.sources) ? body.sources : [];
+        const minimalReferences = sources.map((s, idx) => ({
+          id: idx + 1,
+          title: s?.name || s?.title || "Untitled source",
+          url: s?.url || null,
+          type: "uploaded",
+        }));
+        const fallbackPayload = {
+          ok: true,
+          statements: [], // Safe fallback: empty array since 'statements' is not in scope
+          references: minimalReferences,
+          meta: {
+            webSearch: { enabled: true, used: false },
+            extractionQuality: "error",
+            uploadedSourcesCount: minimalReferences.length,
+            webSourcesCount: 0,
+          },
+        };
+        try {
+          diag(runId, reqSig, `RETURN_PAYLOAD statements=${fallbackPayload.statements?.length ?? -1} refs=${fallbackPayload.references?.length ?? -1}`);
+        } catch (logErr) {
+          // Best-effort logging
+        }
+        return res.status(200).json(fallbackPayload);
+      }
+    }
+    
+    try {
+      // A3.6.9: Check if statements already exist (after filterDraftOnly, enforceAnchorCitations, etc.)
+      // If so, use them instead of re-extracting to preserve citations/evidence
+      const hasExistingStatements = Array.isArray(statements) && statements.length > 0;
+      const hasAnchorCites = hasExistingStatements && statements.some(s => {
+        const assessment = s?.assessment || {};
+        const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
+        return citations.length > 0;
+      });
+      
+      // A3.6.9: Determine fallback stage and reason
+      const fallbackStage = hasExistingStatements ? "after_processing" : "early";
+      const fallbackReason = err?.message || "Unknown error";
+      const afterAnchorCites = hasAnchorCites;
+      const returningAssembled = hasExistingStatements;
+      
+      // A3.6.9: Log fallback type with explicit reason and stage
+      diag(runId, reqSig, `[FALLBACK] stage=${fallbackStage} afterAnchorCites=${afterAnchorCites} returningAssembled=${returningAssembled} reason=${fallbackReason.substring(0, 200)}`);
+      
+      if (hasExistingStatements && returningAssembled) {
+        // A3.6.9: Use existing statements - preserve citations/evidence already injected
+        // Ensure citations/evidence are mirrored to top-level before returning
+        const preservedStatements = normalizeResponseStructure(statements, unifiedReferences || []);
+        
+        // A3.6.9: Strip bracket tags from all reasons
+        const finalStatements = preservedStatements.map((stmt) => {
+          if (!stmt || typeof stmt !== "object") return stmt;
+          const assessment = stmt.assessment || {};
+          const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+          const cleanedReasons = reasons.map(reason => {
+            if (typeof reason !== "string") return reason;
+            // Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
+            return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+          });
+          return {
+            ...stmt,
+            assessment: {
+              ...assessment,
+              reasons: cleanedReasons,
+            },
+          };
+        });
+        
+        // A3.5.21 Step 2: Set hasReturned flag before return in fallback path
+        hasReturned = true;
+        // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+        try {
+          diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback_assembled status=200 returningNow=true`);
+          if (runId && runStateByRid[runId]) {
+            delete runStateByRid[runId];
+          }
+        } catch (logErr) {
+          // Best-effort logging
+        }
+        return res.status(200).json({
+          ok: true,
+          statements: finalStatements,
+          references: unifiedReferences || [],
+          meta: {
+            webSearch: { enabled: true, used: Boolean(search?.ok && (search?.results || []).length) },
+            extractionQuality: "degraded",
+            uploadedSourcesCount: uploadedReferences?.length || 0,
+            webSourcesCount: webReferencesWithIds?.length || 0,
+            ...(meta?.verification ? { verification: meta.verification } : {}),
+            ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
+          },
+        });
+      }
+      
+      // A3.6.9: Fallback to re-extraction only if no existing statements
+      // A3.5.22 Fix: Log entry into fallback block for verification
+      diag(runId, reqSig, `ENTER_FALLBACK finalCountsReached=${runId && runStateByRid[runId]?.finalCountsReached} hasReturned=${hasReturned}`);
+      // A3.5.21 Fix: Pass runId and reqSig to fallback functions for proper context
+      const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
+      // A3.5.21 Step 3: Pass hasReturned flag to fallback extraction
+      // A3.5.21 Fix: Pass runId and reqSig for proper context
+      const fallbackStatements = fallbackExtractAtomicStatements(fallbackDraftText, hasReturned, runId, reqSig);
+      
+      // Build minimal unified references for fallback (from body sources if available)
+      const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+      const fallbackSources = Array.isArray(fallbackBody.sources) ? fallbackBody.sources : [];
+      const fallbackUploadedReferences = fallbackSources.map((s, idx) => ({
+        id: idx + 1,
+        title: s?.name || s?.title || "Untitled source",
+        url: s?.url || null,
+        type: "uploaded",
+      }));
+      
+      // Apply same pipeline as main path: draft filter → resolve → dual-axis → calibration → anchor → post-check → normalize
+      // A3.5.21 Step 2: Fallback path must also return immediately after processing - no Review code after return
+      // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
+      // A3.5.21 Fix: Pass runId and reqSig for proper context and guard behavior
+      const filteredFallbackStatements = filterDraftOnlyStatements(fallbackStatements, fallbackDraftText, runId, reqSig, hasReturned);
+      const resolvedFallbackStatements = resolveCitations(filteredFallbackStatements, fallbackUploadedReferences);
+      const verifiedFallbackStatements = applyDualAxisVerification(resolvedFallbackStatements, fallbackUploadedReferences);
+      const calibratedFallbackStatements = applyNonAnchorCalibration(verifiedFallbackStatements);
+      const toleranceAdjustedFallbackStatements = applyParaphraseTolerance(calibratedFallbackStatements, fallbackUploadedReferences);
+      // A3.5.11: Enforce corpus-level verification before absence claims in fallback path
+      const fallbackUploadedSources = fallbackSources.map((s) => ({
+        id: s?.id || null,
+        name: s?.name || s?.title || "Untitled source",
+        text: s?.text || "",
+        kind: s?.kind || s?.sourceType || "file",
+        url: s?.url || null,
+      }));
+      const gatedFallbackStatements = applyAnchorGating(toleranceAdjustedFallbackStatements, fallbackUploadedSources);
+      const postCheckedFallbackStatements = applyFinalPostCheck(gatedFallbackStatements, fallbackUploadedReferences);
+      const normalizedFallbackStatements = normalizeResponseStructure(postCheckedFallbackStatements, fallbackUploadedReferences);
+      // Web search not available in fallback path
+      const sanitizedFallbackStatements = sanitizeReasons(normalizedFallbackStatements, false, false);
+      const specificityEnforcedFallbackStatements = enforceReasonSpecificity(sanitizedFallbackStatements);
+      const anchorFixedFallbackStatements = fixAnchorFactReasons(specificityEnforcedFallbackStatements, fallbackUploadedReferences);
+      const finalFallbackStatements = enforceCorpusVerificationBeforeAbsence(anchorFixedFallbackStatements, fallbackUploadedSources, fallbackUploadedReferences);
+      
+      // A3.6.9: Strip bracket tags from all reasons in fallback path
+      const cleanedFallbackStatements = finalFallbackStatements.map((stmt) => {
+        if (!stmt || typeof stmt !== "object") return stmt;
+        const assessment = stmt.assessment || {};
+        const reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+        const cleanedReasons = reasons.map(reason => {
+          if (typeof reason !== "string") return reason;
+          // Remove ALL bracket tags: ^\[[^\]]+\]\s* (any bracket prefix)
+          return reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+        });
+        return {
+          ...stmt,
+          assessment: {
+            ...assessment,
+            reasons: cleanedReasons,
+          },
+        };
+      });
+
+      // A3.5.21 Step 2: Set hasReturned flag before return in fallback path
+      hasReturned = true;
+      // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+      try {
+        diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback status=200 returningNow=true`);
+        if (runId && runStateByRid[runId]) {
+          delete runStateByRid[runId];
+        }
+      } catch (logErr) {
+        // Best-effort logging
+      }
+      return res.status(200).json({
+        ok: true,
+        statements: cleanedFallbackStatements,
+        references: fallbackUploadedReferences,
+        meta: {
+          webSearch: { enabled: true, used: false },
+          extractionQuality: "degraded",
+          uploadedSourcesCount: fallbackUploadedReferences.length,
+          webSourcesCount: 0,
+        },
+      });
+    } catch (fallbackErr) {
+      // A3.6.72: Last resort - use best-effort permissive split ONLY if the full pipeline failed
+      // This should NOT trigger just because seg-guard threw (we handle that separately)
+      // A3.5.21 Step 2: Set hasReturned flag before return in fallback error path
+      hasReturned = true;
+      
+      // A3.6.72: Log that this is a truly fatal pipeline error (not just seg-guard)
+      try {
+        diag(runId || "unknown", reqSig || "unknown", `[PIPELINE_FATAL] message="${fallbackErr?.message || String(fallbackErr)}" name="${fallbackErr?.name || "Error"}"`);
+      } catch (logErr) {
+        // Best-effort logging
+      }
+      
+      // A3.6.72: Try to extract best-effort statements from draft
+      let bestEffortStatements = [];
+      const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
+      if (fallbackDraftText && typeof fallbackDraftText === "string" && fallbackDraftText.trim()) {
+        try {
+          const permissiveSplit = fallbackDraftText
+            .split(/[.!?\n]+/)
+            .map(s => s.trim())
+            .filter(s => s.length >= 20)
+            .map(s => sanitizeCandidateText(s, runId, reqSig))
+            .filter(s => s && s.trim().length >= 20)
+            .slice(0, 25)
+            .map((text, idx) => ({
+              text,
+              __draftPosition: idx,
+              assessment: {
+                reliabilityScore: 50,
+                reliabilityLabel: "Low",
+                reasons: [`Extracted via best-effort fallback: "${text.substring(0, 60)}${text.length > 60 ? "..." : ""}"`]
+              }
+            }));
+          bestEffortStatements = permissiveSplit;
+        } catch (splitErr) {
+          // If even permissive split fails, continue with empty
+        }
+      }
+      
+      // Build references from request body
+      const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+      const fallbackSources = Array.isArray(fallbackBody.sources) ? fallbackBody.sources : [];
+      const fallbackUploadedReferences = fallbackSources.map((s, idx) => ({
+        id: idx + 1,
+        title: s?.name || s?.title || "Untitled source",
+        url: s?.url || null,
+        type: "uploaded",
+      }));
+      
+      // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
+      try {
+        diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback_error status=200 returningNow=true bestEffortStatements=${bestEffortStatements.length}`);
+        if (runId && runStateByRid[runId]) {
+          delete runStateByRid[runId];
+        }
+      } catch (logErr) {
+        // Best-effort logging
+      }
+      return res.status(200).json({
+        ok: true,
+        statements: bestEffortStatements,
+        references: fallbackUploadedReferences,
+        meta: {
+          webSearch: { enabled: true, used: false },
+          extractionQuality: bestEffortStatements.length > 0 ? "degraded" : "failed",
+          extractionQualityReasons: bestEffortStatements.length > 0 ? ["pipeline_fatal_error"] : ["pipeline_fatal_error", "no_statements"],
+          uploadedSourcesCount: fallbackUploadedReferences.length,
+          webSourcesCount: 0,
+        },
+      });
+    }
+  }
+  
+  // A3.5.21 Fix: Catch-all to prevent silent fallthrough (should never reach here)
+  if (!hasReturned) {
+    hasReturned = true;
+    try {
+      diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallthrough_error status=500 returningNow=true`);
+      if (runId && runStateByRid[runId]) {
+        delete runStateByRid[runId];
+      }
+    } catch (logErr) {
+      // Best-effort logging
+    }
+    return res.status(500).json({ ok: false, error: "Internal server error: handler reached end without returning" });
+  }
+}
+
