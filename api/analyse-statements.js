@@ -1508,17 +1508,63 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
     log(`[SEG_GUARD] postFallbackValidation rejected=${postFallbackRejected.length} repaired=${postFallbackRepaired.length}`);
   }
   
-  // If filtering reduced count too much, use original unsplit sentences
+  // A3.6.72: If filtering reduced count too much, use best-effort fallback strategy
   const MIN_ACCEPTABLE_COUNT = Math.max(1, Math.floor(candidates.length * 0.3));
-  if (finalCandidates.length < MIN_ACCEPTABLE_COUNT && rawSentenceList.length > 0) {
-    log(`[SEG_GUARD] filtering reduced count too much (${candidates.length} -> ${finalCandidates.length}), using original unsplit sentences`);
-    const unsplitFallback = rawSentenceList
-      .filter(s => s.length >= 45 || /\d/.test(s))
-      .slice(0, 25);
-    log(`[SEG_GUARD] unsplit fallback count=${unsplitFallback.length}`);
+  if (finalCandidates.length < MIN_ACCEPTABLE_COUNT) {
+    log(`[SEG_GUARD] filtering reduced count too much (${candidates.length} -> ${finalCandidates.length}), applying best-effort fallback`);
+    
+    // Priority order: (a) accepted, (b) fallback, (c) original candidates (filtered), (d) permissive split
+    let bestEffortCandidates = [];
+    
+    // (a) Use accepted candidates if available
+    if (accepted.length > 0) {
+      bestEffortCandidates = [...accepted];
+      log(`[SEG_GUARD] best-effort: using ${accepted.length} accepted candidates`);
+    }
+    // (b) Add fallback candidates
+    else if (fallbackCandidates.length > 0) {
+      bestEffortCandidates = [...fallbackCandidates];
+      log(`[SEG_GUARD] best-effort: using ${fallbackCandidates.length} fallback candidates`);
+    }
+    // (c) Use original candidates (pre-guard) but sanitize them
+    else if (candidates.length > 0) {
+      bestEffortCandidates = candidates
+        .filter(c => typeof c === "string" && c.trim().length >= 20)
+        .map(c => sanitizeCandidateText(c, runId, reqSig))
+        .filter(c => c && c.trim().length >= 20)
+        .slice(0, 25);
+      log(`[SEG_GUARD] best-effort: using ${bestEffortCandidates.length} sanitized original candidates`);
+    }
+    // (d) Last resort: permissive sentence split
+    else if (rawSentenceList.length > 0) {
+      bestEffortCandidates = rawSentenceList
+        .filter(s => s.length >= 20 || /\d/.test(s))
+        .map(s => sanitizeCandidateText(s, runId, reqSig))
+        .filter(s => s && s.trim().length >= 20)
+        .slice(0, 25);
+      log(`[SEG_GUARD] best-effort: using ${bestEffortCandidates.length} permissive split sentences`);
+    }
+    // (e) Absolute last resort: split draft on sentence terminators
+    else if (typeof draftText === "string" && draftText.trim()) {
+      const permissiveSplit = draftText
+        .split(/[.!?\n]+/)
+        .map(s => s.trim())
+        .filter(s => s.length >= 20)
+        .map(s => sanitizeCandidateText(s, runId, reqSig))
+        .filter(s => s && s.trim().length >= 20)
+        .slice(0, 25);
+      bestEffortCandidates = permissiveSplit;
+      log(`[SEG_GUARD] best-effort: using ${bestEffortCandidates.length} permissive draft split`);
+    }
+    
+    // Ensure we have at least something
+    if (bestEffortCandidates.length === 0 && finalCandidates.length > 0) {
+      bestEffortCandidates = finalCandidates;
+      log(`[SEG_GUARD] best-effort: falling back to ${finalCandidates.length} final candidates`);
+    }
     
     // Compute stable hash (simple hash for determinism check)
-    const joinedCandidates = unsplitFallback.join('|');
+    const joinedCandidates = bestEffortCandidates.join('|');
     let hash = 0;
     for (let i = 0; i < joinedCandidates.length; i++) {
       const char = joinedCandidates.charCodeAt(i);
@@ -1533,16 +1579,17 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
       rejectionSummary[r] = (rejectionSummary[r] || 0) + 1;
     });
     console.log(`[DIAG][SEG_GUARD] rawCandidateCount=${candidates.length}`);
-    console.log(`[DIAG][SEG_GUARD] accepted=${accepted.length} rejected=${rejected.length} fallback=${unsplitFallback.length}`);
+    console.log(`[DIAG][SEG_GUARD] accepted=${accepted.length} rejected=${rejected.length} fallback=${fallbackCandidates.length} bestEffort=${bestEffortCandidates.length}`);
     console.log(`[DIAG][SEG_GUARD] rejectedByReason=${JSON.stringify(rejectionSummary)}`);
     console.log(`[DIAG][SEG_GUARD] sampleRejected=${JSON.stringify(rejectedWithReasons.slice(0, 3))}`);
     console.log(`[DIAG][SEG_GUARD] stableCandidateHash=${stableHash}`);
     
-    // Fix 3: Return with counts for quality computation
+    // A3.6.72: Return best-effort candidates with seg_guard_fallback flag
     return { 
-      candidates: unsplitFallback, 
+      candidates: bestEffortCandidates, 
       rejectedCount: rejected.length, 
-      fallbackCount: unsplitFallback.length 
+      fallbackCount: bestEffortCandidates.length,
+      segGuardFallback: true // Flag to indicate best-effort fallback was used
     };
   }
   
@@ -11919,8 +11966,9 @@ function formatReason(reasonObj) {
 }
 
 function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0, fragmentDropped = 0, fragmentMerged = 0, dealDedupDropped = 0, qualityPatch = {}, runId = null, reqSig = null) {
+  // A3.6.72: Don't fail if statements exist (even if from best-effort fallback)
   if (!Array.isArray(statements) || statements.length === 0) {
-    return "failed";
+    return { quality: "failed", reasons: ["no_statements"] };
   }
   
   let hasTruncation = false;
@@ -11992,7 +12040,10 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   const rejectedByReasonIncompleteNumericFragment = qualityPatch.rejectedByReasonIncompleteNumericFragment || 0;
   
   // A3.6.65: Build initial reasons array (will be normalized later)
+  // A3.6.72: Add seg_guard_fallback_error if segGuardFallback was used
   const rawReasons = [];
+  const segGuardFallback = qualityPatch.segGuardFallback === true;
+  if (segGuardFallback) rawReasons.push("seg_guard_fallback_error");
   if (hasTruncation) rawReasons.push("truncation");
   if (hasUnbalancedParens) rawReasons.push("unbalanced_parens");
   
@@ -12841,6 +12892,8 @@ export default async function handler(req, res) {
     const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
     const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
     const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
+    // A3.6.72: Track segGuardFallback flag for quality reasons
+    const segGuardFallback = typeof filterResult === "object" && filterResult.segGuardFallback === true;
     // A3.5.26 Fix C: Extract incompleteNumericFragmentCount and recombinedCount from filterResult
     const incompleteNumericFragmentCount = typeof filterResult === "object" && filterResult.incompleteNumericFragmentCount != null ? filterResult.incompleteNumericFragmentCount : 0;
     const recombinedCount = typeof filterResult === "object" && filterResult.recombinedCount != null ? filterResult.recombinedCount : 0;
@@ -12848,7 +12901,23 @@ export default async function handler(req, res) {
     rejectedByReasonIncompleteNumericFragment = typeof filterResult === "object" && filterResult.rejectedByReasonIncompleteNumericFragment != null ? filterResult.rejectedByReasonIncompleteNumericFragment : 0;
     // A3.6.63: Track numeric fragment fallback count (fallback due to incomplete_numeric_fragment)
     numericFragmentFallbackCount = incompleteNumericFragmentCount > 0 && fallbackCount > 0 ? Math.min(incompleteNumericFragmentCount, fallbackCount) : 0;
-    diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount})`);
+    diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount}${segGuardFallback ? ", segGuardFallback=true" : ""})`);
+    
+    // A3.6.72: Ensure pipeline continues even if extractionCandidates is empty (use best-effort)
+    if (extractionCandidates.length === 0 && typeof normalizedDraftText === "string" && normalizedDraftText.trim()) {
+      // Last resort: permissive sentence split
+      const permissiveSplit = normalizedDraftText
+        .split(/[.!?\n]+/)
+        .map(s => s.trim())
+        .filter(s => s.length >= 20)
+        .map(s => sanitizeCandidateText(s, runId, reqSig))
+        .filter(s => s && s.trim().length >= 20)
+        .slice(0, 25);
+      if (permissiveSplit.length > 0) {
+        extractionCandidates.push(...permissiveSplit);
+        diag(runId, reqSig, `[A3.6.72][PIPELINE_CONTINUE] extractionCandidates was empty, using ${permissiveSplit.length} permissive split candidates`);
+      }
+    }
     
     // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
     diag(runId, reqSig, `[PIPELINE] phase=filterFragmentCandidates`);
@@ -13948,7 +14017,8 @@ ${
         earlyDanglingRepairCount,
         finalDanglingRepairCount,
         rejectedByReasonIncompleteNumericFragment,
-        rejectedCandidatesCount: rejectedCount
+        rejectedCandidatesCount: rejectedCount,
+        segGuardFallback: segGuardFallback // A3.6.72: Track seg guard fallback
       };
       // A3.6.64: Diagnostic logging before computeExtractionQuality
       diag(runId, reqSig, `[A3.6.64][QUALITY_COUNTS] numericFragmentRepairCount=${numericFragmentRepairCount} numericFragmentFallbackCount=${numericFragmentFallbackCount} rejectedCandidatesCount=${rejectedCount} rejectedByReasonIncompleteNumericFragment=${rejectedByReasonIncompleteNumericFragment} earlyDanglingRepairCount=${earlyDanglingRepairCount} finalDanglingRepairCount=${finalDanglingRepairCount}`);
@@ -14273,12 +14343,50 @@ ${
         },
       });
     } catch (fallbackErr) {
-      // Last resort: return empty but valid response
+      // A3.6.72: Last resort - use best-effort permissive split instead of empty payload
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback error path
       hasReturned = true;
+      
+      // A3.6.72: Try to extract best-effort statements from draft
+      let bestEffortStatements = [];
+      const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
+      if (fallbackDraftText && typeof fallbackDraftText === "string" && fallbackDraftText.trim()) {
+        try {
+          const permissiveSplit = fallbackDraftText
+            .split(/[.!?\n]+/)
+            .map(s => s.trim())
+            .filter(s => s.length >= 20)
+            .map(s => sanitizeCandidateText(s, runId, reqSig))
+            .filter(s => s && s.trim().length >= 20)
+            .slice(0, 25)
+            .map((text, idx) => ({
+              text,
+              __draftPosition: idx,
+              assessment: {
+                reliabilityScore: 50,
+                reliabilityLabel: "Low",
+                reasons: [`Extracted via best-effort fallback: "${text.substring(0, 60)}${text.length > 60 ? "..." : ""}"`]
+              }
+            }));
+          bestEffortStatements = permissiveSplit;
+        } catch (splitErr) {
+          // If even permissive split fails, continue with empty
+        }
+      }
+      
+      // Build references from request body
+      const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+      const fallbackSources = Array.isArray(fallbackBody.sources) ? fallbackBody.sources : [];
+      const fallbackUploadedReferences = fallbackSources.map((s, idx) => ({
+        id: idx + 1,
+        title: s?.name || s?.title || "Untitled source",
+        url: s?.url || null,
+        type: "uploaded",
+      }));
+      
       // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
       try {
-        diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback_error status=200 returningNow=true`);
+        diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=fallback_error status=200 returningNow=true bestEffortStatements=${bestEffortStatements.length}`);
         if (runId && runStateByRid[runId]) {
           delete runStateByRid[runId];
         }
@@ -14287,12 +14395,13 @@ ${
       }
       return res.status(200).json({
         ok: true,
-        statements: [],
-        references: [],
+        statements: bestEffortStatements,
+        references: fallbackUploadedReferences,
         meta: {
           webSearch: { enabled: true, used: false },
-          extractionQuality: "degraded",
-          uploadedSourcesCount: 0,
+          extractionQuality: bestEffortStatements.length > 0 ? "degraded" : "failed",
+          extractionQualityReasons: bestEffortStatements.length > 0 ? ["seg_guard_fallback_error"] : ["seg_guard_fallback_error", "no_statements"],
+          uploadedSourcesCount: fallbackUploadedReferences.length,
           webSourcesCount: 0,
         },
       });
