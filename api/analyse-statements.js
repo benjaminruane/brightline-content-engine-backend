@@ -11192,7 +11192,39 @@ function backfillCitations(statements, uploadedSources, unifiedReferences, runId
   return { statements: updatedStatements, attempted, injected, skippedShort };
 }
 
-function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0, fragmentDropped = 0, fragmentMerged = 0, dealDedupDropped = 0, qualityPatch = {}) {
+// A3.6.65: Helper to parse reason string into structured key/value
+function parseReason(reasonStr) {
+  if (typeof reasonStr !== "string") return null;
+  const match = reasonStr.match(/^([^=]+)(?:=(.+))?$/);
+  if (!match) return null;
+  const key = match[1];
+  const valueStr = match[2];
+  let value = valueStr;
+  if (valueStr !== undefined) {
+    const numValue = Number(valueStr);
+    if (!isNaN(numValue) && valueStr.trim() === String(numValue)) {
+      value = numValue;
+    } else if (valueStr === "true") {
+      value = true;
+    } else if (valueStr === "false") {
+      value = false;
+    }
+  }
+  return { key, value };
+}
+
+// A3.6.65: Helper to format structured reason back to string
+function formatReason(reasonObj) {
+  if (!reasonObj || typeof reasonObj !== "object") return null;
+  const { key, value } = reasonObj;
+  if (!key) return null;
+  if (value === undefined || value === null) {
+    return key;
+  }
+  return `${key}=${value}`;
+}
+
+function computeExtractionQuality(statements, extractionCandidates, rejectedCount = 0, fallbackCount = 0, incompleteNumericFragmentCount = 0, recombinedCount = 0, fragmentDropped = 0, fragmentMerged = 0, dealDedupDropped = 0, qualityPatch = {}, runId = null, reqSig = null) {
   if (!Array.isArray(statements) || statements.length === 0) {
     return "failed";
   }
@@ -11265,9 +11297,10 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   // A3.6.64: Extract rejectedByReasonIncompleteNumericFragment from qualityPatch
   const rejectedByReasonIncompleteNumericFragment = qualityPatch.rejectedByReasonIncompleteNumericFragment || 0;
   
-  const reasons = [];
-  if (hasTruncation) reasons.push("truncation");
-  if (hasUnbalancedParens) reasons.push("unbalanced_parens");
+  // A3.6.65: Build initial reasons array (will be normalized later)
+  const rawReasons = [];
+  if (hasTruncation) rawReasons.push("truncation");
+  if (hasUnbalancedParens) rawReasons.push("unbalanced_parens");
   
   // A3.6.64: Handle rejected_candidates - check if all rejections were due to incomplete_numeric_fragment and were repaired
   let rejectedResolved = false;
@@ -11275,11 +11308,11 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   if (rejectedCount > 0) {
     if (allRejectionsWereNumericFragment && numericFragmentRepairCount > 0) {
       // All rejections were due to incomplete_numeric_fragment and were repaired
-      reasons.push(`rejected_candidates_resolved_by_repair=1`);
+      rawReasons.push(`rejected_candidates_resolved_by_repair=1`);
       rejectedResolved = true;
     } else {
       // Some rejections were from other reasons, or not repaired - keep degradation
-      reasons.push(`rejected_candidates=${rejectedCount}`);
+      rawReasons.push(`rejected_candidates=${rejectedCount}`);
     }
   }
   
@@ -11288,31 +11321,71 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   if (fallbackCount > 0) {
     if (numericFragmentFallbackCount > 0 && numericFragmentRepairCount > 0) {
       // Fallback was due to incomplete_numeric_fragment and was repaired
-      reasons.push(`fallback_resolved_by_repair=1`);
+      rawReasons.push(`fallback_resolved_by_repair=1`);
       fallbackResolved = true;
     } else {
-      reasons.push(`fallback=${fallbackCount}`);
+      rawReasons.push(`fallback=${fallbackCount}`);
     }
   }
   
-  // A3.6.64: Handle incomplete_numeric_fragments - remove if repaired, add resolved reason
+  // A3.6.64: Handle incomplete_numeric_fragments - will be normalized later to remove if repaired
   const unrepairedIncompleteCount = Math.max(0, incompleteNumericFragmentCount - repairedNumericFragmentCount);
   if (unrepairedIncompleteCount > 0) {
-    reasons.push(`incomplete_numeric_fragments=${unrepairedIncompleteCount}`);
+    rawReasons.push(`incomplete_numeric_fragments=${unrepairedIncompleteCount}`);
   }
   // A3.6.64: Add resolved reason if rejections were due to incomplete_numeric_fragment and were repaired
   if (rejectedByReasonIncompleteNumericFragment > 0 && numericFragmentRepairCount > 0) {
-    reasons.push(`incomplete_numeric_fragments_repaired=${rejectedByReasonIncompleteNumericFragment}`);
+    rawReasons.push(`incomplete_numeric_fragments_repaired=${rejectedByReasonIncompleteNumericFragment}`);
   }
   if (numericFragmentRepairCount > 0) {
-    reasons.push(`numeric_fragments_repaired=${numericFragmentRepairCount}`);
+    rawReasons.push(`numeric_fragments_repaired=${numericFragmentRepairCount}`);
   }
   
-  if (recombinedCount > 0) reasons.push(`recombined_fragments=${recombinedCount}`);
-  if (fragmentDropped > 0) reasons.push(`fragment_dropped=${fragmentDropped}`);
-  if (fragmentMerged > 0) reasons.push(`fragment_merged=${fragmentMerged}`);
+  if (recombinedCount > 0) rawReasons.push(`recombined_fragments=${recombinedCount}`);
+  if (fragmentDropped > 0) rawReasons.push(`fragment_dropped=${fragmentDropped}`);
+  if (fragmentMerged > 0) rawReasons.push(`fragment_merged=${fragmentMerged}`);
   // A3.6.61: Log dedup_dropped but do NOT include in quality degradation
-  if (dealDedupDropped > 0) reasons.push(`dedup_dropped=${dealDedupDropped}`);
+  if (dealDedupDropped > 0) rawReasons.push(`dedup_dropped=${dealDedupDropped}`);
+  
+  // A3.6.65: Parse reasons into structured format
+  const reasonMap = new Map();
+  for (const reasonStr of rawReasons) {
+    const parsed = parseReason(reasonStr);
+    if (parsed) {
+      reasonMap.set(parsed.key, parsed);
+    }
+  }
+  
+  // A3.6.65: Apply repair overrides - remove stale incomplete_numeric_fragments if repaired
+  if (rejectedByReasonIncompleteNumericFragment > 0 && numericFragmentRepairCount > 0) {
+    // Remove stale incomplete_numeric_fragments (will be replaced by incomplete_numeric_fragments_repaired)
+    reasonMap.delete("incomplete_numeric_fragments");
+    // Ensure incomplete_numeric_fragments_repaired is present
+    reasonMap.set("incomplete_numeric_fragments_repaired", {
+      key: "incomplete_numeric_fragments_repaired",
+      value: rejectedByReasonIncompleteNumericFragment
+    });
+  }
+  
+  // A3.6.65: Ensure numeric_fragments_repaired is present if repairs occurred
+  if (numericFragmentRepairCount > 0) {
+    reasonMap.set("numeric_fragments_repaired", {
+      key: "numeric_fragments_repaired",
+      value: numericFragmentRepairCount
+    });
+  }
+  
+  // A3.6.65: Rebuild reasons array from normalized map
+  const reasons = Array.from(reasonMap.values())
+    .map(formatReason)
+    .filter(r => r !== null);
+  
+  // A3.6.65: Diagnostic logging for normalization
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  const normalizedKeys = Array.from(reasonMap.keys());
+  const incompleteNumericRemoved = rawReasons.some(r => r.startsWith("incomplete_numeric_fragments=")) &&
+    !reasons.some(r => r && r.startsWith("incomplete_numeric_fragments="));
+  log(`[A3.6.65][QUALITY_NORMALIZE] beforeReasons=${JSON.stringify(rawReasons)} normalizedKeys=${JSON.stringify(normalizedKeys)} afterReasons=${JSON.stringify(reasons)} incompleteNumericFragmentsRemoved=${incompleteNumericRemoved}`);
   
   // A3.6.62: Quality classification - repaired/resolved reasons do NOT degrade
   // A3.6.60: Quality must degrade if incomplete_numeric_fragment was NOT repaired
@@ -11324,29 +11397,36 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   // A3.6.62: Final dangling repair should still degrade (indicates early pass failed)
   const hasFinalDanglingRepair = finalDanglingRepairCount > 0;
   
-  // A3.6.64: Quality classification - repaired/resolved reasons do NOT degrade
-  // Non-degrading reasons: dealDedupDropped, numeric_fragments_repaired, fallback_resolved_by_repair,
-  // incomplete_numeric_fragments_repaired, rejected_candidates_resolved_by_repair
+  // A3.6.65: Define explicit degrading vs non-degrading reason keys
+  const nonDegradingKeys = new Set([
+    "rejected_candidates_resolved_by_repair",
+    "fallback_resolved_by_repair",
+    "incomplete_numeric_fragments_repaired",
+    "numeric_fragments_repaired",
+    "dedup_dropped"
+  ]);
   
+  // A3.6.65: Determine degrading reasons (all reasons except non-degrading ones)
+  const degradingReasons = Array.from(reasonMap.values())
+    .filter(r => !nonDegradingKeys.has(r.key))
+    .map(r => r.key);
+  
+  // A3.6.65: Quality classification based on degrading reasons
   if (hasTruncation || hasUnbalancedParens || hasIncompleteNumeric) {
     quality = "failed";
   } else if (hasFinalDanglingRepair) {
     // A3.6.62: Final pass repair indicates early pass didn't work
     quality = "degraded";
+  } else if (degradingReasons.length > 0) {
+    // A3.6.65: Only degrade if there are actual degrading reasons
+    quality = "degraded";
   } else {
-    // A3.6.64: Check for degrading issues (excluding resolved/repaired ones)
-    const hasDegradingRejections = !rejectedResolved && rejectedCount > 0;
-    const hasDegradingFallback = !fallbackResolved && fallbackCount > 0;
-    const hasDegradingIssues = hasDegradingRejections || hasDegradingFallback || unrepairedIncompleteCount > 0 || recombinedCount > 0 || fragmentDropped > 0 || fragmentMerged > 0;
-    
-    if (hasDegradingIssues) {
-      quality = "degraded";
-    }
-    // Note: If all issues were resolved/repaired, quality remains "ok"
+    // A3.6.65: All reasons are non-degrading, quality remains "ok"
+    quality = "ok";
   }
-  // Note: dealDedupDropped, numeric_fragments_repaired, fallback_resolved_by_repair,
-  // incomplete_numeric_fragments_repaired, and rejected_candidates_resolved_by_repair do NOT cause quality degradation
   
+  // A3.6.65: Diagnostic logging for grading
+  log(`[A3.6.65][QUALITY_GRADE] degradingKeysDetected=${JSON.stringify(degradingReasons)} extractionQuality=${quality}`);
   console.log(`[DIAG][QUALITY] extractionQuality=${quality} reasons=${JSON.stringify(reasons)}`);
   
   // A3.6.60: Return both quality and reasons
@@ -13131,26 +13211,27 @@ ${
     try {
       const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
       const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
-      // A3.6.64: Build qualityPatch with all repair counts (including finalDanglingRepairCount)
+      // A3.6.65: Build qualityPatch with all repair counts (including finalDanglingRepairCount and rejectedCandidatesCount)
       const qualityPatch = {
         numericFragmentFallbackCount,
         numericFragmentRepairCount,
         earlyDanglingRepairCount,
         finalDanglingRepairCount,
-        rejectedByReasonIncompleteNumericFragment
+        rejectedByReasonIncompleteNumericFragment,
+        rejectedCandidatesCount: rejectedCount
       };
       // A3.6.64: Diagnostic logging before computeExtractionQuality
       diag(runId, reqSig, `[A3.6.64][QUALITY_COUNTS] numericFragmentRepairCount=${numericFragmentRepairCount} numericFragmentFallbackCount=${numericFragmentFallbackCount} rejectedCandidatesCount=${rejectedCount} rejectedByReasonIncompleteNumericFragment=${rejectedByReasonIncompleteNumericFragment} earlyDanglingRepairCount=${earlyDanglingRepairCount} finalDanglingRepairCount=${finalDanglingRepairCount}`);
       // A3.6.12: Pass dealDedupDropped separately (does not count as degraded)
       const beforeQuality = extractionQualityValue;
       const beforeReasons = extractionQualityReasons.slice(); // Save for diagnostics
-      const qualityResult = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged, dealDedupDropped, qualityPatch);
+      const qualityResult = computeExtractionQuality(statements, extractionCandidates, rejectedCount, fallbackCount, incompleteNumericFragmentCount, recombinedCount, fragmentDropped, fragmentMerged, dealDedupDropped, qualityPatch, runId, reqSig);
       // A3.6.60: Extract quality and reasons from result object
       if (typeof qualityResult === "object" && qualityResult !== null) {
         extractionQualityValue = qualityResult.quality || extractionQualityValue;
         extractionQualityReasons = Array.isArray(qualityResult.reasons) ? qualityResult.reasons : [];
-        // A3.6.64: Diagnostic logging
-        diag(runId, reqSig, `[A3.6.64][QUALITY_PATCH] beforeQuality=${beforeQuality} afterQuality=${extractionQualityValue} beforeReasons=${JSON.stringify(beforeReasons)} afterReasons=${JSON.stringify(extractionQualityReasons)} patch=${JSON.stringify(qualityPatch)}`);
+        // A3.6.65: Diagnostic logging
+        diag(runId, reqSig, `[A3.6.65][QUALITY_PATCH] beforeQuality=${beforeQuality} afterQuality=${extractionQualityValue} beforeReasons=${JSON.stringify(beforeReasons)} afterReasons=${JSON.stringify(extractionQualityReasons)} patch=${JSON.stringify(qualityPatch)}`);
         // A3.6.64: Log if rejections were resolved
         const allRejectionsWereNumericFragment = rejectedCount > 0 && rejectedCount === rejectedByReasonIncompleteNumericFragment;
         if (allRejectionsWereNumericFragment && numericFragmentRepairCount > 0) {
