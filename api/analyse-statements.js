@@ -12040,10 +12040,15 @@ function computeExtractionQuality(statements, extractionCandidates, rejectedCoun
   const rejectedByReasonIncompleteNumericFragment = qualityPatch.rejectedByReasonIncompleteNumericFragment || 0;
   
   // A3.6.65: Build initial reasons array (will be normalized later)
-  // A3.6.72: Add seg_guard_fallback_error if segGuardFallback was used
+  // A3.6.72: Add seg_guard_fallback_error if segGuardFallback was used, or seg_guard_error if segGuardError occurred
   const rawReasons = [];
   const segGuardFallback = qualityPatch.segGuardFallback === true;
-  if (segGuardFallback) rawReasons.push("seg_guard_fallback_error");
+  const segGuardError = qualityPatch.segGuardError === true;
+  if (segGuardError) {
+    rawReasons.push("seg_guard_error");
+  } else if (segGuardFallback) {
+    rawReasons.push("seg_guard_fallback_error");
+  }
   if (hasTruncation) rawReasons.push("truncation");
   if (hasUnbalancedParens) rawReasons.push("unbalanced_parens");
   
@@ -12888,12 +12893,48 @@ export default async function handler(req, res) {
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
     diag(runId, reqSig, `[PIPELINE] phase=filterCandidateQuality`);
-    const filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedDraftText, runId, reqSig);
+    // A3.6.72: Wrap filterCandidateQuality in try/catch to handle errors gracefully
+    let filterResult = null;
+    let segGuardError = false;
+    let segGuardErrorDetails = null;
+    try {
+      filterResult = filterCandidateQuality(rawExtractionCandidates, rawSentences, normalizedDraftText, runId, reqSig);
+    } catch (segGuardErr) {
+      // A3.6.72: Log seg-guard error but continue pipeline with original candidates
+      segGuardError = true;
+      segGuardErrorDetails = {
+        message: segGuardErr?.message || String(segGuardErr),
+        name: segGuardErr?.name || "Error",
+        stack: segGuardErr?.stack ? segGuardErr.stack.split('\n').slice(0, 2).join('\n') : null
+      };
+      const candidatePreviews = rawExtractionCandidates.slice(0, 2).map(c => {
+        const preview = typeof c === "string" ? c.substring(0, 60) : String(c).substring(0, 60);
+        return preview.length < (typeof c === "string" ? c.length : String(c).length) ? preview + "..." : preview;
+      });
+      diag(runId, reqSig, `[SEG_GUARD_ERROR] message="${segGuardErrorDetails.message}" name="${segGuardErrorDetails.name}" rawCandidateCount=${rawExtractionCandidates.length} candidatePreviews=${JSON.stringify(candidatePreviews)}`);
+      diag(runId, reqSig, `[A3.6.72][SEG_GUARD_ERROR_HANDLED] handled=true continuingWithOriginalCandidates`);
+      
+      // A3.6.72: Continue with original candidates (before filtering)
+      filterResult = {
+        candidates: rawExtractionCandidates,
+        rejectedCount: 0,
+        fallbackCount: 0,
+        incompleteNumericFragmentCount: 0,
+        recombinedCount: 0,
+        rejectedByReasonIncompleteNumericFragment: 0,
+        segGuardFallback: false,
+        segGuardError: true,
+        candidatesWithReasons: []
+      };
+    }
+    
     const extractionCandidates = Array.isArray(filterResult.candidates) ? filterResult.candidates : (typeof filterResult === "object" && filterResult ? [] : filterResult);
     const rejectedCount = typeof filterResult === "object" && filterResult.rejectedCount != null ? filterResult.rejectedCount : 0;
     const fallbackCount = typeof filterResult === "object" && filterResult.fallbackCount != null ? filterResult.fallbackCount : 0;
     // A3.6.72: Track segGuardFallback flag for quality reasons
     const segGuardFallback = typeof filterResult === "object" && filterResult.segGuardFallback === true;
+    // A3.6.72: Track segGuardError flag for quality reasons
+    const segGuardErrorFlag = typeof filterResult === "object" && filterResult.segGuardError === true || segGuardError;
     // A3.5.26 Fix C: Extract incompleteNumericFragmentCount and recombinedCount from filterResult
     const incompleteNumericFragmentCount = typeof filterResult === "object" && filterResult.incompleteNumericFragmentCount != null ? filterResult.incompleteNumericFragmentCount : 0;
     const recombinedCount = typeof filterResult === "object" && filterResult.recombinedCount != null ? filterResult.recombinedCount : 0;
@@ -12901,6 +12942,11 @@ export default async function handler(req, res) {
     rejectedByReasonIncompleteNumericFragment = typeof filterResult === "object" && filterResult.rejectedByReasonIncompleteNumericFragment != null ? filterResult.rejectedByReasonIncompleteNumericFragment : 0;
     // A3.6.63: Track numeric fragment fallback count (fallback due to incomplete_numeric_fragment)
     numericFragmentFallbackCount = incompleteNumericFragmentCount > 0 && fallbackCount > 0 ? Math.min(incompleteNumericFragmentCount, fallbackCount) : 0;
+    
+    // A3.6.72: Log that pipeline continued past filterCandidateQuality
+    if (segGuardErrorFlag) {
+      diag(runId, reqSig, `[A3.6.72][CONTINUED_AFTER_SEG_GUARD] continued=true nextPhase=filterFragmentCandidates`);
+    }
     diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount}${segGuardFallback ? ", segGuardFallback=true" : ""})`);
     
     // A3.6.72: Ensure pipeline continues even if extractionCandidates is empty (use best-effort)
@@ -14018,7 +14064,8 @@ ${
         finalDanglingRepairCount,
         rejectedByReasonIncompleteNumericFragment,
         rejectedCandidatesCount: rejectedCount,
-        segGuardFallback: segGuardFallback // A3.6.72: Track seg guard fallback
+        segGuardFallback: segGuardFallback, // A3.6.72: Track seg guard fallback
+        segGuardError: segGuardErrorFlag // A3.6.72: Track seg guard error
       };
       // A3.6.64: Diagnostic logging before computeExtractionQuality
       diag(runId, reqSig, `[A3.6.64][QUALITY_COUNTS] numericFragmentRepairCount=${numericFragmentRepairCount} numericFragmentFallbackCount=${numericFragmentFallbackCount} rejectedCandidatesCount=${rejectedCount} rejectedByReasonIncompleteNumericFragment=${rejectedByReasonIncompleteNumericFragment} earlyDanglingRepairCount=${earlyDanglingRepairCount} finalDanglingRepairCount=${finalDanglingRepairCount}`);
@@ -14343,9 +14390,17 @@ ${
         },
       });
     } catch (fallbackErr) {
-      // A3.6.72: Last resort - use best-effort permissive split instead of empty payload
+      // A3.6.72: Last resort - use best-effort permissive split ONLY if the full pipeline failed
+      // This should NOT trigger just because seg-guard threw (we handle that separately)
       // A3.5.21 Step 2: Set hasReturned flag before return in fallback error path
       hasReturned = true;
+      
+      // A3.6.72: Log that this is a truly fatal pipeline error (not just seg-guard)
+      try {
+        diag(runId || "unknown", reqSig || "unknown", `[PIPELINE_FATAL] message="${fallbackErr?.message || String(fallbackErr)}" name="${fallbackErr?.name || "Error"}"`);
+      } catch (logErr) {
+        // Best-effort logging
+      }
       
       // A3.6.72: Try to extract best-effort statements from draft
       let bestEffortStatements = [];
@@ -14400,7 +14455,7 @@ ${
         meta: {
           webSearch: { enabled: true, used: false },
           extractionQuality: bestEffortStatements.length > 0 ? "degraded" : "failed",
-          extractionQualityReasons: bestEffortStatements.length > 0 ? ["seg_guard_fallback_error"] : ["seg_guard_fallback_error", "no_statements"],
+          extractionQualityReasons: bestEffortStatements.length > 0 ? ["pipeline_fatal_error"] : ["pipeline_fatal_error", "no_statements"],
           uploadedSourcesCount: fallbackUploadedReferences.length,
           webSourcesCount: 0,
         },
