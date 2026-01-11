@@ -13266,10 +13266,18 @@ ${
       }
     }
     
+    // A3.7.1: In selection mode, preserve the selection text as the statement text
+    if (isSelectionMode && statements.length > 0 && normalizedSelection) {
+      // Keep the selection text exactly as provided (normalized but not replaced)
+      statements[0].text = normalizedSelection;
+      diag(runId, reqSig, `[A3.7.1][SELECTION_MODE] preserved selection text as statement text, len=${normalizedSelection.length}`);
+    }
+    
     // A3.5.13: Map LLM output back to pre-extracted candidates for stability
     // A3.5.26 Fix B: Also assign candidateIndex for ordering preservation
+    // A3.7.1: Skip candidate matching in selection mode (we already preserved the selection text)
     // If LLM produced statements, ensure they match candidates (fuzzy matching allowed for minor rewording)
-    if (statements.length > 0 && finalExtractionCandidates.length > 0) {
+    if (!isSelectionMode && statements.length > 0 && finalExtractionCandidates.length > 0) {
       // Build a map of normalized candidates for matching using preserved candidateIndex and draftPosition
       const candidateMap = new Map();
       const candidateObjects = fragFilterResult.candidateObjects || [];
@@ -13444,29 +13452,34 @@ ${
     
     // A3.6.47: Canonicalize Deal Terms statements (plural - emits TWO statements)
     // A3.6.66: Run whenever found=true (not just when both preMoney and enterpriseValue exist)
-    diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement`);
+    // A3.7.1: Skip canonicalization in selection mode to keep selection as primary statement
     let dealDedupDropped = 0;
-    if (dealTerms) {
-      statements = canonicalizeDealTermsStatements(statements, dealTerms, runId, reqSig);
-      
-      // A3.6.61: Drop redundant combined deal-terms statements after canonical split
-      diag(runId, reqSig, `[PIPELINE] phase=dedupCombinedDealTermsStatements`);
-      const dedupResult = dropRedundantCombinedDealTerms(statements, dealTerms, runId, reqSig);
-      statements = dedupResult.statements;
-      dealDedupDropped = dedupResult.droppedCount;
-      
-      // A3.6.60: Sort statements by __draftPosition after canonicalization + dedup to preserve original draft ordering
-      statements.sort((a, b) => {
-        const draftPosA = a.__draftPosition != null ? a.__draftPosition : (a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER);
-        const draftPosB = b.__draftPosition != null ? b.__draftPosition : (b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER);
-        if (draftPosA !== draftPosB) {
-          return draftPosA - draftPosB;
-        }
-        // Tie-breaker: candidateIndex ASC
-        const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
-        const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
-        return idxA - idxB;
-      });
+    if (!isSelectionMode) {
+      diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement`);
+      if (dealTerms) {
+        statements = canonicalizeDealTermsStatements(statements, dealTerms, runId, reqSig);
+        
+        // A3.6.61: Drop redundant combined deal-terms statements after canonical split
+        diag(runId, reqSig, `[PIPELINE] phase=dedupCombinedDealTermsStatements`);
+        const dedupResult = dropRedundantCombinedDealTerms(statements, dealTerms, runId, reqSig);
+        statements = dedupResult.statements;
+        dealDedupDropped = dedupResult.droppedCount;
+        
+        // A3.6.60: Sort statements by __draftPosition after canonicalization + dedup to preserve original draft ordering
+        statements.sort((a, b) => {
+          const draftPosA = a.__draftPosition != null ? a.__draftPosition : (a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER);
+          const draftPosB = b.__draftPosition != null ? b.__draftPosition : (b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER);
+          if (draftPosA !== draftPosB) {
+            return draftPosA - draftPosB;
+          }
+          // Tie-breaker: candidateIndex ASC
+          const idxA = a.__candidateIndex != null ? a.__candidateIndex : Number.MAX_SAFE_INTEGER;
+          const idxB = b.__candidateIndex != null ? b.__candidateIndex : Number.MAX_SAFE_INTEGER;
+          return idxA - idxB;
+        });
+      }
+    } else {
+      diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement SKIPPED (selection mode)`);
     }
     
     // B) Citation resolution validation: drop unresolvable citations
@@ -14063,6 +14076,12 @@ ${
       }
     }
     
+    // A3.7.1: Final preservation of selection text before FINAL_COUNTS (ensures it's never replaced)
+    if (isSelectionMode && statements.length > 0 && normalizedSelection) {
+      statements[0].text = normalizedSelection;
+      diag(runId, reqSig, `[A3.7.1][FINAL_PRESERVE] preserved selection text before FINAL_COUNTS, len=${normalizedSelection.length}`);
+    }
+    
     diag(runId, reqSig, `[FINAL_COUNTS] statements=${statements.length} assessCites=${totalAssessmentCites} topCites=${totalTopCites} evidence=${totalEvidence}`);
     
     // A3.5.21 Diagnostic: Mark that FINAL_COUNTS has been reached for this RID
@@ -14096,6 +14115,8 @@ ${
           // A3.7.0: Selection mode metadata
           selectionUsed: isSelectionMode || false,
           selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
+          // A3.7.1: Selection statement count
+          selectionStatementCountReturned: isSelectionMode ? statements.length : undefined,
         },
       };
     } catch (e) {
@@ -14115,6 +14136,8 @@ ${
           // A3.7.0: Selection mode metadata
           selectionUsed: isSelectionMode || false,
           selectionPreview: isSelectionMode && selectionText ? (selectionText.length <= 120 ? selectionText : selectionText.substring(0, 120) + "...") : null,
+          // A3.7.1: Selection statement count
+          selectionStatementCountReturned: isSelectionMode ? (statements?.length || 0) : undefined,
         },
       };
     }
