@@ -2172,7 +2172,10 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
     investment: null,
     ownershipPct: null,
     ownershipUpside: null,
-    secondary: null
+    secondary: null,
+    ownershipModality: null, // A3.6.69: plan, expected, targeted, actual
+    ownershipUpsidePct: null, // A3.6.69: separate upside percentage
+    ownershipUpsideMechanism: null // A3.6.69: e.g. "secondary purchases"
   };
   
   // Extract pre-money
@@ -2232,14 +2235,17 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
   }
   
   // A3.6.68: Extract ownership % (expanded patterns)
+  // A3.6.69: Also extract modality
   const ownPatterns = [
-    /\bown\s*(\d+(?:\.\d+)?)\s*%\s*(?:on\s*)?(?:a\s*)?fully[- ]diluted\b/i,
-    /\b(?:targeted|target|expected)\s*(\d+(?:\.\d+)?)\s*%\s*fully[- ]diluted\s*ownership\b/i,
-    /\b(\d+(?:\.\d+)?)\s*%\s*fully[- ]diluted\b/i,
-    /\b(?:targeted|target)\s*(\d+(?:\.\d+)?)\s*%\s*FD\b/i
+    { pattern: /\b(?:plan\s+to\s+own|we\s+plan\s+to\s+own)\s*(\d+(?:\.\d+)?)\s*%\s*(?:on\s*)?(?:a\s*)?fully[- ]diluted\b/i, modality: "plan" },
+    { pattern: /\bown\s*(\d+(?:\.\d+)?)\s*%\s*(?:on\s*)?(?:a\s*)?fully[- ]diluted\b/i, modality: "actual" },
+    { pattern: /\bexpected\s+(?:to\s+own\s+)?(\d+(?:\.\d+)?)\s*%\s*(?:on\s*)?(?:a\s*)?fully[- ]diluted\b/i, modality: "expected" },
+    { pattern: /\b(?:targeted|target)\s*(\d+(?:\.\d+)?)\s*%\s*fully[- ]diluted\s*ownership\b/i, modality: "targeted" },
+    { pattern: /\b(\d+(?:\.\d+)?)\s*%\s*fully[- ]diluted\b/i, modality: null },
+    { pattern: /\b(?:targeted|target)\s*(\d+(?:\.\d+)?)\s*%\s*FD\b/i, modality: "targeted" }
   ];
   
-  for (const pattern of ownPatterns) {
+  for (const { pattern, modality } of ownPatterns) {
     const ownMatch = normalized.match(pattern);
     if (ownMatch) {
       const ownPctStr = ownMatch[1].trim();
@@ -2249,12 +2255,57 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
           pct: ownPct,
           raw: `${ownPct}%`
         };
+        // A3.6.69: Set modality if detected
+        if (modality && !result.ownershipModality) {
+          result.ownershipModality = modality;
+        }
         break;
       }
     }
   }
   
+  // A3.6.69: Extract modality from separate patterns if not already set
+  if (result.ownershipPct && !result.ownershipModality) {
+    const ownPctStr = result.ownershipPct.pct.toString();
+    const ownPctIndex = normalized.indexOf(ownPctStr + "%");
+    
+    if (ownPctIndex >= 0) {
+      // Search within ±100 chars of ownership %
+      const searchStart = Math.max(0, ownPctIndex - 100);
+      const searchEnd = Math.min(normalized.length, ownPctIndex + 100);
+      const searchWindow = normalized.substring(searchStart, searchEnd);
+      
+      // A3.6.69: Check for modality patterns closest to ownership %
+      const modalityPatterns = [
+        { pattern: /\b(?:plan\s+to\s+own|we\s+plan\s+to\s+own)\b/i, modality: "plan" },
+        { pattern: /\bexpected\s+(?:to\s+own|\d+%)/i, modality: "expected" },
+        { pattern: /\b(?:targeted|target)\s+\d+%/i, modality: "targeted" }
+      ];
+      
+      // Find the closest match
+      let closestMatch = null;
+      let closestDistance = Infinity;
+      
+      for (const { pattern, modality } of modalityPatterns) {
+        const matches = [...searchWindow.matchAll(new RegExp(pattern.source, pattern.flags + 'g'))];
+        for (const match of matches) {
+          const matchIndex = searchStart + match.index;
+          const distance = Math.abs(matchIndex - ownPctIndex);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestMatch = modality;
+          }
+        }
+      }
+      
+      if (closestMatch) {
+        result.ownershipModality = closestMatch;
+      }
+    }
+  }
+  
   // A3.6.68: Extract secondary exposure / upside
+  // A3.6.69: Enhanced to extract upside percent and mechanism separately
   const secondaryPatterns = [
     /\bincrease\s+exposure\s+to\s+\$?\s*(\d+(?:\.\d+)?)\s*(mm|m|million)\b/i,
     /\b(\d+(?:\.\d+)?)\s*%\s*ownership\s+via\s+secondary\s+purchases\b/i,
@@ -2288,8 +2339,74 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
             raw: `${secondaryPct}%`,
             type: "secondary"
           };
+          // A3.6.69: Also set ownershipUpsidePct
+          result.ownershipUpsidePct = secondaryPct;
           break;
         }
+      }
+    }
+  }
+  
+  // A3.6.69: Extract ownership upside percent and mechanism separately
+  // Ownership upside patterns
+  const upsidePatterns = [
+    /\bincrease\s+.*\s+ownership\s+to\s+(\d+(?:\.\d+)?)\s*%/i,
+    /\b(\d+(?:\.\d+)?)\s*%\s*ownership\s+via/i,
+    /\bto\s+(\d+(?:\.\d+)?)\s*%\s+.*\s+secondary/i
+  ];
+  
+  for (const pattern of upsidePatterns) {
+    const upsideMatch = normalized.match(pattern);
+    if (upsideMatch) {
+      const upsidePct = parseFloat(upsideMatch[1].trim());
+      if (Number.isFinite(upsidePct) && upsidePct > 0 && upsidePct <= 100) {
+        result.ownershipUpsidePct = upsidePct;
+        // A3.6.69: Also update ownershipUpside if not already set
+        if (!result.ownershipUpside) {
+          result.ownershipUpside = {
+            pct: upsidePct,
+            raw: `${upsidePct}%`,
+            type: "secondary"
+          };
+        }
+        break;
+      }
+    }
+  }
+  
+  // A3.6.69: Extract mechanism patterns (search in context of upside if available)
+  const mechanismPatterns = [
+    /\bvia\s+secondary\s+purchases\b/i,
+    /\bvia\s+secondary\s+shares\b/i,
+    /\bvia\s+secondary\b/i
+  ];
+  
+  // If we found an upside percent, search near it for mechanism
+  if (result.ownershipUpsidePct) {
+    const upsidePctStr = result.ownershipUpsidePct.toString();
+    const upsideIndex = normalized.indexOf(upsidePctStr + "%");
+    
+    if (upsideIndex >= 0) {
+      // Search within ±50 chars of upside %
+      const searchStart = Math.max(0, upsideIndex - 50);
+      const searchEnd = Math.min(normalized.length, upsideIndex + 50);
+      const searchWindow = normalized.substring(searchStart, searchEnd);
+      
+      for (const pattern of mechanismPatterns) {
+        const mechanismMatch = searchWindow.match(pattern);
+        if (mechanismMatch) {
+          result.ownershipUpsideMechanism = mechanismMatch[0].trim();
+          break;
+        }
+      }
+    }
+  } else {
+    // Search globally if no upside percent found
+    for (const pattern of mechanismPatterns) {
+      const mechanismMatch = normalized.match(pattern);
+      if (mechanismMatch) {
+        result.ownershipUpsideMechanism = mechanismMatch[0].trim();
+        break;
       }
     }
   }
@@ -2333,6 +2450,7 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploa
   }
   
   // A3.6.68: Merge results - prefer non-null values, keep best available
+  // A3.6.69: Include new ownership fields
   const dealTerms = {
     preMoney: draftResults.preMoney || statementResults.preMoney,
     enterpriseValue: draftResults.enterpriseValue || statementResults.enterpriseValue,
@@ -2340,6 +2458,9 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploa
     ownershipPct: draftResults.ownershipPct || statementResults.ownershipPct,
     ownershipUpside: draftResults.ownershipUpside || statementResults.ownershipUpside,
     secondary: draftResults.secondary || statementResults.secondary,
+    ownershipModality: draftResults.ownershipModality || statementResults.ownershipModality,
+    ownershipUpsidePct: draftResults.ownershipUpsidePct || statementResults.ownershipUpsidePct,
+    ownershipUpsideMechanism: draftResults.ownershipUpsideMechanism || statementResults.ownershipUpsideMechanism,
     sourceSpan: null,
     sourceText: null,
     sourceKind: null
@@ -2596,80 +2717,51 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
   }
   
   // 3) Ownership statement: "a targeted 20% fully diluted ownership" (verbatim if possible)
-  // A3.6.54: Add slice clipping guard to prevent losing first word
+  // A3.6.69: Updated to use modality and preserve upside details
   let ownershipText = null;
-  if (dealTerms.ownershipPct && sourceText) {
-    // Try to find verbatim ownership clause
+  if (dealTerms.ownershipPct) {
     const ownPctStr = dealTerms.ownershipPct.pct.toString();
-    const ownPattern = new RegExp(`(?:a\\s+)?(?:targeted|target)\\s+${ownPctStr.replace(".", "\\.")}\\s*%\\s*fully[- ]?diluted\\s*ownership`, "i");
-    const ownMatch = sourceText.match(ownPattern);
+    const ownPctRaw = dealTerms.ownershipPct.raw;
     
-    if (ownMatch) {
-      ownershipText = ownMatch[0].trim();
-      
-      // A3.6.54: Slice clipping guard - check if slice starts with whitespace + lowercase
-      const matchIndex = ownMatch.index;
-      if (matchIndex > 0) {
-        const beforeChar = sourceText[matchIndex - 1];
-        const sliceStart = ownershipText.trim();
-        const startsWithLowercase = /^\s+[a-z]/.test(ownershipText);
-        
-        // If slice starts with whitespace + lowercase AND preceding char was a letter, expand left
-        if (startsWithLowercase && /[a-zA-Z]/.test(beforeChar)) {
-          // Expand left until word boundary (space, punctuation, or start of string)
-          let expandStart = matchIndex;
-          while (expandStart > 0 && /[a-zA-Z]/.test(sourceText[expandStart - 1])) {
-            expandStart--;
-          }
-          // Find the actual word boundary (space or punctuation before the word)
-          while (expandStart > 0 && !/\s/.test(sourceText[expandStart - 1]) && !/[.,;:!?]/.test(sourceText[expandStart - 1])) {
-            expandStart--;
-          }
-          
-          const expandedSlice = sourceText.substring(expandStart, matchIndex + ownMatch[0].length).trim();
-          if (expandedSlice && expandedSlice.length > ownershipText.length) {
-            ownershipText = expandedSlice;
-            if (runId && reqSig) {
-              log(`[A3.6.54][OWNERSHIP_CLIP_GUARD] expanded from ${ownMatch[0].length} to ${ownershipText.length} chars`);
-            }
-          }
-        }
-      }
+    // A3.6.69: Build base ownership text using modality
+    let baseText = "";
+    const modality = dealTerms.ownershipModality;
+    
+    if (modality === "plan" || modality === "expected") {
+      baseText = `an expected ownership of ${ownPctRaw} on a fully diluted basis`;
+    } else if (modality === "targeted") {
+      baseText = `a targeted ownership of ${ownPctRaw} on a fully diluted basis`;
+    } else if (modality === "actual") {
+      baseText = `an ownership of ${ownPctRaw} on a fully diluted basis`;
     } else {
-      // Check for "own X%" pattern (only if memo contains "own")
-      const ownDirectPattern = new RegExp(`own\\s+${ownPctStr.replace(".", "\\.")}\\s*%`, "i");
-      if (ownDirectPattern.test(sourceText)) {
-        const ownDirectMatch = sourceText.match(ownDirectPattern);
-        if (ownDirectMatch) {
-          ownershipText = ownDirectMatch[0].trim() + " fully diluted ownership";
-        }
-      } else {
-        // Fall back to "targeted X%" (no "thereby own")
-        ownershipText = `a targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
-      }
+      // Fallback: no modality detected
+      baseText = `an ownership of ${ownPctRaw} on a fully diluted basis`;
     }
     
-    // A3.6.68: Check for secondary/upside clauses
-    const potentialPattern = /\bpotential\s+to\s+increase\s+to\s*(\d+(?:\.\d+)?)\s*%/i;
-    const potentialMatch = sourceText.match(potentialPattern);
-    if (potentialMatch) {
-      const increasePct = potentialMatch[1];
-      ownershipText += ` with potential to increase to ${increasePct}% through secondary purchases`;
-    } else if (dealTerms.ownershipUpside) {
-      // Add secondary upside if extracted
-      ownershipText += ` with potential to increase to ${dealTerms.ownershipUpside.raw} through secondary purchases`;
+    ownershipText = baseText;
+    
+    // A3.6.69: Add upside clause if ownershipUpsidePct exists
+    if (dealTerms.ownershipUpsidePct) {
+      ownershipText += `, with potential to increase to ${dealTerms.ownershipUpsidePct}% ownership`;
+      
+      // Add mechanism if available
+      if (dealTerms.ownershipUpsideMechanism) {
+        ownershipText += ` ${dealTerms.ownershipUpsideMechanism}`;
+      } else {
+        // Default mechanism if not specified
+        ownershipText += ` via secondary purchases`;
+      }
+    } else if (dealTerms.ownershipUpside && dealTerms.ownershipUpside.pct) {
+      // Fallback to ownershipUpside if ownershipUpsidePct not set
+      ownershipText += `, with potential to increase to ${dealTerms.ownershipUpside.raw} ownership`;
+      if (dealTerms.ownershipUpsideMechanism) {
+        ownershipText += ` ${dealTerms.ownershipUpsideMechanism}`;
+      } else {
+        ownershipText += ` via secondary purchases`;
+      }
     } else if (dealTerms.secondary && dealTerms.secondary.type === "exposure") {
-      // Add secondary exposure if extracted
-      ownershipText += ` with potential to increase exposure to ${dealTerms.secondary.raw}`;
-    }
-  } else if (dealTerms.ownershipPct) {
-    // No sourceText, construct minimal
-    ownershipText = `a targeted ${dealTerms.ownershipPct.raw} fully diluted ownership`;
-    // A3.6.68: Add secondary/upside if available
-    if (dealTerms.ownershipUpside) {
-      ownershipText += ` with potential to increase to ${dealTerms.ownershipUpside.raw} through secondary purchases`;
-    } else if (dealTerms.secondary && dealTerms.secondary.type === "exposure") {
-      ownershipText += ` with potential to increase exposure to ${dealTerms.secondary.raw}`;
+      // Add secondary exposure if no upside percent
+      ownershipText += `, with potential to increase exposure to ${dealTerms.secondary.raw}`;
     }
   }
   
@@ -2870,6 +2962,9 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
       };
       statements.splice(firstCorruptedIdx + insertOffset, 0, ownStmt);
       insertOffset++;
+      
+      // A3.6.69: Log ownership canonical statement
+      log(`[A3.6.69][OWN_CANON] idx=${firstCorruptedIdx + insertOffset - 1} pct=${dealTerms.ownershipPct ? dealTerms.ownershipPct.pct : "null"} modality=${dealTerms.ownershipModality || "null"} upsidePct=${dealTerms.ownershipUpsidePct || "null"} mechanism="${dealTerms.ownershipUpsideMechanism || "null"}" finalText="${ownershipText.substring(0, 150)}"`);
     }
     
     // Drop remaining corrupted statements (in reverse order to maintain indices)
@@ -2950,6 +3045,9 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
       };
       statements.splice(replacedStatementIdx + insertOffset, 0, ownStmt);
       insertOffset++;
+      
+      // A3.6.69: Log ownership canonical statement
+      log(`[A3.6.69][OWN_CANON] idx=${replacedStatementIdx + insertOffset - 1} pct=${dealTerms.ownershipPct ? dealTerms.ownershipPct.pct : "null"} modality=${dealTerms.ownershipModality || "null"} upsidePct=${dealTerms.ownershipUpsidePct || "null"} mechanism="${dealTerms.ownershipUpsideMechanism || "null"}" finalText="${ownershipText.substring(0, 150)}"`);
     }
   } else {
     // No corrupted statements or original found - insert new ones
@@ -3000,6 +3098,9 @@ function canonicalizeDealTermsStatements(statements, dealTerms, runId = null, re
         __dealTermsParentKey: parentKey || undefined
       };
       statements.push(ownStmt);
+      
+      // A3.6.69: Log ownership canonical statement
+      log(`[A3.6.69][OWN_CANON] idx=${statements.length - 1} pct=${dealTerms.ownershipPct ? dealTerms.ownershipPct.pct : "null"} modality=${dealTerms.ownershipModality || "null"} upsidePct=${dealTerms.ownershipUpsidePct || "null"} mechanism="${dealTerms.ownershipUpsideMechanism || "null"}" finalText="${ownershipText.substring(0, 150)}"`);
     }
   }
   
