@@ -1434,7 +1434,12 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
       continue;
     }
     
-    const trimmed = candidate.trim();
+    // A3.6.73: Declare sanitizedCandidate in outer scope before any conditional blocks
+    let sanitizedCandidate = null;
+    
+    // A3.6.73: Sanitize candidate text before validation
+    sanitizedCandidate = sanitizeCandidateText(candidate, runId, reqSig);
+    const trimmed = sanitizedCandidate.trim();
     
     // Check for unbalanced brackets/parens
     const openParens = (trimmed.match(/\(/g) || []).length;
@@ -1484,8 +1489,10 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
                                    repairedOpenBraces === repairedCloseBraces;
         
         if (repairedIsBalanced) {
-          validatedCandidates.push(repaired);
-          postFallbackRepaired.push({ original: trimmed.substring(0, 40) + "...", repaired: repaired.substring(0, 40) + "..." });
+          // A3.6.73: Sanitize repaired candidate before pushing
+          const sanitizedRepaired = sanitizeCandidateText(repaired, runId, reqSig);
+          validatedCandidates.push(sanitizedRepaired);
+          postFallbackRepaired.push({ original: trimmed.substring(0, 40) + "...", repaired: sanitizedRepaired.substring(0, 40) + "..." });
         } else {
           // Even repair has unbalanced brackets, drop it
           postFallbackRejected.push(candidate);
@@ -1495,8 +1502,8 @@ function filterCandidateQuality(candidates, rawSentences, draftText, runId = nul
         postFallbackRejected.push(candidate);
       }
     } else {
-      // Candidate is valid, keep it (already sanitized)
-      validatedCandidates.push(sanitizedCandidate);
+      // Candidate is valid, keep it (use sanitizedCandidate with safe fallback)
+      validatedCandidates.push(sanitizedCandidate ?? candidate);
     }
   }
   
