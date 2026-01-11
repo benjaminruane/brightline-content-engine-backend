@@ -11885,6 +11885,12 @@ export default async function handler(req, res) {
   let runId = null;
   let reqSig = null;
   let finalResponseObject = null;
+  
+  // A3.6.63: Initialize repair/fallback counters upfront to prevent TDZ errors
+  let numericFragmentRepairCount = 0;
+  let numericFragmentFallbackCount = 0;
+  let earlyDanglingRepairCount = 0;
+  let finalDanglingRepairCount = 0;
 
   if (req.method === "OPTIONS") {
     hasReturned = true;
@@ -12039,8 +12045,8 @@ export default async function handler(req, res) {
     // A3.5.26 Fix C: Extract incompleteNumericFragmentCount and recombinedCount from filterResult
     const incompleteNumericFragmentCount = typeof filterResult === "object" && filterResult.incompleteNumericFragmentCount != null ? filterResult.incompleteNumericFragmentCount : 0;
     const recombinedCount = typeof filterResult === "object" && filterResult.recombinedCount != null ? filterResult.recombinedCount : 0;
-    // A3.6.62: Track numeric fragment fallback count (fallback due to incomplete_numeric_fragment)
-    const numericFragmentFallbackCount = incompleteNumericFragmentCount > 0 && fallbackCount > 0 ? Math.min(incompleteNumericFragmentCount, fallbackCount) : 0;
+    // A3.6.63: Track numeric fragment fallback count (fallback due to incomplete_numeric_fragment)
+    numericFragmentFallbackCount = incompleteNumericFragmentCount > 0 && fallbackCount > 0 ? Math.min(incompleteNumericFragmentCount, fallbackCount) : 0;
     diag(runId, reqSig, `A3.5.13: Pre-extracted ${extractionCandidates.length} candidate statements before LLM call (filtered from ${rawExtractionCandidates.length} raw candidates, rejected=${rejectedCount}, fallback=${fallbackCount})`);
     
     // A3.5.27: Fragment-only candidate suppression (post SEG_GUARD)
@@ -12247,10 +12253,10 @@ ${
     
     // A3.6.11: Repair numeric fragments after filterCandidateQuality
     diag(runId, reqSig, `[PIPELINE] phase=repairNumericFragments`);
-    // A3.6.62: Track repair counts for quality classification
+    // A3.6.63: Track repair counts for quality classification
     const numericRepairResult = repairNumericFragments(statements, normalizedDraftText, runId, reqSig);
     statements = numericRepairResult.statements;
-    const numericFragmentRepairCount = numericRepairResult.repairCount || 0;
+    numericFragmentRepairCount = numericRepairResult.repairCount || 0;
     
     // A3.6.44: Checkpoint A - right after repairNumericFragments
     for (let i = 0; i < statements.length; i++) {
@@ -12381,10 +12387,10 @@ ${
     // A3.6.61: Early dangling-currency repair (AFTER ordering/sort, BEFORE extractDealTerms)
     // Must run on the SAME statement array that is later passed to downstream phases
     diag(runId, reqSig, `[PIPELINE] phase=earlyDanglingCurrencyRepair`);
-    // A3.6.62: Track repair counts for quality classification
+    // A3.6.63: Track repair counts for quality classification
     const earlyDanglingResult = repairDanglingCurrency(statements, normalizedDraftText, runId, reqSig, "early");
     statements = earlyDanglingResult.statements;
-    const earlyDanglingRepairCount = earlyDanglingResult.repairCount || 0;
+    earlyDanglingRepairCount = earlyDanglingResult.repairCount || 0;
     
     // A3.6.61: Checkpoint after earlyDanglingCurrencyRepair
     for (let i = 0; i < statements.length; i++) {
@@ -13047,13 +13053,15 @@ ${
       try {
         const fragmentDropped = fragFilterResult ? fragFilterResult.dropped : 0;
         const fragmentMerged = fragFilterResult ? fragFilterResult.merged : 0;
-        // A3.6.62: Build qualityPatch with repair counts
+        // A3.6.63: Build qualityPatch with repair counts (all initialized upfront)
         const qualityPatch = {
           numericFragmentFallbackCount,
           numericFragmentRepairCount,
           earlyDanglingRepairCount,
           finalDanglingRepairCount
         };
+        // A3.6.63: Diagnostic logging before computeExtractionQuality
+        diag(runId, reqSig, `[A3.6.63][QUALITY_COUNTS] numericFragmentRepairCount=${numericFragmentRepairCount} numericFragmentFallbackCount=${numericFragmentFallbackCount} earlyDanglingRepairCount=${earlyDanglingRepairCount} finalDanglingRepairCount=${finalDanglingRepairCount}`);
         // A3.6.12: Pass dealDedupDropped separately (does not count as degraded)
         const beforeQuality = extractionQualityValue;
         const beforeReasons = extractionQualityReasons.slice(); // Save for diagnostics
@@ -13119,7 +13127,7 @@ ${
     // A3.6.44: Final-pass dangling currency repair on canonical return statements
     // This must run immediately before RETURN_SNAPSHOT to catch any dangling fragments
     // that may have been reintroduced by downstream phases
-    // A3.6.62: Track final repair count for quality classification
+    // A3.6.63: Track final repair count for quality classification
     const finalDanglingResult = finalDanglingCurrencyRepair(
       finalResponseObject.statements,
       normalizedDraftText,
@@ -13127,7 +13135,7 @@ ${
       reqSig
     );
     finalResponseObject.statements = finalDanglingResult.statements;
-    const finalDanglingRepairCount = finalDanglingResult.repairCount || 0;
+    finalDanglingRepairCount = finalDanglingResult.repairCount || 0;
     
     // A3.6.57: Prune duplicate deal-term claims for canonical statements
     // This removes overlapping variants and keeps only protected canonical deal-role claims
