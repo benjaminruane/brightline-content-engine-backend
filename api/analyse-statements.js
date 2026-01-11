@@ -1849,6 +1849,209 @@ function repairNumericFragments(statements, draftText, runId = null, reqSig = nu
   return workingStatements;
 }
 
+// A3.6.46: Parse money string to number (in millions)
+// "$18.7" + "mm" => 18.7 (store in millions units; DO NOT multiply to absolute dollars)
+function parseMoneyToNumber(valueStr, suffix) {
+  if (!valueStr || typeof valueStr !== "string") return null;
+  
+  // Remove $ and commas, extract number
+  const numStr = valueStr.replace(/[$,]/g, "").trim();
+  const num = parseFloat(numStr);
+  
+  if (!Number.isFinite(num) || num <= 0) return null;
+  
+  // Normalize suffix to lowercase
+  const normalizedSuffix = (suffix || "").toLowerCase();
+  
+  // If suffix is "billion" or "b", convert to millions
+  if (normalizedSuffix.includes("billion") || normalizedSuffix === "b") {
+    return num * 1000;
+  }
+  // If suffix is "thousand" or "k", convert to millions
+  if (normalizedSuffix.includes("thousand") || normalizedSuffix === "k") {
+    return num / 1000;
+  }
+  // "million", "mm", "m" all stay as-is (already in millions)
+  return num;
+}
+
+// A3.6.46: Extract DealTerms from draftText (deterministic, no hallucination)
+function extractDealTermsFromDraft(draftText) {
+  if (typeof draftText !== "string" || !draftText.trim()) return null;
+  
+  const dealTerms = {
+    preMoney: null,
+    enterpriseValue: null,
+    investment: null,
+    ownershipPct: null,
+    sourceSpan: null,
+    sourceText: null
+  };
+  
+  // Find sentence A: "The round is priced at a $20mm pre-money valuation ($18.7mm EV)."
+  const sentenceAPattern = /The round is priced at a\s+(\$?\s*\d+(?:\.\d+)?)\s*(m|mm)\s+pre-money valuation\s*\(\s*(\$?\s*\d+(?:\.\d+)?)\s*(m|mm)\s+EV\s*\)\s*\./i;
+  const sentenceAMatch = draftText.match(sentenceAPattern);
+  
+  if (!sentenceAMatch) {
+    return null; // Must have sentence A
+  }
+  
+  const preMoneyValue = sentenceAMatch[1].trim();
+  const preMoneySuffix = sentenceAMatch[2];
+  const evValue = sentenceAMatch[3].trim();
+  const evSuffix = sentenceAMatch[4];
+  
+  const preMoneyAmount = parseMoneyToNumber(preMoneyValue, preMoneySuffix);
+  const evAmount = parseMoneyToNumber(evValue, evSuffix);
+  
+  if (!preMoneyAmount || !evAmount) {
+    return null; // Invalid numbers
+  }
+  
+  dealTerms.preMoney = {
+    amount: preMoneyAmount,
+    currency: "USD",
+    raw: `$${preMoneyValue.replace(/[$,]/g, "")}${preMoneySuffix}`
+  };
+  
+  dealTerms.enterpriseValue = {
+    amount: evAmount,
+    currency: "USD",
+    raw: `$${evValue.replace(/[$,]/g, "")}${evSuffix}`
+  };
+  
+  // Find sentence B: "We plan to invest $5mm and thereby own 20% on a fully-diluted basis."
+  const sentenceAEnd = sentenceAMatch.index + sentenceAMatch[0].length;
+  const searchStart = sentenceAEnd;
+  const searchEnd = Math.min(draftText.length, searchStart + 400);
+  const searchWindow = draftText.substring(searchStart, searchEnd);
+  
+  const sentenceBPattern = /We plan to invest\s+(\$?\s*\d+(?:\.\d+)?)\s*(m|mm)\s+and thereby own\s+(\d+(?:\.\d+)?)%\s+on a fully-diluted basis\s*\./i;
+  const sentenceBMatch = searchWindow.match(sentenceBPattern);
+  
+  if (sentenceBMatch) {
+    const investValue = sentenceBMatch[1].trim();
+    const investSuffix = sentenceBMatch[2];
+    const ownPctStr = sentenceBMatch[3].trim();
+    
+    const investAmount = parseMoneyToNumber(investValue, investSuffix);
+    const ownPct = parseFloat(ownPctStr);
+    
+    if (investAmount && Number.isFinite(ownPct) && ownPct > 0 && ownPct <= 100) {
+      dealTerms.investment = {
+        amount: investAmount,
+        currency: "USD",
+        raw: `$${investValue.replace(/[$,]/g, "")}${investSuffix}`
+      };
+      
+      dealTerms.ownershipPct = {
+        pct: ownPct,
+        raw: `${ownPct}%`
+      };
+      
+      // Set sourceSpan to cover both sentences
+      const sentenceBEnd = searchStart + sentenceBMatch.index + sentenceBMatch[0].length;
+      dealTerms.sourceSpan = {
+        start: sentenceAMatch.index,
+        end: sentenceBEnd
+      };
+      dealTerms.sourceText = draftText.substring(sentenceAMatch.index, sentenceBEnd);
+    } else {
+      // Sentence B found but invalid - only use sentence A
+      dealTerms.sourceSpan = {
+        start: sentenceAMatch.index,
+        end: sentenceAEnd
+      };
+      dealTerms.sourceText = sentenceAMatch[0];
+    }
+  } else {
+    // Only sentence A found
+    dealTerms.sourceSpan = {
+      start: sentenceAMatch.index,
+      end: sentenceAEnd
+    };
+    dealTerms.sourceText = sentenceAMatch[0];
+  }
+  
+  return dealTerms;
+}
+
+// A3.6.46: Canonicalize Deal Terms statement
+function canonicalizeDealTermsStatement(statements, dealTerms, runId = null, reqSig = null) {
+  if (!dealTerms || !Array.isArray(statements)) return statements;
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
+  // Build canonical text
+  let dealTermsStatementText = null;
+  
+  if (dealTerms.sourceText) {
+    // Use verbatim source text
+    dealTermsStatementText = dealTerms.sourceText;
+  } else {
+    // Construct minimal canonical text
+    const parts = [];
+    
+    if (dealTerms.preMoney && dealTerms.enterpriseValue) {
+      parts.push(`The round is priced at a ${dealTerms.preMoney.raw} pre-money valuation (${dealTerms.enterpriseValue.raw} EV).`);
+    }
+    
+    if (dealTerms.investment && dealTerms.ownershipPct) {
+      parts.push(`We plan to invest ${dealTerms.investment.raw} and thereby own ${dealTerms.ownershipPct.raw} on a fully-diluted basis.`);
+    }
+    
+    if (parts.length > 0) {
+      dealTermsStatementText = parts.join(" ");
+    }
+  }
+  
+  if (!dealTermsStatementText) {
+    return statements;
+  }
+  
+  // Find target statement to replace
+  let targetIdx = -1;
+  
+  for (let i = 0; i < statements.length; i++) {
+    const stmt = statements[i];
+    if (!stmt || typeof stmt !== "object") continue;
+    
+    const text = (stmt.text || "").toLowerCase();
+    
+    // Prefer statement containing "pre-money" OR ("valuation" AND "Series A") OR containing the pre-money amount
+    if (text.includes("pre-money") || 
+        (text.includes("valuation") && text.includes("series a")) ||
+        (dealTerms.preMoney && text.includes(dealTerms.preMoney.raw.toLowerCase().replace("$", "")))) {
+      targetIdx = i;
+      break;
+    }
+  }
+  
+  if (targetIdx >= 0) {
+    // Replace existing statement
+    statements[targetIdx].text = dealTermsStatementText;
+    statements[targetIdx].__dealTermsCanonical = true;
+    statements[targetIdx].__dealTerms = dealTerms;
+    
+    const tail = dealTermsStatementText.length > 120 ? dealTermsStatementText.slice(-120) : dealTermsStatementText;
+    log(`[A3.6.46][DEAL_TERMS_APPLY] action=replaced idx=${targetIdx} tail="${tail}"`);
+  } else {
+    // Insert new statement
+    const newStmt = {
+      text: dealTermsStatementText,
+      __dealTermsCanonicalInserted: true,
+      __dealTerms: dealTerms,
+      __draftPosition: statements.length > 0 ? statements.length - 0.5 : 0.5
+    };
+    
+    statements.push(newStmt);
+    const tail = dealTermsStatementText.length > 120 ? dealTermsStatementText.slice(-120) : dealTermsStatementText;
+    log(`[A3.6.46][DEAL_TERMS_APPLY] action=inserted idx=${statements.length - 1} tail="${tail}"`);
+  }
+  
+  return statements;
+}
+
 // A3.6.44: Final-pass dangling-currency repair on canonical return statements
 // This runs immediately before the response is returned to catch any dangling fragments
 // that may have been reintroduced by downstream phases (e.g., generateClaims, VAL_SNIP_SAN)
@@ -3888,6 +4091,12 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
     Other: 1,
   };
   
+  // A3.6.46: Check if statement has DealTerms (passed via claims context)
+  // Extract DealTerms claims (those with __dealTermsDerived flag)
+  const dealTermsClaims = claims.filter(c => c.__dealTermsDerived === true);
+  const dealTermsRoles = new Set(dealTermsClaims.map(c => c.role).filter(Boolean));
+  const hasDealTerms = dealTermsClaims.length > 0;
+  
   // Group by facet
   const byFacet = new Map();
   for (const claim of claims) {
@@ -3902,6 +4111,131 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0) {
   
   for (const [facet, facetClaims] of byFacet.entries()) {
     const cap = caps[facet] || 1;
+    
+    // A3.6.46: Bypass capping for DealTerms roles
+    if (hasDealTerms && facet === "Valuation") {
+      const dealTermsValuationClaims = facetClaims.filter(c => 
+        dealTermsRoles.has(c.role) && 
+        (c.role === "pre_money_valuation" || c.role === "enterprise_value")
+      );
+      const nonDealTermsValuationClaims = facetClaims.filter(c => 
+        !dealTermsRoles.has(c.role) || 
+        (c.role !== "pre_money_valuation" && c.role !== "enterprise_value")
+      );
+      
+      // Always keep all DealTerms valuation claims
+      result.push(...dealTermsValuationClaims);
+      
+      // Apply cap to non-DealTerms claims
+      if (nonDealTermsValuationClaims.length <= cap) {
+        result.push(...nonDealTermsValuationClaims);
+      } else {
+        // Apply normal capping logic to non-DealTerms claims
+        const keptRoles = dealTermsRoles;
+        const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+        log(`[A3.6.46][DEAL_TERMS_CAP_BYPASS] idx=${idx} enabled=true keptRoles=[${Array.from(keptRoles).join(',')}] dropped=0`);
+        
+        // Continue with normal capping for non-DealTerms claims
+        const scored = nonDealTermsValuationClaims.map(claim => {
+          const text = claim.claimText || "";
+          const length = text.length;
+          const commaCount = (text.match(/,/g) || []).length;
+          const hasAnchor = /\$[\d,]+(?:\.\d+)?\s*m\b|[\d,]+(?:\.\d+)?\s*%|\b1x\b|pre-?money/i.test(text);
+          
+          const anchor = claim.anchor || extractAnchor(text);
+          const canonicalAnchor = canonicalizeAnchor(anchor, text);
+          const isQualValuation = canonicalAnchor === "qual_valuation";
+          const isUsdValuation = canonicalAnchor && canonicalAnchor.startsWith("usd_") && facet === "Valuation";
+          
+          let score = 0;
+          if (length >= 10 && length <= 60) score += 100;
+          else if (length < 10) score -= 50;
+          else score -= (length - 60) * 2;
+          score -= commaCount * 10;
+          if (hasAnchor) score += 50;
+          
+          if (isQualValuation) {
+            score += 200;
+          } else if (isUsdValuation) {
+            const hasQualValuation = nonDealTermsValuationClaims.some(c => {
+              const cAnchor = c.anchor || extractAnchor(c.claimText);
+              const cCanonical = canonicalizeAnchor(cAnchor, c.claimText);
+              return cCanonical === "qual_valuation";
+            });
+            if (hasQualValuation) {
+              score -= 100;
+            }
+          }
+          
+          return { claim, score, length };
+        });
+        
+        scored.sort((a, b) => {
+          if (a.score !== b.score) return b.score - a.score;
+          return a.length - b.length;
+        });
+        
+        const kept = scored.slice(0, cap).map(s => s.claim);
+        const dropped = scored.slice(cap);
+        
+        result.push(...kept);
+        
+        if (dropped.length > 0 && runId && reqSig) {
+          diag(runId, reqSig, `[CLAIMS_CAP] idx=${idx} facet=${facet} kept=${kept.length} dropped=${dropped.length}`);
+        }
+      }
+      continue; // Skip normal capping for Valuation when DealTerms present
+    }
+    
+    // Similar logic for Investment and Ownership facets
+    if (hasDealTerms && (facet === "Investment" || facet === "Ownership")) {
+      const dealTermsFacetClaims = facetClaims.filter(c => 
+        dealTermsRoles.has(c.role) && 
+        ((facet === "Investment" && c.role === "investment_amount") ||
+         (facet === "Ownership" && c.role === "ownership_pct"))
+      );
+      const nonDealTermsFacetClaims = facetClaims.filter(c => !dealTermsRoles.has(c.role));
+      
+      // Always keep all DealTerms claims for this facet
+      result.push(...dealTermsFacetClaims);
+      
+      // Apply cap to non-DealTerms claims
+      if (nonDealTermsFacetClaims.length <= cap) {
+        result.push(...nonDealTermsFacetClaims);
+      } else {
+        // Apply normal capping to non-DealTerms claims (same logic as below)
+        const scored = nonDealTermsFacetClaims.map(claim => {
+          const text = claim.claimText || "";
+          const length = text.length;
+          const commaCount = (text.match(/,/g) || []).length;
+          const hasAnchor = /\$[\d,]+(?:\.\d+)?\s*m\b|[\d,]+(?:\.\d+)?\s*%|\b1x\b|pre-?money/i.test(text);
+          
+          let score = 0;
+          if (length >= 10 && length <= 60) score += 100;
+          else if (length < 10) score -= 50;
+          else score -= (length - 60) * 2;
+          score -= commaCount * 10;
+          if (hasAnchor) score += 50;
+          
+          return { claim, score, length };
+        });
+        
+        scored.sort((a, b) => {
+          if (a.score !== b.score) return b.score - a.score;
+          return a.length - b.length;
+        });
+        
+        const kept = scored.slice(0, cap).map(s => s.claim);
+        const dropped = scored.slice(cap);
+        
+        result.push(...kept);
+        
+        if (dropped.length > 0 && runId && reqSig) {
+          diag(runId, reqSig, `[CLAIMS_CAP] idx=${idx} facet=${facet} kept=${kept.length} dropped=${dropped.length}`);
+        }
+      }
+      continue; // Skip normal capping for this facet when DealTerms present
+    }
     
     if (facetClaims.length <= cap) {
       result.push(...facetClaims);
@@ -5476,9 +5810,71 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     diag(runId, reqSig, `[ANCHORS_ALL] idx=${idx} anchors=${JSON.stringify(Array.from(allAnchorsInOriginal))}`);
   }
   
+  // A3.6.46: Inject DealTerms-derived claims if statement has __dealTerms
+  // This must happen BEFORE extractAtomicClaims to ensure DealTerms claims are included
+  const dealTerms = assessment.__dealTerms || null;
+  const dealTermsClaims = [];
+  
+  if (dealTerms) {
+    // Build DealTerms-derived claims with typed roles
+    if (dealTerms.preMoney) {
+      const claimText = `${dealTerms.preMoney.raw} pre-money valuation`;
+      const anchor = `usd_${dealTerms.preMoney.amount}m`;
+      dealTermsClaims.push({
+        claimText,
+        facet: "Valuation",
+        anchor,
+        role: "pre_money_valuation",
+        __dealTermsDerived: true
+      });
+    }
+    
+    if (dealTerms.enterpriseValue) {
+      const claimText = `${dealTerms.enterpriseValue.raw} enterprise value`;
+      const anchor = `ev_${dealTerms.enterpriseValue.amount.toString().replace(".", "_")}m`;
+      dealTermsClaims.push({
+        claimText,
+        facet: "Valuation",
+        anchor,
+        role: "enterprise_value",
+        __dealTermsDerived: true
+      });
+    }
+    
+    if (dealTerms.investment) {
+      const claimText = `invest ${dealTerms.investment.raw}`;
+      const anchor = `usd_${dealTerms.investment.amount}m`;
+      dealTermsClaims.push({
+        claimText,
+        facet: "Investment",
+        anchor,
+        role: "investment_amount",
+        __dealTermsDerived: true
+      });
+    }
+    
+    if (dealTerms.ownershipPct) {
+      const claimText = `own ${dealTerms.ownershipPct.raw} fully diluted`;
+      const anchor = `pct_${dealTerms.ownershipPct.pct}_fd`;
+      dealTermsClaims.push({
+        claimText,
+        facet: "Ownership",
+        anchor,
+        role: "ownership_pct",
+        __dealTermsDerived: true
+      });
+    }
+  }
+  
   // Extract raw candidates (already cleaned and with facet/key assigned)
   // A3.6.18: Pass bestValSnip to extractAtomicClaims for qual_valuation fallback
   const rawCandidates = extractAtomicClaims(statementText, bestValSnip);
+  
+  // A3.6.46: Prepend DealTerms claims to rawCandidates (they take precedence)
+  if (dealTermsClaims.length > 0) {
+    rawCandidates.unshift(...dealTermsClaims);
+  }
+  
   if (rawCandidates.length === 0) {
     return [];
   }
@@ -5759,8 +6155,47 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
   }
   
+  // A3.6.46: Apply role guards to prevent EV from non-EV roles
+  // A claim may only produce text containing "enterprise value" or "EV" if role == enterprise_value
+  const sanitizedCandidates = rawCandidates.map(claim => {
+    const role = claim.role;
+    const claimText = claim.claimText || "";
+    
+    // Check if claim text contains "enterprise value" or "EV"
+    const hasEnterpriseValue = /\benterprise\s+value\b|\bev\b(?!\w)/i.test(claimText);
+    
+    // If it has EV but role is not enterprise_value, strip it
+    if (hasEnterpriseValue && role !== "enterprise_value") {
+      const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+      const preview = claimText.length > 50 ? claimText.substring(0, 50) + "..." : claimText;
+      log(`[A3.6.46][ROLE_GUARD] idx=${idx} preventedEVFromRole=${role || 'none'} claimPreview="${preview}"`);
+      
+      // Strip "enterprise value" or "EV" from claim text
+      let sanitized = claimText
+        .replace(/\s*\(\s*enterprise\s+value\s*\)/gi, "")
+        .replace(/\s*\(\s*EV\s*\)/gi, "")
+        .replace(/\s+enterprise\s+value/gi, "")
+        .replace(/\s+EV\b(?!\w)/gi, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      
+      // If sanitized is too short or empty, keep original but log warning
+      if (sanitized.length < 5) {
+        sanitized = claimText; // Keep original if sanitization breaks it
+      }
+      
+      return {
+        ...claim,
+        claimText: sanitized,
+        __roleGuardApplied: true
+      };
+    }
+    
+    return claim;
+  });
+  
   // A3.6.1: Aggregate by claimKey
-  const aggregatedClaims = aggregateClaimsByKey(rawCandidates);
+  const aggregatedClaims = aggregateClaimsByKey(sanitizedCandidates);
   
   // A3.6.40: 2) Safety net - if forcedValQual === true at statement level, ensure qual_valuation claims have the flag
   if (forcedValQual === true) {
@@ -10436,6 +10871,30 @@ ${
     diag(runId, reqSig, `[PIPELINE] phase=filterDraftOnly`);
     statements = filterDraftOnlyStatements(statements, draftText, runId, reqSig, hasReturned);
     
+    // A3.6.46: Extract DealTerms from draftText
+    diag(runId, reqSig, `[PIPELINE] phase=extractDealTerms`);
+    let dealTerms = null;
+    try {
+      dealTerms = extractDealTermsFromDraft(normalizedDraftText);
+      if (dealTerms) {
+        const preMoneyRaw = dealTerms.preMoney ? dealTerms.preMoney.raw : null;
+        const evRaw = dealTerms.enterpriseValue ? dealTerms.enterpriseValue.raw : null;
+        const investRaw = dealTerms.investment ? dealTerms.investment.raw : null;
+        const ownPctRaw = dealTerms.ownershipPct ? dealTerms.ownershipPct.raw : null;
+        const span = dealTerms.sourceSpan ? `${dealTerms.sourceSpan.start}..${dealTerms.sourceSpan.end}` : null;
+        diag(runId, reqSig, `[A3.6.46][DEAL_TERMS] found=true preMoney="${preMoneyRaw || ''}" ev="${evRaw || ''}" invest="${investRaw || ''}" ownPct="${ownPctRaw || ''}" span=${span || ''}`);
+      } else {
+        diag(runId, reqSig, `[A3.6.46][DEAL_TERMS] found=false`);
+      }
+    } catch (e) {
+      diag(runId, reqSig, `[A3.6.46][DEAL_TERMS] error="${e?.message || String(e)}"`);
+    }
+    
+    // A3.6.46: Canonicalize Deal Terms statement
+    diag(runId, reqSig, `[PIPELINE] phase=canonicalizeDealTermsStatement`);
+    if (dealTerms) {
+      statements = canonicalizeDealTermsStatement(statements, dealTerms, runId, reqSig);
+    }
     
     // B) Citation resolution validation: drop unresolvable citations
     statements = resolveCitations(statements, unifiedReferences);
@@ -10641,6 +11100,11 @@ ${
         let uniqueAnchors = new Set();
         
         try {
+          // A3.6.46: Pass __dealTerms from statement to assessment for claim generation
+          if (stmt.__dealTerms) {
+            assessment.__dealTerms = stmt.__dealTerms;
+          }
+          
           // Generate claims (with aggregation, capping, and claim-aware scoring)
           claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
           
