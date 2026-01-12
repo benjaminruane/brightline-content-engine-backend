@@ -15,6 +15,7 @@ import {
   deriveQueryFromDraft,
 } from "../lib/web.js";
 import { corpusSearch } from "../lib/corpusSearch.js";
+import { createHash } from "node:crypto";
 
 // A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
 const runStateByRid = {};
@@ -78,8 +79,7 @@ function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null
   if (charLen <= 280) {
     const trimmed = originalText.trim();
     // Generate stable deterministic ID (hash of full selectedText)
-    const crypto = require("crypto");
-    const selectionGroupId = crypto.createHash("sha256").update(originalText).digest("hex").substring(0, 16);
+    const selectionGroupId = createHash("sha256").update(originalText).digest("hex").substring(0, 16);
     
     log(`[A3.7.3][SPLIT_SELECTION] mode=selection selectionSplitApplied=false charLen=${charLen} N=1`);
     log(`[A3.7.3][SPLIT_SELECTION] extractCandidates skipped (selection mode)`);
@@ -105,8 +105,7 @@ function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null
   }
   
   // Generate stable deterministic ID (hash of full selectedText)
-  const crypto = require("crypto");
-  const selectionGroupId = crypto.createHash("sha256").update(originalText).digest("hex").substring(0, 16);
+  const selectionGroupId = createHash("sha256").update(originalText).digest("hex").substring(0, 16);
   
   // A3.7.3: Deterministic split algorithm (no LLM)
   // Boundary priority: a) "\n\n" b) "\n" c) sentence enders [.!?] d) ";" e) comma
@@ -14733,10 +14732,13 @@ ${
       }
     }
     
+    // A3.7.8: Initialize statements safely - it may not be defined if error occurred early
+    let finalStatements = [];
     try {
       // A3.6.9: Check if statements already exist (after filterDraftOnly, enforceAnchorCitations, etc.)
       // If so, use them instead of re-extracting to preserve citations/evidence
-      const hasExistingStatements = Array.isArray(statements) && statements.length > 0;
+      // A3.7.8: Safely check if statements is defined (may not exist if error occurred before initialization)
+      const hasExistingStatements = typeof statements !== "undefined" && Array.isArray(statements) && statements.length > 0;
       const hasAnchorCites = hasExistingStatements && statements.some(s => {
         const assessment = s?.assessment || {};
         const citations = Array.isArray(assessment.citations) ? assessment.citations : [];
@@ -14752,9 +14754,10 @@ ${
       // A3.6.9: Log fallback type with explicit reason and stage
       diag(runId, reqSig, `[FALLBACK] stage=${fallbackStage} afterAnchorCites=${afterAnchorCites} returningAssembled=${returningAssembled} reason=${fallbackReason.substring(0, 200)}`);
       
-      if (hasExistingStatements && returningAssembled) {
+      if (hasExistingStatements && returningAssembled && typeof statements !== "undefined") {
         // A3.6.9: Use existing statements - preserve citations/evidence already injected
         // Ensure citations/evidence are mirrored to top-level before returning
+        // A3.7.8: Extra safety check - statements is verified to exist by hasExistingStatements check
         const preservedStatements = normalizeResponseStructure(statements, unifiedReferences || []);
         
         // A3.6.9: Strip bracket tags from all reasons
