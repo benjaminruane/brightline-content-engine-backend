@@ -13001,6 +13001,9 @@ export default async function handler(req, res) {
   // A3.7.5: Hoist selectionUsed to top of handler scope for catch block access
   let selectionUsed = false;
   
+  // A3.7.7: Hoist selectedText to top of handler scope to prevent ReferenceError in catch blocks
+  let selectedText = "";
+  
   // A3.6.63: Initialize repair/fallback counters upfront to prevent TDZ errors
   let numericFragmentRepairCount = 0;
   let numericFragmentFallbackCount = 0;
@@ -13045,14 +13048,18 @@ export default async function handler(req, res) {
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
     
     // A3.7.4: Make selection-mode base text unambiguous and early
-    // A3.7.5: selectionUsed is hoisted to handler scope, assign value here
+    // A3.7.7: selectionUsed and selectedText are hoisted to handler scope, assign values here
     selectionUsed = Boolean(
       body?.selectionUsed || 
       body?.mode === "selection" || 
       typeof body?.selectedText === "string" ||
       typeof body?.selectionText === "string"
     );
-    const selectedText = (body?.selectedText ?? body?.selectionText ?? "").toString().trim();
+    // A3.7.7: Assign to hoisted variable (not const/let) and normalize defensively
+    selectedText = (body?.selectedText ?? body?.selectionText ?? "").toString();
+    // A3.7.7: Normalize selectedText defensively (ensure it's always a safe string)
+    if (typeof selectedText !== "string") selectedText = String(selectedText ?? "");
+    selectedText = selectedText.replace(/\r\n/g, "\n").trim();
     
     // A3.7.4: Hard guard for empty selection
     if (selectionUsed && selectedText.length === 0) {
@@ -14902,9 +14909,11 @@ ${
       }
       
       // A3.7.4: Try to extract best-effort statements - use selectedText in selection mode, draftText otherwise
+      // A3.7.7: Use hoisted selectedText (always defined, may be empty string)
       let bestEffortStatements = [];
       const fallbackBody = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
-      const fallbackText = selectionUsed && selectedText ? selectedText : (fallbackBody?.draftText || "");
+      // A3.7.7: Safe access to hoisted selectedText - use it if selectionUsed is true and selectedText is non-empty
+      const fallbackText = (selectionUsed && selectedText && selectedText.trim().length > 0) ? selectedText : (fallbackBody?.draftText || "");
       if (fallbackText && typeof fallbackText === "string" && fallbackText.trim()) {
         try {
           const permissiveSplit = fallbackText
@@ -14958,9 +14967,10 @@ ${
       };
       
       // A3.7.4: Add selection mode metadata if applicable
+      // A3.7.7: Safe access to hoisted selectedText (always defined, may be empty string)
       if (selectionUsed) {
         meta.selectionUsed = true;
-        meta.selectionPreview = selectedText ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : "";
+        meta.selectionPreview = (selectedText && selectedText.trim().length > 0) ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : "";
         meta.selectionStatementCountReturned = 0;
         meta.selectionStatementsReturned = bestEffortStatements.length;
       }
