@@ -16,6 +16,7 @@ import {
 } from "../lib/web.js";
 import { corpusSearch } from "../lib/corpusSearch.js";
 import { createHash } from "node:crypto";
+import { canonicalizeClaims } from "../lib/canonicalClaims.js";
 
 // A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
 const runStateByRid = {};
@@ -14882,6 +14883,8 @@ ${
         let claims = [];
         let claimsError = false;
         let uniqueAnchors = new Set();
+        let canonicalClaims = [];
+        let rawClaimsForDiagnostics = [];
         
         try {
           // A3.6.49: Pass __dealTerms and __dealTermsCanonicalKind from statement to assessment for claim generation
@@ -14894,7 +14897,50 @@ ${
           }
           
           // Generate claims (with aggregation, capping, and claim-aware scoring)
-          claims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
+          const rawClaims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
+          
+          // A3.8.0: Canonicalize raw claims into canonical claims
+          // Compute selectionHash if in selection mode
+          const selectionHash = selectionUsed && selectedText
+            ? createHash("sha256").update(selectedText).digest("hex").substring(0, 16)
+            : null;
+          
+          // Extract known entities from statement/assessment
+          const knownEntities = {
+            company: assessment.company || stmt.company || null,
+            round: assessment.round || stmt.round || null,
+          };
+          
+          // Canonicalize claims
+          const canonicalizationResult = canonicalizeClaims(rawClaims, {
+            statementText: text,
+            selectionMode: selectionUsed,
+            selectionText: selectionUsed ? selectedText : null,
+            selectionHash,
+            knownEntities,
+            runId,
+            reqSig,
+            statementIndex: idx,
+          });
+          
+          canonicalClaims = canonicalizationResult.canonicalClaims || [];
+          
+          // A3.8.0: Preserve raw claims for diagnostics
+          rawClaimsForDiagnostics = [...rawClaims];
+          
+          // Map canonical claims to old claim shape for backward compatibility (5.3 Option A)
+          claims = canonicalClaims.map(cc => ({
+            claimText: cc.displayText,
+            reliability: cc.reliability,
+            reliabilityScore: cc.reliabilityScore,
+            comment: cc.evidenceNotes && cc.evidenceNotes.length > 0 
+              ? cc.evidenceNotes.join("; ") 
+              : (cc.citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
+            anchor: cc.anchorFamily,
+            citations: cc.citations,
+            // Preserve canonical claim ID for diagnostics
+            _canonicalId: cc.id,
+          }));
           
           // Extract unique anchors for logging
           uniqueAnchors = new Set(claims.map(c => {
@@ -14921,6 +14967,8 @@ ${
           }
           
           claims = [];
+          canonicalClaims = [];
+          rawClaimsForDiagnostics = [];
           claimsError = true;
           claimsFailures++;
         }
@@ -14930,7 +14978,13 @@ ${
           diag(runId, reqSig, `[CLAIMS_PHASE] idx=${idx} ok=${!claimsError} claimsCount=${claims.length} anchors=${JSON.stringify(Array.from(uniqueAnchors).slice(0, 5))}`);
         }
         
-        // A3.6.3: Compute statement reliability from claims (deterministic)
+        // A3.8.0: Use canonical claims for reliability computation
+        const canonicalClaims = claims.map(c => ({
+          reliability: c.reliability,
+          reliabilityScore: c.reliabilityScore,
+        })).filter(c => c.reliability); // Only use claims with reliability
+        
+        // A3.6.3: Compute statement reliability from canonical claims (deterministic)
         const existingScore = typeof assessment.reliabilityScore === "number" 
           ? assessment.reliabilityScore 
           : 30;
@@ -14938,11 +14992,11 @@ ${
           ? assessment.reliabilityLabel
           : existingScore >= 80 ? "High" : existingScore >= 60 ? "Medium" : "Low";
         
-        const computedReliability = computeStatementReliabilityFromClaims(claims, existingScore, existingLabel);
+        const computedReliability = computeStatementReliabilityFromClaims(canonicalClaims, existingScore, existingLabel);
         
-        // A3.6.5: Count claim reliabilities for logging
+        // A3.6.5: Count canonical claim reliabilities for logging
         let hiCount = 0, medCount = 0, lowCount = 0;
-        for (const claim of claims) {
+        for (const claim of canonicalClaims) {
           const reliability = claim?.reliability;
           if (reliability === "High") hiCount++;
           else if (reliability === "Medium") medCount++;
@@ -15018,11 +15072,12 @@ ${
           }
         }
         
-        // A3.6.9: Generate claim-linked reasons immediately if claims exist AND no error
-        // Use normalized claims so reasons use normalized comments
+        // A3.8.0: Generate claim-linked reasons from canonical claims
+        // Use canonical claims (mapped to old shape) for reasons generation
         let claimLinkedReasons = [];
-        if (normalizedClaims.length > 0 && !claimsError) {
-          claimLinkedReasons = generateClaimLinkedReasons(normalizedClaims, stmt, runId, reqSig);
+        if (canonicalClaims.length > 0 && !claimsError) {
+          // Generate reasons from canonical claims (mapped to old shape for compatibility)
+          claimLinkedReasons = generateClaimLinkedReasons(claims, stmt, runId, reqSig);
           
           // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
           if (idx < 2 && runId && reqSig) {
@@ -15031,19 +15086,39 @@ ${
           }
         }
         
-        // A3.6.9: Add claims to assessment and update reliability
-        // If claimsError, force reasons mode to legacy (claims will be empty array)
-        // Use normalizedClaims (with normalized comments) instead of original claims
+        // A3.8.0: Add canonical claims and raw claims to assessment
+        // Preserve original raw claims for diagnostics (already captured above)
+        
+        // A3.8.0: Set reasonsSource to "canonical" when using canonical claims
+        // 5.2: Legacy fallback flag (defaults to false - canonical path always)
+        const ENABLE_LEGACY_REASONS_FALLBACK = false;
+        let reasonsSourceValue = "canonical";
+        
+        if (canonicalClaims.length === 0 && !claimsError && ENABLE_LEGACY_REASONS_FALLBACK) {
+          // Fallback enabled and zero canonical claims - log warning and use legacy
+          diag(runId, reqSig, `[CANON][FALLBACK] idx=${idx} zeroCanonicalClaims fallbackEnabled=true usingLegacy`);
+          reasonsSourceValue = "legacy";
+        } else if (canonicalClaims.length === 0 && !claimsError) {
+          // No fallback - canonical path always (even with zero claims)
+          reasonsSourceValue = "canonical";
+        } else if (claimsError) {
+          reasonsSourceValue = "legacy";
+        }
+        
         return {
           ...stmt,
           assessment: {
             ...assessment,
-            claims: normalizedClaims, // Use normalized claims with updated comments
+            // A3.8.0: Add canonical claims and raw claims
+            canonicalClaims: canonicalClaims,
+            rawClaims: rawClaimsForDiagnostics,
+            // A3.8.0: claims field maps to canonical claims for backward compatibility (5.3 Option A)
+            claims: claims, // Already mapped from canonical claims above
             reliabilityScore: computedReliability.reliabilityScore,
             reliabilityLabel: computedReliability.reliabilityLabel,
-            // A3.6.9: Set claim-linked reasons if available and no error, otherwise keep existing reasons
+            // A3.8.0: Set reasonsSource to "canonical" when canonical claims exist
             reasons: (claimLinkedReasons.length > 0 && !claimsError) ? claimLinkedReasons : assessment.reasons,
-            reasonsSource: (claimLinkedReasons.length > 0 && !claimsError) ? "claims" : "legacy",
+            reasonsSource: reasonsSourceValue,
             _claimsError: claimsError, // Internal flag for later phases
           },
         };
