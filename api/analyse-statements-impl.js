@@ -14912,7 +14912,8 @@ ${
           };
           
           // Canonicalize claims
-          const canonicalizationResult = canonicalizeClaims(rawClaims, {
+          // A3.8.1: Use alias to avoid redeclaration collision
+          const { canonicalClaims: canonClaims, diagnostics: canonDiag } = canonicalizeClaims(rawClaims, {
             statementText: text,
             selectionMode: selectionUsed,
             selectionText: selectionUsed ? selectedText : null,
@@ -14923,13 +14924,13 @@ ${
             statementIndex: idx,
           });
           
-          canonicalClaims = canonicalizationResult.canonicalClaims || [];
+          canonicalClaims = canonClaims || [];
           
           // A3.8.0: Preserve raw claims for diagnostics
           rawClaimsForDiagnostics = [...rawClaims];
           
           // Map canonical claims to old claim shape for backward compatibility (5.3 Option A)
-          claims = canonicalClaims.map(cc => ({
+          claims = canonClaims.map(cc => ({
             claimText: cc.displayText,
             reliability: cc.reliability,
             reliabilityScore: cc.reliabilityScore,
@@ -14979,10 +14980,8 @@ ${
         }
         
         // A3.8.0: Use canonical claims for reliability computation
-        const canonicalClaims = claims.map(c => ({
-          reliability: c.reliability,
-          reliabilityScore: c.reliabilityScore,
-        })).filter(c => c.reliability); // Only use claims with reliability
+        // A3.8.1: Use canonClaims directly (already filtered to have reliability)
+        const canonClaimsForReliability = canonicalClaims.filter(cc => cc.reliability);
         
         // A3.6.3: Compute statement reliability from canonical claims (deterministic)
         const existingScore = typeof assessment.reliabilityScore === "number" 
@@ -14992,17 +14991,22 @@ ${
           ? assessment.reliabilityLabel
           : existingScore >= 80 ? "High" : existingScore >= 60 ? "Medium" : "Low";
         
-        const computedReliability = computeStatementReliabilityFromClaims(canonicalClaims, existingScore, existingLabel);
+        const computedReliability = computeStatementReliabilityFromClaims(canonClaimsForReliability, existingScore, existingLabel);
         
         // A3.6.5: Count canonical claim reliabilities for logging
         let hiCount = 0, medCount = 0, lowCount = 0;
-        for (const claim of canonicalClaims) {
+        for (const claim of canonClaimsForReliability) {
           const reliability = claim?.reliability;
           if (reliability === "High") hiCount++;
           else if (reliability === "Medium") medCount++;
           else if (reliability === "Low") lowCount++;
         }
         const totalCount = hiCount + medCount + lowCount;
+        
+        // A3.8.1: Guard log to confirm fix
+        if (runId && reqSig) {
+          diag(runId, reqSig, `[CANON][WIRE] using canonClaimsCount=${canonicalClaims.length}`);
+        }
         
         // A3.6.58: Normalize claim comments using corpusSearch support (before reasons generation)
         // This ensures reasons use normalized comments when reasonsSource="claims"
@@ -15077,6 +15081,7 @@ ${
         let claimLinkedReasons = [];
         if (canonicalClaims.length > 0 && !claimsError) {
           // Generate reasons from canonical claims (mapped to old shape for compatibility)
+          // A3.8.1: claims already mapped from canonClaims above
           claimLinkedReasons = generateClaimLinkedReasons(claims, stmt, runId, reqSig);
           
           // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
