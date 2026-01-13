@@ -2793,12 +2793,68 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
 // A3.6.47: Extract DealTerms from draftText (robust, handles messy text)
 // A3.6.66: Updated to allow partial detection and statement_only fallback
 // A3.6.68: Extract from both sourceText and statementText, then merge results
-function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploadedDocs = null, statementText = null) {
+// A3.7.10: Add selectionMode guard to prevent leakage from outside selected text
+function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploadedDocs = null, statementText = null, selectionMode = false) {
   if (typeof draftText !== "string" || !draftText.trim()) return null;
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
-  // A3.6.47: Normalize draftText before regex
+  // A3.7.10: Selection mode isolation - only parse from statementText (selectedText)
+  if (selectionMode && statementText && typeof statementText === "string" && statementText.trim()) {
+    const normalizedSelected = statementText
+      .replace(/[''']/g, "'")
+      .replace(/[—–−]/g, "-")
+      .replace(/[…]/g, " ")
+      .replace(/\.\.\./g, " ")
+      .replace(/[ \t\r\n]+/g, " ");
+    
+    const selectedResults = extractDealTermsFromText(normalizedSelected, runId, reqSig);
+    
+    // A3.7.10: Only return what's found in selectedText, no windowing
+    const hasAnyField = selectedResults.preMoney || selectedResults.enterpriseValue || selectedResults.investment || 
+                       selectedResults.ownershipPct || selectedResults.ownershipUpside;
+    
+    if (!hasAnyField) {
+      log(`[A3.7.10][DEAL_TERMS_SELECTION] selectionDealTermsMode=selection_only found=false`);
+      return null;
+    }
+    
+    const dealTerms = {
+      preMoney: selectedResults.preMoney,
+      enterpriseValue: selectedResults.enterpriseValue,
+      investment: selectedResults.investment,
+      ownershipPct: selectedResults.ownershipPct,
+      ownershipUpside: selectedResults.ownershipUpside,
+      secondary: selectedResults.secondary,
+      ownershipModality: selectedResults.ownershipModality,
+      ownershipUpsidePct: selectedResults.ownershipUpsidePct,
+      ownershipUpsideMechanism: selectedResults.ownershipUpsideMechanism,
+      sourceSpan: null,
+      sourceText: normalizedSelected,
+      sourceKind: "selection_only"
+    };
+    
+    const preMoneyVal = dealTerms.preMoney ? dealTerms.preMoney.amount : null;
+    const evVal = dealTerms.enterpriseValue ? dealTerms.enterpriseValue.amount : null;
+    const investVal = dealTerms.investment ? dealTerms.investment.amount : null;
+    const ownPctVal = dealTerms.ownershipPct ? dealTerms.ownershipPct.pct : null;
+    const ownUpsideVal = dealTerms.ownershipUpside ? dealTerms.ownershipUpside.pct : null;
+    const secondaryVal = dealTerms.secondary ? (dealTerms.secondary.amount || dealTerms.secondary.pct) : null;
+    const fields = {
+      preMoney: preMoneyVal,
+      ev: evVal,
+      invest: investVal,
+      ownPct: ownPctVal,
+      secondary: secondaryVal,
+      upsides: ownUpsideVal
+    };
+    
+    log(`[A3.7.10][DEAL_TERMS_SELECTION] selectionDealTermsMode=selection_only fields=${JSON.stringify(fields)}`);
+    
+    return dealTerms;
+  }
+  
+  // A3.6.47: Normalize draftText before regex (non-selection mode)
   let normalizedDraft = draftText
     .replace(/[''']/g, "'")  // Replace unicode apostrophes with standard apostrophe
     .replace(/[—–−]/g, "-")  // Replace unicode dashes with standard dash
@@ -5852,47 +5908,105 @@ function extractAtomicNumericClaims(statementText) {
         normalized = normalized / 1000;
       }
       
-      // Extract context window (up to 6 words before and after)
+      // A3.7.10: Use STRICT local window (1-4 words) for qualifier extraction
       const words = text.split(/\s+/);
       const matchWordIndex = text.substring(0, index).split(/\s+/).length - 1;
-      const contextStart = Math.max(0, matchWordIndex - 6);
-      const contextEnd = Math.min(words.length, matchWordIndex + fullMatch.split(/\s+/).length + 6);
-      const contextWords = words.slice(contextStart, contextEnd);
-      const contextText = contextWords.join(" ");
+      const matchWordCount = fullMatch.split(/\s+/).length;
       
-      // Build qualifier phrase from nearby keywords
+      // Prefer right-side tokens within 1-4 words after the numeric token
+      const rightStart = matchWordIndex + matchWordCount;
+      const rightEnd = Math.min(words.length, rightStart + 4);
+      const rightWords = words.slice(rightStart, rightEnd);
+      const rightContext = rightWords.join(" ").toLowerCase();
+      
+      // Fallback to left-side tokens within 1-4 words before
+      const leftStart = Math.max(0, matchWordIndex - 4);
+      const leftEnd = matchWordIndex;
+      const leftWords = words.slice(leftStart, leftEnd);
+      const leftContext = leftWords.join(" ").toLowerCase();
+      
+      // Build qualifier phrase from STRICT local context only
       let qualifier = "";
+      const strongTypeWords = ["enterprise value", "ev", "pre-money", "premoney", "post-money", "postmoney", "ownership"];
+      
+      // Check right context first (preferred)
       for (const keyword of qualifierKeywords) {
         const keywordLower = keyword.toLowerCase();
-        const contextLower = contextText.toLowerCase();
-        if (contextLower.includes(keywordLower)) {
-          // Find the position of keyword relative to the number
-          const keywordIndex = contextLower.indexOf(keywordLower);
-          const numIndex = contextLower.indexOf(fullMatch.toLowerCase());
-          if (Math.abs(keywordIndex - numIndex) < 50) {
+        if (rightContext.includes(keywordLower)) {
+          // Verify it's truly within the strict window (not just substring match)
+          const keywordWords = keywordLower.split(/\s+/);
+          let foundInWindow = false;
+          for (let i = 0; i <= rightWords.length - keywordWords.length; i++) {
+            const windowSlice = rightWords.slice(i, i + keywordWords.length).join(" ").toLowerCase();
+            if (windowSlice === keywordLower || windowSlice.includes(keywordLower)) {
+              foundInWindow = true;
+              break;
+            }
+          }
+          if (foundInWindow) {
             qualifier = keyword;
             break;
           }
         }
       }
       
-      // Build claim text
+      // Fallback to left context if no qualifier found
+      if (!qualifier) {
+        for (const keyword of qualifierKeywords) {
+          const keywordLower = keyword.toLowerCase();
+          if (leftContext.includes(keywordLower)) {
+            const keywordWords = keywordLower.split(/\s+/);
+            let foundInWindow = false;
+            for (let i = 0; i <= leftWords.length - keywordWords.length; i++) {
+              const windowSlice = leftWords.slice(i, i + keywordWords.length).join(" ").toLowerCase();
+              if (windowSlice === keywordLower || windowSlice.includes(keywordLower)) {
+                foundInWindow = true;
+                break;
+              }
+            }
+            if (foundInWindow) {
+              qualifier = keyword;
+              break;
+            }
+          }
+        }
+      }
+      
+      // A3.7.10: If qualifier contains strong type words but they're not in strict window, drop them
+      if (qualifier) {
+        const qualifierLower = qualifier.toLowerCase();
+        const hasStrongType = strongTypeWords.some(type => qualifierLower.includes(type));
+        if (hasStrongType) {
+          // Verify strong type word is actually in the strict window
+          const allContext = (rightContext + " " + leftContext).toLowerCase();
+          let typeInWindow = false;
+          for (const type of strongTypeWords) {
+            if (qualifierLower.includes(type)) {
+              // Check if this type word appears in the strict windows
+              if (rightContext.includes(type) || leftContext.includes(type)) {
+                typeInWindow = true;
+                break;
+              }
+            }
+          }
+          if (!typeInWindow) {
+            qualifier = ""; // Drop misleading qualifier
+          }
+        }
+      }
+      
+      // A3.7.10: Build claim text with neutral template if no meaningful qualifier
       let claimText = fullMatch;
       if (qualifier) {
-        // Position qualifier appropriately
-        if (contextText.toLowerCase().indexOf(qualifier.toLowerCase()) < contextText.toLowerCase().indexOf(fullMatch.toLowerCase())) {
+        // Position qualifier based on where it appears relative to number
+        if (leftContext.includes(qualifier.toLowerCase())) {
           claimText = `${qualifier} ${fullMatch}`;
         } else {
           claimText = `${fullMatch} ${qualifier}`;
         }
       } else {
-        // Fallback: use "number mention" or try to extract from context
-        const beforeWords = words.slice(Math.max(0, matchWordIndex - 2), matchWordIndex);
-        const afterWords = words.slice(matchWordIndex + fullMatch.split(/\s+/).length, Math.min(words.length, matchWordIndex + fullMatch.split(/\s+/).length + 2));
-        const nearbyText = [...beforeWords, ...afterWords].join(" ");
-        if (nearbyText.trim().length > 0) {
-          claimText = `${fullMatch} ${nearbyText.trim()}`;
-        }
+        // A3.7.10: Use neutral template - just the number (no misleading label)
+        claimText = fullMatch;
       }
       
       // Generate anchor (normalize decimal to underscore for consistency)
@@ -5921,47 +6035,99 @@ function extractAtomicNumericClaims(statementText) {
     const fullMatch = match[0];
     const index = match.index;
     
-    // Extract context window
+    // A3.7.10: Use STRICT local window (1-4 words) for qualifier extraction
     const words = text.split(/\s+/);
     const matchWordIndex = text.substring(0, index).split(/\s+/).length - 1;
-    const contextStart = Math.max(0, matchWordIndex - 6);
-    const contextEnd = Math.min(words.length, matchWordIndex + 1 + 6);
-    const contextWords = words.slice(contextStart, contextEnd);
-    const contextText = contextWords.join(" ");
     
-    // Build qualifier phrase
+    // Prefer right-side tokens within 1-4 words after the percentage
+    const rightStart = matchWordIndex + 1;
+    const rightEnd = Math.min(words.length, rightStart + 4);
+    const rightWords = words.slice(rightStart, rightEnd);
+    const rightContext = rightWords.join(" ").toLowerCase();
+    
+    // Fallback to left-side tokens within 1-4 words before
+    const leftStart = Math.max(0, matchWordIndex - 4);
+    const leftEnd = matchWordIndex;
+    const leftWords = words.slice(leftStart, leftEnd);
+    const leftContext = leftWords.join(" ").toLowerCase();
+    
+    // Build qualifier phrase from STRICT local context only
     let qualifier = "";
+    const strongTypeWords = ["enterprise value", "ev", "pre-money", "premoney", "post-money", "postmoney", "ownership"];
+    
+    // Check right context first (preferred)
     for (const keyword of qualifierKeywords) {
       const keywordLower = keyword.toLowerCase();
-      const contextLower = contextText.toLowerCase();
-      if (contextLower.includes(keywordLower)) {
-        const keywordIndex = contextLower.indexOf(keywordLower);
-        const numIndex = contextLower.indexOf(fullMatch.toLowerCase());
-        if (Math.abs(keywordIndex - numIndex) < 50) {
+      if (rightContext.includes(keywordLower)) {
+        const keywordWords = keywordLower.split(/\s+/);
+        let foundInWindow = false;
+        for (let i = 0; i <= rightWords.length - keywordWords.length; i++) {
+          const windowSlice = rightWords.slice(i, i + keywordWords.length).join(" ").toLowerCase();
+          if (windowSlice === keywordLower || windowSlice.includes(keywordLower)) {
+            foundInWindow = true;
+            break;
+          }
+        }
+        if (foundInWindow) {
           qualifier = keyword;
           break;
         }
       }
     }
     
-    // Build claim text
+    // Fallback to left context if no qualifier found
+    if (!qualifier) {
+      for (const keyword of qualifierKeywords) {
+        const keywordLower = keyword.toLowerCase();
+        if (leftContext.includes(keywordLower)) {
+          const keywordWords = keywordLower.split(/\s+/);
+          let foundInWindow = false;
+          for (let i = 0; i <= leftWords.length - keywordWords.length; i++) {
+            const windowSlice = leftWords.slice(i, i + keywordWords.length).join(" ").toLowerCase();
+            if (windowSlice === keywordLower || windowSlice.includes(keywordLower)) {
+              foundInWindow = true;
+              break;
+            }
+          }
+          if (foundInWindow) {
+            qualifier = keyword;
+            break;
+          }
+        }
+      }
+    }
+    
+    // A3.7.10: If qualifier contains strong type words but they're not in strict window, drop them
+    if (qualifier) {
+      const qualifierLower = qualifier.toLowerCase();
+      const hasStrongType = strongTypeWords.some(type => qualifierLower.includes(type));
+      if (hasStrongType) {
+        let typeInWindow = false;
+        for (const type of strongTypeWords) {
+          if (qualifierLower.includes(type)) {
+            if (rightContext.includes(type) || leftContext.includes(type)) {
+              typeInWindow = true;
+              break;
+            }
+          }
+        }
+        if (!typeInWindow) {
+          qualifier = ""; // Drop misleading qualifier
+        }
+      }
+    }
+    
+    // A3.7.10: Build claim text with neutral template if no meaningful qualifier
     let claimText = fullMatch;
     if (qualifier) {
-      const contextLower = contextText.toLowerCase();
-      const qualifierIndex = contextLower.indexOf(qualifier.toLowerCase());
-      const numIndex = contextLower.indexOf(fullMatch.toLowerCase());
-      if (qualifierIndex < numIndex) {
+      if (leftContext.includes(qualifier.toLowerCase())) {
         claimText = `${qualifier} ${fullMatch}`;
       } else {
         claimText = `${fullMatch} ${qualifier}`;
       }
     } else {
-      const beforeWords = words.slice(Math.max(0, matchWordIndex - 2), matchWordIndex);
-      const afterWords = words.slice(matchWordIndex + 1, Math.min(words.length, matchWordIndex + 3));
-      const nearbyText = [...beforeWords, ...afterWords].join(" ");
-      if (nearbyText.trim().length > 0) {
-        claimText = `${fullMatch} ${nearbyText.trim()}`;
-      }
+      // A3.7.10: Use neutral template - just the percentage (no misleading label)
+      claimText = fullMatch;
     }
     
     // Generate anchor
@@ -8952,13 +9118,34 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
 }
 
 // A3.6.10: Universal bracket-tag stripping helper
+// A3.7.10: Strip "[Other]" and similar bracket tags from reasons
+function stripBracketTagsFromReason(reason) {
+  if (typeof reason !== "string") return reason;
+  
+  // Remove leading bracket tags like [Other], [X], [Anything] at start or after quoted snippet
+  // But preserve bracketed citations like [1]
+  let cleaned = reason;
+  
+  // Remove [Other] or [X] at the very start
+  cleaned = cleaned.replace(/^\[[^\]]+\]\s*/, "");
+  
+  // Remove [Other] or [X] immediately after the quoted snippet (before comment)
+  // Pattern: "snippet" [Other] comment
+  cleaned = cleaned.replace(/"([^"]+)"\s*\[[^\]]+\]\s*/g, '"$1" ');
+  
+  // Don't remove bracketed citations (numbers like [1], [2])
+  // These are preserved as-is
+  
+  return cleaned;
+}
+
 function stripReasonTags(reasons) {
   if (!Array.isArray(reasons)) return [];
   
   return reasons.map(reason => {
     if (typeof reason !== "string") return reason;
-    // Remove any leading bracket tag via regex: /^\[[^\]]+\]\s*/g
-    const cleaned = reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+    // A3.7.10: Use enhanced bracket tag stripping
+    const cleaned = stripBracketTagsFromReason(reason).trim();
     return cleaned;
   }).filter(reason => {
     // Drop empty strings
@@ -8977,11 +9164,12 @@ function normalizeFinalReasons(reasons, reasonsSource = null) {
   const stats = { before: reasons.length, after: 0, strippedTags: 0, deduped: 0 };
   
   // Step 1: Strip all bracket/facet tags universally
+  // A3.7.10: Use enhanced bracket tag stripping
   const stripped = reasons.map(reason => {
     if (typeof reason !== "string") return reason;
     const before = reason;
-    // Strip bracket tags: /^\[[^\]]+\]\s*/ and any other known prefixes
-    const cleaned = reason.replace(/^\[[^\]]+\]\s*/g, "").trim();
+    // A3.7.10: Use stripBracketTagsFromReason for comprehensive bracket tag removal
+    const cleaned = stripBracketTagsFromReason(reason).trim();
     if (cleaned !== before) {
       stats.strippedTags++;
     }
@@ -9350,7 +9538,7 @@ function rankClaimForReasons(claim, stmt) {
   return [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3];
 }
 
-function generateClaimLinkedReasons(claims, statement = null) {
+function generateClaimLinkedReasons(claims, statement = null, runId = null, reqSig = null) {
   if (!Array.isArray(claims) || claims.length === 0) {
     return [];
   }
@@ -9478,9 +9666,11 @@ function generateClaimLinkedReasons(claims, statement = null) {
   const maxReasons = (hasHigh && hasMediumOrLow) ? 3 : 2;
   
   // A3.7.9: Track numeric claims separately to ensure coverage
+  // A3.7.10: Also track non-numeric qualifier claims (qual_series_a, qual_financing, etc.)
   const currencyClaims = [];
   const percentClaims = [];
   const relationshipClaims = [];
+  const qualifierClaims = []; // A3.7.10: Non-numeric qualifiers like qual_series_a, qual_financing
   
   // Pre-sort claims by type for numeric coverage
   for (const { claim } of rankedClaims) {
@@ -9492,6 +9682,12 @@ function generateClaimLinkedReasons(claims, statement = null) {
       percentClaims.push(claim);
     } else if (canonicalAnchor && canonicalAnchor.startsWith("rel_")) {
       relationshipClaims.push(claim);
+    } else if (canonicalAnchor && canonicalAnchor.startsWith("qual_")) {
+      // A3.7.10: Track deal-term qualifiers (series, financing, etc.)
+      const qualType = canonicalAnchor.replace("qual_", "");
+      if (qualType.startsWith("series_") || qualType === "financing" || qualType === "round") {
+        qualifierClaims.push(claim);
+      }
     }
   }
   
@@ -9945,12 +10141,101 @@ function generateClaimLinkedReasons(claims, statement = null) {
         relationshipCount++;
       }
     }
+    
+    // A3.7.10: Add non-numeric qualifier claim if space exists after numeric coverage
+    if (qualifierClaims.length > 0 && reasons.length < maxReasons) {
+      // Prefer qual_series_* or qual_financing
+      const preferredQualifier = qualifierClaims.find(c => {
+        const cAnchor = c.anchor || extractAnchor(c.claimText || "");
+        const cCanonical = canonicalizeAnchor(cAnchor, c.claimText || "");
+        return cCanonical && (cCanonical.startsWith("qual_series_") || cCanonical === "qual_financing");
+      }) || qualifierClaims[0];
+      
+      const claimAnchor = preferredQualifier.anchor || extractAnchor(preferredQualifier.claimText || "");
+      const canonicalAnchor = canonicalizeAnchor(claimAnchor, preferredQualifier.claimText || "");
+      if (!seenCanonicalAnchors.has(canonicalAnchor)) {
+        seenCanonicalAnchors.add(canonicalAnchor);
+        let comment = preferredQualifier?.comment || "Not found in sources";
+        const citations = Array.isArray(preferredQualifier?.citations) && preferredQualifier.citations.length > 0
+          ? ` [${preferredQualifier.citations.join(", ")}]`
+          : "";
+        let snippet = extractAnchorSubstring(preferredQualifier.claimText || "");
+        if (snippet.length > 50) {
+          const truncateAt = snippet.lastIndexOf(" ", 50);
+          if (truncateAt > 20) {
+            snippet = snippet.substring(0, truncateAt) + "...";
+          } else {
+            snippet = snippet.substring(0, 47) + "...";
+          }
+        }
+        let reason = `"${snippet}" ${comment}${citations}`;
+        if (reason.length > 120) {
+          const truncateAt = reason.lastIndexOf(" ", 117);
+          if (truncateAt > 80) {
+            reason = reason.substring(0, truncateAt) + "...";
+          } else {
+            reason = reason.substring(0, 117) + "...";
+          }
+        }
+        reason = stripReasonTags([reason])[0];
+        reasons.push(reason);
+      }
+    }
+  }
+  
+  // A3.7.10: Build reason normalization key for deduplication
+  // Based on quoted snippet portion only (not the comment)
+  function normalizeReasonKey(reason) {
+    if (typeof reason !== "string") return "";
+    
+    // Extract quoted snippet (between first " and second ")
+    const firstQuote = reason.indexOf('"');
+    const secondQuote = reason.indexOf('"', firstQuote + 1);
+    let snippet = "";
+    if (firstQuote >= 0 && secondQuote > firstQuote) {
+      snippet = reason.substring(firstQuote + 1, secondQuote);
+    } else {
+      // Fallback: use first part before comment
+      snippet = reason.split(/not found|confirmed|supported/i)[0];
+    }
+    
+    // Normalize: lowercase, remove leading boilerplate, collapse whitespace, remove trailing "..."
+    let normalized = snippet.toLowerCase().trim();
+    normalized = normalized.replace(/^(is |the firm is |the |a |an )/i, "");
+    normalized = normalized.replace(/[^\w\s]/g, " "); // Remove punctuation
+    normalized = normalized.replace(/\s+/g, " ").trim();
+    normalized = normalized.replace(/\.\.\.$/, "").trim();
+    
+    return normalized;
+  }
+  
+  // A3.7.10: Strip "[Other]" and similar bracket tags from reasons
+  function stripBracketTags(reason) {
+    if (typeof reason !== "string") return reason;
+    
+    // Remove leading bracket tags like [Other], [X], [Anything] at start or after quoted snippet
+    // But preserve bracketed citations like [1]
+    let cleaned = reason;
+    
+    // Remove [Other] or [X] at the very start
+    cleaned = cleaned.replace(/^\[[^\]]+\]\s*/, "");
+    
+    // Remove [Other] or [X] immediately after the quoted snippet (before comment)
+    // Pattern: "snippet" [Other] comment
+    cleaned = cleaned.replace(/"([^"]+)"\s*\[[^\]]+\]\s*/g, '"$1" ');
+    
+    // Don't remove bracketed citations (numbers like [1], [2])
+    // These are preserved as-is
+    
+    return cleaned;
   }
   
   // A3.6.12: Final post-pass to dedupe reasons by canonical anchor or uniquenessKey
-  // This ensures no duplicate reasons differing only by trivial prefixes
+  // A3.7.10: Enhanced with normalization key deduplication
   const dedupedReasons = [];
   const seenReasonKeysFinal = new Set();
+  const seenNormalizationKeys = new Set();
+  let dedupedCount = 0;
   
   for (const reason of reasons) {
     if (typeof reason !== "string") {
@@ -9958,21 +10243,40 @@ function generateClaimLinkedReasons(claims, statement = null) {
       continue;
     }
     
+    // A3.7.10: Strip bracket tags first
+    const cleanedReason = stripBracketTags(reason);
+    
+    // A3.7.10: Check normalization key (based on snippet only)
+    const normKey = normalizeReasonKey(cleanedReason);
+    if (normKey && seenNormalizationKeys.has(normKey)) {
+      dedupedCount++;
+      continue; // Skip duplicate based on normalized snippet
+    }
+    
     // Extract anchor from reason text using extractAnchor (finds anchor-bearing phrases)
-    const anchor = extractAnchor(reason);
-    const canonicalAnchor = anchor ? canonicalizeAnchor(anchor, reason) : null;
+    const anchor = extractAnchor(cleanedReason);
+    const canonicalAnchor = anchor ? canonicalizeAnchor(anchor, cleanedReason) : null;
     
     // Build uniqueness key: canonicalAnchor + normalized reason text prefix
-    const normalizedPrefix = reason.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
+    const normalizedPrefix = cleanedReason.toLowerCase().trim().substring(0, 50).replace(/[^\w\s]/g, "");
     const reasonKey = canonicalAnchor ? `${canonicalAnchor}|${normalizedPrefix}` : normalizedPrefix;
     
     // Skip if we've seen this key before
     if (seenReasonKeysFinal.has(reasonKey)) {
+      dedupedCount++;
       continue;
     }
     
     seenReasonKeysFinal.add(reasonKey);
-    dedupedReasons.push(reason);
+    if (normKey) {
+      seenNormalizationKeys.add(normKey);
+    }
+    dedupedReasons.push(cleanedReason);
+  }
+  
+  // A3.7.10: Log deduplication stats
+  if (dedupedCount > 0 && runId && reqSig) {
+    diag(runId, reqSig, `[A3.7.10][REASONS_DEDUPE] dedupedReasons=${dedupedCount}`);
   }
   
   // A3.6.12: Limit to max 2 bullets after dedupe
@@ -14331,7 +14635,8 @@ ${
       }
       // A3.6.68: Use first matching statement text (or all if needed)
       const statementTextForExtraction = statementTextsForExtraction.length > 0 ? statementTextsForExtraction[0] : null;
-      dealTerms = extractDealTermsFromDraft(normalizedDraftText, runId, reqSig, uploadedDocs, statementTextForExtraction);
+      // A3.7.10: Pass selectionMode flag to enforce isolation
+      dealTerms = extractDealTermsFromDraft(normalizedDraftText, runId, reqSig, uploadedDocs, statementTextForExtraction, selectionUsed);
       // Logging is now handled inside extractDealTermsFromDraft
     } catch (e) {
       const errorMessage = e?.message || String(e);
@@ -14717,7 +15022,7 @@ ${
         // Use normalized claims so reasons use normalized comments
         let claimLinkedReasons = [];
         if (normalizedClaims.length > 0 && !claimsError) {
-          claimLinkedReasons = generateClaimLinkedReasons(normalizedClaims);
+          claimLinkedReasons = generateClaimLinkedReasons(normalizedClaims, stmt, runId, reqSig);
           
           // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
           if (idx < 2 && runId && reqSig) {
