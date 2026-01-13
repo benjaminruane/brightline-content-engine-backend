@@ -5801,6 +5801,313 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0, assessment
   return result;
 }
 
+// A3.7.9: Extract atomic numeric claims with context windows and qualifier phrases
+// Returns array of claim objects with claimText, anchor, and optional qualifier
+function extractAtomicNumericClaims(statementText) {
+  if (typeof statementText !== "string" || !statementText.trim()) return [];
+  
+  const text = statementText.trim();
+  const claims = [];
+  
+  // Keywords for qualifier phrases (general domain keywords)
+  const qualifierKeywords = [
+    "valuation", "pre-money", "post-money", "premoney", "postmoney", 
+    "enterprise value", "EV", "ownership", "stake", "fully diluted", 
+    "investment", "proceeds", "secondary purchases", "secondary", 
+    "round", "Series", "revenue", "EBITDA", "margin", "equity"
+  ];
+  
+  // Extract currency tokens
+  const currencyPatterns = [
+    /\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/gi,
+    /\$([\d,]+(?:\.\d+)?)/g,
+    /\b(USD|EUR|GBP|SGD|AUD|CAD|JPY|CNY)\s+([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)?/gi,
+  ];
+  
+  // Extract percentage tokens
+  const percentPattern = /([\d,]+(?:\.\d+)?)\s*%/g;
+  
+  const numericTokens = [];
+  
+  // Extract currency tokens
+  for (let patternIdx = 0; patternIdx < currencyPatterns.length; patternIdx++) {
+    const pattern = currencyPatterns[patternIdx];
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      // Pattern 0 and 1: $X or $X unit - numStr is match[1], unit is match[2]
+      // Pattern 2: USD X unit - numStr is match[2], unit is match[3]
+      const numStr = (patternIdx === 2 ? match[2] : match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num) || num <= 0) continue;
+      
+      const unit = (patternIdx === 2 ? match[3] : match[2] || "").toLowerCase();
+      const fullMatch = match[0];
+      const index = match.index;
+      
+      // Normalize to millions for anchor
+      let normalized = num;
+      if (unit.includes("billion") || unit === "b") {
+        normalized = normalized * 1000;
+      } else if (unit.includes("thousand") || unit === "k") {
+        normalized = normalized / 1000;
+      }
+      
+      // Extract context window (up to 6 words before and after)
+      const words = text.split(/\s+/);
+      const matchWordIndex = text.substring(0, index).split(/\s+/).length - 1;
+      const contextStart = Math.max(0, matchWordIndex - 6);
+      const contextEnd = Math.min(words.length, matchWordIndex + fullMatch.split(/\s+/).length + 6);
+      const contextWords = words.slice(contextStart, contextEnd);
+      const contextText = contextWords.join(" ");
+      
+      // Build qualifier phrase from nearby keywords
+      let qualifier = "";
+      for (const keyword of qualifierKeywords) {
+        const keywordLower = keyword.toLowerCase();
+        const contextLower = contextText.toLowerCase();
+        if (contextLower.includes(keywordLower)) {
+          // Find the position of keyword relative to the number
+          const keywordIndex = contextLower.indexOf(keywordLower);
+          const numIndex = contextLower.indexOf(fullMatch.toLowerCase());
+          if (Math.abs(keywordIndex - numIndex) < 50) {
+            qualifier = keyword;
+            break;
+          }
+        }
+      }
+      
+      // Build claim text
+      let claimText = fullMatch;
+      if (qualifier) {
+        // Position qualifier appropriately
+        if (contextText.toLowerCase().indexOf(qualifier.toLowerCase()) < contextText.toLowerCase().indexOf(fullMatch.toLowerCase())) {
+          claimText = `${qualifier} ${fullMatch}`;
+        } else {
+          claimText = `${fullMatch} ${qualifier}`;
+        }
+      } else {
+        // Fallback: use "number mention" or try to extract from context
+        const beforeWords = words.slice(Math.max(0, matchWordIndex - 2), matchWordIndex);
+        const afterWords = words.slice(matchWordIndex + fullMatch.split(/\s+/).length, Math.min(words.length, matchWordIndex + fullMatch.split(/\s+/).length + 2));
+        const nearbyText = [...beforeWords, ...afterWords].join(" ");
+        if (nearbyText.trim().length > 0) {
+          claimText = `${fullMatch} ${nearbyText.trim()}`;
+        }
+      }
+      
+      // Generate anchor (normalize decimal to underscore for consistency)
+      const anchorNum = normalized.toString().replace(/\./g, "_");
+      const anchor = `usd_${anchorNum}m`;
+      
+      numericTokens.push({
+        type: "currency",
+        value: fullMatch,
+        normalized,
+        claimText: claimText.trim(),
+        anchor,
+        index,
+        qualifier
+      });
+    }
+  }
+  
+  // Extract percentage tokens
+  let match;
+  while ((match = percentPattern.exec(text)) !== null) {
+    const numStr = match[1].replace(/,/g, "");
+    const num = parseFloat(numStr);
+    if (!Number.isFinite(num) || num < 0 || num > 100) continue;
+    
+    const fullMatch = match[0];
+    const index = match.index;
+    
+    // Extract context window
+    const words = text.split(/\s+/);
+    const matchWordIndex = text.substring(0, index).split(/\s+/).length - 1;
+    const contextStart = Math.max(0, matchWordIndex - 6);
+    const contextEnd = Math.min(words.length, matchWordIndex + 1 + 6);
+    const contextWords = words.slice(contextStart, contextEnd);
+    const contextText = contextWords.join(" ");
+    
+    // Build qualifier phrase
+    let qualifier = "";
+    for (const keyword of qualifierKeywords) {
+      const keywordLower = keyword.toLowerCase();
+      const contextLower = contextText.toLowerCase();
+      if (contextLower.includes(keywordLower)) {
+        const keywordIndex = contextLower.indexOf(keywordLower);
+        const numIndex = contextLower.indexOf(fullMatch.toLowerCase());
+        if (Math.abs(keywordIndex - numIndex) < 50) {
+          qualifier = keyword;
+          break;
+        }
+      }
+    }
+    
+    // Build claim text
+    let claimText = fullMatch;
+    if (qualifier) {
+      const contextLower = contextText.toLowerCase();
+      const qualifierIndex = contextLower.indexOf(qualifier.toLowerCase());
+      const numIndex = contextLower.indexOf(fullMatch.toLowerCase());
+      if (qualifierIndex < numIndex) {
+        claimText = `${qualifier} ${fullMatch}`;
+      } else {
+        claimText = `${fullMatch} ${qualifier}`;
+      }
+    } else {
+      const beforeWords = words.slice(Math.max(0, matchWordIndex - 2), matchWordIndex);
+      const afterWords = words.slice(matchWordIndex + 1, Math.min(words.length, matchWordIndex + 3));
+      const nearbyText = [...beforeWords, ...afterWords].join(" ");
+      if (nearbyText.trim().length > 0) {
+        claimText = `${fullMatch} ${nearbyText.trim()}`;
+      }
+    }
+    
+    // Generate anchor
+    const anchor = `pct_${Math.floor(num)}`;
+    
+    numericTokens.push({
+      type: "percent",
+      value: fullMatch,
+      num,
+      claimText: claimText.trim(),
+      anchor,
+      index,
+      qualifier
+    });
+  }
+  
+  // Sort by index to maintain order
+  numericTokens.sort((a, b) => a.index - b.index);
+  
+  // De-duplicate: if same numeric token + similar qualifier, keep the better one
+  const deduped = [];
+  const seen = new Set();
+  
+  for (const token of numericTokens) {
+    const key = `${token.anchor}_${token.qualifier || ""}`;
+    if (seen.has(key)) {
+      // Check if current is better (longer qualifier)
+      const existing = deduped.find(t => `${t.anchor}_${t.qualifier || ""}` === key);
+      if (existing && token.qualifier && (!existing.qualifier || token.qualifier.length > existing.qualifier.length)) {
+        const idx = deduped.indexOf(existing);
+        deduped[idx] = token;
+      }
+      continue;
+    }
+    seen.add(key);
+    deduped.push(token);
+  }
+  
+  // Cap at 8 per statement
+  const capped = deduped.slice(0, 8);
+  
+  // Convert to claim objects
+  return capped.map(token => ({
+    claimText: token.claimText,
+    anchor: token.anchor,
+    facet: token.type === "currency" ? "Valuation" : "Ownership"
+  }));
+}
+
+// A3.7.9: Extract optional qualified relationship claims
+// Returns array of relationship claim objects when linkage markers are present
+function extractQualifiedRelationshipClaims(statementText, atomicNumericClaims) {
+  if (typeof statementText !== "string" || !statementText.trim()) return [];
+  if (!Array.isArray(atomicNumericClaims) || atomicNumericClaims.length < 1) return [];
+  
+  const text = statementText.toLowerCase();
+  const originalText = statementText;
+  const claims = [];
+  
+  // Linkage markers
+  const linkageMarkers = [
+    "implying", "at", "for", "valued at", "enterprise value", "pre-money", 
+    "post-money", "through", "via", "from", "including", "targets", "targeted"
+  ];
+  
+  // Check if statement contains linkage markers
+  const hasLinkageMarker = linkageMarkers.some(marker => text.includes(marker));
+  if (!hasLinkageMarker) return [];
+  
+  // Need at least 2 numeric tokens OR 1 numeric token + strong qualifier
+  if (atomicNumericClaims.length < 2) {
+    // Check for strong qualifier phrase
+    const strongQualifiers = ["through", "via", "secondary purchases", "secondary"];
+    const hasStrongQualifier = strongQualifiers.some(q => text.includes(q));
+    if (!hasStrongQualifier) return [];
+  }
+  
+  // Pattern matching for relationship claims
+  // Pattern 1: "<numA> ... implying ... <numB>"
+  const implyingPattern = /(\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b)?|[\d,]+(?:\.\d+)?\s*%)\s+[^.]*?\bimplying\b[^.]*?(\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b)?|[\d,]+(?:\.\d+)?\s*%)/gi;
+  let match;
+  while ((match = implyingPattern.exec(originalText)) !== null) {
+    const numA = match[1];
+    const numB = match[2];
+    
+    // Find qualifiers from context
+    const context = match[0].toLowerCase();
+    let qualifierB = "";
+    if (context.includes("enterprise value") || context.includes(" ev ")) {
+      qualifierB = "enterprise value";
+    } else if (context.includes("pre-money") || context.includes("premoney")) {
+      qualifierB = "pre-money valuation";
+    }
+    
+    const claimText = qualifierB 
+      ? `${numB} ${qualifierB} implied by ${numA}`
+      : `${numB} implied by ${numA}`;
+    
+    const numBAnchor = extractAnchor(numB);
+    const anchor = numBAnchor ? `rel_implied_${numBAnchor}` : "rel_implied_unknown";
+    
+    claims.push({
+      claimText: claimText.trim(),
+      anchor,
+      facet: "Valuation"
+    });
+  }
+  
+  // Pattern 2: "increase to <pct> through <currency> of secondary purchases"
+  const increasePattern = /(?:increase|increasing)\s+to\s+([\d,]+(?:\.\d+)?\s*%)\s+through\s+(\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b)?)\s+of\s+secondary\s+purchases/gi;
+  while ((match = increasePattern.exec(originalText)) !== null) {
+    const pct = match[1];
+    const currency = match[2];
+    
+    const claimText = `increase to ${pct} through ${currency} secondary purchases`;
+    const pctAnchor = extractAnchor(pct);
+    const anchor = pctAnchor ? `rel_increase_${pctAnchor}` : "rel_increase_unknown";
+    
+    claims.push({
+      claimText: claimText.trim(),
+      anchor,
+      facet: "Ownership"
+    });
+  }
+  
+  // Pattern 3: "<currency> investment targets <pct> ownership"
+  const targetsPattern = /(\$[\d,]+(?:\.\d+)?\s*(?:million|mm|m|billion|b)?)\s+investment\s+targets\s+([\d,]+(?:\.\d+)?\s*%)\s+ownership/gi;
+  while ((match = targetsPattern.exec(originalText)) !== null) {
+    const currency = match[1];
+    const pct = match[2];
+    
+    const claimText = `${currency} investment targets ${pct} ownership`;
+    const currencyAnchor = extractAnchor(currency);
+    const anchor = currencyAnchor ? `rel_targets_${currencyAnchor}` : "rel_targets_unknown";
+    
+    claims.push({
+      claimText: claimText.trim(),
+      anchor,
+      facet: "Investment"
+    });
+  }
+  
+  // Limit to max 3 relationship claims
+  return claims.slice(0, 3);
+}
+
 // A3.6.0: Extract atomic claims from statement text (deterministic, no LLM)
 function extractAtomicClaims(statementText, bestValSnip = "") {
   if (typeof statementText !== "string" || !statementText.trim()) return [];
@@ -7630,9 +7937,27 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
   }
   
+  // A3.7.9: Extract atomic numeric claims (currency, percentages) with context windows
+  // This ensures comprehensive coverage of all numeric mentions
+  const atomicNumericClaims = extractAtomicNumericClaims(statementText);
+  
+  // A3.7.9: Extract optional qualified relationship claims when linkage markers are present
+  const relationshipClaims = extractQualifiedRelationshipClaims(statementText, atomicNumericClaims);
+  
   // Extract raw candidates (already cleaned and with facet/key assigned)
   // A3.6.18: Pass bestValSnip to extractAtomicClaims for qual_valuation fallback
   const rawCandidates = extractAtomicClaims(statementText, bestValSnip);
+  
+  // A3.7.9: Prepend atomic numeric claims to ensure they are included
+  // These take precedence over existing claims for the same numeric tokens
+  if (atomicNumericClaims.length > 0) {
+    rawCandidates.unshift(...atomicNumericClaims);
+  }
+  
+  // A3.7.9: Append relationship claims (they are optional and add incremental meaning)
+  if (relationshipClaims.length > 0) {
+    rawCandidates.push(...relationshipClaims);
+  }
   
   // A3.6.12: Scope deal-term claim injection by canonical kind
   const isCanonicalStatement = assessment.__dealTermsCanonical === true;
@@ -8915,15 +9240,62 @@ function rankClaimForReasons(claim, stmt) {
     return [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3];
   }
   
-  // Priority bucket B: Non-protected but canonical anchor claims that match deal-term anchors
+  // A3.7.9: Priority bucket B: Numeric claims (currency, percent, relationship)
+  // Prioritize currency claims (largest magnitude first), then percent, then relationship
+  const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
+  const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
+  const isCurrencyClaim = canonicalAnchor && canonicalAnchor.startsWith("usd_");
+  const isPercentClaim = canonicalAnchor && canonicalAnchor.startsWith("pct_");
+  const isRelationshipClaim = canonicalAnchor && canonicalAnchor.startsWith("rel_");
+  
+  if (isCurrencyClaim || isPercentClaim || isRelationshipClaim) {
+    const priorityBucket = 1; // Second priority (after protected canonical)
+    
+    // Sub-priority: currency (0) > percent (1) > relationship (2)
+    let subPriority = 2;
+    if (isCurrencyClaim) {
+      subPriority = 0;
+      // For currency, prefer larger magnitudes (extract number from anchor)
+      const numMatch = canonicalAnchor.match(/usd_([\d.]+)m/);
+      if (numMatch) {
+        const magnitude = parseFloat(numMatch[1]);
+        // Invert so larger magnitudes have lower subPriority (better)
+        subPriority = 1000 - Math.min(magnitude, 1000); // Cap at 1000m
+      }
+    } else if (isPercentClaim) {
+      subPriority = 1;
+    } else {
+      subPriority = 2;
+    }
+    
+    // Evidence score
+    let evidenceScore = 3;
+    if (claim.reliability === "High") {
+      evidenceScore = 0;
+    } else if (claim.reliability === "Medium") {
+      evidenceScore = 1;
+    } else {
+      evidenceScore = 2;
+    }
+    
+    // Tie-breakers
+    const hasFacet = claim.facet ? 0 : 1;
+    const hasRole = claim.role ? 0 : 1;
+    const claimTextLen = Math.min((claim.claimText || "").length, 90);
+    const tieBreaker1 = subPriority; // Use subPriority as first tie-breaker
+    const tieBreaker2 = hasFacet + hasRole;
+    const tieBreaker3 = 90 - claimTextLen;
+    
+    return [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3];
+  }
+  
+  // Priority bucket C: Non-protected but canonical anchor claims that match deal-term anchors
   const isCanonicalStmt = stmt?.__dealTermsCanonical === true;
   const canonicalKind = stmt?.__dealTermsCanonicalKind || null;
   let isCanonicalAnchor = false;
   
   if (isCanonicalStmt && canonicalKind && CANON_KIND_ALLOW[canonicalKind]) {
     const allow = CANON_KIND_ALLOW[canonicalKind];
-    const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
-    const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
     isCanonicalAnchor = canonicalAnchor && (
       allow.anchors.has(canonicalAnchor) ||
       Array.from(allow.anchors).some(anchor => canonicalAnchor.startsWith(anchor + "_") || anchor.startsWith(canonicalAnchor + "_"))
@@ -8931,7 +9303,7 @@ function rankClaimForReasons(claim, stmt) {
   }
   
   if (isCanonicalAnchor) {
-    const priorityBucket = 1; // Second priority
+    const priorityBucket = 2; // Third priority
     
     // Evidence score
     let evidenceScore = 3;
@@ -8954,8 +9326,8 @@ function rankClaimForReasons(claim, stmt) {
     return [priorityBucket, evidenceScore, tieBreaker1, tieBreaker2, tieBreaker3];
   }
   
-  // Priority bucket C: Everything else
-  const priorityBucket = 2; // Lowest priority
+  // Priority bucket D: Everything else
+  const priorityBucket = 3; // Lowest priority
   
   // Evidence score
   let evidenceScore = 3;
@@ -9105,6 +9477,24 @@ function generateClaimLinkedReasons(claims, statement = null) {
   const hasMediumOrLow = claims.some(c => c.reliability === "Medium" || c.reliability === "Low");
   const maxReasons = (hasHigh && hasMediumOrLow) ? 3 : 2;
   
+  // A3.7.9: Track numeric claims separately to ensure coverage
+  const currencyClaims = [];
+  const percentClaims = [];
+  const relationshipClaims = [];
+  
+  // Pre-sort claims by type for numeric coverage
+  for (const { claim } of rankedClaims) {
+    const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
+    const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
+    if (canonicalAnchor && canonicalAnchor.startsWith("usd_")) {
+      currencyClaims.push(claim);
+    } else if (canonicalAnchor && canonicalAnchor.startsWith("pct_")) {
+      percentClaims.push(claim);
+    } else if (canonicalAnchor && canonicalAnchor.startsWith("rel_")) {
+      relationshipClaims.push(claim);
+    }
+  }
+  
   // A3.6.56: Select reasons from ranked claims, deduplicating by canonical family key
   const reasons = [];
   const seenReasonKeys = new Set();
@@ -9112,6 +9502,11 @@ function generateClaimLinkedReasons(claims, statement = null) {
   const chosenReasons = [];
   let droppedReasonDuplicates = 0;
   let droppedCanonicalFamilyDuplicates = 0;
+  
+  // A3.7.9: Track counts of numeric claims added to reasons
+  let currencyCount = 0;
+  let percentCount = 0;
+  let relationshipCount = 0;
   
   // A3.6.56: First pass - collect claims by family, ensuring protected claims dominate
   const claimsByFamily = new Map();
@@ -9187,6 +9582,15 @@ function generateClaimLinkedReasons(claims, statement = null) {
     
     if (seenCanonicalAnchors.has(canonicalAnchor)) continue;
     seenCanonicalAnchors.add(canonicalAnchor);
+    
+    // A3.7.9: Track numeric claim counts
+    if (canonicalAnchor.startsWith("usd_")) {
+      currencyCount++;
+    } else if (canonicalAnchor.startsWith("pct_")) {
+      percentCount++;
+    } else if (canonicalAnchor.startsWith("rel_")) {
+      relationshipCount++;
+    }
     
     // A3.6.55: Overwrite "not explicitly confirmed" comments for protected canonical deal-term claims
     let comment = claim?.comment || "Not found in sources";
@@ -9429,6 +9833,120 @@ function generateClaimLinkedReasons(claims, statement = null) {
     log(`[A3.6.56][REASONS_SELECTION] kind=${statement.__dealTermsCanonicalKind || 'unknown'} chosenReasons=${JSON.stringify(chosenReasons)} droppedDuplicates=${droppedReasonDuplicates} droppedCanonicalFamilyDuplicates=${droppedCanonicalFamilyDuplicates} hasNotConfirmedWithProtected=${hasNotConfirmedWithProtected ? 1 : 0}`);
   }
   
+  // A3.7.9: Ensure numeric claims are prioritized in reasons
+  // If we have currency/percent claims but they weren't included, add them (up to maxReasons)
+  // This happens before final deduplication
+  if (reasons.length < maxReasons) {
+    // Add currency claims if we have fewer than 2
+    if (currencyCount < 2 && currencyClaims.length > 0) {
+      for (const claim of currencyClaims) {
+        if (reasons.length >= maxReasons) break;
+        const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
+        const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
+        if (seenCanonicalAnchors.has(canonicalAnchor)) continue;
+        
+        seenCanonicalAnchors.add(canonicalAnchor);
+        let comment = claim?.comment || "Not found in sources";
+        const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+          ? ` [${claim.citations.join(", ")}]`
+          : "";
+        let snippet = extractAnchorSubstring(claim.claimText || "");
+        if (snippet.length > 50) {
+          const truncateAt = snippet.lastIndexOf(" ", 50);
+          if (truncateAt > 20) {
+            snippet = snippet.substring(0, truncateAt) + "...";
+          } else {
+            snippet = snippet.substring(0, 47) + "...";
+          }
+        }
+        let reason = `"${snippet}" ${comment}${citations}`;
+        if (reason.length > 120) {
+          const truncateAt = reason.lastIndexOf(" ", 117);
+          if (truncateAt > 80) {
+            reason = reason.substring(0, truncateAt) + "...";
+          } else {
+            reason = reason.substring(0, 117) + "...";
+          }
+        }
+        reason = stripReasonTags([reason])[0];
+        reasons.push(reason);
+        currencyCount++;
+      }
+    }
+    
+    // Add percent claims if we have fewer than 2
+    if (percentCount < 2 && percentClaims.length > 0) {
+      for (const claim of percentClaims) {
+        if (reasons.length >= maxReasons) break;
+        const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
+        const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
+        if (seenCanonicalAnchors.has(canonicalAnchor)) continue;
+        
+        seenCanonicalAnchors.add(canonicalAnchor);
+        let comment = claim?.comment || "Not found in sources";
+        const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+          ? ` [${claim.citations.join(", ")}]`
+          : "";
+        let snippet = extractAnchorSubstring(claim.claimText || "");
+        if (snippet.length > 50) {
+          const truncateAt = snippet.lastIndexOf(" ", 50);
+          if (truncateAt > 20) {
+            snippet = snippet.substring(0, truncateAt) + "...";
+          } else {
+            snippet = snippet.substring(0, 47) + "...";
+          }
+        }
+        let reason = `"${snippet}" ${comment}${citations}`;
+        if (reason.length > 120) {
+          const truncateAt = reason.lastIndexOf(" ", 117);
+          if (truncateAt > 80) {
+            reason = reason.substring(0, truncateAt) + "...";
+          } else {
+            reason = reason.substring(0, 117) + "...";
+          }
+        }
+        reason = stripReasonTags([reason])[0];
+        reasons.push(reason);
+        percentCount++;
+      }
+    }
+    
+    // Add relationship claim if we have one and haven't added any yet
+    if (relationshipCount === 0 && relationshipClaims.length > 0 && reasons.length < maxReasons) {
+      const claim = relationshipClaims[0];
+      const claimAnchor = claim.anchor || extractAnchor(claim.claimText || "");
+      const canonicalAnchor = canonicalizeAnchor(claimAnchor, claim.claimText || "");
+      if (!seenCanonicalAnchors.has(canonicalAnchor)) {
+        seenCanonicalAnchors.add(canonicalAnchor);
+        let comment = claim?.comment || "Not found in sources";
+        const citations = Array.isArray(claim?.citations) && claim.citations.length > 0
+          ? ` [${claim.citations.join(", ")}]`
+          : "";
+        let snippet = extractAnchorSubstring(claim.claimText || "");
+        if (snippet.length > 50) {
+          const truncateAt = snippet.lastIndexOf(" ", 50);
+          if (truncateAt > 20) {
+            snippet = snippet.substring(0, truncateAt) + "...";
+          } else {
+            snippet = snippet.substring(0, 47) + "...";
+          }
+        }
+        let reason = `"${snippet}" ${comment}${citations}`;
+        if (reason.length > 120) {
+          const truncateAt = reason.lastIndexOf(" ", 117);
+          if (truncateAt > 80) {
+            reason = reason.substring(0, truncateAt) + "...";
+          } else {
+            reason = reason.substring(0, 117) + "...";
+          }
+        }
+        reason = stripReasonTags([reason])[0];
+        reasons.push(reason);
+        relationshipCount++;
+      }
+    }
+  }
+  
   // A3.6.12: Final post-pass to dedupe reasons by canonical anchor or uniquenessKey
   // This ensures no duplicate reasons differing only by trivial prefixes
   const dedupedReasons = [];
@@ -9449,11 +9967,11 @@ function generateClaimLinkedReasons(claims, statement = null) {
     const reasonKey = canonicalAnchor ? `${canonicalAnchor}|${normalizedPrefix}` : normalizedPrefix;
     
     // Skip if we've seen this key before
-    if (seenReasonKeys.has(reasonKey)) {
+    if (seenReasonKeysFinal.has(reasonKey)) {
       continue;
     }
     
-    seenReasonKeys.add(reasonKey);
+    seenReasonKeysFinal.add(reasonKey);
     dedupedReasons.push(reason);
   }
   
