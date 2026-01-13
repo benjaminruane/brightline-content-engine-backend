@@ -15122,7 +15122,34 @@ ${
             reliabilityScore: computedReliability.reliabilityScore,
             reliabilityLabel: computedReliability.reliabilityLabel,
             // A3.8.0: Set reasonsSource to "canonical" when canonical claims exist
-            reasons: (claimLinkedReasons.length > 0 && !claimsError) ? claimLinkedReasons : assessment.reasons,
+            // A3.8.2: Cap reasons to 3
+            let finalReasons = (claimLinkedReasons.length > 0 && !claimsError) ? claimLinkedReasons : assessment.reasons;
+            const reasonsBefore = finalReasons.length;
+            if (Array.isArray(finalReasons) && finalReasons.length > 3) {
+              finalReasons = finalReasons.slice(0, 3);
+              if (runId && reqSig) {
+                diag(runId, reqSig, `[REASONS][CAP] idx=${idx} before=${reasonsBefore} after=3`);
+              }
+            }
+            
+            // A3.8.2: Emit CANON_SUMMARY with reasons count
+            if (runId && reqSig && canonicalClaims.length >= 0) {
+              const diagnostics = canonDiag || {};
+              const selHash = selectionHash ? selectionHash.substring(0, 8) : "none";
+              const finCount = diagnostics.finCount !== undefined ? diagnostics.finCount : canonicalClaims.filter(cc => {
+                const financialTypes = new Set(["investment_amount", "valuation_pre_money", "valuation_post_money", "valuation_enterprise_value", "ownership_percent", "secondary_purchase", "structure_term"]);
+                return financialTypes.has(cc.type);
+              }).length;
+              const qualCount = diagnostics.qualCount !== undefined ? diagnostics.qualCount : (canonicalClaims.length - finCount);
+              const rawCount = diagnostics.rawCount || rawClaims.length;
+              const dropCount = diagnostics.droppedRawCount || 0;
+              const mergedCount = diagnostics.mergedGroupsCount || 0;
+              const dedupDropCount = diagnostics.dedupDroppedCount || 0;
+              const reasonsCount = finalReasons.length;
+              diag(runId, reqSig, `[CANON_SUMMARY] idx=${idx} sel=${selectionUsed ? 1 : 0} hash=${selHash} raw=${rawCount} drop=${dropCount} canon=${canonicalClaims.length} fin=${finCount} qual=${qualCount} merged=${mergedCount} dedupDrop=${dedupDropCount} reasons=${reasonsCount}`);
+            }
+            
+            reasons: finalReasons,
             reasonsSource: reasonsSourceValue,
             _claimsError: claimsError, // Internal flag for later phases
           },
