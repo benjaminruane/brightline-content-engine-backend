@@ -13,6 +13,8 @@ function setCorsHeaders(req, res) {
 }
 
 export default async function handler(req, res) {
+  console.log("[A3.8.6][START] analyse-statements invoked");
+
   // A3.7.6: Set CORS headers immediately, before any logic
   setCorsHeaders(req, res);
 
