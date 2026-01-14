@@ -14898,6 +14898,8 @@ ${
         let uniqueAnchors = new Set();
         let canonicalClaims = [];
         let rawClaimsForDiagnostics = [];
+        let canonDiag = null;
+        let rawClaims = null;
         
         try {
           // A3.6.49: Pass __dealTerms and __dealTermsCanonicalKind from statement to assessment for claim generation
@@ -14910,7 +14912,7 @@ ${
           }
           
           // Generate claims (with aggregation, capping, and claim-aware scoring)
-          const rawClaims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
+          rawClaims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
           
           // A3.8.0: Canonicalize raw claims into canonical claims
           // A3.8.4: Use computed selectionHash from top level
@@ -14924,7 +14926,7 @@ ${
           
           // Canonicalize claims
           // A3.8.1: Use alias to avoid redeclaration collision
-          const { canonicalClaims: canonClaims, diagnostics: canonDiag } = canonicalizeClaims(rawClaims, {
+          const { canonicalClaims: canonClaims, diagnostics: canonDiagResult } = canonicalizeClaims(rawClaims, {
             statementText: text,
             selectionMode: selectionUsed,
             selectionText: selectionUsed ? selectedText : null,
@@ -14936,6 +14938,7 @@ ${
           });
           
           canonicalClaims = canonClaims || [];
+          canonDiag = canonDiagResult ?? null;
           
           // A3.8.0: Preserve raw claims for diagnostics
           rawClaimsForDiagnostics = [...rawClaims];
@@ -14981,6 +14984,8 @@ ${
           claims = [];
           canonicalClaims = [];
           rawClaimsForDiagnostics = [];
+          canonDiag = null;
+          rawClaims = null;
           claimsError = true;
           claimsFailures++;
         }
