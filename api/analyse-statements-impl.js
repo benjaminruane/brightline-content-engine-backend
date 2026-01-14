@@ -13941,6 +13941,12 @@ export default async function handler(req, res) {
     const publicSearch = true; // Analysis always uses web search
     reqSig = generateReqSig(draftText, sources, publicSearch);
     
+    // A3.8.4: Early selection logging (must appear even if later phases fail)
+    const selectionHash = selectionUsed && selectedText
+      ? createHash("sha256").update(selectedText).digest("hex").substring(0, 8)
+      : null;
+    diag(runId, reqSig, `[SELECTION][INPUT] used=${selectionUsed} selLen=${selectedText.length} hash=${selectionHash || "none"}`);
+    
     // A3.5.21 Diagnostic: Initialize run state for this RID
     if (runId) {
       runStateByRid[runId] = { finalCountsReached: false };
@@ -14059,6 +14065,8 @@ export default async function handler(req, res) {
       
       if (selectionStartPosition === null || selectionStartPosition < 0) {
         selectionStartPosition = null;
+        // A3.8.4: Debug log when selection cannot be located (for reference only, still use selectedText)
+        diag(runId, reqSig, `[SELECTION][DEBUG] selectionCannotBeLocatedInDraft selLen=${selectedText.length} preview="${selectedText.substring(0, 60)}..."`);
       }
       
       diag(runId, reqSig, `[PIPELINE] mode=selection selectionLen=${selectedText.length} foundSelectionStartPos=${selectionStartPosition !== null ? selectionStartPosition : "null"}`);
@@ -14872,6 +14880,11 @@ ${
     // A3.6.9: Track claims failures for meta
     let claimsFailures = 0;
     
+    // A3.8.4: Compute selectionHash once at top level (reused in canonicalizeClaims)
+    const computedSelectionHash = selectionUsed && selectedText
+      ? createHash("sha256").update(selectedText).digest("hex").substring(0, 16)
+      : null;
+    
     if (uploadedDocs.length > 0) {
       statements = statements.map((stmt, idx) => {
         if (!stmt || typeof stmt !== "object") return stmt;
@@ -14900,10 +14913,8 @@ ${
           const rawClaims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
           
           // A3.8.0: Canonicalize raw claims into canonical claims
-          // Compute selectionHash if in selection mode
-          const selectionHash = selectionUsed && selectedText
-            ? createHash("sha256").update(selectedText).digest("hex").substring(0, 16)
-            : null;
+          // A3.8.4: Use computed selectionHash from top level
+          const selectionHash = computedSelectionHash;
           
           // Extract known entities from statement/assessment
           const knownEntities = {
@@ -15120,8 +15131,8 @@ ${
           }
         }
         
-        // A3.8.2: Emit CANON_SUMMARY with reasons count
-        if (runId && reqSig && canonicalClaims.length >= 0) {
+        // A3.8.4: Emit CANON_SUMMARY with reasons count (must always be emitted)
+        if (runId && reqSig) {
           const diagnostics = canonDiag || {};
           const selHash = selectionHash ? selectionHash.substring(0, 8) : "none";
           const finCount = diagnostics.finCount !== undefined ? diagnostics.finCount : canonicalClaims.filter(cc => {
@@ -15129,12 +15140,45 @@ ${
             return financialTypes.has(cc.type);
           }).length;
           const qualCount = diagnostics.qualCount !== undefined ? diagnostics.qualCount : (canonicalClaims.length - finCount);
-          const rawCount = diagnostics.rawCount || rawClaims.length;
-          const dropCount = diagnostics.droppedRawCount || 0;
-          const mergedCount = diagnostics.mergedGroupsCount || 0;
-          const dedupDropCount = diagnostics.dedupDroppedCount || 0;
+          const rawCount = diagnostics.rawCount !== undefined ? diagnostics.rawCount : (rawClaims ? rawClaims.length : 0);
+          const dropCount = diagnostics.droppedRawCount !== undefined ? diagnostics.droppedRawCount : 0;
+          const mergedCount = diagnostics.mergedGroupsCount !== undefined ? diagnostics.mergedGroupsCount : 0;
+          const dedupDropCount = diagnostics.dedupDroppedCount !== undefined ? diagnostics.dedupDroppedCount : 0;
           const reasonsCount = finalReasons.length;
           diag(runId, reqSig, `[CANON_SUMMARY] idx=${idx} sel=${selectionUsed ? 1 : 0} hash=${selHash} raw=${rawCount} drop=${dropCount} canon=${canonicalClaims.length} fin=${finCount} qual=${qualCount} merged=${mergedCount} dedupDrop=${dedupDropCount} reasons=${reasonsCount}`);
+        }
+        
+        // A3.8.4: Extract citations from canonical claims
+        const canonicalCitations = new Set();
+        canonicalClaims.forEach(cc => {
+          if (Array.isArray(cc.citations)) {
+            cc.citations.forEach(cit => canonicalCitations.add(cit));
+          }
+        });
+        const mergedCitations = Array.from(canonicalCitations).sort((a, b) => a - b);
+        
+        // A3.8.4: Build evidence from citations + unifiedReferences
+        const evidenceFromCitations = [];
+        if (mergedCitations.length > 0 && unifiedReferences) {
+          mergedCitations.forEach(citationId => {
+            const ref = unifiedReferences.find(r => String(r?.id) === String(citationId));
+            if (ref) {
+              evidenceFromCitations.push({
+                title: ref.title || "Untitled source",
+                url: ref.url || null,
+                sourceType: ref.type || (ref.url ? "web" : "uploaded"),
+              });
+            }
+          });
+        }
+        
+        // A3.8.4: Use canonical citations if available, otherwise keep existing
+        const finalCitations = mergedCitations.length > 0 ? mergedCitations : (Array.isArray(assessment.citations) ? assessment.citations : []);
+        const finalEvidence = evidenceFromCitations.length > 0 ? evidenceFromCitations : (Array.isArray(assessment.evidence) ? assessment.evidence : []);
+        
+        // A3.8.4: Warn if citations are empty but references exist
+        if (finalCitations.length === 0 && unifiedReferences && unifiedReferences.length > 0 && runId && reqSig) {
+          diag(runId, reqSig, `[CITE][WARN] idx=${idx} noCitationsEmitted references=${unifiedReferences.length}`);
         }
         
         return {
@@ -15146,6 +15190,9 @@ ${
             rawClaims: rawClaimsForDiagnostics,
             // A3.8.0: claims field maps to canonical claims for backward compatibility (5.3 Option A)
             claims: claims, // Already mapped from canonical claims above
+            // A3.8.4: Restore citations and evidence from canonical claims
+            citations: finalCitations,
+            evidence: finalEvidence,
             reliabilityScore: computedReliability.reliabilityScore,
             reliabilityLabel: computedReliability.reliabilityLabel,
             // A3.8.0: Set reasonsSource to "canonical" when canonical claims exist
@@ -15412,7 +15459,9 @@ ${
           ...(meta?.verification ? { verification: meta.verification } : {}),
           ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
           // A3.7.4: Selection mode metadata - always set when selectionUsed is true
+          // A3.8.4: Add selectionHash to meta
           selectionUsed: selectionUsed || false,
+          selectionHash: selectionHash || null,
           selectionPreview: selectionUsed && selectedText ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : null,
           // A3.7.4: Selection statement count (N from split) - intended count
           selectionStatementCountReturned: selectionUsed && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (selectionUsed ? statements.length : undefined),
@@ -15435,7 +15484,9 @@ ${
           ...(meta?.verification ? { verification: meta.verification } : {}),
           ...(meta?.claimsFailures ? { claimsFailures: meta.claimsFailures } : {}),
           // A3.7.4: Selection mode metadata - always set when selectionUsed is true
+          // A3.8.4: Add selectionHash to meta
           selectionUsed: selectionUsed || false,
+          selectionHash: selectionHash || null,
           selectionPreview: selectionUsed && selectedText ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : null,
           // A3.7.4: Selection statement count (N from split) - intended count
           selectionStatementCountReturned: selectionUsed && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (selectionUsed ? (statements?.length || 0) : undefined),
@@ -15450,6 +15501,30 @@ ${
     
     // NOTE: finalResponseObject is now built immediately after FINAL_COUNTS (see above)
     // After this point, finalResponseObject must never be null.
+    
+    // A3.8.4: Hard reasons cap invariant (must not regress) - enforce at final point
+    finalResponseObject.statements = finalResponseObject.statements.map((stmt, idx) => {
+      if (!stmt || typeof stmt !== "object") return stmt;
+      const assessment = stmt.assessment || {};
+      let reasons = Array.isArray(assessment.reasons) ? assessment.reasons : [];
+      const reasonsBefore = reasons.length;
+      
+      // A3.8.4: Hard cap to 3
+      if (reasons.length > 3) {
+        reasons = reasons.slice(0, 3);
+        if (runId && reqSig) {
+          diag(runId, reqSig, `[REASONS][CAP] idx=${idx} before=${reasonsBefore} after=3`);
+        }
+      }
+      
+      return {
+        ...stmt,
+        assessment: {
+          ...assessment,
+          reasons: reasons,
+        },
+      };
+    });
     
     // A3.6.44: Final-pass dangling currency repair on canonical return statements
     // This must run immediately before RETURN_SNAPSHOT to catch any dangling fragments
