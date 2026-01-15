@@ -257,7 +257,10 @@ export default async function handler(req, res) {
         throw new Error("analyse-statements-impl missing default export");
       }
     } catch (importErr) {
-      throw new Error("IMPORT_FAILED", { cause: importErr });
+      // A3.8.18: Node-18 safe error with cause
+      const e = new Error("IMPORT_FAILED");
+      e.cause = importErr;
+      throw e;
     }
     
     // A3.8.16: Call implementation with normalized body
@@ -273,7 +276,10 @@ export default async function handler(req, res) {
       pipelineResult = await impl(normalizedReq, res);
     } catch (pipelineErr) {
       // A3.8.17: Re-throw with context to preserve phase tracking
-      throw new Error("REVIEW_PIPELINE_FAILED", { cause: pipelineErr });
+      // A3.8.18: Node-18 safe error with cause
+      const e = new Error("REVIEW_PIPELINE_FAILED");
+      e.cause = pipelineErr;
+      throw e;
     }
     
     // A3.8.17: Harden: check pipeline result
