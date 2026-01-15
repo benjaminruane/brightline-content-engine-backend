@@ -10296,91 +10296,156 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     return ["No extractable claims were produced for this statement."];
   }
   
-  // A3.8.10: Map canonical claims to old shape for compatibility with generateClaimLinkedReasons
-  // Respect reliability - don't say "supported" for Low reliability claims
-  const claims = canonicalClaims.map(cc => {
+  // A3.8.12: Generate user-meaningful reasons directly from canonical claims
+  // Filter out consolidation jargon and build type-specific verification language
+  const reasons = [];
+  
+  // Sort claims: financial/metric first, then qualitative
+  const financialTypes = new Set([
+    "investment_amount",
+    "valuation_pre_money",
+    "valuation_post_money",
+    "valuation_enterprise_value",
+    "ownership_percent",
+    "fee_percent",
+    "percent",
+    "metric_amount",
+    "growth_percent",
+    "secondary_purchase",
+    "structure_term",
+  ]);
+  
+  const sortedClaims = [...canonicalClaims].sort((a, b) => {
+    const aIsFinancial = financialTypes.has(a.type);
+    const bIsFinancial = financialTypes.has(b.type);
+    if (aIsFinancial && !bIsFinancial) return -1;
+    if (!aIsFinancial && bIsFinancial) return 1;
+    return 0;
+  });
+  
+  for (const cc of sortedClaims.slice(0, 3)) {
     const reliability = cc.reliability || "Medium";
     const evidenceNotes = cc.evidenceNotes || [];
     const citations = cc.citations || [];
+    const claimType = cc.type;
     
-    // A3.8.10: Check if claim is actually supported (not Low reliability)
+    // A3.8.12: Check if claim is actually supported (not Low reliability)
     const isSupported = reliability !== "Low" && !evidenceNotes.some(note => 
       typeof note === "string" && /not supported|unsupported|could not/i.test(note)
     );
     
-    // A3.8.10: Build comment based on reliability, not just citations
-    let comment;
-    if (cc.evidenceNotes && cc.evidenceNotes.length > 0) {
-      // Filter out "Qualitative fallback claim" from user-facing comments
-      const filteredNotes = cc.evidenceNotes.filter(note => 
-        typeof note === "string" && !/qualitative fallback claim/i.test(note)
-      );
-      comment = filteredNotes.length > 0 ? filteredNotes.join("; ") : null;
-    }
+    // A3.8.12: Filter out consolidation jargon from evidenceNotes
+    const filteredNotes = evidenceNotes.filter(note => 
+      typeof note === "string" && !/consolidated.*extracted signals|merged.*raw claims/i.test(note)
+    );
     
-    if (!comment) {
-      if (isSupported && citations.length > 0) {
-        comment = "Supported by sources";
-      } else {
-        comment = "Not supported in provided sources";
+    // A3.8.12: Build user-meaningful reason based on type
+    let reasonText = "";
+    const citeStr = citations.length > 0 
+      ? (citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`)
+      : "";
+    
+    // A3.8.12: Extract value/amount for display
+    let valueDisplay = "";
+    if (cc.value !== null) {
+      if (cc.currency) {
+        const millions = cc.value / 1e6;
+        if (millions >= 1) {
+          valueDisplay = `$${millions.toFixed(millions >= 10 ? 0 : 1)}m`;
+        } else {
+          const thousands = cc.value / 1e3;
+          if (thousands >= 1) {
+            valueDisplay = `$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`;
+          } else {
+            valueDisplay = `$${cc.value.toLocaleString()}`;
+          }
+        }
+      } else if (cc.unit === "%") {
+        valueDisplay = `${cc.value > 0 ? "+" : ""}${cc.value}%`;
       }
     }
     
-    return {
-      claimText: cc.displayText,
-      reliability: cc.reliability,
-      reliabilityScore: cc.reliabilityScore,
-      comment: comment,
-      anchor: cc.anchorFamily,
-      citations: cc.citations,
-      _canonicalId: cc.id,
-      // Preserve canonical claim properties
-      _canonicalType: cc.type,
-      _canonicalCompany: cc.company,
-      _canonicalRound: cc.round,
-    };
-  });
-  
-  // Generate reasons using existing function (works with mapped claims)
-  let reasons = generateClaimLinkedReasons(claims, statement, runId, reqSig);
-  
-  // A3.8.10: Handle qualitative claims (type="other_qualitative") with deterministic templates
-  // Respect reliability - don't say "supported" for Low reliability claims
-  const qualitativeClaims = canonicalClaims.filter(cc => cc.type === "other_qualitative");
-  if (qualitativeClaims.length > 0 && reasons.length === 0) {
-    // No reasons generated from existing logic, build deterministic qualitative reasons
-    for (const qualClaim of qualitativeClaims.slice(0, 3)) {
-      const snippet = qualClaim.displayText || "";
-      const citations = qualClaim.citations || [];
-      const company = qualClaim.company;
-      const reliability = qualClaim.reliability || "Medium";
-      const evidenceNotes = qualClaim.evidenceNotes || [];
-      
-      // A3.8.10: Check if claim is actually supported (not Low reliability)
-      const isSupported = reliability !== "Low" && !evidenceNotes.some(note => 
-        typeof note === "string" && /not supported|unsupported|could not/i.test(note)
-      );
-      
-      // A3.8.10: Remove "Qualitative fallback claim" from snippet if present
-      let cleanSnippet = snippet;
+    // Extract metric hint from displayText if available
+    let metricHint = "";
+    if (claimType === "metric_amount" && cc.displayText) {
+      const metricMatch = cc.displayText.match(/\b(mrr|arr|gmv|revenue|run-rate|run\s+rate|annualized)\b/i);
+      if (metricMatch) {
+        metricHint = ` ${metricMatch[0].toUpperCase()}`;
+      }
+    }
+    
+    if (claimType === "investment_amount") {
+      if (isSupported && citations.length > 0) {
+        reasonText = `Investment amount (${valueDisplay}) appears supported by the provided source(s). ${citeStr}`;
+      } else {
+        reasonText = `Investment amount (${valueDisplay}) could not be verified in the provided source(s).`;
+      }
+    } else if (claimType === "metric_amount") {
+      if (isSupported && citations.length > 0) {
+        reasonText = `Operating metric (${valueDisplay}${metricHint}) appears supported by the provided source(s). ${citeStr}`;
+      } else {
+        reasonText = `Operating metric (${valueDisplay}${metricHint}) could not be verified in the provided source(s).`;
+      }
+    } else if (claimType === "growth_percent") {
+      if (isSupported && citations.length > 0) {
+        reasonText = `Growth rate (${valueDisplay} YoY) appears supported by the provided source(s). ${citeStr}`;
+      } else {
+        reasonText = `Growth rate (${valueDisplay} YoY) could not be verified in the provided source(s).`;
+      }
+    } else if (claimType === "other_qualitative") {
+      let cleanSnippet = cc.displayText || "";
+      // Remove internal jargon
       if (cleanSnippet.includes("Qualitative fallback claim")) {
         cleanSnippet = cleanSnippet.replace(/Qualitative fallback claim[:\s]*/i, "").trim();
       }
-      
       if (isSupported && citations.length > 0) {
-        // High/Medium reliability with citations
-        const citeStr = citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`;
-        if (company) {
-          reasons.push(`"${cleanSnippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
-        } else {
-          reasons.push(`"${cleanSnippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
-        }
+        reasonText = `This statement appears consistent with the provided source(s). ${citeStr}`;
       } else {
-        // Low reliability or no citations - don't claim support
-        reasons.push(`"${cleanSnippet.substring(0, 100)}" Could not be conclusively verified in provided sources.`);
+        reasonText = `This statement could not be verified in the provided source(s).`;
       }
-      
-      if (reasons.length >= 3) break; // Max 3 bullets
+    } else {
+      // Fallback for other types - use existing generateClaimLinkedReasons logic
+      // Map to old shape for compatibility
+      const mappedClaim = {
+        claimText: cc.displayText,
+        reliability: cc.reliability,
+        reliabilityScore: cc.reliabilityScore,
+        comment: filteredNotes.length > 0 ? filteredNotes.join("; ") : (isSupported && citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
+        anchor: cc.anchorFamily,
+        citations: cc.citations,
+        _canonicalId: cc.id,
+        _canonicalType: cc.type,
+        _canonicalCompany: cc.company,
+        _canonicalRound: cc.round,
+      };
+      // Use existing function for other types
+      const fallbackReasons = generateClaimLinkedReasons([mappedClaim], statement, runId, reqSig);
+      if (fallbackReasons.length > 0) {
+        reasonText = fallbackReasons[0];
+      }
+    }
+    
+    if (reasonText) {
+      reasons.push(reasonText);
+    }
+    
+    if (reasons.length >= 3) break; // Max 3 bullets
+  }
+  
+  // A3.8.12: If no reasons generated, fall back to qualitative template
+  if (reasons.length === 0) {
+    const firstClaim = canonicalClaims[0];
+    if (firstClaim) {
+      const citations = firstClaim.citations || [];
+      const citeStr = citations.length > 0 
+        ? (citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`)
+        : "";
+      const isSupported = (firstClaim.reliability || "Medium") !== "Low";
+      if (isSupported && citations.length > 0) {
+        reasons.push(`This statement appears consistent with the provided source(s). ${citeStr}`);
+      } else {
+        reasons.push(`This statement could not be verified in the provided source(s).`);
+      }
     }
   }
   
@@ -15062,18 +15127,27 @@ ${
           rawClaimsForDiagnostics = [...rawClaims];
           
           // Map canonical claims to old claim shape for backward compatibility (5.3 Option A)
-          claims = canonClaims.map(cc => ({
-            claimText: cc.displayText,
-            reliability: cc.reliability,
-            reliabilityScore: cc.reliabilityScore,
-            comment: cc.evidenceNotes && cc.evidenceNotes.length > 0 
-              ? cc.evidenceNotes.join("; ") 
-              : (cc.citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
-            anchor: cc.anchorFamily,
-            citations: cc.citations,
-            // Preserve canonical claim ID for diagnostics
-            _canonicalId: cc.id,
-          }));
+          claims = canonClaims.map(cc => {
+            // A3.8.12: Filter out consolidation jargon from evidenceNotes for user-facing comments
+            const filteredNotes = cc.evidenceNotes && cc.evidenceNotes.length > 0
+              ? cc.evidenceNotes.filter(note => 
+                  typeof note === "string" && !/consolidated.*extracted signals|merged.*raw claims/i.test(note)
+                )
+              : [];
+            
+            return {
+              claimText: cc.displayText,
+              reliability: cc.reliability,
+              reliabilityScore: cc.reliabilityScore,
+              comment: filteredNotes.length > 0
+                ? filteredNotes.join("; ")
+                : (cc.citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
+              anchor: cc.anchorFamily,
+              citations: cc.citations,
+              // Preserve canonical claim ID for diagnostics
+              _canonicalId: cc.id,
+            };
+          });
           
           // Extract unique anchors for logging
           uniqueAnchors = new Set(claims.map(c => {
