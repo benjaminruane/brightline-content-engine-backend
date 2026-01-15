@@ -166,20 +166,44 @@ function segmentSelectionIntoCandidates(selectionText, runId = null, reqSig = nu
     finalSegments.push(seg);
   }
   
-  // A3.8.13: Discard segments < 25 characters and cap at 6 segments
-  const validSegments = finalSegments
-    .map(s => s.trim())
-    .filter(s => s.length >= 25)
-    .slice(0, 6);
+  // A3.8.15: Track created segments with IDs before filtering
+  const createdSegments = finalSegments
+    .map((s, segId) => ({ segId, text: s.trim(), len: s.trim().length }))
+    .filter(seg => seg.len >= 25);
+  
+  // A3.8.15: Cap at 6 segments and log drops
+  const validSegments = [];
+  const droppedSegments = [];
+  for (let i = 0; i < createdSegments.length && validSegments.length < 6; i++) {
+    const seg = createdSegments[i];
+    if (seg.len >= 25) {
+      validSegments.push(seg);
+    } else {
+      droppedSegments.push({ ...seg, reason: "too_short" });
+    }
+  }
+  
+  // A3.8.15: Log segments that were dropped due to cap
+  for (let i = 6; i < createdSegments.length; i++) {
+    droppedSegments.push({ ...createdSegments[i], reason: "cap_exceeded" });
+  }
   
   // Generate stable deterministic ID (hash of full selectedText)
   const selectionGroupId = createHash("sha256").update(originalText).digest("hex").substring(0, 16);
   
-  // A3.8.13: Logging
-  const kept = validSegments.length;
-  log(`[SELECTION][SEGMENT] segments=${validSegments.length} kept=${kept}`);
-  validSegments.forEach((seg, idx) => {
-    log(`[SELECTION][SEGMENT_ITEM] idx=${idx} len=${seg.length}`);
+  // A3.8.15: Logging with segmentId
+  const createdCount = createdSegments.length;
+  const keptCount = validSegments.length;
+  log(`[SELECTION][SEGMENT] segments=${createdCount} kept=${keptCount}`);
+  
+  // A3.8.15: Log kept segments with segmentId (cap at 12 to avoid duplicates)
+  validSegments.slice(0, 12).forEach((seg) => {
+    log(`[SELECTION][SEGMENT_ITEM] segId=${seg.segId} len=${seg.len}`);
+  });
+  
+  // A3.8.15: Log dropped segments
+  droppedSegments.forEach((seg) => {
+    log(`[SELECTION][SEGMENT_DROP] segId=${seg.segId} len=${seg.len} reason=${seg.reason}`);
   });
   
   // If no valid segments, return single candidate (backward compat)
@@ -191,14 +215,16 @@ function segmentSelectionIntoCandidates(selectionText, runId = null, reqSig = nu
       selectionGroupId,
       selectionIndex: 1,
       selectionTotal: 1,
+      segmentId: 0, // A3.8.15: Add segmentId
     }];
   }
   
-  return validSegments.map((text, idx) => ({
-    text,
+  return validSegments.map((seg, idx) => ({
+    text: seg.text,
     selectionGroupId,
     selectionIndex: idx + 1,
     selectionTotal: validSegments.length,
+    segmentId: seg.segId, // A3.8.15: Preserve original segmentId
   }));
 }
 
@@ -10185,6 +10211,31 @@ function generateClaimLinkedReasons(claims, statement = null, runId = null, reqS
 }
 
 /**
+ * A3.8.15: Get definitive verb phrase based on reliability
+ * Returns "is supported" for Medium/High, "is not supported" for Low.
+ */
+function verbForReliability(reliabilityLabelOrScore) {
+  if (typeof reliabilityLabelOrScore === "number") {
+    // Score-based
+    if (reliabilityLabelOrScore >= 60) {
+      return "is supported by the provided source(s).";
+    } else {
+      return "is not supported by the provided source(s).";
+    }
+  } else if (typeof reliabilityLabelOrScore === "string") {
+    // Label-based
+    const label = reliabilityLabelOrScore.toLowerCase();
+    if (label === "high" || label === "medium") {
+      return "is supported by the provided source(s).";
+    } else if (label === "low") {
+      return "is not supported by the provided source(s).";
+    }
+  }
+  // Fallback
+  return "could not be verified in the provided source(s).";
+}
+
+/**
  * A3.8.14: Build deal context from canonical claims (selection mode only)
  * Detects deal-related claims and groups them for assessment purposes.
  */
@@ -10334,20 +10385,10 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     const citations = cc.citations || [];
     const claimType = cc.type;
     
-    // A3.8.12: Check if claim is actually supported (not Low reliability)
-    const isSupported = reliability !== "Low" && !evidenceNotes.some(note => 
-      typeof note === "string" && /not supported|unsupported|could not/i.test(note)
-    );
-    
-    // A3.8.12: Filter out consolidation jargon from evidenceNotes
-    const filteredNotes = evidenceNotes.filter(note => 
-      typeof note === "string" && !/consolidated.*extracted signals|merged.*raw claims/i.test(note)
-    );
-    
-    // A3.8.12: Build user-meaningful reason based on type
-    let reasonText = "";
+    // A3.8.15: Use definitive language based on reliability
+    const verb = verbForReliability(reliability);
     const citeStr = citations.length > 0 
-      ? (citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`)
+      ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
       : "";
     
     // A3.8.12: Extract value/amount for display
@@ -10379,35 +10420,27 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       }
     }
     
+    // A3.8.15: Build user-meaningful reason with definitive language
+    let reasonText = "";
+    
     if (claimType === "investment_amount") {
-      if (isSupported && citations.length > 0) {
-        reasonText = `Investment amount (${valueDisplay}) appears supported by the provided source(s). ${citeStr}`;
-      } else {
-        reasonText = `Investment amount (${valueDisplay}) could not be verified in the provided source(s).`;
-      }
+      reasonText = `Investment amount (${valueDisplay}) ${verb}${citeStr}`;
     } else if (claimType === "metric_amount") {
-      if (isSupported && citations.length > 0) {
-        reasonText = `Operating metric (${valueDisplay}${metricHint}) appears supported by the provided source(s). ${citeStr}`;
-      } else {
-        reasonText = `Operating metric (${valueDisplay}${metricHint}) could not be verified in the provided source(s).`;
-      }
+      reasonText = `Operating metric (${valueDisplay}${metricHint}) ${verb}${citeStr}`;
     } else if (claimType === "growth_percent") {
-      if (isSupported && citations.length > 0) {
-        reasonText = `Growth rate (${valueDisplay} YoY) appears supported by the provided source(s). ${citeStr}`;
-      } else {
-        reasonText = `Growth rate (${valueDisplay} YoY) could not be verified in the provided source(s).`;
-      }
+      reasonText = `Growth rate (${valueDisplay} YoY) ${verb}${citeStr}`;
+    } else if (claimType === "ownership_percent") {
+      reasonText = `Ownership percentage (${valueDisplay}) ${verb}${citeStr}`;
+    } else if (claimType === "fee_percent") {
+      reasonText = `Fee / take rate (${valueDisplay}) ${verb}${citeStr}`;
+    } else if (claimType === "secondary_purchase") {
+      reasonText = `Secondary purchase amount (${valueDisplay}) ${verb}${citeStr}`;
     } else if (claimType === "other_qualitative") {
-      let cleanSnippet = cc.displayText || "";
-      // Remove internal jargon
-      if (cleanSnippet.includes("Qualitative fallback claim")) {
-        cleanSnippet = cleanSnippet.replace(/Qualitative fallback claim[:\s]*/i, "").trim();
-      }
-      if (isSupported && citations.length > 0) {
-        reasonText = `This statement appears consistent with the provided source(s). ${citeStr}`;
-      } else {
-        reasonText = `This statement could not be verified in the provided source(s).`;
-      }
+      // A3.8.15: Use "is consistent" for Medium/High, "is not supported" for Low
+      const qualVerb = reliability === "Low" 
+        ? "is not supported by the provided source(s)."
+        : "is consistent with the provided source(s).";
+      reasonText = `This statement ${qualVerb}${citeStr}`;
     } else {
       // Fallback for other types - use existing generateClaimLinkedReasons logic
       // Map to old shape for compatibility
@@ -10438,19 +10471,19 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
   }
   
   // A3.8.12: If no reasons generated, fall back to qualitative template
+  // A3.8.15: Use definitive language
   if (reasons.length === 0) {
     const firstClaim = canonicalClaims[0];
     if (firstClaim) {
       const citations = firstClaim.citations || [];
       const citeStr = citations.length > 0 
-        ? (citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`)
+        ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
         : "";
-      const isSupported = (firstClaim.reliability || "Medium") !== "Low";
-      if (isSupported && citations.length > 0) {
-        reasons.push(`This statement appears consistent with the provided source(s). ${citeStr}`);
-      } else {
-        reasons.push(`This statement could not be verified in the provided source(s).`);
-      }
+      const reliability = firstClaim.reliability || "Medium";
+      const qualVerb = reliability === "Low" 
+        ? "is not supported by the provided source(s)."
+        : "is consistent with the provided source(s).";
+      reasons.push(`This statement ${qualVerb}${citeStr}`);
     }
   }
   
@@ -14251,7 +14284,7 @@ export default async function handler(req, res) {
     // A3.5.21 Step 3: Pass hasReturned flag to guard against execution after return
     // A3.7.4: In selection mode, split ONLY selectedText (never the full draft)
     let rawExtractionCandidates = [];
-    let selectionMetadataMap = new Map(); // Map candidate text -> { selectionGroupId, selectionIndex, selectionTotal }
+    let selectionMetadataMap = new Map(); // Map candidate text -> { selectionGroupId, selectionIndex, selectionTotal, segmentId }
     let selectionStatementCountReturned = null; // A3.7.4: Store N from split
     if (!selectionUsed) {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
@@ -14276,6 +14309,7 @@ export default async function handler(req, res) {
               selectionGroupId: item.selectionGroupId,
               selectionIndex: item.selectionIndex,
               selectionTotal: item.selectionTotal,
+              segmentId: item.segmentId !== undefined ? item.segmentId : null, // A3.8.15: Add segmentId
             });
           }
           return text;
@@ -15066,6 +15100,15 @@ ${
         const text = typeof stmt.text === "string" ? stmt.text : "";
         const assessment = stmt.assessment || {};
         
+        // A3.8.15: Extract segmentId from selection metadata if available
+        let segmentId = null;
+        if (selectionUsed && selectionMetadataMap) {
+          const metadata = selectionMetadataMap.get(text.trim());
+          if (metadata && metadata.segmentId !== undefined && metadata.segmentId !== null) {
+            segmentId = metadata.segmentId;
+          }
+        }
+        
         // A3.6.9: Per-statement guard around claim generation - never trigger global fallback
         let claims = [];
         let claimsError = false;
@@ -15132,6 +15175,7 @@ ${
           rawClaimsForDiagnostics = [...rawClaims];
           
           // Map canonical claims to old claim shape for backward compatibility (5.3 Option A)
+          // A3.8.15: Fix comment to respect Low reliability
           claims = canonClaims.map(cc => {
             // A3.8.12: Filter out consolidation jargon from evidenceNotes for user-facing comments
             const filteredNotes = cc.evidenceNotes && cc.evidenceNotes.length > 0
@@ -15140,13 +15184,27 @@ ${
                 )
               : [];
             
+            // A3.8.15: Comment must respect reliability - Low claims must NOT say "Supported by sources"
+            const reliability = cc.reliability || "Medium";
+            let comment;
+            if (filteredNotes.length > 0) {
+              comment = filteredNotes.join("; ");
+            } else {
+              // A3.8.15: Low reliability claims must say "Not supported"
+              if (reliability === "Low") {
+                comment = "Not supported by sources";
+              } else if (cc.citations.length > 0) {
+                comment = "Supported by sources";
+              } else {
+                comment = "Not supported in provided sources";
+              }
+            }
+            
             return {
               claimText: cc.displayText,
               reliability: cc.reliability,
               reliabilityScore: cc.reliabilityScore,
-              comment: filteredNotes.length > 0
-                ? filteredNotes.join("; ")
-                : (cc.citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
+              comment: comment,
               anchor: cc.anchorFamily,
               citations: cc.citations,
               // Preserve canonical claim ID for diagnostics
@@ -15226,6 +15284,22 @@ ${
               reliabilityLabel: dealReliability.reliabilityLabel,
             };
           }
+        }
+        
+        // A3.8.15: Reliability score/label consistency guardrail
+        const finalScore = computedReliability.reliabilityScore;
+        const finalLabel = computedReliability.reliabilityLabel;
+        if (finalScore <= 40 && finalLabel !== "Low") {
+          if (runId && reqSig) {
+            diag(runId, reqSig, `[RELIABILITY][MISMATCH] idx=${idx} score=${finalScore} label=${finalLabel} expected=Low`);
+          }
+          computedReliability.reliabilityLabel = "Low";
+        } else if (finalScore >= 60 && finalLabel !== "Medium" && finalLabel !== "High") {
+          if (runId && reqSig) {
+            diag(runId, reqSig, `[RELIABILITY][MISMATCH] idx=${idx} score=${finalScore} label=${finalLabel} expected=Medium_or_High`);
+          }
+          // Derive label from score if mismatch
+          computedReliability.reliabilityLabel = finalScore >= 80 ? "High" : "Medium";
         }
         
         // A3.6.5: Count canonical claim reliabilities for logging
@@ -15394,7 +15468,9 @@ ${
           const mergedCount = diagnostics.mergedGroupsCount !== undefined ? diagnostics.mergedGroupsCount : 0;
           const dedupDropCount = diagnostics.dedupDroppedCount !== undefined ? diagnostics.dedupDroppedCount : 0;
           const reasonsCount = finalReasons.length;
-          diag(runId, reqSig, `[CANON_SUMMARY] idx=${idx} sel=${selectionUsed ? 1 : 0} hash=${selHash} raw=${rawCount} drop=${dropCount} canon=${canonicalClaims.length} fin=${finCount} qual=${qualCount} merged=${mergedCount} dedupDrop=${dedupDropCount} reasons=${reasonsCount}`);
+          // A3.8.15: Extract segmentId for logging
+          const logSegmentId = segmentId !== undefined && segmentId !== null ? segmentId : "na";
+          diag(runId, reqSig, `[CANON_SUMMARY] idx=${idx} segId=${logSegmentId} sel=${selectionUsed ? 1 : 0} hash=${selHash} raw=${rawCount} drop=${dropCount} canon=${canonicalClaims.length} fin=${finCount} qual=${qualCount} merged=${mergedCount} dedupDrop=${dedupDropCount} reasons=${reasonsCount}`);
         }
         
         // A3.8.4: Extract citations from canonical claims
@@ -15430,8 +15506,10 @@ ${
           diag(runId, reqSig, `[CITE][WARN] idx=${idx} noCitationsEmitted references=${unifiedReferences.length}`);
         }
         
-        return {
+        // A3.8.15: Add segmentId to statement for traceability
+        const statementWithSegmentId = {
           ...stmt,
+          __selectionSegmentId: segmentId, // A3.8.15: Preserve segmentId for logging
           assessment: {
             ...assessment,
             // A3.8.0: Add canonical claims and raw claims
@@ -15449,6 +15527,9 @@ ${
             reasonsSource: reasonsSourceValue,
             _claimsError: claimsError, // Internal flag for later phases
           },
+        };
+        
+        return statementWithSegmentId;
         };
       });
       
@@ -15966,6 +16047,33 @@ ${
     // A3.5.21 Step 2: Set hasReturned flag before return to prevent any further Review pipeline execution
     hasReturned = true;
     diag(runId, reqSig, `END returningNow=true status=200`);
+    // A3.8.15: Segment-to-statement reconciliation logging (selection mode only)
+    if (selectionUsed && selectionMetadataMap && runId && reqSig) {
+      const keptSegmentIds = Array.from(selectionMetadataMap.values())
+        .map(m => m.segmentId)
+        .filter(id => id !== undefined && id !== null)
+        .sort((a, b) => a - b);
+      
+      const emittedStatementSegmentIds = finalResponseObject.statements
+        .map(s => s.__selectionSegmentId)
+        .filter(id => id !== undefined && id !== null)
+        .sort((a, b) => a - b);
+      
+      // Find missing segmentIds
+      const missingSegmentIds = keptSegmentIds.filter(id => !emittedStatementSegmentIds.includes(id));
+      
+      if (missingSegmentIds.length > 0) {
+        // Log each missing segment with best-guess reason
+        missingSegmentIds.forEach(segId => {
+          // Try to determine why it was dropped (best effort)
+          let reason = "unknown";
+          // Check if it was filtered/dropped earlier in pipeline
+          // (We can't know for sure, but log it anyway)
+          diag(runId, reqSig, `[SELECTION][SEGMENT_PIPELINE_DROP] segId=${segId} reason=${reason}`);
+        });
+      }
+    }
+    
     // A3.5.21 Fix: Wrap END_DIAG and cleanup in try/catch to prevent logging crashes
     try {
       diag(runId, reqSig, `RETURN_PAYLOAD statements=${finalResponseObject?.statements?.length ?? -1} refs=${finalResponseObject?.references?.length ?? -1}`);
