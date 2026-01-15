@@ -78,9 +78,39 @@ function validateRequest(body) {
   };
 }
 
+// A3.8.17: Extract cause chain for logging
+function extractCauseChain(err, maxDepth = 4) {
+  const chain = [];
+  let current = err;
+  let depth = 0;
+  
+  while (current && depth < maxDepth) {
+    if (current.cause) {
+      chain.push({
+        name: current.cause?.name || "Unknown",
+        message: current.cause?.message || "",
+        stack: current.cause?.stack || "",
+      });
+      current = current.cause;
+      depth++;
+    } else {
+      break;
+    }
+  }
+  
+  return chain;
+}
+
 export default async function handler(req, res) {
   // A3.8.16: Generate RID/SIG early for all logging
   const { runId, reqSig } = generateRidSig();
+  
+  // A3.8.17: Phase tracker + debug context
+  let phase = "init";
+  let selectionChars = 0;
+  let draftChars = 0;
+  let hasInstructions = false;
+  const dbg = { route: "analyse-selected-statements", phase: "init", selectionMode: true };
   
   // A3.8.16: Top-level try/catch to ensure JSON response always
   try {
@@ -103,12 +133,19 @@ export default async function handler(req, res) {
       });
     }
     
+    // A3.8.17: Phase: parse_body
+    phase = "parse_body";
+    dbg.phase = phase;
+    
     // A3.8.16: Parse body safely
     let body;
     try {
       body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      if (!body || typeof body !== "object") {
+        throw new Error("Body must be an object");
+      }
     } catch (parseErr) {
-      diag(runId, reqSig, `BAD_REQUEST route=analyse-selected-statements invalid=["JSON parse error: ${parseErr.message}"]`);
+      diag(runId, reqSig, `BAD_REQUEST route=analyse-selected-statements phase=${phase} invalid=["JSON parse error: ${parseErr.message}"]`);
       return res.status(400).json({
         ok: false,
         error: {
@@ -122,10 +159,45 @@ export default async function handler(req, res) {
       });
     }
     
+    // A3.8.17: Phase: validate
+    phase = "validate";
+    dbg.phase = phase;
+    
+    // A3.8.17: Harden: normalize unexpected types safely
+    if (typeof body.selectionText !== "string") {
+      diag(runId, reqSig, `BAD_REQUEST route=analyse-selected-statements phase=${phase} invalid=["selectionText must be a string"]`);
+      return res.status(400).json({
+        ok: false,
+        error: {
+          code: "BAD_REQUEST",
+          message: "Request validation failed",
+          details: {
+            missing: [],
+            invalid: ["selectionText must be a string"],
+          },
+        },
+      });
+    }
+    
+    if (typeof body.draftText !== "string") {
+      diag(runId, reqSig, `BAD_REQUEST route=analyse-selected-statements phase=${phase} invalid=["draftText must be a string"]`);
+      return res.status(400).json({
+        ok: false,
+        error: {
+          code: "BAD_REQUEST",
+          message: "Request validation failed",
+          details: {
+            missing: [],
+            invalid: ["draftText must be a string"],
+          },
+        },
+      });
+    }
+    
     // A3.8.16: Validate request
     const validation = validateRequest(body);
     if (!validation.valid) {
-      diag(runId, reqSig, `BAD_REQUEST route=analyse-selected-statements missing=[${validation.missing.join(",")}] invalid=[${validation.invalid.join("; ")}]`);
+      diag(runId, reqSig, `BAD_REQUEST route=analyse-selected-statements phase=${phase} missing=[${validation.missing.join(",")}] invalid=[${validation.invalid.join("; ")}]`);
       return res.status(400).json({
         ok: false,
         error: {
@@ -139,13 +211,24 @@ export default async function handler(req, res) {
       });
     }
     
+    // A3.8.17: Phase: normalize
+    phase = "normalize";
+    dbg.phase = phase;
+    
     // A3.8.16: Normalize inputs
     const selectionTextNorm = body.selectionText.trim();
     const draftTextNorm = body.draftText.trim();
-    const instructionsNorm = (body.instructions || "").trim();
+    const instructionsNorm = (body.instructions || null) ? String(body.instructions).trim() : "";
+    
+    selectionChars = selectionTextNorm.length;
+    draftChars = draftTextNorm.length;
+    hasInstructions = instructionsNorm.length > 0;
+    dbg.selectionChars = selectionChars;
+    dbg.draftChars = draftChars;
+    dbg.hasInstructions = hasInstructions;
     
     // A3.8.16: Log START (once, with request shape summary)
-    diag(runId, reqSig, `START route=analyse-selected-statements selectionChars=${selectionTextNorm.length} draftChars=${draftTextNorm.length} hasInstructions=${instructionsNorm.length > 0}`);
+    diag(runId, reqSig, `START route=analyse-selected-statements selectionChars=${selectionChars} draftChars=${draftChars} hasInstructions=${hasInstructions}`);
     
     // A3.8.16: Guard segmentation inputs
     // Normalize body for implementation
@@ -157,7 +240,14 @@ export default async function handler(req, res) {
       selectionUsed: true, // This endpoint always uses selection mode
     };
     
+    // A3.8.17: Phase: segment (segmentation happens inside impl, but we track phase)
+    phase = "segment";
+    dbg.phase = phase;
+    
     // A3.8.16: Lazy-load implementation
+    phase = "run_review_pipeline";
+    dbg.phase = phase;
+    
     let mod;
     let impl;
     try {
@@ -167,16 +257,7 @@ export default async function handler(req, res) {
         throw new Error("analyse-statements-impl missing default export");
       }
     } catch (importErr) {
-      diag(runId, reqSig, `ERROR route=analyse-selected-statements name=${importErr?.name} message=${importErr?.message}`);
-      return res.status(500).json({
-        ok: false,
-        error: {
-          code: "INTERNAL_ERROR",
-          message: "Internal error in analyse-selected-statements",
-          rid: runId,
-          sig: reqSig,
-        },
-      });
+      throw new Error("IMPORT_FAILED", { cause: importErr });
     }
     
     // A3.8.16: Call implementation with normalized body
@@ -186,21 +267,74 @@ export default async function handler(req, res) {
       body: normalizedBody,
     };
     
-    return await impl(normalizedReq, res);
+    // A3.8.17: Harden: wrap pipeline call in try/catch
+    let pipelineResult;
+    try {
+      pipelineResult = await impl(normalizedReq, res);
+    } catch (pipelineErr) {
+      // A3.8.17: Re-throw with context to preserve phase tracking
+      throw new Error("REVIEW_PIPELINE_FAILED", { cause: pipelineErr });
+    }
+    
+    // A3.8.17: Harden: check pipeline result
+    if (!pipelineResult || typeof pipelineResult !== "object") {
+      phase = "respond";
+      dbg.phase = phase;
+      diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=0 statementCount=0 dropReasons=["PIPELINE_RETURNED_EMPTY"]`);
+      return res.status(200).json({
+        ok: true,
+        statements: [],
+        references: [],
+        diagnostics: {
+          selectionMode: true,
+          segmentCount: 0,
+          dropReasons: ["PIPELINE_RETURNED_EMPTY"],
+        },
+      });
+    }
+    
+    // A3.8.17: Phase: respond
+    phase = "respond";
+    dbg.phase = phase;
+    
+    // A3.8.17: Extract statement/segment counts from result
+    const statementCount = Array.isArray(pipelineResult?.statements) ? pipelineResult.statements.length : 0;
+    // Segment count is not directly available from result, estimate from statement count
+    // (Each statement typically corresponds to one segment in selection mode)
+    const segmentCount = statementCount;
+    
+    // A3.8.17: Log END
+    diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount}`);
+    
+    return pipelineResult;
     
   } catch (err) {
     // A3.8.16: Top-level catch - ensure JSON response
     setCorsHeaders(req, res);
     
-    // A3.8.16: Log error with request shape summary (not full text)
-    const requestShape = {
-      hasBody: !!req.body,
-      bodyType: typeof req.body,
-      bodySize: typeof req.body === "string" ? req.body.length : (req.body ? JSON.stringify(req.body).length : 0),
-      method: req.method,
-    };
+    // A3.8.17: Extract cause chain
+    const causeChain = extractCauseChain(err);
     
-    diag(runId, reqSig, `ERROR route=analyse-selected-statements name=${err?.name} message=${err?.message} requestShape=${JSON.stringify(requestShape)} stack=${err?.stack?.split("\n").slice(0, 3).join(" | ") || "no stack"}`);
+    // A3.8.17: Log error EXACTLY ONCE with full details
+    diag(runId, reqSig, `ERROR route=analyse-selected-statements phase=${phase} name=${err?.name || "Error"} message=${err?.message || ""}`);
+    
+    // Log stack
+    if (err?.stack) {
+      diag(runId, reqSig, `stack=${err.stack}`);
+    }
+    
+    // Log cause chain
+    if (causeChain.length > 0) {
+      causeChain.forEach((cause, idx) => {
+        diag(runId, reqSig, `cause[${idx}] name=${cause.name} message=${cause.message}`);
+        if (cause.stack) {
+          diag(runId, reqSig, `cause[${idx}] stack=${cause.stack}`);
+        }
+      });
+    }
+    
+    // Log debug context (NO TEXT)
+    diag(runId, reqSig, `dbg=${JSON.stringify({ ...dbg, selectionChars, draftChars, hasInstructions })}`);
     
     return res.status(500).json({
       ok: false,
@@ -209,6 +343,8 @@ export default async function handler(req, res) {
         message: "Internal error in analyse-selected-statements",
         rid: runId,
         sig: reqSig,
+        phase: phase,
+        name: err?.name || "Error",
       },
     });
   }
