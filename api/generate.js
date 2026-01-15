@@ -20,11 +20,10 @@ import {
 // ------------------------------------------------------------------
 // CORS
 function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Max-Age", "86400");
 }
 
 // ------------------------------------------------------------------
@@ -497,7 +496,7 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
-  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   if (!process.env.OPENAI_API_KEY) {

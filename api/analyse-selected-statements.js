@@ -8,11 +8,10 @@
 import analyseStatementsImpl from "./analyse-statements-impl.js";
 
 function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Max-Age", "86400");
   res.setHeader("Content-Type", "application/json; charset=utf-8");
 }
 
@@ -123,7 +122,7 @@ export default async function handler(req, res) {
     
     // A3.8.16: Handle OPTIONS preflight
     if (req.method === "OPTIONS") {
-      return res.status(200).end();
+      return res.status(204).end();
     }
     
     // A3.8.16: Reject non-POST methods
