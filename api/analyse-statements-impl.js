@@ -10284,6 +10284,68 @@ function generateClaimLinkedReasons(claims, statement = null, runId = null, reqS
   return dedupedReasons.slice(0, 2);
 }
 
+/**
+ * A3.8.9: Build reasons from canonical claims (claim-driven only)
+ * Returns deterministic reasons based on canonical claims, with special handling for qualitative claims.
+ */
+function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
+  const { statement = null, runId = null, reqSig = null } = context;
+  
+  if (!Array.isArray(canonicalClaims) || canonicalClaims.length === 0) {
+    // A3.8.9: If canonicalClaims is empty (should not happen after hard invariant), return single deterministic bullet
+    return ["No extractable claims were produced for this statement."];
+  }
+  
+  // Map canonical claims to old shape for compatibility with generateClaimLinkedReasons
+  const claims = canonicalClaims.map(cc => ({
+    claimText: cc.displayText,
+    reliability: cc.reliability,
+    reliabilityScore: cc.reliabilityScore,
+    comment: cc.evidenceNotes && cc.evidenceNotes.length > 0 
+      ? cc.evidenceNotes.join("; ") 
+      : (cc.citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
+    anchor: cc.anchorFamily,
+    citations: cc.citations,
+    _canonicalId: cc.id,
+    // Preserve canonical claim properties
+    _canonicalType: cc.type,
+    _canonicalCompany: cc.company,
+    _canonicalRound: cc.round,
+  }));
+  
+  // Generate reasons using existing function (works with mapped claims)
+  let reasons = generateClaimLinkedReasons(claims, statement, runId, reqSig);
+  
+  // A3.8.9: Handle qualitative claims (type="other_qualitative") with deterministic templates
+  const qualitativeClaims = canonicalClaims.filter(cc => cc.type === "other_qualitative");
+  if (qualitativeClaims.length > 0 && reasons.length === 0) {
+    // No reasons generated from existing logic, build deterministic qualitative reasons
+    for (const qualClaim of qualitativeClaims.slice(0, 3)) {
+      const snippet = qualClaim.displayText || "";
+      const citations = qualClaim.citations || [];
+      const company = qualClaim.company;
+      
+      if (company && citations.length > 0) {
+        // Priority: If company exists and citations non-empty
+        const citeStr = citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`;
+        reasons.push(`"${snippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
+      } else if (citations.length === 0) {
+        // Citations empty
+        reasons.push(`"${snippet.substring(0, 100)}" Could not be conclusively verified in provided sources.`);
+      } else {
+        // Company missing but citations exist
+        const citeStr = citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`;
+        reasons.push(`"${snippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
+      }
+      
+      if (reasons.length >= 3) break; // Max 3 bullets
+    }
+  }
+  
+  // A3.8.9: Cap to max 3 bullets
+  return reasons.slice(0, 3);
+}
+
 // A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
 function scrubRepeatedPhrases(snippet) {
   if (!snippet || typeof snippet !== "string") return snippet;
@@ -14924,9 +14986,13 @@ ${
             round: assessment.round || stmt.round || null,
           };
           
+          // A3.8.9: Always canonicalize, even when rawClaims is empty (will create fallback)
+          // Extract citations from assessment for fallback claims
+          const citationsFromStatement = Array.isArray(assessment.citations) ? assessment.citations : null;
+          
           // Canonicalize claims
           // A3.8.1: Use alias to avoid redeclaration collision
-          const { canonicalClaims: canonClaims, diagnostics: canonDiagResult } = canonicalizeClaims(rawClaims, {
+          const { canonicalClaims: canonClaims, diagnostics: canonDiagResult } = canonicalizeClaims(rawClaims || [], {
             statementText: text,
             selectionMode: selectionUsed,
             selectionText: selectionUsed ? selectedText : null,
@@ -14935,6 +15001,8 @@ ${
             runId,
             reqSig,
             statementIndex: idx,
+            assessment: assessment,
+            citationsFromStatement: citationsFromStatement,
           });
           
           canonicalClaims = canonClaims || [];
@@ -15092,42 +15160,45 @@ ${
           }
         }
         
-        // A3.8.0: Generate claim-linked reasons from canonical claims
-        // Use canonical claims (mapped to old shape) for reasons generation
-        let claimLinkedReasons = [];
-        if (canonicalClaims.length > 0 && !claimsError) {
-          // Generate reasons from canonical claims (mapped to old shape for compatibility)
-          // A3.8.1: claims already mapped from canonClaims above
-          claimLinkedReasons = generateClaimLinkedReasons(claims, stmt, runId, reqSig);
+        // A3.8.9: Reasons generation must be claim-driven only
+        // Build reasons from canonical claims (always, even if empty - will return fallback message)
+        let finalReasons = [];
+        let reasonsSourceValue = "canonical";
+        
+        if (!claimsError) {
+          // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
+          finalReasons = buildReasonsFromCanonicalClaims(canonicalClaims, {
+            statement: stmt,
+            runId,
+            reqSig,
+          });
+          
+          // A3.8.9: Set reasonsSource based on actual pipeline path
+          if (canonicalClaims.length > 0) {
+            reasonsSourceValue = "canonical";
+          } else {
+            // Fallback emergency path (shouldn't happen after hard invariant)
+            reasonsSourceValue = "fallback";
+          }
+          
+          // A3.8.9: Log reasons mode
+          if (runId && reqSig) {
+            diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=canonical_claims_only canonicalClaimsCount=${canonicalClaims.length} reasonsCount=${finalReasons.length}`);
+          }
           
           // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
           if (idx < 2 && runId && reqSig) {
             const branch = computedReliability._branch || "UNKNOWN";
             diag(runId, reqSig, `[STMT_FROM_CLAIMS] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount} total=${totalCount} score=${computedReliability.reliabilityScore} label=${computedReliability.reliabilityLabel} branch=${branch}`);
           }
+        } else {
+          // A3.8.9: Claims error - use fallback (should be rare)
+          reasonsSourceValue = "fallback";
+          finalReasons = ["No extractable claims were produced for this statement."];
+          if (runId && reqSig) {
+            diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=fallback claimsError=true`);
+          }
         }
-        
-        // A3.8.0: Add canonical claims and raw claims to assessment
-        // Preserve original raw claims for diagnostics (already captured above)
-        
-        // A3.8.0: Set reasonsSource to "canonical" when using canonical claims
-        // 5.2: Legacy fallback flag (defaults to false - canonical path always)
-        const ENABLE_LEGACY_REASONS_FALLBACK = false;
-        let reasonsSourceValue = "canonical";
-        
-        if (canonicalClaims.length === 0 && !claimsError && ENABLE_LEGACY_REASONS_FALLBACK) {
-          // Fallback enabled and zero canonical claims - log warning and use legacy
-          diag(runId, reqSig, `[CANON][FALLBACK] idx=${idx} zeroCanonicalClaims fallbackEnabled=true usingLegacy`);
-          reasonsSourceValue = "legacy";
-        } else if (canonicalClaims.length === 0 && !claimsError) {
-          // No fallback - canonical path always (even with zero claims)
-          reasonsSourceValue = "canonical";
-        } else if (claimsError) {
-          reasonsSourceValue = "legacy";
-        }
-        
-        // A3.8.2: Cap reasons to 3
-        let finalReasons = (claimLinkedReasons.length > 0 && !claimsError) ? claimLinkedReasons : assessment.reasons;
         const reasonsBefore = finalReasons.length;
         if (Array.isArray(finalReasons) && finalReasons.length > 3) {
           finalReasons = finalReasons.slice(0, 3);
@@ -15223,46 +15294,56 @@ ${
       const text = typeof stmt.text === "string" ? stmt.text : "";
       const claims = Array.isArray(assessment.claims) ? assessment.claims : [];
       
-      // A3.6.9: If claims exist AND no claimsError, ONLY use claim-linked reasons. Do not generate old reasons at all.
+      // A3.8.9: Reasons generation is now claim-driven only (no legacy paths)
+      // Check if canonical claims exist (reasons should already be set from buildReasonsFromCanonicalClaims)
+      const canonicalClaims = Array.isArray(assessment.canonicalClaims) ? assessment.canonicalClaims : [];
       const claimsError = assessment._claimsError || false;
-      if (claims.length > 0 && !claimsError) {
-        // Skip normalization entirely - claim-linked reasons already set in claims generation phase
-        const reasonsSource = "claims";
-        
-        // A3.6.9: Log reasons mode (idx<2)
+      const reasonsSource = assessment.reasonsSource || null;
+      
+      // A3.8.9: If canonical claims exist OR reasonsSource is "canonical", skip legacy normalization
+      if (canonicalClaims.length > 0 || reasonsSource === "canonical" || reasonsSource === "fallback") {
+        // Reasons already generated from canonical claims - skip legacy path
         if (idx < 2 && runId && reqSig) {
-          diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=claims claimsCount=${claims.length}`);
+          diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=canonical_claims_only skipLegacy=true canonicalClaimsCount=${canonicalClaims.length}`);
         }
-        
-        // A3.6.9: Return as-is - claim-linked reasons already set in claims generation phase
-        // DO NOT call normalizeAssessmentReasons() - skip legacy reason generation entirely
         return stmt;
       }
       
-      // A3.6.9: If claimsError or no claims, use legacy reasons
-      if (idx < 2 && runId && reqSig) {
-        diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=legacy claimsCount=${claims.length} claimsError=${claimsError}`);
+      // A3.8.9: Legacy path disabled - should not reach here if canonicalization works correctly
+      // Only allow if there was a claims error (should be rare)
+      if (claimsError) {
+        if (idx < 2 && runId && reqSig) {
+          diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=fallback claimsError=true`);
+        }
+        // Return as-is with fallback reason if not already set
+        if (!Array.isArray(assessment.reasons) || assessment.reasons.length === 0) {
+          return {
+            ...stmt,
+            assessment: {
+              ...assessment,
+              reasons: ["No extractable claims were produced for this statement."],
+              reasonsSource: "fallback",
+            },
+          };
+        }
+        return stmt;
       }
       
-      // A3.5.31: Pass statement context into normalization
-      // A3.6.5: Pass reasonsSource to prevent overwriting claim-linked reasons
-      // A3.6.6: Legacy reasons only run when claims.length === 0
-      const hasCitations = (assessment.citations?.length > 0) || (stmt.citations?.length > 0);
-      const hasEvidence = (stmt.evidence?.length > 0) || (assessment.evidence?.length > 0);
-      const facetsDetected = detectFacetsInStatement(text);
-      const reasonsSource = assessment.reasonsSource || null;
+      // A3.8.9: Should not reach here - log warning
+      if (runId && reqSig) {
+        diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=legacy DISABLED canonicalClaimsCount=${canonicalClaims.length} claimsCount=${claims.length} WARNING=legacy_path_should_not_run`);
+      }
+      // Return as-is to avoid legacy reason generation
+      return stmt;
       
-      // Log reasons mode (idx<2)
-      if (idx < 2 && runId && reqSig) {
-        diag(runId, reqSig, `[REASONS_MODE] idx=${idx} mode=legacy claimsCount=0`);
+      // A3.8.9: Legacy path removed - this code should not execute
+      // If we reach here, it's an error condition
+      if (runId && reqSig) {
+        diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=legacy DISABLED ERROR=should_not_reach_here`);
       }
       
-      const { reasons: normalizedReasons, stats } = normalizeAssessmentReasons(text, reasons, {
-        hasCitations,
-        hasEvidence,
-        facetsDetected,
-        reasonsSource,
-      });
+      // Return as-is without legacy normalization
+      return stmt;
 
       if (idx === 0) firstStmtNormStats = stats;
 
