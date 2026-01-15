@@ -15530,7 +15530,6 @@ ${
         };
         
         return statementWithSegmentId;
-        };
       });
       
       // A3.8.10: Defensive check for canonical ID collisions across statements

@@ -5,7 +5,9 @@
   "type": "module",
   "main": "api/generate.js",
   "scripts": {
-    "test": "echo \"no tests\""
+    "test": "echo \"no tests\"",
+    "prebuild": "NODE_OPTIONS=\"--trace-uncaught --trace-warnings --enable-source-maps\" node scripts/import-isolator.mjs",
+    "build": "echo \"NODE_OPTIONS=$NODE_OPTIONS\" && NODE_OPTIONS=\"--trace-uncaught --trace-warnings --enable-source-maps\" echo \"Build complete (no compilation needed for JS)\""
   },
   "dependencies": {
     "openai": "^4.0.0",
