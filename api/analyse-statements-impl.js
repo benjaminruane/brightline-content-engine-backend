@@ -22,11 +22,35 @@ import { canonicalizeClaims } from "../lib/canonicalClaims.js";
 const runStateByRid = {};
 
 function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // A3.8.24: Defensive CORS helper - never throws, handles undefined req/headers
+  if (typeof res?.setHeader !== "function") {
+    return; // Cannot set headers if res is invalid
+  }
+
+  // Resolve origin safely with multiple fallbacks
+  const origin = req?.headers?.origin || req?.headers?.Origin || req?.headers?.['origin'] || "";
+  
+  // Allowed origins list
+  const ALLOWED_ORIGINS = [
+    "https://brightline-content-engine-frontend.vercel.app"
+  ];
+  
+  // Determine allowed origin: if request origin matches allowed list, use it; otherwise use canonical frontend origin
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) 
+    ? origin 
+    : "https://brightline-content-engine-frontend.vercel.app";
+  
+  // Set headers safely (never throw)
+  try {
+    res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Max-Age", "86400");
+  } catch (err) {
+    // Silently fail - CORS headers are best-effort
+    // Log once at most if needed for debugging
+  }
 }
 
 // A3.5.20 Fix 1: Central DIAG logger that prefixes every log with runId + reqSig
@@ -14042,12 +14066,13 @@ export default async function handler(req, res) {
   let rejectedByReasonIncompleteNumericFragment = 0;
 
   // A3.7.5: Handle OPTIONS preflight immediately after CORS headers
+  // A3.8.24: Return 204 for OPTIONS (standard preflight response)
   if (req.method === "OPTIONS") {
     hasReturned = true;
     try {
-      diag("options", "preflight", `END_DIAG path=options status=200 returningNow=true`);
+      diag("options", "preflight", `END_DIAG path=options status=204 returningNow=true`);
     } catch {}
-    return res.status(200).end();
+    return res.status(204).end();
   }
   if (req.method !== "POST") {
     hasReturned = true;
