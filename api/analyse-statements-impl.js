@@ -10296,27 +10296,56 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     return ["No extractable claims were produced for this statement."];
   }
   
-  // Map canonical claims to old shape for compatibility with generateClaimLinkedReasons
-  const claims = canonicalClaims.map(cc => ({
-    claimText: cc.displayText,
-    reliability: cc.reliability,
-    reliabilityScore: cc.reliabilityScore,
-    comment: cc.evidenceNotes && cc.evidenceNotes.length > 0 
-      ? cc.evidenceNotes.join("; ") 
-      : (cc.citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
-    anchor: cc.anchorFamily,
-    citations: cc.citations,
-    _canonicalId: cc.id,
-    // Preserve canonical claim properties
-    _canonicalType: cc.type,
-    _canonicalCompany: cc.company,
-    _canonicalRound: cc.round,
-  }));
+  // A3.8.10: Map canonical claims to old shape for compatibility with generateClaimLinkedReasons
+  // Respect reliability - don't say "supported" for Low reliability claims
+  const claims = canonicalClaims.map(cc => {
+    const reliability = cc.reliability || "Medium";
+    const evidenceNotes = cc.evidenceNotes || [];
+    const citations = cc.citations || [];
+    
+    // A3.8.10: Check if claim is actually supported (not Low reliability)
+    const isSupported = reliability !== "Low" && !evidenceNotes.some(note => 
+      typeof note === "string" && /not supported|unsupported|could not/i.test(note)
+    );
+    
+    // A3.8.10: Build comment based on reliability, not just citations
+    let comment;
+    if (cc.evidenceNotes && cc.evidenceNotes.length > 0) {
+      // Filter out "Qualitative fallback claim" from user-facing comments
+      const filteredNotes = cc.evidenceNotes.filter(note => 
+        typeof note === "string" && !/qualitative fallback claim/i.test(note)
+      );
+      comment = filteredNotes.length > 0 ? filteredNotes.join("; ") : null;
+    }
+    
+    if (!comment) {
+      if (isSupported && citations.length > 0) {
+        comment = "Supported by sources";
+      } else {
+        comment = "Not supported in provided sources";
+      }
+    }
+    
+    return {
+      claimText: cc.displayText,
+      reliability: cc.reliability,
+      reliabilityScore: cc.reliabilityScore,
+      comment: comment,
+      anchor: cc.anchorFamily,
+      citations: cc.citations,
+      _canonicalId: cc.id,
+      // Preserve canonical claim properties
+      _canonicalType: cc.type,
+      _canonicalCompany: cc.company,
+      _canonicalRound: cc.round,
+    };
+  });
   
   // Generate reasons using existing function (works with mapped claims)
   let reasons = generateClaimLinkedReasons(claims, statement, runId, reqSig);
   
-  // A3.8.9: Handle qualitative claims (type="other_qualitative") with deterministic templates
+  // A3.8.10: Handle qualitative claims (type="other_qualitative") with deterministic templates
+  // Respect reliability - don't say "supported" for Low reliability claims
   const qualitativeClaims = canonicalClaims.filter(cc => cc.type === "other_qualitative");
   if (qualitativeClaims.length > 0 && reasons.length === 0) {
     // No reasons generated from existing logic, build deterministic qualitative reasons
@@ -10324,18 +10353,31 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       const snippet = qualClaim.displayText || "";
       const citations = qualClaim.citations || [];
       const company = qualClaim.company;
+      const reliability = qualClaim.reliability || "Medium";
+      const evidenceNotes = qualClaim.evidenceNotes || [];
       
-      if (company && citations.length > 0) {
-        // Priority: If company exists and citations non-empty
+      // A3.8.10: Check if claim is actually supported (not Low reliability)
+      const isSupported = reliability !== "Low" && !evidenceNotes.some(note => 
+        typeof note === "string" && /not supported|unsupported|could not/i.test(note)
+      );
+      
+      // A3.8.10: Remove "Qualitative fallback claim" from snippet if present
+      let cleanSnippet = snippet;
+      if (cleanSnippet.includes("Qualitative fallback claim")) {
+        cleanSnippet = cleanSnippet.replace(/Qualitative fallback claim[:\s]*/i, "").trim();
+      }
+      
+      if (isSupported && citations.length > 0) {
+        // High/Medium reliability with citations
         const citeStr = citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`;
-        reasons.push(`"${snippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
-      } else if (citations.length === 0) {
-        // Citations empty
-        reasons.push(`"${snippet.substring(0, 100)}" Could not be conclusively verified in provided sources.`);
+        if (company) {
+          reasons.push(`"${cleanSnippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
+        } else {
+          reasons.push(`"${cleanSnippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
+        }
       } else {
-        // Company missing but citations exist
-        const citeStr = citations.length === 1 ? `[${citations[0]}]` : `[${citations.join(", ")}]`;
-        reasons.push(`"${snippet.substring(0, 100)}" Appears consistent with provided sources ${citeStr}`);
+        // Low reliability or no citations - don't claim support
+        reasons.push(`"${cleanSnippet.substring(0, 100)}" Could not be conclusively verified in provided sources.`);
       }
       
       if (reasons.length >= 3) break; // Max 3 bullets
@@ -14990,6 +15032,13 @@ ${
           // Extract citations from assessment for fallback claims
           const citationsFromStatement = Array.isArray(assessment.citations) ? assessment.citations : null;
           
+          // A3.8.10: Compute statementScopeKey for unique ID generation
+          // In selection mode: use selectionHash + ":" + statementIndex
+          // In non-selection mode: use reqSig (or runId) + ":" + statementIndex
+          const statementScopeKey = selectionUsed && selectionHash
+            ? `${selectionHash}:${idx}`
+            : `${reqSig || runId || "global"}:${idx}`;
+          
           // Canonicalize claims
           // A3.8.1: Use alias to avoid redeclaration collision
           const { canonicalClaims: canonClaims, diagnostics: canonDiagResult } = canonicalizeClaims(rawClaims || [], {
@@ -15001,6 +15050,7 @@ ${
             runId,
             reqSig,
             statementIndex: idx,
+            statementScopeKey: statementScopeKey, // A3.8.10: Unique per-statement scope key
             assessment: assessment,
             citationsFromStatement: citationsFromStatement,
           });
@@ -15278,6 +15328,63 @@ ${
           },
         };
       });
+      
+      // A3.8.10: Defensive check for canonical ID collisions across statements
+      const allCanonicalIds = new Map(); // id -> [statementIndex, ...]
+      statements.forEach((stmt, idx) => {
+        const canonicalClaims = stmt?.assessment?.canonicalClaims || [];
+        canonicalClaims.forEach(cc => {
+          if (cc && cc.id) {
+            if (!allCanonicalIds.has(cc.id)) {
+              allCanonicalIds.set(cc.id, []);
+            }
+            allCanonicalIds.get(cc.id).push(idx);
+          }
+        });
+      });
+      
+      // Check for collisions
+      const collisions = [];
+      for (const [id, indices] of allCanonicalIds.entries()) {
+        if (indices.length > 1) {
+          collisions.push({ id, indices });
+        }
+      }
+      
+      if (collisions.length > 0 && runId && reqSig) {
+        const first5 = collisions.slice(0, 5).map(c => c.id.substring(0, 8));
+        diag(runId, reqSig, `[CANON][ID_COLLISION] count=${collisions.length} ids=[${first5.join(",")}]`);
+        
+        // A3.8.10: Re-salt duplicates using ":collisionFix:<i>" for the duplicates only
+        collisions.forEach(({ id, indices }) => {
+          // Fix all but the first occurrence
+          for (let i = 1; i < indices.length; i++) {
+            const stmtIdx = indices[i];
+            const stmt = statements[stmtIdx];
+            if (stmt && stmt.assessment && stmt.assessment.canonicalClaims) {
+              const claim = stmt.assessment.canonicalClaims.find(cc => cc && cc.id === id);
+              if (claim) {
+                // Re-salt the ID
+                const newIdParts = id.split("|");
+                if (newIdParts.length > 0) {
+                  const newId = createHash("sha256")
+                    .update(`${id}:collisionFix:${stmtIdx}`)
+                    .digest("hex")
+                    .substring(0, 32);
+                  claim.id = newId;
+                  // Also update _canonicalId in mapped claims if present
+                  if (stmt.assessment.claims) {
+                    const mappedClaim = stmt.assessment.claims.find(c => c && c._canonicalId === id);
+                    if (mappedClaim) {
+                      mappedClaim._canonicalId = newId;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
     }
     
     // A3.6.9: Store claims failures in meta
