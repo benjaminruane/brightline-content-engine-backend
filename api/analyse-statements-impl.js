@@ -10185,6 +10185,111 @@ function generateClaimLinkedReasons(claims, statement = null, runId = null, reqS
 }
 
 /**
+ * A3.8.14: Build deal context from canonical claims (selection mode only)
+ * Detects deal-related claims and groups them for assessment purposes.
+ */
+function buildDealContext(canonicalClaims) {
+  if (!Array.isArray(canonicalClaims) || canonicalClaims.length === 0) {
+    return null;
+  }
+  
+  const dealTypes = new Set([
+    "investment_amount",
+    "valuation_pre_money",
+    "valuation_post_money",
+    "valuation_enterprise_value",
+    "ownership_percent",
+    "secondary_purchase",
+  ]);
+  
+  const dealClaims = canonicalClaims.filter(cc => dealTypes.has(cc.type));
+  
+  // Only return deal context if ≥2 deal-related claims exist
+  if (dealClaims.length < 2) {
+    return null;
+  }
+  
+  const hasInvestment = dealClaims.some(cc => cc.type === "investment_amount");
+  const hasValuation = dealClaims.some(cc => 
+    cc.type === "valuation_pre_money" || 
+    cc.type === "valuation_post_money" || 
+    cc.type === "valuation_enterprise_value"
+  );
+  const hasOwnership = dealClaims.some(cc => cc.type === "ownership_percent");
+  const hasSecondary = dealClaims.some(cc => cc.type === "secondary_purchase");
+  
+  return {
+    hasInvestment,
+    hasValuation,
+    hasOwnership,
+    hasSecondary,
+    claims: dealClaims,
+  };
+}
+
+/**
+ * A3.8.14: Build deterministic assessment for deal context
+ * Returns reasons array with fixed order and plain language.
+ */
+function buildDealAssessment(dealContext, citations = []) {
+  if (!dealContext) {
+    return [];
+  }
+  
+  const reasons = [];
+  const citeStr = citations.length > 0 
+    ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+    : "";
+  
+  // Fixed order: investment, valuation, ownership, secondary
+  if (dealContext.hasInvestment) {
+    reasons.push(`Investment amount is supported by the provided source(s).${citeStr}`);
+  }
+  
+  if (dealContext.hasValuation) {
+    reasons.push(`Valuation range is supported by the provided source(s).${citeStr}`);
+  }
+  
+  if (dealContext.hasOwnership) {
+    reasons.push(`Ownership structure is supported by the provided source(s).${citeStr}`);
+  }
+  
+  if (dealContext.hasSecondary) {
+    reasons.push(`Secondary purchase terms are supported by the provided source(s).${citeStr}`);
+  }
+  
+  return reasons;
+}
+
+/**
+ * A3.8.14: Compute reliability from deal context
+ * Returns reliability score and label based on deal claims.
+ */
+function computeDealContextReliability(dealContext) {
+  if (!dealContext || !dealContext.claims || dealContext.claims.length === 0) {
+    return null;
+  }
+  
+  // Check if all deal claims are Medium or higher
+  const allMediumOrHigher = dealContext.claims.every(cc => {
+    const reliability = cc.reliability || "Medium";
+    return reliability !== "Low";
+  });
+  
+  if (allMediumOrHigher) {
+    return {
+      reliabilityScore: 70,
+      reliabilityLabel: "Medium",
+    };
+  } else {
+    return {
+      reliabilityScore: 30,
+      reliabilityLabel: "Low",
+    };
+  }
+}
+
+/**
  * A3.8.9: Build reasons from canonical claims (claim-driven only)
  * Returns deterministic reasons based on canonical claims, with special handling for qualitative claims.
  */
@@ -15087,11 +15192,21 @@ ${
           diag(runId, reqSig, `[CLAIMS_PHASE] idx=${idx} ok=${!claimsError} claimsCount=${claims.length} anchors=${JSON.stringify(Array.from(uniqueAnchors).slice(0, 5))}`);
         }
         
+        // A3.8.14: Check for deal context in selection mode
+        let dealContext = null;
+        if (selectionUsed) {
+          dealContext = buildDealContext(canonicalClaims);
+          if (dealContext && runId && reqSig) {
+            diag(runId, reqSig, `[DEAL_CONTEXT] detected=true investment=${dealContext.hasInvestment} valuation=${dealContext.hasValuation} ownership=${dealContext.hasOwnership} secondary=${dealContext.hasSecondary}`);
+          }
+        }
+        
         // A3.8.0: Use canonical claims for reliability computation
         // A3.8.1: Use canonClaims directly (already filtered to have reliability)
         const canonClaimsForReliability = canonicalClaims.filter(cc => cc.reliability);
         
         // A3.6.3: Compute statement reliability from canonical claims (deterministic)
+        // A3.8.14: Override with deal context reliability if present
         const existingScore = typeof assessment.reliabilityScore === "number" 
           ? assessment.reliabilityScore 
           : 30;
@@ -15099,7 +15214,19 @@ ${
           ? assessment.reliabilityLabel
           : existingScore >= 80 ? "High" : existingScore >= 60 ? "Medium" : "Low";
         
-        const computedReliability = computeStatementReliabilityFromClaims(canonClaimsForReliability, existingScore, existingLabel);
+        let computedReliability = computeStatementReliabilityFromClaims(canonClaimsForReliability, existingScore, existingLabel);
+        
+        // A3.8.14: Override reliability if deal context exists
+        if (dealContext) {
+          const dealReliability = computeDealContextReliability(dealContext);
+          if (dealReliability) {
+            computedReliability = {
+              ...computedReliability,
+              reliabilityScore: dealReliability.reliabilityScore,
+              reliabilityLabel: dealReliability.reliabilityLabel,
+            };
+          }
+        }
         
         // A3.6.5: Count canonical claim reliabilities for logging
         let hiCount = 0, medCount = 0, lowCount = 0;
@@ -15190,24 +15317,46 @@ ${
         let reasonsSourceValue = "canonical";
         
         if (!claimsError) {
-          // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
-          finalReasons = buildReasonsFromCanonicalClaims(canonicalClaims, {
-            statement: stmt,
-            runId,
-            reqSig,
-          });
-          
-          // A3.8.9: Set reasonsSource based on actual pipeline path
-          if (canonicalClaims.length > 0) {
-            reasonsSourceValue = "canonical";
+          // A3.8.14: Use deal context assessment if present (selection mode only)
+          if (dealContext) {
+            // Collect citations from deal claims
+            const dealCitations = new Set();
+            dealContext.claims.forEach(cc => {
+              if (Array.isArray(cc.citations)) {
+                cc.citations.forEach(cit => dealCitations.add(cit));
+              }
+            });
+            const sortedCitations = Array.from(dealCitations).sort((a, b) => a - b);
+            
+            // Build deterministic deal assessment
+            finalReasons = buildDealAssessment(dealContext, sortedCitations);
+            
+            if (runId && reqSig) {
+              diag(runId, reqSig, `[DEAL_CONTEXT][REASONS] count=${finalReasons.length}`);
+              diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=deal_context canonicalClaimsCount=${canonicalClaims.length} reasonsCount=${finalReasons.length}`);
+            }
+            
+            reasonsSourceValue = "deal_context";
           } else {
-            // Fallback emergency path (shouldn't happen after hard invariant)
-            reasonsSourceValue = "fallback";
-          }
-          
-          // A3.8.9: Log reasons mode
-          if (runId && reqSig) {
-            diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=canonical_claims_only canonicalClaimsCount=${canonicalClaims.length} reasonsCount=${finalReasons.length}`);
+            // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
+            finalReasons = buildReasonsFromCanonicalClaims(canonicalClaims, {
+              statement: stmt,
+              runId,
+              reqSig,
+            });
+            
+            // A3.8.9: Set reasonsSource based on actual pipeline path
+            if (canonicalClaims.length > 0) {
+              reasonsSourceValue = "canonical";
+            } else {
+              // Fallback emergency path (shouldn't happen after hard invariant)
+              reasonsSourceValue = "fallback";
+            }
+            
+            // A3.8.9: Log reasons mode
+            if (runId && reqSig) {
+              diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=canonical_claims_only canonicalClaimsCount=${canonicalClaims.length} reasonsCount=${finalReasons.length}`);
+            }
           }
           
           // A3.6.7: Log claim-derived statement scoring (idx<2, only when mode=claims)
