@@ -65,7 +65,11 @@ function safeJsonParse(s) {
 
 // A3.7.3: Deterministic splitting into 2-5 statement rows (verbatim slices)
 // Returns array of objects with { text, selectionGroupId, selectionIndex, selectionTotal }
-function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null) {
+/**
+ * A3.8.13: Segment selection into candidate statements
+ * Splits on sentence boundaries, enumeration markers, and long clauses
+ */
+function segmentSelectionIntoCandidates(selectionText, runId = null, reqSig = null) {
   if (typeof selectionText !== "string" || !selectionText.trim()) {
     return [];
   }
@@ -76,15 +80,112 @@ function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null
   const originalText = selectionText;
   const charLen = originalText.length;
   
-  // A3.7.3: Split trigger - if <= 280 chars, return single row
-  if (charLen <= 280) {
+  // A3.8.13: Enhanced segmentation for multi-claim coverage
+  let segments = [];
+  
+  // Step 1: Split on enumeration markers first: (i), (ii), (iii), -, •
+  const enumPattern = /(?:^|\n|\s)(?:\([ivx]+\)|\([0-9]+\)|[-•])\s+/gi;
+  const enumMatches = [];
+  let enumMatch;
+  while ((enumMatch = enumPattern.exec(originalText)) !== null) {
+    enumMatches.push(enumMatch.index);
+  }
+  
+  if (enumMatches.length > 0) {
+    // Split on enumeration markers
+    let lastIndex = 0;
+    for (const enumIndex of enumMatches) {
+      if (enumIndex > lastIndex) {
+        const segment = originalText.substring(lastIndex, enumIndex).trim();
+        if (segment.length >= 25) {
+          segments.push(segment);
+        }
+      }
+      lastIndex = enumIndex;
+    }
+    // Add final segment after last enum marker
+    const finalSegment = originalText.substring(lastIndex).trim();
+    if (finalSegment.length >= 25) {
+      segments.push(finalSegment);
+    }
+  }
+  
+  // Step 2: If no enum markers, split on sentence boundaries (. ;)
+  if (segments.length === 0) {
+    const sentencePattern = /([.!?]+)\s+|(;)\s+/g;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = sentencePattern.exec(originalText)) !== null) {
+      const segment = originalText.substring(lastIndex, match.index + match[0].length).trim();
+      if (segment.length >= 25) {
+        segments.push(segment);
+      }
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add final segment
+    if (lastIndex < originalText.length) {
+      const finalSegment = originalText.substring(lastIndex).trim();
+      if (finalSegment.length >= 25) {
+        segments.push(finalSegment);
+      }
+    }
+  }
+  
+  // Step 3: Handle long clauses (>160 chars) - soft split on `;` and `", and "`
+  const finalSegments = [];
+  for (const seg of segments) {
+    if (seg.length > 160) {
+      // Try to split on `;` first
+      const semicolonSplits = seg.split(/\s*;\s+/);
+      if (semicolonSplits.length > 1) {
+        for (const split of semicolonSplits) {
+          const trimmed = split.trim();
+          if (trimmed.length >= 25) {
+            finalSegments.push(trimmed);
+          }
+        }
+        continue;
+      }
+      
+      // Try to split on `", and "` or `, and `
+      const andSplits = seg.split(/,\s+and\s+/i);
+      if (andSplits.length > 1) {
+        for (const split of andSplits) {
+          const trimmed = split.trim();
+          if (trimmed.length >= 25) {
+            finalSegments.push(trimmed);
+          }
+        }
+        continue;
+      }
+    }
+    
+    // Keep segment as-is if no splitting needed
+    finalSegments.push(seg);
+  }
+  
+  // A3.8.13: Discard segments < 25 characters and cap at 6 segments
+  const validSegments = finalSegments
+    .map(s => s.trim())
+    .filter(s => s.length >= 25)
+    .slice(0, 6);
+  
+  // Generate stable deterministic ID (hash of full selectedText)
+  const selectionGroupId = createHash("sha256").update(originalText).digest("hex").substring(0, 16);
+  
+  // A3.8.13: Logging
+  const kept = validSegments.length;
+  log(`[SELECTION][SEGMENT] segments=${validSegments.length} kept=${kept}`);
+  validSegments.forEach((seg, idx) => {
+    log(`[SELECTION][SEGMENT_ITEM] idx=${idx} len=${seg.length}`);
+  });
+  
+  // If no valid segments, return single candidate (backward compat)
+  if (validSegments.length === 0) {
     const trimmed = originalText.trim();
-    // Generate stable deterministic ID (hash of full selectedText)
-    const selectionGroupId = createHash("sha256").update(originalText).digest("hex").substring(0, 16);
-    
-    log(`[A3.7.3][SPLIT_SELECTION] mode=selection selectionSplitApplied=false charLen=${charLen} N=1`);
-    log(`[A3.7.3][SPLIT_SELECTION] extractCandidates skipped (selection mode)`);
-    
+    log(`[SELECTION][SEGMENT] segments=0 kept=1 (fallback to single candidate)`);
     return [{
       text: trimmed,
       selectionGroupId,
@@ -93,219 +194,18 @@ function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null
     }];
   }
   
-  // A3.7.3: Determine target N by length
-  let targetN = 2;
-  if (charLen > 1100) {
-    targetN = 5;
-  } else if (charLen > 800) {
-    targetN = 4;
-  } else if (charLen > 520) {
-    targetN = 3;
-  } else {
-    targetN = 2;
-  }
-  
-  // Generate stable deterministic ID (hash of full selectedText)
-  const selectionGroupId = createHash("sha256").update(originalText).digest("hex").substring(0, 16);
-  
-  // A3.7.3: Deterministic split algorithm (no LLM)
-  // Boundary priority: a) "\n\n" b) "\n" c) sentence enders [.!?] d) ";" e) comma
-  const rows = [];
-  
-  // Step 1: Find all potential boundaries with priority
-  const boundaries = [];
-  let pos = 0;
-  
-  // Priority a: "\n\n" paragraph breaks
-  const paraBreakPattern = /\n\n/g;
-  const paraBreakPositions = new Set();
-  let match;
-  while ((match = paraBreakPattern.exec(originalText)) !== null) {
-    const pos = match.index + 2;
-    boundaries.push({ pos, priority: 1, type: "para" });
-    paraBreakPositions.add(pos - 2); // Mark the start of "\n\n"
-    paraBreakPositions.add(pos - 1); // Mark the second "\n"
-  }
-  
-  // Priority b: "\n" (but not "\n\n" which we already captured)
-  const newlinePattern = /\n/g;
-  while ((match = newlinePattern.exec(originalText)) !== null) {
-    // Skip if this newline is part of "\n\n"
-    if (!paraBreakPositions.has(match.index)) {
-      boundaries.push({ pos: match.index + 1, priority: 2, type: "newline" });
-    }
-  }
-  
-  // Priority c: sentence enders [.!?] followed by space/newline
-  const sentencePattern = /[.!?]+(?:\s+|\n)/g;
-  while ((match = sentencePattern.exec(originalText)) !== null) {
-    boundaries.push({ pos: match.index + match[0].length, priority: 3, type: "sentence" });
-  }
-  
-  // Priority d: ";" as soft boundary
-  const semicolonPattern = /;/g;
-  while ((match = semicolonPattern.exec(originalText)) !== null) {
-    boundaries.push({ pos: match.index + 1, priority: 4, type: "semicolon" });
-  }
-  
-  // Priority e: comma (last resort)
-  const commaPattern = /,\s+/g;
-  while ((match = commaPattern.exec(originalText)) !== null) {
-    boundaries.push({ pos: match.index + match[0].length, priority: 5, type: "comma" });
-  }
-  
-  // Sort boundaries by position
-  boundaries.sort((a, b) => a.pos - b.pos);
-  
-  // Step 2: Split into targetN rows using boundaries
-  const targetLength = Math.floor(charLen / targetN);
-  const minRowLength = 80;
-  const maxRowLength = 520;
-  
-  let currentStart = 0;
-  const splits = [];
-  
-  for (let i = 0; i < targetN - 1; i++) {
-    const idealEnd = currentStart + targetLength;
-    
-    // Find best boundary near idealEnd
-    let bestBoundary = null;
-    let bestDistance = Infinity;
-    
-    for (const boundary of boundaries) {
-      if (boundary.pos <= currentStart) continue;
-      if (boundary.pos > charLen) break;
-      
-      const distance = Math.abs(boundary.pos - idealEnd);
-      if (distance < bestDistance && boundary.pos > currentStart + minRowLength) {
-        bestDistance = distance;
-        bestBoundary = boundary;
-      }
-    }
-    
-    // If no good boundary found, try to find any boundary that gives us at least minRowLength
-    if (!bestBoundary) {
-      for (const boundary of boundaries) {
-        if (boundary.pos <= currentStart) continue;
-        if (boundary.pos > charLen) break;
-        if (boundary.pos >= currentStart + minRowLength) {
-          bestBoundary = boundary;
-          break;
-        }
-      }
-    }
-    
-    // If still no boundary, use idealEnd (will be adjusted later)
-    if (!bestBoundary) {
-      splits.push(idealEnd);
-      currentStart = idealEnd;
-    } else {
-      splits.push(bestBoundary.pos);
-      currentStart = bestBoundary.pos;
-    }
-  }
-  
-  // Step 3: Extract rows from splits
-  let startPos = 0;
-  for (let i = 0; i < splits.length; i++) {
-    const endPos = splits[i];
-    let rowText = originalText.substring(startPos, endPos).trim();
-    
-    // Check if row exceeds maxRowLength - if so, try to re-split using next boundary type
-    if (rowText.length > maxRowLength) {
-      // Find a boundary within this row to split further
-      const rowBoundaries = boundaries.filter(b => b.pos > startPos && b.pos < endPos);
-      if (rowBoundaries.length > 0) {
-        // Use the boundary closest to maxRowLength
-        const targetSplit = startPos + maxRowLength;
-        let bestSplit = null;
-        let bestDist = Infinity;
-        for (const b of rowBoundaries) {
-          if (b.pos > startPos + minRowLength && b.pos < endPos) {
-            const dist = Math.abs(b.pos - targetSplit);
-            if (dist < bestDist) {
-              bestDist = dist;
-              bestSplit = b.pos;
-            }
-          }
-        }
-        if (bestSplit) {
-          rowText = originalText.substring(startPos, bestSplit).trim();
-          splits[i] = bestSplit;
-        }
-      }
-    }
-    
-    if (rowText.length >= minRowLength || i === 0) {
-      rows.push({
-        text: rowText,
-        startPos,
-        endPos: splits[i],
-      });
-    }
-    
-    startPos = splits[i];
-  }
-  
-  // Add final row
-  const finalRowText = originalText.substring(startPos).trim();
-  if (finalRowText.length > 0) {
-    rows.push({
-      text: finalRowText,
-      startPos,
-      endPos: charLen,
-    });
-  }
-  
-  // Step 4: Merge adjacent pieces if needed to reach targetN with constraints
-  // If we have too many rows, merge smallest adjacent pairs
-  while (rows.length > targetN && rows.length > 1) {
-    // Find smallest adjacent pair
-    let minPairSize = Infinity;
-    let minPairIdx = 0;
-    for (let i = 0; i < rows.length - 1; i++) {
-      const pairSize = rows[i].text.length + rows[i + 1].text.length;
-      if (pairSize < minPairSize && pairSize <= maxRowLength) {
-        minPairSize = pairSize;
-        minPairIdx = i;
-      }
-    }
-    
-    if (minPairSize < Infinity) {
-      // Merge rows[minPairIdx] and rows[minPairIdx + 1]
-      const mergedText = originalText.substring(rows[minPairIdx].startPos, rows[minPairIdx + 1].endPos).trim();
-      rows[minPairIdx] = {
-        text: mergedText,
-        startPos: rows[minPairIdx].startPos,
-        endPos: rows[minPairIdx + 1].endPos,
-      };
-      rows.splice(minPairIdx + 1, 1);
-    } else {
-      break; // Can't merge without exceeding maxRowLength
-    }
-  }
-  
-  // Step 5: Build final result with metadata
-  const result = rows.map((row, idx) => ({
-    text: row.text,
+  return validSegments.map((text, idx) => ({
+    text,
     selectionGroupId,
     selectionIndex: idx + 1,
-    selectionTotal: rows.length,
+    selectionTotal: validSegments.length,
   }));
-  
-  // Logging
-  const rowLengths = result.map(r => r.text.length);
-  const rowPreviews = result.map(r => {
-    const preview = r.text.substring(0, 60);
-    return preview.length < r.text.length ? preview + "..." : preview;
-  });
-  
-  log(`[A3.7.3][SPLIT_SELECTION] mode=selection selectionSplitApplied=true charLen=${charLen} N=${result.length}`);
-  log(`[A3.7.3][SPLIT_SELECTION] rowLengths=[${rowLengths.join(",")}]`);
-  log(`[A3.7.3][SPLIT_SELECTION] rowPreviews=[${rowPreviews.map(p => JSON.stringify(p)).join(",")}]`);
-  log(`[A3.7.3][SPLIT_SELECTION] extractCandidates skipped (selection mode)`);
-  
-  return result;
+}
+
+// A3.7.3: Legacy function name (kept for backward compatibility)
+// A3.8.13: Use enhanced segmentation
+function splitSelectionIntoCandidates(selectionText, runId = null, reqSig = null) {
+  return segmentSelectionIntoCandidates(selectionText, runId, reqSig);
 }
 
 // Extract first valid JSON from raw text (handles markdown/prose wrappers)
