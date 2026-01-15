@@ -2,6 +2,10 @@
 //
 // A3.8.11: Selection mode endpoint for analyse-statements.
 // A3.8.16: Hard validation + fail-closed error envelope
+// A3.8.19: Static import to surface syntax errors at build time
+
+// A3.8.19: Static import (replaces dynamic import to surface build-time syntax errors)
+import analyseStatementsImpl from "./analyse-statements-impl.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -244,22 +248,14 @@ export default async function handler(req, res) {
     phase = "segment";
     dbg.phase = phase;
     
-    // A3.8.16: Lazy-load implementation
+    // A3.8.19: Phase: run_review_pipeline (static import, no dynamic import)
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
-    let mod;
-    let impl;
-    try {
-      mod = await import("./analyse-statements-impl.js");
-      impl = mod?.default;
-      if (typeof impl !== "function") {
-        throw new Error("analyse-statements-impl missing default export");
-      }
-    } catch (importErr) {
-      // A3.8.18: Node-18 safe error with cause
-      const e = new Error("IMPORT_FAILED");
-      e.cause = importErr;
+    // A3.8.19: Validate static import
+    if (typeof analyseStatementsImpl !== "function") {
+      const e = new Error("REVIEW_PIPELINE_FAILED");
+      e.cause = new Error("analyse-statements-impl missing default export");
       throw e;
     }
     
@@ -273,7 +269,7 @@ export default async function handler(req, res) {
     // A3.8.17: Harden: wrap pipeline call in try/catch
     let pipelineResult;
     try {
-      pipelineResult = await impl(normalizedReq, res);
+      pipelineResult = await analyseStatementsImpl(normalizedReq, res);
     } catch (pipelineErr) {
       // A3.8.17: Re-throw with context to preserve phase tracking
       // A3.8.18: Node-18 safe error with cause
