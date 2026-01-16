@@ -10429,6 +10429,7 @@ function buildDealAssessment(dealContext, citations = []) {
 /**
  * A3.8.30: Extract key numeric tokens from statement text (deterministic)
  * Returns array of Token objects with raw, kind, normalizedCandidates, and display.
+ * NOTE: JS RegExp flags must be lowercase and limited to gimsuyd.
  */
 function extractKeyNumericTokens(statementText) {
   if (typeof statementText !== "string" || !statementText.trim()) {
@@ -10441,7 +10442,7 @@ function extractKeyNumericTokens(statementText) {
   // Money patterns: $45, $45 per month, $20–25 million, $18.7 million, $5.5 million
   const moneyPatterns = [
     // Per month pattern: "$45 per month", "$45/month", "$45 monthly"
-    /\$([\d,]+(?:\.\d+)?)\s*(?:per\s+month|/mo|/month|monthly)/gi,
+    /\$([\d,]+(?:\.\d+)?)\s*(?:per\s+month|\/mo|\/month|monthly)/gi,
     // Range: "$20–25 million", "$20-25 million"
     /\$([\d,]+(?:\.\d+)?)\s*[–-]\s*([\d,]+(?:\.\d+)?)\s*(million|mm|m|billion|b)\b/gi,
     // Single with unit: "$18.7 million", "$5.5 million", "$20 million"
@@ -10475,7 +10476,7 @@ function extractKeyNumericTokens(statementText) {
       let normalizedCandidates = [fullMatch];
       
       // Handle per month pattern
-      if (/\b(?:per\s+month|/mo|/month|monthly)\b/i.test(fullMatch)) {
+      if (/\b(?:per\s+month|\/mo|\/month|monthly)\b/i.test(fullMatch)) {
         const num = match[1].replace(/,/g, "");
         display = `$${num}/mo`;
         normalizedCandidates = [
