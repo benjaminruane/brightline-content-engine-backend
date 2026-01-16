@@ -305,14 +305,14 @@ export default async function handler(req, res) {
     phase = "respond";
     dbg.phase = phase;
     
-    // A3.8.27: Compute counts from the exact object we return (out)
-    const statementCount = Array.isArray(out.statements) ? out.statements.length : 0;
+    // A3.8.28: Compute counts from the exact object we return (out) - immediately before logging
+    const statementCount = Array.isArray(out?.statements) ? out.statements.length : 0;
     
-    // A3.8.27: Compute segmentCount from meta.selectionSegmentsKept or __selectionSegmentId
+    // A3.8.28: Compute segmentCount from meta.selectionSegmentsKept or __selectionSegmentId
     let segmentCount = 0;
-    if (typeof out.meta?.selectionSegmentsKept === "number") {
+    if (typeof out?.meta?.selectionSegmentsKept === "number") {
       segmentCount = out.meta.selectionSegmentsKept;
-    } else if (Array.isArray(out.statements)) {
+    } else if (Array.isArray(out?.statements)) {
       // Derive from unique __selectionSegmentId count (only finite numbers)
       const uniqueSegmentIds = new Set();
       for (const stmt of out.statements) {
@@ -323,8 +323,10 @@ export default async function handler(req, res) {
       segmentCount = uniqueSegmentIds.size;
     }
     
-    // A3.8.27: Log END using counts from exact return object
-    diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount}`);
+    // A3.8.28: Log END using counts from exact return object with diagnostic info
+    const outOk = out?.ok === true;
+    const outKeys = out ? Object.keys(out).slice(0, 8).join(",") : "none";
+    diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount} outOk=${outOk} outKeys=${outKeys}`);
     
     return out;
     

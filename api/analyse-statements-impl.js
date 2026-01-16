@@ -5005,6 +5005,7 @@ function extractAnchor(claimText) {
   
   // A3.6.2 PATCH v2: Numeric anchors with consistent normalization and validation
   // Match: "$7 million", "$7mm", "$7m" -> all normalize to usd_7m
+  // A3.8.28: Fix $45 -> $45m bug by checking for "month" context
   // Use more specific regex to capture full number
   const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/i);
   if (usdMatch) {
@@ -5015,6 +5016,16 @@ function extractAnchor(claimText) {
     // A3.6.2 PATCH v2: Sanity check - ensure we captured the full number
     if (!Number.isFinite(num) || num <= 0) {
       return null;
+    }
+    
+    // A3.8.28: Fix $45 -> $45m bug - if "m" suffix and following text starts with "month", treat as no suffix
+    if (unit === "m") {
+      const matchIndex = usdMatch.index + usdMatch[0].length;
+      const followingText = text.substring(matchIndex).trim();
+      if (/^month|^monthly|^mo\b/i.test(followingText)) {
+        // Treat as plain USD (no million suffix)
+        return `usd_${num}`;
+      }
     }
     
     let normalized = num;
@@ -5160,6 +5171,7 @@ function extractAllAnchors(clauseText) {
   const anchors = new Set();
   
   // Extract USD anchors
+  // A3.8.28: Fix $45 -> $45m bug by checking for "month" context
   const usdMatches = [...originalText.matchAll(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/gi)];
   for (const match of usdMatches) {
     const numStr = match[1].replace(/,/g, "");
@@ -5167,6 +5179,17 @@ function extractAllAnchors(clauseText) {
     const num = parseFloat(numStr);
     
     if (Number.isFinite(num) && num > 0) {
+      // A3.8.28: Fix $45 -> $45m bug - if "m" suffix and following text starts with "month", treat as no suffix
+      if (unit === "m") {
+        const matchIndex = match.index + match[0].length;
+        const followingText = originalText.substring(matchIndex).trim();
+        if (/^month|^monthly|^mo\b/i.test(followingText)) {
+          // Treat as plain USD (no million suffix)
+          anchors.add(`usd_${num}`);
+          continue;
+        }
+      }
+      
       let normalized = num;
       if (unit.includes("billion") || unit === "b") {
         normalized = normalized * 1000;
@@ -15580,38 +15603,71 @@ ${
             diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=fallback claimsError=true`);
           }
         }
-        // A3.8.27: Part C - Add scope note for partial coverage (selection mode only)
-        if (selectionUsed && reasonsSourceValue !== "deal_context" && Array.isArray(finalReasons) && finalReasons.length > 0) {
-          const statementText = stmt?.text || "";
-          const statementTextLength = statementText.length;
-          const canonicalClaimsCount = canonicalClaims.length;
+        // A3.8.28: Part C - Surface unsupported numeric rawClaims (selection mode only, before scope note)
+        if (selectionUsed && Array.isArray(finalReasons) && finalReasons.length > 0 && Array.isArray(rawClaimsForDiagnostics) && rawClaimsForDiagnostics.length > 0) {
+          // Identify unsupported numeric rawClaims
+          const unsupportedNumeric = rawClaimsForDiagnostics.find(rawClaim => {
+            if (!rawClaim || typeof rawClaim !== "object") return false;
+            const reliability = rawClaim.reliability || "";
+            const comment = String(rawClaim.comment || "");
+            const claimText = String(rawClaim.claimText || "");
+            
+            // Check if unsupported numeric
+            const isUnsupported = reliability === "Low" && /not supported/i.test(comment);
+            const isNumeric = /\d/.test(claimText) || /^\$/.test(claimText) || /%$/.test(claimText);
+            
+            return isUnsupported && isNumeric;
+          });
           
-          // Check if statement is long (> 140 chars) and assessment is partial
-          if (statementTextLength > 140) {
-            const reasonsFromCanonical = reasonsSourceValue === "canonical";
-            const hasFewClaims = canonicalClaimsCount < 2;
+          // Append one unsupported numeric reason if found
+          if (unsupportedNumeric) {
+            const claimText = String(unsupportedNumeric.claimText || "").trim();
+            const trimmedText = claimText.length > 80 ? claimText.substring(0, 80) + "..." : claimText;
+            const citations = unsupportedNumeric.citations || [];
+            const citeStr = citations.length > 0 
+              ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+              : "";
+            finalReasons.push(`"${trimmedText}" is not supported by the provided source(s).${citeStr}`);
+          }
+        }
+        
+        // A3.8.28: Part B - Add scope note for partial coverage (selection mode only, tightened trigger)
+        if (selectionUsed && reasonsSourceValue !== "deal_context" && Array.isArray(finalReasons) && finalReasons.length > 0) {
+          // A3.8.28: Do NOT add scope note if any canonicalClaim is other_qualitative
+          const hasQualitativeClaim = canonicalClaims.some(cc => cc?.type === "other_qualitative");
+          
+          if (!hasQualitativeClaim) {
+            const statementText = stmt?.text || "";
+            const statementTextLength = statementText.length;
+            const canonicalClaimsCount = canonicalClaims.length;
             
-            // Check if only 1 figure is covered (for canonical mode)
-            let onlyOneFigure = false;
-            if (reasonsFromCanonical && canonicalClaimsCount === 1) {
-              const firstClaim = canonicalClaims[0];
-              const isFinancial = firstClaim && (
-                firstClaim.type === "investment_amount" ||
-                firstClaim.type === "valuation_pre_money" ||
-                firstClaim.type === "valuation_post_money" ||
-                firstClaim.type === "valuation_enterprise_value" ||
-                firstClaim.type === "ownership_percent" ||
-                firstClaim.type === "fee_percent" ||
-                firstClaim.type === "metric_amount" ||
-                firstClaim.type === "growth_percent" ||
-                firstClaim.type === "secondary_purchase"
-              );
-              onlyOneFigure = isFinancial;
-            }
-            
-            // Append scope note if assessment is partial
-            if (hasFewClaims || onlyOneFigure) {
-              finalReasons.push("Note: assessment focuses on the extracted verifiable claim(s) in this segment; other descriptive clauses are not individually verified.");
+            // Check if statement is long (> 140 chars) and assessment is partial
+            if (statementTextLength > 140) {
+              const reasonsFromCanonical = reasonsSourceValue === "canonical";
+              const hasFewClaims = canonicalClaimsCount < 2;
+              
+              // Check if only 1 figure is covered (for canonical mode)
+              let onlyOneFigure = false;
+              if (reasonsFromCanonical && canonicalClaimsCount === 1) {
+                const firstClaim = canonicalClaims[0];
+                const isFinancial = firstClaim && (
+                  firstClaim.type === "investment_amount" ||
+                  firstClaim.type === "valuation_pre_money" ||
+                  firstClaim.type === "valuation_post_money" ||
+                  firstClaim.type === "valuation_enterprise_value" ||
+                  firstClaim.type === "ownership_percent" ||
+                  firstClaim.type === "fee_percent" ||
+                  firstClaim.type === "metric_amount" ||
+                  firstClaim.type === "growth_percent" ||
+                  firstClaim.type === "secondary_purchase"
+                );
+                onlyOneFigure = isFinancial;
+              }
+              
+              // Append scope note if assessment is partial
+              if (hasFewClaims || onlyOneFigure) {
+                finalReasons.push("Note: assessment focuses on the extracted verifiable claim(s) in this segment; other descriptive clauses are not individually verified.");
+              }
             }
           }
         }
