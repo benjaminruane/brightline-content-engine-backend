@@ -10940,6 +10940,16 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       reasonText = `This statement ${qualVerb}${citeStr}`;
     } else {
       // Fallback for other types - use existing generateClaimLinkedReasons logic
+      // A3.8.32: Fix filteredNotes ReferenceError - define from evidenceNotes
+      const filteredNotes = Array.isArray(evidenceNotes)
+        ? evidenceNotes.filter(note => 
+            typeof note === "string" && !/consolidated.*extracted signals|merged.*raw claims/i.test(note)
+          )
+        : [];
+      
+      // Determine if claim is supported
+      const isSupported = reliability !== "Low" && citations.length > 0;
+      
       // Map to old shape for compatibility
       const mappedClaim = {
         claimText: cc.displayText,

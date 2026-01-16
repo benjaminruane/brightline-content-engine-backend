@@ -15,6 +15,16 @@ function setCorsHeaders(req, res) {
   res.setHeader("Content-Type", "application/json; charset=utf-8");
 }
 
+// A3.8.32: Safe wrapper to prevent ERR_HTTP_HEADERS_SENT
+function safeSetCorsHeaders(req, res) {
+  if (!res || res.headersSent) return;
+  try { 
+    setCorsHeaders(req, res); 
+  } catch (_) {
+    // Silently ignore if headers already sent
+  }
+}
+
 // A3.8.16: Generate RID/SIG for logging
 function generateRidSig() {
   const runId = Math.random().toString(36).substring(2, 15);
@@ -118,7 +128,8 @@ export default async function handler(req, res) {
   // A3.8.16: Top-level try/catch to ensure JSON response always
   try {
     // A3.8.16: Set CORS and Content-Type headers immediately
-    setCorsHeaders(req, res);
+    // A3.8.32: Use safe wrapper to prevent ERR_HTTP_HEADERS_SENT
+    safeSetCorsHeaders(req, res);
     
     // A3.8.16: Handle OPTIONS preflight
     if (req.method === "OPTIONS") {
@@ -284,6 +295,18 @@ export default async function handler(req, res) {
       throw e;
     }
     
+    // A3.8.32: Hard guard - ensure impl returned a plain payload object (not res)
+    const looksLikeResponseObject =
+      payload &&
+      typeof payload === "object" &&
+      ("_events" in payload || "outputData" in payload || typeof payload.status === "function");
+    
+    if (looksLikeResponseObject) {
+      const e = new Error("IMPL_RETURNED_RESPONSE_OBJECT");
+      e.cause = new Error("Implementation returned Node response object instead of JSON payload");
+      throw e;
+    }
+    
     // A3.8.17: Harden: check pipeline result
     if (!payload || typeof payload !== "object") {
       phase = "respond";
@@ -332,43 +355,48 @@ export default async function handler(req, res) {
     return res.status(200).json(payload);
     
   } catch (err) {
-    // A3.8.16: Top-level catch - ensure JSON response
-    setCorsHeaders(req, res);
-    
-    // A3.8.17: Extract cause chain
-    const causeChain = extractCauseChain(err);
-    
-    // A3.8.17: Log error EXACTLY ONCE with full details
-    diag(runId, reqSig, `ERROR route=analyse-selected-statements phase=${phase} name=${err?.name || "Error"} message=${err?.message || ""}`);
-    
-    // Log stack
-    if (err?.stack) {
-      diag(runId, reqSig, `stack=${err.stack}`);
-    }
-    
-    // Log cause chain
-    if (causeChain.length > 0) {
-      causeChain.forEach((cause, idx) => {
-        diag(runId, reqSig, `cause[${idx}] name=${cause.name} message=${cause.message}`);
-        if (cause.stack) {
-          diag(runId, reqSig, `cause[${idx}] stack=${cause.stack}`);
-        }
+    // A3.8.32: Only send error response if headers not already sent
+    if (!res.headersSent) {
+      // A3.8.16: Top-level catch - ensure JSON response
+      safeSetCorsHeaders(req, res);
+      
+      // A3.8.17: Extract cause chain
+      const causeChain = extractCauseChain(err);
+      
+      // A3.8.17: Log error EXACTLY ONCE with full details
+      diag(runId, reqSig, `ERROR route=analyse-selected-statements phase=${phase} name=${err?.name || "Error"} message=${err?.message || ""}`);
+      
+      // Log stack
+      if (err?.stack) {
+        diag(runId, reqSig, `stack=${err.stack}`);
+      }
+      
+      // Log cause chain
+      if (causeChain.length > 0) {
+        causeChain.forEach((cause, idx) => {
+          diag(runId, reqSig, `cause[${idx}] name=${cause.name} message=${cause.message}`);
+          if (cause.stack) {
+            diag(runId, reqSig, `cause[${idx}] stack=${cause.stack}`);
+          }
+        });
+      }
+      
+      // Log debug context (NO TEXT)
+      diag(runId, reqSig, `dbg=${JSON.stringify({ ...dbg, selectionChars, draftChars, hasInstructions })}`);
+      
+      return res.status(500).json({
+        ok: false,
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Internal error in analyse-selected-statements",
+          rid: runId,
+          sig: reqSig,
+          phase: phase,
+          name: err?.name || "Error",
+        },
       });
     }
-    
-    // Log debug context (NO TEXT)
-    diag(runId, reqSig, `dbg=${JSON.stringify({ ...dbg, selectionChars, draftChars, hasInstructions })}`);
-    
-    return res.status(500).json({
-      ok: false,
-      error: {
-        code: "INTERNAL_ERROR",
-        message: "Internal error in analyse-selected-statements",
-        rid: runId,
-        sig: reqSig,
-        phase: phase,
-        name: err?.name || "Error",
-      },
-    });
+    // A3.8.32: Headers already sent, just return (no-op)
+    return;
   }
 }
