@@ -10540,7 +10540,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     }
   }
   
-  // A3.8.25: Part D - Align rawClaims uncertainty with final reasons (selection mode only)
+  // A3.8.27: Part B - Align rawClaims uncertainty with final reasons (selection mode only, type-specific notes)
   if (selectionMode && reasons.length > 0) {
     // Check if any canonical claim has Medium/High reliability
     const hasMediumOrHigh = canonicalClaims.some(cc => {
@@ -10549,34 +10549,63 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     });
     
     if (hasMediumOrHigh && Array.isArray(rawClaims) && rawClaims.length > 0) {
-      // Scan rawClaims comments for uncertainty language
-      const uncertaintyPatterns = [
-        /not explicitly/i,
-        /verify/i,
-        /multiple figures/i,
-        /ambiguous/i,
-        /may be/i,
-      ];
+      // A3.8.27: Detect specific uncertainty types with priority order
+      let noteType = null;
+      let matchedComment = null;
       
-      let hasUncertainty = false;
       for (const rawClaim of rawClaims) {
         if (rawClaim && typeof rawClaim === "object") {
           const comment = String(rawClaim.comment || "");
-          if (uncertaintyPatterns.some(pattern => pattern.test(comment))) {
-            hasUncertainty = true;
-            break;
+          
+          // Priority 1: MAPPING_AMBIGUITY (highest)
+          if (!noteType || noteType === "MAPPING_AMBIGUITY") {
+            if (/multiple figures|verify which applies|ambiguous/i.test(comment)) {
+              noteType = "MAPPING_AMBIGUITY";
+              matchedComment = comment;
+              break; // Highest priority, stop scanning
+            }
+          }
+          
+          // Priority 2: BASIS_UNCLEAR
+          if (!noteType || noteType === "BASIS_UNCLEAR") {
+            if (/ownership basis not clearly defined|basis not clearly defined|basis.*unclear/i.test(comment)) {
+              noteType = "BASIS_UNCLEAR";
+              matchedComment = comment;
+              // Don't break - might find MAPPING_AMBIGUITY in another claim
+            }
+          }
+          
+          // Priority 3: EXPLICITNESS (lowest)
+          if (!noteType) {
+            if (/not explicitly confirmed|not explicitly/i.test(comment)) {
+              noteType = "EXPLICITNESS";
+              matchedComment = comment;
+              // Don't break - might find higher priority in another claim
+            }
           }
         }
       }
       
-      // If uncertainty found, append caution line
-      if (hasUncertainty) {
+      // A3.8.27: Append specific note based on detected type
+      if (noteType) {
         const firstClaim = canonicalClaims[0];
         const citations = firstClaim?.citations || [];
         const citeStr = citations.length > 0 
           ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
           : "";
-        reasons.push(`Note: multiple or ambiguous figures were present in the source; mapping should be manually confirmed.${citeStr}`);
+        
+        let noteText = "";
+        if (noteType === "MAPPING_AMBIGUITY") {
+          noteText = "Note: multiple candidate figures were found; figure-to-claim mapping should be manually confirmed.";
+        } else if (noteType === "BASIS_UNCLEAR") {
+          noteText = "Note: the figure is present, but the basis/definition is unclear in the source; confirm interpretation.";
+        } else if (noteType === "EXPLICITNESS") {
+          noteText = "Note: the source supports the substance, but the exact phrasing is not explicitly stated; confirm wording if required.";
+        }
+        
+        if (noteText) {
+          reasons.push(`${noteText}${citeStr}`);
+        }
       }
     }
   }
@@ -15551,6 +15580,42 @@ ${
             diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=fallback claimsError=true`);
           }
         }
+        // A3.8.27: Part C - Add scope note for partial coverage (selection mode only)
+        if (selectionUsed && reasonsSourceValue !== "deal_context" && Array.isArray(finalReasons) && finalReasons.length > 0) {
+          const statementText = stmt?.text || "";
+          const statementTextLength = statementText.length;
+          const canonicalClaimsCount = canonicalClaims.length;
+          
+          // Check if statement is long (> 140 chars) and assessment is partial
+          if (statementTextLength > 140) {
+            const reasonsFromCanonical = reasonsSourceValue === "canonical";
+            const hasFewClaims = canonicalClaimsCount < 2;
+            
+            // Check if only 1 figure is covered (for canonical mode)
+            let onlyOneFigure = false;
+            if (reasonsFromCanonical && canonicalClaimsCount === 1) {
+              const firstClaim = canonicalClaims[0];
+              const isFinancial = firstClaim && (
+                firstClaim.type === "investment_amount" ||
+                firstClaim.type === "valuation_pre_money" ||
+                firstClaim.type === "valuation_post_money" ||
+                firstClaim.type === "valuation_enterprise_value" ||
+                firstClaim.type === "ownership_percent" ||
+                firstClaim.type === "fee_percent" ||
+                firstClaim.type === "metric_amount" ||
+                firstClaim.type === "growth_percent" ||
+                firstClaim.type === "secondary_purchase"
+              );
+              onlyOneFigure = isFinancial;
+            }
+            
+            // Append scope note if assessment is partial
+            if (hasFewClaims || onlyOneFigure) {
+              finalReasons.push("Note: assessment focuses on the extracted verifiable claim(s) in this segment; other descriptive clauses are not individually verified.");
+            }
+          }
+        }
+        
         const reasonsBefore = finalReasons.length;
         if (Array.isArray(finalReasons) && finalReasons.length > 3) {
           finalReasons = finalReasons.slice(0, 3);

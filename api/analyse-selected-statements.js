@@ -272,9 +272,10 @@ export default async function handler(req, res) {
     };
     
     // A3.8.17: Harden: wrap pipeline call in try/catch
-    let pipelineResult;
+    // A3.8.27: Use ONE variable for the outgoing response object
+    let out;
     try {
-      pipelineResult = await analyseStatementsImpl(normalizedReq, res);
+      out = await analyseStatementsImpl(normalizedReq, res);
     } catch (pipelineErr) {
       // A3.8.17: Re-throw with context to preserve phase tracking
       // A3.8.18: Node-18 safe error with cause
@@ -284,7 +285,7 @@ export default async function handler(req, res) {
     }
     
     // A3.8.17: Harden: check pipeline result
-    if (!pipelineResult || typeof pipelineResult !== "object") {
+    if (!out || typeof out !== "object") {
       phase = "respond";
       dbg.phase = phase;
       diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=0 statementCount=0 dropReasons=["PIPELINE_RETURNED_EMPTY"]`);
@@ -304,28 +305,28 @@ export default async function handler(req, res) {
     phase = "respond";
     dbg.phase = phase;
     
-    // A3.8.25: Extract statement/segment counts from result (correct counts)
-    const statementCount = Array.isArray(pipelineResult?.statements) ? pipelineResult.statements.length : 0;
+    // A3.8.27: Compute counts from the exact object we return (out)
+    const statementCount = Array.isArray(out.statements) ? out.statements.length : 0;
     
-    // A3.8.25: Compute segmentCount from meta.selectionSegmentsKept or __selectionSegmentId
+    // A3.8.27: Compute segmentCount from meta.selectionSegmentsKept or __selectionSegmentId
     let segmentCount = 0;
-    if (pipelineResult?.meta?.selectionSegmentsKept !== undefined) {
-      segmentCount = pipelineResult.meta.selectionSegmentsKept;
-    } else if (Array.isArray(pipelineResult?.statements)) {
-      // Derive from unique __selectionSegmentId count
+    if (typeof out.meta?.selectionSegmentsKept === "number") {
+      segmentCount = out.meta.selectionSegmentsKept;
+    } else if (Array.isArray(out.statements)) {
+      // Derive from unique __selectionSegmentId count (only finite numbers)
       const uniqueSegmentIds = new Set();
-      for (const stmt of pipelineResult.statements) {
-        if (stmt.__selectionSegmentId) {
+      for (const stmt of out.statements) {
+        if (stmt && typeof stmt === "object" && typeof stmt.__selectionSegmentId === "number" && isFinite(stmt.__selectionSegmentId)) {
           uniqueSegmentIds.add(stmt.__selectionSegmentId);
         }
       }
       segmentCount = uniqueSegmentIds.size;
     }
     
-    // A3.8.17: Log END
+    // A3.8.27: Log END using counts from exact return object
     diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount}`);
     
-    return pipelineResult;
+    return out;
     
   } catch (err) {
     // A3.8.16: Top-level catch - ensure JSON response
