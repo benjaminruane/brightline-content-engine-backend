@@ -258,11 +258,17 @@ export default async function handler(req, res) {
       throw e;
     }
     
+    // A3.8.25: Pass diag context to implementation for unified RID/SIG
+    const diagContext = { rid: runId, sig: reqSig };
+    
     // A3.8.16: Call implementation with normalized body
-    // Create a request-like object with normalized body
+    // Create a request-like object with normalized body and diag context
     const normalizedReq = {
       ...req,
-      body: normalizedBody,
+      body: {
+        ...normalizedBody,
+        _diag: diagContext, // A3.8.25: Pass diag context via body
+      },
     };
     
     // A3.8.17: Harden: wrap pipeline call in try/catch
@@ -298,11 +304,23 @@ export default async function handler(req, res) {
     phase = "respond";
     dbg.phase = phase;
     
-    // A3.8.17: Extract statement/segment counts from result
+    // A3.8.25: Extract statement/segment counts from result (correct counts)
     const statementCount = Array.isArray(pipelineResult?.statements) ? pipelineResult.statements.length : 0;
-    // Segment count is not directly available from result, estimate from statement count
-    // (Each statement typically corresponds to one segment in selection mode)
-    const segmentCount = statementCount;
+    
+    // A3.8.25: Compute segmentCount from meta.selectionSegmentsKept or __selectionSegmentId
+    let segmentCount = 0;
+    if (pipelineResult?.meta?.selectionSegmentsKept !== undefined) {
+      segmentCount = pipelineResult.meta.selectionSegmentsKept;
+    } else if (Array.isArray(pipelineResult?.statements)) {
+      // Derive from unique __selectionSegmentId count
+      const uniqueSegmentIds = new Set();
+      for (const stmt of pipelineResult.statements) {
+        if (stmt.__selectionSegmentId) {
+          uniqueSegmentIds.add(stmt.__selectionSegmentId);
+        }
+      }
+      segmentCount = uniqueSegmentIds.size;
+    }
     
     // A3.8.17: Log END
     diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount}`);

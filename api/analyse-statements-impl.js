@@ -10369,7 +10369,7 @@ function computeDealContextReliability(dealContext) {
  * Returns deterministic reasons based on canonical claims, with special handling for qualitative claims.
  */
 function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
-  const { statement = null, runId = null, reqSig = null } = context;
+  const { statement = null, runId = null, reqSig = null, selectionMode = false, rawClaims = [] } = context;
   
   if (!Array.isArray(canonicalClaims) || canonicalClaims.length === 0) {
     // A3.8.9: If canonicalClaims is empty (should not happen after hard invariant), return single deterministic bullet
@@ -10460,10 +10460,24 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     } else if (claimType === "secondary_purchase") {
       reasonText = `Secondary purchase amount (${valueDisplay}) ${verb}${citeStr}`;
     } else if (claimType === "other_qualitative") {
-      // A3.8.15: Use "is consistent" for Medium/High, "is not supported" for Low
-      const qualVerb = reliability === "Low" 
-        ? "is not supported by the provided source(s)."
-        : "is consistent with the provided source(s).";
+      // A3.8.25: Use deterministic verbs based on reliability (selection mode only)
+      const selectionMode = context.selectionMode === true;
+      let qualVerb;
+      if (selectionMode) {
+        // A3.8.25: Selection mode uses deterministic language
+        if (reliability === "Low") {
+          qualVerb = "is not supported by the provided source(s).";
+        } else if (citations.length > 0) {
+          qualVerb = "is supported by the provided source(s).";
+        } else {
+          qualVerb = "could not be verified in the provided source(s).";
+        }
+      } else {
+        // Non-selection mode: keep existing behavior
+        qualVerb = reliability === "Low" 
+          ? "is not supported by the provided source(s)."
+          : "is consistent with the provided source(s).";
+      }
       reasonText = `This statement ${qualVerb}${citeStr}`;
     } else {
       // Fallback for other types - use existing generateClaimLinkedReasons logic
@@ -10504,10 +10518,66 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
         : "";
       const reliability = firstClaim.reliability || "Medium";
-      const qualVerb = reliability === "Low" 
-        ? "is not supported by the provided source(s)."
-        : "is consistent with the provided source(s).";
+      // A3.8.25: Use deterministic verbs based on reliability (selection mode only)
+      const selectionMode = context.selectionMode === true;
+      let qualVerb;
+      if (selectionMode) {
+        // A3.8.25: Selection mode uses deterministic language
+        if (reliability === "Low") {
+          qualVerb = "is not supported by the provided source(s).";
+        } else if (citations.length > 0) {
+          qualVerb = "is supported by the provided source(s).";
+        } else {
+          qualVerb = "could not be verified in the provided source(s).";
+        }
+      } else {
+        // Non-selection mode: keep existing behavior
+        qualVerb = reliability === "Low" 
+          ? "is not supported by the provided source(s)."
+          : "is consistent with the provided source(s).";
+      }
       reasons.push(`This statement ${qualVerb}${citeStr}`);
+    }
+  }
+  
+  // A3.8.25: Part D - Align rawClaims uncertainty with final reasons (selection mode only)
+  if (selectionMode && reasons.length > 0) {
+    // Check if any canonical claim has Medium/High reliability
+    const hasMediumOrHigh = canonicalClaims.some(cc => {
+      const rel = cc.reliability || "Medium";
+      return rel === "Medium" || rel === "High";
+    });
+    
+    if (hasMediumOrHigh && Array.isArray(rawClaims) && rawClaims.length > 0) {
+      // Scan rawClaims comments for uncertainty language
+      const uncertaintyPatterns = [
+        /not explicitly/i,
+        /verify/i,
+        /multiple figures/i,
+        /ambiguous/i,
+        /may be/i,
+      ];
+      
+      let hasUncertainty = false;
+      for (const rawClaim of rawClaims) {
+        if (rawClaim && typeof rawClaim === "object") {
+          const comment = String(rawClaim.comment || "");
+          if (uncertaintyPatterns.some(pattern => pattern.test(comment))) {
+            hasUncertainty = true;
+            break;
+          }
+        }
+      }
+      
+      // If uncertainty found, append caution line
+      if (hasUncertainty) {
+        const firstClaim = canonicalClaims[0];
+        const citations = firstClaim?.citations || [];
+        const citeStr = citations.length > 0 
+          ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+          : "";
+        reasons.push(`Note: multiple or ambiguous figures were present in the source; mapping should be manually confirmed.${citeStr}`);
+      }
     }
   }
   
@@ -14168,10 +14238,17 @@ export default async function handler(req, res) {
     // A3.7.4: Define base text - selection mode uses selectedText, non-selection uses draftText
     const baseText = selectionUsed ? selectedText : draftText;
     
-    // A3.5.20 Fix 1 & 2: Generate runId and reqSig early for unambiguous logging
-    runId = Math.random().toString(36).substring(2, 15);
+    // A3.8.25: Use diag context from wrapper if provided, otherwise generate
+    const diagContext = body?._diag;
     const publicSearch = true; // Analysis always uses web search
-    reqSig = generateReqSig(draftText, sources, publicSearch);
+    if (diagContext && diagContext.rid && diagContext.sig) {
+      runId = diagContext.rid;
+      reqSig = diagContext.sig;
+    } else {
+      // A3.5.20 Fix 1 & 2: Generate runId and reqSig early for unambiguous logging (fallback)
+      runId = Math.random().toString(36).substring(2, 15);
+      reqSig = generateReqSig(draftText, sources, publicSearch);
+    }
     
     // A3.8.4: Early selection logging (must appear even if later phases fail)
     const selectionHash = selectionUsed && selectedText
@@ -15438,10 +15515,13 @@ ${
             reasonsSourceValue = "deal_context";
           } else {
             // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
+            // A3.8.25: Pass selectionMode for deterministic language and rawClaims for uncertainty detection
             finalReasons = buildReasonsFromCanonicalClaims(canonicalClaims, {
               statement: stmt,
               runId,
               reqSig,
+              selectionMode: selectionUsed,
+              rawClaims: rawClaimsForDiagnostics, // A3.8.25: Pass rawClaims for uncertainty alignment
             });
             
             // A3.8.9: Set reasonsSource based on actual pipeline path
