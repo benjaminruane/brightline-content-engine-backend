@@ -87,11 +87,128 @@ function safeJsonParse(s) {
   }
 }
 
+/**
+ * A3.8.33: Build selection sentences (deterministic sentence reconstruction)
+ * Returns { sentences: string[], mergedSmallCount: number }
+ */
+function buildSelectionSentences(selectionText, runId = null, reqSig = null) {
+  if (typeof selectionText !== "string" || !selectionText.trim()) {
+    return { sentences: [], mergedSmallCount: 0 };
+  }
+  
+  const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
+  
+  // Common abbreviations that should not trigger sentence splits
+  const abbreviations = new Set([
+    "e.g.", "i.e.", "vs.", "Mr.", "Ms.", "Mrs.", "Dr.", "Prof.", "Inc.", "Ltd.", "Corp.", "Co.",
+    "etc.", "cf.", "ex.", "al.", "et al.", "p.", "pp.", "vol.", "no.", "ch.", "fig.", "eq."
+  ]);
+  
+  // Step 1: Split by sentence terminators (. ? !)
+  // Pattern: match sentence terminator followed by space or end of string
+  // But avoid splitting on abbreviations
+  let sentences = [];
+  let currentSentence = "";
+  let i = 0;
+  
+  while (i < selectionText.length) {
+    const char = selectionText[i];
+    currentSentence += char;
+    
+    // Check for sentence terminators
+    if (/[.!?]/.test(char)) {
+      // Check if this period is part of an abbreviation
+      // Look at the word ending with this period
+      const words = currentSentence.trim().split(/\s+/);
+      const lastWord = words[words.length - 1] || "";
+      const isAbbreviation = abbreviations.has(lastWord.toLowerCase());
+      
+      // Check if next char is space, newline, or end of string (and not abbreviation)
+      if ((i + 1 >= selectionText.length || /\s/.test(selectionText[i + 1])) && !isAbbreviation) {
+        // End of sentence
+        const trimmed = currentSentence.trim();
+        if (trimmed.length > 0) {
+          sentences.push(trimmed);
+        }
+        currentSentence = "";
+        // Skip whitespace after terminator
+        while (i + 1 < selectionText.length && /\s/.test(selectionText[i + 1])) {
+          i++;
+        }
+      }
+    }
+    i++;
+  }
+  
+  // Add final sentence if any remains
+  const finalTrimmed = currentSentence.trim();
+  if (finalTrimmed.length > 0) {
+    sentences.push(finalTrimmed);
+  }
+  
+  // Step 2: Cleanup - collapse whitespace, trim
+  sentences = sentences.map(s => s.replace(/\s+/g, " ").trim()).filter(s => s.length > 0);
+  
+  // Step 3: Merge small fragments (< 60 chars) into next sentence
+  const mergedSentences = [];
+  let mergedSmallCount = 0;
+  
+  for (let i = 0; i < sentences.length; i++) {
+    const current = sentences[i];
+    
+    if (current.length < 60 && i < sentences.length - 1) {
+      // Merge with next sentence
+      const next = sentences[i + 1];
+      const merged = (current + " " + next).replace(/\s+/g, " ").trim();
+      mergedSentences.push(merged);
+      mergedSmallCount++;
+      i++; // Skip next sentence as it's been merged
+    } else {
+      mergedSentences.push(current);
+    }
+  }
+  
+  // Step 4: Fix dangling conjunction fragments at sentence start
+  const conjunctionPattern = /^(addition,|and|or|but|as well as|in addition|furthermore|moreover|however|nevertheless|therefore|thus|consequently|additionally|also|plus|further|more|then|so|yet|still|nonetheless|hence|accordingly|meanwhile|subsequently|previously|finally|first|second|third|lastly|next|now|here|there|where|when|while|since|because|although|though|even though|despite|regardless|instead|rather|besides|indeed|specifically|particularly|especially|notably|importantly|significantly|interestingly|surprisingly|unfortunately|fortunately|clearly|obviously|apparently|presumably|supposedly|allegedly|reportedly|evidently|seemingly|arguably|potentially|possibly|probably|likely|unlikely|certainly|definitely|absolutely|completely|entirely|totally|fully|partially|mostly|mainly|primarily|essentially|basically|fundamentally|generally|typically|usually|normally|commonly|often|frequently|sometimes|occasionally|rarely|seldom|hardly|barely|scarcely|almost|nearly|quite|rather|very|extremely|highly|significantly|substantially|considerably|relatively|comparatively|fairly|pretty|somewhat|slightly)\s*,?\s*/i;
+  
+  const fixedSentences = [];
+  for (let i = 0; i < mergedSentences.length; i++) {
+    const current = mergedSentences[i];
+    const match = current.match(conjunctionPattern);
+    
+    if (match && i > 0) {
+      // Merge into previous sentence
+      const prev = fixedSentences.pop();
+      const fragment = current.substring(match[0].length).trim();
+      const merged = (prev + " " + fragment).replace(/\s+/g, " ").trim();
+      fixedSentences.push(merged);
+    } else {
+      fixedSentences.push(current);
+    }
+  }
+  
+  // Step 5: Cap at 6 sentences, merge remainder into sentence #6
+  let finalSentences = fixedSentences;
+  if (fixedSentences.length > 6) {
+    const first5 = fixedSentences.slice(0, 5);
+    const remainder = fixedSentences.slice(5).join(" ");
+    const merged6 = (first5[4] + " " + remainder).replace(/\s+/g, " ").trim();
+    finalSentences = first5.slice(0, 4).concat([merged6]);
+  }
+  
+  // A3.8.33: Log sentence reconstruction
+  const sampleFirst2 = finalSentences.slice(0, 2).map(s => s.length);
+  log(`[SELECTION][SENTENCES] count=${finalSentences.length} sampleFirst2Len=${sampleFirst2.join(",")} mergedSmall=${mergedSmallCount}`);
+  
+  return { sentences: finalSentences, mergedSmallCount };
+}
+
 // A3.7.3: Deterministic splitting into 2-5 statement rows (verbatim slices)
 // Returns array of objects with { text, selectionGroupId, selectionIndex, selectionTotal }
 /**
  * A3.8.13: Segment selection into candidate statements
  * Splits on sentence boundaries, enumeration markers, and long clauses
+ * A3.8.33: Now uses buildSelectionSentences for sentence reconstruction
  */
 function segmentSelectionIntoCandidates(selectionText, runId = null, reqSig = null) {
   if (typeof selectionText !== "string" || !selectionText.trim()) {
@@ -100,98 +217,20 @@ function segmentSelectionIntoCandidates(selectionText, runId = null, reqSig = nu
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
-  // Work on a copy; output must be verbatim slices (only whitespace trimming allowed)
+  // A3.8.33: Use sentence reconstruction for selection mode
+  const { sentences: reconstructedSentences } = buildSelectionSentences(selectionText, runId, reqSig);
+  
+  if (reconstructedSentences.length === 0) {
+    return [];
+  }
+  
+  // Work on reconstructed sentences; output must be verbatim slices (only whitespace trimming allowed)
   const originalText = selectionText;
   const charLen = originalText.length;
   
-  // A3.8.13: Enhanced segmentation for multi-claim coverage
-  let segments = [];
-  
-  // Step 1: Split on enumeration markers first: (i), (ii), (iii), -, •
-  const enumPattern = /(?:^|\n|\s)(?:\([ivx]+\)|\([0-9]+\)|[-•])\s+/gi;
-  const enumMatches = [];
-  let enumMatch;
-  while ((enumMatch = enumPattern.exec(originalText)) !== null) {
-    enumMatches.push(enumMatch.index);
-  }
-  
-  if (enumMatches.length > 0) {
-    // Split on enumeration markers
-    let lastIndex = 0;
-    for (const enumIndex of enumMatches) {
-      if (enumIndex > lastIndex) {
-        const segment = originalText.substring(lastIndex, enumIndex).trim();
-        if (segment.length >= 25) {
-          segments.push(segment);
-        }
-      }
-      lastIndex = enumIndex;
-    }
-    // Add final segment after last enum marker
-    const finalSegment = originalText.substring(lastIndex).trim();
-    if (finalSegment.length >= 25) {
-      segments.push(finalSegment);
-    }
-  }
-  
-  // Step 2: If no enum markers, split on sentence boundaries (. ;)
-  if (segments.length === 0) {
-    const sentencePattern = /([.!?]+)\s+|(;)\s+/g;
-    let lastIndex = 0;
-    let match;
-    
-    while ((match = sentencePattern.exec(originalText)) !== null) {
-      const segment = originalText.substring(lastIndex, match.index + match[0].length).trim();
-      if (segment.length >= 25) {
-        segments.push(segment);
-      }
-      lastIndex = match.index + match[0].length;
-    }
-    
-    // Add final segment
-    if (lastIndex < originalText.length) {
-      const finalSegment = originalText.substring(lastIndex).trim();
-      if (finalSegment.length >= 25) {
-        segments.push(finalSegment);
-      }
-    }
-  }
-  
-  // Step 3: Handle long clauses (>160 chars) - soft split on `;` and `", and "`
-  const finalSegments = [];
-  for (const seg of segments) {
-    if (seg.length > 160) {
-      // Try to split on `;` first
-      const semicolonSplits = seg.split(/\s*;\s+/);
-      if (semicolonSplits.length > 1) {
-        for (const split of semicolonSplits) {
-          const trimmed = split.trim();
-          if (trimmed.length >= 25) {
-            finalSegments.push(trimmed);
-          }
-        }
-        continue;
-      }
-      
-      // Try to split on `", and "` or `, and `
-      const andSplits = seg.split(/,\s+and\s+/i);
-      if (andSplits.length > 1) {
-        for (const split of andSplits) {
-          const trimmed = split.trim();
-          if (trimmed.length >= 25) {
-            finalSegments.push(trimmed);
-          }
-        }
-        continue;
-      }
-    }
-    
-    // Keep segment as-is if no splitting needed
-    finalSegments.push(seg);
-  }
-  
-  // A3.8.15: Track created segments with IDs before filtering
-  const createdSegments = finalSegments
+  // A3.8.33: Use reconstructed sentences directly as segments
+  // Track created segments with IDs before filtering
+  const createdSegments = reconstructedSentences
     .map((s, segId) => ({ segId, text: s.trim(), len: s.trim().length }))
     .filter(seg => seg.len >= 25);
   
@@ -10828,7 +10867,7 @@ function computeDealContextReliability(dealContext) {
  * Returns deterministic reasons based on canonical claims, with special handling for qualitative claims.
  */
 function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
-  const { statement = null, runId = null, reqSig = null, selectionMode = false, rawClaims = [] } = context;
+  const { statement = null, runId = null, reqSig = null, selectionMode = false, rawClaims = [], uploadedDocs = [] } = context;
   
   if (!Array.isArray(canonicalClaims) || canonicalClaims.length === 0) {
     // A3.8.9: If canonicalClaims is empty (should not happen after hard invariant), return single deterministic bullet
@@ -10920,14 +10959,44 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       reasonText = `Secondary purchase amount (${valueDisplay}) ${verb}${citeStr}`;
     } else if (claimType === "other_qualitative") {
       // A3.8.25: Use deterministic verbs based on reliability (selection mode only)
+      // A3.8.33: Honest support wording for qualitative claims
       const selectionMode = context.selectionMode === true;
       let qualVerb;
       if (selectionMode) {
+        // A3.8.33: Check if all claims are qualitative and if match is fuzzy
+        const statement = context.statement || {};
+        const statementText = statement.text || "";
+        const uploadedDocs = context.uploadedDocs || [];
+        
+        // Check corpusSearch match type if available
+        let isFuzzyOnly = false;
+        if (uploadedDocs.length > 0 && statementText) {
+          try {
+            const searchResult = corpusSearch(statementText, uploadedDocs);
+            if (searchResult && searchResult.found && searchResult.hits) {
+              const hits = searchResult.hits || [];
+              const matchTypes = new Set(hits.map(h => h.matchType).filter(Boolean));
+              const hasNumber = matchTypes.has("number");
+              const hasKeyword = matchTypes.has("keyword");
+              const hasFuzzy = matchTypes.has("fuzzy");
+              const hasNumberOrKeyword = hasNumber || hasKeyword;
+              isFuzzyOnly = hasFuzzy && !hasNumberOrKeyword;
+            }
+          } catch (_) {
+            // If corpusSearch fails, default to non-fuzzy
+          }
+        }
+        
         // A3.8.25: Selection mode uses deterministic language
         if (reliability === "Low") {
           qualVerb = "is not supported by the provided source(s).";
         } else if (citations.length > 0) {
-          qualVerb = "is supported by the provided source(s).";
+          // A3.8.33: Use paraphrase-qualified line if fuzzy-only match
+          if (isFuzzyOnly) {
+            qualVerb = "substance is supported, but the exact wording may be paraphrased; confirm phrasing if required.";
+          } else {
+            qualVerb = "is supported by the provided source(s).";
+          }
         } else {
           qualVerb = "could not be verified in the provided source(s).";
         }
@@ -14886,11 +14955,18 @@ export default async function handler(req, res) {
     let rawExtractionCandidates = [];
     let selectionMetadataMap = new Map(); // Map candidate text -> { selectionGroupId, selectionIndex, selectionTotal, segmentId }
     let selectionStatementCountReturned = null; // A3.7.4: Store N from split
+    let selectionSentencesCount = null; // A3.8.33: Store sentence count for diagnostics
+    let selectionMergedSmallCount = 0; // A3.8.33: Store merged small fragments count
     if (!selectionUsed) {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates`);
       rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
     } else {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates (selection mode - splitting)`);
+      // A3.8.33: Build sentences first for integrity
+      const { sentences, mergedSmallCount } = buildSelectionSentences(selectedText, runId, reqSig);
+      selectionSentencesCount = sentences.length;
+      selectionMergedSmallCount = mergedSmallCount;
+      
       // A3.7.4: Split ONLY selectedText (baseText in selection mode)
       const splitResult = splitSelectionIntoCandidates(selectedText, runId, reqSig);
       if (splitResult.length === 0) {
@@ -14899,8 +14975,8 @@ export default async function handler(req, res) {
         selectionStatementCountReturned = 1; // A3.7.4: Single row fallback
         diag(runId, reqSig, `[PIPELINE] selection split returned 0 candidates, using selection as single candidate`);
       } else {
-        // A3.7.4: Store N from split
-        selectionStatementCountReturned = splitResult.length;
+        // A3.8.33: Store sentence count (not split result count) for meta
+        selectionStatementCountReturned = selectionSentencesCount || splitResult.length;
         // Extract metadata and text separately - each candidate is verbatim slice (trim only)
         rawExtractionCandidates = splitResult.map(item => {
           const text = typeof item === "string" ? item.trim() : ((item.text || String(item)).trim());
@@ -16020,6 +16096,7 @@ ${
               reqSig,
               selectionMode: selectionUsed,
               rawClaims: rawClaimsForDiagnostics, // A3.8.25: Pass rawClaims for uncertainty alignment
+              uploadedDocs: uploadedDocs, // A3.8.33: Pass uploadedDocs for corpusSearch check
             });
             
             // A3.8.9: Set reasonsSource based on actual pipeline path
@@ -16629,9 +16706,9 @@ ${
           selectionUsed: selectionUsed || false,
           selectionHash: selectionHash || null,
           selectionPreview: selectionUsed && selectedText ? (selectedText.length <= 120 ? selectedText : selectedText.substring(0, 120) + "...") : null,
-          // A3.7.4: Selection statement count (N from split) - intended count
+          // A3.8.33: Selection statement count (sentence count) - intended count
           selectionStatementCountReturned: selectionUsed && selectionStatementCountReturned !== null ? selectionStatementCountReturned : (selectionUsed ? statements.length : undefined),
-          // A3.7.4: Actual statements returned (may differ from intended if filtering drops rows)
+          // A3.8.33: Actual statements returned (may differ from intended if filtering drops rows)
           selectionStatementsReturned: selectionUsed ? statements.length : undefined,
         },
       };
@@ -16854,6 +16931,15 @@ ${
       // Best-effort logging; don't crash on cleanup
     }
     // A3.8.29: Return JSON payload instead of response object
+    // A3.8.33: Selection mode final diagnostics
+    if (selectionUsed && runId && reqSig) {
+      const sentences = selectionSentencesCount || 0;
+      const returned = finalResponseObject?.statements?.length || 0;
+      const degraded = finalResponseObject?.meta?.extractionQuality === "degraded";
+      const mergedSmall = selectionMergedSmallCount || 0;
+      diag(runId, reqSig, `[SELECTION][FINAL] sentences=${sentences} returned=${returned} degraded=${degraded} mergedSmall=${mergedSmall}`);
+    }
+    
     return finalResponseObject;
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
