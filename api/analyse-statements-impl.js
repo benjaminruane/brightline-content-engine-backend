@@ -6248,6 +6248,67 @@ function extractQualifiedRelationshipClaims(statementText, atomicNumericClaims) 
   return claims.slice(0, 3);
 }
 
+// A3.8.29: Part B - Helper to normalize money suffix for rawClaims (check for month context)
+function normalizeMoneySuffixForRawClaim(claimText, nearbyText = "") {
+  if (!claimText || typeof claimText !== "string") return null;
+  
+  // Extract USD amount from claimText
+  const usdMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)/);
+  if (!usdMatch) return null;
+  
+  const numStr = usdMatch[1].replace(/,/g, "");
+  const num = parseFloat(numStr);
+  if (!Number.isFinite(num) || num <= 0) return null;
+  
+  // Check if claimText is a plain $ amount without explicit million/billion token
+  const plainUsdMatch = claimText.match(/^\$([\d,]+(?:\.\d+)?)$/);
+  if (plainUsdMatch) {
+    // Plain USD without suffix - check nearby text for "month" context
+    const nearbyLower = nearbyText.toLowerCase();
+    const claimIndex = nearbyLower.indexOf(claimText.toLowerCase());
+    if (claimIndex >= 0) {
+      const afterClaim = nearbyLower.substring(claimIndex + claimText.length, claimIndex + claimText.length + 30);
+      if (/^\s*(per\s+)?(month|monthly|mo\b)/.test(afterClaim)) {
+        // Force plain USD anchor (not million)
+        return `usd_${num}`;
+      }
+    }
+    // Plain USD without month context - return null to use default extractAnchor
+    return null;
+  }
+  
+  // Check if claimText explicitly contains million indicators
+  const explicitMillionMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/i);
+  if (explicitMillionMatch) {
+    const unit = (explicitMillionMatch[2] || "").toLowerCase();
+    
+    // A3.8.29: If "m" suffix, check for "month" context in nearby text
+    if (unit === "m") {
+      const nearbyLower = nearbyText.toLowerCase();
+      const claimIndex = nearbyLower.indexOf(claimText.toLowerCase());
+      if (claimIndex >= 0) {
+        const afterClaim = nearbyLower.substring(claimIndex + claimText.length, claimIndex + claimText.length + 30);
+        if (/^\s*(per\s+)?(month|monthly|mo\b)/.test(afterClaim)) {
+          // Treat as plain USD (no million suffix)
+          return `usd_${num}`;
+        }
+      }
+    }
+    
+    // Normalize to millions (explicit million indicators)
+    let normalized = num;
+    if (unit.includes("billion") || unit === "b") {
+      normalized = normalized * 1000;
+    } else if (unit.includes("thousand") || unit === "k") {
+      normalized = normalized / 1000;
+    }
+    return `usd_${normalized}m`;
+  }
+  
+  // No special handling needed - return null to use default extractAnchor
+  return null;
+}
+
 // A3.6.0: Extract atomic claims from statement text (deterministic, no LLM)
 function extractAtomicClaims(statementText, bestValSnip = "") {
   if (typeof statementText !== "string" || !statementText.trim()) return [];
@@ -6826,12 +6887,18 @@ function extractAtomicClaims(statementText, bestValSnip = "") {
     const claimKey = buildClaimKey(cleaned, facet);
     
     // A3.6.10: Preserve anchor explicitly (use provided anchor or extract from cleaned text)
-    const anchor = claimAnchor || extractAnchor(cleaned);
+    // A3.8.29: Part B - Use normalizeMoneySuffixForRawClaim for rawClaims anchor assignment
+    let anchor = claimAnchor;
+    if (!anchor) {
+      // Check for month context in rawClaims
+      const normalizedAnchor = normalizeMoneySuffixForRawClaim(cleaned, statementText);
+      anchor = normalizedAnchor || extractAnchor(cleaned);
+    }
     const candidate = {
       claimText: cleaned,
       facet,
       claimKey,
-      anchor: anchor, // A3.6.10: Explicit anchor field
+      anchor: anchor, // A3.6.10: Explicit anchor field, A3.8.29: Month-aware for rawClaims
     };
     
     // A3.6.18: Preserve _usedBestValSnip flag if present
@@ -16309,7 +16376,8 @@ ${
     } catch (logErr) {
       // Best-effort logging; don't crash on cleanup
     }
-    return res.status(200).json(finalResponseObject);
+    // A3.8.29: Return JSON payload instead of response object
+    return finalResponseObject;
   } catch (err) {
       // Graceful degradation: even on error, return valid JSON with fallback statements
     // A3.7.5: Ensure CORS headers are set defensively (safe to repeat)
@@ -16353,7 +16421,8 @@ ${
         } catch (logErr) {
           // Best-effort logging
         }
-        return res.status(200).json(finalResponseObject);
+        // A3.8.29: Return JSON payload instead of response object
+        return finalResponseObject;
       } else {
         // HOTFIX: Build safe fallback without referencing undefined 'statements'
         // This should never happen if finalResponseObject was built correctly after FINAL_COUNTS

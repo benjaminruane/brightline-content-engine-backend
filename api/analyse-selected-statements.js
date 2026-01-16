@@ -271,11 +271,11 @@ export default async function handler(req, res) {
       },
     };
     
+    // A3.8.29: Part A - Separate payload (JSON) from res (Vercel response object)
     // A3.8.17: Harden: wrap pipeline call in try/catch
-    // A3.8.27: Use ONE variable for the outgoing response object
-    let out;
+    let payload;
     try {
-      out = await analyseStatementsImpl(normalizedReq, res);
+      payload = await analyseStatementsImpl(normalizedReq, res);
     } catch (pipelineErr) {
       // A3.8.17: Re-throw with context to preserve phase tracking
       // A3.8.18: Node-18 safe error with cause
@@ -285,7 +285,7 @@ export default async function handler(req, res) {
     }
     
     // A3.8.17: Harden: check pipeline result
-    if (!out || typeof out !== "object") {
+    if (!payload || typeof payload !== "object") {
       phase = "respond";
       dbg.phase = phase;
       diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=0 statementCount=0 dropReasons=["PIPELINE_RETURNED_EMPTY"]`);
@@ -305,17 +305,17 @@ export default async function handler(req, res) {
     phase = "respond";
     dbg.phase = phase;
     
-    // A3.8.28: Compute counts from the exact object we return (out) - immediately before logging
-    const statementCount = Array.isArray(out?.statements) ? out.statements.length : 0;
+    // A3.8.29: Compute counts from the JSON payload (not res object) - immediately before logging
+    const statementCount = Array.isArray(payload?.statements) ? payload.statements.length : 0;
     
-    // A3.8.28: Compute segmentCount from meta.selectionSegmentsKept or __selectionSegmentId
+    // A3.8.29: Compute segmentCount from meta.selectionSegmentsKept or __selectionSegmentId
     let segmentCount = 0;
-    if (typeof out?.meta?.selectionSegmentsKept === "number") {
-      segmentCount = out.meta.selectionSegmentsKept;
-    } else if (Array.isArray(out?.statements)) {
+    if (typeof payload?.meta?.selectionSegmentsKept === "number") {
+      segmentCount = payload.meta.selectionSegmentsKept;
+    } else if (Array.isArray(payload?.statements)) {
       // Derive from unique __selectionSegmentId count (only finite numbers)
       const uniqueSegmentIds = new Set();
-      for (const stmt of out.statements) {
+      for (const stmt of payload.statements) {
         if (stmt && typeof stmt === "object" && typeof stmt.__selectionSegmentId === "number" && isFinite(stmt.__selectionSegmentId)) {
           uniqueSegmentIds.add(stmt.__selectionSegmentId);
         }
@@ -323,12 +323,13 @@ export default async function handler(req, res) {
       segmentCount = uniqueSegmentIds.size;
     }
     
-    // A3.8.28: Log END using counts from exact return object with diagnostic info
-    const outOk = out?.ok === true;
-    const outKeys = out ? Object.keys(out).slice(0, 8).join(",") : "none";
-    diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount} outOk=${outOk} outKeys=${outKeys}`);
+    // A3.8.29: Log END using counts from JSON payload with diagnostic info
+    const payloadOk = payload && payload.ok === true;
+    const payloadKeys = Object.keys(payload || {}).slice(0, 12).join(",");
+    diag(runId, reqSig, `END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount} payloadOk=${payloadOk} payloadKeys=${payloadKeys}`);
     
-    return out;
+    // A3.8.29: Return JSON payload via res.json()
+    return res.status(200).json(payload);
     
   } catch (err) {
     // A3.8.16: Top-level catch - ensure JSON response
