@@ -2271,7 +2271,8 @@ function repairDanglingCurrencySingle(statementText, draftText) {
   
   if (completionFound && completionText) {
     // A3.6.60: Replace from the LAST occurrence of connector to end with the matched completion phrase
-    const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
+    // A3.8.31: Sanitize flags (though "gi" is already valid, defensive measure)
+    const connectorPattern = new RegExp(`\\b${connector}\\b`, sanitizeRegexFlags("gi"));
     let lastConnectorIndex = -1;
     let matchResult;
     while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
@@ -2287,7 +2288,8 @@ function repairDanglingCurrencySingle(statementText, draftText) {
   
   // A3.6.60: DROP clause - remove from last connector to end
   // Rules: If dropping would leave < 25 chars OR removes the only numeric content, drop the whole statement
-  const connectorPattern = new RegExp(`\\b${connector}\\b`, "gi");
+  // A3.8.31: Sanitize flags (though "gi" is already valid, defensive measure)
+  const connectorPattern = new RegExp(`\\b${connector}\\b`, sanitizeRegexFlags("gi"));
   let lastConnectorIndex = -1;
   let matchResult;
   while ((matchResult = connectorPattern.exec(textFinal)) !== null) {
@@ -2603,7 +2605,9 @@ function extractDealTermsFromText(text, runId = null, reqSig = null) {
       let closestDistance = Infinity;
       
       for (const { pattern, modality } of modalityPatterns) {
-        const matches = [...searchWindow.matchAll(new RegExp(pattern.source, pattern.flags + 'g'))];
+        // A3.8.31: Sanitize flags to prevent invalid flag errors
+        const combinedFlags = sanitizeRegexFlags(pattern.flags + 'g');
+        const matches = [...searchWindow.matchAll(new RegExp(pattern.source, combinedFlags))];
         for (const match of matches) {
           const matchIndex = searchStart + match.index;
           const distance = Math.abs(matchIndex - ownPctIndex);
@@ -7366,7 +7370,9 @@ function ensureGlobalRegex(re) {
     return re; // Already has 'g', shouldn't happen but be safe
   }
   
-  return new RegExp(re.source, flags + 'g');
+  // A3.8.31: Sanitize flags to prevent invalid flag errors
+  const combinedFlags = sanitizeRegexFlags(flags + 'g');
+  return new RegExp(re.source, combinedFlags);
 }
 
 // A3.6.15: Fallback snippet extractor for qual_valuation when primary extraction returns empty
@@ -10424,6 +10430,44 @@ function buildDealAssessment(dealContext, citations = []) {
   }
   
   return reasons;
+}
+
+/**
+ * A3.8.31: Sanitize regex flags to prevent invalid flag errors
+ * Keeps only valid lowercase flags from the set: gimsuyd
+ * Dedupes characters, preserves order, strips whitespace/non-ASCII
+ * @param {string} flags - Original flags string
+ * @param {string} runId - Optional runId for diagnostic logging
+ * @param {string} reqSig - Optional reqSig for diagnostic logging
+ * @returns {string} - Sanitized flags string
+ */
+function sanitizeRegexFlags(flags, runId = null, reqSig = null) {
+  if (typeof flags !== "string") {
+    return "";
+  }
+  
+  // Valid flags: g, i, m, s, u, y, d (lowercase only)
+  const validFlags = new Set(["g", "i", "m", "s", "u", "y", "d"]);
+  const seen = new Set();
+  const sanitized = [];
+  
+  // Process each character, keeping only valid lowercase flags
+  for (const char of flags) {
+    const lowerChar = char.toLowerCase();
+    if (validFlags.has(lowerChar) && !seen.has(lowerChar)) {
+      seen.add(lowerChar);
+      sanitized.push(lowerChar);
+    }
+  }
+  
+  const sanitizedStr = sanitized.join("");
+  
+  // A3.8.31: Log diagnostic warning if sanitization changed the flags
+  if (sanitizedStr !== flags && runId && reqSig) {
+    diag(runId, reqSig, `[DIAG] regexFlagsSanitized original="${flags}" sanitized="${sanitizedStr}"`);
+  }
+  
+  return sanitizedStr;
 }
 
 /**
