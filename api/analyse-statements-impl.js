@@ -10427,6 +10427,330 @@ function buildDealAssessment(dealContext, citations = []) {
 }
 
 /**
+ * A3.8.30: Extract key numeric tokens from statement text (deterministic)
+ * Returns array of Token objects with raw, kind, normalizedCandidates, and display.
+ */
+function extractKeyNumericTokens(statementText) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return [];
+  }
+  
+  const tokens = [];
+  const seenDisplays = new Set();
+  
+  // Money patterns: $45, $45 per month, $20–25 million, $18.7 million, $5.5 million
+  const moneyPatterns = [
+    // Per month pattern: "$45 per month", "$45/month", "$45 monthly"
+    /\$([\d,]+(?:\.\d+)?)\s*(?:per\s+month|/mo|/month|monthly)/gi,
+    // Range: "$20–25 million", "$20-25 million"
+    /\$([\d,]+(?:\.\d+)?)\s*[–-]\s*([\d,]+(?:\.\d+)?)\s*(million|mm|m|billion|b)\b/gi,
+    // Single with unit: "$18.7 million", "$5.5 million", "$20 million"
+    /\$([\d,]+(?:\.\d+)?)\s*(million|mm|m|billion|b)\b/gi,
+    // Plain money: "$45", "$18.7"
+    /\$([\d,]+(?:\.\d+)?)/g,
+  ];
+  
+  // Percent patterns: "0.5–2%", "0.5-2%", "20%"
+  const percentPatterns = [
+    // Range: "0.5–2%", "0.5-2%"
+    /([\d,]+(?:\.\d+)?)\s*[–-]\s*([\d,]+(?:\.\d+)?)\s*%/gi,
+    // Single: "20%", "0.5%"
+    /([\d,]+(?:\.\d+)?)\s*%/g,
+  ];
+  
+  // Multiple patterns: "3–4x", "3-4x", "2x"
+  const multiplePatterns = [
+    // Range: "3–4x", "3-4x"
+    /([\d,]+(?:\.\d+)?)\s*[–-]\s*([\d,]+(?:\.\d+)?)\s*x/gi,
+    // Single: "2x", "3x"
+    /([\d,]+(?:\.\d+)?)\s*x/gi,
+  ];
+  
+  // Process money patterns
+  for (const pattern of moneyPatterns) {
+    let match;
+    while ((match = pattern.exec(statementText)) !== null) {
+      const fullMatch = match[0];
+      let display = fullMatch;
+      let normalizedCandidates = [fullMatch];
+      
+      // Handle per month pattern
+      if (/\b(?:per\s+month|/mo|/month|monthly)\b/i.test(fullMatch)) {
+        const num = match[1].replace(/,/g, "");
+        display = `$${num}/mo`;
+        normalizedCandidates = [
+          `${num}/mo`,
+          `${num} per month`,
+          `$${num}/mo`,
+          `$${num} per month`,
+          `$${num}/month`,
+          `$${num} monthly`,
+        ];
+      }
+      // Handle range with unit
+      else if (match[2] && match[3]) {
+        const num1 = match[1].replace(/,/g, "");
+        const num2 = match[2].replace(/,/g, "");
+        const unit = match[3].toLowerCase();
+        const unitShort = unit === "million" || unit === "mm" || unit === "m" ? "m" : unit === "billion" || unit === "b" ? "b" : "";
+        display = `$${num1}–${num2}${unitShort}`;
+        normalizedCandidates = [
+          `${num1}–${num2} ${unit}`,
+          `${num1}-${num2} ${unit}`,
+          `$${num1}–${num2} ${unit}`,
+          `$${num1}-${num2} ${unit}`,
+          `${num1}–${num2}${unitShort}`,
+          `${num1}-${num2}${unitShort}`,
+          `$${num1}–${num2}${unitShort}`,
+          `$${num1}-${num2}${unitShort}`,
+        ];
+      }
+      // Handle single with unit
+      else if (match[2]) {
+        const num = match[1].replace(/,/g, "");
+        const unit = match[2].toLowerCase();
+        const unitShort = unit === "million" || unit === "mm" || unit === "m" ? "m" : unit === "billion" || unit === "b" ? "b" : "";
+        display = `$${num}${unitShort}`;
+        normalizedCandidates = [
+          `${num} ${unit}`,
+          `$${num} ${unit}`,
+          `${num}${unitShort}`,
+          `$${num}${unitShort}`,
+        ];
+      }
+      // Plain money
+      else {
+        const num = match[1].replace(/,/g, "");
+        display = `$${num}`;
+        normalizedCandidates = [`$${num}`, num];
+      }
+      
+      if (!seenDisplays.has(display)) {
+        seenDisplays.add(display);
+        tokens.push({
+          raw: fullMatch,
+          kind: "money",
+          normalizedCandidates,
+          display,
+        });
+      }
+    }
+  }
+  
+  // Process percent patterns
+  for (const pattern of percentPatterns) {
+    let match;
+    while ((match = pattern.exec(statementText)) !== null) {
+      const fullMatch = match[0];
+      let display = fullMatch;
+      let normalizedCandidates = [fullMatch];
+      
+      // Range percent
+      if (match[2]) {
+        const num1 = match[1].replace(/,/g, "");
+        const num2 = match[2].replace(/,/g, "");
+        display = `${num1}–${num2}%`;
+        normalizedCandidates = [
+          `${num1}–${num2}%`,
+          `${num1}-${num2}%`,
+          `${num1}–${num2} percent`,
+          `${num1}-${num2} percent`,
+        ];
+      }
+      // Single percent
+      else {
+        const num = match[1].replace(/,/g, "");
+        display = `${num}%`;
+        normalizedCandidates = [`${num}%`, `${num} percent`];
+      }
+      
+      if (!seenDisplays.has(display)) {
+        seenDisplays.add(display);
+        tokens.push({
+          raw: fullMatch,
+          kind: "percent",
+          normalizedCandidates,
+          display,
+        });
+      }
+    }
+  }
+  
+  // Process multiple patterns
+  for (const pattern of multiplePatterns) {
+    let match;
+    while ((match = pattern.exec(statementText)) !== null) {
+      const fullMatch = match[0];
+      let display = fullMatch;
+      let normalizedCandidates = [fullMatch];
+      
+      // Range multiple
+      if (match[2]) {
+        const num1 = match[1].replace(/,/g, "");
+        const num2 = match[2].replace(/,/g, "");
+        display = `${num1}–${num2}x`;
+        normalizedCandidates = [
+          `${num1}–${num2}x`,
+          `${num1}-${num2}x`,
+          `${num1}–${num2} x`,
+          `${num1}-${num2} x`,
+        ];
+      }
+      // Single multiple
+      else {
+        const num = match[1].replace(/,/g, "");
+        display = `${num}x`;
+        normalizedCandidates = [`${num}x`, `${num} x`];
+      }
+      
+      if (!seenDisplays.has(display)) {
+        seenDisplays.add(display);
+        tokens.push({
+          raw: fullMatch,
+          kind: "multiple",
+          normalizedCandidates,
+          display,
+        });
+      }
+    }
+  }
+  
+  // Sort by appearance order in text and limit to 6
+  tokens.sort((a, b) => {
+    const idxA = statementText.indexOf(a.raw);
+    const idxB = statementText.indexOf(b.raw);
+    return idxA - idxB;
+  });
+  
+  // Prefer money/ranges/multiples/percents over plain integers, limit to 6
+  const prioritized = tokens.filter(t => 
+    t.kind === "money" || t.kind === "percent" || t.kind === "multiple"
+  );
+  const others = tokens.filter(t => 
+    t.kind !== "money" && t.kind !== "percent" && t.kind !== "multiple"
+  );
+  
+  return [...prioritized, ...others].slice(0, 6);
+}
+
+/**
+ * A3.8.30: Check if token is found in uploaded sources (deterministic)
+ * Returns {found: boolean, evidenceRefIds: number[]}
+ */
+function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) {
+  if (!token || !Array.isArray(uploadedDocs) || uploadedDocs.length === 0) {
+    return { found: false, evidenceRefIds: [] };
+  }
+  
+  // Concatenate all uploaded source text
+  const allUploadedText = uploadedDocs
+    .map(doc => (doc.text || "").toLowerCase())
+    .join(" ");
+  
+  // Check each normalized candidate
+  let found = false;
+  for (const candidate of token.normalizedCandidates) {
+    const candidateLower = candidate.toLowerCase();
+    if (allUploadedText.includes(candidateLower)) {
+      found = true;
+      break;
+    }
+  }
+  
+  // Build evidenceRefIds from statement's citations (use existing citation plumbing)
+  // Map uploadedDocs IDs to unifiedReferences IDs
+  const uploadedRefIds = new Set();
+  if (Array.isArray(unifiedReferences)) {
+    unifiedReferences.forEach(ref => {
+      if (ref?.type === "uploaded") {
+        // Find matching uploadedDoc by title or ID
+        const matchingDoc = uploadedDocs.find(doc => 
+          doc.id === ref.id || doc.title === ref.title
+        );
+        if (matchingDoc) {
+          uploadedRefIds.add(ref.id);
+        }
+      }
+    });
+  }
+  
+  const evidenceRefIds = found && citations && citations.length > 0 
+    ? citations.filter(id => {
+        // Verify the citation ID exists in uploaded refs
+        return uploadedRefIds.has(Number(id)) || uploadedRefIds.has(String(id));
+      })
+    : [];
+  
+  // If found but no citations match uploaded refs, use first uploaded ref ID from unifiedReferences
+  if (found && evidenceRefIds.length === 0 && Array.isArray(unifiedReferences)) {
+    const firstUploadedRef = unifiedReferences.find(ref => ref?.type === "uploaded");
+    if (firstUploadedRef && firstUploadedRef.id !== undefined && firstUploadedRef.id !== null) {
+      evidenceRefIds.push(Number(firstUploadedRef.id) || firstUploadedRef.id);
+    }
+  }
+  
+  return { found, evidenceRefIds };
+}
+
+/**
+ * A3.8.30: Build coverage summary reason lines (selection mode only)
+ * Returns array of string reasons (max 2 lines)
+ */
+function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return [];
+  }
+  
+  // Extract tokens
+  const tokens = extractKeyNumericTokens(statementText);
+  if (tokens.length === 0) {
+    return [];
+  }
+  
+  // Check each token
+  const foundTokens = [];
+  const notFoundTokens = [];
+  
+  for (const token of tokens) {
+    const result = checkTokenInSources(token, uploadedDocs, unifiedReferences, citations);
+    if (result.found) {
+      foundTokens.push(token);
+    } else {
+      notFoundTokens.push(token);
+    }
+  }
+  
+  const reasons = [];
+  const citeStr = citations && citations.length > 0
+    ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+    : "";
+  
+  // Line 1: Found tokens
+  if (foundTokens.length > 0) {
+    const displayList = foundTokens.map(t => t.display);
+    let listStr = displayList.join("; ");
+    if (listStr.length > 140) {
+      const truncated = displayList.slice(0, 4).join("; ");
+      listStr = `${truncated}…`;
+    }
+    reasons.push(`Coverage (figures): Found in sources: ${listStr}.${citeStr}`);
+  }
+  
+  // Line 2: Not found tokens
+  if (notFoundTokens.length > 0) {
+    const displayList = notFoundTokens.map(t => t.display);
+    let listStr = displayList.join("; ");
+    if (listStr.length > 140) {
+      const truncated = displayList.slice(0, 4).join("; ");
+      listStr = `${truncated}…`;
+    }
+    reasons.push(`Coverage (figures): Not found in sources: ${listStr}.${citeStr}`);
+  }
+  
+  return reasons;
+}
+
+/**
  * A3.8.14: Compute reliability from deal context
  * Returns reliability score and label based on deal claims.
  */
@@ -15698,7 +16022,64 @@ ${
           }
         }
         
+        // A3.8.30: Add coverage summary (selection mode only)
+        let coverageTokens = [];
+        let coverageFoundCount = 0;
+        let coverageNotFoundCount = 0;
+        if (selectionUsed && Array.isArray(finalReasons) && finalReasons.length > 0) {
+          const statementText = stmt?.text || "";
+          const statementTextLength = statementText.length;
+          
+          // Extract tokens for coverage check
+          coverageTokens = extractKeyNumericTokens(statementText);
+          
+          // Only add coverage summary if statement is long (>=160) OR has >=2 tokens
+          if (statementTextLength >= 160 || coverageTokens.length >= 2) {
+            // Get citations from canonical claims (collect early for coverage check)
+            const canonicalCitationsForCoverage = new Set();
+            canonicalClaims.forEach(cc => {
+              if (Array.isArray(cc.citations)) {
+                cc.citations.forEach(cit => canonicalCitationsForCoverage.add(cit));
+              }
+            });
+            const sortedCitationsForCoverage = Array.from(canonicalCitationsForCoverage).sort((a, b) => a - b);
+            
+            // Use canonical citations if available, otherwise fall back to assessment citations
+            const coverageCitations = sortedCitationsForCoverage.length > 0 
+              ? sortedCitationsForCoverage 
+              : (Array.isArray(assessment.citations) ? assessment.citations : []);
+            
+            // Build coverage reasons
+            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations);
+            
+            // Count found/not found for diagnostics
+            for (const token of coverageTokens) {
+              const result = checkTokenInSources(token, uploadedDocs, unifiedReferences, coverageCitations);
+              if (result.found) {
+                coverageFoundCount++;
+              } else {
+                coverageNotFoundCount++;
+              }
+            }
+            
+            // Add coverage reasons with priority ordering
+            // Priority 3: Coverage "Found in sources" (if added)
+            // Priority 4: Coverage "Not found in sources" OR scope note (if needed)
+            for (const coverageReason of coverageReasons) {
+              if (coverageReason.includes("Found in sources")) {
+                finalReasons.push(coverageReason);
+              }
+            }
+            for (const coverageReason of coverageReasons) {
+              if (coverageReason.includes("Not found in sources")) {
+                finalReasons.push(coverageReason);
+              }
+            }
+          }
+        }
+        
         // A3.8.28: Part B - Add scope note for partial coverage (selection mode only, tightened trigger)
+        // A3.8.30: Only add scope note if no numeric tokens found but statement is long
         if (selectionUsed && reasonsSourceValue !== "deal_context" && Array.isArray(finalReasons) && finalReasons.length > 0) {
           // A3.8.28: Do NOT add scope note if any canonicalClaim is other_qualitative
           const hasQualitativeClaim = canonicalClaims.some(cc => cc?.type === "other_qualitative");
@@ -15708,8 +16089,11 @@ ${
             const statementTextLength = statementText.length;
             const canonicalClaimsCount = canonicalClaims.length;
             
+            // A3.8.30: Only add scope note if no numeric tokens were found
+            const hasNumericTokens = coverageTokens.length > 0;
+            
             // Check if statement is long (> 140 chars) and assessment is partial
-            if (statementTextLength > 140) {
+            if (statementTextLength > 140 && !hasNumericTokens) {
               const reasonsFromCanonical = reasonsSourceValue === "canonical";
               const hasFewClaims = canonicalClaimsCount < 2;
               
@@ -15733,21 +16117,52 @@ ${
               
               // Append scope note if assessment is partial
               if (hasFewClaims || onlyOneFigure) {
-                finalReasons.push("Note: assessment focuses on the extracted verifiable claim(s) in this segment; other descriptive clauses are not individually verified.");
+                finalReasons.push("Note: assessment focuses on extracted verifiable claim(s); other descriptive clauses are not individually verified.");
               }
             }
           }
         }
         
+        // A3.8.30: Reason cap behavior (selection mode only)
+        // Allow up to 4 reasons in selection mode with priority ordering
         const reasonsBefore = finalReasons.length;
-        if (Array.isArray(finalReasons) && finalReasons.length > 3) {
-          finalReasons = finalReasons.slice(0, 3);
+        const maxReasons = selectionUsed ? 4 : 3;
+        if (Array.isArray(finalReasons) && finalReasons.length > maxReasons) {
+          // Priority order:
+          // 1) Deal-context assessment OR primary canonical reason
+          // 2) Type-specific caution note (mapping/basis/explicitness) if triggered
+          // 3) Coverage "Found in sources" (if added)
+          // 4) Coverage "Not found in sources" OR scope note (if needed)
+          // If reasons exceed cap, drop lowest priority coverage line first
+          
+          // Keep first maxReasons, but prioritize by type
+          const prioritized = [];
+          const coverageFound = [];
+          const coverageNotFound = [];
+          const scopeNote = [];
+          
+          for (const reason of finalReasons) {
+            if (reason.includes("Coverage (figures): Found in sources")) {
+              coverageFound.push(reason);
+            } else if (reason.includes("Coverage (figures): Not found in sources")) {
+              coverageNotFound.push(reason);
+            } else if (reason.includes("Note: assessment focuses on")) {
+              scopeNote.push(reason);
+            } else {
+              prioritized.push(reason);
+            }
+          }
+          
+          // Rebuild with priority: prioritized, coverageFound, then coverageNotFound/scopeNote
+          finalReasons = [...prioritized, ...coverageFound, ...coverageNotFound, ...scopeNote].slice(0, maxReasons);
+          
           if (runId && reqSig) {
-            diag(runId, reqSig, `[REASONS][CAP] idx=${idx} before=${reasonsBefore} after=3`);
+            diag(runId, reqSig, `[REASONS][CAP] idx=${idx} before=${reasonsBefore} after=${finalReasons.length} selectionMode=${selectionUsed}`);
           }
         }
         
         // A3.8.4: Emit CANON_SUMMARY with reasons count (must always be emitted)
+        // A3.8.30: Add coverage diagnostics (selection mode only)
         if (runId && reqSig) {
           const diagnostics = canonDiag || {};
           const selHash = selectionHash ? selectionHash.substring(0, 8) : "none";
@@ -15763,7 +16178,14 @@ ${
           const reasonsCount = finalReasons.length;
           // A3.8.15: Extract segmentId for logging
           const logSegmentId = segmentId !== undefined && segmentId !== null ? segmentId : "na";
-          diag(runId, reqSig, `[CANON_SUMMARY] idx=${idx} segId=${logSegmentId} sel=${selectionUsed ? 1 : 0} hash=${selHash} raw=${rawCount} drop=${dropCount} canon=${canonicalClaims.length} fin=${finCount} qual=${qualCount} merged=${mergedCount} dedupDrop=${dedupDropCount} reasons=${reasonsCount}`);
+          // A3.8.30: Add coverage diagnostics
+          const tokensCount = coverageTokens.length;
+          const foundCount = coverageFoundCount;
+          const notFoundCount = coverageNotFoundCount;
+          const coverageDiag = selectionUsed && tokensCount > 0 
+            ? ` tokens=${tokensCount} found=${foundCount} notFound=${notFoundCount}`
+            : "";
+          diag(runId, reqSig, `[CANON_SUMMARY] idx=${idx} segId=${logSegmentId} sel=${selectionUsed ? 1 : 0} hash=${selHash} raw=${rawCount} drop=${dropCount} canon=${canonicalClaims.length} fin=${finCount} qual=${qualCount} merged=${mergedCount} dedupDrop=${dedupDropCount} reasons=${reasonsCount}${coverageDiag}`);
         }
         
         // A3.8.4: Extract citations from canonical claims
