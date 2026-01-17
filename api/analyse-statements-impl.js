@@ -5907,11 +5907,60 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0, assessment
   
   // Then apply caps to non-deal-terms claims
   for (const [facet, facetClaims] of byFacet.entries()) {
-    const cap = caps[facet] || 1;
+    let cap = caps[facet] || 1;
+    
+    // A3.8.41: Key-figure coverage for valuation segments
+    // If Valuation facet has pre-money + (EV OR revenue), increase cap to 3
+    if (facet === "Valuation" && facetClaims.length > 1) {
+      let hasPreMoney = false;
+      let hasEV = false;
+      let hasRevenue = false;
+      
+      // Check for pre-money valuation, EV, and revenue
+      for (const claim of facetClaims) {
+        const text = (claim.claimText || "").toLowerCase();
+        const anchor = claim.anchor || extractAnchor(claim.claimText || "");
+        const canonicalAnchor = canonicalizeAnchor(anchor, text);
+        
+        // Check for pre-money (canonical type or qual anchor or text)
+        if (claim._canonicalType === "valuation_pre_money" || 
+            canonicalAnchor === "qual_premoney" ||
+            /\bpre-?money|premoney\b/i.test(text)) {
+          hasPreMoney = true;
+        }
+        
+        // Check for enterprise value
+        if (claim._canonicalType === "valuation_enterprise_value" ||
+            /\benterprise\s+value|\bev\b(?!\w)/i.test(text)) {
+          hasEV = true;
+        }
+        
+        // Check for revenue (metric_amount with revenue context)
+        if (claim._canonicalType === "metric_amount" ||
+            /\brevenue|annualized\s+revenue|run-?rate\s+revenue/i.test(text)) {
+          hasRevenue = true;
+        }
+      }
+      
+      // If pre-money exists and (EV OR revenue) exists, increase cap to 3
+      if (hasPreMoney && (hasEV || hasRevenue)) {
+        cap = 3;
+      }
+    }
     
     if (facetClaims.length <= cap) {
       // Under cap - keep all
       result.push(...facetClaims);
+      
+      // A3.8.41: Log key-figure keep rule activation
+      if (facet === "Valuation" && cap === 3 && runId && reqSig) {
+        const keptAnchors = facetClaims.map(c => {
+          const anchor = c.anchor || extractAnchor(c.claimText || "");
+          return canonicalizeAnchor(anchor, c.claimText || "") || "none";
+        }).filter(Boolean);
+        const keptPreviews = facetClaims.slice(0, 3).map(c => (c.claimText || "").substring(0, 40));
+        diag(runId, reqSig, `[A3.8.41][VAL_FACET_KEEP] idx=${idx} beforeCap=${facetClaims.length} cap=${cap} keptAnchors=[${keptAnchors.join(",")}] keptPreviews=[${keptPreviews.join("|")}]`);
+      }
     } else {
       // Over cap - apply scoring and keep top N
       const scored = facetClaims.map(claim => {
@@ -5948,18 +5997,92 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0, assessment
         return { claim, score, length };
       });
       
-      scored.sort((a, b) => {
-        if (a.score !== b.score) return b.score - a.score;
-        return a.length - b.length;
-      });
-      
-      const kept = scored.slice(0, cap).map(s => s.claim);
-      const dropped = scored.slice(cap);
-      
-      result.push(...kept);
-      
-      if (dropped.length > 0 && runId && reqSig) {
-        diag(runId, reqSig, `[A3.6.53][CAP] idx=${idx} facet=${facet} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} kept=${kept.length} dropped=${dropped.length}`);
+      // A3.8.41: For Valuation facet with key-figure cap, prioritize deterministically
+      if (facet === "Valuation" && cap === 3) {
+        // Priority order: (1) pre-money, (2) EV, (3) revenue/metric_amount
+        const preMoneyClaims = [];
+        const evClaims = [];
+        const revenueClaims = [];
+        const otherClaims = [];
+        
+        for (const item of scored) {
+          const claim = item.claim;
+          const text = (claim.claimText || "").toLowerCase();
+          const anchor = claim.anchor || extractAnchor(claim.claimText || "");
+          const canonicalAnchor = canonicalizeAnchor(anchor, text);
+          
+          // Priority 1: pre-money valuation
+          if (claim._canonicalType === "valuation_pre_money" || 
+              canonicalAnchor === "qual_premoney" ||
+              /\bpre-?money|premoney\b/i.test(text)) {
+            preMoneyClaims.push(item);
+          }
+          // Priority 2: enterprise value
+          else if (claim._canonicalType === "valuation_enterprise_value" ||
+                   /\benterprise\s+value|\bev\b(?!\w)/i.test(text)) {
+            evClaims.push(item);
+          }
+          // Priority 3: revenue (metric_amount with revenue context)
+          else if (claim._canonicalType === "metric_amount" ||
+                   /\brevenue|annualized\s+revenue|run-?rate\s+revenue/i.test(text)) {
+            revenueClaims.push(item);
+          }
+          else {
+            otherClaims.push(item);
+          }
+        }
+        
+        // Deterministic selection: pre-money (1), EV (1), revenue (1), then fill with others
+        const kept = [];
+        if (preMoneyClaims.length > 0) {
+          kept.push(preMoneyClaims[0].claim);
+        }
+        if (evClaims.length > 0 && kept.length < cap) {
+          kept.push(evClaims[0].claim);
+        }
+        if (revenueClaims.length > 0 && kept.length < cap) {
+          kept.push(revenueClaims[0].claim);
+        }
+        // Fill remaining slots with highest-scored others
+        const remaining = otherClaims.sort((a, b) => {
+          if (a.score !== b.score) return b.score - a.score;
+          return a.length - b.length;
+        });
+        for (let i = 0; i < remaining.length && kept.length < cap; i++) {
+          kept.push(remaining[i].claim);
+        }
+        
+        const dropped = scored.filter(item => !kept.includes(item.claim));
+        result.push(...kept);
+        
+        // A3.8.41: Log key-figure keep rule activation
+        if (runId && reqSig) {
+          const keptAnchors = kept.map(c => {
+            const anchor = c.anchor || extractAnchor(c.claimText || "");
+            return canonicalizeAnchor(anchor, c.claimText || "") || "none";
+          }).filter(Boolean);
+          const keptPreviews = kept.slice(0, 3).map(c => (c.claimText || "").substring(0, 40));
+          diag(runId, reqSig, `[A3.8.41][VAL_FACET_KEEP] idx=${idx} beforeCap=${facetClaims.length} cap=${cap} keptAnchors=[${keptAnchors.join(",")}] keptPreviews=[${keptPreviews.join("|")}]`);
+        }
+        
+        if (dropped.length > 0 && runId && reqSig) {
+          diag(runId, reqSig, `[A3.6.53][CAP] idx=${idx} facet=${facet} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} kept=${kept.length} dropped=${dropped.length}`);
+        }
+      } else {
+        // Original scoring-based selection for other cases
+        scored.sort((a, b) => {
+          if (a.score !== b.score) return b.score - a.score;
+          return a.length - b.length;
+        });
+        
+        const kept = scored.slice(0, cap).map(s => s.claim);
+        const dropped = scored.slice(cap);
+        
+        result.push(...kept);
+        
+        if (dropped.length > 0 && runId && reqSig) {
+          diag(runId, reqSig, `[A3.6.53][CAP] idx=${idx} facet=${facet} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} kept=${kept.length} dropped=${dropped.length}`);
+        }
       }
     }
   }
@@ -11306,9 +11429,10 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     } else {
       // Fallback for other types - use existing generateClaimLinkedReasons logic
       // A3.8.32: Fix filteredNotes ReferenceError - define from evidenceNotes
+      // A3.8.41: Filter consolidation jargon (expanded pattern)
       const filteredNotes = Array.isArray(evidenceNotes)
         ? evidenceNotes.filter(note => 
-            typeof note === "string" && !/consolidated.*extracted signals|merged.*raw claims/i.test(note)
+            typeof note === "string" && !/(consolidated\s+\d+.*signals|merged.*raw\s+claims)/i.test(note)
           )
         : [];
       
@@ -11321,7 +11445,8 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         reliability: cc.reliability,
         reliabilityScore: cc.reliabilityScore,
         comment: filteredNotes.length > 0 ? filteredNotes.join("; ") : (isSupported && citations.length > 0 ? "Supported by sources" : "Not supported in provided sources"),
-        anchor: cc.anchorFamily,
+        // A3.8.41: Prefer signalAnchors for coverage accounting when available (preserves consolidated qualitative signals)
+        anchor: (cc.signalAnchors && Array.isArray(cc.signalAnchors) && cc.signalAnchors.length > 0) ? cc.signalAnchors.join(",") : cc.anchorFamily,
         citations: cc.citations,
         _canonicalId: cc.id,
         _canonicalType: cc.type,
@@ -16206,9 +16331,10 @@ ${
           // A3.8.15: Fix comment to respect Low reliability
           claims = canonClaims.map(cc => {
             // A3.8.12: Filter out consolidation jargon from evidenceNotes for user-facing comments
+            // A3.8.41: Expanded pattern to catch all consolidation jargon
             const filteredNotes = cc.evidenceNotes && cc.evidenceNotes.length > 0
               ? cc.evidenceNotes.filter(note => 
-                  typeof note === "string" && !/consolidated.*extracted signals|merged.*raw claims/i.test(note)
+                  typeof note === "string" && !/(consolidated\s+\d+.*signals|merged.*raw\s+claims)/i.test(note)
                 )
               : [];
             
@@ -16233,7 +16359,8 @@ ${
               reliability: cc.reliability,
               reliabilityScore: cc.reliabilityScore,
               comment: comment,
-              anchor: cc.anchorFamily,
+              // A3.8.41: Prefer signalAnchors for coverage accounting when available (preserves consolidated qualitative signals)
+              anchor: (cc.signalAnchors && Array.isArray(cc.signalAnchors) && cc.signalAnchors.length > 0) ? cc.signalAnchors.join(",") : cc.anchorFamily,
               citations: cc.citations,
               // Preserve canonical claim ID for diagnostics
               _canonicalId: cc.id,
