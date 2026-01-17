@@ -16,7 +16,7 @@ import {
 } from "../lib/web.js";
 import { corpusSearch } from "../lib/corpusSearch.js";
 import { createHash } from "node:crypto";
-import { canonicalizeClaims, normalizeMoneyAnchor } from "../lib/canonicalClaims.js";
+import { canonicalizeClaims, normalizeMoneyAnchor, isMoneyAnchor, normalizeAnyAnchor } from "../lib/canonicalClaims.js";
 
 // A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
 const runStateByRid = {};
@@ -197,8 +197,11 @@ function buildSelectionSentences(selectionText, runId = null, reqSig = null) {
   }
   
   // A3.8.33: Log sentence reconstruction
+  // A3.8.43: Part E - Only log if runId and reqSig are provided (prevents duplicate logs)
   const sampleFirst2 = finalSentences.slice(0, 2).map(s => s.length);
-  log(`[SELECTION][SENTENCES] count=${finalSentences.length} sampleFirst2Len=${sampleFirst2.join(",")} mergedSmall=${mergedSmallCount}`);
+  if (runId && reqSig) {
+    log(`[SELECTION][SENTENCES] count=${finalSentences.length} sampleFirst2Len=${sampleFirst2.join(",")} mergedSmall=${mergedSmallCount}`);
+  }
   
   return { sentences: finalSentences, mergedSmallCount };
 }
@@ -6528,6 +6531,124 @@ function extractQualifiedRelationshipClaims(statementText, atomicNumericClaims) 
   return claims.slice(0, 3);
 }
 
+/**
+ * A3.8.43: Split mixed numeric raw claims (claims containing both $ and % values)
+ * Returns array of claims (original if no split needed, or [percentClaim, moneyClaim] if split)
+ */
+function splitMixedNumericClaims(rawClaims, statementText, selectionMode, runId = null, reqSig = null) {
+  if (!Array.isArray(rawClaims) || rawClaims.length === 0) {
+    return rawClaims;
+  }
+  
+  const splitClaims = [];
+  let splitCount = 0;
+  
+  for (const rc of rawClaims) {
+    if (!rc || typeof rc.claimText !== "string") {
+      splitClaims.push(rc);
+      continue;
+    }
+    
+    const claimText = rc.claimText;
+    const anchor = rc.anchor || extractAnchor(claimText) || "";
+    
+    // Detect presence of both dollar and percent
+    const hasDollar = /\$/.test(claimText) || /\b(?:usd)\b/i.test(claimText);
+    const hasPercent = /%/.test(claimText) || /^pct_/.test(anchor);
+    
+    if (hasDollar && hasPercent) {
+      // Split into percent-only and money-only claims
+      const percentMatches = claimText.match(/([\d,]+(?:\.\d+)?)\s*%/g);
+      const dollarMatches = claimText.match(/\$\s*([\d,]+(?:\.\d+)?)\s*(?:m|mm|million|b|bn|billion|k|thousand)?/gi);
+      
+      // Extract percent claim
+      if (percentMatches && percentMatches.length > 0) {
+        // Prefer the one that matches anchor pct_N if possible
+        let selectedPercent = percentMatches[0];
+        if (anchor && /^pct_(\d+)$/.test(anchor)) {
+          const anchorNum = parseInt(anchor.match(/^pct_(\d+)$/)[1]);
+          for (const pct of percentMatches) {
+            const pctNum = Math.floor(parseFloat(pct.replace(/,/g, "").replace(/%/g, "")));
+            if (pctNum === anchorNum) {
+              selectedPercent = pct;
+              break;
+            }
+          }
+        }
+        
+        // Extract surrounding context for percent claim
+        const pctIndex = claimText.indexOf(selectedPercent);
+        const contextStart = Math.max(0, pctIndex - 20);
+        const contextEnd = Math.min(claimText.length, pctIndex + selectedPercent.length + 20);
+        const percentText = claimText.substring(contextStart, contextEnd).trim();
+        
+        // Use existing anchor if it's pct_*, otherwise extract from text
+        let percentAnchor = anchor && /^pct_/.test(anchor) ? anchor : extractAnchor(percentText);
+        if (percentAnchor) {
+          percentAnchor = canonicalizeAnchor(percentAnchor, percentText);
+          percentAnchor = normalizeAnyAnchor(percentAnchor);
+        }
+        
+        const percentClaim = {
+          ...rc,
+          claimText: percentText,
+          anchor: percentAnchor,
+        };
+        splitClaims.push(percentClaim);
+      }
+      
+      // Extract money claim
+      if (dollarMatches && dollarMatches.length > 0) {
+        const dollarMatch = dollarMatches[0];
+        const dollarIndex = claimText.indexOf(dollarMatch);
+        
+        // Expand context to include "per month" / "annualized" if adjacent
+        let contextStart = Math.max(0, dollarIndex - 10);
+        let contextEnd = Math.min(claimText.length, dollarIndex + dollarMatch.length + 30);
+        let moneyText = claimText.substring(contextStart, contextEnd);
+        
+        // Check for adjacent time/period context
+        const afterDollar = claimText.substring(dollarIndex + dollarMatch.length, dollarIndex + dollarMatch.length + 30);
+        if (/\b(per|month|monthly|annualized|annually|year|yr)\b/i.test(afterDollar)) {
+          contextEnd = Math.min(claimText.length, dollarIndex + dollarMatch.length + 50);
+          moneyText = claimText.substring(contextStart, contextEnd).trim();
+        } else {
+          moneyText = moneyText.trim();
+        }
+        
+        // Extract anchor from money text
+        let moneyAnchor = extractAnchor(moneyText);
+        if (moneyAnchor) {
+          moneyAnchor = canonicalizeAnchor(moneyAnchor, moneyText);
+          moneyAnchor = normalizeAnyAnchor(moneyAnchor);
+        }
+        
+        const moneyClaim = {
+          ...rc,
+          claimText: moneyText,
+          anchor: moneyAnchor,
+        };
+        splitClaims.push(moneyClaim);
+      }
+      
+      splitCount++;
+      
+      // A3.8.43: Log split in selection mode
+      if (selectionMode && runId && reqSig) {
+        const beforePreview = claimText.substring(0, 60);
+        const outAnchors = splitClaims.slice(-2).map(c => c.anchor || "none");
+        const outPreviews = splitClaims.slice(-2).map(c => (c.claimText || "").substring(0, 40));
+        diag(runId, reqSig, `[A3.8.43][MIXED_SPLIT] beforeAnchor=${anchor} beforePreview="${beforePreview}" out=[${outAnchors.map((a, i) => `{anchor:${a},preview:"${outPreviews[i]}"}`).join(",")}]`);
+      }
+    } else {
+      // No split needed - keep original
+      splitClaims.push(rc);
+    }
+  }
+  
+  return splitClaims;
+}
+
 // A3.8.29: Part B - Helper to normalize money suffix for rawClaims (check for month context)
 function normalizeMoneySuffixForRawClaim(claimText, nearbyText = "") {
   if (!claimText || typeof claimText !== "string") return null;
@@ -8419,7 +8540,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   // This is set up here but logged in the extraction/aggregation phase
   
   // A3.6.8: Extract all anchors from original statement text for logging
-  const allAnchorsInOriginal = extractAllAnchors(statementText);
+  // A3.8.43: Normalize anchors for consistency
+  const allAnchorsInOriginal = extractAllAnchors(statementText).map(a => normalizeAnyAnchor(a));
   if (idx < 2 && runId && reqSig) {
     diag(runId, reqSig, `[ANCHORS_ALL] idx=${idx} anchors=${JSON.stringify(Array.from(allAnchorsInOriginal))}`);
   }
@@ -9527,15 +9649,18 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   }
   
   // A3.6.12: Anchor coverage logging - post-condition check (using canonical anchors only)
+  // A3.8.43: Normalize anchors for consistent comparison
   if (runId && reqSig) {
-    // Canonicalize detected anchors and filter to canonical only
+    // Canonicalize detected anchors and filter to canonical only, then normalize
     const anchorsDetected = allAnchorsInOriginal
       .map(a => canonicalizeAnchor(a, statementText))
-      .filter(a => a && isCanonicalAnchor(a));
+      .filter(a => a && isCanonicalAnchor(a))
+      .map(a => normalizeAnyAnchor(a));
     const anchorsEmitted = Array.from(new Set(finalClaims.map(c => {
       const anchor = c.anchor || extractAnchor(c.claimText);
       const canonical = canonicalizeAnchor(anchor, c.claimText);
-      return canonical && isCanonicalAnchor(canonical) ? canonical : null;
+      const normalized = canonical && isCanonicalAnchor(canonical) ? normalizeAnyAnchor(canonical) : null;
+      return normalized;
     }).filter(Boolean)));
     const missing = Array.from(new Set(anchorsDetected.filter(a => !anchorsEmitted.includes(a))));
     
@@ -15406,12 +15531,13 @@ export default async function handler(req, res) {
       rawExtractionCandidates = extractDeterministicStatementCandidates(normalizedDraftText, runId, reqSig, hasReturned);
     } else {
       diag(runId, reqSig, `[PIPELINE] phase=extractCandidates (selection mode - splitting)`);
-      // A3.8.33: Build sentences first for integrity
-      const { sentences, mergedSmallCount } = buildSelectionSentences(selectedText, runId, reqSig);
-      selectionSentencesCount = sentences.length;
-      selectionMergedSmallCount = mergedSmallCount;
-      
       // A3.7.4: Split ONLY selectedText (baseText in selection mode)
+      // A3.8.43: Part E - buildSelectionSentences is called inside splitSelectionIntoCandidates and logs there
+      // Extract sentence info from the split result to avoid duplicate log
+      const { sentences: tempSentences, mergedSmallCount: tempMergedSmall } = buildSelectionSentences(selectedText, null, null); // Call without logging
+      selectionSentencesCount = tempSentences.length;
+      selectionMergedSmallCount = tempMergedSmall;
+      
       const splitResult = splitSelectionIntoCandidates(selectedText, runId, reqSig);
       if (splitResult.length === 0) {
         // Fallback: if split returns empty, use selection as single candidate (backward compat)
@@ -16259,6 +16385,11 @@ ${
             if (subsumptionResult.droppedCount > 0 && runId && reqSig) {
               diag(runId, reqSig, `[CLAIMS][SUBSUME] idx=${idx} dropped=${subsumptionResult.droppedCount} examples="${subsumptionResult.examples.join(" | ")}"`);
             }
+          }
+          
+          // A3.8.43: Part B - Split mixed numeric claims (selection mode only, but safe globally)
+          if (Array.isArray(rawClaims) && rawClaims.length > 0) {
+            rawClaims = splitMixedNumericClaims(rawClaims, text, selectionUsed, runId, reqSig);
           }
           
           // A3.8.0: Canonicalize raw claims into canonical claims
