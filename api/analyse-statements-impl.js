@@ -5090,11 +5090,19 @@ function extractAnchor(claimText) {
     }
     // "million", "mm", "m" all stay as-is (already in millions)
     
-    // Only add "m" suffix if there was an explicit unit or if it's a large amount
-    if (unit || normalized >= 1) {
+    // A3.8.37: Only add "m" suffix if there was an explicit unit (million/mm/m/billion/b/thousand/k)
+    // OR if the numeric value is >= 1,000,000 (actual millions)
+    // For small values like $45 with no unit, return "usd_45" (no "m")
+    if (unit) {
+      // Explicit unit present - use "m" suffix
       return `usd_${normalized}m`;
+    } else if (num >= 1000000) {
+      // Large value without explicit unit but clearly in millions
+      return `usd_${normalized}m`;
+    } else {
+      // Small value without explicit unit - no "m" suffix
+      return `usd_${num}`;
     }
-    return `usd_${normalized}`;
   }
   
   // Percentage anchors: "<num>%"
@@ -5166,6 +5174,7 @@ const CANONICAL_ANCHOR_ALLOWLIST = new Set([
 ]);
 
 // Helper to check if anchor is canonical (supports dynamic pct/usd/mult patterns)
+// A3.8.37: Extended to support usd_* anchors without "m" suffix (for unit pricing)
 function isCanonicalAnchor(anchor) {
   if (typeof anchor !== "string") return false;
   
@@ -5175,6 +5184,7 @@ function isCanonicalAnchor(anchor) {
   // Dynamic patterns
   if (/^pct_\d+$/.test(anchor)) return true; // Any pct_* number
   if (/^usd_[\d.]+m$/.test(anchor)) return true; // Any usd_*m
+  if (/^usd_\d+(?:\.\d+)?$/.test(anchor)) return true; // A3.8.37: Any usd_* (without "m") for unit pricing
   if (/^mult_[\d.]+x$/.test(anchor)) return true; // Any mult_*x
   
   return false;
@@ -5299,11 +5309,18 @@ function extractAllAnchors(clauseText) {
       } else if (unit.includes("thousand") || unit === "k") {
         normalized = normalized / 1000;
       }
-      // Only add "m" suffix if there was an explicit unit or if it's a large amount
-      if (unit || normalized >= 1) {
+      // A3.8.37: Only add "m" suffix if there was an explicit unit (million/mm/m/billion/b/thousand/k)
+      // OR if the numeric value is >= 1,000,000 (actual millions)
+      // For small values like $45 with no unit, return "usd_45" (no "m")
+      if (unit) {
+        // Explicit unit present - use "m" suffix
+        anchors.add(`usd_${normalized}m`);
+      } else if (num >= 1000000) {
+        // Large value without explicit unit but clearly in millions
         anchors.add(`usd_${normalized}m`);
       } else {
-        anchors.add(`usd_${normalized}`);
+        // Small value without explicit unit - no "m" suffix
+        anchors.add(`usd_${num}`);
       }
     }
   }
@@ -6446,10 +6463,11 @@ function filterSubsumedClaims(rawClaims, statementText, statementIndex, runId = 
   }
   
   // Context tokens allowlist (semantic words that indicate meaning-complete claims)
+  // A3.8.37: Extended to include pricing/period context tokens
   const contextTokens = new Set([
-    "per", "month", "monthly", "annual", "subscription", "pricing", "tiered",
+    "per", "month", "/mo", "monthly", "annual", "subscription", "pricing", "tiered", "averaging",
     "valuation", "pre-money", "post-money", "premoney", "postmoney", "enterprise", "value", "ev",
-    "ownership", "stake", "equity", "fully", "diluted", "take", "rate", "transaction", "fee",
+    "ownership", "stake", "equity", "fully", "diluted", "take", "rate", "transaction", "fee", "fees",
     "investment", "financing", "round", "series", "seed", "secondary", "purchase",
   ]);
   
@@ -8923,8 +8941,16 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       diag(runId, reqSig, `[VAL_QUAL_TRACE] idx=${statementIdx} checkpoint=enter_claim claimIdx=${claimIdx} anchor=qual_valuation`);
     }
     
+    // A3.8.37: Check for contextual USD claims (pricing/period context) in selection mode
+    // These should be kept even if anchor might be non-canonical
+    const hasPricingContext = /\b(per|month|/mo|monthly|subscription|pricing|fee|fees|averaging|avg)\b/i.test(claimText);
+    const isContextualUsd = hasPricingContext && canonicalClaimAnchor && canonicalClaimAnchor.startsWith("usd_");
+    let keptForContextualUsd = false;
+    let droppedFragment = null;
+    
     // A3.6.53: Hard guard - skip non-canonical anchors (including null from qual_ownership)
     // BUT: Never drop protected claims (canonical deal-role claims)
+    // A3.8.37: Also keep contextual USD claims in selection mode
     if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
       // A3.6.53: Bypass non-canonical check for protected claims
       if (aggClaim.__protected === true) {
@@ -8932,6 +8958,31 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         const claimRole = aggClaim.role || "unknown";
         if (runId && reqSig) {
           diag(runId, reqSig, `[A3.6.53][NONCANON_SKIP] idx=${statementIdx} anchor=${claimAnchor} role=${claimRole} reason=protected_canonical_deal_role`);
+        }
+        // Continue to process this claim (don't skip)
+      } else if (isContextualUsd) {
+        // A3.8.37: Keep contextual USD claims (e.g., "$45 per month") even if anchor is non-canonical
+        // Check if there's a bare fragment that should be dropped instead
+        const usdMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)/);
+        if (usdMatch) {
+          const numStr = usdMatch[1].replace(/,/g, "");
+          const num = parseFloat(numStr);
+          // Look for a bare fragment claim with same number
+          for (const otherClaim of cappedClaims) {
+            if (otherClaim === aggClaim) continue;
+            const otherText = otherClaim.claimText || "";
+            const bareFragmentMatch = otherText.match(/^\$([\d,]+(?:\.\d+)?)$/);
+            if (bareFragmentMatch && bareFragmentMatch[1].replace(/,/g, "") === numStr) {
+              droppedFragment = otherText;
+              break;
+            }
+          }
+        }
+        keptForContextualUsd = true;
+        if (runId && reqSig) {
+          const keptPreview = claimText.substring(0, 50);
+          const droppedPreview = droppedFragment ? droppedFragment.substring(0, 30) : "none";
+          diag(runId, reqSig, `[CLAIMS][KEEP_CONTEXTUAL_USD] idx=${statementIdx} kept="${keptPreview}" dropped="${droppedPreview}"`);
         }
         // Continue to process this claim (don't skip)
       } else {
