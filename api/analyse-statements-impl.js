@@ -11254,15 +11254,18 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         
         // Check corpusSearch match type if available
         let isFuzzyOnly = false;
+        let matchTypesArray = [];
         if (uploadedDocs.length > 0 && statementText) {
           try {
             const searchResult = corpusSearch(statementText, uploadedDocs);
             if (searchResult && searchResult.found && searchResult.hits) {
               const hits = searchResult.hits || [];
               const matchTypes = new Set(hits.map(h => h.matchType).filter(Boolean));
+              matchTypesArray = Array.from(matchTypes);
               const hasNumber = matchTypes.has("number");
               const hasKeyword = matchTypes.has("keyword");
               const hasFuzzy = matchTypes.has("fuzzy");
+              // A3.8.39: Strict gate - only fuzzy-only (no number, no keyword)
               const hasNumberOrKeyword = hasNumber || hasKeyword;
               isFuzzyOnly = hasFuzzy && !hasNumberOrKeyword;
             }
@@ -11271,11 +11274,20 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
           }
         }
         
+        // A3.8.39: Log paraphrase gate decision
+        const statementIndex = context.statementIndex || 0;
+        const runId = context.runId || null;
+        const reqSig = context.reqSig || null;
+        if (runId && reqSig) {
+          const matchTypesStr = matchTypesArray.length > 0 ? matchTypesArray.join(",") : "none";
+          diag(runId, reqSig, `[REASONS][PARAPHRASE_GATE] idx=${statementIndex} matchTypes=[${matchTypesStr}] added=${isFuzzyOnly}`);
+        }
+        
         // A3.8.25: Selection mode uses deterministic language
         if (reliability === "Low") {
           qualVerb = "is not supported by the provided source(s).";
         } else if (citations.length > 0) {
-          // A3.8.33: Use paraphrase-qualified line if fuzzy-only match
+          // A3.8.39: Use paraphrase-qualified line ONLY if fuzzy-only match (no number, no keyword)
           if (isFuzzyOnly) {
             qualVerb = "substance is supported, but the exact wording may be paraphrased; confirm phrasing if required.";
           } else {
@@ -16140,6 +16152,52 @@ ${
           
           canonicalClaims = canonClaims || [];
           canonDiag = canonDiagResult ?? null;
+          
+          // A3.8.39: Part D - Invariant warning check (selection mode only)
+          if (selectionUsed && canonicalClaims && Array.isArray(canonicalClaims)) {
+            const badClaims = [];
+            const usdTypes = new Set([
+              "valuation_pre_money",
+              "valuation_post_money",
+              "valuation_enterprise_value",
+              "investment_amount",
+              "metric_amount",
+              "secondary_purchase",
+            ]);
+            const percentTypes = new Set([
+              "ownership_percent",
+              "fee_percent",
+              "growth_percent",
+            ]);
+            
+            for (const claim of canonicalClaims) {
+              if (!claim || typeof claim !== "object") continue;
+              
+              // Check USD type invariants
+              if (usdTypes.has(claim.type)) {
+                if (claim.unit !== "USD" || (claim.currency !== "USD" && claim.currency !== null && claim.currency !== undefined)) {
+                  badClaims.push({ type: claim.type, unit: claim.unit, currency: claim.currency });
+                }
+              }
+              
+              // Check percent type invariants
+              if (percentTypes.has(claim.type)) {
+                if (claim.unit !== "%" || (claim.currency !== null && claim.currency !== undefined)) {
+                  badClaims.push({ type: claim.type, unit: claim.unit, currency: claim.currency });
+                }
+              }
+              
+              // Check for currency="%" anywhere
+              if (claim.currency === "%") {
+                badClaims.push({ type: claim.type, unit: claim.unit, currency: claim.currency });
+              }
+            }
+            
+            if (badClaims.length > 0 && runId && reqSig) {
+              const sample = badClaims[0];
+              diag(runId, reqSig, `[CANON][INVARIANT_WARN] idx=${idx} badClaims=${badClaims.length} sample=${JSON.stringify(sample)}`);
+            }
+          }
           
           // A3.8.0: Preserve raw claims for diagnostics
           rawClaimsForDiagnostics = [...rawClaims];
