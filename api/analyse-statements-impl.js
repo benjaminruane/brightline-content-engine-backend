@@ -5041,6 +5041,7 @@ function extractEntityKey(claimText) {
 }
 
 // A3.6.2 ADDENDUM: Extract anchor (facet-free, for meaning-based deduplication)
+// A3.8.35: Enhanced unit pricing detection
 function extractAnchor(claimText) {
   if (typeof claimText !== "string") return null;
   
@@ -5048,9 +5049,9 @@ function extractAnchor(claimText) {
   
   // A3.6.2 PATCH v2: Numeric anchors with consistent normalization and validation
   // Match: "$7 million", "$7mm", "$7m" -> all normalize to usd_7m
-  // A3.8.28: Fix $45 -> $45m bug by checking for "month" context
+  // A3.8.35: Enhanced unit pricing detection
   // Use more specific regex to capture full number
-  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/i);
+  const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)?/i);
   if (usdMatch) {
     const numStr = usdMatch[1].replace(/,/g, "");
     const unit = (usdMatch[2] || "").toLowerCase();
@@ -5059,6 +5060,14 @@ function extractAnchor(claimText) {
     // A3.6.2 PATCH v2: Sanity check - ensure we captured the full number
     if (!Number.isFinite(num) || num <= 0) {
       return null;
+    }
+    
+    // A3.8.35: Unit pricing guardrail - check for unit pricing context
+    const hasUnitPricingContext = checkUnitPricingContextForAnchor(claimText, usdMatch.index, usdMatch[0].length);
+    
+    // A3.8.35: If amount is in unit pricing range and context is present, use unit pricing anchor
+    if (hasUnitPricingContext && num >= 1 && num <= 5000) {
+      return `usd_${num}`;
     }
     
     // A3.8.28: Fix $45 -> $45m bug - if "m" suffix and following text starts with "month", treat as no suffix
@@ -5081,7 +5090,11 @@ function extractAnchor(claimText) {
     }
     // "million", "mm", "m" all stay as-is (already in millions)
     
-    return `usd_${normalized}m`;
+    // Only add "m" suffix if there was an explicit unit or if it's a large amount
+    if (unit || normalized >= 1) {
+      return `usd_${normalized}m`;
+    }
+    return `usd_${normalized}`;
   }
   
   // Percentage anchors: "<num>%"
@@ -5203,7 +5216,45 @@ function canonicalizeAnchor(anchor, contextText = null) {
   return anchor;
 }
 
+// A3.8.35: Helper to check unit pricing context for anchor extraction
+function checkUnitPricingContextForAnchor(text, matchIndex, matchLength) {
+  if (!text || typeof text !== "string") return false;
+  
+  const lower = text.toLowerCase();
+  
+  // Unit pricing triggers (case-insensitive)
+  const unitPricingTriggers = [
+    /\bper\s+month\b/i,
+    /\b\/month\b/i,
+    /\bmonthly\b/i,
+    /\bper\s+user\b/i,
+    /\bper\s+seat\b/i,
+    /\bper\s+license\b/i,
+    /\bsubscription\b/i,
+    /\bpricing\b/i,
+    /\btiered\s+subscription\b/i,
+    /\bplan\b/i,
+    /\barpu\b/i,
+    /\baverage\b/i,
+  ];
+  
+  // Check context within ±40 chars
+  const contextStart = Math.max(0, matchIndex - 40);
+  const contextEnd = Math.min(lower.length, matchIndex + matchLength + 40);
+  const contextWindow = lower.substring(contextStart, contextEnd);
+  
+  // Check if any trigger matches in context window
+  for (const trigger of unitPricingTriggers) {
+    if (trigger.test(contextWindow)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
 // A3.6.11: Extract all anchors and canonicalize them
+// A3.8.35: Enhanced unit pricing detection
 function extractAllAnchors(clauseText) {
   if (typeof clauseText !== "string") return [];
   
@@ -5214,14 +5265,23 @@ function extractAllAnchors(clauseText) {
   const anchors = new Set();
   
   // Extract USD anchors
-  // A3.8.28: Fix $45 -> $45m bug by checking for "month" context
-  const usdMatches = [...originalText.matchAll(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)/gi)];
+  // A3.8.35: Enhanced unit pricing detection - check for unit pricing context
+  const usdMatches = [...originalText.matchAll(/\$([\d,]+(?:\.\d+)?)\s*(million|mm\b|m\b|billion|b\b|thousand|k\b)?/gi)];
   for (const match of usdMatches) {
     const numStr = match[1].replace(/,/g, "");
     const unit = (match[2] || "").toLowerCase();
     const num = parseFloat(numStr);
     
     if (Number.isFinite(num) && num > 0) {
+      // A3.8.35: Unit pricing guardrail - check for unit pricing context
+      const hasUnitPricingContext = checkUnitPricingContextForAnchor(originalText, match.index, match[0].length);
+      
+      // A3.8.35: If amount is in unit pricing range and context is present, use unit pricing anchor
+      if (hasUnitPricingContext && num >= 1 && num <= 5000) {
+        anchors.add(`usd_${num}`);
+        continue;
+      }
+      
       // A3.8.28: Fix $45 -> $45m bug - if "m" suffix and following text starts with "month", treat as no suffix
       if (unit === "m") {
         const matchIndex = match.index + match[0].length;
@@ -5239,7 +5299,30 @@ function extractAllAnchors(clauseText) {
       } else if (unit.includes("thousand") || unit === "k") {
         normalized = normalized / 1000;
       }
-      anchors.add(`usd_${normalized}m`);
+      // Only add "m" suffix if there was an explicit unit or if it's a large amount
+      if (unit || normalized >= 1) {
+        anchors.add(`usd_${normalized}m`);
+      } else {
+        anchors.add(`usd_${normalized}`);
+      }
+    }
+  }
+  
+  // A3.8.35: Also check for plain USD amounts without explicit unit
+  const plainUsdMatches = [...originalText.matchAll(/\$([\d,]+(?:\.\d+)?)(?!\s*(?:million|mm|m|billion|b|thousand|k)\b)/gi)];
+  for (const match of plainUsdMatches) {
+    const numStr = match[1].replace(/,/g, "");
+    const num = parseFloat(numStr);
+    
+    if (Number.isFinite(num) && num > 0) {
+      // A3.8.35: Unit pricing guardrail - check for unit pricing context
+      const hasUnitPricingContext = checkUnitPricingContextForAnchor(originalText, match.index, match[0].length);
+      
+      // A3.8.35: If amount is in unit pricing range and context is present, use unit pricing anchor
+      if (hasUnitPricingContext && num >= 1 && num <= 5000) {
+        anchors.add(`usd_${num}`);
+      }
+      // Otherwise, don't add plain USD without explicit unit (let existing logic handle it)
     }
   }
   
