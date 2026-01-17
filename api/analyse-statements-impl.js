@@ -5235,7 +5235,7 @@ function checkUnitPricingContextForAnchor(text, matchIndex, matchLength) {
   // Unit pricing triggers (case-insensitive)
   const unitPricingTriggers = [
     /\bper\s+month\b/i,
-    /\b\/month\b/i,
+    /\b\/month\b/i,  // Forward slash is escaped as \/
     /\bmonthly\b/i,
     /\bper\s+user\b/i,
     /\bper\s+seat\b/i,
@@ -8943,7 +8943,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     // A3.8.37: Check for contextual USD claims (pricing/period context) in selection mode
     // These should be kept even if anchor might be non-canonical
-    const hasPricingContext = /\b(per|month|/mo|monthly|subscription|pricing|fee|fees|averaging|avg)\b/i.test(claimText);
+    const hasPricingContext = /\b(per|month|\/mo|monthly|subscription|pricing|fee|fees|averaging|avg)\b/i.test(claimText);
     const isContextualUsd = hasPricingContext && canonicalClaimAnchor && canonicalClaimAnchor.startsWith("usd_");
     let keptForContextualUsd = false;
     let droppedFragment = null;
@@ -10783,6 +10783,14 @@ function sanitizeRegexFlags(flags, runId = null, reqSig = null) {
   }
   
   return sanitizedStr;
+}
+
+/**
+ * A3.8.38: Safe RegExp constructor that sanitizes flags
+ * Prevents invalid regex flag errors at runtime
+ */
+function safeRegExp(pattern, flags) {
+  return new RegExp(pattern, sanitizeRegexFlags(flags));
 }
 
 /**
