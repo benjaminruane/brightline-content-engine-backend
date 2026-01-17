@@ -16,7 +16,7 @@ import {
 } from "../lib/web.js";
 import { corpusSearch } from "../lib/corpusSearch.js";
 import { createHash } from "node:crypto";
-import { canonicalizeClaims } from "../lib/canonicalClaims.js";
+import { canonicalizeClaims, normalizeMoneyAnchor } from "../lib/canonicalClaims.js";
 
 // A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
 const runStateByRid = {};
@@ -6056,13 +6056,27 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0, assessment
         result.push(...kept);
         
         // A3.8.41: Log key-figure keep rule activation
+        // A3.8.42: Also log normalized anchors and which will be emitted
         if (runId && reqSig) {
-          const keptAnchors = kept.map(c => {
+          const keptAnchorsRaw = kept.map(c => {
             const anchor = c.anchor || extractAnchor(c.claimText || "");
             return canonicalizeAnchor(anchor, c.claimText || "") || "none";
           }).filter(Boolean);
+          
+          // A3.8.42: Normalize anchors for consistency
+          const keptAnchorsNorm = keptAnchorsRaw.map(a => normalizeMoneyAnchor(a));
+          
+          // A3.8.42: Check which will be emitted (non-canonical check with normalized anchors)
+          const willEmitAnchorsNorm = keptAnchorsNorm.filter(a => a && isCanonicalAnchor(a));
+          const skippedAfterKeep = keptAnchorsNorm.filter(a => a && !isCanonicalAnchor(a));
+          
           const keptPreviews = kept.slice(0, 3).map(c => (c.claimText || "").substring(0, 40));
-          diag(runId, reqSig, `[A3.8.41][VAL_FACET_KEEP] idx=${idx} beforeCap=${facetClaims.length} cap=${cap} keptAnchors=[${keptAnchors.join(",")}] keptPreviews=[${keptPreviews.join("|")}]`);
+          diag(runId, reqSig, `[A3.8.41][VAL_FACET_KEEP] idx=${idx} beforeCap=${facetClaims.length} cap=${cap} keptAnchors=[${keptAnchorsRaw.join(",")}] keptPreviews=[${keptPreviews.join("|")}]`);
+          
+          // A3.8.42: Part D - Log normalized anchors and emit status
+          if (selectionMode) {
+            diag(runId, reqSig, `[A3.8.42][VAL_KEEP_EMIT] idx=${idx} keptAnchorsRaw=[${keptAnchorsRaw.join(",")}] keptAnchorsNorm=[${keptAnchorsNorm.join(",")}] willEmitAnchorsNorm=[${willEmitAnchorsNorm.join(",")}] skippedAfterKeep=[${skippedAfterKeep.join(",")}]`);
+          }
         }
         
         if (dropped.length > 0 && runId && reqSig) {
@@ -8878,10 +8892,14 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   if (runId && reqSig && (idx < 2 || idx === 3)) {
     for (const candidate of rawCandidates) {
       const rawAnchor = candidate.anchor || extractAnchor(candidate.claimText) || "no_anchor";
-      const canonicalAnchor = canonicalizeAnchor(rawAnchor, candidate.claimText);
+      let canonicalAnchor = canonicalizeAnchor(rawAnchor, candidate.claimText);
+      // A3.8.42: Normalize money anchor for consistency in uniquenessKey
+      canonicalAnchor = normalizeMoneyAnchor(canonicalAnchor);
       if (canonicalAnchor && canonicalAnchor.startsWith("usd_")) {
         const normalizedMeaningKey = buildNormalizedMeaningKey(candidate.claimText);
-        const uniquenessKey = `${canonicalAnchor}|${normalizedMeaningKey}`;
+        // A3.8.42: Normalize money anchor for consistency in uniquenessKey
+        const normalizedCanonicalAnchor = normalizeMoneyAnchor(canonicalAnchor);
+        const uniquenessKey = `${normalizedCanonicalAnchor}|${normalizedMeaningKey}`;
         const preview = candidate.claimText.substring(0, 50);
         diag(runId, reqSig, `[CLAIMS_DEDUP_USD] idx=${idx} anchor=${canonicalAnchor} uniquenessKey=${uniquenessKey.substring(0, 80)} preview="${preview}"`);
       }
@@ -8970,7 +8988,9 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         const anchor = c.anchor || extractAnchor(c.claimText);
         const canonicalAnchor = canonicalizeAnchor(anchor, c.claimText) || "no_anchor";
         const normalizedMeaningKey = buildNormalizedMeaningKey(c.claimText);
-        const uniquenessKey = `${canonicalAnchor}|${normalizedMeaningKey}`;
+        // A3.8.42: Normalize money anchor for consistency in uniquenessKey
+        const normalizedCanonicalAnchor = normalizeMoneyAnchor(canonicalAnchor);
+        const uniquenessKey = `${normalizedCanonicalAnchor}|${normalizedMeaningKey}`;
         return {
           claimPreview: c.claimText.substring(0, 40),
           anchor: canonicalAnchor,
@@ -9031,8 +9051,10 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     const facet = aggClaim.facet;
     
     // A3.6.12: Extract and canonicalize anchor - enforce canonical anchor allowlist
+    // A3.8.42: Normalize money anchor for consistency (dot/underscore)
     const claimAnchor = aggClaim.anchor || extractAnchor(claimText);
-    const canonicalClaimAnchor = canonicalizeAnchor(claimAnchor, claimText);
+    let canonicalClaimAnchor = canonicalizeAnchor(claimAnchor, claimText);
+    canonicalClaimAnchor = normalizeMoneyAnchor(canonicalClaimAnchor);
     
     // A3.6.71: Synthesize claimText for pct_* claims if missing
     if ((!claimText || !claimText.trim()) && canonicalClaimAnchor && /^pct_\d+$/.test(canonicalClaimAnchor)) {
@@ -9074,6 +9096,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // A3.6.53: Hard guard - skip non-canonical anchors (including null from qual_ownership)
     // BUT: Never drop protected claims (canonical deal-role claims)
     // A3.8.37: Also keep contextual USD claims in selection mode
+    // A3.8.42: canonicalClaimAnchor is already normalized above (line 9051)
     if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
       // A3.6.53: Bypass non-canonical check for protected claims
       if (aggClaim.__protected === true) {
