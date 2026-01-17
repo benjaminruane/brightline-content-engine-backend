@@ -6435,6 +6435,148 @@ function normalizeMoneySuffixForRawClaim(claimText, nearbyText = "") {
   return null;
 }
 
+/**
+ * A3.8.36: INV-2 - Filter subsumed claims
+ * Drops short numeric fragments that are subsumed by more specific claims
+ * Returns { keptClaims, droppedCount, examples }
+ */
+function filterSubsumedClaims(rawClaims, statementText, statementIndex, runId = null, reqSig = null) {
+  if (!Array.isArray(rawClaims) || rawClaims.length === 0) {
+    return { keptClaims: rawClaims, droppedCount: 0, examples: [] };
+  }
+  
+  // Context tokens allowlist (semantic words that indicate meaning-complete claims)
+  const contextTokens = new Set([
+    "per", "month", "monthly", "annual", "subscription", "pricing", "tiered",
+    "valuation", "pre-money", "post-money", "premoney", "postmoney", "enterprise", "value", "ev",
+    "ownership", "stake", "equity", "fully", "diluted", "take", "rate", "transaction", "fee",
+    "investment", "financing", "round", "series", "seed", "secondary", "purchase",
+  ]);
+  
+  // Normalize claim text: lowercase, collapse whitespace, strip punctuation
+  function normalizeClaimText(text) {
+    if (!text || typeof text !== "string") return "";
+    return text
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/[.,;:!?"'()\[\]{}]/g, "")
+      .trim();
+  }
+  
+  // Extract numeric signature: currency symbol, numeric value, scale tokens
+  function extractNumericSignature(text) {
+    const usdMatch = text.match(/\$([\d,]+(?:\.\d+)?)\s*(million|mm|m|billion|b|thousand|k)?/i);
+    if (usdMatch) {
+      const numStr = usdMatch[1].replace(/,/g, "");
+      const scale = (usdMatch[2] || "").toLowerCase();
+      return { type: "usd", value: numStr, scale };
+    }
+    
+    const pctMatch = text.match(/([\d,]+(?:\.\d+)?)\s*%/);
+    if (pctMatch) {
+      const numStr = pctMatch[1].replace(/,/g, "");
+      return { type: "pct", value: numStr, scale: null };
+    }
+    
+    return null;
+  }
+  
+  // Extract context tokens from claim
+  function extractContextTokens(text) {
+    const normalized = normalizeClaimText(text);
+    const words = normalized.split(/\s+/);
+    const found = [];
+    for (const word of words) {
+      if (contextTokens.has(word)) {
+        found.push(word);
+      }
+    }
+    return found;
+  }
+  
+  // Check if claim has meaningful context (beyond bare number)
+  function hasContext(text) {
+    const normalized = normalizeClaimText(text);
+    const words = normalized.split(/\s+/);
+    // Check if there are alphabetic tokens beyond numbers/currency
+    const hasAlphabetic = words.some(w => /[a-z]/.test(w) && !/^\d+$/.test(w));
+    return hasAlphabetic;
+  }
+  
+  const keptClaims = [];
+  const droppedIndices = new Set();
+  const examples = [];
+  
+  // Compare all pairs
+  for (let i = 0; i < rawClaims.length; i++) {
+    if (droppedIndices.has(i)) continue;
+    
+    const claimA = rawClaims[i];
+    const textA = claimA.claimText || "";
+    const normalizedA = normalizeClaimText(textA);
+    const sigA = extractNumericSignature(textA);
+    const contextA = extractContextTokens(textA);
+    const hasContextA = hasContext(textA);
+    
+    // Skip if A has no numeric signature
+    if (!sigA) {
+      keptClaims.push(claimA);
+      continue;
+    }
+    
+    // Check if A is very short (<= 6 chars after stripping)
+    const strippedA = textA.replace(/[$,%]/g, "").trim();
+    const isVeryShort = strippedA.length <= 6;
+    
+    let isSubsumed = false;
+    let subsumedBy = null;
+    
+    for (let j = 0; j < rawClaims.length; j++) {
+      if (i === j || droppedIndices.has(j)) continue;
+      
+      const claimB = rawClaims[j];
+      const textB = claimB.claimText || "";
+      const normalizedB = normalizeClaimText(textB);
+      const sigB = extractNumericSignature(textB);
+      const contextB = extractContextTokens(textB);
+      const hasContextB = hasContext(textB);
+      
+      // Skip if B has no numeric signature or different signature
+      if (!sigB || sigB.type !== sigA.type || sigB.value !== sigA.value || sigB.scale !== sigA.scale) {
+        continue;
+      }
+      
+      // Check if A is substring of B
+      if (normalizedB.includes(normalizedA) && normalizedA !== normalizedB) {
+        // Check subsumption conditions:
+        // 1. B has context AND (A has no context OR A has fewer context tokens)
+        // 2. OR A is very short and B is meaning-complete
+        if ((hasContextB && (!hasContextA || contextB.length > contextA.length)) || 
+            (isVeryShort && hasContextB)) {
+          isSubsumed = true;
+          subsumedBy = textB;
+          break;
+        }
+      }
+    }
+    
+    if (isSubsumed) {
+      droppedIndices.add(i);
+      if (examples.length < 3) {
+        examples.push(`"${textA.substring(0, 30)}" -> "${subsumedBy.substring(0, 50)}"`);
+      }
+    } else {
+      keptClaims.push(claimA);
+    }
+  }
+  
+  return {
+    keptClaims,
+    droppedCount: droppedIndices.size,
+    examples: examples.slice(0, 3),
+  };
+}
+
 // A3.6.0: Extract atomic claims from statement text (deterministic, no LLM)
 function extractAtomicClaims(statementText, bestValSnip = "") {
   if (typeof statementText !== "string" || !statementText.trim()) return [];
@@ -15890,6 +16032,16 @@ ${
           // Generate claims (with aggregation, capping, and claim-aware scoring)
           rawClaims = generateClaimsForStatement(text, uploadedDocs, assessment, runId, reqSig, idx);
           
+          // A3.8.36: INV-2 - Subsumption filter (selection mode only)
+          // Drop short numeric fragments that are subsumed by more specific claims
+          if (selectionUsed && Array.isArray(rawClaims) && rawClaims.length > 0) {
+            const subsumptionResult = filterSubsumedClaims(rawClaims, text, idx, runId, reqSig);
+            rawClaims = subsumptionResult.keptClaims;
+            if (subsumptionResult.droppedCount > 0 && runId && reqSig) {
+              diag(runId, reqSig, `[CLAIMS][SUBSUME] idx=${idx} dropped=${subsumptionResult.droppedCount} examples="${subsumptionResult.examples.join(" | ")}"`);
+            }
+          }
+          
           // A3.8.0: Canonicalize raw claims into canonical claims
           // A3.8.4: Use computed selectionHash from top level
           const selectionHash = computedSelectionHash;
@@ -16209,32 +16361,16 @@ ${
             diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=fallback claimsError=true`);
           }
         }
-        // A3.8.28: Part C - Surface unsupported numeric rawClaims (selection mode only, before scope note)
-        if (selectionUsed && Array.isArray(finalReasons) && finalReasons.length > 0 && Array.isArray(rawClaimsForDiagnostics) && rawClaimsForDiagnostics.length > 0) {
-          // Identify unsupported numeric rawClaims
-          const unsupportedNumeric = rawClaimsForDiagnostics.find(rawClaim => {
-            if (!rawClaim || typeof rawClaim !== "object") return false;
-            const reliability = rawClaim.reliability || "";
-            const comment = String(rawClaim.comment || "");
-            const claimText = String(rawClaim.claimText || "");
-            
-            // Check if unsupported numeric
-            const isUnsupported = reliability === "Low" && /not supported/i.test(comment);
-            const isNumeric = /\d/.test(claimText) || /^\$/.test(claimText) || /%$/.test(claimText);
-            
-            return isUnsupported && isNumeric;
-          });
-          
-          // Append one unsupported numeric reason if found
-          if (unsupportedNumeric) {
-            const claimText = String(unsupportedNumeric.claimText || "").trim();
-            const trimmedText = claimText.length > 80 ? claimText.substring(0, 80) + "..." : claimText;
-            const citations = unsupportedNumeric.citations || [];
-            const citeStr = citations.length > 0 
-              ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
-              : "";
-            finalReasons.push(`"${trimmedText}" is not supported by the provided source(s).${citeStr}`);
-          }
+        // A3.8.36: INV-1 - Canonical-only reasons (selection mode)
+        // Hard-disable any residual rawClaims-based reason injection for selection mode
+        // Reasons must be generated ONLY from canonicalClaims (or dealContext/fallback canonical claim)
+        // The code that previously appended unsupported numeric rawClaims has been removed.
+        
+        // A3.8.36: Add diagnostic log for canonical-only enforcement
+        if (selectionUsed && runId && reqSig) {
+          const usedDeal = dealContext !== null;
+          const usedFallbackQual = canonicalClaims.length === 0 && finalReasons.length > 0 && finalReasons.some(r => typeof r === "string" && /No extractable claims|This statement/i.test(r));
+          diag(runId, reqSig, `[REASONS][SELECTION_CANON_ONLY] idx=${idx} canon=${canonicalClaims.length} raw=${rawClaimsForDiagnostics ? rawClaimsForDiagnostics.length : 0} usedDeal=${usedDeal} usedFallbackQual=${usedFallbackQual} reasons=${finalReasons.length}`);
         }
         
         // A3.8.30: Add coverage summary (selection mode only)
