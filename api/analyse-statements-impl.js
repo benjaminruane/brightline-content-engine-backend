@@ -5309,21 +5309,74 @@ function checkUnitPricingContextForAnchor(text, matchIndex, matchLength) {
   return false;
 }
 
+// A3.8.55: Request-scoped cache for USD anchor normalization logs
+// Key: `${runId}_${reqSig}_${original}=>${normalized}`
+const usdNormalizationLogCache = new Map();
+const MAX_CACHE_SIZE = 10000; // Prevent unbounded growth
+
+// A3.8.55: Module-level variable to track current request context (set at request start, cleared at end)
+// Note: This works because Node.js processes requests sequentially per process
+let currentRequestContext = { runId: null, reqSig: null };
+
+// A3.8.55: Set current request context (called at request start)
+function setUsdNormalizationRequestContext(runId, reqSig) {
+  currentRequestContext = { runId, reqSig };
+}
+
+// A3.8.55: Clear current request context (called at request end)
+function clearUsdNormalizationRequestContext() {
+  currentRequestContext = { runId: null, reqSig: null };
+}
+
+// A3.8.55: Clear cache entries for a specific request
+function clearUsdNormalizationLogCacheForRequest(runId, reqSig) {
+  if (!runId || !reqSig) return;
+  const prefix = `${runId}_${reqSig}_`;
+  const keysToDelete = [];
+  for (const key of usdNormalizationLogCache.keys()) {
+    if (typeof key === "string" && key.startsWith(prefix)) {
+      keysToDelete.push(key);
+    }
+  }
+  keysToDelete.forEach(key => usdNormalizationLogCache.delete(key));
+}
+
 // A3.8.54: Normalize USD anchors at extraction source
 // Ensures all USD anchors use underscore format (e.g. "usd_5_5m") instead of dot format ("usd_5.5m")
-function normalizeUsdAnchorAtSource(anchor, context = "extractAnchor") {
+// A3.8.55: Added logOnce guard to prevent repeated logs per request
+function normalizeUsdAnchorAtSource(anchor, context = "extractAnchor", runId = null, reqSig = null) {
   if (!anchor || typeof anchor !== "string") return anchor;
   if (!anchor.startsWith("usd_")) return anchor;
   if (!anchor.includes(".")) return anchor;
   
   const normalized = anchor.replace(/\./g, "_");
   
-  // Diagnostic logging when normalization occurs
-  console.log(`[DIAG][A3.8.54][USD_ANCHOR_SOURCE_NORMALIZED]`, {
-    original: anchor,
-    normalized: normalized,
-    context: context
-  });
+  // A3.8.55: Use provided runId/reqSig, or fall back to current request context, or global dedup
+  const effectiveRunId = runId || currentRequestContext.runId;
+  const effectiveReqSig = reqSig || currentRequestContext.reqSig;
+  
+  // A3.8.55: Log at most once per request per unique original→normalized mapping
+  const cacheKey = effectiveRunId && effectiveReqSig 
+    ? `${effectiveRunId}_${effectiveReqSig}_${anchor}=>${normalized}`
+    : `${anchor}=>${normalized}`; // Fallback to global dedup if no request context
+  
+  if (!usdNormalizationLogCache.has(cacheKey)) {
+    // Diagnostic logging when normalization occurs
+    console.log(`[DIAG][A3.8.54][USD_ANCHOR_SOURCE_NORMALIZED]`, {
+      original: anchor,
+      normalized: normalized,
+      context: context
+    });
+    
+    // Add to cache
+    usdNormalizationLogCache.set(cacheKey, true);
+    
+    // Prevent unbounded growth - clear oldest entries if cache is too large
+    if (usdNormalizationLogCache.size > MAX_CACHE_SIZE) {
+      const firstKey = usdNormalizationLogCache.keys().next().value;
+      usdNormalizationLogCache.delete(firstKey);
+    }
+  }
   
   return normalized;
 }
@@ -12276,6 +12329,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
   }
   
   // A3.8.27: Part B - Align rawClaims uncertainty with final reasons (selection mode only, type-specific notes)
+  // A3.8.55: Part A - Tighten ambiguity trigger in selection mode
   if (selectionMode && reasons.length > 0) {
     // Check if any canonical claim has Medium/High reliability
     const hasMediumOrHigh = canonicalClaims.some(cc => {
@@ -12288,16 +12342,27 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       let noteType = null;
       let matchedComment = null;
       
+      const canonicalClaimsCount = canonicalClaims.length;
+      const statementText = statement?.text || "";
+      
       for (const rawClaim of rawClaims) {
         if (rawClaim && typeof rawClaim === "object") {
           const comment = String(rawClaim.comment || "");
           
           // Priority 1: MAPPING_AMBIGUITY (highest)
+          // A3.8.55: Only allow MAPPING_AMBIGUITY if selectionMode=true AND canonicalClaimsCount==1 AND statement has >=2 distinct figures
           if (!noteType || noteType === "MAPPING_AMBIGUITY") {
             if (/multiple figures|verify which applies|ambiguous/i.test(comment)) {
-              noteType = "MAPPING_AMBIGUITY";
-              matchedComment = comment;
-              break; // Highest priority, stop scanning
+              // A3.8.55: Check if statement truly has >=2 distinct numeric values
+              const distinctNumericCount = countDistinctNumericValues(statementText);
+              const shouldAllowAmbiguity = canonicalClaimsCount !== 1 || distinctNumericCount >= 2;
+              
+              if (shouldAllowAmbiguity) {
+                noteType = "MAPPING_AMBIGUITY";
+                matchedComment = comment;
+                break; // Highest priority, stop scanning
+              }
+              // If shouldAllowAmbiguity is false, skip this note type
             }
           }
           
@@ -12341,6 +12406,35 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         if (noteText) {
           reasons.push(`${noteText}${citeStr}`);
         }
+      }
+    }
+  }
+  
+  // A3.8.55: Part B - Post-filter generic hedging note when it adds no value
+  if (selectionMode && reasons.length > 0) {
+    const canonicalClaimsCount = canonicalClaims.length;
+    const statementText = statement?.text || "";
+    const firstClaim = canonicalClaims[0];
+    const hasCitations = firstClaim && Array.isArray(firstClaim.citations) && firstClaim.citations.length > 0;
+    
+    // Check if corpus verification found hits (for bare USD statements)
+    let hasCorpusHit = false;
+    if (isBareUsd && corpusSearchHitsCount > 0) {
+      hasCorpusHit = true;
+    } else if (hasCitations) {
+      // If citations exist, assume corpus verification found support
+      hasCorpusHit = true;
+    }
+    
+    // Only filter if: single claim, corpus hit exists, and statement doesn't have >=2 distinct figures
+    if (canonicalClaimsCount === 1 && hasCorpusHit) {
+      const distinctNumericCount = countDistinctNumericValues(statementText);
+      if (distinctNumericCount < 2) {
+        // Remove generic ambiguity note if present
+        reasons = reasons.filter(reason => {
+          if (typeof reason !== "string") return true;
+          return !reason.includes("multiple candidate figures were found; figure-to-claim mapping should be manually confirmed");
+        });
       }
     }
   }
@@ -13917,6 +14011,88 @@ function extractNumericValues(text) {
   }
   
   return [...new Set(values)];
+}
+
+// A3.8.55: Count distinct numeric values in statement, normalizing for scale variants
+// Treats {5, 5,000,000} as equivalent when million/billion present, {20, 0.20} as equivalent for percent
+function countDistinctNumericValues(statementText) {
+  if (typeof statementText !== "string") return 0;
+  
+  const text = statementText.toLowerCase();
+  const distinctValues = new Set();
+  const hasMillionBillion = /\b(million|billion|mm|m\b|b\b)\b/i.test(statementText);
+  const hasPercent = /%/.test(statementText);
+  
+  // Extract all numeric values with their context
+  const patterns = [
+    // $25mm, $25m, $25 million
+    /\$?([\d,]+(?:\.\d+)?)\s*(mm|million|m\b|M\b)/gi,
+    // $2b, $2 billion
+    /\$?([\d,]+(?:\.\d+)?)\s*(billion|b\b|B\b)/gi,
+    // $2k, $2 thousand
+    /\$?([\d,]+(?:\.\d+)?)\s*(thousand|k\b|K\b)/gi,
+    // Plain $25, $18.7
+    /\$([\d,]+(?:\.\d+)?)/g,
+    // Percentages
+    /([\d,]+(?:\.\d+)?)\s*%/g,
+  ];
+  
+  for (const pattern of patterns) {
+    const matches = [...statementText.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (!Number.isFinite(num)) continue;
+      
+      // Handle percentages
+      if (pattern.source.includes("%")) {
+        // Normalize percent: treat 20 and 0.20 as equivalent
+        const normalizedPercent = num >= 1 ? num : num * 100;
+        distinctValues.add(`percent_${normalizedPercent}`);
+        continue;
+      }
+      
+      // Handle dollar amounts
+      const unit = (match[2] || "").toLowerCase();
+      const multipliers = {
+        mm: 1e6, million: 1e6, m: 1e6,
+        billion: 1e9, b: 1e9,
+        thousand: 1e3, k: 1e3,
+      };
+      const multiplier = multipliers[unit] || 1;
+      const valueInBaseUnits = num * multiplier;
+      
+      // Normalize: if statement has million/billion context, treat {5, 5,000,000} as equivalent
+      if (hasMillionBillion && multiplier === 1) {
+        // Plain number without unit - normalize to millions if it's a large number (>= 1e6)
+        // or a small number in reasonable range (1-10000) that could be millions
+        if (valueInBaseUnits >= 1e6) {
+          // Large number like 5,000,000 - normalize to millions
+          const millions = valueInBaseUnits / 1e6;
+          distinctValues.add(`usd_${millions}m`);
+        } else if (num >= 1 && num <= 10000) {
+          // Small number like 5 - treat as millions to match "$5" with "$5 million"
+          distinctValues.add(`usd_${num}m`);
+        } else {
+          // Outside reasonable range, keep as-is
+          distinctValues.add(`usd_${valueInBaseUnits}`);
+        }
+      } else {
+        // Has explicit unit or no million/billion context - use normalized value
+        if (multiplier === 1e6 || multiplier === 1e9) {
+          const millions = valueInBaseUnits / 1e6;
+          distinctValues.add(`usd_${millions}m`);
+        } else if (multiplier === 1e3) {
+          const thousands = valueInBaseUnits / 1e3;
+          distinctValues.add(`usd_${thousands}k`);
+        } else {
+          distinctValues.add(`usd_${valueInBaseUnits}`);
+        }
+      }
+    }
+  }
+  
+  return distinctValues.size;
 }
 
 // Detect absence claims in reasons
@@ -16013,6 +16189,9 @@ export default async function handler(req, res) {
       runId = Math.random().toString(36).substring(2, 15);
       reqSig = generateReqSig(draftText, sources, publicSearch);
     }
+    
+    // A3.8.55: Set request context for USD anchor normalization log deduplication
+    setUsdNormalizationRequestContext(runId, reqSig);
     
     // A3.8.4: Early selection logging (must appear even if later phases fail)
     const selectionHash = selectionUsed && selectedText
@@ -18238,6 +18417,11 @@ ${
         } catch (logErr) {
           // Best-effort logging
         }
+        // A3.8.55: Clear request context and cache entries for this request
+        if (runId && reqSig) {
+          clearUsdNormalizationLogCacheForRequest(runId, reqSig);
+        }
+        clearUsdNormalizationRequestContext();
         // A3.8.29: Return JSON payload instead of response object
         return finalResponseObject;
       } else {
@@ -18330,6 +18514,11 @@ ${
         } catch (logErr) {
           // Best-effort logging
         }
+        // A3.8.55: Clear request context and cache entries for this request
+        if (runId && reqSig) {
+          clearUsdNormalizationLogCacheForRequest(runId, reqSig);
+        }
+        clearUsdNormalizationRequestContext();
         return res.status(200).json({
           ok: true,
           statements: finalStatements,
@@ -18524,6 +18713,11 @@ ${
         meta.degradedErrorName = errorName;
       }
       
+      // A3.8.55: Clear request context and cache entries for this request
+      if (runId && reqSig) {
+        clearUsdNormalizationLogCacheForRequest(runId, reqSig);
+      }
+      clearUsdNormalizationRequestContext();
       return res.status(200).json({
         ok: true,
         statements: bestEffortStatements,
@@ -18544,6 +18738,11 @@ ${
     } catch (logErr) {
       // Best-effort logging
     }
+    // A3.8.55: Clear request context and cache entries for this request
+    if (runId && reqSig) {
+      clearUsdNormalizationLogCacheForRequest(runId, reqSig);
+    }
+    clearUsdNormalizationRequestContext();
     return res.status(500).json({ ok: false, error: "Internal server error: handler reached end without returning" });
   }
 }
