@@ -2796,20 +2796,33 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploa
   
   const log = (runId && reqSig) ? (...args) => diag(runId, reqSig, ...args) : console.log;
   
+  // A3.8.45: Part B - Force selection_only mode for ALL selection statements (no windowed_blob leakage)
   // A3.7.10: Selection mode isolation - only parse from statementText (selectedText)
-  if (selectionMode && statementText && typeof statementText === "string" && statementText.trim()) {
-    const normalizedSelected = statementText
-      .replace(/[''']/g, "'")
-      .replace(/[—–−]/g, "-")
-      .replace(/[…]/g, " ")
-      .replace(/\.\.\./g, " ")
-      .replace(/[ \t\r\n]+/g, " ");
+  if (selectionMode) {
+    // A3.8.45: Always use selection_only in selection mode, even if statementText is empty/short
+    const selLen = (statementText && typeof statementText === "string") ? statementText.trim().length : 0;
+    const normalizedSelected = (statementText && typeof statementText === "string" && statementText.trim())
+      ? statementText
+          .replace(/[''']/g, "'")
+          .replace(/[—–−]/g, "-")
+          .replace(/[…]/g, " ")
+          .replace(/\.\.\./g, " ")
+          .replace(/[ \t\r\n]+/g, " ")
+      : "";
     
-    const selectedResults = extractDealTermsFromText(normalizedSelected, runId, reqSig);
+    const selectedResults = normalizedSelected
+      ? extractDealTermsFromText(normalizedSelected, runId, reqSig)
+      : { preMoney: null, enterpriseValue: null, investment: null, ownershipPct: null, ownershipUpside: null, secondary: null };
     
     // A3.7.10: Only return what's found in selectedText, no windowing
     const hasAnyField = selectedResults.preMoney || selectedResults.enterpriseValue || selectedResults.investment || 
                        selectedResults.ownershipPct || selectedResults.ownershipUpside;
+    
+    // A3.8.45: DIAG log for selection-only enforcement
+    const statementIdx = 0; // idx would need to be passed in, using 0 as default
+    if (runId && reqSig) {
+      log(`[DIAG][A3.8.45][DEAL_TERMS_SELECTION_ONLY] idx=${statementIdx} selLen=${selLen} forced=true`);
+    }
     
     if (!hasAnyField) {
       log(`[A3.7.10][DEAL_TERMS_SELECTION] selectionDealTermsMode=selection_only found=false`);
@@ -2827,7 +2840,7 @@ function extractDealTermsFromDraft(draftText, runId = null, reqSig = null, uploa
       ownershipUpsidePct: selectedResults.ownershipUpsidePct,
       ownershipUpsideMechanism: selectedResults.ownershipUpsideMechanism,
       sourceSpan: null,
-      sourceText: normalizedSelected,
+      sourceText: normalizedSelected || null,
       sourceKind: "selection_only"
     };
     
