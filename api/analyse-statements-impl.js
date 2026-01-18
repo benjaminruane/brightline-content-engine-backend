@@ -9251,6 +9251,24 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     return a.replace(/\./g, "_");
   }
   
+  // A3.8.50: USD anchor normalizer (strict, for pruning path)
+  // Converts "usd_5.5m" -> "usd_5_5m" and collapses double underscores
+  function normalizeUsdAnchorStrict(anchor) {
+    if (!anchor) return anchor;
+    if (typeof anchor !== "string") return anchor;
+    if (!anchor.startsWith("usd_")) return anchor;
+    
+    // Replace all '.' with '_'
+    let normalized = anchor.replace(/\./g, "_");
+    
+    // Collapse double underscores to single underscores
+    while (normalized.includes("__")) {
+      normalized = normalized.replace(/__/g, "_");
+    }
+    
+    return normalized;
+  }
+  
   // A3.8.49: Pre-prune diagnostic (selection mode only)
   if (selectionMode) {
     const hasDetectedUsd = allAnchorsInOriginal.some(a => typeof a === "string" && a.startsWith("usd_"));
@@ -9331,20 +9349,46 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       ? normalizeUsdAnchorFamily(canonicalClaimAnchor)
       : canonicalClaimAnchor;
     
-    // A3.8.49: Normalize anchors for USD anchor family matching (selection mode only)
-    // This fixes the issue where "usd_5_5m" vs "usd_5.5m" are treated as different
-    let claimAnchorNorm = claimAnchor || "";
-    let canonicalNorm = canonicalClaimAnchor || "";
-    if (selectionMode) {
-      claimAnchorNorm = normalizeUsdAnchor(claimAnchor || "");
-      canonicalNorm = normalizeUsdAnchor(canonicalClaimAnchor || "");
+    // A3.8.50: Normalize USD anchors at exact pruning decision point (selection mode only)
+    // Compute raw anchors
+    const claimAnchorRaw = claimAnchor || extractAnchor(claimText) || null;
+    const canonicalAnchorRaw = canonicalClaimAnchor || null;
+    
+    // Compute normalized anchors using strict normalizer
+    const claimAnchorNorm = selectionMode ? normalizeUsdAnchorStrict(claimAnchorRaw) : claimAnchorRaw;
+    const canonicalAnchorNorm = selectionMode ? normalizeUsdAnchorStrict(canonicalAnchorRaw) : canonicalAnchorRaw;
+    
+    // A3.8.50: Check if both are USD anchors
+    const bothAreUsd = selectionMode && 
+      claimAnchorNorm && typeof claimAnchorNorm === "string" && claimAnchorNorm.startsWith("usd_") &&
+      canonicalAnchorNorm && typeof canonicalAnchorNorm === "string" && canonicalAnchorNorm.startsWith("usd_");
+    
+    // A3.8.50: KEEP if normalized USD anchors match
+    const normalizedUsdMatch = bothAreUsd && claimAnchorNorm === canonicalAnchorNorm;
+    
+    // A3.8.50: DIAG marker proving this build and pruning path executed
+    if (selectionMode && ((claimAnchorRaw && typeof claimAnchorRaw === "string" && claimAnchorRaw.startsWith("usd_")) || 
+        (canonicalAnchorRaw && typeof canonicalAnchorRaw === "string" && canonicalAnchorRaw.startsWith("usd_")))) {
+      let decision = "SKIP";
+      if (bothAreUsd) {
+        decision = normalizedUsdMatch ? "KEEP" : "DROP";
+      }
+      if (runId && reqSig) {
+        diag(runId, reqSig, `[DIAG][A3.8.50][USD_PRUNE_NORM] idx=${statementIdx} claim=${claimAnchorRaw || "null"} canon=${canonicalAnchorRaw || "null"} claimNorm=${claimAnchorNorm || "null"} canonNorm=${canonicalAnchorNorm || "null"} decision=${decision}`);
+      }
     }
     
-    // A3.8.49: Keep rule: KEEP a USD claim if normalized anchors match
-    const bothAreUsd = selectionMode && 
-      claimAnchorNorm.startsWith("usd_") && 
-      canonicalNorm.startsWith("usd_");
-    const normalizedMatch = bothAreUsd && claimAnchorNorm === canonicalNorm;
+    // A3.8.49: Legacy normalization for backward compatibility
+    let claimAnchorNormLegacy = claimAnchor || "";
+    let canonicalNormLegacy = canonicalClaimAnchor || "";
+    if (selectionMode) {
+      claimAnchorNormLegacy = normalizeUsdAnchor(claimAnchor || "");
+      canonicalNormLegacy = normalizeUsdAnchor(canonicalClaimAnchor || "");
+    }
+    const bothAreUsdLegacy = selectionMode && 
+      claimAnchorNormLegacy.startsWith("usd_") && 
+      canonicalNormLegacy.startsWith("usd_");
+    const normalizedMatchLegacy = bothAreUsdLegacy && claimAnchorNormLegacy === canonicalNormLegacy;
     
     // A3.6.53: Hard guard - skip non-canonical anchors (including null from qual_ownership)
     // BUT: Never drop protected claims (canonical deal-role claims)
@@ -9352,57 +9396,63 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // A3.8.42: canonicalClaimAnchor is already normalized above (line 9051)
     // A3.8.47: Part A - Check canonical status using normalized anchor for USD anchors in selection mode
     // A3.8.49: Keep USD claims if normalized anchors match (even if not canonical)
+    // A3.8.50: Keep USD claims if strict normalized anchors match
     const isCanonical = normalizedAnchorForComparison && isCanonicalAnchor(normalizedAnchorForComparison);
     
-    // A3.8.49: Only DROP as noncanonical if:
-    // - No canonical anchor, OR
-    // - Not canonical AND (not both USD OR normalized versions don't match)
-    const shouldDropAsNoncanonical = !canonicalClaimAnchor || 
-      (!isCanonical && !normalizedMatch);
-    
-    if (shouldDropAsNoncanonical) {
-      // A3.6.53: Bypass non-canonical check for protected claims
-      if (aggClaim.__protected === true) {
-        // Protected claim - allow through even if anchor is non-canonical
-        const claimRole = aggClaim.role || "unknown";
-        if (runId && reqSig) {
-          diag(runId, reqSig, `[A3.6.53][NONCANON_SKIP] idx=${statementIdx} anchor=${claimAnchor} role=${claimRole} reason=protected_canonical_deal_role`);
-        }
-        // Continue to process this claim (don't skip)
-      } else if (isContextualUsd) {
-        // A3.8.37: Keep contextual USD claims (e.g., "$45 per month") even if anchor is non-canonical
-        // Check if there's a bare fragment that should be dropped instead
-        const usdMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)/);
-        if (usdMatch) {
-          const numStr = usdMatch[1].replace(/,/g, "");
-          const num = parseFloat(numStr);
-          // Look for a bare fragment claim with same number
-          for (const otherClaim of cappedClaims) {
-            if (otherClaim === aggClaim) continue;
-            const otherText = otherClaim.claimText || "";
-            const bareFragmentMatch = otherText.match(/^\$([\d,]+(?:\.\d+)?)$/);
-            if (bareFragmentMatch && bareFragmentMatch[1].replace(/,/g, "") === numStr) {
-              droppedFragment = otherText;
-              break;
+    // A3.8.50: KEEP if normalized USD anchors match (before checking shouldDropAsNoncanonical)
+    if (normalizedUsdMatch) {
+      // A3.8.50: KEEP USD claim because normalized anchors match (selection mode only)
+      // Continue to process this claim (don't skip)
+    } else {
+      // A3.8.50: Only DROP as noncanonical if:
+      // - No canonical anchor, OR
+      // - Not canonical AND (not both USD OR normalized versions don't match)
+      const shouldDropAsNoncanonical = !canonicalClaimAnchor || 
+        (!isCanonical && !normalizedMatchLegacy);
+      
+      if (shouldDropAsNoncanonical) {
+        // A3.6.53: Bypass non-canonical check for protected claims
+        if (aggClaim.__protected === true) {
+          // Protected claim - allow through even if anchor is non-canonical
+          const claimRole = aggClaim.role || "unknown";
+          if (runId && reqSig) {
+            diag(runId, reqSig, `[A3.6.53][NONCANON_SKIP] idx=${statementIdx} anchor=${claimAnchor} role=${claimRole} reason=protected_canonical_deal_role`);
+          }
+          // Continue to process this claim (don't skip)
+        } else if (isContextualUsd) {
+          // A3.8.37: Keep contextual USD claims (e.g., "$45 per month") even if anchor is non-canonical
+          // Check if there's a bare fragment that should be dropped instead
+          const usdMatch = claimText.match(/\$([\d,]+(?:\.\d+)?)/);
+          if (usdMatch) {
+            const numStr = usdMatch[1].replace(/,/g, "");
+            const num = parseFloat(numStr);
+            // Look for a bare fragment claim with same number
+            for (const otherClaim of cappedClaims) {
+              if (otherClaim === aggClaim) continue;
+              const otherText = otherClaim.claimText || "";
+              const bareFragmentMatch = otherText.match(/^\$([\d,]+(?:\.\d+)?)$/);
+              if (bareFragmentMatch && bareFragmentMatch[1].replace(/,/g, "") === numStr) {
+                droppedFragment = otherText;
+                break;
+              }
             }
           }
+          keptForContextualUsd = true;
+          if (runId && reqSig) {
+            const keptPreview = claimText.substring(0, 50);
+            const droppedPreview = droppedFragment ? droppedFragment.substring(0, 30) : "none";
+            diag(runId, reqSig, `[CLAIMS][KEEP_CONTEXTUAL_USD] idx=${statementIdx} kept="${keptPreview}" dropped="${droppedPreview}"`);
+          }
+          // Continue to process this claim (don't skip)
+        } else {
+          // Non-protected claim - apply normal non-canonical guard
+          // OR if not USD anchors, use existing drop logic
+          if (runId && reqSig && statementIdx < 2) {
+            diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${statementIdx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
+          }
+          claimIdx++;
+          continue; // Skip this claim
         }
-        keptForContextualUsd = true;
-        if (runId && reqSig) {
-          const keptPreview = claimText.substring(0, 50);
-          const droppedPreview = droppedFragment ? droppedFragment.substring(0, 30) : "none";
-          diag(runId, reqSig, `[CLAIMS][KEEP_CONTEXTUAL_USD] idx=${statementIdx} kept="${keptPreview}" dropped="${droppedPreview}"`);
-        }
-        // Continue to process this claim (don't skip)
-      } else {
-        // Non-protected claim - apply normal non-canonical guard
-        // A3.8.49: Drop only if both are USD anchors and normalized versions don't match
-        // OR if not USD anchors, use existing drop logic
-        if (runId && reqSig && statementIdx < 2) {
-          diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${statementIdx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
-        }
-        claimIdx++;
-        continue; // Skip this claim
       }
     }
     
