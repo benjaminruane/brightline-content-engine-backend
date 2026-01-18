@@ -8587,6 +8587,18 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   // A3.6.18: Diagnostic when qual_valuation uses bestValSnip (will be logged after extraction)
   // This is set up here but logged in the extraction/aggregation phase
   
+  // A3.8.52: Derive selectionMode early (needed for anchor normalization)
+  // A3.8.44: Derive selectionMode from assessment (check for selectionScope or selectionHash)
+  const selectionMode = !!(assessment?.selectionScope?.selectionMode) || !!(assessment?.selectionHash);
+  
+  // A3.8.52: USD anchor normalizer (early definition for use in aggregation)
+  // Converts "usd_5.5m" -> "usd_5_5m" for consistent comparison
+  function normalizeUsdAnchor(a) {
+    if (!a || typeof a !== "string") return a;
+    if (!a.startsWith("usd_")) return a;
+    return a.replace(/\./g, "_");
+  }
+  
   // A3.6.8: Extract all anchors from original statement text for logging
   // A3.8.43: Normalize anchors for consistency
   const allAnchorsInOriginal = extractAllAnchors(statementText).map(a => normalizeAnyAnchor(a));
@@ -9068,7 +9080,11 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       if (canonicalAnchor && canonicalAnchor.startsWith("usd_")) {
         const normalizedMeaningKey = buildNormalizedMeaningKey(candidate.claimText);
         // A3.8.42: Normalize money anchor for consistency in uniquenessKey
-        const normalizedCanonicalAnchor = normalizeMoneyAnchor(canonicalAnchor);
+        // A3.8.52: Also normalize USD anchors (dot to underscore) in selection mode
+        let normalizedCanonicalAnchor = normalizeMoneyAnchor(canonicalAnchor);
+        if (selectionMode && normalizedCanonicalAnchor.includes(".")) {
+          normalizedCanonicalAnchor = normalizeUsdAnchor(normalizedCanonicalAnchor);
+        }
         const uniquenessKey = `${normalizedCanonicalAnchor}|${normalizedMeaningKey}`;
         const preview = candidate.claimText.substring(0, 50);
         diag(runId, reqSig, `[CLAIMS_DEDUP_USD] idx=${idx} anchor=${canonicalAnchor} uniquenessKey=${uniquenessKey.substring(0, 80)} preview="${preview}"`);
@@ -9114,6 +9130,16 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     return claim;
   });
+  
+  // A3.8.52: Normalize USD anchors in candidates before aggregation (selection mode only)
+  // This ensures dedup keys don't split on dot-form anchors
+  if (selectionMode) {
+    for (const candidate of sanitizedCandidates) {
+      if (candidate.anchor && typeof candidate.anchor === "string" && candidate.anchor.startsWith("usd_") && candidate.anchor.includes(".")) {
+        candidate.anchor = normalizeUsdAnchor(candidate.anchor);
+      }
+    }
+  }
   
   // A3.6.1: Aggregate by claimKey
   const aggregatedClaims = aggregateClaimsByKey(sanitizedCandidates);
@@ -9215,8 +9241,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   const shouldLogDiagnostics = runId && reqSig && statementIdx < 2;
   
   // A3.8.47: Part A - Track original claims and prepare for USD anchor normalization (selection mode only)
-  // A3.8.44: Derive selectionMode from assessment (check for selectionScope or selectionHash)
-  const selectionMode = !!(assessment?.selectionScope?.selectionMode) || !!(assessment?.selectionHash);
+  // A3.8.52: selectionMode already determined earlier
   const originalClaimsBeforeFilter = selectionMode ? [...cappedClaims] : null;
   
   // A3.8.47: Part A - Collect USD anchors for normalization diagnostic (selection mode only)
@@ -9243,13 +9268,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
   }
   
-  // A3.8.49: USD anchor normalizer (local helper, selection mode only)
-  // Converts "usd_5.5m" -> "usd_5_5m" for consistent comparison
-  function normalizeUsdAnchor(a) {
-    if (!a || typeof a !== "string") return a;
-    if (!a.startsWith("usd_")) return a;
-    return a.replace(/\./g, "_");
-  }
+  // A3.8.52: normalizeUsdAnchor already defined earlier in function
   
   // A3.8.50: USD anchor normalizer (strict, for pruning path)
   // Converts "usd_5.5m" -> "usd_5_5m" and collapses double underscores
@@ -9450,6 +9469,12 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         } else {
           // Non-protected claim - apply normal non-canonical guard
           // OR if not USD anchors, use existing drop logic
+          // A3.8.52: Diagnostic log at drop site for USD anchors
+          if (selectionMode && runId && reqSig && bothAreUsd) {
+            const normA = claimAnchorNorm || "null";
+            const normC = canonicalAnchorNorm || "null";
+            diag(runId, reqSig, `[DIAG][A3.8.52][USD_DROP_SITE] anchor=${claimAnchorRaw || "null"} canonical=${canonicalAnchorRaw || "null"} normA=${normA} normC=${normC} kept=false`);
+          }
           if (runId && reqSig && statementIdx < 2) {
             diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${statementIdx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
           }
@@ -9751,7 +9776,12 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     };
     
     // A3.6.12: Always set canonical anchor (enforced above)
-    claim.anchor = canonicalClaimAnchor;
+    // A3.8.52: Normalize USD anchors at emission (selection mode only)
+    let emittedAnchor = canonicalClaimAnchor;
+    if (selectionMode && emittedAnchor && typeof emittedAnchor === "string" && emittedAnchor.startsWith("usd_") && emittedAnchor.includes(".")) {
+      emittedAnchor = normalizeUsdAnchor(emittedAnchor);
+    }
+    claim.anchor = emittedAnchor;
     
     // A3.6.54: Preserve deal-terms confirmation flag
     if (aggClaim.__dealTermsConfirmed === true) {
@@ -9782,6 +9812,15 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     finalClaims.push(claim);
     claimIdx++;
+  }
+  
+  // A3.8.52: Diagnostic log for USD anchor emission (selection mode only, before pruning)
+  if (selectionMode && runId && reqSig) {
+    const emittedAnchors = finalClaims.map(c => c.anchor || extractAnchor(c.claimText || "") || "no_anchor").filter(Boolean);
+    const usdAnchors = emittedAnchors.filter(a => typeof a === "string" && a.startsWith("usd_"));
+    if (usdAnchors.length > 0) {
+      diag(runId, reqSig, `[DIAG][A3.8.52][USD_ANCHOR_EMIT] idx=${statementIdx} anchors=${JSON.stringify(usdAnchors.slice(0, 8))}`);
+    }
   }
   
   // A3.8.51: Post-prune diagnostic (selection mode only)
