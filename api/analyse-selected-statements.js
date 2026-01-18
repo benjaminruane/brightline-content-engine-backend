@@ -151,6 +151,9 @@ export default async function handler(req, res) {
     phase = "parse_body";
     dbg.phase = phase;
     
+    // A3.8.53: Build marker - confirms deployed build includes A3.8.53 changes
+    diag(runId, reqSig, `[DIAG][A3.8.53][BUILD_MARKER] active=true`);
+    
     // A3.8.16: Parse body safely
     let body;
     try {

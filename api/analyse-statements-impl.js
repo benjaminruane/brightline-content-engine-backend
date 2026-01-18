@@ -8592,11 +8592,13 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   const selectionMode = !!(assessment?.selectionScope?.selectionMode) || !!(assessment?.selectionHash);
   
   // A3.8.52: USD anchor normalizer (early definition for use in aggregation)
+  // A3.8.53: Updated to match spec - includes check for dots before replacing
   // Converts "usd_5.5m" -> "usd_5_5m" for consistent comparison
-  function normalizeUsdAnchor(a) {
-    if (!a || typeof a !== "string") return a;
-    if (!a.startsWith("usd_")) return a;
-    return a.replace(/\./g, "_");
+  function normalizeUsdAnchor(anchor) {
+    if (!anchor || typeof anchor !== "string") return anchor ?? null;
+    if (!anchor.startsWith("usd_")) return anchor;
+    // normalize all dots to underscores for USD anchors
+    return anchor.includes(".") ? anchor.replace(/\./g, "_") : anchor;
   }
   
   // A3.6.8: Extract all anchors from original statement text for logging
@@ -9432,6 +9434,12 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       const shouldDropAsNoncanonical = !canonicalClaimAnchor || 
         (bothAreUsd ? true : (!isCanonical && !normalizedMatchLegacy));
       
+      // A3.8.53: Diagnostic log before drop decision for USD anchors (selection mode only)
+      if (selectionMode && runId && reqSig && claimAnchorRaw && typeof claimAnchorRaw === "string" && claimAnchorRaw.startsWith("usd_")) {
+        const willKeep = !shouldDropAsNoncanonical || aggClaim.__protected === true || isContextualUsd;
+        diag(runId, reqSig, `[DIAG][A3.8.53][USD_DROP_CHECK] claimAnchor=${claimAnchorRaw || "null"} canonAnchor=${canonicalAnchorRaw || "null"} claimNorm=${claimAnchorNorm || "null"} canonNorm=${canonicalAnchorNorm || "null"} willKeep=${willKeep}`);
+      }
+      
       if (shouldDropAsNoncanonical) {
         // A3.6.53: Bypass non-canonical check for protected claims
         if (aggClaim.__protected === true) {
@@ -9845,6 +9853,39 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         .filter((a, i, arr) => arr.indexOf(a) === i) // unique
         .slice(0, 8);
       diag(runId, reqSig, `[A3.8.51][USD_PRUNE_RESULT] idx=${statementIdx} postUsd=${postUsdCount} keptUsdAnchors=${JSON.stringify(keptUsdAnchors)}`);
+    }
+  }
+  
+  // A3.8.53: USD drop summary (selection mode only, after prune pass)
+  if (selectionMode && runId && reqSig) {
+    const hasDetectedUsd = allAnchorsInOriginal.some(a => typeof a === "string" && a.startsWith("usd_"));
+    if (hasDetectedUsd) {
+      // Count USD claims before pruning (from cappedClaims)
+      const usdClaimsBefore = cappedClaims.filter(c => {
+        const anchor = c.anchor || extractAnchor(c.claimText || "");
+        return typeof anchor === "string" && anchor.startsWith("usd_");
+      }).length;
+      
+      // Count USD claims after pruning (from finalClaims)
+      const usdClaimsAfter = finalClaims.filter(c => {
+        const anchor = c.anchor || extractAnchor(c.claimText || "");
+        return typeof anchor === "string" && anchor.startsWith("usd_");
+      }).length;
+      
+      // Get kept USD anchors
+      const keptUsdAnchors = finalClaims
+        .filter(c => {
+          const anchor = c.anchor || extractAnchor(c.claimText || "");
+          return typeof anchor === "string" && anchor.startsWith("usd_");
+        })
+        .map(c => {
+          const anchor = c.anchor || extractAnchor(c.claimText || "");
+          return anchor;
+        })
+        .filter((a, i, arr) => arr.indexOf(a) === i) // unique
+        .slice(0, 8);
+      
+      diag(runId, reqSig, `[DIAG][A3.8.53][USD_DROP_SUMMARY] idx=${statementIdx} usdClaimsBefore=${usdClaimsBefore} usdClaimsAfter=${usdClaimsAfter} keptUsdAnchors=${JSON.stringify(keptUsdAnchors)}`);
     }
   }
   
