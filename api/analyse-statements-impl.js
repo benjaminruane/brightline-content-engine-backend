@@ -9269,7 +9269,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     return normalized;
   }
   
-  // A3.8.49: Pre-prune diagnostic (selection mode only)
+  // A3.8.51: Pre-prune diagnostic (selection mode only)
   if (selectionMode) {
     const hasDetectedUsd = allAnchorsInOriginal.some(a => typeof a === "string" && a.startsWith("usd_"));
     if (hasDetectedUsd && runId && reqSig) {
@@ -9290,7 +9290,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
           break;
         }
       }
-      diag(runId, reqSig, `[A3.8.49][USD_PRUNE_CHECK] idx=${statementIdx} detectedAnchors=${JSON.stringify(detectedUsdAnchors)} canonical=${canonicalAnchor || "none"} canonicalNorm=${canonicalNorm || "none"} preUsd=${preUsdCount}`);
+      diag(runId, reqSig, `[A3.8.51][USD_PRUNE_CHECK] idx=${statementIdx} detected=${JSON.stringify(detectedUsdAnchors)} canonical=${canonicalAnchor || "none"} canonicalNorm=${canonicalNorm || "none"} preUsd=${preUsdCount}`);
     }
   }
   
@@ -9349,21 +9349,21 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       ? normalizeUsdAnchorFamily(canonicalClaimAnchor)
       : canonicalClaimAnchor;
     
-    // A3.8.50: Normalize USD anchors at exact pruning decision point (selection mode only)
+    // A3.8.51: Normalize USD anchors at exact pruning decision point (selection mode only)
     // Compute raw anchors
     const claimAnchorRaw = claimAnchor || extractAnchor(claimText) || null;
     const canonicalAnchorRaw = canonicalClaimAnchor || null;
     
-    // Compute normalized anchors using strict normalizer
-    const claimAnchorNorm = selectionMode ? normalizeUsdAnchorStrict(claimAnchorRaw) : claimAnchorRaw;
-    const canonicalAnchorNorm = selectionMode ? normalizeUsdAnchorStrict(canonicalAnchorRaw) : canonicalAnchorRaw;
+    // A3.8.51: Compute normalized anchors using normalizeUsdAnchor helper
+    const claimAnchorNorm = selectionMode ? normalizeUsdAnchor(claimAnchorRaw) : claimAnchorRaw;
+    const canonicalAnchorNorm = selectionMode ? normalizeUsdAnchor(canonicalAnchorRaw) : canonicalAnchorRaw;
     
-    // A3.8.50: Check if both are USD anchors
+    // A3.8.51: Check if both are USD anchors
     const bothAreUsd = selectionMode && 
       claimAnchorNorm && typeof claimAnchorNorm === "string" && claimAnchorNorm.startsWith("usd_") &&
       canonicalAnchorNorm && typeof canonicalAnchorNorm === "string" && canonicalAnchorNorm.startsWith("usd_");
     
-    // A3.8.50: KEEP if normalized USD anchors match
+    // A3.8.51: KEEP if normalized USD anchors match
     const normalizedUsdMatch = bothAreUsd && claimAnchorNorm === canonicalAnchorNorm;
     
     // A3.8.50: DIAG marker proving this build and pruning path executed
@@ -9397,18 +9397,21 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     // A3.8.47: Part A - Check canonical status using normalized anchor for USD anchors in selection mode
     // A3.8.49: Keep USD claims if normalized anchors match (even if not canonical)
     // A3.8.50: Keep USD claims if strict normalized anchors match
+    // A3.8.51: Keep USD claims if normalized anchors match (using normalizeUsdAnchor)
     const isCanonical = normalizedAnchorForComparison && isCanonicalAnchor(normalizedAnchorForComparison);
     
-    // A3.8.50: KEEP if normalized USD anchors match (before checking shouldDropAsNoncanonical)
+    // A3.8.51: KEEP if normalized USD anchors match (before checking shouldDropAsNoncanonical)
     if (normalizedUsdMatch) {
-      // A3.8.50: KEEP USD claim because normalized anchors match (selection mode only)
+      // A3.8.51: KEEP USD claim because normalized anchors match (selection mode only)
       // Continue to process this claim (don't skip)
     } else {
-      // A3.8.50: Only DROP as noncanonical if:
+      // A3.8.51: Only DROP as noncanonical if:
       // - No canonical anchor, OR
-      // - Not canonical AND (not both USD OR normalized versions don't match)
+      // - For USD anchors in selection mode: if both are USD and normalized versions don't match, drop
+      // - For others: drop if not canonical AND normalized versions don't match
+      // In the else block, normalizedUsdMatch is false
       const shouldDropAsNoncanonical = !canonicalClaimAnchor || 
-        (!isCanonical && !normalizedMatchLegacy);
+        (bothAreUsd ? true : (!isCanonical && !normalizedMatchLegacy));
       
       if (shouldDropAsNoncanonical) {
         // A3.6.53: Bypass non-canonical check for protected claims
@@ -9781,7 +9784,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     claimIdx++;
   }
   
-  // A3.8.49: Post-prune diagnostic (selection mode only)
+  // A3.8.51: Post-prune diagnostic (selection mode only)
   if (selectionMode) {
     const hasDetectedUsd = allAnchorsInOriginal.some(a => typeof a === "string" && a.startsWith("usd_"));
     if (hasDetectedUsd && runId && reqSig) {
@@ -9802,7 +9805,7 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         })
         .filter((a, i, arr) => arr.indexOf(a) === i) // unique
         .slice(0, 8);
-      diag(runId, reqSig, `[A3.8.49][USD_PRUNE_RESULT] idx=${statementIdx} postUsd=${postUsdCount} keptUsdAnchors=${JSON.stringify(keptUsdAnchors)}`);
+      diag(runId, reqSig, `[A3.8.51][USD_PRUNE_RESULT] idx=${statementIdx} postUsd=${postUsdCount} keptUsdAnchors=${JSON.stringify(keptUsdAnchors)}`);
     }
   }
   
