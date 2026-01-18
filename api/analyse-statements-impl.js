@@ -5879,6 +5879,9 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0, assessment
     return [];
   }
   
+  // A3.8.44: Derive selectionMode from assessment (check for selectionScope or selectionHash)
+  const selectionMode = !!(assessment?.selectionScope?.selectionMode) || !!(assessment?.selectionHash);
+  
   const caps = {
     Investment: 2,
     Valuation: 1,
@@ -6080,6 +6083,11 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0, assessment
           if (selectionMode) {
             diag(runId, reqSig, `[A3.8.42][VAL_KEEP_EMIT] idx=${idx} keptAnchorsRaw=[${keptAnchorsRaw.join(",")}] keptAnchorsNorm=[${keptAnchorsNorm.join(",")}] willEmitAnchorsNorm=[${willEmitAnchorsNorm.join(",")}] skippedAfterKeep=[${skippedAfterKeep.join(",")}]`);
           }
+          
+          // A3.8.44: DIAG log for facet caps (selection mode only)
+          if (selectionMode && runId && reqSig) {
+            diag(runId, reqSig, `[DIAG][A3.8.44][FACET_CAPS] selectionMode=${selectionMode} facet=${facet} before=${facetClaims.length} after=${kept.length}`);
+          }
         }
         
         if (dropped.length > 0 && runId && reqSig) {
@@ -6096,6 +6104,11 @@ function applyFacetCaps(claims, runId = null, reqSig = null, idx = 0, assessment
         const dropped = scored.slice(cap);
         
         result.push(...kept);
+        
+        // A3.8.44: DIAG log for facet caps (selection mode only)
+        if (selectionMode && runId && reqSig) {
+          diag(runId, reqSig, `[DIAG][A3.8.44][FACET_CAPS] selectionMode=${selectionMode} facet=${facet} before=${facetClaims.length} after=${kept.length}`);
+        }
         
         if (dropped.length > 0 && runId && reqSig) {
           diag(runId, reqSig, `[A3.6.53][CAP] idx=${idx} facet=${facet} keepAlways=${keepAlways.length} capCandidates=${capCandidates.length} kept=${kept.length} dropped=${dropped.length}`);
@@ -16754,7 +16767,12 @@ ${
         } else {
           // A3.8.9: Claims error - use fallback (should be rare)
           reasonsSourceValue = "fallback";
-          finalReasons = ["No extractable claims were produced for this statement."];
+          // A3.8.44: Guardrail - prepend error message when selectionMode=true and claims failed
+          if (selectionUsed) {
+            finalReasons = ["Claim extraction failed internally; showing fallback assessment.", "No extractable claims were produced for this statement."];
+          } else {
+            finalReasons = ["No extractable claims were produced for this statement."];
+          }
           if (runId && reqSig) {
             diag(runId, reqSig, `[REASONS][MODE] idx=${idx} mode=fallback claimsError=true`);
           }
@@ -17091,11 +17109,15 @@ ${
         }
         // Return as-is with fallback reason if not already set
         if (!Array.isArray(assessment.reasons) || assessment.reasons.length === 0) {
+          // A3.8.44: Guardrail - prepend error message when selectionMode=true and claims failed
+          const fallbackReasons = selectionUsed
+            ? ["Claim extraction failed internally; showing fallback assessment.", "No extractable claims were produced for this statement."]
+            : ["No extractable claims were produced for this statement."];
           return {
             ...stmt,
             assessment: {
               ...assessment,
-              reasons: ["No extractable claims were produced for this statement."],
+              reasons: fallbackReasons,
               reasonsSource: "fallback",
             },
           };
