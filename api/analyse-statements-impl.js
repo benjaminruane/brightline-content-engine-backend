@@ -5196,6 +5196,7 @@ const CANONICAL_ANCHOR_ALLOWLIST = new Set([
 
 // Helper to check if anchor is canonical (supports dynamic pct/usd/mult patterns)
 // A3.8.37: Extended to support usd_* anchors without "m" suffix (for unit pricing)
+// A3.8.55: Accept both dot and underscore decimal forms for USD anchors (usd_5.5m, usd_5_5m)
 function isCanonicalAnchor(anchor) {
   if (typeof anchor !== "string") return false;
   
@@ -5204,15 +5205,17 @@ function isCanonicalAnchor(anchor) {
   
   // Dynamic patterns
   if (/^pct_\d+$/.test(anchor)) return true; // Any pct_* number
-  if (/^usd_[\d.]+m$/.test(anchor)) return true; // Any usd_*m
-  if (/^usd_\d+(?:\.\d+)?$/.test(anchor)) return true; // A3.8.37: Any usd_* (without "m") for unit pricing
+  // A3.8.55: Accept USD anchors with optional decimal part (dot or underscore) and optional suffix (k/m/b)
+  // Matches: usd_5m, usd_5.5m, usd_5_5m, usd_12.75m, usd_12_75m, usd_5, usd_5.5, usd_5_5, etc.
+  if (/^usd_\d+(?:[._]\d+)?[kmb]?$/.test(anchor)) return true;
   if (/^mult_[\d.]+x$/.test(anchor)) return true; // Any mult_*x
   
   return false;
 }
 
 // A3.8.47: Part A - Normalize USD anchor families for comparison (selection mode only)
-// This normalizes anchor string variants (e.g., "usd_5_5m" -> "usd_5.5m") for matching purposes
+// A3.8.55: Normalize toward underscore form (not dot form) for canonical family representation
+// This normalizes anchor string variants (e.g., "usd_5.5m" -> "usd_5_5m") for matching purposes
 // Only used for comparisons in noncanonical filtering, not for emitted anchors
 function normalizeUsdAnchorFamily(anchor) {
   if (typeof anchor !== "string") return anchor;
@@ -5220,16 +5223,16 @@ function normalizeUsdAnchorFamily(anchor) {
   // Only normalize USD anchors
   if (!anchor.startsWith("usd_")) return anchor;
   
-  // Replace underscore decimals with dot decimals in numeric portion
-  // e.g., "usd_5_5m" -> "usd_5.5m", "usd_10_2m" -> "usd_10.2m"
-  // Pattern: usd_<digits>_<digits><suffix>
-  const match = anchor.match(/^usd_(\d+)_(\d+)([kmb]?)$/);
+  // A3.8.55: Replace dot decimals with underscore decimals in numeric portion
+  // e.g., "usd_5.5m" -> "usd_5_5m", "usd_10.2m" -> "usd_10_2m", "usd_12.75" -> "usd_12_75"
+  // Pattern: usd_<digits>.<digits><suffix>
+  const match = anchor.match(/^usd_(\d+)\.(\d+)([kmb]?)$/);
   if (match) {
     const [, whole, decimal, suffix] = match;
-    return `usd_${whole}.${decimal}${suffix}`;
+    return `usd_${whole}_${decimal}${suffix}`;
   }
   
-  // Already normalized or no decimal part
+  // Already in underscore form or no decimal part
   return anchor;
 }
 
@@ -9452,17 +9455,22 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     const isCanonical = normalizedAnchorForComparison && isCanonicalAnchor(normalizedAnchorForComparison);
     
     // A3.8.51: KEEP if normalized USD anchors match (before checking shouldDropAsNoncanonical)
+    // A3.8.55: Fix USD pruning - only drop when decision is DROP, not auto-drop USD anchors
     if (normalizedUsdMatch) {
       // A3.8.51: KEEP USD claim because normalized anchors match (selection mode only)
+      // A3.8.55: Diagnostic log when USD claim is kept due to normalized match
+      if (selectionMode && runId && reqSig && bothAreUsd) {
+        diag(runId, reqSig, `[DIAG][A3.8.55][USD_PRUNE_KEEP] idx=${statementIdx} claimAnchorRaw=${claimAnchorRaw || "null"} canonicalAnchorRaw=${canonicalAnchorRaw || "null"} claimAnchorNorm=${claimAnchorNorm || "null"} canonicalAnchorNorm=${canonicalAnchorNorm || "null"}`);
+      }
       // Continue to process this claim (don't skip)
     } else {
-      // A3.8.51: Only DROP as noncanonical if:
+      // A3.8.55: Only DROP as noncanonical if:
       // - No canonical anchor, OR
-      // - For USD anchors in selection mode: if both are USD and normalized versions don't match, drop
+      // - For USD anchors in selection mode: only drop if not canonical (check isCanonical, don't auto-drop just because it's USD)
       // - For others: drop if not canonical AND normalized versions don't match
       // In the else block, normalizedUsdMatch is false
       const shouldDropAsNoncanonical = !canonicalClaimAnchor || 
-        (bothAreUsd ? true : (!isCanonical && !normalizedMatchLegacy));
+        (bothAreUsd ? !isCanonical : (!isCanonical && !normalizedMatchLegacy));
       
       // A3.8.53: Diagnostic log before drop decision for USD anchors (selection mode only)
       if (selectionMode && runId && reqSig && claimAnchorRaw && typeof claimAnchorRaw === "string" && claimAnchorRaw.startsWith("usd_")) {
