@@ -11447,6 +11447,43 @@ function verbForReliability(reliabilityLabelOrScore) {
   return "could not be verified in the provided source(s).";
 }
 
+// A3.8.56: Detect bare USD statement (e.g., "$5.5m" without context)
+// Conservative definition: statement is just a currency figure
+function isBareUsdStatement(statementText, canonicalClaims) {
+  if (!statementText || typeof statementText !== "string") return false;
+  if (!Array.isArray(canonicalClaims) || canonicalClaims.length !== 1) return false;
+  
+  const trimmed = statementText.trim();
+  
+  // Match patterns like: "$5.5m", "$5.5", "5.5m", "$5 million", etc.
+  const bareUsdPattern = /^\$?\s*\d+(?:\.\d+)?\s*[kmb]?\s*$/i;
+  const bareUsdPatternWithWord = /^\$?\s*\d+(?:\.\d+)?\s*(million|billion|thousand)\s*$/i;
+  
+  if (!bareUsdPattern.test(trimmed) && !bareUsdPatternWithWord.test(trimmed)) {
+    return false;
+  }
+  
+  // Check that there's exactly one canonical claim with USD anchor
+  const claim = canonicalClaims[0];
+  if (!claim || typeof claim !== "object") return false;
+  
+  const allowedTypes = new Set([
+    "metric_amount",
+    "investment_amount",
+    "valuation_pre_money",
+    "valuation_post_money",
+    "valuation_enterprise_value",
+    "other_numeric"
+  ]);
+  
+  if (!allowedTypes.has(claim.type)) return false;
+  
+  const anchorFamily = claim.anchorFamily || "";
+  if (!anchorFamily.startsWith("usd_")) return false;
+  
+  return true;
+}
+
 /**
  * A3.8.14: Build deal context from canonical claims (selection mode only)
  * Detects deal-related claims and groups them for assessment purposes.
@@ -11935,6 +11972,30 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     return ["No extractable claims were produced for this statement."];
   }
   
+  // A3.8.56: Check if this is a bare USD statement and if corpusSearch found matches
+  const statementText = statement?.text || "";
+  const isBareUsd = isBareUsdStatement(statementText, canonicalClaims);
+  let corpusSearchHitsCount = 0;
+  let shouldReplaceNotSupported = false;
+  
+  if (isBareUsd && selectionMode && uploadedDocs.length > 0) {
+    try {
+      const searchResult = corpusSearch(statementText, uploadedDocs);
+      if (searchResult && searchResult.found && Array.isArray(searchResult.hits)) {
+        corpusSearchHitsCount = searchResult.hits.length;
+        shouldReplaceNotSupported = corpusSearchHitsCount > 0;
+        
+        // A3.8.56: Diagnostic log when special case triggers
+        if (shouldReplaceNotSupported && runId && reqSig) {
+          const statementIndex = statement?.index ?? 0;
+          diag(runId, reqSig, `[A3.8.56][BARE_USD_COVERAGE_ONLY] idx=${statementIndex} text="${statementText}" hits=${corpusSearchHitsCount} replacedNotSupported=true`);
+        }
+      }
+    } catch (_) {
+      // If corpusSearch fails, keep existing behavior
+    }
+  }
+  
   // A3.8.12: Generate user-meaningful reasons directly from canonical claims
   // Filter out consolidation jargon and build type-specific verification language
   const reasons = [];
@@ -12006,10 +12067,25 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     // A3.8.15: Build user-meaningful reason with definitive language
     let reasonText = "";
     
+    // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason
+    const verbToUse = verb;
+    const isNotSupported = verbToUse === "is not supported by the provided source(s).";
+    const shouldReplace = shouldReplaceNotSupported && isNotSupported && (claimType === "metric_amount" || claimType === "investment_amount" || claimType === "valuation_pre_money" || claimType === "valuation_post_money" || claimType === "valuation_enterprise_value" || claimType === "other_numeric");
+    
     if (claimType === "investment_amount") {
-      reasonText = `Investment amount (${valueDisplay}) ${verb}${citeStr}`;
+      if (shouldReplace) {
+        // A3.8.56: Use deterministic reason for bare USD with corpus hits
+        reasonText = `Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
+      } else {
+        reasonText = `Investment amount (${valueDisplay}) ${verbToUse}${citeStr}`;
+      }
     } else if (claimType === "metric_amount") {
-      reasonText = `Operating metric (${valueDisplay}${metricHint}) ${verb}${citeStr}`;
+      if (shouldReplace) {
+        // A3.8.56: Use deterministic reason for bare USD with corpus hits
+        reasonText = `Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
+      } else {
+        reasonText = `Operating metric (${valueDisplay}${metricHint}) ${verbToUse}${citeStr}`;
+      }
     } else if (claimType === "growth_percent") {
       reasonText = `Growth rate (${valueDisplay} YoY) ${verb}${citeStr}`;
     } else if (claimType === "ownership_percent") {
@@ -12111,6 +12187,28 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       const fallbackReasons = generateClaimLinkedReasons([mappedClaim], statement, runId, reqSig);
       if (fallbackReasons.length > 0) {
         reasonText = fallbackReasons[0];
+        
+        // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" in fallback reasons
+        if (shouldReplace && reasonText && typeof reasonText === "string" && reasonText.includes("not supported")) {
+          // Extract the value display from the claim
+          let fallbackValueDisplay = "";
+          if (cc.value !== null) {
+            if (cc.currency) {
+              const millions = cc.value / 1e6;
+              if (millions >= 1) {
+                fallbackValueDisplay = `$${millions.toFixed(millions >= 10 ? 0 : 1)}m`;
+              } else {
+                const thousands = cc.value / 1e3;
+                if (thousands >= 1) {
+                  fallbackValueDisplay = `$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`;
+                } else {
+                  fallbackValueDisplay = `$${cc.value.toLocaleString()}`;
+                }
+              }
+            }
+          }
+          reasonText = `Figure (${fallbackValueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
+        }
       }
     }
     
@@ -12136,20 +12234,44 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       let qualVerb;
       if (selectionMode) {
         // A3.8.25: Selection mode uses deterministic language
+        // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason
         if (reliability === "Low") {
-          qualVerb = "is not supported by the provided source(s).";
+          if (shouldReplaceNotSupported) {
+            // A3.8.56: Use deterministic reason for bare USD with corpus hits
+            const claimValue = firstClaim.value;
+            let valueDisplay = "";
+            if (claimValue !== null && firstClaim.currency) {
+              const millions = claimValue / 1e6;
+              if (millions >= 1) {
+                valueDisplay = `$${millions.toFixed(millions >= 10 ? 0 : 1)}m`;
+              } else {
+                const thousands = claimValue / 1e3;
+                if (thousands >= 1) {
+                  valueDisplay = `$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`;
+                } else {
+                  valueDisplay = `$${claimValue.toLocaleString()}`;
+                }
+              }
+            }
+            reasons.push(`Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`);
+          } else {
+            qualVerb = "is not supported by the provided source(s).";
+            reasons.push(`This statement ${qualVerb}${citeStr}`);
+          }
         } else if (citations.length > 0) {
           qualVerb = "is supported by the provided source(s).";
+          reasons.push(`This statement ${qualVerb}${citeStr}`);
         } else {
           qualVerb = "could not be verified in the provided source(s).";
+          reasons.push(`This statement ${qualVerb}${citeStr}`);
         }
       } else {
         // Non-selection mode: keep existing behavior
         qualVerb = reliability === "Low" 
           ? "is not supported by the provided source(s)."
           : "is consistent with the provided source(s).";
+        reasons.push(`This statement ${qualVerb}${citeStr}`);
       }
-      reasons.push(`This statement ${qualVerb}${citeStr}`);
     }
   }
   
