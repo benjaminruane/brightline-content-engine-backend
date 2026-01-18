@@ -9243,6 +9243,39 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     }
   }
   
+  // A3.8.49: USD anchor normalizer (local helper, selection mode only)
+  // Converts "usd_5.5m" -> "usd_5_5m" for consistent comparison
+  function normalizeUsdAnchor(a) {
+    if (!a || typeof a !== "string") return a;
+    if (!a.startsWith("usd_")) return a;
+    return a.replace(/\./g, "_");
+  }
+  
+  // A3.8.49: Pre-prune diagnostic (selection mode only)
+  if (selectionMode) {
+    const hasDetectedUsd = allAnchorsInOriginal.some(a => typeof a === "string" && a.startsWith("usd_"));
+    if (hasDetectedUsd && runId && reqSig) {
+      const detectedUsdAnchors = Array.from(allAnchorsInOriginal).filter(a => typeof a === "string" && a.startsWith("usd_")).slice(0, 8);
+      const preUsdCount = cappedClaims.filter(c => {
+        const anchor = c.anchor || extractAnchor(c.claimText || "");
+        return typeof anchor === "string" && anchor.startsWith("usd_");
+      }).length;
+      // Get canonical anchor from first USD claim (if any) for diagnostic
+      let canonicalAnchor = null;
+      let canonicalNorm = null;
+      for (const c of cappedClaims) {
+        const anchor = c.anchor || extractAnchor(c.claimText || "");
+        if (anchor && anchor.startsWith("usd_")) {
+          canonicalAnchor = canonicalizeAnchor(anchor, c.claimText);
+          canonicalAnchor = normalizeMoneyAnchor(canonicalAnchor);
+          canonicalNorm = normalizeUsdAnchor(canonicalAnchor);
+          break;
+        }
+      }
+      diag(runId, reqSig, `[A3.8.49][USD_PRUNE_CHECK] idx=${statementIdx} detectedAnchors=${JSON.stringify(detectedUsdAnchors)} canonical=${canonicalAnchor || "none"} canonicalNorm=${canonicalNorm || "none"} preUsd=${preUsdCount}`);
+    }
+  }
+  
   // A3.6.26: Use claimIdx for claim loop, statementIdx for statement-level gating
   let claimIdx = 0;
   for (const aggClaim of cappedClaims) {
@@ -9298,13 +9331,36 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
       ? normalizeUsdAnchorFamily(canonicalClaimAnchor)
       : canonicalClaimAnchor;
     
+    // A3.8.49: Normalize anchors for USD anchor family matching (selection mode only)
+    // This fixes the issue where "usd_5_5m" vs "usd_5.5m" are treated as different
+    let claimAnchorNorm = claimAnchor || "";
+    let canonicalNorm = canonicalClaimAnchor || "";
+    if (selectionMode) {
+      claimAnchorNorm = normalizeUsdAnchor(claimAnchor || "");
+      canonicalNorm = normalizeUsdAnchor(canonicalClaimAnchor || "");
+    }
+    
+    // A3.8.49: Keep rule: KEEP a USD claim if normalized anchors match
+    const bothAreUsd = selectionMode && 
+      claimAnchorNorm.startsWith("usd_") && 
+      canonicalNorm.startsWith("usd_");
+    const normalizedMatch = bothAreUsd && claimAnchorNorm === canonicalNorm;
+    
     // A3.6.53: Hard guard - skip non-canonical anchors (including null from qual_ownership)
     // BUT: Never drop protected claims (canonical deal-role claims)
     // A3.8.37: Also keep contextual USD claims in selection mode
     // A3.8.42: canonicalClaimAnchor is already normalized above (line 9051)
     // A3.8.47: Part A - Check canonical status using normalized anchor for USD anchors in selection mode
+    // A3.8.49: Keep USD claims if normalized anchors match (even if not canonical)
     const isCanonical = normalizedAnchorForComparison && isCanonicalAnchor(normalizedAnchorForComparison);
-    if (!canonicalClaimAnchor || !isCanonical) {
+    
+    // A3.8.49: Only DROP as noncanonical if:
+    // - No canonical anchor, OR
+    // - Not canonical AND (not both USD OR normalized versions don't match)
+    const shouldDropAsNoncanonical = !canonicalClaimAnchor || 
+      (!isCanonical && !normalizedMatch);
+    
+    if (shouldDropAsNoncanonical) {
       // A3.6.53: Bypass non-canonical check for protected claims
       if (aggClaim.__protected === true) {
         // Protected claim - allow through even if anchor is non-canonical
@@ -9340,6 +9396,8 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
         // Continue to process this claim (don't skip)
       } else {
         // Non-protected claim - apply normal non-canonical guard
+        // A3.8.49: Drop only if both are USD anchors and normalized versions don't match
+        // OR if not USD anchors, use existing drop logic
         if (runId && reqSig && statementIdx < 2) {
           diag(runId, reqSig, `[CLAIMS_DROPPED_NONCANONICAL] idx=${statementIdx} anchor=${claimAnchor} canonical=${canonicalClaimAnchor} claimText="${claimText.substring(0, 60)}"`);
         }
@@ -9671,6 +9729,31 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     
     finalClaims.push(claim);
     claimIdx++;
+  }
+  
+  // A3.8.49: Post-prune diagnostic (selection mode only)
+  if (selectionMode) {
+    const hasDetectedUsd = allAnchorsInOriginal.some(a => typeof a === "string" && a.startsWith("usd_"));
+    if (hasDetectedUsd && runId && reqSig) {
+      const postUsdCount = finalClaims.filter(c => {
+        const anchor = c.anchor || extractAnchor(c.claimText || "");
+        return typeof anchor === "string" && anchor.startsWith("usd_");
+      }).length;
+      const keptUsdAnchors = finalClaims
+        .filter(c => {
+          const anchor = c.anchor || extractAnchor(c.claimText || "");
+          return typeof anchor === "string" && anchor.startsWith("usd_");
+        })
+        .map(c => {
+          const anchor = c.anchor || extractAnchor(c.claimText || "");
+          const canonical = canonicalizeAnchor(anchor, c.claimText);
+          const normalized = normalizeMoneyAnchor(canonical);
+          return normalizeUsdAnchor(normalized);
+        })
+        .filter((a, i, arr) => arr.indexOf(a) === i) // unique
+        .slice(0, 8);
+      diag(runId, reqSig, `[A3.8.49][USD_PRUNE_RESULT] idx=${statementIdx} postUsd=${postUsdCount} keptUsdAnchors=${JSON.stringify(keptUsdAnchors)}`);
+    }
   }
   
   // A3.8.48: Selection-mode USD retention guard (post-prune)
