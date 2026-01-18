@@ -5083,7 +5083,8 @@ function extractAnchor(claimText) {
     
     // A3.8.35: If amount is in unit pricing range and context is present, use unit pricing anchor
     if (hasUnitPricingContext && num >= 1 && num <= 5000) {
-      return `usd_${num}`;
+      let anchor = `usd_${num}`;
+      return normalizeUsdAnchorAtSource(anchor, "extractAnchor");
     }
     
     // A3.8.28: Fix $45 -> $45m bug - if "m" suffix and following text starts with "month", treat as no suffix
@@ -5092,7 +5093,8 @@ function extractAnchor(claimText) {
       const followingText = text.substring(matchIndex).trim();
       if (/^month|^monthly|^mo\b/i.test(followingText)) {
         // Treat as plain USD (no million suffix)
-        return `usd_${num}`;
+        let anchor = `usd_${num}`;
+        return normalizeUsdAnchorAtSource(anchor, "extractAnchor");
       }
     }
     
@@ -5109,16 +5111,19 @@ function extractAnchor(claimText) {
     // A3.8.37: Only add "m" suffix if there was an explicit unit (million/mm/m/billion/b/thousand/k)
     // OR if the numeric value is >= 1,000,000 (actual millions)
     // For small values like $45 with no unit, return "usd_45" (no "m")
+    let anchor;
     if (unit) {
       // Explicit unit present - use "m" suffix
-      return `usd_${normalized}m`;
+      anchor = `usd_${normalized}m`;
     } else if (num >= 1000000) {
       // Large value without explicit unit but clearly in millions
-      return `usd_${normalized}m`;
+      anchor = `usd_${normalized}m`;
     } else {
       // Small value without explicit unit - no "m" suffix
-      return `usd_${num}`;
+      anchor = `usd_${num}`;
     }
+    // A3.8.54: Normalize USD anchor at source
+    return normalizeUsdAnchorAtSource(anchor, "extractAnchor");
   }
   
   // Percentage anchors: "<num>%"
@@ -5301,6 +5306,25 @@ function checkUnitPricingContextForAnchor(text, matchIndex, matchLength) {
   return false;
 }
 
+// A3.8.54: Normalize USD anchors at extraction source
+// Ensures all USD anchors use underscore format (e.g. "usd_5_5m") instead of dot format ("usd_5.5m")
+function normalizeUsdAnchorAtSource(anchor, context = "extractAnchor") {
+  if (!anchor || typeof anchor !== "string") return anchor;
+  if (!anchor.startsWith("usd_")) return anchor;
+  if (!anchor.includes(".")) return anchor;
+  
+  const normalized = anchor.replace(/\./g, "_");
+  
+  // Diagnostic logging when normalization occurs
+  console.log(`[DIAG][A3.8.54][USD_ANCHOR_SOURCE_NORMALIZED]`, {
+    original: anchor,
+    normalized: normalized,
+    context: context
+  });
+  
+  return normalized;
+}
+
 // A3.6.11: Extract all anchors and canonicalize them
 // A3.8.35: Enhanced unit pricing detection
 function extractAllAnchors(clauseText) {
@@ -5326,7 +5350,8 @@ function extractAllAnchors(clauseText) {
       
       // A3.8.35: If amount is in unit pricing range and context is present, use unit pricing anchor
       if (hasUnitPricingContext && num >= 1 && num <= 5000) {
-        anchors.add(`usd_${num}`);
+        let anchor = `usd_${num}`;
+        anchors.add(normalizeUsdAnchorAtSource(anchor, "extractAllAnchors"));
         continue;
       }
       
@@ -5336,7 +5361,8 @@ function extractAllAnchors(clauseText) {
         const followingText = originalText.substring(matchIndex).trim();
         if (/^month|^monthly|^mo\b/i.test(followingText)) {
           // Treat as plain USD (no million suffix)
-          anchors.add(`usd_${num}`);
+          let anchor = `usd_${num}`;
+          anchors.add(normalizeUsdAnchorAtSource(anchor, "extractAllAnchors"));
           continue;
         }
       }
@@ -5350,16 +5376,19 @@ function extractAllAnchors(clauseText) {
       // A3.8.37: Only add "m" suffix if there was an explicit unit (million/mm/m/billion/b/thousand/k)
       // OR if the numeric value is >= 1,000,000 (actual millions)
       // For small values like $45 with no unit, return "usd_45" (no "m")
+      let anchor;
       if (unit) {
         // Explicit unit present - use "m" suffix
-        anchors.add(`usd_${normalized}m`);
+        anchor = `usd_${normalized}m`;
       } else if (num >= 1000000) {
         // Large value without explicit unit but clearly in millions
-        anchors.add(`usd_${normalized}m`);
+        anchor = `usd_${normalized}m`;
       } else {
         // Small value without explicit unit - no "m" suffix
-        anchors.add(`usd_${num}`);
+        anchor = `usd_${num}`;
       }
+      // A3.8.54: Normalize USD anchor at source
+      anchors.add(normalizeUsdAnchorAtSource(anchor, "extractAllAnchors"));
     }
   }
   
@@ -5375,7 +5404,8 @@ function extractAllAnchors(clauseText) {
       
       // A3.8.35: If amount is in unit pricing range and context is present, use unit pricing anchor
       if (hasUnitPricingContext && num >= 1 && num <= 5000) {
-        anchors.add(`usd_${num}`);
+        let anchor = `usd_${num}`;
+        anchors.add(normalizeUsdAnchorAtSource(anchor, "extractAllAnchors"));
       }
       // Otherwise, don't add plain USD without explicit unit (let existing logic handle it)
     }
