@@ -9673,6 +9673,84 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     claimIdx++;
   }
   
+  // A3.8.48: Selection-mode USD retention guard (post-prune)
+  // Prevent CLAIMS_DROPPED_NONCANONICAL from deleting all USD claims when a USD anchor was detected
+  if (selectionMode) {
+    // a) Determine whether this statement had any detected USD anchor
+    const hasDetectedUsd = allAnchorsInOriginal.some(a => typeof a === "string" && a.startsWith("usd_"));
+    
+    // b) Determine whether any USD claim survived
+    const hasUsdClaimPost = finalClaims.some(c => {
+      const anchor = c.anchor || extractAnchor(c.claimText || "");
+      return typeof anchor === "string" && anchor.startsWith("usd_");
+    });
+    
+    // c) If detected USD but none survived, rescue exactly ONE USD claim
+    if (hasDetectedUsd && !hasUsdClaimPost) {
+      // Count USD claims before pruning
+      const preUsdCount = cappedClaims.filter(c => {
+        const anchor = c.anchor || extractAnchor(c.claimText || "");
+        return typeof anchor === "string" && anchor.startsWith("usd_");
+      }).length;
+      
+      // Find all USD candidate claims from prePruneClaims
+      const usdCandidates = cappedClaims.filter(c => {
+        const anchor = c.anchor || extractAnchor(c.claimText || "");
+        return typeof anchor === "string" && anchor.startsWith("usd_") &&
+               typeof c.claimText === "string" && c.claimText.trim().length > 0;
+      });
+      
+      if (usdCandidates.length > 0) {
+        // Rank candidates: (1) prefer revenue/metric cues, (2) longest text, (3) first in order
+        const metricKeywords = /annualized|revenue|sales|ARR|run[- ]rate/i;
+        usdCandidates.sort((a, b) => {
+          const aText = a.claimText || "";
+          const bText = b.claimText || "";
+          const aHasMetric = metricKeywords.test(aText);
+          const bHasMetric = metricKeywords.test(bText);
+          
+          if (aHasMetric && !bHasMetric) return -1;
+          if (!aHasMetric && bHasMetric) return 1;
+          if (aText.length !== bText.length) return bText.length - aText.length;
+          return 0; // Stable tie-break: keep original order
+        });
+        
+        // Rescue the best candidate
+        const rescued = usdCandidates[0];
+        rescued.__rescuedUsdSelection = true;
+        finalClaims.push(rescued);
+        
+        // A3.8.48: DIAG logs
+        if (runId && reqSig) {
+          const rescuedAnchor = rescued.anchor || extractAnchor(rescued.claimText || "");
+          const preview = (rescued.claimText || "").substring(0, 60);
+          const hasMetric = metricKeywords.test(rescued.claimText || "");
+          const reason = hasMetric ? "metric_keyword" : (rescued.claimText && rescued.claimText.length > 20 ? "longest" : "first");
+          const detectedAnchorsArray = Array.from(allAnchorsInOriginal).filter(a => typeof a === "string" && a.startsWith("usd_")).slice(0, 8);
+          
+          diag(runId, reqSig, `[A3.8.48][USD_RESCUE_TRIGGER] idx=${statementIdx} detectedUsd=true preUsd=${preUsdCount} postUsd=0 detectedAnchors=${JSON.stringify(detectedAnchorsArray)}`);
+          diag(runId, reqSig, `[A3.8.48][USD_RESCUE_PICK] idx=${statementIdx} anchor=${rescuedAnchor} preview="${preview}" reason=${reason}`);
+        }
+      } else {
+        // No candidates found (shouldn't happen if hasDetectedUsd is true, but defensive)
+        if (runId && reqSig) {
+          const detectedAnchorsArray = Array.from(allAnchorsInOriginal).filter(a => typeof a === "string" && a.startsWith("usd_")).slice(0, 8);
+          diag(runId, reqSig, `[A3.8.48][USD_RESCUE_TRIGGER] idx=${statementIdx} detectedUsd=true preUsd=0 postUsd=0 detectedAnchors=${JSON.stringify(detectedAnchorsArray)} reason="no_candidates"`);
+        }
+      }
+    } else if (hasDetectedUsd && hasUsdClaimPost) {
+      // USD detected and survived - no rescue needed
+      if (runId && reqSig) {
+        const postUsdCount = finalClaims.filter(c => {
+          const anchor = c.anchor || extractAnchor(c.claimText || "");
+          return typeof anchor === "string" && anchor.startsWith("usd_");
+        }).length;
+        const detectedAnchorsArray = Array.from(allAnchorsInOriginal).filter(a => typeof a === "string" && a.startsWith("usd_")).slice(0, 8);
+        diag(runId, reqSig, `[A3.8.48][USD_RESCUE_TRIGGER] idx=${statementIdx} detectedUsd=true preUsd=<unknown> postUsd=${postUsdCount} detectedAnchors=${JSON.stringify(detectedAnchorsArray)} reason="not_needed"`);
+      }
+    }
+  }
+  
   // A3.6.12: Force-emit missing DealTerms claims for canonical statements (kind-scoped)
   // After dedup + filtering, ensure deal-term claims relevant to the statement kind are included
   // Reuse isCanonicalStatement and canonicalKind declared earlier in function
