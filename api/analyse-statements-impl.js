@@ -5206,6 +5206,28 @@ function isCanonicalAnchor(anchor) {
   return false;
 }
 
+// A3.8.47: Part A - Normalize USD anchor families for comparison (selection mode only)
+// This normalizes anchor string variants (e.g., "usd_5_5m" -> "usd_5.5m") for matching purposes
+// Only used for comparisons in noncanonical filtering, not for emitted anchors
+function normalizeUsdAnchorFamily(anchor) {
+  if (typeof anchor !== "string") return anchor;
+  
+  // Only normalize USD anchors
+  if (!anchor.startsWith("usd_")) return anchor;
+  
+  // Replace underscore decimals with dot decimals in numeric portion
+  // e.g., "usd_5_5m" -> "usd_5.5m", "usd_10_2m" -> "usd_10.2m"
+  // Pattern: usd_<digits>_<digits><suffix>
+  const match = anchor.match(/^usd_(\d+)_(\d+)([kmb]?)$/);
+  if (match) {
+    const [, whole, decimal, suffix] = match;
+    return `usd_${whole}.${decimal}${suffix}`;
+  }
+  
+  // Already normalized or no decimal part
+  return anchor;
+}
+
 // A3.6.4: Extract all distinct anchors from a clause text
 // A3.6.8: Operate on ORIGINAL statement text (before any cleaning that might remove % or punctuation)
 // A3.6.11: Canonical anchor taxonomy - maps all anchor variants to canonical forms
@@ -9192,6 +9214,35 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   // A3.6.2 PATCH: Minimal diagnostics for first 1-2 statements
   const shouldLogDiagnostics = runId && reqSig && statementIdx < 2;
   
+  // A3.8.47: Part A - Track original claims and prepare for USD anchor normalization (selection mode only)
+  // A3.8.44: Derive selectionMode from assessment (check for selectionScope or selectionHash)
+  const selectionMode = !!(assessment?.selectionScope?.selectionMode) || !!(assessment?.selectionHash);
+  const originalClaimsBeforeFilter = selectionMode ? [...cappedClaims] : null;
+  
+  // A3.8.47: Part A - Collect USD anchors for normalization diagnostic (selection mode only)
+  // Pre-scan to collect anchors before filtering
+  const rawUsdAnchors = new Set();
+  const normUsdAnchors = new Set();
+  if (selectionMode) {
+    for (const aggClaim of cappedClaims) {
+      const claimText = aggClaim.claimText || "";
+      const claimAnchor = aggClaim.anchor || extractAnchor(claimText);
+      let canonicalClaimAnchor = canonicalizeAnchor(claimAnchor, claimText);
+      canonicalClaimAnchor = normalizeMoneyAnchor(canonicalClaimAnchor);
+      if (canonicalClaimAnchor && canonicalClaimAnchor.startsWith("usd_")) {
+        rawUsdAnchors.add(canonicalClaimAnchor);
+        const normalized = normalizeUsdAnchorFamily(canonicalClaimAnchor);
+        normUsdAnchors.add(normalized);
+      }
+    }
+    // A3.8.47: Part A - Log normalized anchors diagnostic (selection mode only)
+    if (rawUsdAnchors.size > 0 && runId && reqSig) {
+      const rawArray = Array.from(rawUsdAnchors).slice(0, 8);
+      const normArray = Array.from(normUsdAnchors).slice(0, 8);
+      diag(runId, reqSig, `[DIAG][A3.8.47][NONCANONICAL_KEYS] idx=${statementIdx} rawUsdAnchors=${JSON.stringify(rawArray)} normUsdAnchors=${JSON.stringify(normArray)}`);
+    }
+  }
+  
   // A3.6.26: Use claimIdx for claim loop, statementIdx for statement-level gating
   let claimIdx = 0;
   for (const aggClaim of cappedClaims) {
@@ -9241,11 +9292,19 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
     let keptForContextualUsd = false;
     let droppedFragment = null;
     
+    // A3.8.47: Part A - Use normalized USD anchor for comparison in selection mode
+    // This ensures "usd_5_5m" matches "usd_5.5m" when checking canonical status
+    const normalizedAnchorForComparison = selectionMode && canonicalClaimAnchor && canonicalClaimAnchor.startsWith("usd_")
+      ? normalizeUsdAnchorFamily(canonicalClaimAnchor)
+      : canonicalClaimAnchor;
+    
     // A3.6.53: Hard guard - skip non-canonical anchors (including null from qual_ownership)
     // BUT: Never drop protected claims (canonical deal-role claims)
     // A3.8.37: Also keep contextual USD claims in selection mode
     // A3.8.42: canonicalClaimAnchor is already normalized above (line 9051)
-    if (!canonicalClaimAnchor || !isCanonicalAnchor(canonicalClaimAnchor)) {
+    // A3.8.47: Part A - Check canonical status using normalized anchor for USD anchors in selection mode
+    const isCanonical = normalizedAnchorForComparison && isCanonicalAnchor(normalizedAnchorForComparison);
+    if (!canonicalClaimAnchor || !isCanonical) {
       // A3.6.53: Bypass non-canonical check for protected claims
       if (aggClaim.__protected === true) {
         // Protected claim - allow through even if anchor is non-canonical
@@ -9771,6 +9830,95 @@ function generateClaimsForStatement(statementText, uploadedDocs, assessment, run
   // Log scoring distribution (per statement)
   if (runId && reqSig) {
     diag(runId, reqSig, `[CLAIMS_SCORE] idx=${idx} hi=${hiCount} med=${medCount} low=${lowCount}`);
+  }
+  
+  // A3.8.47: Part B - Deterministic rescue: never drop the last USD claim for an anchorFamily in selection mode
+  if (selectionMode && originalClaimsBeforeFilter) {
+    // Extract detected USD anchors from allAnchorsInOriginal
+    const detectedUsdAnchors = allAnchorsInOriginal.filter(a => a && a.startsWith("usd_"));
+    
+    if (detectedUsdAnchors.length > 0) {
+      // Normalize detected anchors
+      const normalizedDetectedAnchors = new Set(detectedUsdAnchors.map(a => normalizeUsdAnchorFamily(a)));
+      
+      // Check which USD anchorFamilies survived in finalClaims
+      const survivedUsdAnchors = new Set();
+      for (const claim of finalClaims) {
+        const anchor = claim.anchor || extractAnchor(claim.claimText || "");
+        const canonical = canonicalizeAnchor(anchor, claim.claimText);
+        const normalized = normalizeMoneyAnchor(canonical);
+        if (normalized && normalized.startsWith("usd_")) {
+          const normFamily = normalizeUsdAnchorFamily(normalized);
+          survivedUsdAnchors.add(normFamily);
+        }
+      }
+      
+      // Find missing anchorFamilies (detected but not survived)
+      const missingAnchors = Array.from(normalizedDetectedAnchors).filter(a => !survivedUsdAnchors.has(a));
+      
+      if (missingAnchors.length > 0) {
+        // Need to rescue claims for missing anchorFamilies
+        const rescuedClaims = [];
+        const domainMetricKeywords = /\b(revenue|sales|arr|annualized|run-rate|run\s+rate|gmv|bookings|ebitda|profit|margin)\b/i;
+        
+        for (const missingAnchor of missingAnchors) {
+          // Find all original claims that match this anchorFamily
+          const candidates = originalClaimsBeforeFilter.filter(claim => {
+            const anchor = claim.anchor || extractAnchor(claim.claimText || "");
+            const canonical = canonicalizeAnchor(anchor, claim.claimText);
+            const normalized = normalizeMoneyAnchor(canonical);
+            if (!normalized || !normalized.startsWith("usd_")) return false;
+            const normFamily = normalizeUsdAnchorFamily(normalized);
+            if (normFamily !== missingAnchor) return false;
+            // Only rescue claims whose claimText appears in statementText (prevent leakage)
+            const claimText = claim.claimText || "";
+            return statementText.includes(claimText);
+          });
+          
+          if (candidates.length === 0) continue;
+          
+          // Rank candidates: prefer domain metric keywords, then longer text, then first in order
+          candidates.sort((a, b) => {
+            const aText = a.claimText || "";
+            const bText = b.claimText || "";
+            const aHasMetric = domainMetricKeywords.test(aText);
+            const bHasMetric = domainMetricKeywords.test(bText);
+            
+            if (aHasMetric && !bHasMetric) return -1;
+            if (!aHasMetric && bHasMetric) return 1;
+            if (aText.length !== bText.length) return bText.length - aText.length;
+            return 0; // Stable tie-break: keep original order
+          });
+          
+          // Rescue the best candidate
+          const rescued = candidates[0];
+          rescuedClaims.push(rescued);
+          finalClaims.push(rescued);
+        }
+        
+        // A3.8.47: Part B - Log rescue operation
+        if (runId && reqSig) {
+          const rescuedCount = rescuedClaims.length;
+          const anchorsKept = Array.from(new Set(rescuedClaims.map(c => {
+            const anchor = c.anchor || extractAnchor(c.claimText || "");
+            const canonical = canonicalizeAnchor(anchor, c.claimText);
+            return normalizeUsdAnchorFamily(normalizeMoneyAnchor(canonical));
+          }))).slice(0, 8);
+          const preview = rescuedClaims.length > 0 ? (rescuedClaims[0].claimText || "").substring(0, 60) : "";
+          diag(runId, reqSig, `[DIAG][A3.8.47][NONCANONICAL_RESCUE] idx=${statementIdx} rescued=${rescuedCount} anchorsKept=${JSON.stringify(anchorsKept)} preview="${preview}"`);
+        }
+      } else {
+        // A3.8.47: Part B - Log when rescue not needed
+        if (runId && reqSig) {
+          diag(runId, reqSig, `[DIAG][A3.8.47][NONCANONICAL_RESCUE] idx=${statementIdx} rescued=0 reason="not_needed"`);
+        }
+      }
+    } else {
+      // A3.8.47: Part B - Log when no USD detected
+      if (runId && reqSig) {
+        diag(runId, reqSig, `[DIAG][A3.8.47][NONCANONICAL_RESCUE] idx=${statementIdx} rescued=0 reason="no_usd_detected"`);
+      }
+    }
   }
   
   return finalClaims;
