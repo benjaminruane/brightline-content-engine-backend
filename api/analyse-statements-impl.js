@@ -11526,6 +11526,7 @@ function isBareUsdStatement(statementText, canonicalClaims) {
     "valuation_pre_money",
     "valuation_post_money",
     "valuation_enterprise_value",
+    "valuation_equity_value", // A3.8.58
     "other_numeric"
   ]);
   
@@ -12059,6 +12060,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     "valuation_pre_money",
     "valuation_post_money",
     "valuation_enterprise_value",
+    "valuation_equity_value", // A3.8.58
     "ownership_percent",
     "fee_percent",
     "percent",
@@ -12145,13 +12147,43 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         const windowEnd = Math.min(statementText.length, spanMid + 80);
         const windowText = statementText.substring(windowStart, windowEnd).toLowerCase();
         
-        // Determine subtype based on local context
-        if (/\b(arr|annual recurring|recurring revenue|recurring)\b/i.test(windowText)) {
+        // A3.8.58: Extended metric subtype detection (MRR, EBITDA, period hints)
+        let periodHint = null;
+        
+        // Detect period hints (LTM/TTM/NTM)
+        if (/\b(ltm|last\s+twelve\s+months|last\s+12\s+months|trailing\s+twelve\s+months|trailing\s+12\s+months)\b/i.test(windowText)) {
+          periodHint = "LTM";
+        } else if (/\b(ttm|trailing\s+twelve\s+months|trailing\s+12\s+months)\b/i.test(windowText)) {
+          periodHint = "TTM";
+        } else if (/\b(ntm|next\s+twelve\s+months|next\s+12\s+months)\b/i.test(windowText)) {
+          periodHint = "NTM";
+        }
+        
+        // Determine subtype based on local context (priority order)
+        if (/\b(arr|annual\s+recurring\s+revenue|recurring\s+revenue|recurring)\b/i.test(windowText)) {
           metricSubtype = "ARR";
-        } else if (/\b(annualized revenue|annualized)\b/i.test(windowText)) {
+        } else if (/\b(mrr|monthly\s+recurring\s+revenue)\b/i.test(windowText)) {
+          metricSubtype = "MRR";
+        } else if (/\b(adjusted\s+ebitda|pro\s+forma\s+ebitda|adj\.?\s+ebitda)\b/i.test(windowText)) {
+          const adjustedMatch = windowText.match(/\b(adjusted|pro\s+forma|adj\.?)\s+ebitda/i);
+          if (adjustedMatch) {
+            const variant = adjustedMatch[1].replace(/\s+/g, " ");
+            metricSubtype = `${variant} EBITDA`;
+          } else {
+            metricSubtype = "EBITDA";
+          }
+        } else if (/\bebitda\b/i.test(windowText)) {
+          metricSubtype = "EBITDA";
+        } else if (/\b(annualized\s+revenue|annualized)\b/i.test(windowText)) {
           metricSubtype = "annualized revenue";
         } else if (/\brevenue\b/i.test(windowText)) {
           metricSubtype = "revenue";
+        }
+        
+        // A3.8.58: Store period hint in metricSubtype if detected (for reason text generation)
+        if (periodHint && metricSubtype) {
+          // Period hint will be used in reason text generation below
+          metricSubtype = `${periodHint} ${metricSubtype}`;
         }
         
         // A3.8.57: DIAG log for metric subtype detection
@@ -12170,7 +12202,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason
     const verbToUse = verb;
     const isNotSupported = verbToUse === "is not supported by the provided source(s).";
-    const shouldReplace = shouldReplaceNotSupported && isNotSupported && (claimType === "metric_amount" || claimType === "investment_amount" || claimType === "valuation_pre_money" || claimType === "valuation_post_money" || claimType === "valuation_enterprise_value" || claimType === "other_numeric");
+    const shouldReplace = shouldReplaceNotSupported && isNotSupported && (claimType === "metric_amount" || claimType === "investment_amount" || claimType === "valuation_pre_money" || claimType === "valuation_post_money" || claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value" || claimType === "other_numeric");
     
     if (claimType === "investment_amount") {
       if (shouldReplace) {
@@ -12185,13 +12217,31 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         reasonText = `Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
       } else {
         // A3.8.57: Include metric subtype in reason text
+        // A3.8.58: Extended subtypes (MRR, EBITDA, period hints)
         let subtypeLabel = "";
-        if (metricSubtype === "ARR") {
-          subtypeLabel = `ARR ${valueDisplay}`;
-        } else if (metricSubtype === "annualized revenue") {
-          subtypeLabel = `annualized revenue ${valueDisplay}`;
-        } else if (metricSubtype === "revenue") {
-          subtypeLabel = `revenue ${valueDisplay}`;
+        if (metricSubtype) {
+          // Check if subtype includes period hint (e.g., "LTM ARR", "TTM EBITDA")
+          const periodMatch = metricSubtype.match(/^(LTM|TTM|NTM)\s+(.+)$/);
+          if (periodMatch) {
+            const [, period, subtype] = periodMatch;
+            subtypeLabel = `${period} ${subtype} ${valueDisplay}`;
+          } else if (metricSubtype === "ARR") {
+            subtypeLabel = `ARR ${valueDisplay}`;
+          } else if (metricSubtype === "MRR") {
+            subtypeLabel = `MRR ${valueDisplay}`;
+          } else if (metricSubtype === "EBITDA") {
+            subtypeLabel = `EBITDA ${valueDisplay}`;
+          } else if (metricSubtype.includes("EBITDA")) {
+            // Handle adjusted/pro forma variants
+            subtypeLabel = `${metricSubtype} ${valueDisplay}`;
+          } else if (metricSubtype === "annualized revenue") {
+            subtypeLabel = `annualized revenue ${valueDisplay}`;
+          } else if (metricSubtype === "revenue") {
+            subtypeLabel = `revenue ${valueDisplay}`;
+          } else {
+            // Fallback: use subtype as-is
+            subtypeLabel = `${metricSubtype} ${valueDisplay}`;
+          }
         } else {
           // Keep existing generic wording
           subtypeLabel = `${valueDisplay}${metricHint}`;
@@ -17789,7 +17839,7 @@ ${
           const diagnostics = canonDiag || {};
           const selHash = selectionHash ? selectionHash.substring(0, 8) : "none";
           const finCount = diagnostics.finCount !== undefined ? diagnostics.finCount : canonicalClaims.filter(cc => {
-            const financialTypes = new Set(["investment_amount", "valuation_pre_money", "valuation_post_money", "valuation_enterprise_value", "ownership_percent", "secondary_purchase", "structure_term"]);
+            const financialTypes = new Set(["investment_amount", "valuation_pre_money", "valuation_post_money", "valuation_enterprise_value", "valuation_equity_value", "ownership_percent", "secondary_purchase", "structure_term"]);
             return financialTypes.has(cc.type);
           }).length;
           const qualCount = diagnostics.qualCount !== undefined ? diagnostics.qualCount : (canonicalClaims.length - finCount);
