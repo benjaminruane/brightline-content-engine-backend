@@ -12411,6 +12411,8 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
   }
   
   // A3.8.55: Part B - Post-filter generic hedging note when it adds no value
+  // A3.8.56: Use finalReasons to avoid const reassignment crash
+  let finalReasons = reasons;
   if (selectionMode && reasons.length > 0) {
     const canonicalClaimsCount = canonicalClaims.length;
     const statementText = statement?.text || "";
@@ -12431,7 +12433,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       const distinctNumericCount = countDistinctNumericValues(statementText);
       if (distinctNumericCount < 2) {
         // Remove generic ambiguity note if present
-        reasons = reasons.filter(reason => {
+        finalReasons = reasons.filter(reason => {
           if (typeof reason !== "string") return true;
           return !reason.includes("multiple candidate figures were found; figure-to-claim mapping should be manually confirmed");
         });
@@ -12440,7 +12442,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
   }
   
   // A3.8.9: Cap to max 3 bullets
-  return reasons.slice(0, 3);
+  return finalReasons.slice(0, 3);
 }
 
 // A3.5.34: Scrub repeated phrases from snippets (e.g., "fully diluted ownership fully diluted ownership")
