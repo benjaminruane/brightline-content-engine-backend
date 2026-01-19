@@ -12117,6 +12117,53 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       }
     }
     
+    // A3.8.57: Detect metric subtype (ARR vs revenue) using local context window
+    let metricSubtype = null;
+    if (claimType === "metric_amount" && statementText) {
+      // Extract sourceSpan from canonical claim or compute from claim text
+      let sourceSpan = cc.sourceSpan;
+      if (!sourceSpan || sourceSpan.start === null || sourceSpan.end === null) {
+        // Fallback: extract from statement text
+        const claimText = cc.claimText || cc.displayText || "";
+        const index = statementText.indexOf(claimText);
+        if (index >= 0) {
+          sourceSpan = { start: index, end: index + claimText.length };
+        } else {
+          // Try to find USD amount position
+          const usdMatch = statementText.match(/\$([\d,]+(?:\.\d+)?)/);
+          if (usdMatch) {
+            const usdIndex = statementText.indexOf(usdMatch[0]);
+            sourceSpan = { start: usdIndex, end: usdIndex + usdMatch[0].length };
+          }
+        }
+      }
+      
+      if (sourceSpan && sourceSpan.start !== null && sourceSpan.end !== null) {
+        // Get local context window (80 chars around span)
+        const spanMid = Math.floor((sourceSpan.start + sourceSpan.end) / 2);
+        const windowStart = Math.max(0, spanMid - 80);
+        const windowEnd = Math.min(statementText.length, spanMid + 80);
+        const windowText = statementText.substring(windowStart, windowEnd).toLowerCase();
+        
+        // Determine subtype based on local context
+        if (/\b(arr|annual recurring|recurring revenue|recurring)\b/i.test(windowText)) {
+          metricSubtype = "ARR";
+        } else if (/\b(annualized revenue|annualized)\b/i.test(windowText)) {
+          metricSubtype = "annualized revenue";
+        } else if (/\brevenue\b/i.test(windowText)) {
+          metricSubtype = "revenue";
+        }
+        
+        // A3.8.57: DIAG log for metric subtype detection
+        if (runId && reqSig) {
+          const trimmedWindow = windowText.length > 120 ? windowText.substring(0, 120) + "..." : windowText;
+          const statementIndex = statement?.index ?? 0;
+          const anchorFamily = cc.anchorFamily || "unknown";
+          diag(runId, reqSig, `[DIAG][A3.8.57][CURRENCY_METRIC_SUBTYPE] idx=${statementIndex} anchor=${anchorFamily} subtype=${metricSubtype || "null"} window="${trimmedWindow}"`);
+        }
+      }
+    }
+    
     // A3.8.15: Build user-meaningful reason with definitive language
     let reasonText = "";
     
@@ -12137,7 +12184,19 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         // A3.8.56: Use deterministic reason for bare USD with corpus hits
         reasonText = `Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
       } else {
-        reasonText = `Operating metric (${valueDisplay}${metricHint}) ${verbToUse}${citeStr}`;
+        // A3.8.57: Include metric subtype in reason text
+        let subtypeLabel = "";
+        if (metricSubtype === "ARR") {
+          subtypeLabel = `ARR ${valueDisplay}`;
+        } else if (metricSubtype === "annualized revenue") {
+          subtypeLabel = `annualized revenue ${valueDisplay}`;
+        } else if (metricSubtype === "revenue") {
+          subtypeLabel = `revenue ${valueDisplay}`;
+        } else {
+          // Keep existing generic wording
+          subtypeLabel = `${valueDisplay}${metricHint}`;
+        }
+        reasonText = `Operating metric (${subtypeLabel}) ${verbToUse}${citeStr}`;
       }
     } else if (claimType === "growth_percent") {
       reasonText = `Growth rate (${valueDisplay} YoY) ${verb}${citeStr}`;
