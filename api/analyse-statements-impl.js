@@ -12134,9 +12134,61 @@ function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) 
  * A3.8.30: Build coverage summary reason lines (selection mode only)
  * Returns array of string reasons (max 2 lines)
  */
+/**
+ * A3.8.67: Extract scaled money expressions from statement text
+ * Returns { hasScaledMoney: boolean, bases: number[], formsSample: string[] }
+ */
+function detectScaledMoneyInStatement(statementText) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return { hasScaledMoney: false, bases: [], formsSample: [] };
+  }
+  
+  const bases = new Set();
+  const formsSample = [];
+  
+  // Match patterns: "$20m", "$20 m", "$20 million", "USD 20m", "usd 20 million", etc.
+  const scaledMoneyPatterns = [
+    // $20m, $20M, $4m
+    /\$([\d,]+(?:\.\d+)?)\s*([kmb]|mm)\b/gi,
+    // $20 million, $20 Million, $4 million
+    /\$([\d,]+(?:\.\d+)?)\s+(million|billion|thousand|mm)\b/gi,
+    // USD 20m, usd 20 million
+    /(?:USD|usd)\s+([\d,]+(?:\.\d+)?)\s*([kmb]|mm|million|billion|thousand)\b/gi,
+  ];
+  
+  for (const pattern of scaledMoneyPatterns) {
+    const matches = [...statementText.matchAll(pattern)];
+    for (const match of matches) {
+      const numStr = (match[1] || "").replace(/,/g, "");
+      const num = parseFloat(numStr);
+      if (Number.isFinite(num) && num > 0) {
+        bases.add(num);
+        // Store sample form (first few)
+        if (formsSample.length < 5) {
+          const fullMatch = match[0];
+          formsSample.push(fullMatch);
+        }
+      }
+    }
+  }
+  
+  return {
+    hasScaledMoney: bases.size > 0,
+    bases: Array.from(bases).sort((a, b) => a - b),
+    formsSample: formsSample.slice(0, 5),
+  };
+}
+
 function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations, runId = null, reqSig = null, statement = null, canonicalClaims = []) {
   if (typeof statementText !== "string" || !statementText.trim()) {
     return [];
+  }
+  
+  // A3.8.67: Detect scaled money from statement text (not just canonicalClaims)
+  const scaledMoneyFromText = detectScaledMoneyInStatement(statementText);
+  if (scaledMoneyFromText.hasScaledMoney && runId && reqSig) {
+    const statementIndex = statement?.index ?? 0;
+    diag(runId, reqSig, `[DIAG][A3.8.67][NUM_COV_SCALED_FROM_TEXT] found=true bases=[${scaledMoneyFromText.bases.join(",")}] formsSample=["${scaledMoneyFromText.formsSample.join('","')}"]`);
   }
   
   // A3.8.66: Extract scaled anchor families from canonical claims
@@ -12194,19 +12246,37 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
     }
     const anchorFamily = inferredAnchorFamily || "unknown";
     
-    // A3.8.66: Skip unknown family tokens when scaled families exist
-    if (anchorFamily === "unknown" && scaledAnchorFamilies.size > 0) {
+    // A3.8.66: Skip unknown family tokens when scaled families exist (from canonicalClaims)
+    // A3.8.67: Also skip when scaled money is detected in statement text (for qual_valuation cases)
+    const shouldSkipUnknown = anchorFamily === "unknown" && (
+      scaledAnchorFamilies.size > 0 || 
+      scaledMoneyFromText.hasScaledMoney
+    );
+    
+    if (shouldSkipUnknown) {
       // Check if this is a bare digit or bare $N token
       const isBareDigitOrBareMoney = /^\$?\d+(?:\.\d+)?$/.test(token.display.trim());
       if (isBareDigitOrBareMoney) {
-        skippedUnknownTokens.push(token);
-        // A3.8.66: DIAG log for skipped unknown family
-        if (runId && reqSig) {
-          const statementIndex = statement?.index ?? 0;
-          const scaledFamiliesArray = Array.from(scaledAnchorFamilies);
-          diag(runId, reqSig, `[DIAG][A3.8.66][NUM_COV_SKIP_UNKNOWN] scaledFamilies=["${scaledFamiliesArray.join('","')}"] skippedForms=["${token.display}"]`);
+        // A3.8.67: Check if this bare token matches a scaled base from text
+        const tokenNumMatch = token.display.match(/(\d+(?:\.\d+)?)/);
+        const tokenNum = tokenNumMatch ? parseFloat(tokenNumMatch[1].replace(/,/g, "")) : null;
+        const matchesScaledBase = tokenNum !== null && scaledMoneyFromText.bases.includes(tokenNum);
+        
+        // Skip if it matches a scaled base OR if scaled families exist
+        if (matchesScaledBase || scaledAnchorFamilies.size > 0) {
+          skippedUnknownTokens.push(token);
+          // A3.8.67: DIAG log for skipped unknown family (text-scale detection)
+          if (runId && reqSig) {
+            const statementIndex = statement?.index ?? 0;
+            if (matchesScaledBase && scaledMoneyFromText.hasScaledMoney) {
+              diag(runId, reqSig, `[DIAG][A3.8.67][NUM_COV_SKIP_UNKNOWN_TEXT_SCALE] skippedForms=["${token.display}"] bases=[${scaledMoneyFromText.bases.join(",")}]`);
+            } else if (scaledAnchorFamilies.size > 0) {
+              const scaledFamiliesArray = Array.from(scaledAnchorFamilies);
+              diag(runId, reqSig, `[DIAG][A3.8.66][NUM_COV_SKIP_UNKNOWN] scaledFamilies=["${scaledFamiliesArray.join('","')}"] skippedForms=["${token.display}"]`);
+            }
+          }
+          continue; // Skip this token - don't add to found or notFound
         }
-        continue; // Skip this token - don't add to found or notFound
       }
     }
     
