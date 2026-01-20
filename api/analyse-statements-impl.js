@@ -12349,7 +12349,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     } else if (claimType === "other_qualitative") {
       // A3.8.25: Use deterministic verbs based on reliability (selection mode only)
       // A3.8.33: Honest support wording for qualitative claims
-      const selectionMode = context.selectionMode === true;
+      // A3.8.61: selectionMode already declared from context destructuring above
       let qualVerb;
       if (selectionMode) {
         // A3.8.33: Check if all claims are qualitative and if match is fuzzy
@@ -12482,7 +12482,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         : "";
       const reliability = firstClaim.reliability || "Medium";
       // A3.8.25: Use deterministic verbs based on reliability (selection mode only)
-      const selectionMode = context.selectionMode === true;
+      // A3.8.61: selectionMode already declared from context destructuring above
       let qualVerb;
       if (selectionMode) {
         // A3.8.25: Selection mode uses deterministic language
