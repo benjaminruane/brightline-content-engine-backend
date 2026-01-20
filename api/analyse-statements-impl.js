@@ -16480,6 +16480,9 @@ export default async function handler(req, res) {
   // A3.7.7: Hoist selectedText to top of handler scope to prevent ReferenceError in catch blocks
   let selectedText = "";
   
+  // A3.8.65: Hoist selectionModeResolved to handler scope for fallback handler access
+  let selectionModeResolved = false;
+  
   // A3.6.63: Initialize repair/fallback counters upfront to prevent TDZ errors
   let numericFragmentRepairCount = 0;
   let numericFragmentFallbackCount = 0;
@@ -16532,6 +16535,11 @@ export default async function handler(req, res) {
       typeof body?.selectedText === "string" ||
       typeof body?.selectionText === "string"
     );
+    
+    // A3.8.65: Compute selectionModeResolved flag early (single request-level flag)
+    // Do not redeclare selectionMode elsewhere - use this flag
+    // Assign to hoisted variable (not const) for catch block access
+    selectionModeResolved = Boolean(selectionUsed);
     // A3.7.7: Assign to hoisted variable (not const/let) and normalize defensively
     selectedText = (body?.selectedText ?? body?.selectionText ?? "").toString();
     // A3.7.7: Normalize selectedText defensively (ensure it's always a safe string)
@@ -18024,7 +18032,8 @@ ${
               : (Array.isArray(assessment.citations) ? assessment.citations : []);
             
             // Build coverage reasons
-            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, statement);
+            // A3.8.65: Fix ReferenceError - use stmt (loop variable) instead of statement
+            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt);
             
             // Count found/not found for diagnostics
             for (const token of coverageTokens) {
@@ -18950,6 +18959,33 @@ ${
       // A3.6.9: Fallback to re-extraction only if no existing statements
       // A3.5.22 Fix: Log entry into fallback block for verification
       diag(runId, reqSig, `ENTER_FALLBACK finalCountsReached=${runId && runStateByRid[runId]?.finalCountsReached} hasReturned=${hasReturned}`);
+      
+      // A3.8.65: Selection mode "no blow-up" hard gate - NEVER allow fallback to extract/segment from draft text
+      if (selectionModeResolved) {
+        // Option 1 (preferred): return ok=false with error marker, and empty statements
+        hasReturned = true;
+        try {
+          diag(runId || "unknown", reqSig || "unknown", `[DIAG][A3.8.65][SEL_FATAL] message="Selection mode fatal error - preventing draft segmentation fallback" phase="fallback_handler" willFallback=false`);
+          diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=selection_fatal_error status=200 returningNow=true`);
+          if (runId && runStateByRid[runId]) {
+            delete runStateByRid[runId];
+          }
+        } catch (logErr) {
+          // Best-effort logging
+        }
+        return res.status(200).json({
+          ok: false,
+          statements: [],
+          references: [],
+          meta: {
+            selectionMode: true,
+            fatal: "Selection mode pipeline failed; prevented fallback expansion into draft segmentation",
+            extractionQuality: "failed",
+            extractionQualityReasons: ["selection_mode_fatal_error", "fallback_prevented"],
+          },
+        });
+      }
+      
       // A3.5.21 Fix: Pass runId and reqSig to fallback functions for proper context
       const fallbackDraftText = typeof req.body === "string" ? safeJsonParse(req.body)?.draftText || "" : req.body?.draftText || "";
       // A3.5.21 Step 3: Pass hasReturned flag to fallback extraction
@@ -19051,6 +19087,32 @@ ${
         diag(runId || "unknown", reqSig || "unknown", `[PIPELINE_FATAL_ERROR] name="${errorName}" message="${errorMessage.substring(0, 200)}" stack="${errorStack || "none"}" mode=${selectionUsed ? "selection" : "normal"} phase=${currentPhase}`);
       } catch (logErr) {
         // Best-effort logging
+      }
+      
+      // A3.8.65: Selection mode "no blow-up" hard gate - NEVER allow fallback to extract/segment from draft text
+      if (selectionModeResolved) {
+        // Option 1 (preferred): return ok=false with error marker, and empty statements
+        hasReturned = true;
+        try {
+          diag(runId || "unknown", reqSig || "unknown", `[DIAG][A3.8.65][SEL_FATAL] message="${errorMessage.substring(0, 200)}" phase="${currentPhase}" willFallback=false`);
+          diag(runId || "unknown", reqSig || "unknown", `END_DIAG path=selection_fatal_error status=200 returningNow=true`);
+          if (runId && runStateByRid[runId]) {
+            delete runStateByRid[runId];
+          }
+        } catch (logErr) {
+          // Best-effort logging
+        }
+        return res.status(200).json({
+          ok: false,
+          statements: [],
+          references: [],
+          meta: {
+            selectionMode: true,
+            fatal: `Selection mode pipeline failed: ${errorMessage.substring(0, 100)}`,
+            extractionQuality: "failed",
+            extractionQualityReasons: ["selection_mode_fatal_error", "fallback_prevented"],
+          },
+        });
       }
       
       // A3.7.4: Try to extract best-effort statements - use selectedText in selection mode, draftText otherwise
