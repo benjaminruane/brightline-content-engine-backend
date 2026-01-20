@@ -12135,6 +12135,33 @@ function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) 
  * Returns array of string reasons (max 2 lines)
  */
 /**
+ * A3.8.68: Sanitize coverage form (strip trailing punctuation)
+ * Removes trailing punctuation that commonly appears when a token is at sentence end.
+ * Keeps currency/decimal/magnitude characters intact.
+ */
+function sanitizeCoverageForm(form) {
+  if (!form || typeof form !== "string") return form;
+  
+  // Trim whitespace first
+  let s = form.trim();
+  
+  // Strip trailing punctuation that commonly appears when a token is at sentence end.
+  // Keep currency/decimal/magnitude characters.
+  // Examples:
+  // "$20m." -> "$20m"
+  // "$18.7m," -> "$18.7m"
+  // "$4m)" -> "$4m"
+  // "$5m;" -> "$5m"
+  // "$20." (bare) -> "$20"  (still fine; downstream logic already suppresses unknown bare tokens when scaled)
+  while (s.length > 0 && /[.,;:)\]]$/.test(s)) {
+    s = s.slice(0, -1);
+    s = s.trimEnd();
+  }
+  
+  return s;
+}
+
+/**
  * A3.8.67: Extract scaled money expressions from statement text
  * Returns { hasScaledMoney: boolean, bases: number[], formsSample: string[] }
  */
@@ -12188,7 +12215,9 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
   const scaledMoneyFromText = detectScaledMoneyInStatement(statementText);
   if (scaledMoneyFromText.hasScaledMoney && runId && reqSig) {
     const statementIndex = statement?.index ?? 0;
-    diag(runId, reqSig, `[DIAG][A3.8.67][NUM_COV_SCALED_FROM_TEXT] found=true bases=[${scaledMoneyFromText.bases.join(",")}] formsSample=["${scaledMoneyFromText.formsSample.join('","')}"]`);
+    // A3.8.68: Sanitize formsSample for DIAG log
+    const sanitizedFormsSample = scaledMoneyFromText.formsSample.map(sanitizeCoverageForm);
+    diag(runId, reqSig, `[DIAG][A3.8.67][NUM_COV_SCALED_FROM_TEXT] found=true bases=[${scaledMoneyFromText.bases.join(",")}] formsSample=["${sanitizedFormsSample.join('","')}"]`);
   }
   
   // A3.8.66: Extract scaled anchor families from canonical claims
@@ -12333,10 +12362,29 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
   
   // Line 1: Found tokens (only valid forms)
   if (validFoundTokens.length > 0) {
-    const displayList = validFoundTokens.map(t => t.display);
-    let listStr = displayList.join("; ");
+    // A3.8.68: Sanitize coverage forms (strip trailing punctuation) and dedup
+    const cleanForms = validFoundTokens
+      .map(t => sanitizeCoverageForm(t.display))
+      .filter(Boolean);
+    const uniqueForms = Array.from(new Set(cleanForms));
+    
+    // A3.8.68: DIAG log for sanitization changes (first 3 per request)
+    if (runId && reqSig && validFoundTokens.length > 0) {
+      let sanitizeLogCount = 0;
+      for (let i = 0; i < validFoundTokens.length && sanitizeLogCount < 3; i++) {
+        const original = validFoundTokens[i].display;
+        const sanitized = cleanForms[i];
+        if (original !== sanitized) {
+          const statementIndex = statement?.index ?? 0;
+          diag(runId, reqSig, `[DIAG][A3.8.68][NUM_COV_SANITIZE] before="${original}" after="${sanitized}"`);
+          sanitizeLogCount++;
+        }
+      }
+    }
+    
+    let listStr = uniqueForms.join("; ");
     if (listStr.length > 140) {
-      const truncated = displayList.slice(0, 4).join("; ");
+      const truncated = uniqueForms.slice(0, 4).join("; ");
       listStr = `${truncated}…`;
     }
     reasons.push(`Coverage (figures): Found in sources: ${listStr}.${citeStr}`);
@@ -12365,10 +12413,29 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
   
   // Line 2: Not found tokens
   if (notFoundTokens.length > 0) {
-    const displayList = notFoundTokens.map(t => t.display);
-    let listStr = displayList.join("; ");
+    // A3.8.68: Sanitize coverage forms (strip trailing punctuation) and dedup
+    const cleanForms = notFoundTokens
+      .map(t => sanitizeCoverageForm(t.display))
+      .filter(Boolean);
+    const uniqueForms = Array.from(new Set(cleanForms));
+    
+    // A3.8.68: DIAG log for sanitization changes (first 3 per request)
+    if (runId && reqSig && notFoundTokens.length > 0) {
+      let sanitizeLogCount = 0;
+      for (let i = 0; i < notFoundTokens.length && sanitizeLogCount < 3; i++) {
+        const original = notFoundTokens[i].display;
+        const sanitized = cleanForms[i];
+        if (original !== sanitized) {
+          const statementIndex = statement?.index ?? 0;
+          diag(runId, reqSig, `[DIAG][A3.8.68][NUM_COV_SANITIZE] before="${original}" after="${sanitized}"`);
+          sanitizeLogCount++;
+        }
+      }
+    }
+    
+    let listStr = uniqueForms.join("; ");
     if (listStr.length > 140) {
-      const truncated = displayList.slice(0, 4).join("; ");
+      const truncated = uniqueForms.slice(0, 4).join("; ");
       listStr = `${truncated}…`;
     }
     reasons.push(`Coverage (figures): Not found in sources: ${listStr}.${citeStr}`);
