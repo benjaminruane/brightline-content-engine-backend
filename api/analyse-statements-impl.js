@@ -12134,9 +12134,32 @@ function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) 
  * A3.8.30: Build coverage summary reason lines (selection mode only)
  * Returns array of string reasons (max 2 lines)
  */
-function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations, runId = null, reqSig = null, statement = null) {
+function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations, runId = null, reqSig = null, statement = null, canonicalClaims = []) {
   if (typeof statementText !== "string" || !statementText.trim()) {
     return [];
+  }
+  
+  // A3.8.66: Extract scaled anchor families from canonical claims
+  const scaledAnchorFamilies = new Set();
+  if (Array.isArray(canonicalClaims)) {
+    for (const cc of canonicalClaims) {
+      // Extract anchor family from canonical claim (could be in anchorFamily, signalAnchor, or claimText)
+      let anchorFamily = null;
+      if (cc.anchorFamily && typeof cc.anchorFamily === "string") {
+        anchorFamily = cc.anchorFamily;
+      } else if (cc.signalAnchor && typeof cc.signalAnchor === "string") {
+        anchorFamily = cc.signalAnchor;
+      } else if (cc.claimText && typeof cc.claimText === "string") {
+        // Try to extract from claimText (e.g., "usd_5m" pattern)
+        const anchorMatch = cc.claimText.match(/usd_[\d_]+[kmb]/i);
+        if (anchorMatch) {
+          anchorFamily = anchorMatch[0];
+        }
+      }
+      if (anchorFamily && /^usd_\d+(?:[._]\d+)?[kmb]$/i.test(anchorFamily)) {
+        scaledAnchorFamilies.add(anchorFamily.toLowerCase());
+      }
+    }
   }
   
   // Extract tokens
@@ -12148,6 +12171,7 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
   // Check each token
   const foundTokens = [];
   const notFoundTokens = [];
+  const skippedUnknownTokens = []; // A3.8.66: Track skipped unknown family tokens
   
   for (const token of tokens) {
     const result = checkTokenInSources(token, uploadedDocs, unifiedReferences, citations);
@@ -12169,6 +12193,22 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
       }
     }
     const anchorFamily = inferredAnchorFamily || "unknown";
+    
+    // A3.8.66: Skip unknown family tokens when scaled families exist
+    if (anchorFamily === "unknown" && scaledAnchorFamilies.size > 0) {
+      // Check if this is a bare digit or bare $N token
+      const isBareDigitOrBareMoney = /^\$?\d+(?:\.\d+)?$/.test(token.display.trim());
+      if (isBareDigitOrBareMoney) {
+        skippedUnknownTokens.push(token);
+        // A3.8.66: DIAG log for skipped unknown family
+        if (runId && reqSig) {
+          const statementIndex = statement?.index ?? 0;
+          const scaledFamiliesArray = Array.from(scaledAnchorFamilies);
+          diag(runId, reqSig, `[DIAG][A3.8.66][NUM_COV_SKIP_UNKNOWN] scaledFamilies=["${scaledFamiliesArray.join('","')}"] skippedForms=["${token.display}"]`);
+        }
+        continue; // Skip this token - don't add to found or notFound
+      }
+    }
     
     if (result.found) {
       foundTokens.push(token);
@@ -18033,7 +18073,8 @@ ${
             
             // Build coverage reasons
             // A3.8.65: Fix ReferenceError - use stmt (loop variable) instead of statement
-            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt);
+            // A3.8.66: Pass canonicalClaims to prevent unknown family emissions for scaled claims
+            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt, canonicalClaims);
             
             // Count found/not found for diagnostics
             for (const token of coverageTokens) {
