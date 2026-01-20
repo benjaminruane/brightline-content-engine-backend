@@ -11747,17 +11747,20 @@ function extractKeyNumericTokens(statementText) {
         const unit = match[2].toLowerCase();
         const unitShort = unit === "million" || unit === "mm" || unit === "m" ? "m" : unit === "billion" || unit === "b" ? "b" : "";
         display = `$${num}${unitShort}`;
+        // A3.8.63: For scaled tokens, exclude bare digits from normalizedCandidates
         normalizedCandidates = [
           `${num} ${unit}`,
           `$${num} ${unit}`,
           `${num}${unitShort}`,
           `$${num}${unitShort}`,
         ];
+        // Explicitly exclude bare digit (num) for scaled anchors
       }
       // Plain money
       else {
         const num = match[1].replace(/,/g, "");
         display = `$${num}`;
+        // A3.8.63: For plain money (no unit), include bare digit as it's not a scaled anchor
         normalizedCandidates = [`$${num}`, num];
       }
       
@@ -11870,6 +11873,86 @@ function extractKeyNumericTokens(statementText) {
 }
 
 /**
+ * A3.8.63: Strict USD token matching helper
+ * Validates that a candidate form matches a scaled anchor with proper magnitude
+ * Returns { ok: boolean, matchedForms: string[], rejectReason?: string }
+ */
+function strictUsdTokenMatch({ anchorFamily, tokenText, tokenValue, tokenMagnitudeClass, sourceText, candidate }) {
+  if (!anchorFamily || !tokenText || !sourceText) {
+    return { ok: false, matchedForms: [], rejectReason: "missing_params" };
+  }
+  
+  // Check if anchor requires magnitude (usd_*m, usd_*b, usd_*k)
+  const requiresMagnitude = /^usd_\d+(?:[._]\d+)?[kmb]$/.test(anchorFamily);
+  
+  if (!requiresMagnitude) {
+    // No magnitude requirement - use basic match
+    return { ok: true, matchedForms: [candidate || tokenText] };
+  }
+  
+  // Extract magnitude from anchor family
+  let requiredMagnitude = null;
+  if (anchorFamily.endsWith("m")) {
+    requiredMagnitude = "m";
+  } else if (anchorFamily.endsWith("b")) {
+    requiredMagnitude = "b";
+  } else if (anchorFamily.endsWith("k")) {
+    requiredMagnitude = "k";
+  }
+  
+  if (!requiredMagnitude) {
+    return { ok: false, matchedForms: [], rejectReason: "no_magnitude_in_anchor" };
+  }
+  
+  // Check candidate form
+  const candidateLower = (candidate || tokenText).toLowerCase();
+  
+  // A3.8.63: Explicitly ban bare digits for scaled anchors
+  // Check if candidate is a bare digit (no $, no magnitude, no currency context)
+  const isBareDigit = /^\d+(?:\.\d+)?$/.test(candidateLower.trim());
+  if (isBareDigit) {
+    return { ok: false, matchedForms: [], rejectReason: "bare_digit_no_scale" };
+  }
+  
+  // Check if candidate has currency symbol or code
+  const hasCurrency = /\$|usd/i.test(candidateLower);
+  if (!hasCurrency) {
+    return { ok: false, matchedForms: [], rejectReason: "missing_currency_symbol" };
+  }
+  
+  // Check if candidate has required magnitude
+  const hasRequiredMagnitude = (() => {
+    if (requiredMagnitude === "m") {
+      return /\b(m|mm|million)\b/i.test(candidateLower);
+    } else if (requiredMagnitude === "b") {
+      return /\b(b|bn|billion)\b/i.test(candidateLower);
+    } else if (requiredMagnitude === "k") {
+      return /\b(k|thousand)\b/i.test(candidateLower);
+    }
+    return false;
+  })();
+  
+  if (!hasRequiredMagnitude) {
+    return { ok: false, matchedForms: [], rejectReason: "missing_magnitude" };
+  }
+  
+  // Check if number matches (with tolerance for decimals)
+  if (tokenValue !== null && tokenValue !== undefined) {
+    const candidateNumMatch = candidateLower.match(/([\d,]+(?:\.\d+)?)/);
+    if (candidateNumMatch) {
+      const candidateNum = parseFloat(candidateNumMatch[1].replace(/,/g, ""));
+      const numTolerance = 0.1;
+      if (Math.abs(candidateNum - tokenValue) > numTolerance) {
+        return { ok: false, matchedForms: [], rejectReason: "number_mismatch" };
+      }
+    }
+  }
+  
+  // All checks passed
+  return { ok: true, matchedForms: [candidate || tokenText] };
+}
+
+/**
  * A3.8.30: Check if token is found in uploaded sources (deterministic)
  * Returns {found: boolean, evidenceRefIds: number[]}
  */
@@ -11908,69 +11991,73 @@ function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) 
     }
   }
   
+  // A3.8.63: Filter normalizedCandidates to remove bare digits for scaled anchors
+  let validCandidates = token.normalizedCandidates;
+  if (tokenMagnitude && tokenMajorNumber !== null) {
+    // For scaled anchors, remove bare digit candidates
+    validCandidates = token.normalizedCandidates.filter(candidate => {
+      const candidateLower = candidate.toLowerCase().trim();
+      // Reject bare digits (no $, no magnitude, no currency context)
+      const isBareDigit = /^\d+(?:\.\d+)?$/.test(candidateLower);
+      if (isBareDigit) {
+        return false;
+      }
+      // Reject candidates without currency symbol for scaled anchors
+      if (!/\$|usd/i.test(candidateLower)) {
+        return false;
+      }
+      return true;
+    });
+  }
+  
   // Check each normalized candidate with scale validation
   let found = false;
   let scaleMismatchRejected = false;
-  for (const candidate of token.normalizedCandidates) {
+  let rejectedCandidates = [];
+  let acceptedCandidates = [];
+  
+  for (const candidate of validCandidates) {
     const candidateLower = candidate.toLowerCase();
     const matchIndex = allUploadedText.indexOf(candidateLower);
     
     if (matchIndex >= 0) {
-      // A3.8.59: If token has magnitude, verify match also has same magnitude and number
+      // A3.8.63: Use strict matching helper for scaled anchors
       if (tokenMagnitude && tokenMajorNumber !== null) {
-        // Extract surrounding context to check for magnitude indicators
-        const contextStart = Math.max(0, matchIndex - 30);
-        const contextEnd = Math.min(allUploadedText.length, matchIndex + candidateLower.length + 30);
-        const matchContext = allUploadedText.substring(contextStart, contextEnd);
+        // Infer anchor family from token display (e.g., "$5m" -> "usd_5m")
+        const anchorFamilyMatch = token.display.match(/\$?([\d,]+(?:\.\d+)?)([kmb]|million|billion|thousand)?/i);
+        let inferredAnchorFamily = null;
+        if (anchorFamilyMatch) {
+          const num = anchorFamilyMatch[1].replace(/,/g, "").replace(/\./g, "_");
+          const mag = anchorFamilyMatch[2]?.toLowerCase() || "";
+          if (mag === "m" || mag === "million" || mag === "mm") {
+            inferredAnchorFamily = `usd_${num}m`;
+          } else if (mag === "b" || mag === "billion" || mag === "b") {
+            inferredAnchorFamily = `usd_${num}b`;
+          } else if (mag === "k" || mag === "thousand" || mag === "k") {
+            inferredAnchorFamily = `usd_${num}k`;
+          }
+        }
         
-        // Extract number from candidate
-        const candidateNumMatch = candidate.match(/([\d,]+(?:\.\d+)?)/);
-        if (candidateNumMatch) {
-          const candidateNum = parseFloat(candidateNumMatch[1].replace(/,/g, ""));
-          // Allow small tolerance for decimals (e.g., 18.7m vs 18.7)
-          const numTolerance = 0.1;
-          const numbersMatch = Math.abs(candidateNum - tokenMajorNumber) < numTolerance;
-          
-          if (!numbersMatch) {
-            scaleMismatchRejected = true;
-            continue; // Number doesn't match, try next candidate
-          }
-          
-          // Check if match context has same magnitude
-          const matchMagAfter = matchContext.match(new RegExp(`\\b${candidateLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*([kmb]|million|billion|thousand)\\b`, "i"));
-          const matchMagBefore = matchContext.match(new RegExp(`\\b([kmb]|million|billion|thousand)\\s+${candidateLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, "i"));
-          const candidateHasMag = candidate.match(/([kmb]|million|billion|thousand)\b/i);
-          
-          let magnitudeMatches = false;
-          if (matchMagAfter || matchMagBefore || candidateHasMag) {
-            const matchMag = (matchMagAfter?.[1] || matchMagBefore?.[1] || candidateHasMag?.[1] || "").toLowerCase();
-            let matchMagnitude = null;
-            if (matchMag === "m" || matchMag === "million" || matchMag === "mm") {
-              matchMagnitude = "m";
-            } else if (matchMag === "b" || matchMag === "billion") {
-              matchMagnitude = "b";
-            } else if (matchMag === "k" || matchMag === "thousand") {
-              matchMagnitude = "k";
-            }
-            magnitudeMatches = matchMagnitude === tokenMagnitude;
-          } else {
-            // No magnitude in candidate or context - reject if token has magnitude (e.g., "$5m" shouldn't match bare "5")
-            magnitudeMatches = false;
-          }
-          
-          if (magnitudeMatches) {
-            found = true;
-            break;
-          } else {
-            scaleMismatchRejected = true;
-          }
-        } else {
-          // No number in candidate - use basic match
+        const strictMatch = strictUsdTokenMatch({
+          anchorFamily: inferredAnchorFamily || `usd_${tokenMajorNumber}${tokenMagnitude}`,
+          tokenText: token.display,
+          tokenValue: tokenMajorNumber,
+          tokenMagnitudeClass: tokenMagnitude,
+          sourceText: allUploadedText,
+          candidate: candidate
+        });
+        
+        if (strictMatch.ok) {
+          acceptedCandidates.push(candidate);
           found = true;
           break;
+        } else {
+          rejectedCandidates.push({ candidate, reason: strictMatch.rejectReason });
+          scaleMismatchRejected = true;
+          continue;
         }
       } else {
-        // No magnitude requirement - use basic match
+        // A3.8.63: No magnitude requirement - use basic match (for plain money tokens like "$45")
         found = true;
         break;
       }
@@ -12009,15 +12096,45 @@ function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) 
     }
   }
   
+  // A3.8.63: DIAG logging for strict matching
+  if (tokenMagnitude && tokenMajorNumber !== null) {
+    // Infer anchor family for logging
+    const anchorFamilyMatch = token.display.match(/\$?([\d,]+(?:\.\d+)?)([kmb]|million|billion|thousand)?/i);
+    let inferredAnchorFamily = null;
+    if (anchorFamilyMatch) {
+      const num = anchorFamilyMatch[1].replace(/,/g, "").replace(/\./g, "_");
+      const mag = anchorFamilyMatch[2]?.toLowerCase() || "";
+      if (mag === "m" || mag === "million" || mag === "mm") {
+        inferredAnchorFamily = `usd_${num}m`;
+      } else if (mag === "b" || mag === "billion" || mag === "b") {
+        inferredAnchorFamily = `usd_${num}b`;
+      } else if (mag === "k" || mag === "thousand" || mag === "k") {
+        inferredAnchorFamily = `usd_${num}k`;
+      }
+    }
+    const anchorFamily = inferredAnchorFamily || `usd_${tokenMajorNumber}${tokenMagnitude}`;
+    
+    // Log rejected candidates
+    for (const rejected of rejectedCandidates) {
+      // DIAG log will be added by caller if runId/reqSig available
+    }
+    
+    // Log accepted candidate
+    if (found && acceptedCandidates.length > 0) {
+      // DIAG log will be added by caller if runId/reqSig available
+    }
+  }
+  
   // A3.8.59: Return scale mismatch flag for DIAG logging
-  return { found, evidenceRefIds, scaleMismatchRejected };
+  // A3.8.63: Also return accepted/rejected candidates for detailed logging
+  return { found, evidenceRefIds, scaleMismatchRejected, acceptedCandidates, rejectedCandidates };
 }
 
 /**
  * A3.8.30: Build coverage summary reason lines (selection mode only)
  * Returns array of string reasons (max 2 lines)
  */
-function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations) {
+function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations, runId = null, reqSig = null, statement = null) {
   if (typeof statementText !== "string" || !statementText.trim()) {
     return [];
   }
@@ -12034,11 +12151,43 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
   
   for (const token of tokens) {
     const result = checkTokenInSources(token, uploadedDocs, unifiedReferences, citations);
+    
+    // A3.8.63: Infer anchor family for DIAG logging
+    let inferredAnchorFamily = null;
+    if (token.kind === "money" && token.display) {
+      const anchorFamilyMatch = token.display.match(/\$?([\d,]+(?:\.\d+)?)([kmb]|million|billion|thousand)?/i);
+      if (anchorFamilyMatch) {
+        const num = anchorFamilyMatch[1].replace(/,/g, "").replace(/\./g, "_");
+        const mag = anchorFamilyMatch[2]?.toLowerCase() || "";
+        if (mag === "m" || mag === "million" || mag === "mm") {
+          inferredAnchorFamily = `usd_${num}m`;
+        } else if (mag === "b" || mag === "billion" || mag === "b") {
+          inferredAnchorFamily = `usd_${num}b`;
+        } else if (mag === "k" || mag === "thousand" || mag === "k") {
+          inferredAnchorFamily = `usd_${num}k`;
+        }
+      }
+    }
+    const anchorFamily = inferredAnchorFamily || "unknown";
+    
     if (result.found) {
       foundTokens.push(token);
+      // A3.8.63: DIAG log for accepted match
+      if (runId && reqSig && result.acceptedCandidates && result.acceptedCandidates.length > 0) {
+        const statementIndex = statement?.index ?? 0;
+        const acceptedForm = result.acceptedCandidates[0];
+        diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_ACCEPT] anchorFamily=${anchorFamily} candidate="${acceptedForm}"`);
+      }
     } else {
       notFoundTokens.push(token);
-      // A3.8.59: DIAG log for scale mismatch rejection
+      // A3.8.63: DIAG log for rejected candidates
+      if (runId && reqSig && result.rejectedCandidates && result.rejectedCandidates.length > 0) {
+        const statementIndex = statement?.index ?? 0;
+        for (const rejected of result.rejectedCandidates) {
+          diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_REJECT] anchorFamily=${anchorFamily} candidate="${rejected.candidate}" reason=${rejected.reason || "unknown"}`);
+        }
+      }
+      // A3.8.59: DIAG log for scale mismatch rejection (legacy)
       if (result.scaleMismatchRejected && runId && reqSig) {
         const statementIndex = statement?.index ?? 0;
         diag(runId, reqSig, `[DIAG][A3.8.59][NUMERIC_MATCH_STRICT] idx=${statementIndex} token="${token.display}" reason=scale_mismatch`);
@@ -12051,15 +12200,57 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
     ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
     : "";
   
-  // Line 1: Found tokens
-  if (foundTokens.length > 0) {
-    const displayList = foundTokens.map(t => t.display);
+  // A3.8.63: Filter found tokens to only include valid matched forms (no bare digits for scaled anchors)
+  const validFoundTokens = foundTokens.filter(token => {
+    // For scaled tokens, ensure they have magnitude in display
+    if (token.kind === "money" && token.display) {
+      const hasMagnitude = /([kmb]|million|billion|thousand)\b/i.test(token.display);
+      const hasCurrency = /\$|usd/i.test(token.display);
+      // If token has magnitude, it must be in the display (not just in raw)
+      if (hasMagnitude && hasCurrency) {
+        return true;
+      }
+      // If no magnitude, it's plain money (like "$45") which is OK
+      if (!hasMagnitude && hasCurrency) {
+        return true;
+      }
+      // Reject if it's a bare digit
+      const isBareDigit = /^\d+(?:\.\d+)?$/.test(token.display.trim());
+      return !isBareDigit;
+    }
+    return true;
+  });
+  
+  // Line 1: Found tokens (only valid forms)
+  if (validFoundTokens.length > 0) {
+    const displayList = validFoundTokens.map(t => t.display);
     let listStr = displayList.join("; ");
     if (listStr.length > 140) {
       const truncated = displayList.slice(0, 4).join("; ");
       listStr = `${truncated}…`;
     }
     reasons.push(`Coverage (figures): Found in sources: ${listStr}.${citeStr}`);
+    
+    // A3.8.63: DIAG log for emitted coverage
+    if (runId && reqSig) {
+      const statementIndex = statement?.index ?? 0;
+      for (const token of validFoundTokens) {
+        const anchorFamilyMatch = token.display.match(/\$?([\d,]+(?:\.\d+)?)([kmb]|million|billion|thousand)?/i);
+        let tokenAnchorFamily = "unknown";
+        if (anchorFamilyMatch) {
+          const num = anchorFamilyMatch[1].replace(/,/g, "").replace(/\./g, "_");
+          const mag = anchorFamilyMatch[2]?.toLowerCase() || "";
+          if (mag === "m" || mag === "million" || mag === "mm") {
+            tokenAnchorFamily = `usd_${num}m`;
+          } else if (mag === "b" || mag === "billion" || mag === "b") {
+            tokenAnchorFamily = `usd_${num}b`;
+          } else if (mag === "k" || mag === "thousand" || mag === "k") {
+            tokenAnchorFamily = `usd_${num}k`;
+          }
+        }
+        diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_EMIT] anchorFamily=${tokenAnchorFamily} emitted=found forms=["${token.display}"]`);
+      }
+    }
   }
   
   // Line 2: Not found tokens
@@ -12071,6 +12262,27 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
       listStr = `${truncated}…`;
     }
     reasons.push(`Coverage (figures): Not found in sources: ${listStr}.${citeStr}`);
+    
+    // A3.8.63: DIAG log for emitted not-found coverage
+    if (runId && reqSig) {
+      const statementIndex = statement?.index ?? 0;
+      for (const token of notFoundTokens) {
+        const anchorFamilyMatch = token.display.match(/\$?([\d,]+(?:\.\d+)?)([kmb]|million|billion|thousand)?/i);
+        let tokenAnchorFamily = "unknown";
+        if (anchorFamilyMatch) {
+          const num = anchorFamilyMatch[1].replace(/,/g, "").replace(/\./g, "_");
+          const mag = anchorFamilyMatch[2]?.toLowerCase() || "";
+          if (mag === "m" || mag === "million" || mag === "mm") {
+            tokenAnchorFamily = `usd_${num}m`;
+          } else if (mag === "b" || mag === "billion" || mag === "b") {
+            tokenAnchorFamily = `usd_${num}b`;
+          } else if (mag === "k" || mag === "thousand" || mag === "k") {
+            tokenAnchorFamily = `usd_${num}k`;
+          }
+        }
+        diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_EMIT] anchorFamily=${tokenAnchorFamily} emitted=not_found forms=["${token.display}"]`);
+      }
+    }
   }
   
   return reasons;
@@ -17812,7 +18024,7 @@ ${
               : (Array.isArray(assessment.citations) ? assessment.citations : []);
             
             // Build coverage reasons
-            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations);
+            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, statement);
             
             // Count found/not found for diagnostics
             for (const token of coverageTokens) {
