@@ -11883,13 +11883,97 @@ function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) 
     .map(doc => (doc.text || "").toLowerCase())
     .join(" ");
   
-  // Check each normalized candidate
+  // A3.8.59: Scale-consistent numeric matching for currency anchors
+  // Extract magnitude class and major number from token if it's a money token with magnitude
+  let tokenMagnitude = null;
+  let tokenMajorNumber = null;
+  if (token.kind === "money" && token.display) {
+    // Extract magnitude from display (e.g., "$5m" -> "m", "$25 million" -> "m")
+    const magnitudeMatch = token.display.match(/([kmb]|million|billion|thousand)\b/i);
+    if (magnitudeMatch) {
+      const mag = magnitudeMatch[1].toLowerCase();
+      if (mag === "m" || mag === "million" || mag === "mm") {
+        tokenMagnitude = "m";
+      } else if (mag === "b" || mag === "billion") {
+        tokenMagnitude = "b";
+      } else if (mag === "k" || mag === "thousand") {
+        tokenMagnitude = "k";
+      }
+    }
+    
+    // Extract major number from display (e.g., "$5m" -> 5, "$18.7m" -> 18.7)
+    const numMatch = token.display.match(/\$?([\d,]+(?:\.\d+)?)/);
+    if (numMatch) {
+      tokenMajorNumber = parseFloat(numMatch[1].replace(/,/g, ""));
+    }
+  }
+  
+  // Check each normalized candidate with scale validation
   let found = false;
+  let scaleMismatchRejected = false;
   for (const candidate of token.normalizedCandidates) {
     const candidateLower = candidate.toLowerCase();
-    if (allUploadedText.includes(candidateLower)) {
-      found = true;
-      break;
+    const matchIndex = allUploadedText.indexOf(candidateLower);
+    
+    if (matchIndex >= 0) {
+      // A3.8.59: If token has magnitude, verify match also has same magnitude and number
+      if (tokenMagnitude && tokenMajorNumber !== null) {
+        // Extract surrounding context to check for magnitude indicators
+        const contextStart = Math.max(0, matchIndex - 30);
+        const contextEnd = Math.min(allUploadedText.length, matchIndex + candidateLower.length + 30);
+        const matchContext = allUploadedText.substring(contextStart, contextEnd);
+        
+        // Extract number from candidate
+        const candidateNumMatch = candidate.match(/([\d,]+(?:\.\d+)?)/);
+        if (candidateNumMatch) {
+          const candidateNum = parseFloat(candidateNumMatch[1].replace(/,/g, ""));
+          // Allow small tolerance for decimals (e.g., 18.7m vs 18.7)
+          const numTolerance = 0.1;
+          const numbersMatch = Math.abs(candidateNum - tokenMajorNumber) < numTolerance;
+          
+          if (!numbersMatch) {
+            scaleMismatchRejected = true;
+            continue; // Number doesn't match, try next candidate
+          }
+          
+          // Check if match context has same magnitude
+          const matchMagAfter = matchContext.match(new RegExp(`\\b${candidateLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*([kmb]|million|billion|thousand)\\b`, "i"));
+          const matchMagBefore = matchContext.match(new RegExp(`\\b([kmb]|million|billion|thousand)\\s+${candidateLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, "i"));
+          const candidateHasMag = candidate.match(/([kmb]|million|billion|thousand)\b/i);
+          
+          let magnitudeMatches = false;
+          if (matchMagAfter || matchMagBefore || candidateHasMag) {
+            const matchMag = (matchMagAfter?.[1] || matchMagBefore?.[1] || candidateHasMag?.[1] || "").toLowerCase();
+            let matchMagnitude = null;
+            if (matchMag === "m" || matchMag === "million" || matchMag === "mm") {
+              matchMagnitude = "m";
+            } else if (matchMag === "b" || matchMag === "billion") {
+              matchMagnitude = "b";
+            } else if (matchMag === "k" || matchMag === "thousand") {
+              matchMagnitude = "k";
+            }
+            magnitudeMatches = matchMagnitude === tokenMagnitude;
+          } else {
+            // No magnitude in candidate or context - reject if token has magnitude (e.g., "$5m" shouldn't match bare "5")
+            magnitudeMatches = false;
+          }
+          
+          if (magnitudeMatches) {
+            found = true;
+            break;
+          } else {
+            scaleMismatchRejected = true;
+          }
+        } else {
+          // No number in candidate - use basic match
+          found = true;
+          break;
+        }
+      } else {
+        // No magnitude requirement - use basic match
+        found = true;
+        break;
+      }
     }
   }
   
@@ -11925,7 +12009,8 @@ function checkTokenInSources(token, uploadedDocs, unifiedReferences, citations) 
     }
   }
   
-  return { found, evidenceRefIds };
+  // A3.8.59: Return scale mismatch flag for DIAG logging
+  return { found, evidenceRefIds, scaleMismatchRejected };
 }
 
 /**
@@ -11953,6 +12038,11 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
       foundTokens.push(token);
     } else {
       notFoundTokens.push(token);
+      // A3.8.59: DIAG log for scale mismatch rejection
+      if (result.scaleMismatchRejected && runId && reqSig) {
+        const statementIndex = statement?.index ?? 0;
+        diag(runId, reqSig, `[DIAG][A3.8.59][NUMERIC_MATCH_STRICT] idx=${statementIndex} token="${token.display}" reason=scale_mismatch`);
+      }
     }
   }
   
