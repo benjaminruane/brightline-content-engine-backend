@@ -11500,6 +11500,19 @@ function verbForReliability(reliabilityLabelOrScore) {
   return "could not be verified in the provided source(s).";
 }
 
+/**
+ * A3.8.73: Strip citation tags from reason text
+ * Removes trailing " [n]" or " [n, m]" patterns safely
+ * 
+ * @param {string} text - The text to strip citations from
+ * @returns {string} Text with citation tags removed
+ */
+function stripCitationTags(text) {
+  if (!text || typeof text !== "string") return text;
+  // Remove trailing citation patterns: " [1]", " [1, 2]", etc.
+  return text.replace(/\s+\[\d+(?:\s*,\s*\d+)*\]\s*$/, "").trim();
+}
+
 // A3.8.56: Detect bare USD statement (e.g., "$5.5m" without context)
 // Conservative definition: statement is just a currency figure
 function isBareUsdStatement(statementText, canonicalClaims) {
@@ -12215,32 +12228,45 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
     return [];
   }
   
-  // A3.8.71: Use EvidenceMatch for coverage rendering (if feature flag enabled)
+  // A3.8.73: Use EvidenceMatch for deterministic coverage rendering (if feature flag enabled)
   if (USE_EVIDENCE_MATCH_V1 && evidenceMatch) {
     const reasons = [];
-    const citeStr = citations && Array.isArray(citations) && citations.length > 0
-      ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
-      : "";
     
-    // Case A: hasSemanticSupport = true
-    if (evidenceMatch.hasSemanticSupport && evidenceMatch.hasNumericPresence && evidenceMatch.matchedNumbers.length > 0) {
+    // A3.8.73: Part C - Coverage text accuracy (tie to matchedNumbers only)
+    // A3.8.73: Part B - Citation placement rules for coverage
+    if (evidenceMatch.matchedNumbers.length > 0) {
+      // Found case - use matchedNumbers deterministically
       const numbersList = evidenceMatch.matchedNumbers.join(", ");
+      
+      // A3.8.73: Citation placement rules
+      // Case A: hasSemanticSupport = true -> MAY include citations
+      // Case B: numeric only -> MUST include citations (because we're saying numbers exist in sources)
+      let shouldIncludeCiteInCoverage = true;
+      if (evidenceMatch.hasSemanticSupport) {
+        // Case A: MAY include citations
+        shouldIncludeCiteInCoverage = citations && Array.isArray(citations) && citations.length > 0;
+      } else if (evidenceMatch.hasNumericPresence) {
+        // Case B: MUST include citations (numeric-only case)
+        shouldIncludeCiteInCoverage = citations && Array.isArray(citations) && citations.length > 0;
+      } else {
+        // Should not happen if matchedNumbers.length > 0, but be safe
+        shouldIncludeCiteInCoverage = false;
+      }
+      
+      const citeStr = shouldIncludeCiteInCoverage
+        ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+        : "";
+      
       reasons.push(`Coverage (figures): Found in sources: ${numbersList}.${citeStr}`);
-    }
-    // Case B: numeric only
-    else if (!evidenceMatch.hasSemanticSupport && evidenceMatch.hasNumericPresence && evidenceMatch.matchedNumbers.length > 0) {
-      const numbersList = evidenceMatch.matchedNumbers.join(", ");
-      reasons.push(`Coverage (figures): Found in sources: ${numbersList}.${citeStr}`);
-    }
-    // Case C: no match
-    else if (!evidenceMatch.hasNumericPresence) {
-      reasons.push(`Coverage (figures): Not found in sources.${citeStr}`);
+    } else {
+      // A3.8.73: Case C: no match - no citations
+      reasons.push(`Coverage (figures): Not found in sources.`);
     }
     
-    // A3.8.71: DIAG log for coverage from EvidenceMatch
+    // A3.8.73: DIAG log for coverage from EvidenceMatch
     if (runId && reqSig) {
       const statementIndex = statement?.index ?? 0;
-      diag(runId, reqSig, `[EVIDENCE_MATCH][COVERAGE] idx=${statementIndex} hasNumericPresence=${evidenceMatch.hasNumericPresence} matchedNumbers=[${evidenceMatch.matchedNumbers.join(",")}] reasonsCount=${reasons.length}`);
+      diag(runId, reqSig, `[A3.8.73][COVERAGE] idx=${statementIndex} hasNumericPresence=${evidenceMatch.hasNumericPresence} matchedNumbers=[${evidenceMatch.matchedNumbers.join(",")}] reasonsCount=${reasons.length}`);
     }
     
     return reasons;
@@ -12574,7 +12600,162 @@ function computeDealContextReliability(dealContext) {
 const USE_EVIDENCE_MATCH_V1 = true;
 
 /**
+ * A3.8.73: Deterministic evidenceMatchForStatement function (module scope)
+ * Computes evidence match classification from corpusSearch result
+ * 
+ * @param {string} statementText - The statement text
+ * @param {Object} corpusResult - Result from corpusSearch(statementText, uploadedDocs)
+ * @param {Object} debugContext - Optional context with runId, reqSig, statementIndex for logging
+ * @returns {Object} EvidenceMatch with hasSemanticSupport, hasNumericPresence, matchQuality, matchedNumbers, sourceIdsUsed
+ */
+function evidenceMatchForStatement(statementText, corpusResult, debugContext = {}) {
+  const { runId = null, reqSig = null, statementIndex = 0 } = debugContext;
+  
+  if (!statementText || typeof statementText !== "string") {
+    return {
+      hasSemanticSupport: false,
+      hasNumericPresence: false,
+      matchedNumbers: [],
+      sourceIdsUsed: [],
+      matchQuality: "none"
+    };
+  }
+  
+  // Analyze corpusSearch result
+  const hasCorpusResult = corpusResult && corpusResult.found === true;
+  const hits = (corpusResult && Array.isArray(corpusResult.hits)) ? corpusResult.hits : [];
+  const debug = corpusResult?.debug || {};
+  
+  // Extract match types from hits (deterministic - use Set then convert to sorted array)
+  const matchTypesSet = new Set();
+  const matchedDocIdsSet = new Set();
+  for (const hit of hits) {
+    if (hit && hit.matchType) {
+      matchTypesSet.add(hit.matchType);
+    }
+    if (hit && hit.docId !== undefined && hit.docId !== null) {
+      matchedDocIdsSet.add(String(hit.docId));
+    }
+  }
+  
+  // Convert to sorted arrays for determinism
+  const matchTypes = Array.from(matchTypesSet).sort();
+  const sourceIdsUsed = Array.from(matchedDocIdsSet).sort();
+  
+  const hasNumberMatch = matchTypes.includes("number");
+  const hasKeywordMatch = matchTypes.includes("keyword") || matchTypes.includes("phrase");
+  const hasFuzzyMatch = matchTypes.includes("fuzzy");
+  
+  // A3.8.73: Deterministic matchedNumbers extraction
+  // Use corpusSearch debug.normalizedNumbersFound INTERSECT numsInDoc
+  const matchedNumbers = [];
+  const stmtNums = Array.isArray(debug.numsInStmt) ? debug.numsInStmt : [];
+  const docNums = Array.isArray(debug.numsInDoc) ? debug.numsInDoc : [];
+  const matchesAccepted = Array.isArray(debug.matchesAccepted) ? debug.matchesAccepted : [];
+  
+  // First, use matchesAccepted if available (most reliable)
+  if (matchesAccepted.length > 0) {
+    for (const match of matchesAccepted) {
+      if (match && typeof match.docValue === "number" && Number.isFinite(match.docValue)) {
+        matchedNumbers.push(match.docValue);
+      }
+    }
+  } else if (hasNumberMatch && stmtNums.length > 0 && docNums.length > 0) {
+    // Fallback: compute intersection of stmtNums and docNums (within 5% tolerance)
+    for (const stmtNum of stmtNums) {
+      for (const docNum of docNums) {
+        const diff = Math.abs(stmtNum - docNum);
+        const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
+        if (diff / maxVal <= 0.05) {
+          matchedNumbers.push(docNum);
+          break; // Only add each stmtNum once
+        }
+      }
+    }
+  }
+  
+  // A3.8.73: Deterministic normalization - always use same pipeline
+  // Normalize matched numbers to display format ($5m, $18.7m, etc.)
+  const normalizedMatchedNumbers = [];
+  for (const num of matchedNumbers) {
+    if (num >= 1e9) {
+      const billions = num / 1e9;
+      normalizedMatchedNumbers.push(`$${billions.toFixed(billions >= 10 ? 0 : 1)}b`);
+    } else if (num >= 1e6) {
+      const millions = num / 1e6;
+      normalizedMatchedNumbers.push(`$${millions.toFixed(millions >= 10 ? 0 : 1)}m`);
+    } else if (num >= 1e3) {
+      const thousands = num / 1e3;
+      normalizedMatchedNumbers.push(`$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`);
+    } else {
+      normalizedMatchedNumbers.push(`$${num.toLocaleString()}`);
+    }
+  }
+  
+  // Deduplicate and sort ascending (deterministic)
+  const uniqueNormalized = Array.from(new Set(normalizedMatchedNumbers)).sort((a, b) => {
+    // Extract numeric values for sorting
+    const extractValue = (str) => {
+      const match = str.match(/\$?([\d.]+)([kmb])?/i);
+      if (!match) return 0;
+      const num = parseFloat(match[1]);
+      const mag = (match[2] || "").toLowerCase();
+      const multipliers = { b: 1e9, m: 1e6, k: 1e3 };
+      return num * (multipliers[mag] || 1);
+    };
+    return extractValue(a) - extractValue(b);
+  });
+  
+  // A3.8.73: Deterministic classification rules
+  let hasSemanticSupport = false;
+  let hasNumericPresence = false;
+  let matchQuality = "none";
+  
+  // Check if keywords AND number match
+  if (hasCorpusResult && hasNumberMatch && hasKeywordMatch) {
+    hasSemanticSupport = true;
+    hasNumericPresence = uniqueNormalized.length > 0;
+    matchQuality = "exact";
+  } else if (hasCorpusResult && hasNumberMatch && hasFuzzyMatch && !hasKeywordMatch) {
+    hasSemanticSupport = true;
+    hasNumericPresence = uniqueNormalized.length > 0;
+    matchQuality = "fuzzy";
+  } else if (hasCorpusResult && hasNumberMatch && !hasKeywordMatch && !hasFuzzyMatch) {
+    // Number match exists WITHOUT semantic context
+    hasSemanticSupport = false;
+    hasNumericPresence = uniqueNormalized.length > 0;
+    matchQuality = "numeric_only";
+  } else if (hasCorpusResult && (hasKeywordMatch || hasFuzzyMatch) && !hasNumberMatch) {
+    // Keyword/fuzzy match but no number (for non-numeric statements)
+    hasSemanticSupport = true;
+    hasNumericPresence = false;
+    matchQuality = hasFuzzyMatch ? "fuzzy" : "exact";
+  } else {
+    hasSemanticSupport = false;
+    hasNumericPresence = uniqueNormalized.length > 0; // A3.8.73: May still have numeric presence if any overlap exists
+    matchQuality = "none";
+  }
+  
+  // A3.8.73: Logging
+  if (runId && reqSig) {
+    diag(runId, reqSig, `[A3.8.73][EVIDENCE_MATCH] idx=${statementIndex} hasNumericPresence=${hasNumericPresence} hasSemanticSupport=${hasSemanticSupport} matchQuality=${matchQuality} matchedNumbers=[${uniqueNormalized.join(",")}]`);
+    if (sourceIdsUsed.length > 0) {
+      diag(runId, reqSig, `[A3.8.73][EVIDENCE_MATCH_SOURCE] idx=${statementIndex} sourceIdsUsed=[${sourceIdsUsed.join(",")}]`);
+    }
+  }
+  
+  return {
+    hasSemanticSupport,
+    hasNumericPresence,
+    matchedNumbers: uniqueNormalized,
+    sourceIdsUsed,
+    matchQuality
+  };
+}
+
+/**
  * A3.8.71: Build EvidenceMatch classification from statement, anchors, and corpusSearch result
+ * (Legacy wrapper - delegates to evidenceMatchForStatement for A3.8.73 compatibility)
  * 
  * @param {string} statementText - The statement text
  * @param {Array} canonicalClaims - Array of canonical claims (for anchor extraction)
@@ -12733,12 +12914,14 @@ function buildEvidenceMatch(statementText, canonicalClaims, corpusResult, upload
     matchQuality = "none";
   }
   
+  // A3.8.73: Delegate to deterministic evidenceMatchForStatement
+  const result = evidenceMatchForStatement(statementText, corpusResult, {});
   return {
-    hasSemanticSupport,
-    hasNumericPresence,
-    matchedNumbers: uniqueNormalized,
-    matchedSources: Array.from(matchedDocIds),
-    matchQuality
+    hasSemanticSupport: result.hasSemanticSupport,
+    hasNumericPresence: result.hasNumericPresence,
+    matchedNumbers: result.matchedNumbers,
+    matchedSources: result.sourceIdsUsed, // Map sourceIdsUsed to matchedSources for backward compatibility
+    matchQuality: result.matchQuality
   };
 }
 
@@ -12836,7 +13019,13 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     
     // A3.8.15: Use definitive language based on reliability
     const verb = verbForReliability(reliability);
-    const citeStr = citations.length > 0 
+    
+    // A3.8.73: Determine if citations should be included for this claim
+    // Check if this is a "not supported" reason based on EvidenceMatch
+    const isNotSupportedReason = USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && !evidenceMatchToUse.hasSemanticSupport;
+    const shouldIncludeCiteForThisClaim = !isNotSupportedReason && citations.length > 0;
+    
+    const citeStr = shouldIncludeCiteForThisClaim
       ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
       : "";
     
@@ -12949,6 +13138,18 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     // A3.8.15: Build user-meaningful reason with definitive language
     let reasonText = "";
     
+    // A3.8.73: Citation placement rules - determine if citations should be included
+    let shouldIncludeCitationsInReason = true;
+    if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse) {
+      if (!evidenceMatchToUse.hasSemanticSupport) {
+        // Not supported reason - MUST NOT include citations
+        shouldIncludeCitationsInReason = false;
+      } else {
+        // Support reason - MAY include citations
+        shouldIncludeCitationsInReason = true;
+      }
+    }
+    
     // A3.8.71: Use EvidenceMatch for deterministic classification (if feature flag enabled)
     let effectiveReliability = reliability;
     if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode) {
@@ -12958,17 +13159,18 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         // Update verb to reflect Low reliability
         const verbForLow = verbForReliability("Low");
         
-        // Case B: numeric only - generate specific reason
+        // Case B: numeric only - generate specific reason (NO citations per A3.8.73)
         if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
           const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
-          reasonText = `"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.${citeStr}`;
+          reasonText = `"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.`;
         } else {
-          // Case C: no match
-          reasonText = `"${statementText}" Not supported by provided sources.${citeStr}`;
+          // Case C: no match (NO citations per A3.8.73)
+          reasonText = `"${statementText}" Not supported by provided sources.`;
         }
       } else {
         // Case A: has semantic support - use existing logic
         // effectiveReliability stays as-is (from canonical claim)
+        // Citations will be added below if shouldIncludeCitationsInReason is true
       }
     }
     
@@ -13156,6 +13358,11 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       }
     }
     
+    // A3.8.73: Apply citation placement rules - strip citations from not supported reasons
+    if (reasonText && USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && !evidenceMatchToUse.hasSemanticSupport) {
+      reasonText = stripCitationTags(reasonText);
+    }
+    
     if (reasonText) {
       reasons.push(reasonText);
     }
@@ -13169,29 +13376,36 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     const firstClaim = canonicalClaims[0];
     if (firstClaim) {
       const citations = firstClaim.citations || [];
-      const citeStr = citations.length > 0 
+      let reliability = firstClaim.reliability || "Medium";
+      
+      // A3.8.73: Determine citation placement based on EvidenceMatch
+      let shouldIncludeCiteInFallback = true;
+      if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse) {
+        shouldIncludeCiteInFallback = evidenceMatchToUse.hasSemanticSupport;
+      }
+      
+      const citeStr = shouldIncludeCiteInFallback && citations.length > 0
         ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
         : "";
-      let reliability = firstClaim.reliability || "Medium";
       
       // A3.8.71: Use EvidenceMatch for fallback reason generation (if feature flag enabled)
       if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode) {
         if (!evidenceMatchToUse.hasSemanticSupport) {
           reliability = "Low";
-          // Case B: numeric only
+          // Case B: numeric only (NO citations per A3.8.73)
           if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
             const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
-            reasons.push(`"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.${citeStr}`);
+            reasons.push(`"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.`);
           } else {
-            // Case C: no match
-            reasons.push(`"${statementText}" Not supported by provided sources.${citeStr}`);
+            // Case C: no match (NO citations per A3.8.73)
+            reasons.push(`"${statementText}" Not supported by provided sources.`);
           }
         } else {
-          // Case A: has semantic support
+          // Case A: has semantic support (MAY include citations)
           if (citations.length > 0) {
             reasons.push(`"${statementText}" Supported by sources [${citations.join(", ")}]`);
           } else {
-            reasons.push(`"${statementText}" Supported by sources.${citeStr}`);
+            reasons.push(`"${statementText}" Supported by sources.`);
           }
         }
       } else {
@@ -18300,27 +18514,25 @@ ${
           }
         }
         
-        // A3.8.71: Build EvidenceMatch early (if feature flag enabled) for use in reliability guard and reasons/coverage
+        // A3.8.73: Build EvidenceMatch early using deterministic evidenceMatchForStatement function
         // Define in outer scope so it's accessible for reliability guard check
-        let evidenceMatchForStatement = null;
+        let evidenceMatchForStatementResult = null;
         if (USE_EVIDENCE_MATCH_V1 && selectionUsed && uploadedDocs.length > 0) {
           try {
             const statementText = stmt?.text || "";
             const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
-            evidenceMatchForStatement = buildEvidenceMatch(statementText, canonicalClaims, corpusSearchResult, uploadedDocs);
-            
-            // A3.8.71: Diagnostic log for EvidenceMatch
-            if (runId && reqSig) {
-              const statementIndex = stmt?.index ?? 0;
-              diag(runId, reqSig, `[EVIDENCE_MATCH] idx=${statementIndex} hasSemanticSupport=${evidenceMatchForStatement.hasSemanticSupport} hasNumericPresence=${evidenceMatchForStatement.hasNumericPresence} matchQuality=${evidenceMatchForStatement.matchQuality} matchedNumbers=[${evidenceMatchForStatement.matchedNumbers.join(",")}]`);
-            }
+            // A3.8.73: Use deterministic evidenceMatchForStatement function with debug context
+            evidenceMatchForStatementResult = evidenceMatchForStatement(statementText, corpusSearchResult, {
+              runId,
+              reqSig,
+              statementIndex: idx
+            });
           } catch (err) {
             // A3.8.71: Guard against errors in evidence match assembly - log but continue
             if (runId && reqSig) {
-              const statementIndex = stmt?.index ?? 0;
-              diag(runId, reqSig, `[DIAG][A3.8.71][SEL_ASSEMBLY_GUARD] idx=${statementIndex} error="${String(err)}"`);
+              diag(runId, reqSig, `[DIAG][A3.8.71][SEL_ASSEMBLY_GUARD] idx=${idx} error="${String(err)}"`);
             }
-            // evidenceMatchForStatement remains null, pipeline continues
+            // evidenceMatchForStatementResult remains null, pipeline continues
           }
         }
         
@@ -18352,7 +18564,7 @@ ${
         }
         
         // A3.8.71: Force Low reliability if EvidenceMatch indicates no semantic support
-        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchForStatement && !evidenceMatchForStatement.hasSemanticSupport) {
+        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchForStatementResult && !evidenceMatchForStatementResult.hasSemanticSupport) {
           computedReliability = {
             ...computedReliability,
             reliabilityScore: 30,
@@ -18507,13 +18719,13 @@ ${
               return cc;
             });
             
-            // A3.8.71: EvidenceMatch already built earlier in outer scope (before reliability computation)
-            // It's available here as evidenceMatchForStatement
+            // A3.8.73: EvidenceMatch already built earlier using deterministic evidenceMatchForStatement function
+            // It's available here as evidenceMatchForStatementResult
             
             // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
             // A3.8.25: Pass selectionMode for deterministic language and rawClaims for uncertainty detection
             // A3.8.70: Use canonicalClaimsForReasons (with citations stripped) to prevent citation tags in reasons
-            // A3.8.71: Pass evidenceMatch if available
+            // A3.8.73: Pass evidenceMatch if available
             finalReasons = buildReasonsFromCanonicalClaims(canonicalClaimsForReasons, {
               statement: stmt,
               runId,
@@ -18521,7 +18733,7 @@ ${
               selectionMode: selectionUsed,
               rawClaims: rawClaimsForDiagnostics, // A3.8.25: Pass rawClaims for uncertainty alignment
               uploadedDocs: uploadedDocs, // A3.8.33: Pass uploadedDocs for corpusSearch check
-              evidenceMatch: evidenceMatchForStatement, // A3.8.71: Pass pre-built EvidenceMatch
+              evidenceMatch: evidenceMatchForStatementResult, // A3.8.73: Pass pre-built EvidenceMatch
             });
             
             // A3.8.9: Set reasonsSource based on actual pipeline path
@@ -18598,11 +18810,11 @@ ${
             // Build coverage reasons
             // A3.8.65: Fix ReferenceError - use stmt (loop variable) instead of statement
             // A3.8.66: Pass canonicalClaims to prevent unknown family emissions for scaled claims
-            // A3.8.71: Pass evidenceMatch if available (built earlier in the flow)
+            // A3.8.73: Pass evidenceMatch if available (built earlier using deterministic function)
             // A3.8.71: Wrap in try/catch to prevent fatal errors in selection mode
             let coverageReasons = [];
             try {
-              coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt, canonicalClaims, evidenceMatchForStatement);
+              coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt, canonicalClaims, evidenceMatchForStatementResult);
             } catch (err) {
               // A3.8.71: Guard against errors in coverage assembly - log but continue
               if (runId && reqSig) {
@@ -18800,8 +19012,20 @@ ${
         
         // A3.8.4: Use canonical citations if available, otherwise keep existing
         // A3.8.70: But clear if all claims are unsupported
+        // A3.8.73: Clear citations/evidence for no-match cases (hasSemanticSupport === false AND hasNumericPresence === false)
         let finalCitations = mergedCitations.length > 0 ? mergedCitations : (Array.isArray(assessment.citations) ? assessment.citations : []);
         let finalEvidence = evidenceFromCitations.length > 0 ? evidenceFromCitations : (Array.isArray(assessment.evidence) ? assessment.evidence : []);
+        
+        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchForStatementResult) {
+          if (!evidenceMatchForStatementResult.hasSemanticSupport && !evidenceMatchForStatementResult.hasNumericPresence) {
+            // Case C: no match - clear all citations and evidence
+            finalCitations = [];
+            finalEvidence = [];
+            if (runId && reqSig) {
+              diag(runId, reqSig, `[A3.8.73][CLEAR_CITATIONS] idx=${idx} reason=no_match`);
+            }
+          }
+        }
         
         if (allClaimsUnsupported && supportedCanonicalClaims.length > 0) {
           // A3.8.70: If all claims are unsupported, clear statement-level citations/evidence
