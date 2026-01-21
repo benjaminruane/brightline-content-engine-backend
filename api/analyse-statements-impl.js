@@ -18300,6 +18300,30 @@ ${
           }
         }
         
+        // A3.8.71: Build EvidenceMatch early (if feature flag enabled) for use in reliability guard and reasons/coverage
+        // Define in outer scope so it's accessible for reliability guard check
+        let evidenceMatchForStatement = null;
+        if (USE_EVIDENCE_MATCH_V1 && selectionUsed && uploadedDocs.length > 0) {
+          try {
+            const statementText = stmt?.text || "";
+            const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
+            evidenceMatchForStatement = buildEvidenceMatch(statementText, canonicalClaims, corpusSearchResult, uploadedDocs);
+            
+            // A3.8.71: Diagnostic log for EvidenceMatch
+            if (runId && reqSig) {
+              const statementIndex = stmt?.index ?? 0;
+              diag(runId, reqSig, `[EVIDENCE_MATCH] idx=${statementIndex} hasSemanticSupport=${evidenceMatchForStatement.hasSemanticSupport} hasNumericPresence=${evidenceMatchForStatement.hasNumericPresence} matchQuality=${evidenceMatchForStatement.matchQuality} matchedNumbers=[${evidenceMatchForStatement.matchedNumbers.join(",")}]`);
+            }
+          } catch (err) {
+            // A3.8.71: Guard against errors in evidence match assembly - log but continue
+            if (runId && reqSig) {
+              const statementIndex = stmt?.index ?? 0;
+              diag(runId, reqSig, `[DIAG][A3.8.71][SEL_ASSEMBLY_GUARD] idx=${statementIndex} error="${String(err)}"`);
+            }
+            // evidenceMatchForStatement remains null, pipeline continues
+          }
+        }
+        
         // A3.8.0: Use canonical claims for reliability computation
         // A3.8.1: Use canonClaims directly (already filtered to have reliability)
         const canonClaimsForReliability = canonicalClaims.filter(cc => cc.reliability);
@@ -18483,27 +18507,8 @@ ${
               return cc;
             });
             
-            // A3.8.71: Build EvidenceMatch early (if feature flag enabled) for use in both reasons and coverage
-            let evidenceMatchForStatement = null;
-            if (USE_EVIDENCE_MATCH_V1 && selectionUsed && uploadedDocs.length > 0) {
-              try {
-                const statementText = stmt?.text || "";
-                const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
-                evidenceMatchForStatement = buildEvidenceMatch(statementText, canonicalClaims, corpusSearchResult, uploadedDocs);
-                
-                // A3.8.71: Diagnostic log for EvidenceMatch
-                if (runId && reqSig) {
-                  const statementIndex = stmt?.index ?? 0;
-                  diag(runId, reqSig, `[EVIDENCE_MATCH] idx=${statementIndex} hasSemanticSupport=${evidenceMatchForStatement.hasSemanticSupport} hasNumericPresence=${evidenceMatchForStatement.hasNumericPresence} matchQuality=${evidenceMatchForStatement.matchQuality} matchedNumbers=[${evidenceMatchForStatement.matchedNumbers.join(",")}]`);
-                }
-              } catch (err) {
-                // If corpusSearch fails, keep existing behavior
-                if (runId && reqSig) {
-                  const statementIndex = stmt?.index ?? 0;
-                  diag(runId, reqSig, `[EVIDENCE_MATCH][ERROR] idx=${statementIndex} error=${String(err)}`);
-                }
-              }
-            }
+            // A3.8.71: EvidenceMatch already built earlier in outer scope (before reliability computation)
+            // It's available here as evidenceMatchForStatement
             
             // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
             // A3.8.25: Pass selectionMode for deterministic language and rawClaims for uncertainty detection
@@ -18594,7 +18599,18 @@ ${
             // A3.8.65: Fix ReferenceError - use stmt (loop variable) instead of statement
             // A3.8.66: Pass canonicalClaims to prevent unknown family emissions for scaled claims
             // A3.8.71: Pass evidenceMatch if available (built earlier in the flow)
-            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt, canonicalClaims, evidenceMatchForStatement);
+            // A3.8.71: Wrap in try/catch to prevent fatal errors in selection mode
+            let coverageReasons = [];
+            try {
+              coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt, canonicalClaims, evidenceMatchForStatement);
+            } catch (err) {
+              // A3.8.71: Guard against errors in coverage assembly - log but continue
+              if (runId && reqSig) {
+                const statementIndex = stmt?.index ?? 0;
+                diag(runId, reqSig, `[DIAG][A3.8.71][SEL_ASSEMBLY_GUARD] idx=${statementIndex} error="${String(err)}"`);
+              }
+              // coverageReasons remains empty array, pipeline continues
+            }
             
             // Count found/not found for diagnostics
             for (const token of coverageTokens) {
