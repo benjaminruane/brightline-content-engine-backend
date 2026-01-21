@@ -12210,10 +12210,43 @@ function detectScaledMoneyInStatement(statementText) {
   };
 }
 
-function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations, runId = null, reqSig = null, statement = null, canonicalClaims = []) {
+function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, citations, runId = null, reqSig = null, statement = null, canonicalClaims = [], evidenceMatch = null) {
   if (typeof statementText !== "string" || !statementText.trim()) {
     return [];
   }
+  
+  // A3.8.71: Use EvidenceMatch for coverage rendering (if feature flag enabled)
+  if (USE_EVIDENCE_MATCH_V1 && evidenceMatch) {
+    const reasons = [];
+    const citeStr = citations && Array.isArray(citations) && citations.length > 0
+      ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+      : "";
+    
+    // Case A: hasSemanticSupport = true
+    if (evidenceMatch.hasSemanticSupport && evidenceMatch.hasNumericPresence && evidenceMatch.matchedNumbers.length > 0) {
+      const numbersList = evidenceMatch.matchedNumbers.join(", ");
+      reasons.push(`Coverage (figures): Found in sources: ${numbersList}.${citeStr}`);
+    }
+    // Case B: numeric only
+    else if (!evidenceMatch.hasSemanticSupport && evidenceMatch.hasNumericPresence && evidenceMatch.matchedNumbers.length > 0) {
+      const numbersList = evidenceMatch.matchedNumbers.join(", ");
+      reasons.push(`Coverage (figures): Found in sources: ${numbersList}.${citeStr}`);
+    }
+    // Case C: no match
+    else if (!evidenceMatch.hasNumericPresence) {
+      reasons.push(`Coverage (figures): Not found in sources.${citeStr}`);
+    }
+    
+    // A3.8.71: DIAG log for coverage from EvidenceMatch
+    if (runId && reqSig) {
+      const statementIndex = statement?.index ?? 0;
+      diag(runId, reqSig, `[EVIDENCE_MATCH][COVERAGE] idx=${statementIndex} hasNumericPresence=${evidenceMatch.hasNumericPresence} matchedNumbers=[${evidenceMatch.matchedNumbers.join(",")}] reasonsCount=${reasons.length}`);
+    }
+    
+    return reasons;
+  }
+  
+  // Legacy behavior (when feature flag disabled)
   
   // A3.8.67: Detect scaled money from statement text (not just canonicalClaims)
   const scaledMoneyFromText = detectScaledMoneyInStatement(statementText);
@@ -12537,25 +12570,219 @@ function computeDealContextReliability(dealContext) {
   }
 }
 
+// A3.8.71: Feature flag for deterministic evidence classification
+const USE_EVIDENCE_MATCH_V1 = true;
+
+/**
+ * A3.8.71: Build EvidenceMatch classification from statement, anchors, and corpusSearch result
+ * 
+ * @param {string} statementText - The statement text
+ * @param {Array} canonicalClaims - Array of canonical claims (for anchor extraction)
+ * @param {Object} corpusResult - Result from corpusSearch(statementText, uploadedDocs)
+ * @param {Array} uploadedDocs - Array of uploaded documents
+ * @returns {Object} EvidenceMatch with hasSemanticSupport, hasNumericPresence, matchedNumbers, matchedSources, matchQuality
+ */
+function buildEvidenceMatch(statementText, canonicalClaims, corpusResult, uploadedDocs = []) {
+  if (!statementText || typeof statementText !== "string") {
+    return {
+      hasSemanticSupport: false,
+      hasNumericPresence: false,
+      matchedNumbers: [],
+      matchedSources: [],
+      matchQuality: "none"
+    };
+  }
+  
+  // Extract numeric anchors from canonical claims
+  const numericAnchors = [];
+  if (Array.isArray(canonicalClaims)) {
+    for (const cc of canonicalClaims) {
+      if (cc && typeof cc === "object") {
+        // Extract anchor family (could be in anchorFamily, signalAnchor, or claimText)
+        let anchorFamily = cc.anchorFamily || cc.signalAnchor || null;
+        if (!anchorFamily && cc.claimText) {
+          const match = String(cc.claimText).match(/usd_[\d_]+[kmb]/i);
+          if (match) anchorFamily = match[0];
+        }
+        
+        // Extract numeric value from anchor (e.g., "usd_5m" -> 5)
+        if (anchorFamily) {
+          const usdMatch = anchorFamily.match(/usd_([\d_]+)([kmb])/i);
+          if (usdMatch) {
+            const numStr = usdMatch[1].replace(/_/g, ".");
+            const mag = usdMatch[2].toLowerCase();
+            const num = parseFloat(numStr);
+            if (Number.isFinite(num)) {
+              const multipliers = { m: 1e6, b: 1e9, k: 1e3 };
+              const value = num * (multipliers[mag] || 1);
+              numericAnchors.push({ value, anchorFamily, display: `$${num}${mag}` });
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Analyze corpusSearch result
+  const hasCorpusResult = corpusResult && corpusResult.found === true;
+  const hits = (corpusResult && Array.isArray(corpusResult.hits)) ? corpusResult.hits : [];
+  
+  // Extract match types from hits
+  const matchTypes = new Set();
+  const matchedDocIds = new Set();
+  for (const hit of hits) {
+    if (hit && hit.matchType) {
+      matchTypes.add(hit.matchType);
+    }
+    if (hit && hit.docId !== undefined && hit.docId !== null) {
+      matchedDocIds.add(String(hit.docId));
+    }
+  }
+  
+  const hasNumberMatch = matchTypes.has("number");
+  const hasKeywordMatch = matchTypes.has("keyword") || matchTypes.has("phrase");
+  const hasFuzzyMatch = matchTypes.has("fuzzy");
+  
+  // Extract matched numbers from corpusSearch debug info
+  const matchedNumbers = [];
+  if (corpusResult && corpusResult.debug && Array.isArray(corpusResult.debug.matchesAccepted)) {
+    for (const match of corpusResult.debug.matchesAccepted) {
+      if (match && typeof match.docValue === "number") {
+        matchedNumbers.push(match.docValue);
+      }
+    }
+  }
+  
+  // If no matchesAccepted but has number match, extract from statement numeric values
+  if (matchedNumbers.length === 0 && hasNumberMatch && corpusResult && corpusResult.debug) {
+    const stmtNums = corpusResult.debug.numsInStmt || [];
+    const docNums = corpusResult.debug.numsInDoc || [];
+    // Find matching values (within 5% tolerance)
+    for (const stmtNum of stmtNums) {
+      for (const docNum of docNums) {
+        const diff = Math.abs(stmtNum - docNum);
+        const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
+        if (diff / maxVal <= 0.05) {
+          matchedNumbers.push(docNum);
+          break;
+        }
+      }
+    }
+  }
+  
+  // Normalize matched numbers to display format ($5m, $18.7m, etc.)
+  // A3.8.71: Format rules - always use normalized display format
+  const normalizedMatchedNumbers = [];
+  for (const num of matchedNumbers) {
+    if (num >= 1e9) {
+      const billions = num / 1e9;
+      normalizedMatchedNumbers.push(`$${billions.toFixed(billions >= 10 ? 0 : 1)}b`);
+    } else if (num >= 1e6) {
+      const millions = num / 1e6;
+      normalizedMatchedNumbers.push(`$${millions.toFixed(millions >= 10 ? 0 : 1)}m`);
+    } else if (num >= 1e3) {
+      const thousands = num / 1e3;
+      normalizedMatchedNumbers.push(`$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`);
+    } else {
+      normalizedMatchedNumbers.push(`$${num.toLocaleString()}`);
+    }
+  }
+  // Deduplicate and sort ascending (as per spec)
+  const uniqueNormalized = Array.from(new Set(normalizedMatchedNumbers)).sort((a, b) => {
+    // Extract numeric values for sorting
+    const extractValue = (str) => {
+      const match = str.match(/\$?([\d.]+)([kmb])?/i);
+      if (!match) return 0;
+      const num = parseFloat(match[1]);
+      const mag = (match[2] || "").toLowerCase();
+      const multipliers = { b: 1e9, m: 1e6, k: 1e3 };
+      return num * (multipliers[mag] || 1);
+    };
+    return extractValue(a) - extractValue(b);
+  });
+  
+  // Classification rules
+  let hasSemanticSupport = false;
+  let hasNumericPresence = false;
+  let matchQuality = "none";
+  
+  // Check if keywords AND number match in same sentence window
+  // For now, we consider it semantic support if both keyword and number matches exist
+  // (The "same sentence window" check would require more sophisticated analysis)
+  if (hasCorpusResult && hasNumberMatch && hasKeywordMatch) {
+    hasSemanticSupport = true;
+    hasNumericPresence = true;
+    matchQuality = "exact";
+  } else if (hasCorpusResult && hasNumberMatch && hasFuzzyMatch && !hasKeywordMatch) {
+    hasSemanticSupport = true;
+    hasNumericPresence = true;
+    matchQuality = "fuzzy";
+  } else if (hasCorpusResult && hasNumberMatch && !hasKeywordMatch && !hasFuzzyMatch) {
+    // Number match exists WITHOUT semantic context
+    hasSemanticSupport = false;
+    hasNumericPresence = true;
+    matchQuality = "numeric_only";
+  } else if (hasCorpusResult && (hasKeywordMatch || hasFuzzyMatch) && !hasNumberMatch) {
+    // Keyword/fuzzy match but no number (for non-numeric statements)
+    hasSemanticSupport = true;
+    hasNumericPresence = false;
+    matchQuality = hasFuzzyMatch ? "fuzzy" : "exact";
+  } else {
+    hasSemanticSupport = false;
+    hasNumericPresence = false;
+    matchQuality = "none";
+  }
+  
+  return {
+    hasSemanticSupport,
+    hasNumericPresence,
+    matchedNumbers: uniqueNormalized,
+    matchedSources: Array.from(matchedDocIds),
+    matchQuality
+  };
+}
+
 /**
  * A3.8.9: Build reasons from canonical claims (claim-driven only)
  * Returns deterministic reasons based on canonical claims, with special handling for qualitative claims.
  */
 function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
-  const { statement = null, runId = null, reqSig = null, selectionMode = false, rawClaims = [], uploadedDocs = [] } = context;
+  const { statement = null, runId = null, reqSig = null, selectionMode = false, rawClaims = [], uploadedDocs = [], evidenceMatch = null } = context;
   
   if (!Array.isArray(canonicalClaims) || canonicalClaims.length === 0) {
     // A3.8.9: If canonicalClaims is empty (should not happen after hard invariant), return single deterministic bullet
     return ["No extractable claims were produced for this statement."];
   }
   
-  // A3.8.56: Check if this is a bare USD statement and if corpusSearch found matches
+  // A3.8.71: Use pre-built EvidenceMatch if provided, otherwise build it (for backward compatibility)
   const statementText = statement?.text || "";
+  let evidenceMatchToUse = evidenceMatch;
+  
+  if (!evidenceMatchToUse && USE_EVIDENCE_MATCH_V1 && selectionMode && uploadedDocs.length > 0) {
+    try {
+      const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
+      evidenceMatchToUse = buildEvidenceMatch(statementText, canonicalClaims, corpusSearchResult, uploadedDocs);
+      
+      // A3.8.71: Diagnostic log for EvidenceMatch
+      if (runId && reqSig) {
+        const statementIndex = statement?.index ?? 0;
+        diag(runId, reqSig, `[EVIDENCE_MATCH] idx=${statementIndex} hasSemanticSupport=${evidenceMatchToUse.hasSemanticSupport} hasNumericPresence=${evidenceMatchToUse.hasNumericPresence} matchQuality=${evidenceMatchToUse.matchQuality} matchedNumbers=[${evidenceMatchToUse.matchedNumbers.join(",")}]`);
+      }
+    } catch (err) {
+      // If corpusSearch fails, keep existing behavior
+      if (runId && reqSig) {
+        const statementIndex = statement?.index ?? 0;
+        diag(runId, reqSig, `[EVIDENCE_MATCH][ERROR] idx=${statementIndex} error=${String(err)}`);
+      }
+    }
+  }
+  
+  // A3.8.56: Check if this is a bare USD statement and if corpusSearch found matches (legacy, only if feature flag disabled)
   const isBareUsd = isBareUsdStatement(statementText, canonicalClaims);
   let corpusSearchHitsCount = 0;
   let shouldReplaceNotSupported = false;
   
-  if (isBareUsd && selectionMode && uploadedDocs.length > 0) {
+  if (!USE_EVIDENCE_MATCH_V1 && isBareUsd && selectionMode && uploadedDocs.length > 0) {
     try {
       const searchResult = corpusSearch(statementText, uploadedDocs);
       if (searchResult && searchResult.found && Array.isArray(searchResult.hits)) {
@@ -12722,10 +12949,42 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     // A3.8.15: Build user-meaningful reason with definitive language
     let reasonText = "";
     
-    // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason
-    const verbToUse = verb;
+    // A3.8.71: Use EvidenceMatch for deterministic classification (if feature flag enabled)
+    let effectiveReliability = reliability;
+    if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode) {
+      // A3.8.71: Force Low reliability if no semantic support
+      if (!evidenceMatchToUse.hasSemanticSupport) {
+        effectiveReliability = "Low";
+        // Update verb to reflect Low reliability
+        const verbForLow = verbForReliability("Low");
+        
+        // Case B: numeric only - generate specific reason
+        if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
+          const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
+          reasonText = `"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.${citeStr}`;
+        } else {
+          // Case C: no match
+          reasonText = `"${statementText}" Not supported by provided sources.${citeStr}`;
+        }
+      } else {
+        // Case A: has semantic support - use existing logic
+        // effectiveReliability stays as-is (from canonical claim)
+      }
+    }
+    
+    // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason (legacy, only if feature flag disabled)
+    const verbToUse = USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && !evidenceMatchToUse.hasSemanticSupport
+      ? verbForReliability("Low")
+      : verb;
     const isNotSupported = verbToUse === "is not supported by the provided source(s).";
-    const shouldReplace = shouldReplaceNotSupported && isNotSupported && (claimType === "metric_amount" || claimType === "investment_amount" || claimType === "valuation_pre_money" || claimType === "valuation_post_money" || claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value" || claimType === "other_numeric");
+    const shouldReplace = !USE_EVIDENCE_MATCH_V1 && shouldReplaceNotSupported && isNotSupported && (claimType === "metric_amount" || claimType === "investment_amount" || claimType === "valuation_pre_money" || claimType === "valuation_post_money" || claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value" || claimType === "other_numeric");
+    
+    // A3.8.71: Skip reason generation if EvidenceMatch already generated it
+    if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && reasonText) {
+      reasons.push(reasonText);
+      if (reasons.length >= 3) break;
+      continue;
+    }
     
     if (claimType === "investment_amount") {
       if (shouldReplace) {
@@ -12913,49 +13172,73 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       const citeStr = citations.length > 0 
         ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
         : "";
-      const reliability = firstClaim.reliability || "Medium";
-      // A3.8.25: Use deterministic verbs based on reliability (selection mode only)
-      // A3.8.61: selectionMode already declared from context destructuring above
-      let qualVerb;
-      if (selectionMode) {
-        // A3.8.25: Selection mode uses deterministic language
-        // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason
-        if (reliability === "Low") {
-          if (shouldReplaceNotSupported) {
-            // A3.8.56: Use deterministic reason for bare USD with corpus hits
-            const claimValue = firstClaim.value;
-            let valueDisplay = "";
-            if (claimValue !== null && firstClaim.currency) {
-              const millions = claimValue / 1e6;
-              if (millions >= 1) {
-                valueDisplay = `$${millions.toFixed(millions >= 10 ? 0 : 1)}m`;
-              } else {
-                const thousands = claimValue / 1e3;
-                if (thousands >= 1) {
-                  valueDisplay = `$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`;
-                } else {
-                  valueDisplay = `$${claimValue.toLocaleString()}`;
-                }
-              }
-            }
-            reasons.push(`Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`);
+      let reliability = firstClaim.reliability || "Medium";
+      
+      // A3.8.71: Use EvidenceMatch for fallback reason generation (if feature flag enabled)
+      if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode) {
+        if (!evidenceMatchToUse.hasSemanticSupport) {
+          reliability = "Low";
+          // Case B: numeric only
+          if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
+            const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
+            reasons.push(`"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.${citeStr}`);
           } else {
-            qualVerb = "is not supported by the provided source(s).";
-            reasons.push(`This statement ${qualVerb}${citeStr}`);
+            // Case C: no match
+            reasons.push(`"${statementText}" Not supported by provided sources.${citeStr}`);
           }
-        } else if (citations.length > 0) {
-          qualVerb = "is supported by the provided source(s).";
-          reasons.push(`This statement ${qualVerb}${citeStr}`);
         } else {
-          qualVerb = "could not be verified in the provided source(s).";
-          reasons.push(`This statement ${qualVerb}${citeStr}`);
+          // Case A: has semantic support
+          if (citations.length > 0) {
+            reasons.push(`"${statementText}" Supported by sources [${citations.join(", ")}]`);
+          } else {
+            reasons.push(`"${statementText}" Supported by sources.${citeStr}`);
+          }
         }
       } else {
-        // Non-selection mode: keep existing behavior
-        qualVerb = reliability === "Low" 
-          ? "is not supported by the provided source(s)."
-          : "is consistent with the provided source(s).";
-        reasons.push(`This statement ${qualVerb}${citeStr}`);
+        // Legacy behavior (when feature flag disabled)
+        // A3.8.25: Use deterministic verbs based on reliability (selection mode only)
+        // A3.8.61: selectionMode already declared from context destructuring above
+        let qualVerb;
+        if (selectionMode) {
+          // A3.8.25: Selection mode uses deterministic language
+          // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason
+          if (reliability === "Low") {
+            if (shouldReplaceNotSupported) {
+              // A3.8.56: Use deterministic reason for bare USD with corpus hits
+              const claimValue = firstClaim.value;
+              let valueDisplay = "";
+              if (claimValue !== null && firstClaim.currency) {
+                const millions = claimValue / 1e6;
+                if (millions >= 1) {
+                  valueDisplay = `$${millions.toFixed(millions >= 10 ? 0 : 1)}m`;
+                } else {
+                  const thousands = claimValue / 1e3;
+                  if (thousands >= 1) {
+                    valueDisplay = `$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`;
+                  } else {
+                    valueDisplay = `$${claimValue.toLocaleString()}`;
+                  }
+                }
+              }
+              reasons.push(`Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`);
+            } else {
+              qualVerb = "is not supported by the provided source(s).";
+              reasons.push(`This statement ${qualVerb}${citeStr}`);
+            }
+          } else if (citations.length > 0) {
+            qualVerb = "is supported by the provided source(s).";
+            reasons.push(`This statement ${qualVerb}${citeStr}`);
+          } else {
+            qualVerb = "could not be verified in the provided source(s).";
+            reasons.push(`This statement ${qualVerb}${citeStr}`);
+          }
+        } else {
+          // Non-selection mode: keep existing behavior
+          qualVerb = reliability === "Low" 
+            ? "is not supported by the provided source(s)."
+            : "is consistent with the provided source(s).";
+          reasons.push(`This statement ${qualVerb}${citeStr}`);
+        }
       }
     }
   }
@@ -18044,6 +18327,18 @@ ${
           }
         }
         
+        // A3.8.71: Force Low reliability if EvidenceMatch indicates no semantic support
+        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchForStatement && !evidenceMatchForStatement.hasSemanticSupport) {
+          computedReliability = {
+            ...computedReliability,
+            reliabilityScore: 30,
+            reliabilityLabel: "Low",
+          };
+          if (runId && reqSig) {
+            diag(runId, reqSig, `[EVIDENCE_MATCH][RELIABILITY_GUARD] idx=${idx} forced=Low reason=no_semantic_support`);
+          }
+        }
+        
         // A3.8.15: Reliability score/label consistency guardrail
         const finalScore = computedReliability.reliabilityScore;
         const finalLabel = computedReliability.reliabilityLabel;
@@ -18188,9 +18483,32 @@ ${
               return cc;
             });
             
+            // A3.8.71: Build EvidenceMatch early (if feature flag enabled) for use in both reasons and coverage
+            let evidenceMatchForStatement = null;
+            if (USE_EVIDENCE_MATCH_V1 && selectionUsed && uploadedDocs.length > 0) {
+              try {
+                const statementText = stmt?.text || "";
+                const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
+                evidenceMatchForStatement = buildEvidenceMatch(statementText, canonicalClaims, corpusSearchResult, uploadedDocs);
+                
+                // A3.8.71: Diagnostic log for EvidenceMatch
+                if (runId && reqSig) {
+                  const statementIndex = stmt?.index ?? 0;
+                  diag(runId, reqSig, `[EVIDENCE_MATCH] idx=${statementIndex} hasSemanticSupport=${evidenceMatchForStatement.hasSemanticSupport} hasNumericPresence=${evidenceMatchForStatement.hasNumericPresence} matchQuality=${evidenceMatchForStatement.matchQuality} matchedNumbers=[${evidenceMatchForStatement.matchedNumbers.join(",")}]`);
+                }
+              } catch (err) {
+                // If corpusSearch fails, keep existing behavior
+                if (runId && reqSig) {
+                  const statementIndex = stmt?.index ?? 0;
+                  diag(runId, reqSig, `[EVIDENCE_MATCH][ERROR] idx=${statementIndex} error=${String(err)}`);
+                }
+              }
+            }
+            
             // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
             // A3.8.25: Pass selectionMode for deterministic language and rawClaims for uncertainty detection
             // A3.8.70: Use canonicalClaimsForReasons (with citations stripped) to prevent citation tags in reasons
+            // A3.8.71: Pass evidenceMatch if available
             finalReasons = buildReasonsFromCanonicalClaims(canonicalClaimsForReasons, {
               statement: stmt,
               runId,
@@ -18198,6 +18516,7 @@ ${
               selectionMode: selectionUsed,
               rawClaims: rawClaimsForDiagnostics, // A3.8.25: Pass rawClaims for uncertainty alignment
               uploadedDocs: uploadedDocs, // A3.8.33: Pass uploadedDocs for corpusSearch check
+              evidenceMatch: evidenceMatchForStatement, // A3.8.71: Pass pre-built EvidenceMatch
             });
             
             // A3.8.9: Set reasonsSource based on actual pipeline path
@@ -18274,7 +18593,8 @@ ${
             // Build coverage reasons
             // A3.8.65: Fix ReferenceError - use stmt (loop variable) instead of statement
             // A3.8.66: Pass canonicalClaims to prevent unknown family emissions for scaled claims
-            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt, canonicalClaims);
+            // A3.8.71: Pass evidenceMatch if available (built earlier in the flow)
+            const coverageReasons = buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedReferences, coverageCitations, runId, reqSig, stmt, canonicalClaims, evidenceMatchForStatement);
             
             // Count found/not found for diagnostics
             for (const token of coverageTokens) {
