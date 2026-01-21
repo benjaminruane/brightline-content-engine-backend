@@ -12279,8 +12279,16 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
     }
     const anchorFamily = inferredAnchorFamily || "unknown";
     
+    // A3.8.70: Remove/disable "anchorFamily=unknown emitted=found" coverage emissions
+    // Coverage lines must only be emitted for known canonical anchor families
+    if (anchorFamily === "unknown") {
+      skippedUnknownTokens.push(token);
+      continue; // Skip unknown family tokens entirely - don't emit coverage for them
+    }
+    
     // A3.8.66: Skip unknown family tokens when scaled families exist (from canonicalClaims)
     // A3.8.67: Also skip when scaled money is detected in statement text (for qual_valuation cases)
+    // NOTE: This block is now unreachable due to A3.8.70 above, but kept for reference
     const shouldSkipUnknown = anchorFamily === "unknown" && (
       scaledAnchorFamilies.size > 0 || 
       scaledMoneyFromText.hasScaledMoney
@@ -12313,21 +12321,27 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
       }
     }
     
-    if (result.found) {
+    // A3.8.70: Gate coverage "Found" on accepted corpus matches
+    // DO NOT emit "Found in sources" unless there is at least one ACCEPTED corpus match
+    const hasAcceptedMatch = result.acceptedCandidates && Array.isArray(result.acceptedCandidates) && result.acceptedCandidates.length > 0;
+    
+    if (result.found && hasAcceptedMatch) {
       foundTokens.push(token);
-      // A3.8.63: DIAG log for accepted match
+      // A3.8.70: DIAG log for accepted match (updated tag)
       if (runId && reqSig && result.acceptedCandidates && result.acceptedCandidates.length > 0) {
         const statementIndex = statement?.index ?? 0;
         const acceptedForm = result.acceptedCandidates[0];
-        diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_ACCEPT] anchorFamily=${anchorFamily} candidate="${acceptedForm}"`);
+        diag(runId, reqSig, `[DIAG][A3.8.70][NUM_COV_ACCEPT] anchorFamily=${anchorFamily} candidate="${acceptedForm}"`);
       }
     } else {
+      // A3.8.70: If result.found but no accepted matches, treat as NOT FOUND for coverage
+      // Add to notFoundTokens (either result.found=false OR result.found=true but no accepted matches)
       notFoundTokens.push(token);
-      // A3.8.63: DIAG log for rejected candidates
+      // A3.8.70: DIAG log for rejected candidates (updated tag)
       if (runId && reqSig && result.rejectedCandidates && result.rejectedCandidates.length > 0) {
         const statementIndex = statement?.index ?? 0;
         for (const rejected of result.rejectedCandidates) {
-          diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_REJECT] anchorFamily=${anchorFamily} candidate="${rejected.candidate}" reason=${rejected.reason || "unknown"}`);
+          diag(runId, reqSig, `[DIAG][A3.8.70][NUM_COV_REJECT] anchorFamily=${anchorFamily} candidate="${rejected.candidate}" reason=${rejected.reason || "unknown"}`);
         }
       }
       // A3.8.59: DIAG log for scale mismatch rejection (legacy)
@@ -12339,7 +12353,8 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
   }
   
   const reasons = [];
-  const citeStr = citations && citations.length > 0
+  // A3.8.70: Only append citation tags if citations exist (prevent " [1]" when empty)
+  const citeStr = citations && Array.isArray(citations) && citations.length > 0
     ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
     : "";
   
@@ -12412,7 +12427,7 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
             tokenAnchorFamily = `usd_${num}k`;
           }
         }
-        diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_EMIT] anchorFamily=${tokenAnchorFamily} emitted=found forms=["${token.display}"]`);
+        diag(runId, reqSig, `[DIAG][A3.8.70][NUM_COV_EMIT] anchorFamily=${tokenAnchorFamily} emitted=found forms=["${token.display}"]`);
       }
     }
   }
@@ -12451,7 +12466,7 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
       reasons.push(`Coverage (figures): Not found in sources.${citeStr}`);
     }
     
-    // A3.8.63: DIAG log for emitted not-found coverage
+    // A3.8.70: DIAG log for emitted not-found coverage (updated tag)
     if (runId && reqSig) {
       const statementIndex = statement?.index ?? 0;
       for (const token of notFoundTokens) {
@@ -12468,9 +12483,27 @@ function buildSelectionCoverageReasons(statementText, uploadedDocs, unifiedRefer
             tokenAnchorFamily = `usd_${num}k`;
           }
         }
-        diag(runId, reqSig, `[DIAG][A3.8.63][NUM_COV_EMIT] anchorFamily=${tokenAnchorFamily} emitted=not_found forms=["${token.display}"]`);
+        diag(runId, reqSig, `[DIAG][A3.8.70][NUM_COV_EMIT] anchorFamily=${tokenAnchorFamily} emitted=not_found forms=["${token.display}"]`);
       }
     }
+  }
+  
+  // A3.8.70: DIAG log for coverage gating summary
+  if (runId && reqSig) {
+    const statementIndex = statement?.index ?? 0;
+    const acceptedAnchors = Array.from(new Set(foundTokens.map(t => {
+      const match = t.display.match(/\$?([\d,]+(?:\.\d+)?)([kmb]|million|billion|thousand)?/i);
+      if (match) {
+        const num = match[1].replace(/,/g, "").replace(/\./g, "_");
+        const mag = match[2]?.toLowerCase() || "";
+        if (mag === "m" || mag === "million" || mag === "mm") return `usd_${num}m`;
+        if (mag === "b" || mag === "billion" || mag === "b") return `usd_${num}b`;
+        if (mag === "k" || mag === "thousand" || mag === "k") return `usd_${num}k`;
+      }
+      return null;
+    }).filter(Boolean)));
+    const emittedFoundAnchors = validFoundTokens.length > 0 ? acceptedAnchors : [];
+    diag(runId, reqSig, `[DIAG][A3.8.70][COV_GATE] stmtIdx=${statementIndex} acceptedAnchors=[${acceptedAnchors.join(",")}] emittedFoundAnchors=[${emittedFoundAnchors.join(",")}]`);
   }
   
   return reasons;
@@ -18137,9 +18170,28 @@ ${
             
             reasonsSourceValue = "deal_context";
           } else {
+            // A3.8.70: Strip citations/evidence for Not supported claims before generating reasons
+            const canonicalClaimsForReasons = canonicalClaims.map(cc => {
+              if (!cc || typeof cc !== "object") return cc;
+              const reliability = cc.reliability || "Medium";
+              const comment = cc.comment || "";
+              const isNotSupported = reliability === "Low" && /not supported in provided sources/i.test(comment);
+              
+              if (isNotSupported) {
+                // A3.8.70: Force citations and evidenceNotes to empty for unsupported claims
+                return {
+                  ...cc,
+                  citations: [],
+                  evidenceNotes: [],
+                };
+              }
+              return cc;
+            });
+            
             // A3.8.9: Use buildReasonsFromCanonicalClaims (claim-driven only)
             // A3.8.25: Pass selectionMode for deterministic language and rawClaims for uncertainty detection
-            finalReasons = buildReasonsFromCanonicalClaims(canonicalClaims, {
+            // A3.8.70: Use canonicalClaimsForReasons (with citations stripped) to prevent citation tags in reasons
+            finalReasons = buildReasonsFromCanonicalClaims(canonicalClaimsForReasons, {
               statement: stmt,
               runId,
               reqSig,
@@ -18361,8 +18413,26 @@ ${
         }
         
         // A3.8.4: Extract citations from canonical claims
+        // A3.8.70: Strip citations/evidence for Not supported claims
+        const supportedCanonicalClaims = canonicalClaims.map(cc => {
+          if (!cc || typeof cc !== "object") return cc;
+          const reliability = cc.reliability || "Medium";
+          const comment = cc.comment || "";
+          const isNotSupported = reliability === "Low" && /not supported in provided sources/i.test(comment);
+          
+          if (isNotSupported) {
+            // A3.8.70: Force citations and evidenceNotes to empty for unsupported claims
+            return {
+              ...cc,
+              citations: [],
+              evidenceNotes: [],
+            };
+          }
+          return cc;
+        });
+        
         const canonicalCitations = new Set();
-        canonicalClaims.forEach(cc => {
+        supportedCanonicalClaims.forEach(cc => {
           if (Array.isArray(cc.citations)) {
             cc.citations.forEach(cit => canonicalCitations.add(cit));
           }
@@ -18384,9 +18454,24 @@ ${
           });
         }
         
+        // A3.8.70: Statement-level cleanup - if all claims are unsupported, clear citations/evidence
+        const allClaimsUnsupported = supportedCanonicalClaims.every(cc => {
+          if (!cc || typeof cc !== "object") return false;
+          const reliability = cc.reliability || "Medium";
+          const comment = cc.comment || "";
+          return reliability === "Low" && /not supported in provided sources/i.test(comment);
+        });
+        
         // A3.8.4: Use canonical citations if available, otherwise keep existing
-        const finalCitations = mergedCitations.length > 0 ? mergedCitations : (Array.isArray(assessment.citations) ? assessment.citations : []);
-        const finalEvidence = evidenceFromCitations.length > 0 ? evidenceFromCitations : (Array.isArray(assessment.evidence) ? assessment.evidence : []);
+        // A3.8.70: But clear if all claims are unsupported
+        let finalCitations = mergedCitations.length > 0 ? mergedCitations : (Array.isArray(assessment.citations) ? assessment.citations : []);
+        let finalEvidence = evidenceFromCitations.length > 0 ? evidenceFromCitations : (Array.isArray(assessment.evidence) ? assessment.evidence : []);
+        
+        if (allClaimsUnsupported && supportedCanonicalClaims.length > 0) {
+          // A3.8.70: If all claims are unsupported, clear statement-level citations/evidence
+          finalCitations = [];
+          finalEvidence = [];
+        }
         
         // A3.8.4: Warn if citations are empty but references exist
         if (finalCitations.length === 0 && unifiedReferences && unifiedReferences.length > 0 && runId && reqSig) {
@@ -18400,11 +18485,23 @@ ${
           assessment: {
             ...assessment,
             // A3.8.0: Add canonical claims and raw claims
-            canonicalClaims: canonicalClaims,
+            // A3.8.70: Use supportedCanonicalClaims (with citations stripped for unsupported)
+            canonicalClaims: supportedCanonicalClaims,
             rawClaims: rawClaimsForDiagnostics,
             // A3.8.0: claims field maps to canonical claims for backward compatibility (5.3 Option A)
-            claims: claims, // Already mapped from canonical claims above
+            // A3.8.70: Update claims to reflect stripped citations
+            claims: supportedCanonicalClaims.map(cc => {
+              const mappedClaim = claims.find(c => c && c._canonicalId === cc.id);
+              if (mappedClaim) {
+                return {
+                  ...mappedClaim,
+                  citations: cc.citations || [],
+                };
+              }
+              return mappedClaim;
+            }).filter(Boolean),
             // A3.8.4: Restore citations and evidence from canonical claims
+            // A3.8.70: Citations/evidence cleared if all claims unsupported
             citations: finalCitations,
             evidence: finalEvidence,
             reliabilityScore: computedReliability.reliabilityScore,
