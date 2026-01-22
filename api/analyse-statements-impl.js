@@ -14,7 +14,7 @@ import {
   webResultsToReferences,
   deriveQueryFromDraft,
 } from "../lib/web.js";
-import { corpusSearch } from "../lib/corpusSearch.js";
+import { corpusSearch, normalizeUploadedDocText } from "../lib/corpusSearch.js";
 import { createHash } from "node:crypto";
 import { canonicalizeClaims, normalizeMoneyAnchor, isMoneyAnchor, normalizeAnyAnchor } from "../lib/canonicalClaims.js";
 
@@ -17601,13 +17601,34 @@ export default async function handler(req, res) {
     diag(runId, reqSig, `START method=${req.method} webSearchEnabled=${publicSearch} bodySize=${bodySize}`);
 
     // Format uploaded sources for prompt (version-scoped)
-    const uploadedSources = sources.map((s) => ({
-      id: s?.id || null,
-      name: s?.name || s?.title || "Untitled source",
-      text: s?.text || "",
-      kind: s?.kind || s?.sourceType || "file",
-      url: s?.url || null,
-    }));
+    // A3.8.76: Normalize RTF text before use
+    const uploadedSources = sources.map((s) => {
+      const rawText = s?.text || "";
+      const docMeta = {
+        title: s?.name || s?.title || "Untitled source",
+        mime: s?.mime || s?.mimeType || "",
+      };
+      const normalizedText = normalizeUploadedDocText(rawText, docMeta);
+      
+      return {
+        id: s?.id || null,
+        name: s?.name || s?.title || "Untitled source",
+        text: normalizedText, // A3.8.76: Use normalized text
+        kind: s?.kind || s?.sourceType || "file",
+        url: s?.url || null,
+        mime: s?.mime || s?.mimeType || "", // A3.8.76: Preserve mime for diagnostics
+      };
+    });
+    
+    // A3.8.76: Diagnostics for uploaded docs
+    if (uploadedSources.length > 0) {
+      const docInfo = uploadedSources.map(doc => {
+        const normalizedLen = doc.text.length;
+        const hasDigitNorm = /\d/.test(doc.text);
+        return `${doc.name || "untitled"}:len=${normalizedLen}:hasDigit=${hasDigitNorm}`;
+      }).join(" ");
+      diag(runId, reqSig, `[DIAG][A3.8.76][UPLOADED_DOCS_READY] count=${uploadedSources.length} ${docInfo}`);
+    }
 
     // Build uploaded sources context for prompt
     let uploadedSourcesBlock = "";
