@@ -13060,7 +13060,8 @@ function evidenceMatchForStatement(statementText, corpusResult, debugContext = {
     hasNumericPresence,
     matchedNumbers: uniqueNormalized,
     sourceIdsUsed,
-    matchQuality
+    matchQuality,
+    reason: semanticSupportReason // A3.8.80: Include reason for verbatim_match detection
   };
 }
 
@@ -18900,6 +18901,7 @@ ${
           
           // Map canonical claims to old claim shape for backward compatibility (5.3 Option A)
           // A3.8.15: Fix comment to respect Low reliability
+          // A3.8.80: Use upgraded reliability from evidence-driven override if applied
           claims = canonClaims.map(cc => {
             // A3.8.12: Filter out consolidation jargon from evidenceNotes for user-facing comments
             // A3.8.41: Expanded pattern to catch all consolidation jargon
@@ -18910,7 +18912,9 @@ ${
               : [];
             
             // A3.8.15: Comment must respect reliability - Low claims must NOT say "Supported by sources"
+            // A3.8.80: Use upgraded reliability (already set on cc by evidence override)
             const reliability = cc.reliability || "Medium";
+            const reliabilityScore = cc.reliabilityScore || (reliability === "High" ? 90 : reliability === "Medium" ? 70 : 30);
             let comment;
             if (filteredNotes.length > 0) {
               comment = filteredNotes.join("; ");
@@ -18927,8 +18931,8 @@ ${
             
             return {
               claimText: cc.displayText,
-              reliability: cc.reliability,
-              reliabilityScore: cc.reliabilityScore,
+              reliability: reliability, // A3.8.80: Use upgraded reliability
+              reliabilityScore: reliabilityScore, // A3.8.80: Use upgraded score
               comment: comment,
               // A3.8.41: Prefer signalAnchors for coverage accounting when available (preserves consolidated qualitative signals)
               anchor: (cc.signalAnchors && Array.isArray(cc.signalAnchors) && cc.signalAnchors.length > 0) ? cc.signalAnchors.join(",") : cc.anchorFamily,
@@ -18987,8 +18991,10 @@ ${
         
         // A3.8.73: Build EvidenceMatch early using deterministic evidenceMatchForStatement function
         // A3.8.75: Pass uploadedDocs for semantic support check
+        // A3.8.80: Track evidence override level for statement-level reliability
         // Define in outer scope so it's accessible for reliability guard check
         let evidenceMatchForStatementResult = null;
+        let evidenceOverrideLevel = null; // A3.8.80: Track if evidence-driven override was applied
         if (USE_EVIDENCE_MATCH_V1 && selectionUsed && uploadedDocs.length > 0) {
           try {
             const statementText = stmt?.text || "";
@@ -19050,6 +19056,43 @@ ${
                 }
               }
             }
+            
+            // A3.8.80: Evidence-driven reliability override (selection mode + uploaded sources only)
+            if (selectionUsed && uploadedDocs.length > 0 && evidenceMatchForStatementResult) {
+              // Check if sources are uploaded only (no web sources)
+              // Since corpusSearch only receives uploadedDocs, all sources are uploaded
+              const uploadedSourcesCount = uploadedDocs.length;
+              const hasNumericPresence = evidenceMatchForStatementResult.hasNumericPresence === true;
+              const hasSemanticSupport = evidenceMatchForStatementResult.hasSemanticSupport === true;
+              const matchQuality = evidenceMatchForStatementResult.matchQuality || "none";
+              const reason = evidenceMatchForStatementResult.reason || null;
+              
+              // Determine override level
+              if (hasNumericPresence && hasSemanticSupport && matchQuality === "numeric_plus_semantic" && reason === "verbatim_match") {
+                // HIGH: verbatim match confirmed
+                evidenceOverrideLevel = "High";
+              } else if (hasNumericPresence) {
+                // MEDIUM: numeric presence confirmed but not verbatim
+                evidenceOverrideLevel = "Medium";
+              }
+              
+              // Apply override to canonical claims
+              if (evidenceOverrideLevel) {
+                const overrideScore = evidenceOverrideLevel === "High" ? 90 : 70; // Use existing High/Medium defaults
+                
+                for (const cc of canonicalClaims) {
+                  if (cc && typeof cc === "object") {
+                    // Override canonical claim reliability
+                    cc.reliability = evidenceOverrideLevel;
+                    cc.reliabilityScore = overrideScore;
+                  }
+                }
+                
+                // A3.8.80: Diagnostic
+                const sourcesType = uploadedSourcesCount > 0 ? "uploadedOnly" : "mixed";
+                diag(runId, reqSig, `[A3.8.80][EVIDENCE_OVERRIDE] idx=${idx} level=${evidenceOverrideLevel} quality=${matchQuality} reason=${reason || "none"} hasNumeric=${hasNumericPresence} hasSemantic=${hasSemanticSupport} sources=${sourcesType}`);
+              }
+            }
           } catch (err) {
             // A3.8.71: Guard against errors in evidence match assembly - log but continue
             if (runId && reqSig) {
@@ -19061,6 +19104,7 @@ ${
         
         // A3.8.0: Use canonical claims for reliability computation
         // A3.8.1: Use canonClaims directly (already filtered to have reliability)
+        // A3.8.80: Canonical claims may have been upgraded by evidence-driven override
         const canonClaimsForReliability = canonicalClaims.filter(cc => cc.reliability);
         
         // A3.6.3: Compute statement reliability from canonical claims (deterministic)
@@ -19089,8 +19133,34 @@ ${
         // A3.8.71: Force Low reliability if EvidenceMatch indicates no semantic support
         // A3.8.74: Upgrade to Medium for weak_semantic match quality
         // A3.8.75: numeric_plus_semantic should allow Medium/High reliability (not force Low)
+        // A3.8.80: Evidence-driven override takes precedence (applied above)
         if (USE_EVIDENCE_MATCH_V1 && evidenceMatchForStatementResult) {
-          if (evidenceMatchForStatementResult.matchQuality === "weak_semantic") {
+          // A3.8.80: Check if evidence-driven override was applied (canonical claims already upgraded)
+          // evidenceOverrideLevel is set in the try block above if override was applied
+          if (typeof evidenceOverrideLevel === "string" && (evidenceOverrideLevel === "High" || evidenceOverrideLevel === "Medium")) {
+            // A3.8.80: Use upgraded canonical claim reliabilities for statement-level computation
+            // The canonical claims were already upgraded above, so recompute from them
+            const upgradedCanonClaims = canonicalClaims.filter(cc => cc.reliability);
+            if (upgradedCanonClaims.length > 0) {
+              // Check if any claim is High
+              const hasHigh = upgradedCanonClaims.some(cc => cc.reliability === "High");
+              const hasMedium = upgradedCanonClaims.some(cc => cc.reliability === "Medium");
+              
+              if (hasHigh) {
+                computedReliability = {
+                  ...computedReliability,
+                  reliabilityScore: 90,
+                  reliabilityLabel: "High",
+                };
+              } else if (hasMedium) {
+                computedReliability = {
+                  ...computedReliability,
+                  reliabilityScore: 70,
+                  reliabilityLabel: "Medium",
+                };
+              }
+            }
+          } else if (evidenceMatchForStatementResult.matchQuality === "weak_semantic") {
             // A3.8.74: Weak semantic support -> Medium reliability (55-65 range)
             computedReliability = {
               ...computedReliability,
