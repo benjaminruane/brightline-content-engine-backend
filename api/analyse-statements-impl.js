@@ -13128,7 +13128,8 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
   
   if (!evidenceMatchToUse && USE_EVIDENCE_MATCH_V1 && selectionMode && uploadedDocs.length > 0) {
     try {
-      const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
+      // A3.8.77: Pass selectionMode to enable numeric-only acceptance
+      const corpusSearchResult = corpusSearch(statementText, uploadedDocs, { selectionMode: true });
       evidenceMatchToUse = buildEvidenceMatch(statementText, canonicalClaims, corpusSearchResult, uploadedDocs);
       
       // A3.8.71: Diagnostic log for EvidenceMatch
@@ -13152,7 +13153,8 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
   
   if (!USE_EVIDENCE_MATCH_V1 && isBareUsd && selectionMode && uploadedDocs.length > 0) {
     try {
-      const searchResult = corpusSearch(statementText, uploadedDocs);
+      // A3.8.77: Pass selectionMode to enable numeric-only acceptance
+      const searchResult = corpusSearch(statementText, uploadedDocs, { selectionMode: true });
       if (searchResult && searchResult.found && Array.isArray(searchResult.hits)) {
         corpusSearchHitsCount = searchResult.hits.length;
         shouldReplaceNotSupported = corpusSearchHitsCount > 0;
@@ -18795,7 +18797,8 @@ ${
         if (USE_EVIDENCE_MATCH_V1 && selectionUsed && uploadedDocs.length > 0) {
           try {
             const statementText = stmt?.text || "";
-            const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
+            // A3.8.77: Pass selectionMode to enable numeric-only acceptance
+            const corpusSearchResult = corpusSearch(statementText, uploadedDocs, { selectionMode: true });
             // A3.8.73: Use deterministic evidenceMatchForStatement function with debug context
             // A3.8.75: Pass uploadedDocs for deterministic semantic support check
             evidenceMatchForStatementResult = evidenceMatchForStatement(statementText, corpusSearchResult, {
