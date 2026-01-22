@@ -12601,6 +12601,132 @@ function computeDealContextReliability(dealContext) {
 const USE_EVIDENCE_MATCH_V1 = true;
 
 /**
+ * A3.8.79: Verification floor helpers for numeric support (prevent overwrite)
+ */
+
+/**
+ * Generate stable key for a canonical claim
+ * @param {Object} canonicalClaim - The canonical claim
+ * @param {number} statementIndex - Statement index (fallback)
+ * @param {string} selectionHash - Selection hash (fallback)
+ * @returns {string} Stable key
+ */
+function getVerificationFloorKey(canonicalClaim, statementIndex = 0, selectionHash = 'noselection') {
+  if (canonicalClaim && canonicalClaim.id) {
+    return `canon:${canonicalClaim.id}`;
+  }
+  // Fallback: use anchor family or anchor
+  const anchorFamily = canonicalClaim?.anchorFamily || canonicalClaim?.anchor || '';
+  return `anchor:${anchorFamily}:${selectionHash}:${statementIndex}`;
+}
+
+/**
+ * Record numeric support floor (once non-empty, stays non-empty)
+ * @param {Map} verificationFloorByKey - Request-scoped Map for verification floors
+ * @param {string} key - Verification floor key
+ * @param {Array<number|string>} acceptedNums - Array of accepted numeric values
+ * @param {Array<string|number>} sourceIds - Array of source IDs
+ * @param {Object} context - Context with runId, reqSig for logging
+ */
+function recordNumericSupportFloor(verificationFloorByKey, key, acceptedNums, sourceIds, context = {}) {
+  const { runId = null, reqSig = null } = context;
+  
+  if (!verificationFloorByKey || typeof verificationFloorByKey.get !== "function" || !key || !Array.isArray(acceptedNums) || acceptedNums.length === 0) {
+    return;
+  }
+  
+  const existing = verificationFloorByKey.get(key);
+  if (existing) {
+    // Union: merge acceptedNums and sourceIds
+    const mergedNums = Array.from(new Set([...existing.acceptedNums, ...acceptedNums]));
+    const mergedSourceIds = Array.from(new Set([...existing.sourceIds, ...sourceIds]));
+    verificationFloorByKey.set(key, {
+      acceptedNums: mergedNums,
+      sourceIds: mergedSourceIds
+    });
+  } else {
+    verificationFloorByKey.set(key, {
+      acceptedNums: Array.from(new Set(acceptedNums)),
+      sourceIds: Array.from(new Set(sourceIds))
+    });
+  }
+  
+  // A3.8.79: Diagnostic
+  if (runId && reqSig) {
+    const numsSample = acceptedNums.slice(0, 8).join(",");
+    const sourceIdsSample = sourceIds.slice(0, 4).join(",");
+    diag(runId, reqSig, `[A3.8.79][FLOOR_SET] key=${key} acceptedNums=[${numsSample}] sourceIds=[${sourceIdsSample}]`);
+  }
+}
+
+/**
+ * Apply numeric support floor to verification result (prevent downgrade)
+ * @param {Map} verificationFloorByKey - Request-scoped Map for verification floors
+ * @param {string} key - Verification floor key
+ * @param {Object} verificationResult - EvidenceMatch result
+ * @param {Object} context - Context with runId, reqSig for logging
+ * @returns {Object} Updated verification result with floor applied
+ */
+function applyNumericSupportFloor(verificationFloorByKey, key, verificationResult, context = {}) {
+  const { runId = null, reqSig = null } = context;
+  
+  if (!verificationFloorByKey || typeof verificationFloorByKey.get !== "function" || !key || !verificationResult) {
+    return verificationResult;
+  }
+  
+  const floor = verificationFloorByKey.get(key);
+  if (!floor || !Array.isArray(floor.acceptedNums) || floor.acceptedNums.length === 0) {
+    return verificationResult;
+  }
+  
+  // Check if we need to apply the floor (current result is empty or has no numeric presence)
+  const beforeHasNumeric = verificationResult.hasNumericPresence === true;
+  const beforeCount = Array.isArray(verificationResult.matchedNumbers) ? verificationResult.matchedNumbers.length : 0;
+  
+  // Only apply if current result lacks numeric presence
+  if (!beforeHasNumeric || beforeCount === 0) {
+    // Apply floor: restore numeric presence
+    verificationResult.hasNumericPresence = true;
+    
+    // Merge matchedNumbers (convert floor acceptedNums to normalized format if needed)
+    const floorNums = floor.acceptedNums.map(n => {
+      // If it's already a normalized string like "$5m", keep it; otherwise normalize
+      if (typeof n === "string" && n.startsWith("$")) {
+        return n;
+      }
+      // Convert number to normalized format
+      const num = typeof n === "number" ? n : parseFloat(n);
+      if (!Number.isFinite(num)) return null;
+      if (num >= 1e9) {
+        const billions = num / 1e9;
+        return `$${billions.toFixed(billions >= 10 ? 0 : 1)}b`;
+      } else if (num >= 1e6) {
+        const millions = num / 1e6;
+        return `$${millions.toFixed(millions >= 10 ? 0 : 1)}m`;
+      } else if (num >= 1e3) {
+        const thousands = num / 1e3;
+        return `$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`;
+      } else {
+        return `$${num.toLocaleString()}`;
+      }
+    }).filter(Boolean);
+    
+    const existingNums = Array.isArray(verificationResult.matchedNumbers) ? verificationResult.matchedNumbers : [];
+    verificationResult.matchedNumbers = Array.from(new Set([...existingNums, ...floorNums])).sort();
+    
+    // Merge sourceIdsUsed
+    const existingSourceIds = Array.isArray(verificationResult.sourceIdsUsed) ? verificationResult.sourceIdsUsed : [];
+    verificationResult.sourceIdsUsed = Array.from(new Set([...existingSourceIds, ...floor.sourceIds]));
+    
+    // A3.8.79: Diagnostic
+    const afterCount = verificationResult.matchedNumbers.length;
+    diag(runId, reqSig, `[A3.8.79][FLOOR_APPLY] key=${key} applied=true beforeHasNumeric=${beforeHasNumeric} beforeCount=${beforeCount} afterCount=${afterCount}`);
+  }
+  
+  return verificationResult;
+}
+
+/**
  * A3.8.75: Deterministic semantic support check for accepted numeric matches
  * Checks if a numeric value in source text has semantic context (domain keywords or verbatim statement match)
  * 
@@ -13115,7 +13241,7 @@ function buildEvidenceMatch(statementText, canonicalClaims, corpusResult, upload
  * Returns deterministic reasons based on canonical claims, with special handling for qualitative claims.
  */
 function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
-  const { statement = null, runId = null, reqSig = null, selectionMode = false, rawClaims = [], uploadedDocs = [], evidenceMatch = null } = context;
+  const { statement = null, runId = null, reqSig = null, selectionMode = false, rawClaims = [], uploadedDocs = [], evidenceMatch = null, selectionHash = null, verificationFloorByKey = null } = context;
   
   if (!Array.isArray(canonicalClaims) || canonicalClaims.length === 0) {
     // A3.8.9: If canonicalClaims is empty (should not happen after hard invariant), return single deterministic bullet
@@ -13132,9 +13258,28 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       const corpusSearchResult = corpusSearch(statementText, uploadedDocs, { selectionMode: true });
       evidenceMatchToUse = buildEvidenceMatch(statementText, canonicalClaims, corpusSearchResult, uploadedDocs);
       
+      // A3.8.79: Record numeric support floor if found (before applying floor)
+      if (verificationFloorByKey) {
+        const statementIndex = statement?.index ?? 0;
+        const hash = selectionHash || statement?.selectionHash || 'noselection';
+        if (evidenceMatchToUse.hasNumericPresence && 
+            Array.isArray(evidenceMatchToUse.matchedNumbers) && 
+            evidenceMatchToUse.matchedNumbers.length > 0) {
+          for (const cc of canonicalClaims) {
+            if (cc && cc.id) {
+              const key = getVerificationFloorKey(cc, statementIndex, hash);
+              const acceptedNums = evidenceMatchToUse.matchedNumbers;
+              const sourceIds = Array.isArray(evidenceMatchToUse.sourceIdsUsed) 
+                ? evidenceMatchToUse.sourceIdsUsed 
+                : [];
+              recordNumericSupportFloor(verificationFloorByKey, key, acceptedNums, sourceIds, { runId, reqSig });
+            }
+          }
+        }
+      }
+      
       // A3.8.71: Diagnostic log for EvidenceMatch
       if (runId && reqSig) {
-        const statementIndex = statement?.index ?? 0;
         diag(runId, reqSig, `[EVIDENCE_MATCH] idx=${statementIndex} hasSemanticSupport=${evidenceMatchToUse.hasSemanticSupport} hasNumericPresence=${evidenceMatchToUse.hasNumericPresence} matchQuality=${evidenceMatchToUse.matchQuality} matchedNumbers=[${evidenceMatchToUse.matchedNumbers.join(",")}]`);
       }
     } catch (err) {
@@ -13142,6 +13287,18 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       if (runId && reqSig) {
         const statementIndex = statement?.index ?? 0;
         diag(runId, reqSig, `[EVIDENCE_MATCH][ERROR] idx=${statementIndex} error=${String(err)}`);
+      }
+    }
+  }
+  
+  // A3.8.79: Apply verification floor to evidenceMatch (prevent downgrade from later passes)
+  if (selectionMode && uploadedDocs.length > 0 && evidenceMatchToUse && verificationFloorByKey) {
+    const statementIndex = statement?.index ?? 0;
+    const hash = selectionHash || statement?.selectionHash || 'noselection';
+    for (const cc of canonicalClaims) {
+      if (cc && cc.id) {
+        const key = getVerificationFloorKey(cc, statementIndex, hash);
+        evidenceMatchToUse = applyNumericSupportFloor(verificationFloorByKey, key, evidenceMatchToUse, { runId, reqSig });
       }
     }
   }
@@ -13367,17 +13524,36 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         
         reasonText = `"${statementText}" Supported by numeric match in provided source${citeStr}. ${contextualWording}.`;
       } else if (!evidenceMatchToUse.hasSemanticSupport) {
-        effectiveReliability = "Low";
-        // Update verb to reflect Low reliability
-        const verbForLow = verbForReliability("Low");
+        // A3.8.79: Check if verification floor exists (prevent "not supported" when numeric support was found earlier)
+        const statementIndex = statement?.index ?? 0;
+        const hash = selectionHash || statement?.selectionHash || 'noselection';
+        const floorKey = getVerificationFloorKey(cc, statementIndex, hash);
+        const floor = verificationFloorByKey.get(floorKey);
+        const hasNumericFloor = floor && Array.isArray(floor.acceptedNums) && floor.acceptedNums.length > 0;
         
-        // Case B: numeric only - generate specific reason (NO citations per A3.8.73)
-        if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
-          const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
-          reasonText = `"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.`;
+        // A3.8.79: If floor exists and coverage already shows the number, suppress "not supported" bullet
+        const shouldSuppressNotSupported = hasNumericFloor && 
+          evidenceMatchToUse.hasNumericPresence && 
+          Array.isArray(evidenceMatchToUse.matchedNumbers) && 
+          evidenceMatchToUse.matchedNumbers.length > 0;
+        
+        if (!shouldSuppressNotSupported) {
+          effectiveReliability = "Low";
+          // Update verb to reflect Low reliability
+          const verbForLow = verbForReliability("Low");
+          
+          // Case B: numeric only - generate specific reason (NO citations per A3.8.73)
+          if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
+            const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
+            reasonText = `"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.`;
+          } else {
+            // Case C: no match (NO citations per A3.8.73)
+            reasonText = `"${statementText}" Not supported by provided sources.`;
+          }
         } else {
-          // Case C: no match (NO citations per A3.8.73)
-          reasonText = `"${statementText}" Not supported by provided sources.`;
+          // A3.8.79: Floor exists - numeric support was found earlier, suppress "not supported"
+          // Don't set reasonText, let it remain empty so no "not supported" bullet is generated
+          // Coverage will still show "Found in sources" via buildSelectionCoverageReasons
         }
       } else {
         // A3.8.75: Case A: has semantic support (numeric_plus_semantic, exact, fuzzy, or weak_semantic)
@@ -13397,6 +13573,14 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     const isNotSupported = verbToUse === "is not supported by the provided source(s).";
     const shouldReplace = !USE_EVIDENCE_MATCH_V1 && shouldReplaceNotSupported && isNotSupported && (claimType === "metric_amount" || claimType === "investment_amount" || claimType === "valuation_pre_money" || claimType === "valuation_post_money" || claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value" || claimType === "other_numeric");
     
+    // A3.8.79: Check verification floor before generating "not supported" text (applies to all numeric claim types)
+    const statementIndex = statement?.index ?? 0;
+    const hash = selectionHash || statement?.selectionHash || 'noselection';
+    const floorKey = getVerificationFloorKey(cc, statementIndex, hash);
+    const floor = verificationFloorByKey && typeof verificationFloorByKey.get === "function" ? verificationFloorByKey.get(floorKey) : null;
+    const hasNumericFloor = floor && Array.isArray(floor.acceptedNums) && floor.acceptedNums.length > 0;
+    const shouldSuppressNotSupported = selectionMode && uploadedDocs.length > 0 && hasNumericFloor && isNotSupported;
+    
     // A3.8.71: Skip reason generation if EvidenceMatch already generated it
     if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && reasonText) {
       reasons.push(reasonText);
@@ -13404,7 +13588,15 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       continue;
     }
     
+    // A3.8.79: Suppress "not supported" bullet when floor exists (numeric support was found earlier)
+    if (shouldSuppressNotSupported) {
+      // Skip this reason generation, coverage will show "Found in sources" via buildSelectionCoverageReasons
+      if (reasons.length >= 3) break;
+      continue;
+    }
+    
     if (claimType === "investment_amount") {
+      
       if (shouldReplace) {
         // A3.8.56: Use deterministic reason for bare USD with corpus hits
         reasonText = `Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
@@ -17463,6 +17655,9 @@ export default async function handler(req, res) {
   let finalDanglingRepairCount = 0;
   // A3.6.64: Initialize rejection reason counter
   let rejectedByReasonIncompleteNumericFragment = 0;
+  
+  // A3.8.79: Request-scoped verification floor for numeric support (prevents later passes from overwriting earlier matches)
+  const verificationFloorByKey = new Map();
 
   // A3.7.5: Handle OPTIONS preflight immediately after CORS headers
   // A3.8.24: Return 204 for OPTIONS (standard preflight response)
@@ -18817,6 +19012,44 @@ ${
                 : "[]";
               diag(runId, reqSig, `[A3.8.75][EVIDENCE_SUMMARY] idx=${idx} canonType=${canonType} acceptedNums=${acceptedNums} semantic=${evidenceMatchForStatementResult.hasSemanticSupport} quality=${evidenceMatchForStatementResult.matchQuality}`);
             }
+            
+            // A3.8.79: Record numeric support floor if found (selection mode + uploaded sources)
+            if (selectionUsed && uploadedDocs.length > 0 && evidenceMatchForStatementResult) {
+              if (evidenceMatchForStatementResult.hasNumericPresence && 
+                  Array.isArray(evidenceMatchForStatementResult.matchedNumbers) && 
+                  evidenceMatchForStatementResult.matchedNumbers.length > 0) {
+                // Record floor for each canonical claim
+                const hash = selectionHash || 'noselection';
+                for (const cc of canonicalClaims) {
+                  if (cc && cc.id) {
+                    const key = getVerificationFloorKey(cc, idx, hash);
+                    // Extract numeric values from matchedNumbers (they're already normalized strings like "$5m")
+                    // Store as-is (strings) for compatibility
+                    const acceptedNums = evidenceMatchForStatementResult.matchedNumbers;
+                    const sourceIds = Array.isArray(evidenceMatchForStatementResult.sourceIdsUsed) 
+                      ? evidenceMatchForStatementResult.sourceIdsUsed 
+                      : [];
+                    recordNumericSupportFloor(verificationFloorByKey, key, acceptedNums, sourceIds, { runId, reqSig });
+                  }
+                }
+              }
+            }
+            
+            // A3.8.79: Apply floor before using evidenceMatch (in case later passes overwrote it)
+            if (selectionUsed && uploadedDocs.length > 0 && evidenceMatchForStatementResult) {
+              const hash = selectionHash || 'noselection';
+              for (const cc of canonicalClaims) {
+                if (cc && cc.id) {
+                  const key = getVerificationFloorKey(cc, idx, hash);
+                  evidenceMatchForStatementResult = applyNumericSupportFloor(
+                    verificationFloorByKey,
+                    key, 
+                    evidenceMatchForStatementResult, 
+                    { runId, reqSig }
+                  );
+                }
+              }
+            }
           } catch (err) {
             // A3.8.71: Guard against errors in evidence match assembly - log but continue
             if (runId && reqSig) {
@@ -19037,6 +19270,7 @@ ${
             // A3.8.25: Pass selectionMode for deterministic language and rawClaims for uncertainty detection
             // A3.8.70: Use canonicalClaimsForReasons (with citations stripped) to prevent citation tags in reasons
             // A3.8.73: Pass evidenceMatch if available
+            // A3.8.79: Pass selectionHash and verificationFloorByKey for verification floor
             finalReasons = buildReasonsFromCanonicalClaims(canonicalClaimsForReasons, {
               statement: stmt,
               runId,
@@ -19045,6 +19279,8 @@ ${
               rawClaims: rawClaimsForDiagnostics, // A3.8.25: Pass rawClaims for uncertainty alignment
               uploadedDocs: uploadedDocs, // A3.8.33: Pass uploadedDocs for corpusSearch check
               evidenceMatch: evidenceMatchForStatementResult, // A3.8.73: Pass pre-built EvidenceMatch
+              selectionHash: selectionHash, // A3.8.79: Pass selectionHash for verification floor
+              verificationFloorByKey: verificationFloorByKey, // A3.8.79: Pass verification floor Map
             });
             
             // A3.8.9: Set reasonsSource based on actual pipeline path
