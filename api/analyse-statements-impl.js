@@ -12601,15 +12601,16 @@ const USE_EVIDENCE_MATCH_V1 = true;
 
 /**
  * A3.8.73: Deterministic evidenceMatchForStatement function (module scope)
+ * A3.8.74: Enhanced with weak semantic support detection
  * Computes evidence match classification from corpusSearch result
  * 
  * @param {string} statementText - The statement text
  * @param {Object} corpusResult - Result from corpusSearch(statementText, uploadedDocs)
- * @param {Object} debugContext - Optional context with runId, reqSig, statementIndex for logging
+ * @param {Object} debugContext - Optional context with runId, reqSig, statementIndex, canonicalClaims for logging
  * @returns {Object} EvidenceMatch with hasSemanticSupport, hasNumericPresence, matchQuality, matchedNumbers, sourceIdsUsed
  */
 function evidenceMatchForStatement(statementText, corpusResult, debugContext = {}) {
-  const { runId = null, reqSig = null, statementIndex = 0 } = debugContext;
+  const { runId = null, reqSig = null, statementIndex = 0, canonicalClaims = [] } = debugContext;
   
   if (!statementText || typeof statementText !== "string") {
     return {
@@ -12734,6 +12735,79 @@ function evidenceMatchForStatement(statementText, corpusResult, debugContext = {
     hasSemanticSupport = false;
     hasNumericPresence = uniqueNormalized.length > 0; // A3.8.73: May still have numeric presence if any overlap exists
     matchQuality = "none";
+  }
+  
+  // A3.8.74: Weak semantic support upgrade
+  // Upgrade from numeric_only to weak_semantic if criteria are met
+  if (!hasSemanticSupport && hasNumericPresence && matchQuality === "numeric_only") {
+    const matchesAcceptedCount = matchesAccepted.length;
+    const isSingleSource = sourceIdsUsed.length === 1;
+    
+    // Check if we have at least one accepted match and single source
+    if (matchesAcceptedCount >= 1 && isSingleSource) {
+      // Check canonical claim type and role keywords
+      const hasNumericClaim = Array.isArray(canonicalClaims) && canonicalClaims.length > 0;
+      if (hasNumericClaim) {
+        // Get primary claim type (first numeric claim)
+        const primaryClaim = canonicalClaims.find(cc => {
+          if (!cc || typeof cc !== "object") return false;
+          const claimType = cc.type || "";
+          return claimType === "investment_amount" ||
+                 claimType === "valuation_pre_money" ||
+                 claimType === "valuation_post_money" ||
+                 claimType === "valuation_enterprise_value" ||
+                 claimType === "valuation_equity_value" ||
+                 claimType === "metric_amount";
+        });
+        
+        if (primaryClaim) {
+          const claimType = primaryClaim.type || "";
+          const statementLower = statementText.toLowerCase();
+          
+          // A3.8.74: Check role keywords based on claim type
+          let roleKeywordsMatch = false;
+          
+          if (claimType === "investment_amount") {
+            const keywords = ["investment", "investing", "raise", "funding", "capital"];
+            roleKeywordsMatch = keywords.some(kw => statementLower.includes(kw));
+          } else if (claimType === "valuation_pre_money" || claimType === "valuation_post_money" || 
+                     claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value") {
+            const keywords = ["valuation", "enterprise value", "equity value", "ev", "post-money", "pre-money"];
+            roleKeywordsMatch = keywords.some(kw => statementLower.includes(kw));
+          } else if (claimType === "metric_amount") {
+            const keywords = ["ebitda", "arr", "revenue", "ltm", "ttm", "ntm"];
+            roleKeywordsMatch = keywords.some(kw => statementLower.includes(kw));
+          }
+          
+          // A3.8.74: Check for conflicting numeric values
+          // No conflict if:
+          // - Single accepted match, OR
+          // - All docNums are within 5% tolerance of the matched number (same value)
+          let hasNoConflict = matchesAcceptedCount === 1;
+          if (!hasNoConflict && matchedNumbers.length > 0 && docNums.length > 0) {
+            // Check if all docNums are essentially the same value (within 5% tolerance)
+            const matchedValue = matchedNumbers[0];
+            hasNoConflict = docNums.every(docNum => {
+              const diff = Math.abs(docNum - matchedValue);
+              const maxVal = Math.max(Math.abs(docNum), Math.abs(matchedValue), 1);
+              return diff / maxVal <= 0.05;
+            });
+          }
+          
+          if (roleKeywordsMatch && hasNoConflict) {
+            // Upgrade to weak semantic support
+            hasSemanticSupport = true;
+            matchQuality = "weak_semantic";
+            
+            // A3.8.74: Diagnostics
+            if (runId && reqSig) {
+              const sourceId = sourceIdsUsed.length > 0 ? sourceIdsUsed[0] : "unknown";
+              diag(runId, reqSig, `[A3.8.74][WEAK_SUPPORT_UPGRADE] idx=${statementIndex} claimType=${claimType} matchedNumbers=[${uniqueNormalized.join(",")}] sourceId=${sourceId}`);
+            }
+          }
+        }
+      }
+    }
   }
   
   // A3.8.73: Logging
@@ -13139,22 +13213,47 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     let reasonText = "";
     
     // A3.8.73: Citation placement rules - determine if citations should be included
+    // A3.8.74: weak_semantic is treated as semantic support for citation purposes
     let shouldIncludeCitationsInReason = true;
     if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse) {
       if (!evidenceMatchToUse.hasSemanticSupport) {
         // Not supported reason - MUST NOT include citations
         shouldIncludeCitationsInReason = false;
       } else {
-        // Support reason - MAY include citations
+        // Support reason (including weak_semantic) - MAY include citations
         shouldIncludeCitationsInReason = true;
       }
     }
     
     // A3.8.71: Use EvidenceMatch for deterministic classification (if feature flag enabled)
+    // A3.8.74: Handle weak_semantic support upgrade
     let effectiveReliability = reliability;
     if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode) {
-      // A3.8.71: Force Low reliability if no semantic support
-      if (!evidenceMatchToUse.hasSemanticSupport) {
+      if (evidenceMatchToUse.matchQuality === "weak_semantic") {
+        // A3.8.74: Weak semantic support - upgrade to Medium
+        effectiveReliability = "Medium";
+        
+        // A3.8.74: Generate weak semantic support reason
+        const sourceId = evidenceMatchToUse.sourceIdsUsed.length > 0 ? evidenceMatchToUse.sourceIdsUsed[0] : null;
+        const citeStr = sourceId && citations.length > 0 && citations.includes(Number(sourceId))
+          ? ` [${sourceId}]`
+          : (citations.length > 0 ? ` [${citations[0]}]` : "");
+        
+        // Determine claim type for contextual wording
+        let contextualWording = "";
+        if (claimType === "investment_amount") {
+          contextualWording = "Investment amount confirmed by source";
+        } else if (claimType === "valuation_pre_money" || claimType === "valuation_post_money" || 
+                   claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value") {
+          contextualWording = "Valuation amount confirmed by source";
+        } else if (claimType === "metric_amount") {
+          contextualWording = "Operating metric confirmed by source";
+        } else {
+          contextualWording = "Numeric value confirmed by source";
+        }
+        
+        reasonText = `"${statementText}" Supported by numeric match in provided source${citeStr}. ${contextualWording}.`;
+      } else if (!evidenceMatchToUse.hasSemanticSupport) {
         effectiveReliability = "Low";
         // Update verb to reflect Low reliability
         const verbForLow = verbForReliability("Low");
@@ -13168,16 +13267,19 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
           reasonText = `"${statementText}" Not supported by provided sources.`;
         }
       } else {
-        // Case A: has semantic support - use existing logic
+        // Case A: has semantic support (exact/fuzzy) - use existing logic
         // effectiveReliability stays as-is (from canonical claim)
         // Citations will be added below if shouldIncludeCitationsInReason is true
       }
     }
     
     // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason (legacy, only if feature flag disabled)
+    // A3.8.74: weak_semantic is treated as semantic support, so use Medium verb
     const verbToUse = USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && !evidenceMatchToUse.hasSemanticSupport
       ? verbForReliability("Low")
-      : verb;
+      : (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && evidenceMatchToUse.matchQuality === "weak_semantic"
+          ? verbForReliability("Medium")
+          : verb);
     const isNotSupported = verbToUse === "is not supported by the provided source(s).";
     const shouldReplace = !USE_EVIDENCE_MATCH_V1 && shouldReplaceNotSupported && isNotSupported && (claimType === "metric_amount" || claimType === "investment_amount" || claimType === "valuation_pre_money" || claimType === "valuation_post_money" || claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value" || claimType === "other_numeric");
     
@@ -13389,8 +13491,34 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         : "";
       
       // A3.8.71: Use EvidenceMatch for fallback reason generation (if feature flag enabled)
+      // A3.8.74: Handle weak_semantic support upgrade
       if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode) {
-        if (!evidenceMatchToUse.hasSemanticSupport) {
+        if (evidenceMatchToUse.matchQuality === "weak_semantic") {
+          // A3.8.74: Weak semantic support - upgrade to Medium
+          reliability = "Medium";
+          
+          // A3.8.74: Generate weak semantic support reason
+          const sourceId = evidenceMatchToUse.sourceIdsUsed.length > 0 ? evidenceMatchToUse.sourceIdsUsed[0] : null;
+          const citeStr = sourceId && citations.length > 0 && citations.includes(Number(sourceId))
+            ? ` [${sourceId}]`
+            : (citations.length > 0 ? ` [${citations[0]}]` : "");
+          
+          // Determine claim type for contextual wording
+          const firstClaimType = firstClaim.type || "";
+          let contextualWording = "";
+          if (firstClaimType === "investment_amount") {
+            contextualWording = "Investment amount confirmed by source";
+          } else if (firstClaimType === "valuation_pre_money" || firstClaimType === "valuation_post_money" || 
+                     firstClaimType === "valuation_enterprise_value" || firstClaimType === "valuation_equity_value") {
+            contextualWording = "Valuation amount confirmed by source";
+          } else if (firstClaimType === "metric_amount") {
+            contextualWording = "Operating metric confirmed by source";
+          } else {
+            contextualWording = "Numeric value confirmed by source";
+          }
+          
+          reasons.push(`"${statementText}" Supported by numeric match in provided source${citeStr}. ${contextualWording}.`);
+        } else if (!evidenceMatchToUse.hasSemanticSupport) {
           reliability = "Low";
           // Case B: numeric only (NO citations per A3.8.73)
           if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
@@ -13401,7 +13529,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
             reasons.push(`"${statementText}" Not supported by provided sources.`);
           }
         } else {
-          // Case A: has semantic support (MAY include citations)
+          // Case A: has semantic support (exact/fuzzy) (MAY include citations)
           if (citations.length > 0) {
             reasons.push(`"${statementText}" Supported by sources [${citations.join(", ")}]`);
           } else {
@@ -18522,10 +18650,12 @@ ${
             const statementText = stmt?.text || "";
             const corpusSearchResult = corpusSearch(statementText, uploadedDocs);
             // A3.8.73: Use deterministic evidenceMatchForStatement function with debug context
+            // A3.8.74: Pass canonicalClaims for weak semantic support detection
             evidenceMatchForStatementResult = evidenceMatchForStatement(statementText, corpusSearchResult, {
               runId,
               reqSig,
-              statementIndex: idx
+              statementIndex: idx,
+              canonicalClaims: canonicalClaims
             });
           } catch (err) {
             // A3.8.71: Guard against errors in evidence match assembly - log but continue
@@ -18564,14 +18694,27 @@ ${
         }
         
         // A3.8.71: Force Low reliability if EvidenceMatch indicates no semantic support
-        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchForStatementResult && !evidenceMatchForStatementResult.hasSemanticSupport) {
-          computedReliability = {
-            ...computedReliability,
-            reliabilityScore: 30,
-            reliabilityLabel: "Low",
-          };
-          if (runId && reqSig) {
-            diag(runId, reqSig, `[EVIDENCE_MATCH][RELIABILITY_GUARD] idx=${idx} forced=Low reason=no_semantic_support`);
+        // A3.8.74: Upgrade to Medium for weak_semantic match quality
+        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchForStatementResult) {
+          if (evidenceMatchForStatementResult.matchQuality === "weak_semantic") {
+            // A3.8.74: Weak semantic support -> Medium reliability (55-65 range)
+            computedReliability = {
+              ...computedReliability,
+              reliabilityScore: 60, // Clamp to 55-65 range, use 60 as default
+              reliabilityLabel: "Medium",
+            };
+            if (runId && reqSig) {
+              diag(runId, reqSig, `[A3.8.74][RELIABILITY_UPGRADE] idx=${idx} upgraded=Medium reason=weak_semantic`);
+            }
+          } else if (!evidenceMatchForStatementResult.hasSemanticSupport) {
+            computedReliability = {
+              ...computedReliability,
+              reliabilityScore: 30,
+              reliabilityLabel: "Low",
+            };
+            if (runId && reqSig) {
+              diag(runId, reqSig, `[EVIDENCE_MATCH][RELIABILITY_GUARD] idx=${idx} forced=Low reason=no_semantic_support`);
+            }
           }
         }
         
