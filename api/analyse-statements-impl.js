@@ -12920,6 +12920,54 @@ function pickBestEvidenceNumber(evidenceMatchSummary, canonicalClaims, statement
 }
 
 /**
+ * A3.8.87: Extract numeric values from statement text (using same normalization as corpus matching)
+ * @param {string} statementText - The statement text
+ * @returns {Array<number>} Array of normalized numeric values found in statement
+ */
+function extractStatementNumbers(statementText) {
+  if (typeof statementText !== "string" || !statementText.trim()) {
+    return [];
+  }
+  
+  const numbers = [];
+  
+  // Match currency patterns: $X, $X.Xm, $X million, etc.
+  const currencyPatterns = [
+    /\$[\d,]+(?:\.\d+)?\s*(?:million|billion|thousand|m|b|k)\b/gi,
+    /\$[\d,]+(?:\.\d+)?/g,
+    /[\d,]+(?:\.\d+)?\s*(?:million|billion|thousand)\b/gi,
+  ];
+  
+  for (const pattern of currencyPatterns) {
+    const matches = statementText.matchAll(pattern);
+    for (const match of matches) {
+      const matchText = match[0];
+      // Extract numeric part and scale
+      let numStr = matchText.replace(/[$,]/g, "").trim();
+      const lower = matchText.toLowerCase();
+      
+      let scale = 1;
+      if (lower.includes("billion") || lower.includes("b")) {
+        scale = 1000000000;
+      } else if (lower.includes("million") || lower.includes("m")) {
+        scale = 1000000;
+      } else if (lower.includes("thousand") || lower.includes("k")) {
+        scale = 1000;
+      }
+      
+      const num = parseFloat(numStr);
+      if (Number.isFinite(num) && num > 0) {
+        const scaled = num * scale;
+        numbers.push(scaled);
+      }
+    }
+  }
+  
+  // Remove duplicates and sort
+  return Array.from(new Set(numbers)).sort((a, b) => a - b);
+}
+
+/**
  * A3.8.85: Describe numeric context from canonical claims
  * @param {Array} canonicalClaims - Array of canonical claims
  * @param {string} statementText - The statement text (for fallback)
@@ -13132,16 +13180,111 @@ function presentAssessmentReasons({
       const lineText = removeCitation(firstSupport.line);
       const citation = extractCitation(firstSupport.line);
       
-      // Extract formatted amount from line (e.g., "$5.0m", "($5.0m)", "$5 million")
-      // Look for patterns like $X.Xm, $X million, etc.
-      const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+      // A3.8.87: Detect near-match numeric confirmation
+      let isNearMatch = false;
+      let chosenAccepted = null;
+      let chosenStmt = null;
+      let acceptedDisplay = null;
+      let statementDisplay = null;
+      let normalizedAccepted = [];
+      let statementNumbers = [];
       
-      if (amountMatch) {
-        const amount = amountMatch[1];
-        transformed.push(`Confirmed: ${amount} is stated in the provided source(s).${citation ? " " + citation : ""}`);
+      if (selectionMode && hasUploadedDocs && evidenceMatchSummary) {
+        const matchQuality = evidenceMatchSummary.matchQuality || "none";
+        
+        // Get accepted numbers (use matchedNumbers as acceptedNumbers if available)
+        const acceptedNumbers = evidenceMatchSummary.acceptedNumbers || 
+                                evidenceMatchSummary.acceptedNumericValues || 
+                                (Array.isArray(evidenceMatchSummary.matchedNumbers) ? evidenceMatchSummary.matchedNumbers : []);
+        
+        // Normalize accepted numbers
+        normalizedAccepted = acceptedNumbers.map(n => {
+          const num = typeof n === "string" ? parseFloat(n.replace(/[$,]/g, "")) : n;
+          return Number.isFinite(num) ? num : null;
+        }).filter(n => n !== null);
+        
+        // Extract statement numbers
+        statementNumbers = extractStatementNumbers(statementText);
+        
+        // Check if this is a near-match case
+        if (matchQuality === "numeric_only" && 
+            normalizedAccepted.length > 0 && 
+            statementNumbers.length > 0) {
+          
+          // Check if any accepted number is NOT exactly equal to any statement number
+          let hasNonExactMatch = false;
+          for (const acceptedNum of normalizedAccepted) {
+            let isExactMatch = false;
+            for (const stmtNum of statementNumbers) {
+              // Use same normalization tolerance as corpus matching (0.01 for small differences)
+              if (Math.abs(acceptedNum - stmtNum) < 0.01) {
+                isExactMatch = true;
+                break;
+              }
+            }
+            if (!isExactMatch) {
+              hasNonExactMatch = true;
+              break;
+            }
+          }
+          
+          if (hasNonExactMatch) {
+            isNearMatch = true;
+            
+            // Pick the best accepted number (smallest absolute diff to nearest statement number)
+            let bestAccepted = null;
+            let bestStmt = null;
+            let minDiff = Infinity;
+            
+            for (const acceptedNum of normalizedAccepted) {
+              for (const stmtNum of statementNumbers) {
+                const diff = Math.abs(acceptedNum - stmtNum);
+                if (diff < minDiff || (diff === minDiff && acceptedNum > bestAccepted)) {
+                  minDiff = diff;
+                  bestAccepted = acceptedNum;
+                  bestStmt = stmtNum;
+                }
+              }
+            }
+            
+            if (bestAccepted !== null && bestStmt !== null) {
+              chosenAccepted = bestAccepted;
+              chosenStmt = bestStmt;
+              acceptedDisplay = formatCurrencyValue(bestAccepted);
+              
+              // Extract statement display from the original line to preserve formatting
+              const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+              if (amountMatch) {
+                statementDisplay = amountMatch[1];
+              } else {
+                statementDisplay = formatCurrencyValue(bestStmt);
+              }
+            }
+          }
+        }
+      }
+      
+      // A3.8.87: Use near-match explanation if detected, otherwise use standard confirmation
+      if (isNearMatch && chosenAccepted !== null && statementDisplay) {
+        transformed.push(`The source shows ${acceptedDisplay} (closest match); the statement's ${statementDisplay} appears to be rounded.${citation ? " " + citation : ""}`);
+        
+        // A3.8.87: Log diagnostic
+        if (runId && reqSig) {
+          const stmtNumsStr = statementNumbers.join(",");
+          const acceptedNumsStr = normalizedAccepted.join(",");
+          diag(runId, reqSig, `[A3.8.87][REASONS_NEAR_MATCH] idx=${statementIndex} stmtNums=[${stmtNumsStr}] acceptedNums=[${acceptedNumsStr}] chosenAccepted=${chosenAccepted} chosenStmt=${chosenStmt}`);
+        }
       } else {
-        // Generic confirmation
-        transformed.push(`Confirmed in the provided source(s).${citation ? " " + citation : ""}`);
+        // Standard confirmation (exact match or non-numeric-only case)
+        const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+        
+        if (amountMatch) {
+          const amount = amountMatch[1];
+          transformed.push(`Confirmed: ${amount} is stated in the provided source(s).${citation ? " " + citation : ""}`);
+        } else {
+          // Generic confirmation
+          transformed.push(`Confirmed in the provided source(s).${citation ? " " + citation : ""}`);
+        }
       }
     } else if (notSupported.length > 0 && !shouldDropNotSupported) {
       // A3.8.84/A3.8.85: Use human-friendly numeric-only explanation if applicable
