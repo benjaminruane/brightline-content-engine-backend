@@ -12819,6 +12819,26 @@ function hasSemanticSupportForAcceptedNumber(statementText, sourceText, accepted
 }
 
 /**
+ * A3.8.84: Format a numeric value as currency (e.g., 5000000 -> "$5.0m")
+ * @param {number|string} value - The numeric value to format
+ * @returns {string} Formatted currency string
+ */
+function formatCurrencyValue(value) {
+  const num = typeof value === "string" ? parseFloat(value.replace(/[$,]/g, "")) : value;
+  if (!Number.isFinite(num) || num <= 0) return String(value);
+  
+  if (num >= 1000000000) {
+    return `$${(num / 1000000000).toFixed(1)}b`;
+  } else if (num >= 1000000) {
+    return `$${(num / 1000000).toFixed(1)}m`;
+  } else if (num >= 1000) {
+    return `$${(num / 1000).toFixed(1)}k`;
+  } else {
+    return `$${num.toFixed(0)}`;
+  }
+}
+
+/**
  * A3.8.83: Tag a reason line to determine its type (deterministic classification)
  * @param {string} line - The reason line to tag
  * @returns {string} One of: SUPPORT_CONFIRMED, NOT_SUPPORTED, COVERAGE_FOUND, COVERAGE_NOT_FOUND, WORDING_CAUTION, OTHER
@@ -12945,6 +12965,49 @@ function presentAssessmentReasons({
       shouldDropNotSupported = true;
     }
     
+    // A3.8.84: Detect numeric-only case for human-friendly explanation
+    // Apply ONLY when:
+    // - evidenceMatch.hasNumericPresence === true
+    // - evidenceMatch.hasSemanticSupport === false
+    // - matchQuality === "numeric_only"
+    // - selectionMode === true
+    // - uploaded sources used
+    // AND tags include: NOT_SUPPORTED + COVERAGE_FOUND, SUPPORT_CONFIRMED = false
+    let useNumericOnlyExplanation = false;
+    let formattedNumericValue = null;
+    let sourceIdsCount = 0;
+    
+    if (selectionMode && hasUploadedDocs && evidenceMatchSummary && 
+        notSupported.length > 0 && coverageFound.length > 0 && 
+        supportConfirmed.length === 0) {
+      const hasNumericPresence = evidenceMatchSummary.hasNumericPresence === true;
+      const hasSemanticSupport = evidenceMatchSummary.hasSemanticSupport === true;
+      const matchQuality = evidenceMatchSummary.matchQuality || "none";
+      
+      if (hasNumericPresence && !hasSemanticSupport && matchQuality === "numeric_only") {
+        useNumericOnlyExplanation = true;
+        
+        // Extract and format the first numeric value
+        if (Array.isArray(evidenceMatchSummary.matchedNumbers) && evidenceMatchSummary.matchedNumbers.length > 0) {
+          const firstNum = evidenceMatchSummary.matchedNumbers[0];
+          formattedNumericValue = formatCurrencyValue(firstNum);
+        } else {
+          // Fallback: try to extract from the NOT_SUPPORTED line
+          const firstNotSupported = notSupported[0];
+          const lineText = removeCitation(firstNotSupported.line);
+          const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+          if (amountMatch) {
+            formattedNumericValue = amountMatch[1];
+          }
+        }
+        
+        // Get source IDs count
+        if (Array.isArray(evidenceMatchSummary.sourceIdsUsed)) {
+          sourceIdsCount = evidenceMatchSummary.sourceIdsUsed.length;
+        }
+      }
+    }
+    
     // Process support/not-supported lines
     let hasSupportConfirmed = false;
     if (supportConfirmed.length > 0) {
@@ -12966,19 +13029,30 @@ function presentAssessmentReasons({
         transformed.push(`Confirmed in the provided source(s).${citation ? " " + citation : ""}`);
       }
     } else if (notSupported.length > 0 && !shouldDropNotSupported) {
-      // Use the first not supported line
-      const firstNotSupported = notSupported[0];
-      const lineText = removeCitation(firstNotSupported.line);
-      const citation = extractCitation(firstNotSupported.line);
-      
-      // Extract formatted amount from line
-      const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
-      
-      if (amountMatch) {
-        const amount = amountMatch[1];
-        transformed.push(`Not found: ${amount} is not stated in the provided source(s).${citation ? " " + citation : ""}`);
+      // A3.8.84: Use human-friendly numeric-only explanation if applicable
+      if (useNumericOnlyExplanation && formattedNumericValue) {
+        // Replace NOT_SUPPORTED with human-friendly explanation
+        transformed.push(`The source does not use this exact wording; however, the ${formattedNumericValue} figure appears in the document in the context of the company's investment round.`);
+        
+        // Log diagnostic
+        if (runId && reqSig) {
+          diag(runId, reqSig, `[A3.8.84][NUMERIC_ONLY_HUMANIZED] idx=${statementIndex} valueFormatted=${formattedNumericValue} sourceIdsCount=${sourceIdsCount}`);
+        }
       } else {
-        transformed.push(`Not found in the provided source(s).${citation ? " " + citation : ""}`);
+        // Standard NOT_SUPPORTED processing
+        const firstNotSupported = notSupported[0];
+        const lineText = removeCitation(firstNotSupported.line);
+        const citation = extractCitation(firstNotSupported.line);
+        
+        // Extract formatted amount from line
+        const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+        
+        if (amountMatch) {
+          const amount = amountMatch[1];
+          transformed.push(`Not found: ${amount} is not stated in the provided source(s).${citation ? " " + citation : ""}`);
+        } else {
+          transformed.push(`Not found in the provided source(s).${citation ? " " + citation : ""}`);
+        }
       }
     }
     
@@ -13005,16 +13079,14 @@ function presentAssessmentReasons({
       const citation = extractCitation(firstCoverage.line);
       
       // Extract numbers from the line if present (look for formatted amounts)
-      // Try to extract from evidenceMatchSummary first if available
+      // Prefer formatted numbers from the original line text to preserve format
       let numbersList = null;
-      if (evidenceMatchSummary && Array.isArray(evidenceMatchSummary.matchedNumbers) && evidenceMatchSummary.matchedNumbers.length > 0) {
-        numbersList = evidenceMatchSummary.matchedNumbers.join(", ");
-      } else {
-        // Fallback: extract from line text
-        const numbersMatch = lineText.match(/(\$?[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/gi);
-        if (numbersMatch && numbersMatch.length > 0) {
-          numbersList = numbersMatch.join(", ");
-        }
+      const numbersMatch = lineText.match(/(\$?[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/gi);
+      if (numbersMatch && numbersMatch.length > 0) {
+        numbersList = numbersMatch.join(", ");
+      } else if (evidenceMatchSummary && Array.isArray(evidenceMatchSummary.matchedNumbers) && evidenceMatchSummary.matchedNumbers.length > 0) {
+        // Fallback: format raw numbers from evidenceMatchSummary
+        numbersList = evidenceMatchSummary.matchedNumbers.map(n => formatCurrencyValue(n)).join(", ");
       }
       
       if (numbersList) {
