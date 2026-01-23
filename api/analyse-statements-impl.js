@@ -12819,6 +12819,252 @@ function hasSemanticSupportForAcceptedNumber(statementText, sourceText, accepted
 }
 
 /**
+ * A3.8.83: Tag a reason line to determine its type (deterministic classification)
+ * @param {string} line - The reason line to tag
+ * @returns {string} One of: SUPPORT_CONFIRMED, NOT_SUPPORTED, COVERAGE_FOUND, COVERAGE_NOT_FOUND, WORDING_CAUTION, OTHER
+ */
+function tagReasonLine(line) {
+  if (typeof line !== "string") return "OTHER";
+  
+  const lower = line.toLowerCase();
+  
+  // Check for support confirmed patterns
+  if (lower.includes("supported by sources") || 
+      lower.includes("is supported by") ||
+      lower.includes("confirmed") ||
+      (lower.includes("supported") && !lower.includes("not supported"))) {
+    return "SUPPORT_CONFIRMED";
+  }
+  
+  // Check for not supported patterns
+  if (lower.includes("not supported") || 
+      lower.includes("not found in provided sources") ||
+      (lower.includes("not found") && lower.includes("source"))) {
+    return "NOT_SUPPORTED";
+  }
+  
+  // Check for coverage found patterns
+  if (lower.startsWith("coverage (figures): found in sources") ||
+      lower.includes("coverage") && lower.includes("found in sources")) {
+    return "COVERAGE_FOUND";
+  }
+  
+  // Check for coverage not found patterns
+  if (lower.startsWith("coverage (figures): not found in sources") ||
+      (lower.includes("coverage") && lower.includes("not found in sources"))) {
+    return "COVERAGE_NOT_FOUND";
+  }
+  
+  // Check for wording caution patterns
+  if (lower.includes("exact phrasing") || 
+      lower.includes("exact wording") ||
+      lower.includes("wording may differ") ||
+      lower.includes("wording not exact") ||
+      lower.includes("confirm wording")) {
+    return "WORDING_CAUTION";
+  }
+  
+  return "OTHER";
+}
+
+/**
+ * A3.8.83: Present assessment reasons in human-readable format
+ * Pure presentation layer - does not change scoring, verification, or canonical claim detection
+ * 
+ * @param {Object} params - Parameters object
+ * @param {string} params.statementText - The statement text
+ * @param {Array<string>} params.reasons - Original reasons array
+ * @param {Array} params.canonicalClaims - Array of canonical claims
+ * @param {Object} params.evidenceMatchSummary - EvidenceMatch result (hasSemanticSupport, hasNumericPresence, matchQuality, matchedNumbers)
+ * @param {boolean} params.selectionMode - Whether in selection mode
+ * @param {boolean} params.hasUploadedDocs - Whether uploaded docs exist
+ * @param {number} params.statementIndex - Statement index for logging
+ * @param {string} params.runId - Run ID for logging
+ * @param {string} params.reqSig - Request signature for logging
+ * @returns {Array<string>} Human-readable reasons array
+ */
+function presentAssessmentReasons({
+  statementText,
+  reasons,
+  canonicalClaims,
+  evidenceMatchSummary,
+  selectionMode,
+  hasUploadedDocs,
+  statementIndex = 0,
+  runId = null,
+  reqSig = null,
+}) {
+  try {
+    if (!Array.isArray(reasons) || reasons.length === 0) {
+      return reasons || [];
+    }
+    
+    // Tag all reason lines
+    const taggedReasons = reasons.map(line => ({
+      line: line,
+      tag: tagReasonLine(line),
+      citationMatch: line.match(/\s*\[\d+\]\s*$/) || null, // Extract trailing citation like " [1]"
+    }));
+    
+    // Count tags for diagnostics
+    const tagCounts = {
+      SUPPORT_CONFIRMED: 0,
+      NOT_SUPPORTED: 0,
+      COVERAGE_FOUND: 0,
+      COVERAGE_NOT_FOUND: 0,
+      WORDING_CAUTION: 0,
+      OTHER: 0,
+    };
+    taggedReasons.forEach(tr => tagCounts[tr.tag]++);
+    
+    // Extract citation suffix from lines (preserve them)
+    const extractCitation = (line) => {
+      const match = line.match(/\s*(\[\d+\])\s*$/);
+      return match ? match[1] : "";
+    };
+    
+    const removeCitation = (line) => {
+      return line.replace(/\s*\[\d+\]\s*$/, "").trim();
+    };
+    
+    // Build transformed reasons
+    const transformed = [];
+    
+    // 3.1 - Normalize coverage lines
+    const coverageFound = taggedReasons.filter(tr => tr.tag === "COVERAGE_FOUND");
+    const coverageNotFound = taggedReasons.filter(tr => tr.tag === "COVERAGE_NOT_FOUND");
+    
+    // 3.2 - Convert support/not-support lines
+    const supportConfirmed = taggedReasons.filter(tr => tr.tag === "SUPPORT_CONFIRMED");
+    const notSupported = taggedReasons.filter(tr => tr.tag === "NOT_SUPPORTED");
+    
+    // 3.3 - Remove contradictions
+    // If SUPPORT_CONFIRMED exists and COVERAGE_FOUND exists, drop all NOT_SUPPORTED
+    let shouldDropNotSupported = false;
+    if (supportConfirmed.length > 0 && coverageFound.length > 0) {
+      shouldDropNotSupported = true;
+    }
+    
+    // Process support/not-supported lines
+    let hasSupportConfirmed = false;
+    if (supportConfirmed.length > 0) {
+      hasSupportConfirmed = true;
+      // Use the first support confirmed line
+      const firstSupport = supportConfirmed[0];
+      const lineText = removeCitation(firstSupport.line);
+      const citation = extractCitation(firstSupport.line);
+      
+      // Extract formatted amount from line (e.g., "$5.0m", "($5.0m)", "$5 million")
+      // Look for patterns like $X.Xm, $X million, etc.
+      const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+      
+      if (amountMatch) {
+        const amount = amountMatch[1];
+        transformed.push(`Confirmed: ${amount} is stated in the provided source(s).${citation ? " " + citation : ""}`);
+      } else {
+        // Generic confirmation
+        transformed.push(`Confirmed in the provided source(s).${citation ? " " + citation : ""}`);
+      }
+    } else if (notSupported.length > 0 && !shouldDropNotSupported) {
+      // Use the first not supported line
+      const firstNotSupported = notSupported[0];
+      const lineText = removeCitation(firstNotSupported.line);
+      const citation = extractCitation(firstNotSupported.line);
+      
+      // Extract formatted amount from line
+      const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+      
+      if (amountMatch) {
+        const amount = amountMatch[1];
+        transformed.push(`Not found: ${amount} is not stated in the provided source(s).${citation ? " " + citation : ""}`);
+      } else {
+        transformed.push(`Not found in the provided source(s).${citation ? " " + citation : ""}`);
+      }
+    }
+    
+    // 3.4 - Add wording caution if applicable (only if support confirmed exists)
+    if (hasSupportConfirmed && selectionMode && hasUploadedDocs && evidenceMatchSummary) {
+      const matchQuality = evidenceMatchSummary.matchQuality || "none";
+      if (matchQuality === "numeric_only") {
+        // Check if we already have a wording caution
+        const hasWordingCaution = taggedReasons.some(tr => tr.tag === "WORDING_CAUTION");
+        if (!hasWordingCaution) {
+          transformed.push("Note: the figure is supported, but the exact wording may differ from the source.");
+        } else {
+          // Normalize existing wording caution
+          transformed.push("Note: the figure is supported, but the exact wording may differ from the source.");
+        }
+      }
+    }
+    
+    // 3.1 - Add coverage lines (normalized)
+    if (coverageFound.length > 0) {
+      // Use the first coverage found line
+      const firstCoverage = coverageFound[0];
+      const lineText = removeCitation(firstCoverage.line);
+      const citation = extractCitation(firstCoverage.line);
+      
+      // Extract numbers from the line if present (look for formatted amounts)
+      // Try to extract from evidenceMatchSummary first if available
+      let numbersList = null;
+      if (evidenceMatchSummary && Array.isArray(evidenceMatchSummary.matchedNumbers) && evidenceMatchSummary.matchedNumbers.length > 0) {
+        numbersList = evidenceMatchSummary.matchedNumbers.join(", ");
+      } else {
+        // Fallback: extract from line text
+        const numbersMatch = lineText.match(/(\$?[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/gi);
+        if (numbersMatch && numbersMatch.length > 0) {
+          numbersList = numbersMatch.join(", ");
+        }
+      }
+      
+      if (numbersList) {
+        transformed.push(`Figures check: ${numbersList} found in the provided source(s).${citation ? " " + citation : ""}`);
+      } else {
+        transformed.push(`Figures check: found in the provided source(s).${citation ? " " + citation : ""}`);
+      }
+    } else if (coverageNotFound.length > 0) {
+      // Use the first coverage not found line
+      const firstCoverageNotFound = coverageNotFound[0];
+      const citation = extractCitation(firstCoverageNotFound.line);
+      transformed.push(`Figures check: not found in the provided source(s).${citation ? " " + citation : ""}`);
+    }
+    
+    // 3.5 - Limit reason count (priority order)
+    // Priority: 1) Supported/Not supported, 2) Wording caution, 3) Coverage, 4) First OTHER
+    const maxBullets = 4;
+    let finalReasons = transformed;
+    
+    // Add first OTHER line if we have space
+    if (finalReasons.length < maxBullets) {
+      const otherReasons = taggedReasons.filter(tr => tr.tag === "OTHER");
+      if (otherReasons.length > 0) {
+        finalReasons.push(otherReasons[0].line);
+      }
+    }
+    
+    // Hard cap at maxBullets
+    finalReasons = finalReasons.slice(0, maxBullets);
+    
+    // 3.6 - Diagnostics
+    if (runId && reqSig) {
+      const beforeCount = reasons.length;
+      const afterCount = finalReasons.length;
+      const tagsStr = JSON.stringify(tagCounts);
+      diag(runId, reqSig, `[A3.8.83][REASONS_PRESENT] idx=${statementIndex} before=${beforeCount} after=${afterCount} tags=${tagsStr}`);
+    }
+    
+    return finalReasons;
+    
+  } catch (error) {
+    // Fail open: return original reasons unchanged
+    if (runId && reqSig) {
+      diag(runId, reqSig, `[A3.8.83][REASONS_PRESENT][ERROR] idx=${statementIndex} msg=${error.message || String(error)}`);
+    }
+    return reasons;
+  }
+}
+
+/**
  * A3.8.73: Deterministic evidenceMatchForStatement function (module scope)
  * A3.8.74: Enhanced with weak semantic support detection
  * A3.8.75: Fixed numeric presence wiring and added deterministic semantic support check
@@ -19835,7 +20081,18 @@ ${
             reliabilityScore: computedReliability.reliabilityScore,
             reliabilityLabel: computedReliability.reliabilityLabel,
             // A3.8.0: Set reasonsSource to "canonical" when canonical claims exist
-            reasons: finalReasons,
+            // A3.8.83: Apply human-readable presentation to reasons (pure presentation layer)
+            reasons: presentAssessmentReasons({
+              statementText: text,
+              reasons: finalReasons,
+              canonicalClaims: canonicalClaims,
+              evidenceMatchSummary: evidenceMatchForStatementResult,
+              selectionMode: selectionUsed,
+              hasUploadedDocs: uploadedDocs.length > 0,
+              statementIndex: idx,
+              runId: runId,
+              reqSig: reqSig,
+            }),
             reasonsSource: reasonsSourceValue,
             _claimsError: claimsError, // Internal flag for later phases
           },
