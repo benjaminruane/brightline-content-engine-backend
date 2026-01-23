@@ -19102,6 +19102,64 @@ ${
           }
         }
         
+        // A3.8.81: Align emitted claims[] reliability with upgraded canonical claims (selection mode + uploaded sources only)
+        // Run only when ALL are true: selectionMode === true, uploadedSourcesCount > 0, canonicalClaims exists, claims exists
+        if (selectionUsed && uploadedDocs.length > 0 && 
+            Array.isArray(canonicalClaims) && canonicalClaims.length > 0 &&
+            Array.isArray(claims) && claims.length > 0) {
+          
+          // Build Map of upgraded canonical claims (Medium/High or reliabilityScore >= 70)
+          const canonicalById = new Map();
+          for (const cc of canonicalClaims) {
+            if (!cc || typeof cc !== "object" || !cc.id) continue;
+            
+            const reliability = cc.reliability;
+            const reliabilityScore = cc.reliabilityScore || (reliability === "High" ? 90 : reliability === "Medium" ? 70 : 30);
+            
+            // Only include canonical claims where reliability is Medium/High OR reliabilityScore >= 70
+            if ((reliability === "Medium" || reliability === "High") || reliabilityScore >= 70) {
+              canonicalById.set(cc.id, {
+                reliability: reliability,
+                reliabilityScore: reliabilityScore,
+                citations: Array.isArray(cc.citations) ? cc.citations : []
+              });
+            }
+          }
+          
+          // Align emitted claims if any canonical claims were upgraded
+          if (canonicalById.size > 0) {
+            let alignedCount = 0;
+            const levelCounts = { "High": 0, "Medium": 0 };
+            
+            for (const claim of claims) {
+              if (!claim || typeof claim !== "object" || !claim._canonicalId) continue;
+              
+              const canon = canonicalById.get(claim._canonicalId);
+              if (canon) {
+                // Update reliability and reliabilityScore
+                claim.reliability = canon.reliability;
+                claim.reliabilityScore = canon.reliabilityScore;
+                
+                // Align citations conservatively: only if claim.citations is empty/missing and canon.citations is non-empty
+                if ((!Array.isArray(claim.citations) || claim.citations.length === 0) && 
+                    Array.isArray(canon.citations) && canon.citations.length > 0) {
+                  claim.citations = canon.citations;
+                }
+                
+                alignedCount++;
+                if (canon.reliability === "High") levelCounts.High++;
+                else if (canon.reliability === "Medium") levelCounts.Medium++;
+              }
+            }
+            
+            // A3.8.81: Diagnostic log when alignment occurs
+            if (alignedCount > 0 && runId && reqSig) {
+              const levelsStr = JSON.stringify(levelCounts);
+              diag(runId, reqSig, `[A3.8.81][CLAIMS_ALIGN] idx=${idx} aligned=${alignedCount} total=${claims.length} levels=${levelsStr}`);
+            }
+          }
+        }
+        
         // A3.8.0: Use canonical claims for reliability computation
         // A3.8.1: Use canonClaims directly (already filtered to have reliability)
         // A3.8.80: Canonical claims may have been upgraded by evidence-driven override
