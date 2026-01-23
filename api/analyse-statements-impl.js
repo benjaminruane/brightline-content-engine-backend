@@ -13020,6 +13020,101 @@ function hasHedgeTerm(statementText) {
 }
 
 /**
+ * A3.8.89: Format human-friendly not-supported reason for numeric claims
+ * @param {Object} params - Parameters object
+ * @param {string} params.claimType - Canonical claim type (e.g., "investment_amount")
+ * @param {number|string} params.claimValue - Claim value (formatted or numeric)
+ * @param {Array<number|string>} params.matchedNumbers - Matched numbers from evidenceMatch (if any)
+ * @param {boolean} params.hasAnySource - Whether any source exists (uploaded or web)
+ * @param {string|number} params.citationId - Citation ID to append (if any)
+ * @returns {string} Formatted reason text
+ */
+function formatNotSupportedNumericReason({
+  claimType,
+  claimValue,
+  matchedNumbers,
+  hasAnySource,
+  citationId,
+}) {
+  // Map claim type to display label
+  const typeLabels = {
+    investment_amount: "investment amount",
+    valuation_pre_money: "valuation",
+    valuation_post_money: "valuation",
+    valuation_enterprise_value: "valuation",
+    valuation_equity_value: "valuation",
+    ownership_percent: "ownership stake",
+    metric_amount: "financial metric",
+  };
+  
+  const typeLabel = typeLabels[claimType] || "claim";
+  
+  // Format claim value
+  let valueDisplay = typeof claimValue === "string" ? claimValue : formatCurrencyValue(claimValue);
+  
+  // Determine article
+  const article = /^[aeiou]/i.test(typeLabel) ? "an" : "a";
+  
+  // Base sentence
+  const baseSentence = `The source does not mention ${article} ${typeLabel} of ${valueDisplay}.`;
+  
+  // Optional second sentence: closest matched number
+  let matchedSentence = "";
+  if (Array.isArray(matchedNumbers) && matchedNumbers.length > 0) {
+    // Find closest match by absolute difference
+    const claimNum = typeof claimValue === "number" ? claimValue : parseFloat(String(claimValue).replace(/[$,]/g, ""));
+    if (Number.isFinite(claimNum)) {
+      let closestMatch = null;
+      let minDiff = Infinity;
+      
+      for (const matchedNum of matchedNumbers) {
+        const num = typeof matchedNum === "number" ? matchedNum : parseFloat(String(matchedNum).replace(/[$,]/g, ""));
+        if (Number.isFinite(num)) {
+          const diff = Math.abs(num - claimNum);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestMatch = num;
+          }
+        }
+      }
+      
+      if (closestMatch !== null) {
+        const formattedMatch = formatCurrencyValue(closestMatch);
+        // Use appropriate label based on claim type
+        const figureLabel = claimType === "investment_amount" ? "investment figure" :
+                           claimType.startsWith("valuation_") ? "valuation figure" :
+                           claimType === "ownership_percent" ? "ownership figure" :
+                           "figure";
+        matchedSentence = `The only ${figureLabel} found in the source is ${formattedMatch}.`;
+      }
+    }
+  }
+  
+  // Optional guidance sentence
+  let guidanceSentence = "";
+  if (hasAnySource) {
+    guidanceSentence = "Consider revising the draft or adding a source that supports this figure.";
+  }
+  
+  // Assemble sentences
+  const sentences = [baseSentence];
+  if (matchedSentence) {
+    sentences.push(matchedSentence);
+  }
+  if (guidanceSentence) {
+    sentences.push(guidanceSentence);
+  }
+  
+  // Join with newlines and add citation to last sentence only
+  let result = sentences.join(" ");
+  if (citationId && sentences.length > 0) {
+    result += ` [${citationId}]`;
+  }
+  
+  return result;
+}
+
+/**
  * A3.8.88: Format numeric support reason with enriched evidence information
  * @param {Object} params - Parameters object
  * @param {string} params.canonType - Canonical claim type (e.g., "investment_amount")
@@ -14249,13 +14344,37 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
           // Update verb to reflect Low reliability
           const verbForLow = verbForReliability("Low");
           
-          // Case B: numeric only - generate specific reason (NO citations per A3.8.73)
-          if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
-            const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
-            reasonText = `"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.`;
+          // A3.8.89: Use human-friendly not-supported reason for numeric claims
+          const isNumericClaim = financialTypes.has(claimType);
+          if (isNumericClaim) {
+            const matchedNumbers = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
+            const hasAnySource = (uploadedDocs.length > 0) || (citations.length > 0);
+            const citationId = citations.length > 0 ? citations[0] : null;
+            
+            reasonText = formatNotSupportedNumericReason({
+              claimType: claimType,
+              claimValue: cc.value || valueDisplay,
+              matchedNumbers: matchedNumbers,
+              hasAnySource: hasAnySource,
+              citationId: citationId,
+            });
+            
+            // A3.8.89: Log diagnostic
+            if (runId && reqSig) {
+              const statementIndex = statement?.index ?? 0;
+              const matchedCount = matchedNumbers.length;
+              const guidanceAdded = hasAnySource ? 1 : 0;
+              diag(runId, reqSig, `[A3.8.89][NOT_SUPPORTED_REASON] idx=${statementIndex} type=${claimType} claimValue=${valueDisplay} matchedNumbersCount=${matchedCount} hasSource=${hasAnySource ? 1 : 0} guidanceAdded=${guidanceAdded}`);
+            }
           } else {
-            // Case C: no match (NO citations per A3.8.73)
-            reasonText = `"${statementText}" Not supported by provided sources.`;
+            // Case B: numeric only - generate specific reason (NO citations per A3.8.73) for non-numeric claims
+            if (evidenceMatchToUse.hasNumericPresence && evidenceMatchToUse.matchedNumbers.length > 0) {
+              const numbersList = evidenceMatchToUse.matchedNumbers.join(", ");
+              reasonText = `"${statementText}" Not supported by provided sources. Numeric value(s) present in sources but not in supporting context: ${numbersList}.`;
+            } else {
+              // Case C: no match (NO citations per A3.8.73)
+              reasonText = `"${statementText}" Not supported by provided sources.`;
+            }
           }
         } else {
           // A3.8.79: Floor exists - numeric support was found earlier, suppress "not supported"
