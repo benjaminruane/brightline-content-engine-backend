@@ -12968,6 +12968,130 @@ function extractStatementNumbers(statementText) {
 }
 
 /**
+ * A3.8.88: Determine numeric support type from evidenceMatch
+ * @param {Object} evidenceMatch - EvidenceMatch result
+ * @param {number} stmtValue - Statement numeric value
+ * @param {Array<number>} sourceValues - Source numeric values
+ * @returns {string} Support type: "exact", "rounded", "numeric_only", "none"
+ */
+function determineNumericSupportType(evidenceMatch, stmtValue, sourceValues) {
+  if (!evidenceMatch) return "none";
+  
+  const hasNumericPresence = evidenceMatch.hasNumericPresence === true;
+  const hasSemanticSupport = evidenceMatch.hasSemanticSupport === true;
+  const matchQuality = evidenceMatch.matchQuality || "none";
+  
+  if (!hasNumericPresence) return "none";
+  
+  if (hasSemanticSupport) {
+    // Check if it's exact or rounded
+    if (Array.isArray(sourceValues) && sourceValues.length > 0 && stmtValue !== null) {
+      const stmtNum = typeof stmtValue === "number" ? stmtValue : parseFloat(String(stmtValue).replace(/[$,]/g, ""));
+      for (const sourceVal of sourceValues) {
+        const sourceNum = typeof sourceVal === "number" ? sourceVal : parseFloat(String(sourceVal).replace(/[$,]/g, ""));
+        if (Number.isFinite(stmtNum) && Number.isFinite(sourceNum)) {
+          const diff = Math.abs(stmtNum - sourceNum);
+          const ratio = Math.max(stmtNum, sourceNum) / Math.min(stmtNum, sourceNum);
+          // Exact match (within 0.01 tolerance)
+          if (diff < 0.01) return "exact";
+          // Rounded match (within 10% difference, typical for rounding)
+          if (ratio < 1.1 && diff < stmtNum * 0.1) return "rounded";
+        }
+      }
+    }
+    // Has semantic support but couldn't determine exact/rounded - treat as exact
+    return "exact";
+  } else if (matchQuality === "numeric_only") {
+    return "numeric_only";
+  }
+  
+  return "none";
+}
+
+/**
+ * A3.8.88: Check if statement contains hedge terms
+ * @param {string} statementText - Statement text
+ * @returns {boolean} Whether statement contains hedge terms
+ */
+function hasHedgeTerm(statementText) {
+  if (typeof statementText !== "string") return false;
+  const lower = statementText.toLowerCase();
+  return /\b(approximately|approx|about|around|close to|more than|less than|roughly|nearly)\b/i.test(lower);
+}
+
+/**
+ * A3.8.88: Format numeric support reason with enriched evidence information
+ * @param {Object} params - Parameters object
+ * @param {string} params.canonType - Canonical claim type (e.g., "investment_amount")
+ * @param {number|string} params.stmtValue - Statement value (formatted or numeric)
+ * @param {Array<number|string>} params.sourceValues - Source numeric values from evidenceMatch
+ * @param {string} params.supportType - Support type: "exact", "rounded", "numeric_only", "none"
+ * @param {boolean} params.hasSemanticSupport - Whether semantic support exists
+ * @param {boolean} params.hasHedgeTerm - Whether statement contains hedge terms like "approximately"
+ * @param {string} params.citation - Citation string (e.g., "[1]")
+ * @returns {string} Formatted reason text
+ */
+function formatNumericSupportReason({
+  canonType,
+  stmtValue,
+  sourceValues,
+  supportType,
+  hasSemanticSupport,
+  hasHedgeTerm,
+  citation = "",
+}) {
+  // Map canonical claim type to display label
+  const typeLabels = {
+    investment_amount: "Investment amount",
+    valuation_pre_money: "Pre-money valuation",
+    valuation_post_money: "Post-money valuation",
+    valuation_enterprise_value: "Enterprise value",
+    valuation_equity_value: "Equity value",
+    ownership_percent: "Ownership percentage",
+    fee_percent: "Fee percentage",
+    metric_amount: "Metric amount",
+  };
+  
+  const typeLabel = typeLabels[canonType] || "Claim";
+  
+  // Format statement value
+  let stmtDisplay = typeof stmtValue === "string" ? stmtValue : formatCurrencyValue(stmtValue);
+  
+  // Format source value(s) - use first/closest match
+  let sourceDisplay = null;
+  if (Array.isArray(sourceValues) && sourceValues.length > 0) {
+    const firstSource = sourceValues[0];
+    sourceDisplay = typeof firstSource === "string" ? firstSource : formatCurrencyValue(firstSource);
+  }
+  
+  const citeStr = citation ? ` ${citation}` : "";
+  
+  // Generate reason based on support type
+  if (supportType === "exact" || (supportType === "rounded" && hasSemanticSupport)) {
+    // Exact match or rounded with semantic support
+    if (supportType === "exact") {
+      return `${typeLabel} (${stmtDisplay}) is supported by the source.${citeStr}`;
+    } else {
+      // Rounded match
+      if (hasHedgeTerm && sourceDisplay) {
+        return `${typeLabel} (${stmtDisplay}) is supported by the source (rounded from ${sourceDisplay} and expressed approximately in the draft).${citeStr}`;
+      } else if (sourceDisplay) {
+        return `${typeLabel} (${stmtDisplay}) is supported in substance by the source (rounded from ${sourceDisplay}).${citeStr}`;
+      } else {
+        return `${typeLabel} (${stmtDisplay}) is supported in substance by the source.${citeStr}`;
+      }
+    }
+  } else if (supportType === "numeric_only") {
+    // Numeric-only (no semantic context)
+    return `${typeLabel} (${stmtDisplay}) is supported in substance by the source based on matching figures, although the surrounding context differs.${citeStr}`;
+  } else {
+    // Unsupported
+    const article = /^[aeiou]/i.test(typeLabel.toLowerCase()) ? "an" : "a";
+    return `The source does not contain ${article} ${typeLabel.toLowerCase()} of ${stmtDisplay}.`;
+  }
+}
+
+/**
  * A3.8.85: Describe numeric context from canonical claims
  * @param {Array} canonicalClaims - Array of canonical claims
  * @param {string} statementText - The statement text (for fallback)
@@ -13080,8 +13204,14 @@ function presentAssessmentReasons({
       return reasons || [];
     }
     
+    // A3.8.88: Filter out "Coverage (figures)" bullets (user-facing removal)
+    const filteredReasons = reasons.filter(reason => {
+      if (typeof reason !== "string") return true;
+      return !reason.startsWith("Coverage (figures):");
+    });
+    
     // Tag all reason lines
-    const taggedReasons = reasons.map(line => ({
+    const taggedReasons = filteredReasons.map(line => ({
       line: line,
       tag: tagReasonLine(line),
       citationMatch: line.match(/\s*\[\d+\]\s*$/) || null, // Extract trailing citation like " [1]"
@@ -14178,49 +14308,126 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         // A3.8.56: Use deterministic reason for bare USD with corpus hits
         reasonText = `Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
       } else {
-        reasonText = `Investment amount (${valueDisplay}) ${verbToUse}${citeStr}`;
+        // A3.8.88: Use enriched numeric support reason if evidenceMatch is available
+        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && uploadedDocs.length > 0) {
+          const sourceValues = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
+          const supportType = determineNumericSupportType(evidenceMatchToUse, cc.value, sourceValues);
+          const hasHedge = hasHedgeTerm(statementText);
+          
+          reasonText = formatNumericSupportReason({
+            canonType: claimType,
+            stmtValue: valueDisplay,
+            sourceValues: sourceValues,
+            supportType: supportType,
+            hasSemanticSupport: evidenceMatchToUse.hasSemanticSupport === true,
+            hasHedgeTerm: hasHedge,
+            citation: citeStr,
+          });
+        } else {
+          // Fallback to standard format
+          reasonText = `Investment amount (${valueDisplay}) ${verbToUse}${citeStr}`;
+        }
       }
     } else if (claimType === "metric_amount") {
       if (shouldReplace) {
         // A3.8.56: Use deterministic reason for bare USD with corpus hits
         reasonText = `Figure (${valueDisplay}) appears in the provided source(s), but the statement lacks context (e.g., revenue, valuation, investment); figure-to-claim mapping should be manually confirmed.${citeStr}`;
       } else {
-        // A3.8.57: Include metric subtype in reason text
-        // A3.8.58: Extended subtypes (MRR, EBITDA, period hints)
-        let subtypeLabel = "";
-        if (metricSubtype) {
-          // Check if subtype includes period hint (e.g., "LTM ARR", "TTM EBITDA")
-          const periodMatch = metricSubtype.match(/^(LTM|TTM|NTM)\s+(.+)$/);
-          if (periodMatch) {
-            const [, period, subtype] = periodMatch;
-            subtypeLabel = `${period} ${subtype} ${valueDisplay}`;
-          } else if (metricSubtype === "ARR") {
-            subtypeLabel = `ARR ${valueDisplay}`;
-          } else if (metricSubtype === "MRR") {
-            subtypeLabel = `MRR ${valueDisplay}`;
-          } else if (metricSubtype === "EBITDA") {
-            subtypeLabel = `EBITDA ${valueDisplay}`;
-          } else if (metricSubtype.includes("EBITDA")) {
-            // Handle adjusted/pro forma variants
-            subtypeLabel = `${metricSubtype} ${valueDisplay}`;
-          } else if (metricSubtype === "annualized revenue") {
-            subtypeLabel = `annualized revenue ${valueDisplay}`;
-          } else if (metricSubtype === "revenue") {
-            subtypeLabel = `revenue ${valueDisplay}`;
-          } else {
-            // Fallback: use subtype as-is
-            subtypeLabel = `${metricSubtype} ${valueDisplay}`;
-          }
+        // A3.8.88: Use enriched numeric support reason for metric claims
+        if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && uploadedDocs.length > 0) {
+          const sourceValues = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
+          const supportType = determineNumericSupportType(evidenceMatchToUse, cc.value, sourceValues);
+          const hasHedge = hasHedgeTerm(statementText);
+          
+          reasonText = formatNumericSupportReason({
+            canonType: claimType,
+            stmtValue: valueDisplay,
+            sourceValues: sourceValues,
+            supportType: supportType,
+            hasSemanticSupport: evidenceMatchToUse.hasSemanticSupport === true,
+            hasHedgeTerm: hasHedge,
+            citation: citeStr,
+          });
         } else {
-          // Keep existing generic wording
-          subtypeLabel = `${valueDisplay}${metricHint}`;
+          // A3.8.57: Include metric subtype in reason text (fallback)
+          // A3.8.58: Extended subtypes (MRR, EBITDA, period hints)
+          let subtypeLabel = "";
+          if (metricSubtype) {
+            // Check if subtype includes period hint (e.g., "LTM ARR", "TTM EBITDA")
+            const periodMatch = metricSubtype.match(/^(LTM|TTM|NTM)\s+(.+)$/);
+            if (periodMatch) {
+              const [, period, subtype] = periodMatch;
+              subtypeLabel = `${period} ${subtype} ${valueDisplay}`;
+            } else if (metricSubtype === "ARR") {
+              subtypeLabel = `ARR ${valueDisplay}`;
+            } else if (metricSubtype === "MRR") {
+              subtypeLabel = `MRR ${valueDisplay}`;
+            } else if (metricSubtype === "EBITDA") {
+              subtypeLabel = `EBITDA ${valueDisplay}`;
+            } else if (metricSubtype.includes("EBITDA")) {
+              // Handle adjusted/pro forma variants
+              subtypeLabel = `${metricSubtype} ${valueDisplay}`;
+            } else if (metricSubtype === "annualized revenue") {
+              subtypeLabel = `annualized revenue ${valueDisplay}`;
+            } else if (metricSubtype === "revenue") {
+              subtypeLabel = `revenue ${valueDisplay}`;
+            } else {
+              // Fallback: use subtype as-is
+              subtypeLabel = `${metricSubtype} ${valueDisplay}`;
+            }
+          } else {
+            // Keep existing generic wording
+            subtypeLabel = `${valueDisplay}${metricHint}`;
+          }
+          reasonText = `Operating metric (${subtypeLabel}) ${verbToUse}${citeStr}`;
         }
-        reasonText = `Operating metric (${subtypeLabel}) ${verbToUse}${citeStr}`;
+      }
+    } else if (claimType === "valuation_pre_money" || claimType === "valuation_post_money" || 
+               claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value") {
+      // A3.8.88: Use enriched numeric support reason for valuation claims
+      if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && uploadedDocs.length > 0) {
+        const sourceValues = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
+        const supportType = determineNumericSupportType(evidenceMatchToUse, cc.value, sourceValues);
+        const hasHedge = hasHedgeTerm(statementText);
+        
+        reasonText = formatNumericSupportReason({
+          canonType: claimType,
+          stmtValue: valueDisplay,
+          sourceValues: sourceValues,
+          supportType: supportType,
+          hasSemanticSupport: evidenceMatchToUse.hasSemanticSupport === true,
+          hasHedgeTerm: hasHedge,
+          citation: citeStr,
+        });
+      } else {
+        // Fallback to standard format
+        const valuationLabel = claimType === "valuation_pre_money" ? "Pre-money valuation" :
+                              claimType === "valuation_post_money" ? "Post-money valuation" :
+                              claimType === "valuation_enterprise_value" ? "Enterprise value" :
+                              "Equity value";
+        reasonText = `${valuationLabel} (${valueDisplay}) ${verbToUse}${citeStr}`;
       }
     } else if (claimType === "growth_percent") {
       reasonText = `Growth rate (${valueDisplay} YoY) ${verb}${citeStr}`;
     } else if (claimType === "ownership_percent") {
-      reasonText = `Ownership percentage (${valueDisplay}) ${verb}${citeStr}`;
+      // A3.8.88: Use enriched numeric support reason for ownership claims
+      if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && uploadedDocs.length > 0) {
+        const sourceValues = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
+        const supportType = determineNumericSupportType(evidenceMatchToUse, cc.value, sourceValues);
+        const hasHedge = hasHedgeTerm(statementText);
+        
+        reasonText = formatNumericSupportReason({
+          canonType: claimType,
+          stmtValue: valueDisplay,
+          sourceValues: sourceValues,
+          supportType: supportType,
+          hasSemanticSupport: evidenceMatchToUse.hasSemanticSupport === true,
+          hasHedgeTerm: hasHedge,
+          citation: citeStr,
+        });
+      } else {
+        reasonText = `Ownership percentage (${valueDisplay}) ${verb}${citeStr}`;
+      }
     } else if (claimType === "fee_percent") {
       reasonText = `Fee / take rate (${valueDisplay}) ${verb}${citeStr}`;
     } else if (claimType === "secondary_purchase") {
@@ -20085,18 +20292,15 @@ ${
               }
             }
             
-            // Add coverage reasons with priority ordering
-            // Priority 3: Coverage "Found in sources" (if added)
-            // Priority 4: Coverage "Not found in sources" OR scope note (if needed)
-            for (const coverageReason of coverageReasons) {
-              if (coverageReason.includes("Found in sources")) {
-                finalReasons.push(coverageReason);
-              }
-            }
-            for (const coverageReason of coverageReasons) {
-              if (coverageReason.includes("Not found in sources")) {
-                finalReasons.push(coverageReason);
-              }
+            // A3.8.88: Do NOT add coverage bullets to user-facing reasons
+            // Coverage information is now merged into primary assessment bullets
+            // Keep coverageReasons for internal tracking but don't emit to UI
+            const coverageBulletsSuppressed = coverageReasons.filter(r => 
+              typeof r === "string" && r.startsWith("Coverage (figures):")
+            ).length;
+            
+            if (coverageBulletsSuppressed > 0 && runId && reqSig) {
+              diag(runId, reqSig, `[A3.8.88][NO_COVERAGE_BULLET] idx=${idx} suppressed=${coverageBulletsSuppressed}`);
             }
           }
         }
