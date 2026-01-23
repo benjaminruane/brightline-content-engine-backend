@@ -12839,6 +12839,119 @@ function formatCurrencyValue(value) {
 }
 
 /**
+ * A3.8.85: Pick the best evidence number from evidenceMatchSummary, canonicalClaims, or fallback
+ * @param {Object} evidenceMatchSummary - EvidenceMatch result with matchedNumbers
+ * @param {Array} canonicalClaims - Array of canonical claims
+ * @param {string} statementText - The statement text
+ * @param {string} notSupportedLine - The original NOT_SUPPORTED line text (for fallback)
+ * @returns {Object} { value: number|null, pickedFrom: string }
+ */
+function pickBestEvidenceNumber(evidenceMatchSummary, canonicalClaims, statementText, notSupportedLine) {
+  // Priority A: Use matchedNumbers from evidenceMatchSummary
+  if (evidenceMatchSummary && Array.isArray(evidenceMatchSummary.matchedNumbers) && evidenceMatchSummary.matchedNumbers.length > 0) {
+    const matchedNumbers = evidenceMatchSummary.matchedNumbers.map(n => {
+      const num = typeof n === "string" ? parseFloat(n.replace(/[$,]/g, "")) : n;
+      return Number.isFinite(num) ? num : null;
+    }).filter(n => n !== null);
+    
+    if (matchedNumbers.length > 0) {
+      // Try to match with canonical claim values first
+      if (Array.isArray(canonicalClaims) && canonicalClaims.length > 0) {
+        for (const cc of canonicalClaims) {
+          if (!cc || typeof cc !== "object") continue;
+          const claimValue = cc.value || cc.numericValue || null;
+          if (claimValue === null || claimValue === undefined) continue;
+          
+          const claimNum = typeof claimValue === "string" ? parseFloat(claimValue.replace(/[$,]/g, "")) : claimValue;
+          if (!Number.isFinite(claimNum)) continue;
+          
+          // Check for exact match or scaled match (within tolerance)
+          for (const matchedNum of matchedNumbers) {
+            // Exact match
+            if (Math.abs(matchedNum - claimNum) < 0.01) {
+              return { value: matchedNum, pickedFrom: "canonicalMatch" };
+            }
+            // Scaled match: check if one is 1e6 or 1e9 times the other
+            const ratio = Math.max(matchedNum, claimNum) / Math.min(matchedNum, claimNum);
+            if (Math.abs(ratio - 1000000) < 1000 || Math.abs(ratio - 1000000000) < 1000000) {
+              // Prefer the larger value (more specific)
+              return { value: Math.max(matchedNum, claimNum), pickedFrom: "canonicalMatch" };
+            }
+          }
+        }
+      }
+      
+      // No canonical match found - prefer the largest absolute value
+      const largest = matchedNumbers.reduce((max, n) => Math.abs(n) > Math.abs(max) ? n : max, matchedNumbers[0]);
+      return { value: largest, pickedFrom: "matchedNumbers" };
+    }
+  }
+  
+  // Priority B: Fallback to parsing from NOT_SUPPORTED line
+  if (notSupportedLine && typeof notSupportedLine === "string") {
+    // Remove citation suffix
+    const lineText = notSupportedLine.replace(/\s*\[\d+\]\s*$/, "").trim();
+    const amountMatch = lineText.match(/(\$?[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
+    
+    if (amountMatch) {
+      let parsedNum = parseFloat(amountMatch[1].replace(/[$,]/g, ""));
+      
+      if (Number.isFinite(parsedNum) && parsedNum > 0) {
+        // Check if we need to upscale (e.g., "5" when statement says "million")
+        const lowerStatement = statementText.toLowerCase();
+        const lowerMatch = amountMatch[1].toLowerCase();
+        
+        if (parsedNum < 1000) {
+          if (lowerStatement.includes("million") && !lowerMatch.includes("million") && !lowerMatch.includes("m")) {
+            parsedNum *= 1000000;
+            return { value: parsedNum, pickedFrom: "fallbackUpscaled" };
+          } else if (lowerStatement.includes("billion") && !lowerMatch.includes("billion") && !lowerMatch.includes("b")) {
+            parsedNum *= 1000000000;
+            return { value: parsedNum, pickedFrom: "fallbackUpscaled" };
+          }
+        }
+        
+        return { value: parsedNum, pickedFrom: "fallbackParsed" };
+      }
+    }
+  }
+  
+  return { value: null, pickedFrom: "none" };
+}
+
+/**
+ * A3.8.85: Describe numeric context from canonical claims
+ * @param {Array} canonicalClaims - Array of canonical claims
+ * @param {string} statementText - The statement text (for fallback)
+ * @returns {string} Context label string
+ */
+function describeNumericContext(canonicalClaims, statementText) {
+  if (!Array.isArray(canonicalClaims) || canonicalClaims.length === 0) {
+    return "the relevant deal terms";
+  }
+  
+  // Check canonical claim types in priority order
+  for (const cc of canonicalClaims) {
+    if (!cc || typeof cc !== "object" || !cc.type) continue;
+    
+    const claimType = String(cc.type);
+    
+    if (claimType.startsWith("investment_amount") || claimType === "investment_amount") {
+      return "the planned investment amount";
+    } else if (claimType.startsWith("valuation_")) {
+      return "the valuation terms";
+    } else if (claimType === "ownership_percent") {
+      return "the ownership terms";
+    } else if (claimType.startsWith("metric_") || claimType === "metric_amount") {
+      return "the relevant metric";
+    }
+  }
+  
+  // Fallback
+  return "the relevant deal terms";
+}
+
+/**
  * A3.8.83: Tag a reason line to determine its type (deterministic classification)
  * @param {string} line - The reason line to tag
  * @returns {string} One of: SUPPORT_CONFIRMED, NOT_SUPPORTED, COVERAGE_FOUND, COVERAGE_NOT_FOUND, WORDING_CAUTION, OTHER
@@ -12965,7 +13078,7 @@ function presentAssessmentReasons({
       shouldDropNotSupported = true;
     }
     
-    // A3.8.84: Detect numeric-only case for human-friendly explanation
+    // A3.8.84/A3.8.85: Detect numeric-only case for human-friendly explanation
     // Apply ONLY when:
     // - evidenceMatch.hasNumericPresence === true
     // - evidenceMatch.hasSemanticSupport === false
@@ -12975,6 +13088,9 @@ function presentAssessmentReasons({
     // AND tags include: NOT_SUPPORTED + COVERAGE_FOUND, SUPPORT_CONFIRMED = false
     let useNumericOnlyExplanation = false;
     let formattedNumericValue = null;
+    let valueRaw = null;
+    let pickedFrom = "none";
+    let contextLabel = null;
     let sourceIdsCount = 0;
     
     if (selectionMode && hasUploadedDocs && evidenceMatchSummary && 
@@ -12987,19 +13103,18 @@ function presentAssessmentReasons({
       if (hasNumericPresence && !hasSemanticSupport && matchQuality === "numeric_only") {
         useNumericOnlyExplanation = true;
         
-        // Extract and format the first numeric value
-        if (Array.isArray(evidenceMatchSummary.matchedNumbers) && evidenceMatchSummary.matchedNumbers.length > 0) {
-          const firstNum = evidenceMatchSummary.matchedNumbers[0];
-          formattedNumericValue = formatCurrencyValue(firstNum);
-        } else {
-          // Fallback: try to extract from the NOT_SUPPORTED line
-          const firstNotSupported = notSupported[0];
-          const lineText = removeCitation(firstNotSupported.line);
-          const amountMatch = lineText.match(/(\$[\d,]+(?:\.\d+)?[kmb]?m?(?:\s+(?:million|billion|thousand))?)/i);
-          if (amountMatch) {
-            formattedNumericValue = amountMatch[1];
-          }
+        // A3.8.85: Use pickBestEvidenceNumber to get the best numeric value
+        const firstNotSupported = notSupported[0];
+        const numberResult = pickBestEvidenceNumber(evidenceMatchSummary, canonicalClaims, statementText, firstNotSupported.line);
+        
+        if (numberResult.value !== null) {
+          valueRaw = numberResult.value;
+          pickedFrom = numberResult.pickedFrom;
+          formattedNumericValue = formatCurrencyValue(numberResult.value);
         }
+        
+        // A3.8.85: Get context label from canonical claims
+        contextLabel = describeNumericContext(canonicalClaims, statementText);
         
         // Get source IDs count
         if (Array.isArray(evidenceMatchSummary.sourceIdsUsed)) {
@@ -13029,14 +13144,14 @@ function presentAssessmentReasons({
         transformed.push(`Confirmed in the provided source(s).${citation ? " " + citation : ""}`);
       }
     } else if (notSupported.length > 0 && !shouldDropNotSupported) {
-      // A3.8.84: Use human-friendly numeric-only explanation if applicable
-      if (useNumericOnlyExplanation && formattedNumericValue) {
-        // Replace NOT_SUPPORTED with human-friendly explanation
-        transformed.push(`The source does not use this exact wording; however, the ${formattedNumericValue} figure appears in the document in the context of the company's investment round.`);
+      // A3.8.84/A3.8.85: Use human-friendly numeric-only explanation if applicable
+      if (useNumericOnlyExplanation && formattedNumericValue && contextLabel) {
+        // A3.8.85: Replace NOT_SUPPORTED with human-friendly explanation using new template
+        transformed.push(`The exact wording is not stated in the source, but the ${formattedNumericValue} amount does appear in the document in the context of ${contextLabel}.`);
         
-        // Log diagnostic
+        // A3.8.85: Log diagnostic with extended information
         if (runId && reqSig) {
-          diag(runId, reqSig, `[A3.8.84][NUMERIC_ONLY_HUMANIZED] idx=${statementIndex} valueFormatted=${formattedNumericValue} sourceIdsCount=${sourceIdsCount}`);
+          diag(runId, reqSig, `[A3.8.85][NUMERIC_ONLY_HUMANIZED] idx=${statementIndex} valueRaw=${valueRaw} valueFormatted=${formattedNumericValue} contextLabel=${contextLabel} sourceIdsCount=${sourceIdsCount} pickedFrom=${pickedFrom}`);
         }
       } else {
         // Standard NOT_SUPPORTED processing
