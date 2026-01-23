@@ -19715,6 +19715,97 @@ ${
           diag(runId, reqSig, `[CITE][WARN] idx=${idx} noCitationsEmitted references=${unifiedReferences.length}`);
         }
         
+        // A3.8.82: Align claim comments with final verification outcome (canonical-driven assessment only)
+        // Applies to both selection and non-selection mode when reasonsSource = "canonical"
+        let patchedClaimsCount = 0;
+        let patchedRawCount = 0;
+        let supportedCanonCount = 0;
+        
+        if (reasonsSourceValue === "canonical" && Array.isArray(supportedCanonicalClaims) && supportedCanonicalClaims.length > 0) {
+          // Build map of canonical claim ID -> supportedFinal status
+          const canonIdToSupported = new Map();
+          const canonAnchorToSupported = new Map(); // For rawClaims matching
+          
+          // Numeric canonical claim types to consider for rawClaims alignment
+          const numericTypes = new Set([
+            "investment_amount",
+            "valuation_pre_money",
+            "valuation_post_money",
+            "valuation_enterprise_value",
+            "valuation_equity_value",
+            "metric_amount"
+          ]);
+          
+          for (const cc of supportedCanonicalClaims) {
+            if (!cc || typeof cc !== "object" || !cc.id) continue;
+            
+            const reliability = cc.reliability || "Medium";
+            const reliabilityScore = cc.reliabilityScore || (reliability === "High" ? 90 : reliability === "Medium" ? 70 : 30);
+            const supportedFinal = (reliability === "High" || reliability === "Medium");
+            
+            if (supportedFinal) {
+              canonIdToSupported.set(cc.id, {
+                reliability: reliability,
+                reliabilityScore: reliabilityScore
+              });
+              supportedCanonCount++;
+              
+              // Also map by anchorFamily for rawClaims matching (only for numeric types)
+              const anchorFamily = cc.anchorFamily || cc.anchor || null;
+              if (anchorFamily && numericTypes.has(cc.type)) {
+                // Store the supported info for this anchorFamily
+                canonAnchorToSupported.set(anchorFamily, {
+                  reliability: reliability,
+                  reliabilityScore: reliabilityScore
+                });
+              }
+            }
+          }
+          
+          // Patch assessment.claims[] (user-facing simplified claims)
+          if (canonIdToSupported.size > 0 && Array.isArray(claims) && claims.length > 0) {
+            for (const claim of claims) {
+              if (!claim || typeof claim !== "object" || !claim._canonicalId) continue;
+              
+              const canonInfo = canonIdToSupported.get(claim._canonicalId);
+              if (canonInfo) {
+                // Update comment, reliability, and reliabilityScore
+                claim.comment = "Supported by sources";
+                claim.reliability = canonInfo.reliability;
+                if (canonInfo.reliabilityScore !== undefined) {
+                  claim.reliabilityScore = canonInfo.reliabilityScore;
+                }
+                patchedClaimsCount++;
+              }
+            }
+          }
+          
+          // Patch assessment.rawClaims[] (optional but recommended for consistency)
+          if (canonAnchorToSupported.size > 0 && Array.isArray(rawClaimsForDiagnostics) && rawClaimsForDiagnostics.length > 0) {
+            for (const rawClaim of rawClaimsForDiagnostics) {
+              if (!rawClaim || typeof rawClaim !== "object") continue;
+              
+              // Match by anchorFamily (rawClaims may not have _canonicalId)
+              const rawAnchorFamily = rawClaim.anchorFamily || rawClaim.anchor || null;
+              if (!rawAnchorFamily) continue;
+              
+              // Check if this anchorFamily belongs to a supported numeric canonical claim
+              const canonInfo = canonAnchorToSupported.get(rawAnchorFamily);
+              if (canonInfo) {
+                // Patch comment and reliability
+                rawClaim.comment = "Supported by sources";
+                rawClaim.reliability = canonInfo.reliability;
+                patchedRawCount++;
+              }
+            }
+          }
+          
+          // A3.8.82: Diagnostic log when any patch occurs
+          if ((patchedClaimsCount > 0 || patchedRawCount > 0) && runId && reqSig) {
+            diag(runId, reqSig, `[A3.8.82][CLAIM_COMMENT_ALIGN] idx=${idx} patchedClaims=${patchedClaimsCount} patchedRaw=${patchedRawCount} supportedCanon=${supportedCanonCount}`);
+          }
+        }
+        
         // A3.8.15: Add segmentId to statement for traceability
         const statementWithSegmentId = {
           ...stmt,
