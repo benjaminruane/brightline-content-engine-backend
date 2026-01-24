@@ -13020,6 +13020,277 @@ function hasHedgeTerm(statementText) {
 }
 
 /**
+ * A3.8.90: Get source text by sourceId from uploadedDocs (no new web calls)
+ * @param {Array} uploadedDocs - Uploaded docs array with { id, text }
+ * @param {string|number} sourceId - Source ID
+ * @returns {string} Source text or empty string
+ */
+function getSourceTextBySourceId(uploadedDocs, sourceId) {
+  if (!Array.isArray(uploadedDocs) || uploadedDocs.length === 0) return "";
+  const sid = String(sourceId);
+  const doc = uploadedDocs.find(d => d && (String(d.id) === sid));
+  return doc && typeof doc.text === "string" ? doc.text : "";
+}
+
+/**
+ * A3.8.90: Find numeric occurrences with a context window (±80 chars)
+ * Conservative matching: only tries common USD/percent forms.
+ * @param {string} text
+ * @param {number} candidateValue - normalized numeric (USD in absolute, percent as 0-100)
+ * @param {"usd"|"percent"} kind
+ * @returns {Array<{start:number,end:number,windowText:string,matchText:string}>}
+ */
+function findNumericOccurrencesWithContext(text, candidateValue, kind) {
+  if (typeof text !== "string" || !text) return [];
+  if (!Number.isFinite(candidateValue)) return [];
+
+  const occurrences = [];
+  const lower = text.toLowerCase();
+
+  // Build conservative regex patterns for the candidate value.
+  // USD: try $6.3m, $6.3 million, 6.3m, 6.3 million, 6,300,000
+  // Percent: 20%, 20 percent, 20 per cent
+  const patterns = [];
+
+  if (kind === "usd") {
+    const abs = Math.abs(candidateValue);
+    // prefer compact scale if large
+    const m = abs / 1e6;
+    const b = abs / 1e9;
+    const k = abs / 1e3;
+    const candidates = [];
+    if (abs >= 1e9) candidates.push({ n: b, suf: "b" }, { n: b, suf: " billion" });
+    else if (abs >= 1e6) candidates.push({ n: m, suf: "m" }, { n: m, suf: " million" });
+    else if (abs >= 1e3) candidates.push({ n: k, suf: "k" }, { n: k, suf: " thousand" });
+
+    // Add scaled forms (rounded to 0-1 decimals)
+    for (const c of candidates) {
+      const n0 = c.n.toFixed(0).replace(/\.0$/, "");
+      const n1 = c.n.toFixed(1).replace(/\.0$/, "");
+      patterns.push(new RegExp(`\\$\\s*${n0}\\s*${c.suf.trim()}\\b`, "gi"));
+      patterns.push(new RegExp(`\\$\\s*${n1}\\s*${c.suf.trim()}\\b`, "gi"));
+      patterns.push(new RegExp(`\\b${n0}\\s*${c.suf.trim()}\\b`, "gi"));
+      patterns.push(new RegExp(`\\b${n1}\\s*${c.suf.trim()}\\b`, "gi"));
+    }
+
+    // Add full absolute integer form if reasonable
+    if (abs >= 1000) {
+      const intStr = Math.round(abs).toString();
+      const withCommas = intStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      patterns.push(new RegExp(`\\$\\s*${withCommas}\\b`, "g"));
+      patterns.push(new RegExp(`\\b${withCommas}\\b`, "g"));
+      patterns.push(new RegExp(`\\b${intStr}\\b`, "g"));
+    }
+  } else if (kind === "percent") {
+    const p = candidateValue;
+    const p0 = Number.isFinite(p) ? (Math.abs(p - Math.round(p)) < 1e-9 ? String(Math.round(p)) : String(p)) : String(candidateValue);
+    patterns.push(new RegExp(`\\b${p0}\\s*%\\b`, "gi"));
+    patterns.push(new RegExp(`\\b${p0}\\s*(?:percent|per\\s+cent)\\b`, "gi"));
+  }
+
+  for (const re of patterns) {
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const start = m.index;
+      const end = m.index + m[0].length;
+      const windowStart = Math.max(0, start - 80);
+      const windowEnd = Math.min(text.length, end + 80);
+      occurrences.push({
+        start,
+        end,
+        windowText: lower.substring(windowStart, windowEnd),
+        matchText: m[0],
+      });
+    }
+  }
+
+  return occurrences;
+}
+
+/**
+ * A3.8.90: Strict context classifier to avoid mixing metric types
+ * @param {string} windowTextLower - lowercased window
+ * @param {string} claimType
+ * @param {number} numberStartInWindow - approximate center index for distance checks
+ * @returns {boolean}
+ */
+function classifyContext(windowTextLower, claimType, numberStartInWindow = 80) {
+  if (typeof windowTextLower !== "string") return false;
+  const w = windowTextLower;
+
+  const minDistanceToAny = (keywords) => {
+    let best = Infinity;
+    for (const kw of keywords) {
+      const idx = w.indexOf(kw);
+      if (idx >= 0) best = Math.min(best, Math.abs(idx - numberStartInWindow));
+    }
+    return best;
+  };
+
+  if (claimType === "investment_amount") {
+    const invest = ["invest", "investment", "invested", "investing", "commit", "committed", "deploy", "funding", "financing"];
+    const valOnly = ["valuation", "pre-money", "premoney", "post-money", "postmoney", "enterprise value", "equity value"];
+    const dInvest = minDistanceToAny(invest);
+    if (!Number.isFinite(dInvest) || dInvest === Infinity) return false;
+    const dVal = minDistanceToAny(valOnly);
+    // If valuation appears closer than investment, reject
+    if (dVal !== Infinity && dVal < dInvest) return false;
+    return true;
+  }
+
+  if (claimType === "ownership_percent") {
+    const own = ["own", "ownership", "stake", "fully diluted", "fd", "equity stake", "percent", "%"];
+    const reject = ["margin", "growth", "irr", "return", "cagr", "moic", "multiple"];
+    const dOwn = minDistanceToAny(own);
+    if (!Number.isFinite(dOwn) || dOwn === Infinity) return false;
+    for (const kw of reject) {
+      if (w.includes(kw)) return false;
+    }
+    return true;
+  }
+
+  if (claimType === "valuation_pre_money" || claimType === "valuation_post_money" ||
+      claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value") {
+    const invest = ["invest", "investment", "invested", "investing", "commit", "committed", "deploy", "funding", "financing"];
+    const dInvest = minDistanceToAny(invest);
+
+    const subtype = claimType === "valuation_pre_money"
+      ? ["pre-money", "premoney"]
+      : claimType === "valuation_post_money"
+        ? ["post-money", "postmoney"]
+        : claimType === "valuation_enterprise_value"
+          ? ["enterprise value", "enterprise valuation", "ev"]
+          : ["equity value", "equity valuation"];
+
+    const genericVal = ["valuation", "valued at", "value of"];
+    const dSubtype = minDistanceToAny(subtype);
+    const dGeneric = minDistanceToAny(genericVal);
+    const dVal = Math.min(dSubtype, dGeneric);
+    if (!Number.isFinite(dVal) || dVal === Infinity) return false;
+    // Reject if investment words are closer than valuation words
+    if (dInvest !== Infinity && dInvest < dVal) return false;
+    return true;
+  }
+
+  // metric_amount intentionally excluded in A3.8.90 (too risky without robust subtype typing)
+  return false;
+}
+
+/**
+ * A3.8.90: Collect a single best same-type alternative candidate for an unsupported claim.
+ * Conservative: only looks in uploadedDocs (no web).
+ * @param {Object} cc - canonical claim
+ * @param {Array} uploadedDocs
+ * @param {Array<string|number>} sourceIdsAvailable - source IDs to scan
+ * @returns {null|{ value:number, sourceId:string|number, score:number }}
+ */
+function collectSameTypeAlternativeForClaim(cc, uploadedDocs, sourceIdsAvailable) {
+  if (!cc || typeof cc !== "object" || !cc.type) return null;
+  const claimType = cc.type;
+  if (!(claimType === "investment_amount" || claimType === "ownership_percent" ||
+        claimType === "valuation_pre_money" || claimType === "valuation_post_money" ||
+        claimType === "valuation_enterprise_value" || claimType === "valuation_equity_value")) {
+    return null;
+  }
+
+  const target = typeof cc.value === "number" ? cc.value : null;
+  if (!Number.isFinite(target) || target <= 0) return null;
+
+  const isPercent = cc.unit === "%" || claimType === "ownership_percent";
+  const kind = isPercent ? "percent" : "usd";
+
+  const srcIds = Array.isArray(sourceIdsAvailable) ? sourceIdsAvailable : [];
+  if (srcIds.length === 0) return null;
+
+  const candidates = [];
+
+  for (const sid of srcIds) {
+    const text = getSourceTextBySourceId(uploadedDocs, sid);
+    if (!text) continue;
+
+    // Conservative number extraction: scan for obvious USD / % tokens, then validate via occurrences+context.
+    const found = new Set();
+    if (kind === "usd") {
+      // collect $X(.Y)?m/b/k and X million/billion
+      const usdPatterns = [
+        /\$[\d,]+(?:\.\d+)?\s*(?:m|b|k)\b/gi,
+        /\$[\d,]+(?:\.\d+)?\s*(?:million|billion|thousand)\b/gi,
+        /\b[\d,]+(?:\.\d+)?\s*(?:million|billion|thousand)\b/gi,
+      ];
+      for (const re of usdPatterns) {
+        for (const m of text.matchAll(re)) {
+          const t = m[0];
+          // normalize into absolute numeric
+          const lower = t.toLowerCase();
+          let scale = 1;
+          if (/\bbillion\b|\bb\b/.test(lower)) scale = 1e9;
+          else if (/\bmillion\b|\bm\b/.test(lower)) scale = 1e6;
+          else if (/\bthousand\b|\bk\b/.test(lower)) scale = 1e3;
+          const num = parseFloat(t.replace(/[$,]/g, ""));
+          if (Number.isFinite(num) && num > 0) {
+            const abs = num * scale;
+            // ignore tiny values unless target is tiny
+            if (abs >= 1000 || target < 1000) found.add(abs);
+          }
+        }
+      }
+    } else {
+      const pctPatterns = [
+        /\b\d+(?:\.\d+)?\s*%\b/g,
+        /\b\d+(?:\.\d+)?\s*(?:percent|per\s+cent)\b/gi,
+      ];
+      for (const re of pctPatterns) {
+        for (const m of text.matchAll(re)) {
+          const t = m[0];
+          const num = parseFloat(t.replace(/[%]/g, ""));
+          if (Number.isFinite(num) && num >= 0 && num <= 100) found.add(num);
+        }
+      }
+    }
+
+    for (const val of found) {
+      // Skip identical to target (exact)
+      if (Math.abs(val - target) < 0.01) continue;
+
+      const occs = findNumericOccurrencesWithContext(text, val, kind);
+      if (occs.length === 0) continue;
+
+      // Require at least one same-type context pass
+      let hasSameType = false;
+      for (const occ of occs) {
+        const center = 80; // approximate; windowText is already centered-ish
+        if (classifyContext(occ.windowText, claimType, center)) {
+          hasSameType = true;
+          break;
+        }
+      }
+      if (!hasSameType) continue;
+
+      const score = Math.abs(val - target) / Math.max(Math.abs(target), 1);
+      candidates.push({ value: val, sourceId: sid, score });
+    }
+  }
+
+  if (candidates.length === 0) return null;
+
+  // Select best candidate: lowest score, tie break by larger value
+  candidates.sort((a, b) => {
+    if (a.score !== b.score) return a.score - b.score;
+    return b.value - a.value;
+  });
+
+  const best = candidates[0];
+  if (best.score > 0.5) return null;
+
+  const runnerUp = candidates[1] || null;
+  if (runnerUp && (runnerUp.score - best.score) < 0.05) {
+    return null; // ambiguous
+  }
+
+  return best;
+}
+
+/**
  * A3.8.89: Format human-friendly not-supported reason for numeric claims
  * @param {Object} params - Parameters object
  * @param {string} params.claimType - Canonical claim type (e.g., "investment_amount")
@@ -14359,12 +14630,77 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
               citationId: citationId,
             });
             
+            // A3.8.90: Same-type alternative numeric suggestion (uploaded sources only, conservative)
+            // Only attempt for supported numeric types (exclude metric_amount in this spec)
+            let altHint = null;
+            const canSuggestAlt = hasAnySource &&
+              (claimType === "investment_amount" ||
+               claimType === "ownership_percent" ||
+               claimType === "valuation_pre_money" ||
+               claimType === "valuation_post_money" ||
+               claimType === "valuation_enterprise_value" ||
+               claimType === "valuation_equity_value");
+
+            if (canSuggestAlt) {
+              // Use sourceIdsUsed when available, otherwise fall back to all uploaded doc ids
+              const sourceIdsAvailable = (evidenceMatchToUse && Array.isArray(evidenceMatchToUse.sourceIdsUsed) && evidenceMatchToUse.sourceIdsUsed.length > 0)
+                ? evidenceMatchToUse.sourceIdsUsed
+                : uploadedDocs.map(d => d && d.id).filter(Boolean);
+
+              const alt = collectSameTypeAlternativeForClaim(cc, uploadedDocs, sourceIdsAvailable);
+              if (alt && Number.isFinite(alt.value) && Math.abs(alt.value - (typeof cc.value === "number" ? cc.value : 0)) > 0.01) {
+                const x = (typeof valueDisplay === "string" && valueDisplay) ? valueDisplay : formatCurrencyValue(cc.value);
+                const y = formatCurrencyValue(alt.value);
+
+                // Map valuation label for valuation types
+                const valuationLabel =
+                  claimType === "valuation_pre_money" ? "pre-money valuation" :
+                  claimType === "valuation_post_money" ? "post-money valuation" :
+                  claimType === "valuation_enterprise_value" ? "enterprise valuation" :
+                  claimType === "valuation_equity_value" ? "equity valuation" :
+                  null;
+
+                // Choose citation id: prefer claim citations; otherwise try to use alt source id if numeric
+                const hintCitationId = citationId || (alt.sourceId !== undefined && alt.sourceId !== null ? alt.sourceId : null);
+                const hintCite = hintCitationId ? ` [${hintCitationId}]` : "";
+
+                if (claimType === "investment_amount") {
+                  altHint = `The source does not mention an investment amount of ${x}. However, it does report an investment of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                } else if (claimType === "ownership_percent") {
+                  altHint = `The source does not mention an ownership stake of ${x}. However, it does report an ownership stake of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                } else if (valuationLabel) {
+                  altHint = `The source does not mention a ${valuationLabel} of ${x}. However, it does report a ${valuationLabel} of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                }
+
+                if (altHint && runId && reqSig) {
+                  diag(runId, reqSig, `[A3.8.90][ALT_NUM_SUGGEST] claimType=${claimType} target=${cc.value} suggested=${alt.value} sourceId=${alt.sourceId} score=${alt.score.toFixed(3)}`);
+                }
+              } else {
+                if (runId && reqSig) {
+                  const reason = !alt ? "no_candidates_or_ambiguous" : "identical_or_invalid";
+                  diag(runId, reqSig, `[A3.8.90][ALT_NUM_SKIP] claimType=${claimType} target=${cc.value} reason=${reason}`);
+                }
+              }
+            }
+
             // A3.8.89: Log diagnostic
             if (runId && reqSig) {
               const statementIndex = statement?.index ?? 0;
               const matchedCount = matchedNumbers.length;
               const guidanceAdded = hasAnySource ? 1 : 0;
               diag(runId, reqSig, `[A3.8.89][NOT_SUPPORTED_REASON] idx=${statementIndex} type=${claimType} claimValue=${valueDisplay} matchedNumbersCount=${matchedCount} hasSource=${hasAnySource ? 1 : 0} guidanceAdded=${guidanceAdded}`);
+            }
+
+            // Append hint bullet immediately after not-supported bullet (if room)
+            if (altHint) {
+              // Push primary reason now, then hint, and skip normal push at end by setting reasonText empty
+              reasons.push(reasonText);
+              if (reasons.length < 3) {
+                reasons.push(altHint);
+              }
+              reasonText = "";
+              if (reasons.length >= 3) break;
+              continue;
             }
           } else {
             // Case B: numeric only - generate specific reason (NO citations per A3.8.73) for non-numeric claims
