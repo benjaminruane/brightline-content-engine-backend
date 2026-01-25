@@ -256,6 +256,18 @@ export default async function handler(req, res) {
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
+    // A3.8.110: Minimal filename-aware import probe for "Unexpected token 'export'" diagnostics
+    try {
+      await import("./analyse-statements-impl.js");
+    } catch (e) {
+      console.error("[A3.8.110][IMPORT_FAIL]", {
+        name: e?.name,
+        message: e?.message,
+        stack: e?.stack
+      });
+      throw e;
+    }
+    
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     try {
       const mod = await import("./analyse-statements-impl.js");
@@ -352,8 +364,8 @@ export default async function handler(req, res) {
       return res.status(200).json(payload);
       
     } catch (err) {
-      // A3.8.102: Ensure errors still return JSON and preserve CORS headers
-      console.error("[A3.8.102][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+      // A3.8.110: Ensure errors still return JSON and preserve CORS headers
+      console.error("[A3.8.110][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
       
       // A3.8.17: Extract cause chain
       const causeChain = extractCauseChain(err);
@@ -402,8 +414,8 @@ export default async function handler(req, res) {
     }
     
   } catch (err) {
-    // A3.8.102: Top-level catch for any errors before dynamic import
-    console.error("[A3.8.102][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    // A3.8.110: Top-level catch for any errors before dynamic import
+    console.error("[A3.8.110][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
     
     // A3.8.99: If headers not already sent, return error JSON with CORS headers
     if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {

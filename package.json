@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "npm@10",
+  "engines": {
+    "node": ">=20"
+  },
   "main": "api/generate.js",
   "scripts": {
     "test": "echo \"no tests\""
