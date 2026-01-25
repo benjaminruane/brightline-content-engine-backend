@@ -256,6 +256,31 @@ export default async function handler(req, res) {
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
+    // A3.8.115: Two-step import probe to distinguish dependency vs parse failures
+    // Probe 1: can we import 'openai'?
+    try {
+      await import("openai");
+    } catch (e) {
+      console.error("[A3.8.115][OPENAI_IMPORT_FAIL]", {
+        name: e?.name,
+        message: e?.message,
+        stack: e?.stack
+      });
+      throw e;
+    }
+    
+    // Probe 2: can we import the impl module?
+    try {
+      await import("./analyse-statements-impl.js");
+    } catch (e) {
+      console.error("[A3.8.115][IMPL_IMPORT_FAIL]", {
+        name: e?.name,
+        message: e?.message,
+        stack: e?.stack
+      });
+      throw e;
+    }
+    
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     try {
       const mod = await import("./analyse-statements-impl.js");
@@ -352,8 +377,8 @@ export default async function handler(req, res) {
       return res.status(200).json(payload);
       
     } catch (err) {
-      // A3.8.113: Ensure errors still return JSON and preserve CORS headers
-      console.error("[A3.8.113][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+      // A3.8.115: Ensure errors still return JSON and preserve CORS headers
+      console.error("[A3.8.115][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
       
       // A3.8.17: Extract cause chain
       const causeChain = extractCauseChain(err);
@@ -402,8 +427,8 @@ export default async function handler(req, res) {
     }
     
   } catch (err) {
-    // A3.8.113: Top-level catch for any errors before dynamic import
-    console.error("[A3.8.113][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    // A3.8.115: Top-level catch for any errors before dynamic import
+    console.error("[A3.8.115][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
     
     // A3.8.99: If headers not already sent, return error JSON with CORS headers
     if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
