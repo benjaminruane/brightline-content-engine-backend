@@ -1,4 +1,14 @@
 {
   "version": 2,
-  "installCommand": "npm ci"
+  "installCommand": "npm ci",
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": [
+        "node_modules/openai/**",
+        "node_modules/**",
+        "api/_lib/**",
+        "lib/**"
+      ]
+    }
+  }
 }
