@@ -256,6 +256,44 @@ export default async function handler(req, res) {
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
+    // A3.8.106: Import probe to identify which module triggers SyntaxError
+    const IMPORT_PROBE_TARGETS = [
+      "openai",
+      "../lib/web.js",
+      "../lib/corpusSearch.js",
+      "node:crypto",
+      "../lib/canonicalClaims.js",
+      "./analyse-statements-impl.js",
+    ];
+    
+    for (const target of IMPORT_PROBE_TARGETS) {
+      try {
+        await import(target);
+      } catch (e) {
+        console.error("[A3.8.106][IMPORT_PROBE_FAIL]", {
+          target,
+          name: e?.name,
+          message: e?.message,
+          stack: e?.stack,
+        });
+        
+        // If this is a local file (starts with "." or ".."), also attempt to print the first ~200 chars
+        // to confirm which file is being read by the runtime.
+        try {
+          if (target.startsWith(".") || target.startsWith("..")) {
+            const { readFile } = await import("node:fs/promises");
+            const url = new URL(target, import.meta.url);
+            const snippet = (await readFile(url, "utf8")).slice(0, 200);
+            console.error("[A3.8.106][IMPORT_PROBE_SNIPPET]", { target, url: String(url), snippet });
+          }
+        } catch (_) {
+          // ignore file read errors
+        }
+        
+        throw e; // preserve existing error behavior
+      }
+    }
+    
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     try {
       const mod = await import("./analyse-statements-impl.js");
