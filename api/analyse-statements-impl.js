@@ -22628,6 +22628,6 @@ ${
   }
 }
 
-// A3.8.100: CommonJS export for compatibility with createRequire() in ESM importers
-module.exports = handler;
+// A3.8.101: ESM default export for dynamic import() in ESM wrappers
+export default handler;
 
