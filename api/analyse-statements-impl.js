@@ -14720,28 +14720,119 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
           evidenceMatchToUse.matchedNumbers.length > 0) || isSupportedByEvidence;
         
         // A3.8.92: If numeric-only match is present, treat as supported and generate supported reason
+        // A3.8.95: Only treat as supported if accepted/source number matches statement number
         if (isSupportedByEvidence) {
-          // Skip not-supported path; generate supported reason for numeric-only match
-          effectiveReliability = "Medium"; // Numeric-only typically maps to Medium
-          // Generate supported reason using formatNumericSupportReason
-          const isNumericClaim = financialTypes.has(claimType);
-          if (isNumericClaim) {
-            const sourceValues = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
-            const supportType = determineNumericSupportType(evidenceMatchToUse, cc.value, sourceValues);
-            const hasHedge = hasHedgeTerm(statementText);
-            const citeStr = shouldIncludeCitationsInReason && citations.length > 0
-              ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
-              : "";
+          // A3.8.95: Check if accepted/source number matches statement number
+          const sourceValues = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
+          const stmtValue = cc.value;
+          let acceptedNumberMatches = false;
+          
+          if (stmtValue !== null && sourceValues.length > 0) {
+            const stmtNum = typeof stmtValue === "number" ? stmtValue : parseFloat(String(stmtValue).replace(/[$,%]/g, ""));
+            for (const sourceVal of sourceValues) {
+              const sourceNum = typeof sourceVal === "number" ? sourceVal : parseFloat(String(sourceVal).replace(/[$,%]/g, ""));
+              if (Number.isFinite(stmtNum) && Number.isFinite(sourceNum)) {
+                // Check for exact match or rounded match (within 10% tolerance for rounding)
+                const diff = Math.abs(stmtNum - sourceNum);
+                const ratio = Math.max(stmtNum, sourceNum) / Math.min(stmtNum, sourceNum);
+                if (diff < 0.01 || (ratio < 1.1 && diff < stmtNum * 0.1)) {
+                  acceptedNumberMatches = true;
+                  break;
+                }
+              }
+            }
+          }
+          
+          // A3.8.95: If accepted number doesn't match statement number, treat as not supported
+          if (!acceptedNumberMatches && sourceValues.length > 0) {
+            // Diagnostic
+            if (runId && reqSig) {
+              const stmtNum = typeof stmtValue === "number" ? stmtValue : parseFloat(String(stmtValue).replace(/[$,%]/g, ""));
+              const acceptedNum = sourceValues[0];
+              diag(runId, reqSig, `[A3.8.95][FALSE_CONFIRMED_PREVENT] stmtNum=${stmtNum} acceptedNum=${acceptedNum} claimType=${claimType} forcedNotSupported=true`);
+            }
             
-            reasonText = formatNumericSupportReason({
-              canonType: claimType,
-              stmtValue: valueDisplay,
-              sourceValues: sourceValues,
-              supportType: supportType,
-              hasSemanticSupport: false, // numeric-only, no semantic
-              hasHedgeTerm: hasHedge,
-              citation: citeStr,
-            });
+            // Treat as not supported and generate alternative hint
+            effectiveReliability = "Low";
+            const isNumericClaim = financialTypes.has(claimType);
+            if (isNumericClaim) {
+              const matchedNumbers = sourceValues;
+              const hasAnySource = (uploadedDocs.length > 0) || (citations.length > 0);
+              const citationId = citations.length > 0 ? citations[0] : null;
+              
+              reasonText = formatNotSupportedNumericReason({
+                claimType: claimType,
+                claimValue: cc.value || valueDisplay,
+                matchedNumbers: matchedNumbers,
+                hasAnySource: hasAnySource,
+                citationId: citationId,
+              });
+              
+              // A3.8.95: Generate alternative hint using the accepted/source number
+              let altHint = null;
+              const canSuggestAlt = hasAnySource &&
+                (claimType === "investment_amount" ||
+                 claimType === "ownership_percent" ||
+                 claimType === "valuation_pre_money" ||
+                 claimType === "valuation_post_money" ||
+                 claimType === "valuation_enterprise_value" ||
+                 claimType === "valuation_equity_value");
+
+              if (canSuggestAlt && matchedNumbers.length > 0) {
+                // Use the closest matched number as the alternative
+                const closestMatch = matchedNumbers[0];
+                const x = formatClaimValueForReason(claimType, cc.value || valueDisplay, cc.currency);
+                const y = formatClaimValueForReason(claimType, closestMatch, null);
+
+                const valuationLabel =
+                  claimType === "valuation_pre_money" ? "pre-money valuation" :
+                  claimType === "valuation_post_money" ? "post-money valuation" :
+                  claimType === "valuation_enterprise_value" ? "enterprise valuation" :
+                  claimType === "valuation_equity_value" ? "equity valuation" :
+                  null;
+
+                // A3.8.95: Use proper citation numbers, not internal doc IDs
+                const hintCitationId = citationId || null;
+                const hintCite = hintCitationId ? ` [${hintCitationId}]` : "";
+
+                if (claimType === "investment_amount") {
+                  altHint = `[ALT_HINT] The source does not mention an investment amount of ${x}. However, it does report an investment of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                } else if (claimType === "ownership_percent") {
+                  altHint = `[ALT_HINT] The source does not mention an ownership stake of ${x}. However, it does report an ownership stake of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                } else if (valuationLabel) {
+                  altHint = `[ALT_HINT] The source does not mention a ${valuationLabel} of ${x}. However, it does report a ${valuationLabel} of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                }
+
+                if (altHint) {
+                  reasons.push(reasonText);
+                  reasons.push(altHint);
+                  reasonText = "";
+                  continue;
+                }
+              }
+            }
+          } else {
+            // Accepted number matches - generate supported reason
+            effectiveReliability = "Medium"; // Numeric-only typically maps to Medium
+            // Generate supported reason using formatNumericSupportReason
+            const isNumericClaim = financialTypes.has(claimType);
+            if (isNumericClaim) {
+              const supportType = determineNumericSupportType(evidenceMatchToUse, cc.value, sourceValues);
+              const hasHedge = hasHedgeTerm(statementText);
+              const citeStr = shouldIncludeCitationsInReason && citations.length > 0
+                ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+                : "";
+              
+              reasonText = formatNumericSupportReason({
+                canonType: claimType,
+                stmtValue: valueDisplay,
+                sourceValues: sourceValues,
+                supportType: supportType,
+                hasSemanticSupport: false, // numeric-only, no semantic
+                hasHedgeTerm: hasHedge,
+                citation: citeStr,
+              });
+            }
           }
         } else if (!shouldSuppressNotSupported) {
           effectiveReliability = "Low";
@@ -14794,8 +14885,16 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
                   claimType === "valuation_equity_value" ? "equity valuation" :
                   null;
 
-                // Choose citation id: prefer claim citations; otherwise try to use alt source id if numeric
-                const hintCitationId = citationId || (alt.sourceId !== undefined && alt.sourceId !== null ? alt.sourceId : null);
+                // A3.8.95: Choose citation id: prefer claim citations; ensure we use proper citation numbers, not internal doc IDs
+                // alt.sourceId should already be a citation number from sourceIdsAvailable, but ensure it's numeric
+                let hintCitationId = citationId;
+                if (!hintCitationId && alt.sourceId !== undefined && alt.sourceId !== null) {
+                  // Ensure sourceId is a proper citation number (not an internal doc ID like "src_file_...")
+                  const sourceIdStr = String(alt.sourceId);
+                  if (!sourceIdStr.includes("src_file_") && !sourceIdStr.includes("_")) {
+                    hintCitationId = alt.sourceId;
+                  }
+                }
                 const hintCite = hintCitationId ? ` [${hintCitationId}]` : "";
 
                 // A3.8.92: Add [ALT_HINT] tag prefix to preserve through normalization
