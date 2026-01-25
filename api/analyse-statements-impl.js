@@ -13408,8 +13408,9 @@ function formatNotSupportedNumericReason({
   }
   
   // Join with newlines and add citation to last sentence only
+  // A3.8.97: Only append citation if citationId is provided (caller should verify it's in assessment.citations)
   let result = sentences.join(" ");
-  if (citationId && sentences.length > 0) {
+  if (citationId !== null && citationId !== undefined && sentences.length > 0) {
     result += ` [${citationId}]`;
   }
   
@@ -14905,12 +14906,22 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
               const hasAnySource = (uploadedDocs.length > 0) || (citations.length > 0);
               const citationId = citations.length > 0 ? citations[0] : null;
               
+              // A3.8.97: Check if assessment.citations includes citationId before passing it
+              // Only include citation if it's actually in the assessment.citations array
+              let validCitationId = null;
+              if (citationId !== null && citationId !== undefined) {
+                const assessmentCitations = statement?.assessment?.citations || [];
+                if (Array.isArray(assessmentCitations) && assessmentCitations.includes(citationId)) {
+                  validCitationId = citationId;
+                }
+              }
+              
               reasonText = formatNotSupportedNumericReason({
                 claimType: claimType,
                 claimValue: cc.value || valueDisplay,
                 matchedNumbers: matchedNumbers,
                 hasAnySource: hasAnySource,
-                citationId: citationId,
+                citationId: validCitationId,
               });
               
               // A3.8.95: Generate alternative hint using the accepted/source number
@@ -14991,15 +15002,26 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
             const hasAnySource = (uploadedDocs.length > 0) || (citations.length > 0);
             const citationId = citations.length > 0 ? citations[0] : null;
             
+            // A3.8.97: Check if assessment.citations includes citationId before passing it
+            // Only include citation if it's actually in the assessment.citations array
+            let validCitationId = null;
+            if (citationId !== null && citationId !== undefined) {
+              const assessmentCitations = statement?.assessment?.citations || [];
+              if (Array.isArray(assessmentCitations) && assessmentCitations.includes(citationId)) {
+                validCitationId = citationId;
+              }
+            }
+            
             reasonText = formatNotSupportedNumericReason({
               claimType: claimType,
               claimValue: cc.value || valueDisplay,
               matchedNumbers: matchedNumbers,
               hasAnySource: hasAnySource,
-              citationId: citationId,
+              citationId: validCitationId,
             });
             
             // A3.8.90: Same-type alternative numeric suggestion (uploaded sources only, conservative)
+            // A3.8.97: For ownership_percent with matchedNumbersCount === 0, extract percent candidates from docs
             // Only attempt for supported numeric types (exclude metric_amount in this spec)
             let altHint = null;
             const canSuggestAlt = hasAnySource &&
@@ -15011,13 +15033,66 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
                claimType === "valuation_equity_value");
 
             if (canSuggestAlt) {
-              // Use sourceIdsUsed when available, otherwise fall back to all uploaded doc ids
-              const sourceIdsAvailable = (evidenceMatchToUse && Array.isArray(evidenceMatchToUse.sourceIdsUsed) && evidenceMatchToUse.sourceIdsUsed.length > 0)
-                ? evidenceMatchToUse.sourceIdsUsed
-                : uploadedDocs.map(d => d && d.id).filter(Boolean);
+              // A3.8.97: Special handling for ownership_percent when matchedNumbersCount === 0
+              if (claimType === "ownership_percent" && matchedNumbers.length === 0 && selectionMode && uploadedDocs.length > 0) {
+                // Extract percent candidates (integers 1-100) from uploaded docs
+                const percentCandidates = [];
+                const stmtValue = cc.value;
+                const stmtNum = typeof stmtValue === "number" ? stmtValue : parseFloat(String(stmtValue).replace(/[$,%]/g, ""));
+                
+                for (const doc of uploadedDocs) {
+                  if (!doc || !doc.text) continue;
+                  const docText = doc.text;
+                  // Extract percent patterns: "20%", "20 percent", etc.
+                  const percentPattern = /([\d,]+(?:\.\d+)?)\s*%/g;
+                  const matches = [...docText.matchAll(percentPattern)];
+                  for (const match of matches) {
+                    const numStr = (match[1] || "").replace(/,/g, "");
+                    const num = parseFloat(numStr);
+                    if (Number.isFinite(num) && num >= 1 && num <= 100 && num === Math.floor(num)) {
+                      // Exclude the statement value itself
+                      if (Math.abs(num - stmtNum) > 0.01) {
+                        percentCandidates.push(num);
+                      }
+                    }
+                  }
+                }
+                
+                // Deduplicate and sort
+                const uniqueCandidates = Array.from(new Set(percentCandidates)).sort((a, b) => a - b);
+                
+                // A3.8.97: If exactly 1 candidate exists, emit ALT suggestion
+                if (uniqueCandidates.length === 1) {
+                  const candidateValue = uniqueCandidates[0];
+                  const x = formatClaimValueForReason(claimType, cc.value || valueDisplay, cc.currency);
+                  const y = formatClaimValueForReason(claimType, candidateValue, null);
+                  
+                  // A3.8.97: Use citation from assessment if available, otherwise use first uploaded doc id
+                  let hintCitationId = citationId;
+                  if (!hintCitationId && uploadedDocs.length > 0) {
+                    // Use first uploaded doc id as citation (should be 1 for first uploaded doc)
+                    hintCitationId = 1;
+                  }
+                  
+                  // A3.8.97: Check if assessment.citations includes this citation before appending
+                  const assessmentCitations = statement?.assessment?.citations || [];
+                  const hasCitation = Array.isArray(assessmentCitations) && assessmentCitations.includes(hintCitationId);
+                  const hintCite = (hintCitationId && hasCitation) ? ` [${hintCitationId}]` : "";
+                  
+                  altHint = `[ALT_HINT] The source reports an ownership stake of ${y}. If this was the intended figure, consider revising the draft.${hintCite}`;
+                  
+                  if (runId && reqSig) {
+                    diag(runId, reqSig, `[A3.8.97][PCT_NEAR_FIGURE] claimType=${claimType} target=${stmtNum} suggested=${candidateValue} hasCitation=${hasCitation ? 1 : 0}`);
+                  }
+                }
+              } else {
+                // Use sourceIdsUsed when available, otherwise fall back to all uploaded doc ids
+                const sourceIdsAvailable = (evidenceMatchToUse && Array.isArray(evidenceMatchToUse.sourceIdsUsed) && evidenceMatchToUse.sourceIdsUsed.length > 0)
+                  ? evidenceMatchToUse.sourceIdsUsed
+                  : uploadedDocs.map(d => d && d.id).filter(Boolean);
 
-              const alt = collectSameTypeAlternativeForClaim(cc, uploadedDocs, sourceIdsAvailable);
-              if (alt && Number.isFinite(alt.value) && Math.abs(alt.value - (typeof cc.value === "number" ? cc.value : 0)) > 0.01) {
+                const alt = collectSameTypeAlternativeForClaim(cc, uploadedDocs, sourceIdsAvailable);
+                if (alt && Number.isFinite(alt.value) && Math.abs(alt.value - (typeof cc.value === "number" ? cc.value : 0)) > 0.01) {
                 // A3.8.92: Use formatClaimValueForReason to handle ownership_percent correctly
                 const x = formatClaimValueForReason(claimType, cc.value || valueDisplay, cc.currency);
                 const y = formatClaimValueForReason(claimType, alt.value, null);
@@ -15031,6 +15106,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
                   null;
 
                 // A3.8.95: Choose citation id: prefer claim citations; ensure we use proper citation numbers, not internal doc IDs
+                // A3.8.97: Check if assessment.citations includes citationId before appending
                 // alt.sourceId should already be a citation number from sourceIdsAvailable, but ensure it's numeric
                 let hintCitationId = citationId;
                 if (!hintCitationId && alt.sourceId !== undefined && alt.sourceId !== null) {
@@ -15040,7 +15116,12 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
                     hintCitationId = alt.sourceId;
                   }
                 }
-                const hintCite = hintCitationId ? ` [${hintCitationId}]` : "";
+                
+                // A3.8.97: Only include citation if it's actually in the assessment.citations array
+                const assessmentCitations = statement?.assessment?.citations || [];
+                const hasCitation = hintCitationId !== null && hintCitationId !== undefined &&
+                                   Array.isArray(assessmentCitations) && assessmentCitations.includes(hintCitationId);
+                const hintCite = hasCitation ? ` [${hintCitationId}]` : "";
 
                 // A3.8.95: Add [ALT_HINT] tag prefix to preserve through normalization
                 if (claimType === "investment_amount") {
