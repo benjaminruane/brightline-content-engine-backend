@@ -2,16 +2,27 @@
 //
 // A3.8.11: Selection mode endpoint for analyse-statements.
 // A3.8.16: Hard validation + fail-closed error envelope
-// A3.8.19: Static import to surface syntax errors at build time
+// A3.8.98: Rewritten as CORS-safe CommonJS wrapper using dynamic import
 
-// A3.8.19: Static import (replaces dynamic import to surface build-time syntax errors)
-import analyseStatementsImpl from "./analyse-statements-impl.js";
-
+// A3.8.98: CommonJS module.exports (not ESM) to avoid CJS/ESM mismatch
+// A3.8.98: Set CORS headers BEFORE any imports that might throw
 function setCorsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  if (!res || typeof res.setHeader !== "function") return;
+  
+  const origin = req?.headers?.origin || req?.headers?.Origin || "";
+  const allowedOrigins = [
+    "https://brightline-content-engine-frontend.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000"
+  ];
+  
+  const allowOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+  
+  res.setHeader("Access-Control-Allow-Origin", allowOrigin);
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Max-Age", "86400");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Content-Type", "application/json; charset=utf-8");
 }
 
@@ -114,7 +125,8 @@ function extractCauseChain(err, maxDepth = 4) {
   return chain;
 }
 
-export default async function handler(req, res) {
+// A3.8.98: CommonJS handler (not ESM export)
+module.exports = async function handler(req, res) {
   // A3.8.16: Generate RID/SIG early for all logging
   const { runId, reqSig } = generateRidSig();
   
@@ -127,11 +139,10 @@ export default async function handler(req, res) {
   
   // A3.8.16: Top-level try/catch to ensure JSON response always
   try {
-    // A3.8.16: Set CORS and Content-Type headers immediately
-    // A3.8.32: Use safe wrapper to prevent ERR_HTTP_HEADERS_SENT
+    // A3.8.98: Set CORS headers IMMEDIATELY before any imports
     safeSetCorsHeaders(req, res);
     
-    // A3.8.16: Handle OPTIONS preflight
+    // A3.8.98: Handle OPTIONS preflight immediately
     if (req.method === "OPTIONS") {
       return res.status(204).end();
     }
@@ -261,11 +272,23 @@ export default async function handler(req, res) {
     phase = "segment";
     dbg.phase = phase;
     
-    // A3.8.19: Phase: run_review_pipeline (static import, no dynamic import)
+    // A3.8.98: Phase: run_review_pipeline (dynamic import, not static import)
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
-    // A3.8.19: Validate static import
+    // A3.8.98: Dynamic-import the underlying implementation (DO NOT require())
+    let analyseStatementsImpl;
+    try {
+      const mod = await import("./analyse-statements-impl.js");
+      analyseStatementsImpl = mod.default || mod.handler || mod;
+    } catch (importErr) {
+      console.error("[A3.8.98][ANALYSE_SELECTED_FATAL]", importErr && importErr.stack ? importErr.stack : importErr);
+      const e = new Error("REVIEW_PIPELINE_FAILED");
+      e.cause = importErr;
+      throw e;
+    }
+    
+    // A3.8.19: Validate dynamic import result
     if (typeof analyseStatementsImpl !== "function") {
       const e = new Error("REVIEW_PIPELINE_FAILED");
       e.cause = new Error("analyse-statements-impl missing default export");
@@ -358,11 +381,15 @@ export default async function handler(req, res) {
     return res.status(200).json(payload);
     
   } catch (err) {
+    // A3.8.98: Ensure errors still return JSON and preserve CORS headers
+    console.error("[A3.8.98][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    
     // A3.8.32: Only send error response if headers not already sent
     if (!res.headersSent) {
-      // A3.8.16: Top-level catch - ensure JSON response
+      // A3.8.98: Ensure CORS headers are set even on errors
       safeSetCorsHeaders(req, res);
       
+      // A3.8.16: Top-level catch - ensure JSON response
       // A3.8.17: Extract cause chain
       const causeChain = extractCauseChain(err);
       
@@ -396,10 +423,11 @@ export default async function handler(req, res) {
           sig: reqSig,
           phase: phase,
           name: err?.name || "Error",
+          detail: String(err && err.message ? err.message : err),
         },
       });
     }
     // A3.8.32: Headers already sent, just return (no-op)
     return;
   }
-}
+};
