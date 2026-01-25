@@ -14044,19 +14044,72 @@ function evidenceMatchForStatement(statementText, corpusResult, debugContext = {
   const matchesAccepted = Array.isArray(debug.matchesAccepted) ? debug.matchesAccepted : 
                          (Array.isArray(corpusResult?.matchesAccepted) ? corpusResult.matchesAccepted : []);
   
+  // A3.8.96: Helper to check if a number is in percent context
+  const isPercentContext = (stmtText, n) => {
+    if (typeof stmtText !== "string" || typeof n !== "number" || !Number.isFinite(n)) {
+      return false;
+    }
+    // (a) Check if stmtText contains `${n}%`
+    const percentPattern = new RegExp(`${n}\\s*%`, 'i');
+    if (percentPattern.test(stmtText)) {
+      return true;
+    }
+    // (b) Check if within +/- 2 chars of the first occurrence of the number token, there is a '%' char
+    const numStr = String(n);
+    const numIndex = stmtText.indexOf(numStr);
+    if (numIndex !== -1) {
+      const start = Math.max(0, numIndex - 2);
+      const end = Math.min(stmtText.length, numIndex + numStr.length + 2);
+      const window = stmtText.substring(start, end);
+      if (window.includes('%')) {
+        return true;
+      }
+    }
+    return false;
+  };
+  
   // A3.8.96: Filter matchesAccepted to only include numbers that exactly match statement numbers
+  // A3.8.96: For percent context, require exact match (no tolerance)
   if (matchesAccepted.length > 0) {
     let rejectionLogged = false;
     for (const match of matchesAccepted) {
       if (match && typeof match.docValue === "number" && Number.isFinite(match.docValue)) {
         const docValue = match.docValue;
-        // A3.8.96: Only accept if docValue exactly equals a stmtNum (or within rounding tolerance)
+        // A3.8.96: Only accept if docValue exactly equals a stmtNum (or within rounding tolerance for non-percent)
         let isAccepted = false;
         for (const stmtNum of stmtNums) {
-          const diff = Math.abs(stmtNum - docValue);
-          const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docValue), 1);
-          // Exact match or within 0.01 tolerance (for rounding)
-          if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+          // A3.8.96: Check if this is a percent context
+          const isPercent = isPercentContext(statementText, stmtNum);
+          
+          let shouldAccept = false;
+          if (isPercent) {
+            // A3.8.96: Percent context - exact match only
+            if (stmtNum === docValue) {
+              shouldAccept = true;
+            } else {
+              // Check if tolerance would have matched (for diagnostic)
+              const diff = Math.abs(stmtNum - docValue);
+              const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docValue), 1);
+              if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+                // Would have matched with tolerance, but blocked for percent
+                if (!rejectionLogged && runId && reqSig) {
+                  diag(runId, reqSig, `[A3.8.96][PCT_TOLERANCE_BLOCKED_FALLBACK] stmtNum=${stmtNum} docNum=${docValue}`);
+                  rejectionLogged = true;
+                }
+              }
+              shouldAccept = false;
+            }
+          } else {
+            // Non-percent: use tolerance matching
+            const diff = Math.abs(stmtNum - docValue);
+            const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docValue), 1);
+            // Exact match or within 0.01 tolerance (for rounding)
+            if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+              shouldAccept = true;
+            }
+          }
+          
+          if (shouldAccept) {
             // Also verify docValue is in docNumSet
             if (docNumSet.has(docValue)) {
               matchedNumbers.push(docValue);
@@ -14080,14 +14133,44 @@ function evidenceMatchForStatement(statementText, corpusResult, debugContext = {
     }
   } else if (hasNumberMatch && stmtNums.length > 0 && docNums.length > 0) {
     // A3.8.96: Fallback: compute intersection - only accept if stmtNum exactly matches docNum
+    // A3.8.96: For percent context, require exact match (no tolerance)
     let rejectionLogged = false;
     for (const stmtNum of stmtNums) {
+      // A3.8.96: Check if this is a percent context
+      const isPercent = isPercentContext(statementText, stmtNum);
+      
       let foundMatch = false;
       for (const docNum of docNums) {
-        const diff = Math.abs(stmtNum - docNum);
-        const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
-        // A3.8.96: Only accept if exact match or within rounding tolerance (0.01 or 10%)
-        if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+        let shouldAccept = false;
+        
+        if (isPercent) {
+          // A3.8.96: Percent context - exact match only
+          if (stmtNum === docNum) {
+            shouldAccept = true;
+          } else {
+            // Check if tolerance would have matched (for diagnostic)
+            const diff = Math.abs(stmtNum - docNum);
+            const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
+            if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+              // Would have matched with tolerance, but blocked for percent
+              if (!rejectionLogged && runId && reqSig) {
+                diag(runId, reqSig, `[A3.8.96][PCT_TOLERANCE_BLOCKED_FALLBACK] stmtNum=${stmtNum} docNum=${docNum}`);
+                rejectionLogged = true;
+              }
+            }
+            shouldAccept = false;
+          }
+        } else {
+          // Non-percent: use tolerance matching
+          const diff = Math.abs(stmtNum - docNum);
+          const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
+          // A3.8.96: Only accept if exact match or within rounding tolerance (0.01 or 10%)
+          if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+            shouldAccept = true;
+          }
+        }
+        
+        if (shouldAccept) {
           // Verify docNum is in docNumSet and stmtNum is in stmtNumSet
           if (docNumSet.has(docNum) && stmtNumSet.has(stmtNum)) {
             matchedNumbers.push(docNum);
