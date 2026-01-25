@@ -3,6 +3,11 @@
 // A3.8.11: Selection mode endpoint for analyse-statements.
 // A3.8.16: Hard validation + fail-closed error envelope
 // A3.8.99: ESM default export with CORS-safe preflight handling
+// A3.8.100: Use createRequire to load CommonJS impl module
+
+// A3.8.100: Import createRequire for ESM-safe CommonJS module loading
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 // A3.8.99: ESM default export (not CommonJS module.exports)
 export default async function handler(req, res) {
@@ -251,17 +256,21 @@ export default async function handler(req, res) {
     phase = "segment";
     dbg.phase = phase;
     
-    // A3.8.99: Phase: run_review_pipeline (ESM-safe dynamic import)
+    // A3.8.100: Phase: run_review_pipeline (CommonJS require via createRequire)
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
-    // A3.8.99: Delegate to analyse-statements-impl.js using ESM-safe dynamic import
+    // A3.8.100: Delegate to analyse-statements-impl.js using createRequire (ESM-safe CommonJS loading)
     try {
-      const mod = await import("./analyse-statements-impl.js");
-      const implHandler = mod.default;
+      const implHandler = require("./analyse-statements-impl.js");
       
-      if (typeof implHandler !== "function") {
-        throw new Error("analyse-statements-impl.js default export is not a function");
+      // A3.8.100: Handle both direct function export and default export pattern
+      const handlerFn = (implHandler && typeof implHandler.default === "function") 
+        ? implHandler.default 
+        : implHandler;
+      
+      if (typeof handlerFn !== "function") {
+        throw new Error("analyse-statements-impl.js export is not a function");
       }
       
       // A3.8.99: Read body safely and force selectionUsed=true for this endpoint
@@ -282,7 +291,7 @@ export default async function handler(req, res) {
       // A3.8.17: Harden: wrap pipeline call in try/catch
       let payload;
       try {
-        payload = await implHandler(normalizedReq, res);
+        payload = await handlerFn(normalizedReq, res);
       } catch (pipelineErr) {
         // A3.8.17: Re-throw with context to preserve phase tracking
         // A3.8.18: Node-18 safe error with cause

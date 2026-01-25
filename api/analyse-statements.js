@@ -3,6 +3,11 @@
 // A3.7.6: Thin CORS-safe wrapper for analyse-statements.
 // Lazy-loads implementation to ensure CORS headers are always set,
 // even if the implementation module fails to import or initialize.
+// A3.8.100: Use createRequire to load CommonJS impl module
+
+// A3.8.100: Import createRequire for ESM-safe CommonJS module loading
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -28,14 +33,19 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: "method_not_allowed" });
   }
 
-  // A3.7.6: Lazy-load implementation inside try/catch to ensure CORS + JSON on import failures
+  // A3.8.100: Lazy-load implementation using createRequire (CommonJS) inside try/catch to ensure CORS + JSON on import failures
   try {
-    const mod = await import("./analyse-statements-impl.js");
-    const impl = mod?.default;
-    if (typeof impl !== "function") {
-      throw new Error("analyse-statements-impl missing default export");
+    const impl = require("./analyse-statements-impl.js");
+    
+    // A3.8.100: Handle both direct function export and default export pattern
+    const handlerFn = (impl && typeof impl.default === "function") 
+      ? impl.default 
+      : impl;
+    
+    if (typeof handlerFn !== "function") {
+      throw new Error("analyse-statements-impl export is not a function");
     }
-    return await impl(req, res);
+    return await handlerFn(req, res);
   } catch (err) {
     // A3.7.6: Set CORS headers defensively (safe to repeat)
     setCorsHeaders(req, res);

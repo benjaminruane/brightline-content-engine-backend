@@ -19355,7 +19355,7 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
   });
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   setCorsHeaders(req, res);
 
   // A3.5.22 Fix: Hoist hasReturned, runId, reqSig, and finalResponseObject to top of handler scope
@@ -22627,4 +22627,7 @@ ${
     return res.status(500).json({ ok: false, error: "Internal server error: handler reached end without returning" });
   }
 }
+
+// A3.8.100: CommonJS export for compatibility with createRequire() in ESM importers
+module.exports = handler;
 
