@@ -256,15 +256,43 @@ export default async function handler(req, res) {
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
-    // A3.8.110: Minimal filename-aware import probe for "Unexpected token 'export'" diagnostics
+    // A3.8.112: Import-graph probe to identify exact failing dependency
     try {
-      await import("./analyse-statements-impl.js");
+      // Load impl text to extract import targets
+      const { readFile } = await import("node:fs/promises");
+      const implUrl = new URL("./analyse-statements-impl.js", import.meta.url);
+      const implText = await readFile(implUrl, "utf8");
+      
+      // Extract import targets with regex
+      const importRe = /\bimport\s+[^;]*?\s+from\s+["']([^"']+)["']/g;
+      const targets = [];
+      let m;
+      while ((m = importRe.exec(implText))) targets.push(m[1]);
+      
+      // Also include any bare `import "x"` form (side-effect imports)
+      const sideEffectRe = /\bimport\s+["']([^"']+)["']/g;
+      while ((m = sideEffectRe.exec(implText))) targets.push(m[1]);
+      
+      // De-dupe while preserving order
+      const seen = new Set();
+      const importTargets = targets.filter(t => (seen.has(t) ? false : (seen.add(t), true)));
+      
+      // Probe each import individually
+      for (const target of importTargets) {
+        try {
+          await import(target);
+        } catch (e) {
+          console.error("[A3.8.112][IMPORT_GRAPH_FAIL]", {
+            target,
+            name: e?.name,
+            message: e?.message,
+            stack: e?.stack
+          });
+          throw e;
+        }
+      }
     } catch (e) {
-      console.error("[A3.8.110][IMPORT_FAIL]", {
-        name: e?.name,
-        message: e?.message,
-        stack: e?.stack
-      });
+      // If probe fails, re-throw to preserve existing error behavior
       throw e;
     }
     
@@ -364,8 +392,8 @@ export default async function handler(req, res) {
       return res.status(200).json(payload);
       
     } catch (err) {
-      // A3.8.111: Ensure errors still return JSON and preserve CORS headers
-      console.error("[A3.8.111][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+      // A3.8.112: Ensure errors still return JSON and preserve CORS headers
+      console.error("[A3.8.112][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
       
       // A3.8.17: Extract cause chain
       const causeChain = extractCauseChain(err);
@@ -414,8 +442,8 @@ export default async function handler(req, res) {
     }
     
   } catch (err) {
-    // A3.8.111: Top-level catch for any errors before dynamic import
-    console.error("[A3.8.111][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    // A3.8.112: Top-level catch for any errors before dynamic import
+    console.error("[A3.8.112][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
     
     // A3.8.99: If headers not already sent, return error JSON with CORS headers
     if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
