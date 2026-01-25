@@ -13943,6 +13943,9 @@ function presentAssessmentReasons({
       }
     }
     
+    // A3.8.94: Define hasAltHint before converting to strings (check structured items)
+    const hasAltHint = finalReasonsItemsRebuilt.some(item => item.kind === "ALT_HINT");
+    
     // Convert back to strings
     finalReasons = finalReasonsItemsRebuilt.map(item => item.text);
     
@@ -13951,6 +13954,7 @@ function presentAssessmentReasons({
       const beforeCount = reasons.length;
       const afterCount = finalReasons.length;
       const tagsStr = JSON.stringify(tagCounts);
+      // A3.8.94: hasAltHint is already defined above (before converting to strings)
       diag(runId, reqSig, `[A3.8.83][REASONS_PRESENT] idx=${statementIndex} before=${beforeCount} after=${afterCount} tags=${tagsStr}`);
       if (hasAltHint) {
         diag(runId, reqSig, `[A3.8.92][ALT_HINT_PRESERVE] idx=${statementIndex} before=${beforeCount} after=${afterCount} keptAltHint=true`);
@@ -14034,14 +14038,41 @@ function evidenceMatchForStatement(statementText, corpusResult, debugContext = {
       }
     }
   } else if (hasNumberMatch && stmtNums.length > 0 && docNums.length > 0) {
-    // Fallback: compute intersection of stmtNums and docNums (within 5% tolerance)
+    // A3.8.94: Fallback: compute intersection of stmtNums and docNums (within 5% tolerance)
+    // Only accept numbers that are present in the document numeric set
+    const docNumsSet = new Set(docNums);
+    let rejectionLogged = false; // A3.8.94: Log at most once per statement
     for (const stmtNum of stmtNums) {
+      let foundMatch = false;
       for (const docNum of docNums) {
         const diff = Math.abs(stmtNum - docNum);
         const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
         if (diff / maxVal <= 0.05) {
-          matchedNumbers.push(docNum);
-          break; // Only add each stmtNum once
+          // A3.8.94: Verify docNum is in docNumsSet (should always be true, but be explicit)
+          if (docNumsSet.has(docNum)) {
+            matchedNumbers.push(docNum);
+            foundMatch = true;
+            break; // Only add each stmtNum once
+          }
+        }
+      }
+      
+      // A3.8.94: Diagnostic when statement number would have been accepted but is not in docNumsSet
+      if (!foundMatch && stmtNum != null && !rejectionLogged) {
+        // Check if stmtNum is close to any docNum but not exactly matching
+        let wouldHaveMatched = false;
+        for (const docNum of docNums) {
+          const diff = Math.abs(stmtNum - docNum);
+          const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
+          if (diff / maxVal <= 0.05) {
+            wouldHaveMatched = true;
+            break;
+          }
+        }
+        if (wouldHaveMatched && runId && reqSig) {
+          const docId = uploadedDocs[0]?.id || "unknown";
+          diag(runId, reqSig, `[A3.8.94][CORPUS_REJECT_NOT_IN_DOC] stmtNum=${stmtNum} docId=${docId}`);
+          rejectionLogged = true;
         }
       }
     }
