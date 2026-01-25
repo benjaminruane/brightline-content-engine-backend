@@ -937,9 +937,9 @@ function mergeContinuationFragments(draftText) {
   // Log merge statistics
   if (mergeCount > 0) {
     const outputSentenceCount = normalizedText.split(/[.!?\n]+/).filter(s => s && s.trim().length > 0).length;
-    log(`[SENT_MERGE] inputSegments=${inputSegmentCount} outputSentences=${outputSentenceCount} merges=${mergeCount}`);
+    console.log(`[SENT_MERGE] inputSegments=${inputSegmentCount} outputSentences=${outputSentenceCount} merges=${mergeCount}`);
     if (mergeSamples.length > 0) {
-      log(`[SENT_MERGE] sampleMerges=${JSON.stringify(mergeSamples)}`);
+      console.log(`[SENT_MERGE] sampleMerges=${JSON.stringify(mergeSamples)}`);
     }
   }
   
