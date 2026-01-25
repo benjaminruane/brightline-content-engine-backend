@@ -13299,19 +13299,21 @@ function collectSameTypeAlternativeForClaim(cc, uploadedDocs, sourceIdsAvailable
  */
 function formatClaimValueForReason(claimType, value, currency) {
   if (claimType === "ownership_percent" || claimType === "fee_percent" || claimType === "growth_percent") {
-    // Format as percentage
+    // A3.8.93: Format as integer percentage (no decimals)
     const num = typeof value === "number" ? value : parseFloat(String(value));
     if (Number.isFinite(num)) {
       // Handle both 0-1 and 0-100 formats
       const pct = num > 1 ? num : num * 100;
-      return `${pct.toFixed(pct % 1 === 0 ? 0 : 1)}%`;
+      return `${Math.round(pct)}%`;
     }
     return String(value);
   }
   
   // For currency types, use existing formatCurrencyValue
   if (currency || claimType === "investment_amount" || claimType.startsWith("valuation_") || claimType === "metric_amount") {
-    return typeof value === "string" ? value : formatCurrencyValue(value);
+    const formatted = typeof value === "string" ? value : formatCurrencyValue(value);
+    // A3.8.93: Polish - remove .0 from integer millions (e.g., "$5.0m" -> "$5m")
+    return formatted.replace(/\$(\d+)\.0([mb])/g, '$$$1$2');
   }
   
   // Fallback
@@ -13465,6 +13467,15 @@ function formatNumericSupportReason({
   if (supportType === "exact" || (supportType === "rounded" && hasSemanticSupport)) {
     // Exact match or rounded with semantic support
     if (supportType === "exact") {
+      // A3.8.93: Include valuation subtype in confirmed reason if available
+      if (canonType.startsWith("valuation_")) {
+        const subtypeLabel = canonType === "valuation_pre_money" ? "pre-money valuation" :
+                            canonType === "valuation_post_money" ? "post-money valuation" :
+                            canonType === "valuation_enterprise_value" ? "enterprise valuation" :
+                            canonType === "valuation_equity_value" ? "equity valuation" :
+                            "valuation";
+        return `${typeLabel} (${stmtDisplay} ${subtypeLabel}) is supported by the source.${citeStr}`;
+      }
       return `${typeLabel} (${stmtDisplay}) is supported by the source.${citeStr}`;
     } else {
       // Rounded match
@@ -13897,20 +13908,43 @@ function presentAssessmentReasons({
       }
     }
     
-    // A3.8.92: Check for ALT_HINT bullets and allow 2 bullets if present
-    const hasAltHint = finalReasons.some(r => typeof r === "string" && r.startsWith("[ALT_HINT]"));
-    const effectiveMaxBullets = hasAltHint ? 2 : maxBullets;
-    
-    // Hard cap at effectiveMaxBullets
-    finalReasons = finalReasons.slice(0, effectiveMaxBullets);
-    
-    // A3.8.92: Strip [ALT_HINT] tag from final reasons before returning
-    finalReasons = finalReasons.map(r => {
-      if (typeof r === "string" && r.startsWith("[ALT_HINT]")) {
-        return r.replace(/^\[ALT_HINT\]\s*/, "");
+    // A3.8.93: Convert to structured items to preserve ALT_HINT
+    let finalReasonsItems = finalReasons.map(text => {
+      if (typeof text === "string" && text.startsWith("[ALT_HINT]")) {
+        return { kind: "ALT_HINT", text: text.replace(/^\[ALT_HINT\]\s*/, "") };
       }
-      return r;
+      return { kind: "PRIMARY", text: text };
     });
+    
+    // Apply caps only on PRIMARY items (preserve all ALT_HINT items)
+    const primaryItems = finalReasonsItems.filter(item => item.kind === "PRIMARY");
+    const altHintItems = finalReasonsItems.filter(item => item.kind === "ALT_HINT");
+    const cappedPrimary = primaryItems.slice(0, maxBullets);
+    
+    // Rebuild: preserve order - for each PRIMARY item, include its immediately following ALT_HINT if present
+    let finalReasonsItemsRebuilt = [];
+    for (let i = 0; i < finalReasonsItems.length && finalReasonsItemsRebuilt.filter(item => item.kind === "PRIMARY").length < maxBullets; i++) {
+      const item = finalReasonsItems[i];
+      if (item.kind === "PRIMARY") {
+        finalReasonsItemsRebuilt.push(item);
+        // Check if next item is ALT_HINT and add it
+        if (i + 1 < finalReasonsItems.length && finalReasonsItems[i + 1].kind === "ALT_HINT") {
+          finalReasonsItemsRebuilt.push(finalReasonsItems[i + 1]);
+          i++; // Skip the ALT_HINT item
+        }
+      }
+    }
+    
+    // A3.8.93: Ensure at least 1 PRIMARY + 1 ALT_HINT when ALT_HINT exists (minimum 2 bullets)
+    if (altHintItems.length > 0 && finalReasonsItemsRebuilt.filter(item => item.kind === "PRIMARY").length === 0) {
+      // If no PRIMARY items survived, keep at least one PRIMARY before ALT_HINT
+      if (primaryItems.length > 0) {
+        finalReasonsItemsRebuilt = [primaryItems[0], altHintItems[0]];
+      }
+    }
+    
+    // Convert back to strings
+    finalReasons = finalReasonsItemsRebuilt.map(item => item.text);
     
     // 3.6 - Diagnostics
     if (runId && reqSig) {
@@ -14761,15 +14795,13 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
               diag(runId, reqSig, `[A3.8.89][NOT_SUPPORTED_REASON] idx=${statementIndex} type=${claimType} claimValue=${valueDisplay} matchedNumbersCount=${matchedCount} hasSource=${hasAnySource ? 1 : 0} guidanceAdded=${guidanceAdded}`);
             }
 
-            // Append hint bullet immediately after not-supported bullet (if room)
+            // A3.8.93: Append hint bullet with [ALT_HINT] tag (preserved through normalization)
             if (altHint) {
-              // Push primary reason now, then hint, and skip normal push at end by setting reasonText empty
+              // Push primary reason now, then hint with [ALT_HINT] tag, and skip normal push at end by setting reasonText empty
               reasons.push(reasonText);
-              if (reasons.length < 3) {
-                reasons.push(altHint);
-              }
+              reasons.push(altHint); // Keep [ALT_HINT] tag for detection in normalization
               reasonText = "";
-              if (reasons.length >= 3) break;
+              // Don't break here - let normalization handle ALT_HINT preservation
               continue;
             }
           } else {
@@ -15298,7 +15330,35 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
   
   // A3.8.55: Part B - Post-filter generic hedging note when it adds no value
   // A3.8.56: Use finalReasons to avoid const reassignment crash
-  let finalReasons = reasons;
+  // A3.8.93: Convert to structured items to preserve ALT_HINT through normalization
+  let finalReasonsItems = reasons.map(text => {
+    if (typeof text === "string" && text.startsWith("[ALT_HINT]")) {
+      return { kind: "ALT_HINT", text: text.replace(/^\[ALT_HINT\]\s*/, "") };
+    }
+    return { kind: "PRIMARY", text: text };
+  });
+  
+  // Apply caps only on PRIMARY items (preserve all ALT_HINT items)
+  const primaryItems = finalReasonsItems.filter(item => item.kind === "PRIMARY");
+  const altHintItems = finalReasonsItems.filter(item => item.kind === "ALT_HINT");
+  const cappedPrimary = primaryItems.slice(0, 3);
+  
+  // Rebuild: preserve order - for each PRIMARY item, include its immediately following ALT_HINT if present
+  let finalReasonsItemsRebuilt = [];
+  for (let i = 0; i < finalReasonsItems.length && finalReasonsItemsRebuilt.filter(item => item.kind === "PRIMARY").length < 3; i++) {
+    const item = finalReasonsItems[i];
+    if (item.kind === "PRIMARY") {
+      finalReasonsItemsRebuilt.push(item);
+      // Check if next item is ALT_HINT and add it
+      if (i + 1 < finalReasonsItems.length && finalReasonsItems[i + 1].kind === "ALT_HINT") {
+        finalReasonsItemsRebuilt.push(finalReasonsItems[i + 1]);
+        i++; // Skip the ALT_HINT item
+      }
+    }
+  }
+  
+  // Convert back to strings for return
+  let finalReasons = finalReasonsItemsRebuilt.map(item => item.text);
   if (selectionMode && reasons.length > 0) {
     const canonicalClaimsCount = canonicalClaims.length;
     const statementText = statement?.text || "";
@@ -21162,21 +21222,51 @@ ${
             // A3.8.70: Citations/evidence cleared if all claims unsupported
             citations: finalCitations,
             evidence: finalEvidence,
-            reliabilityScore: computedReliability.reliabilityScore,
-            reliabilityLabel: computedReliability.reliabilityLabel,
-            // A3.8.0: Set reasonsSource to "canonical" when canonical claims exist
             // A3.8.83: Apply human-readable presentation to reasons (pure presentation layer)
-            reasons: presentAssessmentReasons({
-              statementText: text,
-              reasons: finalReasons,
-              canonicalClaims: canonicalClaims,
-              evidenceMatchSummary: evidenceMatchForStatementResult,
-              selectionMode: selectionUsed,
-              hasUploadedDocs: uploadedDocs.length > 0,
-              statementIndex: idx,
-              runId: runId,
-              reqSig: reqSig,
-            }),
+            // A3.8.93: Compute once and use for both reasons and reliability enforcement
+            ...(() => {
+              const presentedReasons = presentAssessmentReasons({
+                statementText: text,
+                reasons: finalReasons,
+                canonicalClaims: canonicalClaims,
+                evidenceMatchSummary: evidenceMatchForStatementResult,
+                selectionMode: selectionUsed,
+                hasUploadedDocs: uploadedDocs.length > 0,
+                statementIndex: idx,
+                runId: runId,
+                reqSig: reqSig,
+              });
+              
+              // A3.8.93: Enforce Low reliability when not-supported primary bullet exists
+              let finalReliabilityScore = computedReliability.reliabilityScore;
+              let finalReliabilityLabel = computedReliability.reliabilityLabel;
+              
+              if (selectionUsed && Array.isArray(presentedReasons) && presentedReasons.length > 0) {
+                const firstReason = presentedReasons[0];
+                if (typeof firstReason === "string") {
+                  const isNotSupported = /does not mention|does not contain|not supported|not found|The source does not/i.test(firstReason);
+                  if (isNotSupported) {
+                    // Force Low reliability - do not allow canonical claim reliability to override
+                    finalReliabilityLabel = "Low";
+                    finalReliabilityScore = 30;
+                    // Clear citations unless explicitly included in the reason text
+                    if (!firstReason.match(/\[\d+\]/)) {
+                      finalCitations = [];
+                      finalEvidence = [];
+                    }
+                    if (runId && reqSig) {
+                      diag(runId, reqSig, `[A3.8.93][ENFORCE_LOW] idx=${idx} reason=not_supported_primary`);
+                    }
+                  }
+                }
+              }
+              
+              return {
+                reliabilityScore: finalReliabilityScore,
+                reliabilityLabel: finalReliabilityLabel,
+                reasons: presentedReasons,
+              };
+            })(),
             reasonsSource: reasonsSourceValue,
             _claimsError: claimsError, // Internal flag for later phases
           },
