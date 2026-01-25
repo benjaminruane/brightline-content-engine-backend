@@ -1,10 +1,3 @@
 {
-  "version": 2,
-  "installCommand": "npm ci",
-  "buildCommand": "npm run build || echo \"no build\"",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "version": 2
 }
