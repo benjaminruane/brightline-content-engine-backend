@@ -256,61 +256,6 @@ export default async function handler(req, res) {
     phase = "run_review_pipeline";
     dbg.phase = phase;
     
-    // A3.8.115: Two-step import probe to distinguish dependency vs parse failures
-    // Probe 1: can we import 'openai'?
-    try {
-      await import("openai");
-    } catch (e) {
-      console.error("[A3.8.115][OPENAI_IMPORT_FAIL]", {
-        name: e?.name,
-        message: e?.message,
-        stack: e?.stack
-      });
-      throw e;
-    }
-    
-    // Probe 2: import-graph probe to identify exact failing dependency
-    try {
-      // Read impl source text
-      const { readFile } = await import("node:fs/promises");
-      const implUrl = new URL("./analyse-statements-impl.js", import.meta.url);
-      const implText = await readFile(implUrl, "utf8");
-      
-      // Extract import specifiers (both `import ... from "x"` and `import "x"`)
-      const targets = [];
-      const fromRe = /\bimport\s+[^;]*?\s+from\s+["']([^"']+)["']/g;
-      const sideRe = /\bimport\s+["']([^"']+)["']/g;
-      
-      let m;
-      while ((m = fromRe.exec(implText))) targets.push(m[1]);
-      while ((m = sideRe.exec(implText))) targets.push(m[1]);
-      
-      // De-dupe in order
-      const seen = new Set();
-      const importTargets = targets.filter(t => (seen.has(t) ? false : (seen.add(t), true)));
-      
-      // Sequentially import each target and log first failure with the target
-      for (const target of importTargets) {
-        try {
-          await import(target);
-        } catch (e) {
-          console.error("[A3.8.116][IMPORT_GRAPH_FAIL]", {
-            target,
-            name: e?.name,
-            message: e?.message,
-            stack: e?.stack
-          });
-          throw e;
-        }
-      }
-      
-      // After all dependency imports succeed, import the impl module itself
-      await import("./analyse-statements-impl.js");
-    } catch (e) {
-      // Re-throw to preserve existing error behavior
-      throw e;
-    }
-    
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     try {
       const mod = await import("./analyse-statements-impl.js");
@@ -407,8 +352,8 @@ export default async function handler(req, res) {
       return res.status(200).json(payload);
       
     } catch (err) {
-      // A3.8.116: Ensure errors still return JSON and preserve CORS headers
-      console.error("[A3.8.116][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+      // A3.8.117: Ensure errors still return JSON and preserve CORS headers
+      console.error("[A3.8.117][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
       
       // A3.8.17: Extract cause chain
       const causeChain = extractCauseChain(err);
@@ -457,8 +402,8 @@ export default async function handler(req, res) {
     }
     
   } catch (err) {
-    // A3.8.116: Top-level catch for any errors before dynamic import
-    console.error("[A3.8.116][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    // A3.8.117: Top-level catch for any errors before dynamic import
+    console.error("[A3.8.117][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
     
     // A3.8.99: If headers not already sent, return error JSON with CORS headers
     if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
