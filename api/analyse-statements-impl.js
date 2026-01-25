@@ -13291,6 +13291,34 @@ function collectSameTypeAlternativeForClaim(cc, uploadedDocs, sourceIdsAvailable
 }
 
 /**
+ * A3.8.92: Format claim value for reason text (handles ownership_percent as percentage, not currency)
+ * @param {string} claimType - Canonical claim type
+ * @param {number|string} value - Claim value
+ * @param {string} currency - Currency unit (if any)
+ * @returns {string} Formatted value string
+ */
+function formatClaimValueForReason(claimType, value, currency) {
+  if (claimType === "ownership_percent" || claimType === "fee_percent" || claimType === "growth_percent") {
+    // Format as percentage
+    const num = typeof value === "number" ? value : parseFloat(String(value));
+    if (Number.isFinite(num)) {
+      // Handle both 0-1 and 0-100 formats
+      const pct = num > 1 ? num : num * 100;
+      return `${pct.toFixed(pct % 1 === 0 ? 0 : 1)}%`;
+    }
+    return String(value);
+  }
+  
+  // For currency types, use existing formatCurrencyValue
+  if (currency || claimType === "investment_amount" || claimType.startsWith("valuation_") || claimType === "metric_amount") {
+    return typeof value === "string" ? value : formatCurrencyValue(value);
+  }
+  
+  // Fallback
+  return typeof value === "string" ? value : String(value);
+}
+
+/**
  * A3.8.89: Format human-friendly not-supported reason for numeric claims
  * @param {Object} params - Parameters object
  * @param {string} params.claimType - Canonical claim type (e.g., "investment_amount")
@@ -13320,8 +13348,8 @@ function formatNotSupportedNumericReason({
   
   const typeLabel = typeLabels[claimType] || "claim";
   
-  // Format claim value
-  let valueDisplay = typeof claimValue === "string" ? claimValue : formatCurrencyValue(claimValue);
+  // A3.8.92: Format claim value using helper (handles ownership_percent as percentage)
+  let valueDisplay = formatClaimValueForReason(claimType, claimValue, null);
   
   // Determine article
   const article = /^[aeiou]/i.test(typeLabel) ? "an" : "a";
@@ -13350,7 +13378,8 @@ function formatNotSupportedNumericReason({
       }
       
       if (closestMatch !== null) {
-        const formattedMatch = formatCurrencyValue(closestMatch);
+        // A3.8.92: Use formatClaimValueForReason to handle ownership_percent correctly
+        const formattedMatch = formatClaimValueForReason(claimType, closestMatch, null);
         // Use appropriate label based on claim type
         const figureLabel = claimType === "investment_amount" ? "investment figure" :
                            claimType.startsWith("valuation_") ? "valuation figure" :
@@ -13420,14 +13449,14 @@ function formatNumericSupportReason({
   
   const typeLabel = typeLabels[canonType] || "Claim";
   
-  // Format statement value
-  let stmtDisplay = typeof stmtValue === "string" ? stmtValue : formatCurrencyValue(stmtValue);
+  // A3.8.92: Format statement value using helper (handles ownership_percent as percentage)
+  let stmtDisplay = formatClaimValueForReason(canonType, stmtValue, null);
   
-  // Format source value(s) - use first/closest match
+  // A3.8.92: Format source value(s) using helper
   let sourceDisplay = null;
   if (Array.isArray(sourceValues) && sourceValues.length > 0) {
     const firstSource = sourceValues[0];
-    sourceDisplay = typeof firstSource === "string" ? firstSource : formatCurrencyValue(firstSource);
+    sourceDisplay = formatClaimValueForReason(canonType, firstSource, null);
   }
   
   const citeStr = citation ? ` ${citation}` : "";
@@ -13868,8 +13897,20 @@ function presentAssessmentReasons({
       }
     }
     
-    // Hard cap at maxBullets
-    finalReasons = finalReasons.slice(0, maxBullets);
+    // A3.8.92: Check for ALT_HINT bullets and allow 2 bullets if present
+    const hasAltHint = finalReasons.some(r => typeof r === "string" && r.startsWith("[ALT_HINT]"));
+    const effectiveMaxBullets = hasAltHint ? 2 : maxBullets;
+    
+    // Hard cap at effectiveMaxBullets
+    finalReasons = finalReasons.slice(0, effectiveMaxBullets);
+    
+    // A3.8.92: Strip [ALT_HINT] tag from final reasons before returning
+    finalReasons = finalReasons.map(r => {
+      if (typeof r === "string" && r.startsWith("[ALT_HINT]")) {
+        return r.replace(/^\[ALT_HINT\]\s*/, "");
+      }
+      return r;
+    });
     
     // 3.6 - Diagnostics
     if (runId && reqSig) {
@@ -13877,6 +13918,9 @@ function presentAssessmentReasons({
       const afterCount = finalReasons.length;
       const tagsStr = JSON.stringify(tagCounts);
       diag(runId, reqSig, `[A3.8.83][REASONS_PRESENT] idx=${statementIndex} before=${beforeCount} after=${afterCount} tags=${tagsStr}`);
+      if (hasAltHint) {
+        diag(runId, reqSig, `[A3.8.92][ALT_HINT_PRESERVE] idx=${statementIndex} before=${beforeCount} after=${afterCount} keptAltHint=true`);
+      }
     }
     
     return finalReasons;
@@ -14447,23 +14491,10 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
       : "";
     
     // A3.8.12: Extract value/amount for display
+    // A3.8.92: Use formatClaimValueForReason to handle ownership_percent correctly
     let valueDisplay = "";
     if (cc.value !== null) {
-      if (cc.currency) {
-        const millions = cc.value / 1e6;
-        if (millions >= 1) {
-          valueDisplay = `$${millions.toFixed(millions >= 10 ? 0 : 1)}m`;
-        } else {
-          const thousands = cc.value / 1e3;
-          if (thousands >= 1) {
-            valueDisplay = `$${thousands.toFixed(thousands >= 10 ? 0 : 1)}k`;
-          } else {
-            valueDisplay = `$${cc.value.toLocaleString()}`;
-          }
-        }
-      } else if (cc.unit === "%") {
-        valueDisplay = `${cc.value > 0 ? "+" : ""}${cc.value}%`;
-      }
+      valueDisplay = formatClaimValueForReason(claimType, cc.value, cc.currency);
     }
     
     // Extract metric hint from displayText if available
@@ -14557,13 +14588,22 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     
     // A3.8.73: Citation placement rules - determine if citations should be included
     // A3.8.74: weak_semantic is treated as semantic support for citation purposes
+    // A3.8.92: Numeric-only matches are treated as supported, so allow citations
     let shouldIncludeCitationsInReason = true;
-    if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse) {
-      if (!evidenceMatchToUse.hasSemanticSupport) {
+    let isSupportedByEvidence = false;
+    if (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode) {
+      const matchQuality = evidenceMatchToUse.matchQuality || "none";
+      const hasNumericPresence = evidenceMatchToUse.hasNumericPresence === true;
+      const matchedNumbersCount = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers.length : 0;
+      isSupportedByEvidence = hasNumericPresence && 
+        (matchQuality === "numeric_only" || matchQuality === "numeric_plus_semantic") &&
+        matchedNumbersCount > 0;
+      
+      if (!evidenceMatchToUse.hasSemanticSupport && !isSupportedByEvidence) {
         // Not supported reason - MUST NOT include citations
         shouldIncludeCitationsInReason = false;
       } else {
-        // Support reason (including weak_semantic) - MAY include citations
+        // Support reason (including weak_semantic and numeric-only) - MAY include citations
         shouldIncludeCitationsInReason = true;
       }
     }
@@ -14604,13 +14644,41 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         const floor = verificationFloorByKey.get(floorKey);
         const hasNumericFloor = floor && Array.isArray(floor.acceptedNums) && floor.acceptedNums.length > 0;
         
+        // A3.8.92: Check if numeric-only match should be treated as supported (reuse from above)
+        // isSupportedByEvidence is already computed above in citation logic
+        
         // A3.8.79: If floor exists and coverage already shows the number, suppress "not supported" bullet
-        const shouldSuppressNotSupported = hasNumericFloor && 
+        // A3.8.92: Also suppress if numeric-only match is present (treat as supported)
+        const shouldSuppressNotSupported = (hasNumericFloor && 
           evidenceMatchToUse.hasNumericPresence && 
           Array.isArray(evidenceMatchToUse.matchedNumbers) && 
-          evidenceMatchToUse.matchedNumbers.length > 0;
+          evidenceMatchToUse.matchedNumbers.length > 0) || isSupportedByEvidence;
         
-        if (!shouldSuppressNotSupported) {
+        // A3.8.92: If numeric-only match is present, treat as supported and generate supported reason
+        if (isSupportedByEvidence) {
+          // Skip not-supported path; generate supported reason for numeric-only match
+          effectiveReliability = "Medium"; // Numeric-only typically maps to Medium
+          // Generate supported reason using formatNumericSupportReason
+          const isNumericClaim = financialTypes.has(claimType);
+          if (isNumericClaim) {
+            const sourceValues = Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : [];
+            const supportType = determineNumericSupportType(evidenceMatchToUse, cc.value, sourceValues);
+            const hasHedge = hasHedgeTerm(statementText);
+            const citeStr = shouldIncludeCitationsInReason && citations.length > 0
+              ? (citations.length === 1 ? ` [${citations[0]}]` : ` [${citations.join(", ")}]`)
+              : "";
+            
+            reasonText = formatNumericSupportReason({
+              canonType: claimType,
+              stmtValue: valueDisplay,
+              sourceValues: sourceValues,
+              supportType: supportType,
+              hasSemanticSupport: false, // numeric-only, no semantic
+              hasHedgeTerm: hasHedge,
+              citation: citeStr,
+            });
+          }
+        } else if (!shouldSuppressNotSupported) {
           effectiveReliability = "Low";
           // Update verb to reflect Low reliability
           const verbForLow = verbForReliability("Low");
@@ -14649,8 +14717,9 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
 
               const alt = collectSameTypeAlternativeForClaim(cc, uploadedDocs, sourceIdsAvailable);
               if (alt && Number.isFinite(alt.value) && Math.abs(alt.value - (typeof cc.value === "number" ? cc.value : 0)) > 0.01) {
-                const x = (typeof valueDisplay === "string" && valueDisplay) ? valueDisplay : formatCurrencyValue(cc.value);
-                const y = formatCurrencyValue(alt.value);
+                // A3.8.92: Use formatClaimValueForReason to handle ownership_percent correctly
+                const x = formatClaimValueForReason(claimType, cc.value || valueDisplay, cc.currency);
+                const y = formatClaimValueForReason(claimType, alt.value, null);
 
                 // Map valuation label for valuation types
                 const valuationLabel =
@@ -14664,12 +14733,13 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
                 const hintCitationId = citationId || (alt.sourceId !== undefined && alt.sourceId !== null ? alt.sourceId : null);
                 const hintCite = hintCitationId ? ` [${hintCitationId}]` : "";
 
+                // A3.8.92: Add [ALT_HINT] tag prefix to preserve through normalization
                 if (claimType === "investment_amount") {
-                  altHint = `The source does not mention an investment amount of ${x}. However, it does report an investment of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                  altHint = `[ALT_HINT] The source does not mention an investment amount of ${x}. However, it does report an investment of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
                 } else if (claimType === "ownership_percent") {
-                  altHint = `The source does not mention an ownership stake of ${x}. However, it does report an ownership stake of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                  altHint = `[ALT_HINT] The source does not mention an ownership stake of ${x}. However, it does report an ownership stake of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
                 } else if (valuationLabel) {
-                  altHint = `The source does not mention a ${valuationLabel} of ${x}. However, it does report a ${valuationLabel} of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
+                  altHint = `[ALT_HINT] The source does not mention a ${valuationLabel} of ${x}. However, it does report a ${valuationLabel} of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
                 }
 
                 if (altHint && runId && reqSig) {
@@ -14727,9 +14797,10 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
     
     // A3.8.56: For bare USD statements with corpusSearch hits, replace "not supported" with deterministic reason (legacy, only if feature flag disabled)
     // A3.8.74: weak_semantic is treated as semantic support, so use Medium verb
-    const verbToUse = USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && !evidenceMatchToUse.hasSemanticSupport
+    // A3.8.92: Numeric-only matches (isSupportedByEvidence) are treated as supported, so use Medium verb
+    const verbToUse = USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && selectionMode && !evidenceMatchToUse.hasSemanticSupport && !isSupportedByEvidence
       ? verbForReliability("Low")
-      : (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && evidenceMatchToUse.matchQuality === "weak_semantic"
+      : (USE_EVIDENCE_MATCH_V1 && evidenceMatchToUse && (evidenceMatchToUse.matchQuality === "weak_semantic" || isSupportedByEvidence)
           ? verbForReliability("Medium")
           : verb);
     const isNotSupported = verbToUse === "is not supported by the provided source(s).";
@@ -20806,25 +20877,31 @@ ${
         }
         
         // A3.8.30: Reason cap behavior (selection mode only)
-        // Allow up to 4 reasons in selection mode with priority ordering
+        // A3.8.92: Allow 2 bullets when ALT_HINT is present
         const reasonsBefore = finalReasons.length;
-        const maxReasons = selectionUsed ? 4 : 3;
+        const hasAltHint = Array.isArray(finalReasons) && finalReasons.some(r => typeof r === "string" && r.startsWith("[ALT_HINT]"));
+        const maxReasons = (selectionUsed && hasAltHint) ? 2 : (selectionUsed ? 4 : 3);
+        
         if (Array.isArray(finalReasons) && finalReasons.length > maxReasons) {
           // Priority order:
           // 1) Deal-context assessment OR primary canonical reason
-          // 2) Type-specific caution note (mapping/basis/explicitness) if triggered
-          // 3) Coverage "Found in sources" (if added)
-          // 4) Coverage "Not found in sources" OR scope note (if needed)
+          // 2) ALT_HINT bullets (preserve if present)
+          // 3) Type-specific caution note (mapping/basis/explicitness) if triggered
+          // 4) Coverage "Found in sources" (if added)
+          // 5) Coverage "Not found in sources" OR scope note (if needed)
           // If reasons exceed cap, drop lowest priority coverage line first
           
           // Keep first maxReasons, but prioritize by type
           const prioritized = [];
+          const altHints = [];
           const coverageFound = [];
           const coverageNotFound = [];
           const scopeNote = [];
           
           for (const reason of finalReasons) {
-            if (reason.includes("Coverage (figures): Found in sources")) {
+            if (typeof reason === "string" && reason.startsWith("[ALT_HINT]")) {
+              altHints.push(reason);
+            } else if (reason.includes("Coverage (figures): Found in sources")) {
               coverageFound.push(reason);
             } else if (reason.includes("Coverage (figures): Not found in sources")) {
               coverageNotFound.push(reason);
@@ -20835,13 +20912,31 @@ ${
             }
           }
           
-          // Rebuild with priority: prioritized, coverageFound, then coverageNotFound/scopeNote
-          finalReasons = [...prioritized, ...coverageFound, ...coverageNotFound, ...scopeNote].slice(0, maxReasons);
+          // A3.8.92: Rebuild with priority: prioritized, altHints (immediately after main), then coverage/scope
+          // Ensure ALT_HINT comes right after its corresponding not-supported bullet
+          const ordered = [...prioritized];
+          if (altHints.length > 0) {
+            // Insert ALT_HINT bullets right after the first prioritized bullet (which should be the not-supported one)
+            ordered.splice(1, 0, ...altHints.slice(0, 1)); // Only take first ALT_HINT
+          }
+          ordered.push(...coverageFound, ...coverageNotFound, ...scopeNote);
+          finalReasons = ordered.slice(0, maxReasons);
           
           if (runId && reqSig) {
-            diag(runId, reqSig, `[REASONS][CAP] idx=${idx} before=${reasonsBefore} after=${finalReasons.length} selectionMode=${selectionUsed}`);
+            diag(runId, reqSig, `[REASONS][CAP] idx=${idx} before=${reasonsBefore} after=${finalReasons.length} selectionMode=${selectionUsed} hasAltHint=${hasAltHint ? 1 : 0}`);
+            if (hasAltHint) {
+              diag(runId, reqSig, `[A3.8.92][ALT_HINT_PRESERVE] idx=${idx} before=${reasonsBefore} after=${finalReasons.length} keptAltHint=true`);
+            }
           }
         }
+        
+        // A3.8.92: Strip [ALT_HINT] tag from final reasons before returning
+        finalReasons = finalReasons.map(r => {
+          if (typeof r === "string" && r.startsWith("[ALT_HINT]")) {
+            return r.replace(/^\[ALT_HINT\]\s*/, "");
+          }
+          return r;
+        });
         
         // A3.8.4: Emit CANON_SUMMARY with reasons count (must always be emitted)
         // A3.8.30: Add coverage diagnostics (selection mode only)
