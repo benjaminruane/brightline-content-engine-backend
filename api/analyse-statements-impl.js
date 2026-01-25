@@ -19355,7 +19355,8 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
   });
 }
 
-async function handler(req, res) {
+// A3.8.102: ESM default export inline with function declaration for Vercel ESM parsing
+export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   // A3.5.22 Fix: Hoist hasReturned, runId, reqSig, and finalResponseObject to top of handler scope
@@ -22627,7 +22628,4 @@ ${
     return res.status(500).json({ ok: false, error: "Internal server error: handler reached end without returning" });
   }
 }
-
-// A3.8.102: ESM default export for dynamic import() in ESM wrappers
-export default handler;
 
