@@ -13943,8 +13943,16 @@ function presentAssessmentReasons({
       }
     }
     
-    // A3.8.94: Define hasAltHint before converting to strings (check structured items)
-    const hasAltHint = finalReasonsItemsRebuilt.some(item => item.kind === "ALT_HINT");
+    // A3.8.96: Define hasAltHint before converting to strings (check structured items)
+    // Initialize to false to prevent undefined errors
+    let hasAltHint = false;
+    if (Array.isArray(finalReasonsItemsRebuilt)) {
+      hasAltHint = finalReasonsItemsRebuilt.some(item => item && item.kind === "ALT_HINT");
+    }
+    // Also check finalReasons strings as fallback
+    if (!hasAltHint && Array.isArray(finalReasons)) {
+      hasAltHint = finalReasons.some(r => typeof r === "string" && r.includes("[ALT_HINT]"));
+    }
     
     // Convert back to strings
     finalReasons = finalReasonsItemsRebuilt.map(item => item.text);
@@ -13954,10 +13962,10 @@ function presentAssessmentReasons({
       const beforeCount = reasons.length;
       const afterCount = finalReasons.length;
       const tagsStr = JSON.stringify(tagCounts);
-      // A3.8.94: hasAltHint is already defined above (before converting to strings)
       diag(runId, reqSig, `[A3.8.83][REASONS_PRESENT] idx=${statementIndex} before=${beforeCount} after=${afterCount} tags=${tagsStr}`);
       if (hasAltHint) {
-        diag(runId, reqSig, `[A3.8.92][ALT_HINT_PRESERVE] idx=${statementIndex} before=${beforeCount} after=${afterCount} keptAltHint=true`);
+        // A3.8.96: Normalize tag from A3.8.92 to A3.8.95
+        diag(runId, reqSig, `[A3.8.95][ALT_HINT_PRESERVE] idx=${statementIndex} before=${beforeCount} after=${afterCount} keptAltHint=true`);
       }
     }
     
@@ -14022,34 +14030,66 @@ function evidenceMatchForStatement(statementText, corpusResult, debugContext = {
   const hasFuzzyMatch = matchTypes.includes("fuzzy");
   
   // A3.8.75: Deterministic matchedNumbers extraction from corpusSearch accepted matches
+  // A3.8.96: MUST only accept numbers that exactly equal a stmtNum (after normalization)
   // MUST derive from matchesAccepted to preserve numeric presence
   const matchedNumbers = [];
   const stmtNums = Array.isArray(debug.numsInStmt) ? debug.numsInStmt : [];
   const docNums = Array.isArray(debug.numsInDoc) ? debug.numsInDoc : [];
+  
+  // A3.8.96: Build normalized sets for exact matching
+  const stmtNumSet = new Set(stmtNums);
+  const docNumSet = new Set(docNums);
+  
   // A3.8.75: Extract matchesAccepted from corpusResult (check both debug.matchesAccepted and top-level)
   const matchesAccepted = Array.isArray(debug.matchesAccepted) ? debug.matchesAccepted : 
                          (Array.isArray(corpusResult?.matchesAccepted) ? corpusResult.matchesAccepted : []);
   
-  // A3.8.75: First, use matchesAccepted if available (most reliable - this is the source of truth)
+  // A3.8.96: Filter matchesAccepted to only include numbers that exactly match statement numbers
   if (matchesAccepted.length > 0) {
+    let rejectionLogged = false;
     for (const match of matchesAccepted) {
       if (match && typeof match.docValue === "number" && Number.isFinite(match.docValue)) {
-        matchedNumbers.push(match.docValue);
+        const docValue = match.docValue;
+        // A3.8.96: Only accept if docValue exactly equals a stmtNum (or within rounding tolerance)
+        let isAccepted = false;
+        for (const stmtNum of stmtNums) {
+          const diff = Math.abs(stmtNum - docValue);
+          const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docValue), 1);
+          // Exact match or within 0.01 tolerance (for rounding)
+          if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+            // Also verify docValue is in docNumSet
+            if (docNumSet.has(docValue)) {
+              matchedNumbers.push(docValue);
+              isAccepted = true;
+              break;
+            }
+          }
+        }
+        
+        // A3.8.96: Diagnostic when a number would have been accepted but doesn't match stmtNum
+        if (!isAccepted && !rejectionLogged && runId && reqSig) {
+          // Check if docValue is in docNumSet but not in stmtNumSet
+          if (docNumSet.has(docValue) && !stmtNumSet.has(docValue)) {
+            const stmtNumsStr = stmtNums.join(",");
+            const docNumsStr = docNums.slice(0, 10).join(",");
+            diag(runId, reqSig, `[A3.8.96][CORPUS_REJECT_NOT_EQUAL] stmtNums=[${stmtNumsStr}] docNums=[${docNumsStr}] rejectedNum=${docValue}`);
+            rejectionLogged = true;
+          }
+        }
       }
     }
   } else if (hasNumberMatch && stmtNums.length > 0 && docNums.length > 0) {
-    // A3.8.94: Fallback: compute intersection of stmtNums and docNums (within 5% tolerance)
-    // Only accept numbers that are present in the document numeric set
-    const docNumsSet = new Set(docNums);
-    let rejectionLogged = false; // A3.8.94: Log at most once per statement
+    // A3.8.96: Fallback: compute intersection - only accept if stmtNum exactly matches docNum
+    let rejectionLogged = false;
     for (const stmtNum of stmtNums) {
       let foundMatch = false;
       for (const docNum of docNums) {
         const diff = Math.abs(stmtNum - docNum);
         const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
-        if (diff / maxVal <= 0.05) {
-          // A3.8.94: Verify docNum is in docNumsSet (should always be true, but be explicit)
-          if (docNumsSet.has(docNum)) {
+        // A3.8.96: Only accept if exact match or within rounding tolerance (0.01 or 10%)
+        if (diff < 0.01 || (diff / maxVal <= 0.05 && diff < stmtNum * 0.1)) {
+          // Verify docNum is in docNumSet and stmtNum is in stmtNumSet
+          if (docNumSet.has(docNum) && stmtNumSet.has(stmtNum)) {
             matchedNumbers.push(docNum);
             foundMatch = true;
             break; // Only add each stmtNum once
@@ -14057,21 +14097,13 @@ function evidenceMatchForStatement(statementText, corpusResult, debugContext = {
         }
       }
       
-      // A3.8.94: Diagnostic when statement number would have been accepted but is not in docNumsSet
-      if (!foundMatch && stmtNum != null && !rejectionLogged) {
-        // Check if stmtNum is close to any docNum but not exactly matching
-        let wouldHaveMatched = false;
-        for (const docNum of docNums) {
-          const diff = Math.abs(stmtNum - docNum);
-          const maxVal = Math.max(Math.abs(stmtNum), Math.abs(docNum), 1);
-          if (diff / maxVal <= 0.05) {
-            wouldHaveMatched = true;
-            break;
-          }
-        }
-        if (wouldHaveMatched && runId && reqSig) {
-          const docId = uploadedDocs[0]?.id || "unknown";
-          diag(runId, reqSig, `[A3.8.94][CORPUS_REJECT_NOT_IN_DOC] stmtNum=${stmtNum} docId=${docId}`);
+      // A3.8.96: Diagnostic when statement number doesn't match any doc number
+      if (!foundMatch && stmtNum != null && !rejectionLogged && runId && reqSig) {
+        // Check if docNumSet contains numbers but none match stmtNum
+        if (docNumSet.size > 0) {
+          const stmtNumsStr = stmtNums.join(",");
+          const docNumsStr = docNums.slice(0, 10).join(",");
+          diag(runId, reqSig, `[A3.8.96][CORPUS_REJECT_NOT_EQUAL] stmtNums=[${stmtNumsStr}] docNums=[${docNumsStr}] rejectedNum=${stmtNum}`);
           rejectionLogged = true;
         }
       }
@@ -14709,15 +14741,45 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
         const floor = verificationFloorByKey.get(floorKey);
         const hasNumericFloor = floor && Array.isArray(floor.acceptedNums) && floor.acceptedNums.length > 0;
         
-        // A3.8.92: Check if numeric-only match should be treated as supported (reuse from above)
+        // A3.8.96: Check if numeric-only match should be treated as supported (reuse from above)
         // isSupportedByEvidence is already computed above in citation logic
         
+        // A3.8.96: For ownership_percent, only treat as supported if acceptedNums contains the statement number
         // A3.8.79: If floor exists and coverage already shows the number, suppress "not supported" bullet
-        // A3.8.92: Also suppress if numeric-only match is present (treat as supported)
-        const shouldSuppressNotSupported = (hasNumericFloor && 
-          evidenceMatchToUse.hasNumericPresence && 
-          Array.isArray(evidenceMatchToUse.matchedNumbers) && 
-          evidenceMatchToUse.matchedNumbers.length > 0) || isSupportedByEvidence;
+        // A3.8.95: Also suppress if numeric-only match is present (treat as supported) BUT only if numbers match
+        let shouldSuppressNotSupported = false;
+        
+        // A3.8.96: Special handling for ownership_percent - must have acceptedNums matching statement number
+        if (claimType === "ownership_percent") {
+          const acceptedNums = hasNumericFloor ? (floor.acceptedNums || []) : 
+                               (Array.isArray(evidenceMatchToUse.matchedNumbers) ? evidenceMatchToUse.matchedNumbers : []);
+          const stmtValue = cc.value;
+          
+          if (acceptedNums.length === 0) {
+            // A3.8.96: No accepted numbers = not supported
+            shouldSuppressNotSupported = false;
+          } else if (stmtValue !== null) {
+            const stmtNum = typeof stmtValue === "number" ? stmtValue : parseFloat(String(stmtValue).replace(/[$,%]/g, ""));
+            const hasMatchingAccepted = acceptedNums.some(accepted => {
+              const acceptedNum = typeof accepted === "number" ? accepted : parseFloat(String(accepted).replace(/[$,%]/g, ""));
+              if (Number.isFinite(stmtNum) && Number.isFinite(acceptedNum)) {
+                const diff = Math.abs(stmtNum - acceptedNum);
+                return diff < 0.01 || (diff < stmtNum * 0.1);
+              }
+              return false;
+            });
+            shouldSuppressNotSupported = hasMatchingAccepted;
+          } else {
+            shouldSuppressNotSupported = false; // No stmtValue = not supported
+          }
+        } else if (hasNumericFloor && evidenceMatchToUse.hasNumericPresence && 
+            Array.isArray(evidenceMatchToUse.matchedNumbers) && evidenceMatchToUse.matchedNumbers.length > 0) {
+          // For non-ownership_percent, use existing logic
+          shouldSuppressNotSupported = true;
+        } else if (isSupportedByEvidence) {
+          // Will be checked below for number matching
+          shouldSuppressNotSupported = false; // Will be set to true if numbers match
+        }
         
         // A3.8.92: If numeric-only match is present, treat as supported and generate supported reason
         // A3.8.95: Only treat as supported if accepted/source number matches statement number
@@ -14897,7 +14959,7 @@ function buildReasonsFromCanonicalClaims(canonicalClaims, context = {}) {
                 }
                 const hintCite = hintCitationId ? ` [${hintCitationId}]` : "";
 
-                // A3.8.92: Add [ALT_HINT] tag prefix to preserve through normalization
+                // A3.8.95: Add [ALT_HINT] tag prefix to preserve through normalization
                 if (claimType === "investment_amount") {
                   altHint = `[ALT_HINT] The source does not mention an investment amount of ${x}. However, it does report an investment of ${y}. You may want to review the draft figure or adjust it if appropriate.${hintCite}`;
                 } else if (claimType === "ownership_percent") {
@@ -21067,9 +21129,13 @@ ${
         }
         
         // A3.8.30: Reason cap behavior (selection mode only)
-        // A3.8.92: Allow 2 bullets when ALT_HINT is present
+        // A3.8.95: Allow 2 bullets when ALT_HINT is present
         const reasonsBefore = finalReasons.length;
-        const hasAltHint = Array.isArray(finalReasons) && finalReasons.some(r => typeof r === "string" && r.startsWith("[ALT_HINT]"));
+        // A3.8.96: Define hasAltHint with default false to prevent undefined errors
+        let hasAltHint = false;
+        if (Array.isArray(finalReasons)) {
+          hasAltHint = finalReasons.some(r => typeof r === "string" && r.startsWith("[ALT_HINT]"));
+        }
         const maxReasons = (selectionUsed && hasAltHint) ? 2 : (selectionUsed ? 4 : 3);
         
         if (Array.isArray(finalReasons) && finalReasons.length > maxReasons) {
@@ -21115,12 +21181,13 @@ ${
           if (runId && reqSig) {
             diag(runId, reqSig, `[REASONS][CAP] idx=${idx} before=${reasonsBefore} after=${finalReasons.length} selectionMode=${selectionUsed} hasAltHint=${hasAltHint ? 1 : 0}`);
             if (hasAltHint) {
-              diag(runId, reqSig, `[A3.8.92][ALT_HINT_PRESERVE] idx=${idx} before=${reasonsBefore} after=${finalReasons.length} keptAltHint=true`);
+              // A3.8.96: Normalize tag from A3.8.92 to A3.8.95
+              diag(runId, reqSig, `[A3.8.95][ALT_HINT_PRESERVE] idx=${idx} before=${reasonsBefore} after=${finalReasons.length} keptAltHint=true`);
             }
           }
         }
         
-        // A3.8.92: Strip [ALT_HINT] tag from final reasons before returning
+        // A3.8.95: Strip [ALT_HINT] tag from final reasons before returning
         finalReasons = finalReasons.map(r => {
           if (typeof r === "string" && r.startsWith("[ALT_HINT]")) {
             return r.replace(/^\[ALT_HINT\]\s*/, "");
