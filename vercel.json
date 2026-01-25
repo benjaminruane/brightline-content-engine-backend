@@ -1,3 +1,5 @@
 {
-  "version": 2
+  "version": 2,
+  "installCommand": "npm ci",
+  "buildCommand": "echo \"no build\""
 }
