@@ -100,6 +100,60 @@ export default async function handler(req, res) {
             message: vmErr?.message || String(vmErr)
           });
         }
+        
+        // A3.8.160: Scan for handler definition patterns and export context
+        try {
+          const handlerPatterns = [
+            { pattern: /\basync\s+function\s+handler\s*\(/, name: "async function handler(" },
+            { pattern: /\bfunction\s+handler\s*\(/, name: "function handler(" },
+            { pattern: /\bconst\s+handler\s*=\s*/, name: "const handler =" },
+            { pattern: /\blet\s+handler\s*=\s*/, name: "let handler =" },
+            { pattern: /\bvar\s+handler\s*=\s*/, name: "var handler =" }
+          ];
+          
+          for (const { pattern, name } of handlerPatterns) {
+            const matchIndex = implText.search(pattern);
+            if (matchIndex !== -1) {
+              // Calculate 1-based line number
+              const textBeforeMatch = implText.substring(0, matchIndex);
+              const lineNumber = textBeforeMatch.split(/\r?\n/).length;
+              
+              // Extract context lines [line-3 .. line+3] (7 lines total)
+              const contextStart = Math.max(0, lineNumber - 4); // 0-based index for line-3
+              const contextEnd = Math.min(lines.length, lineNumber + 3); // 0-based index for line+3 (exclusive)
+              const contextLines = lines.slice(contextStart, contextEnd);
+              
+              console.log("[A3.8.160][IMPL_HANDLER_MATCH]", {
+                pattern: name,
+                lineNumber,
+                contextLines
+              });
+            }
+          }
+          
+          // Find export default handler; context
+          const exportIndex = implText.lastIndexOf("export default handler;");
+          if (exportIndex !== -1) {
+            const textBeforeExport = implText.substring(0, exportIndex);
+            const exportLineNumber = textBeforeExport.split(/\r?\n/).length;
+            
+            // Extract context lines [line-3 .. line+3] (7 lines total)
+            const contextStart = Math.max(0, exportLineNumber - 4); // 0-based index for line-3
+            const contextEnd = Math.min(lines.length, exportLineNumber + 3); // 0-based index for line+3 (exclusive)
+            const contextLines = lines.slice(contextStart, contextEnd);
+            
+            console.log("[A3.8.160][IMPL_EXPORT_CONTEXT]", {
+              lineNumber: exportLineNumber,
+              contextLines
+            });
+          }
+        } catch (scanErr) {
+          console.error("[A3.8.160][IMPL_TEXT_SCAN_FAIL]", {
+            name: scanErr?.name || "Error",
+            message: scanErr?.message || String(scanErr),
+            stack: scanErr?.stack
+          });
+        }
       } catch (readErr) {
         console.error("[A3.8.153][IMPL_EXPORT_SCAN_FAIL]", {
           name: readErr?.name || "Error",
