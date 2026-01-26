@@ -7,7 +7,7 @@
 //
 // Statement analysis endpoint (Review).
 
-// OpenAI imported dynamically to avoid Vercel bundling issues with ESM
+// ESM module - imports must be at top
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -17,6 +17,12 @@ import {
 import { corpusSearch, normalizeUploadedDocText } from "../lib/corpusSearch.js";
 import { createHash } from "node:crypto";
 import { canonicalizeClaims, normalizeMoneyAnchor, isMoneyAnchor, normalizeAnyAnchor } from "../lib/canonicalClaims.js";
+
+// OpenAI imported dynamically to avoid Vercel bundling issues with ESM
+
+// A3.8.102: ESM marker - ensures file is recognized as ESM module
+// Handler function will be declared later and exported at end
+let handler;
 
 // A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
 const runStateByRid = {};
@@ -19355,8 +19361,8 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
   });
 }
 
-// A3.8.102: ESM default export inline with function declaration for Vercel ESM parsing
-export default async function handler(req, res) {
+// A3.8.102: Handler function declaration - will be exported at end
+handler = async function(req, res) {
   setCorsHeaders(req, res);
 
   // A3.5.22 Fix: Hoist hasReturned, runId, reqSig, and finalResponseObject to top of handler scope
@@ -22630,4 +22636,7 @@ ${
     return res.status(500).json({ ok: false, error: "Internal server error: handler reached end without returning" });
   }
 }
+
+// A3.8.102: ESM default export at end of file
+export default handler;
 
