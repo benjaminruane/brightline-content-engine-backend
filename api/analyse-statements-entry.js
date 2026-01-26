@@ -68,6 +68,38 @@ export default async function handler(req, res) {
           count: exportSamples.length,
           samples: exportSamples
         });
+        
+        // A3.8.155: Precompile with vm.SourceTextModule to get precise SyntaxError location
+        try {
+          const vm = await import("node:vm");
+          if (typeof vm.SourceTextModule === "function") {
+            try {
+              // compile-only; do not link/evaluate
+              new vm.SourceTextModule(implText, { identifier: implUrl.href });
+              console.log("[A3.8.155][VM_COMPILE_OK]", { implHref: implUrl.href });
+            } catch (e) {
+              const props = {};
+              try {
+                for (const k of Object.getOwnPropertyNames(e || {})) {
+                  props[k] = e[k];
+                }
+              } catch (_) {}
+              console.error("[A3.8.155][VM_COMPILE_FAIL]", {
+                name: e?.name,
+                message: e?.message,
+                stack: e?.stack,
+                props
+              });
+            }
+          } else {
+            console.log("[A3.8.155][VM_NO_SOURCETEXTMODULE]", { ok: false });
+          }
+        } catch (vmErr) {
+          console.error("[A3.8.155][VM_COMPILE_FAIL]", {
+            name: vmErr?.name || "Error",
+            message: vmErr?.message || String(vmErr)
+          });
+        }
       } catch (readErr) {
         console.error("[A3.8.153][IMPL_EXPORT_SCAN_FAIL]", {
           name: readErr?.name || "Error",
