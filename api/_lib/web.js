@@ -89,7 +89,7 @@ function inferEntityFromDraft(draftText = "") {
   if (!draftText) return "";
 
   const patterns = [
-    /([A-Z][A-Za-z0-9&.-]{2,})['’]s\b/,
+    /([A-Z][A-Za-z0-9&.-]{2,})['']s\b/,
     /([A-Z][A-Za-z0-9&.-]{2,})\s+(is|provides|offers|was|has)\b/,
   ];
 
