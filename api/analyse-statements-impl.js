@@ -7,7 +7,7 @@
 //
 // Statement analysis endpoint (Review).
 
-import OpenAI from "openai";
+// OpenAI imported dynamically to avoid Vercel bundling issues with ESM
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -19411,6 +19411,8 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
   }
 
+  // Dynamic import of OpenAI to avoid Vercel bundling issues with ESM
+  const { default: OpenAI } = await import("openai");
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   // A3.7.5: Main handler logic - wrapped in try/catch to ensure CORS + JSON on all exceptions
