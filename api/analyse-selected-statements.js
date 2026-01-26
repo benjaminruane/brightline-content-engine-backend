@@ -52,7 +52,8 @@ export default async function handler(req, res) {
   if (diagFlag === "1") {
     try {
       const { readFile } = await import("node:fs/promises");
-      const implUrl = new URL("./analyse-statements-impl.js", import.meta.url);
+      // A3.8.134: Probe reads from lib/ where impl was moved to avoid Vercel bundling
+      const implUrl = new URL("../lib/analyse-statements-impl.js", import.meta.url);
       const implText = await readFile(implUrl, "utf8");
 
       const targets = [];
