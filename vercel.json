@@ -6,10 +6,10 @@
       "includeFiles": "{node_modules/**,lib/**,api/_lib/**}"
     },
     "api/analyse-statements.js": {
-      "includeFiles": ["lib/package.json"]
+      "includeFiles": "lib/package.json"
     },
     "api/analyse-selected-statements.js": {
-      "includeFiles": ["lib/package.json"]
+      "includeFiles": "lib/package.json"
     }
   }
 }
