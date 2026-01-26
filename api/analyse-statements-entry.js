@@ -6,6 +6,39 @@
 console.log("[A3.8.137][ENTRY_META]", { entryMetaUrl: import.meta.url });
 
 export default async function handler(req, res) {
+  // A3.8.147: Diagnostic probe for /var/task/lib contents (env-gated)
+  const diagFlag = String(process.env.BRIGHTLINE_DIAG_IMPORTS || "");
+  if (diagFlag === "1") {
+    try {
+      const { readdir, access } = await import("node:fs/promises");
+      const taskLibPath = "/var/task/lib";
+      
+      try {
+        const entries = await readdir(taskLibPath);
+        const sorted = entries.sort().slice(0, 80);
+        console.log("[A3.8.147][TASK_LIB_LIST]", { count: entries.length, sample: sorted });
+        
+        // Check for web.js existence
+        try {
+          await access("/var/task/lib/web.js");
+          console.log("[A3.8.147][TASK_LIB_HAS_WEB]", { hasWeb: true });
+        } catch (accessErr) {
+          console.log("[A3.8.147][TASK_LIB_HAS_WEB]", { hasWeb: false });
+        }
+      } catch (fsErr) {
+        console.error("[A3.8.147][TASK_LIB_PROBE_FAIL]", {
+          message: fsErr?.message || String(fsErr),
+          name: fsErr?.name || "Error"
+        });
+      }
+    } catch (importErr) {
+      console.error("[A3.8.147][TASK_LIB_PROBE_FAIL]", {
+        message: importErr?.message || String(importErr),
+        name: importErr?.name || "Error"
+      });
+    }
+  }
+  
   // A3.8.137: Resolve impl URL and log before importing
   const implHref = new URL("../lib/analyse-statements-impl.js", import.meta.url).href;
   console.log("[A3.8.137][IMPL_URL]", { implHref });
