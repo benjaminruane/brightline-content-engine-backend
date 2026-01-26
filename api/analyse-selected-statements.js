@@ -50,6 +50,48 @@ export default async function handler(req, res) {
   // A3.8.123: Probe: sequentially import impl dependency graph and report first failing specifier (conditional via env flag)
   // Execute BEFORE any dynamic imports that can throw
   if (diagFlag === "1") {
+    // A3.8.148: Probe /var/task/lib before import-graph loop
+    try {
+      const { readdir, access } = await import("node:fs/promises");
+      try {
+        const entries = await readdir("/var/task/lib");
+        const sorted = entries.sort().slice(0, 80);
+        console.log("[A3.8.148][TASK_LIB_LIST]", { count: entries.length, sample: sorted });
+        
+        // Check existence of key files
+        let hasWeb = false;
+        let hasPkg = false;
+        let hasImpl = false;
+        
+        try {
+          await access("/var/task/lib/web.js");
+          hasWeb = true;
+        } catch (_) {}
+        
+        try {
+          await access("/var/task/lib/package.json");
+          hasPkg = true;
+        } catch (_) {}
+        
+        try {
+          await access("/var/task/lib/analyse-statements-impl.js");
+          hasImpl = true;
+        } catch (_) {}
+        
+        console.log("[A3.8.148][TASK_LIB_HAS]", { hasWeb, hasPkg, hasImpl });
+      } catch (fsErr) {
+        console.log("[A3.8.148][TASK_LIB_PROBE_FAIL]", {
+          name: fsErr?.name || "Error",
+          message: fsErr?.message || String(fsErr)
+        });
+      }
+    } catch (importErr) {
+      console.log("[A3.8.148][TASK_LIB_PROBE_FAIL]", {
+        name: importErr?.name || "Error",
+        message: importErr?.message || String(importErr)
+      });
+    }
+    
     try {
       const { readFile } = await import("node:fs/promises");
       // A3.8.134: Probe reads from lib/ where impl was moved to avoid Vercel bundling
