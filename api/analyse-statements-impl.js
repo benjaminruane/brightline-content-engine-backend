@@ -20,10 +20,6 @@ import { canonicalizeClaims, normalizeMoneyAnchor, isMoneyAnchor, normalizeAnyAn
 
 // OpenAI imported dynamically to avoid Vercel bundling issues with ESM
 
-// A3.8.102: ESM marker - ensures file is recognized as ESM module
-// Handler function will be declared later and exported at end
-let handler;
-
 // A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
 const runStateByRid = {};
 
@@ -19362,7 +19358,7 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
 }
 
 // A3.8.102: Handler function declaration - will be exported at end
-handler = async function(req, res) {
+async function handler(req, res) {
   setCorsHeaders(req, res);
 
   // A3.5.22 Fix: Hoist hasReturned, runId, reqSig, and finalResponseObject to top of handler scope
