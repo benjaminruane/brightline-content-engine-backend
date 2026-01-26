@@ -301,13 +301,14 @@ export default async function handler(req, res) {
     dbg.phase = phase;
     
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
+    // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
     try {
-      const implUrl = new URL("./analyse-statements-impl.js", import.meta.url);
+      const implUrl = new URL("./analyse-statements-entry.js", import.meta.url);
       const mod = await import(implUrl.href);
       const implHandler = mod?.default;
       
       if (typeof implHandler !== "function") {
-        throw new Error("analyse-statements-impl.js default export is not a function");
+        throw new Error("analyse-statements-entry.js default export is not a function");
       }
       
       // A3.8.99: Read body safely and force selectionUsed=true for this endpoint

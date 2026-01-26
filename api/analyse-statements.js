@@ -30,12 +30,13 @@ export default async function handler(req, res) {
   }
 
   // A3.8.101: Lazy-load implementation using ESM dynamic import() inside try/catch to ensure CORS + JSON on import failures
+  // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
   try {
-    const mod = await import("./analyse-statements-impl.js");
+    const mod = await import("./analyse-statements-entry.js");
     const implHandler = mod?.default;
     
     if (typeof implHandler !== "function") {
-      throw new Error("analyse-statements-impl.js default export is not a function");
+      throw new Error("analyse-statements-entry.js default export is not a function");
     }
     return await implHandler(req, res);
   } catch (err) {
