@@ -43,9 +43,9 @@ export default async function handler(req, res) {
     return;
   }
   
-  // A3.8.123: Prove env var presence at runtime
+  // A3.8.131: Prove env var presence at runtime
   const diagFlag = String(process.env.BRIGHTLINE_DIAG_IMPORTS || "");
-  console.log("[A3.8.123][DIAG_ENV]", { BRIGHTLINE_DIAG_IMPORTS: diagFlag, enabled: diagFlag === "1" });
+  console.log("[A3.8.131][DIAG_ENV]", { BRIGHTLINE_DIAG_IMPORTS: diagFlag, enabled: diagFlag === "1" });
   
   // A3.8.123: Probe: sequentially import impl dependency graph and report first failing specifier (conditional via env flag)
   // Execute BEFORE any dynamic imports that can throw
@@ -186,8 +186,8 @@ export default async function handler(req, res) {
     phase = "parse_body";
     dbg.phase = phase;
     
-    // A3.8.53: Build marker - confirms deployed build includes A3.8.53 changes
-    diag(`[DIAG][A3.8.53][BUILD_MARKER] active=true`);
+    // A3.8.131: Build marker - confirms deployed build includes A3.8.131 changes
+    diag(`[DIAG][A3.8.131][BUILD_MARKER] active=true`);
     
     // A3.8.16: Parse body safely
     let body;
@@ -302,9 +302,10 @@ export default async function handler(req, res) {
     
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
+    // A3.8.131: Log import target to confirm entry module is being used
+    console.log("[A3.8.131][IMPORT_TARGET]", { target: "./analyse-statements-entry.js" });
     try {
-      const implUrl = new URL("./analyse-statements-entry.js", import.meta.url);
-      const mod = await import(implUrl.href);
+      const mod = await import("./analyse-statements-entry.js");
       const implHandler = mod?.default;
       
       if (typeof implHandler !== "function") {
@@ -398,8 +399,8 @@ export default async function handler(req, res) {
       return res.status(200).json(payload);
       
     } catch (err) {
-      // A3.8.123: Ensure errors still return JSON and preserve CORS headers
-      console.error("[A3.8.123][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+      // A3.8.131: Ensure errors still return JSON and preserve CORS headers
+      console.error("[A3.8.131][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
       
       // A3.8.17: Extract cause chain
       const causeChain = extractCauseChain(err);
@@ -448,8 +449,8 @@ export default async function handler(req, res) {
     }
     
   } catch (err) {
-    // A3.8.123: Top-level catch for any errors before dynamic import
-    console.error("[A3.8.123][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    // A3.8.131: Top-level catch for any errors before dynamic import
+    console.error("[A3.8.131][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
     
     // A3.8.99: If headers not already sent, return error JSON with CORS headers
     if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
