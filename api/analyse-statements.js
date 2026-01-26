@@ -43,8 +43,8 @@ export default async function handler(req, res) {
     // A3.7.6: Set CORS headers defensively (safe to repeat)
     setCorsHeaders(req, res);
     
-    // Log error concisely
-    console.error("[analyse-statements wrapper]", err?.name, err?.message);
+    // A3.8.135: Log error concisely
+    console.error("[A3.8.135][ANALYSE_STATEMENTS_WRAPPER_FATAL]", err?.name, err?.message);
     
     // Return JSON error response with CORS headers
     return res.status(500).json({

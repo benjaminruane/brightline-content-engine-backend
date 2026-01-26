@@ -71,9 +71,15 @@ export default async function handler(req, res) {
 
       for (const target of importTargets) {
         try {
-          await import(target);
+          // A3.8.135: Resolve relative imports relative to implUrl to avoid incorrect resolution
+          if (target.startsWith(".")) {
+            const resolved = new URL(target, implUrl).href;
+            await import(resolved);
+          } else {
+            await import(target);
+          }
         } catch (e) {
-          console.error("[A3.8.123][IMPORT_GRAPH_FAIL]", {
+          console.error("[A3.8.135][IMPORT_GRAPH_FAIL]", {
             target,
             name: e?.name,
             message: e?.message,
