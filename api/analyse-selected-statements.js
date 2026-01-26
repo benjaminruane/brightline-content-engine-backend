@@ -408,8 +408,25 @@ export default async function handler(req, res) {
       } catch (_) {}
       console.error("[A3.8.132][IMPORT_ERR_PROPS]", errProps);
       
-      // A3.8.132: Ensure errors still return JSON and preserve CORS headers
-      console.error("[A3.8.132][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+      // A3.8.133: Dump cause error properties to identify failing module (SyntaxError url/fileName)
+      if (err && err.cause) {
+        const causeProps = {};
+        try {
+          for (const k of Object.getOwnPropertyNames(err.cause || {})) {
+            causeProps[k] = err.cause[k];
+          }
+        } catch (_) {}
+        console.error("[A3.8.133][CAUSE_ERR_PROPS]", causeProps);
+      }
+      
+      // A3.8.133: Log cause error type (name and constructor)
+      console.error("[A3.8.133][CAUSE_ERR_TYPE]", {
+        name: err?.cause?.name,
+        ctor: err?.cause?.constructor?.name
+      });
+      
+      // A3.8.133: Ensure errors still return JSON and preserve CORS headers
+      console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
       
       // A3.8.17: Extract cause chain
       const causeChain = extractCauseChain(err);
@@ -458,8 +475,8 @@ export default async function handler(req, res) {
     }
     
   } catch (err) {
-    // A3.8.132: Top-level catch for any errors before dynamic import
-    console.error("[A3.8.132][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    // A3.8.133: Top-level catch for any errors before dynamic import
+    console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
     
     // A3.8.99: If headers not already sent, return error JSON with CORS headers
     if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
