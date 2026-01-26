@@ -302,7 +302,8 @@ export default async function handler(req, res) {
     
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     try {
-      const mod = await import("./analyse-statements-impl.js");
+      const implUrl = new URL("./analyse-statements-impl.js", import.meta.url);
+      const mod = await import(implUrl.href);
       const implHandler = mod?.default;
       
       if (typeof implHandler !== "function") {
