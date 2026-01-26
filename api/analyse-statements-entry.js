@@ -40,7 +40,7 @@ export default async function handler(req, res) {
   }
   
   // A3.8.137: Resolve impl URL and log before importing
-  const implUrl = new URL("../lib/analyse-statements-impl.js", import.meta.url);
+  const implUrl = new URL("../lib/analyse-statements-impl.mjs", import.meta.url);
   const implHref = implUrl.href;
   console.log("[A3.8.137][IMPL_URL]", { implHref });
   

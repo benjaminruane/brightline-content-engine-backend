@@ -74,7 +74,7 @@ export default async function handler(req, res) {
         } catch (_) {}
         
         try {
-          await access("/var/task/lib/analyse-statements-impl.js");
+          await access("/var/task/lib/analyse-statements-impl.mjs");
           hasImpl = true;
         } catch (_) {}
         
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
     try {
       const { readFile } = await import("node:fs/promises");
       // A3.8.134: Probe reads from lib/ where impl was moved to avoid Vercel bundling
-      const implUrl = new URL("../lib/analyse-statements-impl.js", import.meta.url);
+      const implUrl = new URL("../lib/analyse-statements-impl.mjs", import.meta.url);
       const implText = await readFile(implUrl, "utf8");
 
       const targets = [];
