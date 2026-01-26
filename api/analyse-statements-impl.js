@@ -13,10 +13,10 @@ import {
   formatWebResultsForPrompt,
   webResultsToReferences,
   deriveQueryFromDraft,
-} from "./_lib/web.js";
-import { corpusSearch, normalizeUploadedDocText } from "./_lib/corpusSearch.js";
+} from "../lib/web.js";
+import { corpusSearch, normalizeUploadedDocText } from "../lib/corpusSearch.js";
 import { createHash } from "node:crypto";
-import { canonicalizeClaims, normalizeMoneyAnchor, isMoneyAnchor, normalizeAnyAnchor } from "./_lib/canonicalClaims.js";
+import { canonicalizeClaims, normalizeMoneyAnchor, isMoneyAnchor, normalizeAnyAnchor } from "../lib/canonicalClaims.js";
 
 // A3.5.21 Diagnostic: Track run state to detect post-FINAL_COUNTS execution
 const runStateByRid = {};
