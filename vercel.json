@@ -3,7 +3,7 @@
   "installCommand": "npm ci",
   "functions": {
     "api/**/*.js": {
-      "includeFiles": "lib/package.json"
+      "includeFiles": "lib/package.json,lib/web.js"
     }
   }
 }
