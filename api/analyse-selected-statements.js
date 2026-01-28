@@ -388,13 +388,25 @@ export default async function handler(req, res) {
         throw e;
       }
       
-      // A3.8.32: Hard guard - ensure impl returned a plain payload object (not res)
-      const looksLikeResponseObject =
+      // A3.8.169: Accept Node response objects (handler already responded)
+      if (payload === undefined || payload === null) {
+        // Handler already handled the response, continue as normal
+      } else if (
         payload &&
         typeof payload === "object" &&
-        ("_events" in payload || "outputData" in payload || typeof payload.status === "function");
-      
-      if (looksLikeResponseObject) {
+        (typeof payload.statusCode === "number" || typeof payload.end === "function" || typeof payload.writeHead === "function")
+      ) {
+        // Handler returned Node response object (already sent response)
+        console.log("[A3.8.169][ENTRY_RETURNED_NODE_RESPONSE][OK]", {
+          statusCode: payload?.statusCode ?? null,
+        });
+        return; // Response already sent, exit early
+      } else if (
+        payload &&
+        typeof payload === "object" &&
+        ("_events" in payload || "outputData" in payload || typeof payload.status === "function")
+      ) {
+        // Legacy check: only throw if it's not a recognized Node response pattern
         const e = new Error("IMPL_RETURNED_RESPONSE_OBJECT");
         e.cause = new Error("Implementation returned Node response object instead of JSON payload");
         throw e;
