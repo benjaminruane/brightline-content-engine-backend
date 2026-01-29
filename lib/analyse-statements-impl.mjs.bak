@@ -22447,6 +22447,7 @@ function enforceCorpusVerificationBeforeAbsence(statements, uploadedSources, uni
       }
       // If corpusSearch found nothing, continue to standard absence/ambiguity check below
     }
+    }
     
     // Invariant 2: Mandatory corpusSearch before absence language
     // Check if reasons contain absence claims
@@ -23789,6 +23790,8 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
     return stmt;
   });
 }
+
+// TEMP_REMOVE_SHIM_START
   if (!Array.isArray(statements)) return statements;
   
   return statements.map((stmt) => {
@@ -23996,6 +23999,7 @@ function applyParaphraseTolerance(statements, unifiedReferences) {
     return stmt;
   });
 }
+// TEMP_REMOVE_SHIM_END
 
 // A3.8.102: Handler function declaration - will be exported at end
 async function handler(req, res) {
