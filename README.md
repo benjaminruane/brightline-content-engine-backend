@@ -2,7 +2,7 @@
 
 Baseline lock: **v6.1.0-phase2**  
 Production branch: **main**
-
+ 
 This roadmap is authoritative.  
 Backend work must align strictly with frontend UX constraints.
 
@@ -147,3 +147,5 @@ These invariants define the minimum trust bar for **Statement Analysis (Review)*
 
 8) **Deterministic safeguards for anchors**  
    Numeric/anchor facts (valuation, funding, dates, percentages) must be normalized (e.g., `$25mm` == `$25 million`) before declaring mismatch/absence.
+
+trigger rollback deployment
