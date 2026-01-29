@@ -352,6 +352,24 @@ export default async function handler(req, res) {
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
     // A3.8.131: Log import target to confirm entry module is being used
+    // A3.8.187: Import helpers module first to catch syntax errors early with CORS-safe JSON response
+    let helpers;
+    try {
+      helpers = await import("../lib/analyse-statements-helpers.mjs");
+      console.log("[A3.8.187][HELPERS_IMPORT_OK]", { hasMarker: helpers?.__A3_8_187_HELPERS_OK === true });
+    } catch (err) {
+      console.log("[A3.8.187][HELPERS_IMPORT_FAIL]", { message: err?.message, name: err?.name });
+      return res.status(500).json({
+        ok: false,
+        statements: [],
+        references: [],
+        meta: {
+          fatal: "Helpers module failed to load",
+          detail: String(err?.message || err),
+        }
+      });
+    }
+    
     console.log("[A3.8.131][IMPORT_TARGET]", { target: "./analyse-statements-entry.js" });
     try {
       const mod = await import("./analyse-statements-entry.js");
