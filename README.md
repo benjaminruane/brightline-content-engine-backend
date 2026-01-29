@@ -2,7 +2,7 @@
 
 Baseline lock: **v6.1.0-phase2**  
 Production branch: **main**
-
+ 
 This roadmap is authoritative.  
 Backend work must align strictly with frontend UX constraints.
 
