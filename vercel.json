@@ -3,7 +3,7 @@
   "installCommand": "npm ci",
   "functions": {
     "api/**/*.js": {
-      "includeFiles": "{_lib/web.js,lib/analyse-statements-impl.mjs,lib/assessment-language-a391.mjs,lib/analyse-statements-helpers.cjs}"
+      "includeFiles": "{_lib/web.js,lib/analyse-statements-impl.mjs,lib/analyse-statements-helpers.cjs}"
     }
   }
 }
