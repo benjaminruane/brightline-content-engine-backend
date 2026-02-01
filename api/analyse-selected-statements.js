@@ -277,6 +277,9 @@ export default async function handler(req, res) {
         },
       });
     }
+    // A3.9.52: Verbose gate for non-essential wrapper logs (keep WRAP_UPLOADS_EFFECTIVE always-on)
+    const diagVerbose = Boolean(body?._diag?.verbose) || (process.env.BRIGHTLINE_DIAG_VERBOSE === "1");
+    const logV = (...args) => { if (diagVerbose) console.log(...args); };
     
     // A3.8.17: Phase: validate
     phase = "validate";
@@ -366,7 +369,7 @@ export default async function handler(req, res) {
     delete body.uploadedDocs;
     delete body.uploadedDocuments;
     if (body.uploadedSources.length === uploadedFromSources.length && uploadedFromSources.length > 0 && originalUploadedSourcesLen === 0) {
-      console.log("[A3.9.41][UPLOADS_DERIVED_FROM_SOURCES]", {
+      logV("[A3.9.41][UPLOADS_DERIVED_FROM_SOURCES]", {
         rid: req._brightlineRid || runId,
         derivedCount: uploadedFromSources.length
       });
@@ -417,11 +420,11 @@ export default async function handler(req, res) {
     // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
     // A3.8.131: Log import target to confirm entry module is being used
     const implHref = "./analyse-statements-entry.js";
-    console.log("[A3.8.131][IMPORT_TARGET]", { target: implHref });
-    console.log("[A3.9.35][WRAPPER_IMPL_URL]", { rid: req._brightlineRid || rid, implHref });
+    logV("[A3.8.131][IMPORT_TARGET]", { target: implHref });
+    logV("[A3.9.35][WRAPPER_IMPL_URL]", { rid: req._brightlineRid || rid, implHref });
     try {
       const mod = await import(implHref);
-      console.log("[A3.9.35][WRAPPER_IMPORT_OK]", { rid: req._brightlineRid || rid });
+      logV("[A3.9.35][WRAPPER_IMPORT_OK]", { rid: req._brightlineRid || rid });
       const implHandler = mod?.default;
       
       if (typeof implHandler !== "function") {
@@ -437,8 +440,8 @@ export default async function handler(req, res) {
       const diagContext = { rid: runId, sig: reqSig };
       req.body._diag = { ...(req.body._diag || {}), ...diagContext };
       
-      // A3.9.40 / A3.9.41: Definitive wrapper log right before calling impl
-      console.log("[A3.9.40][WRAP_UPLOADS]", {
+      // A3.9.40 / A3.9.41: Definitive wrapper log right before calling impl (A3.9.52: verbose-only)
+      logV("[A3.9.40][WRAP_UPLOADS]", {
         rid: req._brightlineRid || runId,
         uploadedSourcesCount: Array.isArray(req.body.uploadedSources) ? req.body.uploadedSources.length : -1,
         bodyKeysHasUploadedSources: Object.prototype.hasOwnProperty.call(req.body, "uploadedSources"),
@@ -475,7 +478,7 @@ export default async function handler(req, res) {
         (typeof payload.statusCode === "number" || typeof payload.end === "function" || typeof payload.writeHead === "function")
       ) {
         // Handler returned Node response object (already sent response)
-        console.log("[A3.8.169][ENTRY_RETURNED_NODE_RESPONSE][OK]", {
+        logV("[A3.8.169][ENTRY_RETURNED_NODE_RESPONSE][OK]", {
           statusCode: payload?.statusCode ?? null,
         });
         return; // Response already sent, exit early
