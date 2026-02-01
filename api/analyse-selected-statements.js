@@ -148,7 +148,8 @@ export default async function handler(req, res) {
   }
   
   // A3.8.16: Generate RID/SIG for logging
-  const runId = Math.random().toString(36).substring(2, 15);
+  // A3.9.37: Use wrapper RID so pre-import DIAG lines match [A3.9.35][WRAPPER_MARKER] rid
+  const runId = req._brightlineRid || Math.random().toString(36).substring(2, 15);
   const reqSig = Math.random().toString(36).substring(2, 10);
   
   // A3.8.16: Diagnostic logger
