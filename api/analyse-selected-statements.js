@@ -349,12 +349,28 @@ export default async function handler(req, res) {
     // A3.8.16: Log START (once, with request shape summary)
     diag(`START route=analyse-selected-statements selectionChars=${selectionChars} draftChars=${draftChars} hasInstructions=${hasInstructions}`);
     
-    // A3.9.39 / A3.9.40: Canonicalize uploaded sources into body.uploadedSources only (single source of truth)
+    // A3.9.41: Derive uploadedSources from sources (uploaded) before strict contract; single source of truth
+    const sourcesArr = Array.isArray(body?.sources) ? body.sources : [];
+    const uploadedFromSources = sourcesArr.filter(s =>
+      s && (s.sourceType === "uploaded" || s.source_type === "uploaded")
+    );
     const rawUploaded = body?.uploadedSources ?? body?.uploadedDocs ?? body?.uploadedDocuments ?? [];
-    const uploadedSources = Array.isArray(rawUploaded) ? rawUploaded : [];
-    body.uploadedSources = uploadedSources;
+    const originalUploadedSourcesLen = Array.isArray(rawUploaded) ? rawUploaded.length : 0;
+    if (Array.isArray(body?.uploadedSources) && body.uploadedSources.length > 0) {
+      // keep existing (no derivation)
+    } else if (uploadedFromSources.length > 0) {
+      body.uploadedSources = uploadedFromSources;
+    } else {
+      body.uploadedSources = [];
+    }
     delete body.uploadedDocs;
     delete body.uploadedDocuments;
+    if (body.uploadedSources.length === uploadedFromSources.length && uploadedFromSources.length > 0 && originalUploadedSourcesLen === 0) {
+      console.log("[A3.9.41][UPLOADS_DERIVED_FROM_SOURCES]", {
+        rid: req._brightlineRid || runId,
+        derivedCount: uploadedFromSources.length
+      });
+    }
 
     // A3.8.16: Guard segmentation inputs
     // Normalize body for implementation
@@ -397,12 +413,14 @@ export default async function handler(req, res) {
       const diagContext = { rid: runId, sig: reqSig };
       req.body._diag = diagContext;
       
-      // A3.9.40: Definitive wrapper log right before calling impl
+      // A3.9.40 / A3.9.41: Definitive wrapper log right before calling impl
       console.log("[A3.9.40][WRAP_UPLOADS]", {
         rid: req._brightlineRid || runId,
         uploadedSourcesCount: Array.isArray(req.body.uploadedSources) ? req.body.uploadedSources.length : -1,
         bodyKeysHasUploadedSources: Object.prototype.hasOwnProperty.call(req.body, "uploadedSources"),
-        bodyKeysSample: Object.keys(req.body || {}).slice(0, 20)
+        bodyKeysSample: Object.keys(req.body || {}).slice(0, 20),
+        sourcesCount: sourcesArr.length,
+        sourcesUploadedCount: uploadedFromSources.length
       });
       
       // A3.8.16: Call implementation with normalized body
