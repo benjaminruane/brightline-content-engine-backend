@@ -433,8 +433,9 @@ export default async function handler(req, res) {
       req.body = { ...bodyForImpl, selectionUsed: true, ...normalizedBody };
       
       // A3.8.25: Pass diag context to implementation for unified RID/SIG
+      // A3.9.51: Preserve _diag.verbose from body so impl can gate verbose corpus logs
       const diagContext = { rid: runId, sig: reqSig };
-      req.body._diag = diagContext;
+      req.body._diag = { ...(req.body._diag || {}), ...diagContext };
       
       // A3.9.40 / A3.9.41: Definitive wrapper log right before calling impl
       console.log("[A3.9.40][WRAP_UPLOADS]", {
