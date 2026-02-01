@@ -5,11 +5,10 @@
 // A3.8.99: ESM default export with CORS-safe preflight handling
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
-// A3.9.40: Module-scope version stamp (once per cold start)
-console.log("[A3.9.40][WRAPPER_VERSION]", {
-  ts: new Date().toISOString(),
-  url: import.meta.url
-});
+// A3.9.53: Module-scope version stamp — verbose-only (quiet-by-default)
+if (process.env.BRIGHTLINE_DIAG_VERBOSE === "1") {
+  console.log("[A3.9.40][WRAPPER_VERSION]", { ts: new Date().toISOString(), url: import.meta.url });
+}
 
 // A3.8.99: ESM default export (not CommonJS module.exports)
 export default async function handler(req, res) {
@@ -52,7 +51,11 @@ export default async function handler(req, res) {
   // A3.9.35: Request RID (pre-import) for deterministic logging
   const rid = (req.headers && (req.headers["x-brightline-rid"] || req.headers["X-Brightline-Rid"])) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   req._brightlineRid = rid;
-  console.log("[A3.9.35][WRAPPER_MARKER]", {
+  // A3.9.53: Log tiers — verbose gated by BRIGHTLINE_DIAG_VERBOSE (quiet-by-default)
+  const earlyDiagVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE === "1";
+  const logA = (...args) => console.log(...args);
+  const logVEarly = (...args) => { if (earlyDiagVerbose) console.log(...args); };
+  logVEarly("[A3.9.35][WRAPPER_MARKER]", {
     rid,
     route: "analyse-selected-statements",
     method: req.method,
@@ -60,13 +63,13 @@ export default async function handler(req, res) {
     selectionUsed: Boolean(req.body && req.body.selectionText),
   });
   
-  // A3.8.131: Prove env var presence at runtime
+  // A3.8.131: Prove env var presence at runtime (verbose-only)
   const diagFlag = String(process.env.BRIGHTLINE_DIAG_IMPORTS || "");
-  console.log("[A3.8.131][DIAG_ENV]", { BRIGHTLINE_DIAG_IMPORTS: diagFlag, enabled: diagFlag === "1" });
+  logVEarly("[A3.8.131][DIAG_ENV]", { BRIGHTLINE_DIAG_IMPORTS: diagFlag, enabled: diagFlag === "1" });
   
-  // A3.8.123: Probe: sequentially import impl dependency graph and report first failing specifier (conditional via env flag)
+  // A3.8.123: Probe: sequentially import impl dependency graph (conditional via env flags)
   // Execute BEFORE any dynamic imports that can throw
-  if (diagFlag === "1") {
+  if (earlyDiagVerbose && diagFlag === "1") {
     // A3.8.148: Probe /var/task/lib before import-graph loop
     try {
       const { readdir, access } = await import("node:fs/promises");
@@ -158,14 +161,6 @@ export default async function handler(req, res) {
   const runId = req._brightlineRid || Math.random().toString(36).substring(2, 15);
   const reqSig = Math.random().toString(36).substring(2, 10);
   
-  // A3.8.16: Diagnostic logger
-  function diag(...args) {
-    const message = args.map(arg => 
-      typeof arg === "object" ? JSON.stringify(arg) : String(arg)
-    ).join(" ");
-    console.log(`[DIAG][RID=${runId}][SIG=${reqSig}] ${message}`);
-  }
-  
   // A3.8.16: Validate request body
   function validateRequest(body) {
     const missing = [];
@@ -253,9 +248,6 @@ export default async function handler(req, res) {
     phase = "parse_body";
     dbg.phase = phase;
     
-    // A3.8.131: Build marker - confirms deployed build includes A3.8.131 changes
-    diag(`[DIAG][A3.8.131][BUILD_MARKER] active=true`);
-    
     // A3.8.16: Parse body safely
     let body;
     try {
@@ -264,7 +256,7 @@ export default async function handler(req, res) {
         throw new Error("Body must be an object");
       }
     } catch (parseErr) {
-      diag(`BAD_REQUEST route=analyse-selected-statements phase=${phase} invalid=["JSON parse error: ${parseErr.message}"]`);
+      logA("[A3.9.53][BAD_REQUEST]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", phase, invalid: `JSON parse: ${parseErr.message}` });
       return res.status(400).json({
         ok: false,
         error: {
@@ -277,9 +269,16 @@ export default async function handler(req, res) {
         },
       });
     }
-    // A3.9.52: Verbose gate for non-essential wrapper logs (keep WRAP_UPLOADS_EFFECTIVE always-on)
+    // A3.9.53: Quiet-by-default — diagVerbose from body or BRIGHTLINE_DIAG_VERBOSE; log tiers
     const diagVerbose = Boolean(body?._diag?.verbose) || (process.env.BRIGHTLINE_DIAG_VERBOSE === "1");
     const logV = (...args) => { if (diagVerbose) console.log(...args); };
+    // A3.9.53: Always-on request summary (one line per request); replaces START/END spam
+    const selectionUsed = Boolean(body?.selectionText);
+    const selectionChars = (body?.selectionText && typeof body.selectionText === "string") ? body.selectionText.trim().length : 0;
+    const uploadedSourcesCount = Array.isArray(body?.uploadedSources) ? body.uploadedSources.length : 0;
+    logA("[A3.9.53][REQ_SUMMARY]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", method: req.method, selectionUsed, selectionChars, uploadedSourcesCount, diagVerbose });
+    // A3.9.34: Build marker — always-on handler-level marker
+    logA("[A3.9.34][BUILD_MARKER]", { active: true });
     
     // A3.8.17: Phase: validate
     phase = "validate";
@@ -287,7 +286,7 @@ export default async function handler(req, res) {
     
     // A3.8.17: Harden: normalize unexpected types safely
     if (typeof body.selectionText !== "string") {
-      diag(`BAD_REQUEST route=analyse-selected-statements phase=${phase} invalid=["selectionText must be a string"]`);
+      logA("[A3.9.53][BAD_REQUEST]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", phase, invalid: "selectionText must be a string" });
       return res.status(400).json({
         ok: false,
         error: {
@@ -302,7 +301,7 @@ export default async function handler(req, res) {
     }
     
     if (typeof body.draftText !== "string") {
-      diag(`BAD_REQUEST route=analyse-selected-statements phase=${phase} invalid=["draftText must be a string"]`);
+      logA("[A3.9.53][BAD_REQUEST]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", phase, invalid: "draftText must be a string" });
       return res.status(400).json({
         ok: false,
         error: {
@@ -319,7 +318,7 @@ export default async function handler(req, res) {
     // A3.8.16: Validate request
     const validation = validateRequest(body);
     if (!validation.valid) {
-      diag(`BAD_REQUEST route=analyse-selected-statements phase=${phase} missing=[${validation.missing.join(",")}] invalid=[${validation.invalid.join("; ")}]`);
+      logA("[A3.9.53][BAD_REQUEST]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", phase, missing: validation.missing.join(","), invalid: validation.invalid.join("; ") });
       return res.status(400).json({
         ok: false,
         error: {
@@ -349,8 +348,8 @@ export default async function handler(req, res) {
     dbg.draftChars = draftChars;
     dbg.hasInstructions = hasInstructions;
     
-    // A3.8.16: Log START (once, with request shape summary)
-    diag(`START route=analyse-selected-statements selectionChars=${selectionChars} draftChars=${draftChars} hasInstructions=${hasInstructions}`);
+    // A3.8.16: Log START (verbose-only; REQ_SUMMARY replaces always-on)
+    logV("START route=analyse-selected-statements", { selectionChars, draftChars, hasInstructions });
     
     // A3.9.41: Derive uploadedSources from sources (uploaded) before strict contract; single source of truth
     const sourcesArr = Array.isArray(body?.sources) ? body.sources : [];
@@ -437,7 +436,7 @@ export default async function handler(req, res) {
       
       // A3.8.25: Pass diag context to implementation for unified RID/SIG
       // A3.9.51: Preserve _diag.verbose from body so impl can gate verbose corpus logs
-      const diagContext = { rid: runId, sig: reqSig };
+      const diagContext = { rid: runId, sig: reqSig, verbose: diagVerbose };
       req.body._diag = { ...(req.body._diag || {}), ...diagContext };
       
       // A3.9.40 / A3.9.41: Definitive wrapper log right before calling impl (A3.9.52: verbose-only)
@@ -497,7 +496,7 @@ export default async function handler(req, res) {
       if (!payload || typeof payload !== "object") {
         phase = "respond";
         dbg.phase = phase;
-        diag(`END route=analyse-selected-statements phase=${phase} segmentCount=0 statementCount=0 dropReasons=["PIPELINE_RETURNED_EMPTY"]`);
+        logV("END route=analyse-selected-statements", { phase, segmentCount: 0, statementCount: 0, dropReasons: ["PIPELINE_RETURNED_EMPTY"] });
         return res.status(200).json({
           ok: true,
           statements: [],
@@ -532,72 +531,23 @@ export default async function handler(req, res) {
         segmentCount = uniqueSegmentIds.size;
       }
       
-      // A3.8.29: Log END using counts from JSON payload with diagnostic info
+      // A3.8.29: Log END (verbose-only)
       const payloadOk = payload && payload.ok === true;
       const payloadKeys = Object.keys(payload || {}).slice(0, 12).join(",");
-      diag(`END route=analyse-selected-statements phase=${phase} segmentCount=${segmentCount} statementCount=${statementCount} payloadOk=${payloadOk} payloadKeys=${payloadKeys}`);
+      logV("END route=analyse-selected-statements", { phase, segmentCount, statementCount, payloadOk, payloadKeys });
       
       // A3.8.29: Return JSON payload via res.json()
       return res.status(200).json(payload);
       
     } catch (err) {
-      console.log("[A3.9.35][WRAPPER_IMPORT_FAIL]", {
-        rid: req._brightlineRid || rid,
-        name: err && err.name,
-        message: err && err.message,
-      });
-      // A3.8.132: Dump import error properties to identify failing module
-      const errProps = {};
-      try {
-        for (const k of Object.getOwnPropertyNames(err || {})) {
-          errProps[k] = err[k];
-        }
-      } catch (_) {}
-      console.error("[A3.8.132][IMPORT_ERR_PROPS]", errProps);
-      
-      // A3.8.133: Dump cause error properties to identify failing module (SyntaxError url/fileName)
-      if (err && err.cause) {
-        const causeProps = {};
-        try {
-          for (const k of Object.getOwnPropertyNames(err.cause || {})) {
-            causeProps[k] = err.cause[k];
-          }
-        } catch (_) {}
-        console.error("[A3.8.133][CAUSE_ERR_PROPS]", causeProps);
+      // A3.9.53: Always-on fatal log — single-line, rid, no body/stack dump
+      logA("[A3.9.53][FATAL]", { rid: req._brightlineRid || rid, route: "analyse-selected-statements", phase, name: err?.name, message: err?.message });
+      // Verbose: full details for debugging
+      if (earlyDiagVerbose || (typeof diagVerbose !== "undefined" && diagVerbose)) {
+        console.error("[A3.8.132][IMPORT_ERR_PROPS]", Object.getOwnPropertyNames(err || {}).reduce((o, k) => ({ ...o, [k]: err[k] }), {}));
+        if (err?.cause) console.error("[A3.8.133][CAUSE_ERR_PROPS]", Object.getOwnPropertyNames(err.cause).reduce((o, k) => ({ ...o, [k]: err.cause[k] }), {}));
+        if (err?.stack) console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err.stack);
       }
-      
-      // A3.8.133: Log cause error type (name and constructor)
-      console.error("[A3.8.133][CAUSE_ERR_TYPE]", {
-        name: err?.cause?.name,
-        ctor: err?.cause?.constructor?.name
-      });
-      
-      // A3.8.133: Ensure errors still return JSON and preserve CORS headers
-      console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
-      
-      // A3.8.17: Extract cause chain
-      const causeChain = extractCauseChain(err);
-      
-      // A3.8.17: Log error EXACTLY ONCE with full details
-      diag(`ERROR route=analyse-selected-statements phase=${phase} name=${err?.name || "Error"} message=${err?.message || ""}`);
-      
-      // Log stack
-      if (err?.stack) {
-        diag(`stack=${err.stack}`);
-      }
-      
-      // Log cause chain
-      if (causeChain.length > 0) {
-        causeChain.forEach((cause, idx) => {
-          diag(`cause[${idx}] name=${cause.name} message=${cause.message}`);
-          if (cause.stack) {
-            diag(`cause[${idx}] stack=${cause.stack}`);
-          }
-        });
-      }
-      
-      // Log debug context (NO TEXT)
-      diag(`dbg=${JSON.stringify({ ...dbg, selectionChars, draftChars, hasInstructions })}`);
       
       // A3.8.99: If headers not already sent, return error JSON with CORS headers
       if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
@@ -622,8 +572,9 @@ export default async function handler(req, res) {
     }
     
   } catch (err) {
-    // A3.8.133: Top-level catch for any errors before dynamic import
-    console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err && err.stack ? err.stack : err);
+    // A3.9.53: Always-on fatal log — single-line, rid; verbose stack only when BRIGHTLINE_DIAG_VERBOSE=1
+    logA("[A3.9.53][FATAL]", { rid: req._brightlineRid || rid, route: "analyse-selected-statements", phase: "pre_impl", name: err?.name, message: err?.message });
+    if (earlyDiagVerbose && err?.stack) console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err.stack);
     
     // A3.8.99: If headers not already sent, return error JSON with CORS headers
     if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
