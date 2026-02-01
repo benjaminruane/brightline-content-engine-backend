@@ -5,6 +5,12 @@
 // A3.8.99: ESM default export with CORS-safe preflight handling
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
+// A3.9.40: Module-scope version stamp (once per cold start)
+console.log("[A3.9.40][WRAPPER_VERSION]", {
+  ts: new Date().toISOString(),
+  url: import.meta.url
+});
+
 // A3.8.99: ESM default export (not CommonJS module.exports)
 export default async function handler(req, res) {
   // A3.8.99: Set CORS headers BEFORE any awaits/imports that might throw
@@ -343,13 +349,12 @@ export default async function handler(req, res) {
     // A3.8.16: Log START (once, with request shape summary)
     diag(`START route=analyse-selected-statements selectionChars=${selectionChars} draftChars=${draftChars} hasInstructions=${hasInstructions}`);
     
-    // A3.9.39: Canonicalize uploaded sources into body.uploadedSources only (single source of truth)
-    let uploadedSources = body.uploadedSources ?? body.uploadedDocs ?? body.uploadedDocuments ?? [];
-    if (!Array.isArray(uploadedSources)) uploadedSources = [];
+    // A3.9.39 / A3.9.40: Canonicalize uploaded sources into body.uploadedSources only (single source of truth)
+    const rawUploaded = body?.uploadedSources ?? body?.uploadedDocs ?? body?.uploadedDocuments ?? [];
+    const uploadedSources = Array.isArray(rawUploaded) ? rawUploaded : [];
     body.uploadedSources = uploadedSources;
     delete body.uploadedDocs;
     delete body.uploadedDocuments;
-    console.log("[A3.9.39][WRAP_UPLOADS]", { rid: req._brightlineRid || rid, uploadedSourcesCount: body.uploadedSources.length });
 
     // A3.8.16: Guard segmentation inputs
     // Normalize body for implementation
@@ -391,6 +396,14 @@ export default async function handler(req, res) {
       // A3.8.25: Pass diag context to implementation for unified RID/SIG
       const diagContext = { rid: runId, sig: reqSig };
       req.body._diag = diagContext;
+      
+      // A3.9.40: Definitive wrapper log right before calling impl
+      console.log("[A3.9.40][WRAP_UPLOADS]", {
+        rid: req._brightlineRid || runId,
+        uploadedSourcesCount: Array.isArray(req.body.uploadedSources) ? req.body.uploadedSources.length : -1,
+        bodyKeysHasUploadedSources: Object.prototype.hasOwnProperty.call(req.body, "uploadedSources"),
+        bodyKeysSample: Object.keys(req.body || {}).slice(0, 20)
+      });
       
       // A3.8.16: Call implementation with normalized body
       const normalizedReq = {
