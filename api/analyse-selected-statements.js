@@ -372,6 +372,29 @@ export default async function handler(req, res) {
       });
     }
 
+    // A3.9.50: Synthesize uploadedSources placeholder for versionId-backed selection runs (explicit, no silent fallback)
+    const selectionTextLen = (typeof body.selectionText === "string") ? body.selectionText.trim().length : 0;
+    const isSelection = selectionTextLen > 0 || body.selectionUsed === true;
+    let uploadedSourcesSynthetic = false;
+    if (isSelection && body.versionId) {
+      if (!Array.isArray(body.uploadedSources) || body.uploadedSources.length === 0) {
+        body.uploadedSources = [{
+          sourceType: "uploaded",
+          title: "versionId-backed uploads",
+          url: null,
+          meta: { versionId: String(body.versionId) }
+        }];
+        uploadedSourcesSynthetic = true;
+      }
+    }
+    console.log("[A3.9.50][WRAP_UPLOADS_EFFECTIVE]", {
+      rid: req._brightlineRid || runId,
+      isSelection,
+      versionIdPresent: Boolean(body.versionId),
+      uploadedSourcesCount: Array.isArray(body.uploadedSources) ? body.uploadedSources.length : -1,
+      uploadedSourcesSynthetic
+    });
+
     // A3.8.16: Guard segmentation inputs
     // Normalize body for implementation
     const normalizedBody = {
