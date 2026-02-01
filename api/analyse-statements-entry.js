@@ -6,6 +6,10 @@
 console.log("[A3.8.137][ENTRY_META]", { entryMetaUrl: import.meta.url });
 
 export default async function handler(req, res) {
+  // A3.9.35: Request RID propagation (from wrapper or generate)
+  const rid = req._brightlineRid || (req.headers && (req.headers["x-brightline-rid"] || req.headers["X-Brightline-Rid"])) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  req._brightlineRid = rid;
+
   // A3.8.147: Diagnostic probe for /var/task/lib contents (env-gated)
   const diagFlag = String(process.env.BRIGHTLINE_DIAG_IMPORTS || "");
   if (diagFlag === "1") {
@@ -43,7 +47,8 @@ export default async function handler(req, res) {
   const implUrl = new URL("../lib/analyse-statements-impl.mjs", import.meta.url);
   const implHref = implUrl.href;
   console.log("[A3.8.137][IMPL_URL]", { implHref });
-  
+  console.log("[A3.9.35][WRAPPER_IMPL_URL]", { rid, implHref });
+
   // A3.8.153: Pre-import scan for leftover "export" tokens (env-gated)
   if (diagFlag === "1") {
     try {
@@ -169,11 +174,18 @@ export default async function handler(req, res) {
   }
   
   // A3.8.137: Direct import by href with detailed error logging
+  // A3.9.35: Deterministic import try/catch with RID
   let mod;
   try {
     mod = await import(implHref);
+    console.log("[A3.9.35][WRAPPER_IMPORT_OK]", { rid });
     console.log("[A3.8.137][IMPL_IMPORT_OK]", { implHref });
   } catch (e) {
+    console.log("[A3.9.35][WRAPPER_IMPORT_FAIL]", {
+      rid,
+      name: e && e.name,
+      message: e && e.message,
+    });
     const props = {};
     try { 
       for (const k of Object.getOwnPropertyNames(e || {})) {

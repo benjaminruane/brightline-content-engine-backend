@@ -42,6 +42,17 @@ export default async function handler(req, res) {
     }
     return;
   }
+
+  // A3.9.35: Request RID (pre-import) for deterministic logging
+  const rid = (req.headers && (req.headers["x-brightline-rid"] || req.headers["X-Brightline-Rid"])) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  req._brightlineRid = rid;
+  console.log("[A3.9.35][WRAPPER_MARKER]", {
+    rid,
+    route: "analyse-selected-statements",
+    method: req.method,
+    ts: new Date().toISOString(),
+    selectionUsed: Boolean(req.body && req.body.selectionText),
+  });
   
   // A3.8.131: Prove env var presence at runtime
   const diagFlag = String(process.env.BRIGHTLINE_DIAG_IMPORTS || "");
@@ -352,9 +363,12 @@ export default async function handler(req, res) {
     // A3.8.101: Delegate to analyse-statements-impl.js using ESM dynamic import()
     // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
     // A3.8.131: Log import target to confirm entry module is being used
-    console.log("[A3.8.131][IMPORT_TARGET]", { target: "./analyse-statements-entry.js" });
+    const implHref = "./analyse-statements-entry.js";
+    console.log("[A3.8.131][IMPORT_TARGET]", { target: implHref });
+    console.log("[A3.9.35][WRAPPER_IMPL_URL]", { rid: req._brightlineRid || rid, implHref });
     try {
-      const mod = await import("./analyse-statements-entry.js");
+      const mod = await import(implHref);
+      console.log("[A3.9.35][WRAPPER_IMPORT_OK]", { rid: req._brightlineRid || rid });
       const implHandler = mod?.default;
       
       if (typeof implHandler !== "function") {
@@ -460,6 +474,11 @@ export default async function handler(req, res) {
       return res.status(200).json(payload);
       
     } catch (err) {
+      console.log("[A3.9.35][WRAPPER_IMPORT_FAIL]", {
+        rid: req._brightlineRid || rid,
+        name: err && err.name,
+        message: err && err.message,
+      });
       // A3.8.132: Dump import error properties to identify failing module
       const errProps = {};
       try {

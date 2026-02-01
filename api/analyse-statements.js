@@ -29,10 +29,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: "method_not_allowed" });
   }
 
+  // A3.9.35: Request RID (pre-import) for deterministic logging
+  const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  req._brightlineRid = rid;
+  const implHref = "./analyse-statements-entry.js";
+  console.log("[A3.9.35][WRAPPER_MARKER]", {
+    rid,
+    route: "analyse-statements",
+    method: req.method,
+    ts: new Date().toISOString(),
+    selectionUsed: Boolean(req.body && req.body.selectionText),
+  });
+  console.log("[A3.9.35][WRAPPER_IMPL_URL]", { rid, implHref });
+
   // A3.8.101: Lazy-load implementation using ESM dynamic import() inside try/catch to ensure CORS + JSON on import failures
   // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
   try {
-    const mod = await import("./analyse-statements-entry.js");
+    const mod = await import(implHref);
+    console.log("[A3.9.35][WRAPPER_IMPORT_OK]", { rid });
     const implHandler = mod?.default;
     
     if (typeof implHandler !== "function") {
@@ -40,6 +54,11 @@ export default async function handler(req, res) {
     }
     return await implHandler(req, res);
   } catch (err) {
+    console.log("[A3.9.35][WRAPPER_IMPORT_FAIL]", {
+      rid,
+      name: err && err.name,
+      message: err && err.message,
+    });
     // A3.7.6: Set CORS headers defensively (safe to repeat)
     setCorsHeaders(req, res);
     
