@@ -1,0 +1,1073 @@
+{
+  "generatedAtIso": "2026-02-01T02:42:29.936Z",
+  "filesScanned": 25,
+  "findings": [
+    {
+      "path": "api/_lib/canonicalClaims.js",
+      "sizeBytes": 143494,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "api/_lib/corpusSearch.js",
+      "sizeBytes": 35042,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "api/_lib/web.js",
+      "sizeBytes": 3344,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": [
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 19
+        },
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "path": "api/analyse-selected-statements.js",
+      "sizeBytes": 20401,
+      "initFunctionDefs": [],
+      "initTags": [
+        {
+          "tag": "TASK_LIB_",
+          "line": 59
+        },
+        {
+          "tag": "TASK_LIB_",
+          "line": 81
+        },
+        {
+          "tag": "TASK_LIB_",
+          "line": 83
+        },
+        {
+          "tag": "TASK_LIB_",
+          "line": 89
+        }
+      ],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 54
+        },
+        {
+          "line": 56
+        },
+        {
+          "line": 66
+        },
+        {
+          "line": 71
+        },
+        {
+          "line": 76
+        },
+        {
+          "line": 95
+        },
+        {
+          "line": 115
+        },
+        {
+          "line": 233
+        },
+        {
+          "line": 243
+        },
+        {
+          "line": 356
+        },
+        {
+          "line": 381
+        },
+        {
+          "line": 465
+        },
+        {
+          "line": 475
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "BRIGHTLINE_DIAG_IMPORTS",
+          "line": 47
+        }
+      ]
+    },
+    {
+      "path": "api/analyse-statements-entry.js",
+      "sizeBytes": 7581,
+      "initFunctionDefs": [],
+      "initTags": [
+        {
+          "tag": "TASK_LIB_",
+          "line": 19
+        },
+        {
+          "tag": "TASK_LIB_",
+          "line": 24
+        },
+        {
+          "tag": "TASK_LIB_",
+          "line": 26
+        },
+        {
+          "tag": "TASK_LIB_",
+          "line": 29
+        },
+        {
+          "tag": "TASK_LIB_",
+          "line": 35
+        },
+        {
+          "tag": "IMPL_EXPORT_SCAN",
+          "line": 67
+        },
+        {
+          "tag": "IMPL_EXPORT_SCAN",
+          "line": 158
+        },
+        {
+          "tag": "IMPL_EXPORT_SCAN",
+          "line": 164
+        }
+      ],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 12
+        },
+        {
+          "line": 16
+        },
+        {
+          "line": 22
+        },
+        {
+          "line": 49
+        },
+        {
+          "line": 51
+        },
+        {
+          "line": 73
+        },
+        {
+          "line": 76
+        },
+        {
+          "line": 82
+        },
+        {
+          "line": 105
+        },
+        {
+          "line": 173
+        },
+        {
+          "line": 178
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "BRIGHTLINE_DIAG_IMPORTS",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "path": "api/analyse-statements.js",
+      "sizeBytes": 2076,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 34
+        }
+      ],
+      "envRefs": []
+    },
+    {
+      "path": "api/debug-node.js",
+      "sizeBytes": 239,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": [
+        {
+          "key": "NODE_OPTIONS",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "path": "api/fetch-url.js",
+      "sizeBytes": 2816,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 30
+        },
+        {
+          "line": 38
+        }
+      ],
+      "envRefs": []
+    },
+    {
+      "path": "api/generate-minimal.js",
+      "sizeBytes": 268,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "api/generate.js",
+      "sizeBytes": 26052,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 87
+        },
+        {
+          "line": 508
+        },
+        {
+          "line": 544
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 502
+        },
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 506
+        }
+      ]
+    },
+    {
+      "path": "api/health.js",
+      "sizeBytes": 670,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "api/import-openai-test.js",
+      "sizeBytes": 207,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "api/import-web-helper-test.js",
+      "sizeBytes": 332,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "api/query-sources.js",
+      "sizeBytes": 7283,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 19
+        },
+        {
+          "line": 45
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 39
+        },
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 43
+        }
+      ]
+    },
+    {
+      "path": "api/query.js",
+      "sizeBytes": 4023,
+      "initFunctionDefs": [
+        {
+          "name": "initialQuery",
+          "line": 55
+        }
+      ],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 27
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 7
+        },
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 65
+        },
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 75
+        }
+      ]
+    },
+    {
+      "path": "api/rewrite.js",
+      "sizeBytes": 23052,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 25
+        },
+        {
+          "line": 454
+        },
+        {
+          "line": 481
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 448
+        },
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 452
+        }
+      ]
+    },
+    {
+      "path": "api/stacktrace-test.js",
+      "sizeBytes": 116,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "api/web-search.js",
+      "sizeBytes": 1663,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 27
+        }
+      ],
+      "envRefs": []
+    },
+    {
+      "path": "api/web-test.js",
+      "sizeBytes": 5113,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 77
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 50
+        },
+        {
+          "key": "NODE_ENV",
+          "line": 51
+        },
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 56
+        },
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 83
+        }
+      ]
+    },
+    {
+      "path": "lib/analyse-statements-helpers.cjs",
+      "sizeBytes": 99452,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [
+        {
+          "kind": "setImplUtils",
+          "line": 14
+        },
+        {
+          "kind": "setImplUtils",
+          "line": 22
+        }
+      ],
+      "tryBlocks": [
+        {
+          "line": 39
+        },
+        {
+          "line": 838
+        },
+        {
+          "line": 913
+        },
+        {
+          "line": 1165
+        },
+        {
+          "line": 1185
+        },
+        {
+          "line": 1244
+        },
+        {
+          "line": 1247
+        },
+        {
+          "line": 1386
+        },
+        {
+          "line": 2179
+        },
+        {
+          "line": 2182
+        },
+        {
+          "line": 2185
+        },
+        {
+          "line": 2188
+        },
+        {
+          "line": 2191
+        },
+        {
+          "line": 2194
+        },
+        {
+          "line": 2197
+        },
+        {
+          "line": 2203
+        }
+      ],
+      "envRefs": []
+    },
+    {
+      "path": "lib/analyse-statements-helpers.mjs",
+      "sizeBytes": 92564,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [
+        {
+          "line": 788
+        },
+        {
+          "line": 863
+        },
+        {
+          "line": 1115
+        },
+        {
+          "line": 1135
+        },
+        {
+          "line": 1194
+        },
+        {
+          "line": 1197
+        },
+        {
+          "line": 1336
+        }
+      ],
+      "envRefs": []
+    },
+    {
+      "path": "lib/analyse-statements-impl.mjs",
+      "sizeBytes": 1243956,
+      "initFunctionDefs": [
+        {
+          "name": "A3926_INIT_HEALTH",
+          "line": 28042
+        },
+        {
+          "name": "A3928_INIT_REGISTRY",
+          "line": 28051
+        },
+        {
+          "name": "a3928LogInitEvent",
+          "line": 28058
+        },
+        {
+          "name": "a3928LogInitError",
+          "line": 28069
+        },
+        {
+          "name": "A3928_INIT_AUDIT_ENABLED",
+          "line": 28081
+        },
+        {
+          "name": "a3928MaybeAddInitAuditToMeta",
+          "line": 28083
+        },
+        {
+          "name": "initHelpersA394",
+          "line": 28116
+        },
+        {
+          "name": "fillInitHealthPostHookTypes",
+          "line": 28130
+        },
+        {
+          "name": "A394_HELPERS_INIT",
+          "line": 28273
+        }
+      ],
+      "initTags": [
+        {
+          "tag": "POST_HOOK",
+          "line": 24707
+        },
+        {
+          "tag": "INIT",
+          "line": 28249
+        },
+        {
+          "tag": "HELPERS_INIT",
+          "line": 28289
+        },
+        {
+          "tag": "HELPERS_INIT",
+          "line": 28301
+        },
+        {
+          "tag": "INIT",
+          "line": 28304
+        },
+        {
+          "tag": "INIT",
+          "line": 28311
+        },
+        {
+          "tag": "HELPERS_INIT",
+          "line": 28315
+        },
+        {
+          "tag": "MODULE_SCOPE",
+          "line": 28351
+        }
+      ],
+      "wiringCalls": [
+        {
+          "kind": "setImplUtils",
+          "line": 28207
+        }
+      ],
+      "tryBlocks": [
+        {
+          "line": 82
+        },
+        {
+          "line": 104
+        },
+        {
+          "line": 126
+        },
+        {
+          "line": 1611
+        },
+        {
+          "line": 1640
+        },
+        {
+          "line": 1682
+        },
+        {
+          "line": 2584
+        },
+        {
+          "line": 2766
+        },
+        {
+          "line": 2774
+        },
+        {
+          "line": 2785
+        },
+        {
+          "line": 4789
+        },
+        {
+          "line": 4828
+        },
+        {
+          "line": 7714
+        },
+        {
+          "line": 8887
+        },
+        {
+          "line": 8896
+        },
+        {
+          "line": 8904
+        },
+        {
+          "line": 9285
+        },
+        {
+          "line": 12616
+        },
+        {
+          "line": 12833
+        },
+        {
+          "line": 18381
+        },
+        {
+          "line": 19326
+        },
+        {
+          "line": 19349
+        },
+        {
+          "line": 19389
+        },
+        {
+          "line": 20143
+        },
+        {
+          "line": 22211
+        },
+        {
+          "line": 22215
+        },
+        {
+          "line": 22220
+        },
+        {
+          "line": 22228
+        },
+        {
+          "line": 22232
+        },
+        {
+          "line": 22236
+        },
+        {
+          "line": 22245
+        },
+        {
+          "line": 22307
+        },
+        {
+          "line": 22341
+        },
+        {
+          "line": 22354
+        },
+        {
+          "line": 23140
+        },
+        {
+          "line": 23213
+        },
+        {
+          "line": 23233
+        },
+        {
+          "line": 23292
+        },
+        {
+          "line": 23434
+        },
+        {
+          "line": 24541
+        },
+        {
+          "line": 24548
+        },
+        {
+          "line": 24556
+        },
+        {
+          "line": 24567
+        },
+        {
+          "line": 24610
+        },
+        {
+          "line": 24635
+        },
+        {
+          "line": 24642
+        },
+        {
+          "line": 24651
+        },
+        {
+          "line": 24681
+        },
+        {
+          "line": 24685
+        },
+        {
+          "line": 24689
+        },
+        {
+          "line": 24693
+        },
+        {
+          "line": 24697
+        },
+        {
+          "line": 24701
+        },
+        {
+          "line": 24705
+        },
+        {
+          "line": 24777
+        },
+        {
+          "line": 24923
+        },
+        {
+          "line": 25428
+        },
+        {
+          "line": 25619
+        },
+        {
+          "line": 25634
+        },
+        {
+          "line": 25650
+        },
+        {
+          "line": 25667
+        },
+        {
+          "line": 25683
+        },
+        {
+          "line": 25686
+        },
+        {
+          "line": 25690
+        },
+        {
+          "line": 25706
+        },
+        {
+          "line": 25709
+        },
+        {
+          "line": 25713
+        },
+        {
+          "line": 25785
+        },
+        {
+          "line": 25999
+        },
+        {
+          "line": 26039
+        },
+        {
+          "line": 26291
+        },
+        {
+          "line": 26495
+        },
+        {
+          "line": 27232
+        },
+        {
+          "line": 27328
+        },
+        {
+          "line": 27464
+        },
+        {
+          "line": 27523
+        },
+        {
+          "line": 27532
+        },
+        {
+          "line": 27540
+        },
+        {
+          "line": 27551
+        },
+        {
+          "line": 27601
+        },
+        {
+          "line": 27612
+        },
+        {
+          "line": 27660
+        },
+        {
+          "line": 27696
+        },
+        {
+          "line": 27776
+        },
+        {
+          "line": 27792
+        },
+        {
+          "line": 27819
+        },
+        {
+          "line": 27852
+        },
+        {
+          "line": 27862
+        },
+        {
+          "line": 27891
+        },
+        {
+          "line": 27925
+        },
+        {
+          "line": 27974
+        },
+        {
+          "line": 27994
+        },
+        {
+          "line": 28007
+        },
+        {
+          "line": 28017
+        },
+        {
+          "line": 28024
+        },
+        {
+          "line": 28032
+        },
+        {
+          "line": 28059
+        },
+        {
+          "line": 28070
+        },
+        {
+          "line": 28085
+        },
+        {
+          "line": 28144
+        },
+        {
+          "line": 28274
+        },
+        {
+          "line": 28331
+        },
+        {
+          "line": 28334
+        },
+        {
+          "line": 28337
+        },
+        {
+          "line": 28340
+        },
+        {
+          "line": 28343
+        },
+        {
+          "line": 28346
+        },
+        {
+          "line": 28349
+        }
+      ],
+      "envRefs": [
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 194
+        },
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 205
+        },
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 24554
+        },
+        {
+          "key": "OPENAI_API_KEY",
+          "line": 24564
+        },
+        {
+          "key": "BRIGHTLINE_INIT_AUDIT",
+          "line": 28081
+        }
+      ]
+    },
+    {
+      "path": "lib/canonicalClaims.js",
+      "sizeBytes": 143494,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "lib/corpusSearch.js",
+      "sizeBytes": 35042,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": []
+    },
+    {
+      "path": "lib/web.js",
+      "sizeBytes": 3346,
+      "initFunctionDefs": [],
+      "initTags": [],
+      "wiringCalls": [],
+      "tryBlocks": [],
+      "envRefs": [
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 19
+        },
+        {
+          "key": "TAVILY_API_KEY",
+          "line": 30
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "initFunctionCount": 10,
+    "filesWithInitTags": 3,
+    "filesWithSetImplUtils": 2,
+    "filesWithTryBlocks": 13,
+    "topFilesByFindings": [
+      {
+        "path": "lib/analyse-statements-impl.mjs",
+        "score": 141
+      },
+      {
+        "path": "api/analyse-statements-entry.js",
+        "score": 28
+      },
+      {
+        "path": "api/analyse-selected-statements.js",
+        "score": 22
+      },
+      {
+        "path": "lib/analyse-statements-helpers.cjs",
+        "score": 22
+      },
+      {
+        "path": "lib/analyse-statements-helpers.mjs",
+        "score": 7
+      },
+      {
+        "path": "api/generate.js",
+        "score": 5
+      },
+      {
+        "path": "api/query.js",
+        "score": 5
+      },
+      {
+        "path": "api/rewrite.js",
+        "score": 5
+      },
+      {
+        "path": "api/web-test.js",
+        "score": 5
+      },
+      {
+        "path": "api/query-sources.js",
+        "score": 4
+      },
+      {
+        "path": "api/_lib/web.js",
+        "score": 2
+      },
+      {
+        "path": "api/fetch-url.js",
+        "score": 2
+      },
+      {
+        "path": "lib/web.js",
+        "score": 2
+      },
+      {
+        "path": "api/analyse-statements.js",
+        "score": 1
+      },
+      {
+        "path": "api/debug-node.js",
+        "score": 1
+      },
+      {
+        "path": "api/web-search.js",
+        "score": 1
+      }
+    ]
+  }
+}
