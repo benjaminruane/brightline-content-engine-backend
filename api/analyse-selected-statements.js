@@ -343,6 +343,14 @@ export default async function handler(req, res) {
     // A3.8.16: Log START (once, with request shape summary)
     diag(`START route=analyse-selected-statements selectionChars=${selectionChars} draftChars=${draftChars} hasInstructions=${hasInstructions}`);
     
+    // A3.9.39: Canonicalize uploaded sources into body.uploadedSources only (single source of truth)
+    let uploadedSources = body.uploadedSources ?? body.uploadedDocs ?? body.uploadedDocuments ?? [];
+    if (!Array.isArray(uploadedSources)) uploadedSources = [];
+    body.uploadedSources = uploadedSources;
+    delete body.uploadedDocs;
+    delete body.uploadedDocuments;
+    console.log("[A3.9.39][WRAP_UPLOADS]", { rid: req._brightlineRid || rid, uploadedSourcesCount: body.uploadedSources.length });
+
     // A3.8.16: Guard segmentation inputs
     // Normalize body for implementation
     const normalizedBody = {
