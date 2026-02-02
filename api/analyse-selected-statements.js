@@ -55,6 +55,9 @@ export default async function handler(req, res) {
   const earlyDiagVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE === "1";
   const logA = (...args) => console.log(...args);
   const logVEarly = (...args) => { if (earlyDiagVerbose) console.log(...args); };
+  // A3.9.55: Imports-only gate for init/URL diagnostics (BRIGHTLINE_DIAG_IMPORTS)
+  const diagImports = (process.env.BRIGHTLINE_DIAG_IMPORTS === "1");
+  const logImports = (...args) => { if (diagImports) console.log(...args); };
   logVEarly("[A3.9.35][WRAPPER_MARKER]", {
     rid,
     route: "analyse-selected-statements",
@@ -420,7 +423,7 @@ export default async function handler(req, res) {
     // A3.8.131: Log import target to confirm entry module is being used
     const implHref = "./analyse-statements-entry.js";
     logV("[A3.8.131][IMPORT_TARGET]", { target: implHref });
-    logV("[A3.9.35][WRAPPER_IMPL_URL]", { rid: req._brightlineRid || rid, implHref });
+    logImports("[A3.9.35][WRAPPER_IMPL_URL]", { rid: req._brightlineRid || rid, implHref });
     try {
       const mod = await import(implHref);
       logV("[A3.9.35][WRAPPER_IMPORT_OK]", { rid: req._brightlineRid || rid });

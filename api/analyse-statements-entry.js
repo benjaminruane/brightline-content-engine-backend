@@ -2,8 +2,12 @@
 // A3.8.132: Small ESM entry wrapper that imports the huge impl dynamically at call time.
 // A3.8.134: Imports from lib/ to avoid Vercel route-handler bundling
 
-// A3.8.137: Entry-level diagnostics
-console.log("[A3.8.137][ENTRY_META]", { entryMetaUrl: import.meta.url });
+// A3.9.55: Imports-only gate for init/URL diagnostics (BRIGHTLINE_DIAG_IMPORTS)
+const diagImports = (process.env.BRIGHTLINE_DIAG_IMPORTS === "1");
+const logImports = (...args) => { if (diagImports) console.log(...args); };
+
+// A3.8.137: Entry-level diagnostics (gated by BRIGHTLINE_DIAG_IMPORTS)
+logImports("[A3.8.137][ENTRY_META]", { entryMetaUrl: import.meta.url });
 
 export default async function handler(req, res) {
   // A3.9.35: Request RID propagation (from wrapper or generate)
@@ -43,11 +47,11 @@ export default async function handler(req, res) {
     }
   }
   
-  // A3.8.137: Resolve impl URL and log before importing
+  // A3.8.137: Resolve impl URL and log before importing (gated by BRIGHTLINE_DIAG_IMPORTS)
   const implUrl = new URL("../lib/analyse-statements-impl.mjs", import.meta.url);
   const implHref = implUrl.href;
-  console.log("[A3.8.137][IMPL_URL]", { implHref });
-  console.log("[A3.9.35][WRAPPER_IMPL_URL]", { rid, implHref });
+  logImports("[A3.8.137][IMPL_URL]", { implHref });
+  logImports("[A3.9.35][WRAPPER_IMPL_URL]", { rid, implHref });
 
   // A3.8.153: Pre-import scan for leftover "export" tokens (env-gated)
   if (diagFlag === "1") {
