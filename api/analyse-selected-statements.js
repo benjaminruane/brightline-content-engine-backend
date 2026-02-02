@@ -274,7 +274,7 @@ export default async function handler(req, res) {
     const logV = (...args) => { if (diagVerbose) console.log(...args); };
     // A3.9.53: Always-on request summary (one line per request); replaces START/END spam
     const selectionUsed = Boolean(body?.selectionText);
-    const selectionChars = (body?.selectionText && typeof body.selectionText === "string") ? body.selectionText.trim().length : 0;
+    selectionChars = (body?.selectionText && typeof body.selectionText === "string") ? body.selectionText.trim().length : 0;
     const uploadedSourcesCount = Array.isArray(body?.uploadedSources) ? body.uploadedSources.length : 0;
     logA("[A3.9.53][REQ_SUMMARY]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", method: req.method, selectionUsed, selectionChars, uploadedSourcesCount, diagVerbose });
     // A3.9.34: Build marker — always-on handler-level marker
