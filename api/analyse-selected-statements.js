@@ -354,6 +354,26 @@ export default async function handler(req, res) {
     // A3.8.16: Log START (verbose-only; REQ_SUMMARY replaces always-on)
     logV("START route=analyse-selected-statements", { selectionChars, draftChars, hasInstructions });
     
+    // A3.10.10: Treat sources[kind=file] as uploadedSources when selection mode and uploadedSources missing/empty
+    if (selectionUsed && Array.isArray(body?.sources)) {
+      try {
+        const fileSources = body.sources.filter(
+          s => s && s.kind === "file" && typeof s.text === "string" && s.text.length > 0
+        );
+        const hasUploaded = Array.isArray(body.uploadedSources) && body.uploadedSources.length > 0;
+        const wouldOverride = fileSources.length > 0 && !hasUploaded;
+        if (wouldOverride) {
+          body.uploadedSources = fileSources.map((fileSource, i) => ({
+            id: fileSource.id != null ? fileSource.id : `file_${i}_${Date.now().toString(36)}`,
+            title: (fileSource.name != null && typeof fileSource.name === "string") ? fileSource.name : "uploaded_file",
+            text: fileSource.text,
+            url: null,
+            sourceType: "uploaded"
+          }));
+        }
+      } catch (_) {}
+    }
+    
     // A3.9.41: Derive uploadedSources from sources (uploaded) before strict contract; single source of truth
     const sourcesArr = Array.isArray(body?.sources) ? body.sources : [];
     const uploadedFromSources = sourcesArr.filter(s =>
