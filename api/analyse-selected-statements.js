@@ -354,24 +354,20 @@ export default async function handler(req, res) {
     // A3.8.16: Log START (verbose-only; REQ_SUMMARY replaces always-on)
     logV("START route=analyse-selected-statements", { selectionChars, draftChars, hasInstructions });
     
-    // A3.10.10: Treat sources[kind=file] as uploadedSources when selection mode and uploadedSources missing/empty
-    if (selectionUsed && Array.isArray(body?.sources)) {
-      try {
-        const fileSources = body.sources.filter(
-          s => s && s.kind === "file" && typeof s.text === "string" && s.text.length > 0
-        );
-        const hasUploaded = Array.isArray(body.uploadedSources) && body.uploadedSources.length > 0;
-        const wouldOverride = fileSources.length > 0 && !hasUploaded;
-        if (wouldOverride) {
-          body.uploadedSources = fileSources.map((fileSource, i) => ({
-            id: fileSource.id != null ? fileSource.id : `file_${i}_${Date.now().toString(36)}`,
-            title: (fileSource.name != null && typeof fileSource.name === "string") ? fileSource.name : "uploaded_file",
-            text: fileSource.text,
-            url: null,
-            sourceType: "uploaded"
-          }));
-        }
-      } catch (_) {}
+    // A3.10.10 / A3.13.2: Treat sources[kind=file] as uploadedSources when selection mode and uploadedSources missing/empty
+    const fileSources = Array.isArray(body?.sources)
+      ? body.sources.filter(s => s && s.kind === "file" && typeof s.text === "string" && s.text.trim().length > 0)
+      : [];
+    const uploadedMissingOrEmpty = !Array.isArray(body?.uploadedSources) || body.uploadedSources.length === 0;
+    if (selectionUsed && fileSources.length > 0 && uploadedMissingOrEmpty) {
+      body.uploadedSources = fileSources.map((s, i) => ({
+        id: s.id != null ? s.id : `file_${i}_${Date.now().toString(36)}`,
+        name: (s.name != null && typeof s.name === "string") ? s.name : "uploaded_file",
+        title: (s.name != null && typeof s.name === "string") ? s.name : "uploaded_file",
+        text: s.text,
+        url: null,
+        sourceType: "uploaded"
+      }));
     }
     
     // A3.9.41: Derive uploadedSources from sources (uploaded) before strict contract; single source of truth
