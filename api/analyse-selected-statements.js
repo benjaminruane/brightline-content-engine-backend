@@ -555,6 +555,37 @@ export default async function handler(req, res) {
       const payloadKeys = Object.keys(payload || {}).slice(0, 12).join(",");
       logV("END route=analyse-selected-statements", { phase, segmentCount, statementCount, payloadOk, payloadKeys });
       
+      // A3.13.2: Evidence Posture Fatal Meta (failure responses only; selection mode; meta-only)
+      if (payload && payload.ok === false) {
+        const meta = payload.meta && typeof payload.meta === "object" ? payload.meta : {};
+        const extractionQuality = meta.extractionQuality ?? null;
+        const reasons = Array.isArray(meta.extractionQualityReasons) ? meta.extractionQualityReasons : [];
+        const fatalText = typeof meta.fatal === "string" ? meta.fatal : "";
+        let evidencePostureFatal = "unexpected_fatal";
+        if (extractionQuality === "failed" && reasons.includes("selection_mode_fatal_error") && reasons.includes("fallback_prevented")) {
+          evidencePostureFatal = "thin_evidence_fatal";
+        } else if (
+          fatalText.includes("selectionText not found") ||
+          fatalText.includes("selection text not found") ||
+          fatalText.includes("selection anchor") ||
+          fatalText.includes("selection mismatch") ||
+          fatalText.includes("selection segmentation")
+        ) {
+          evidencePostureFatal = "selection_anchor_fatal";
+        }
+        const effectiveUploadedInputCount = Array.isArray(req.body?.uploadedSources) ? req.body.uploadedSources.length : (meta.uploadedSourcesCount != null ? meta.uploadedSourcesCount : null);
+        const selectionTextLen = typeof req.body?.selectionText === "string" ? req.body.selectionText.trim().length : null;
+        const webSearchUsed = meta.webSearch && typeof meta.webSearch.used !== "undefined" ? Boolean(meta.webSearch.used) : null;
+        meta.evidencePostureFatal = evidencePostureFatal;
+        meta.evidencePostureFatalSignals = {
+          effectiveUploadedInputCount,
+          selectionTextLen,
+          webSearchUsed,
+          extractionQualityReasons: reasons
+        };
+        payload.meta = meta;
+      }
+      
       // A3.8.29: Return JSON payload via res.json()
       return res.status(200).json(payload);
       
