@@ -245,30 +245,61 @@ export default async function handler(req, res) {
   let hasInstructions = false;
   const dbg = { route: "analyse-selected-statements", phase: "init", selectionMode: true };
   
+  // A3.14.8: Safe request-body parse (non-throwing); explicit 400 on invalid JSON
+  function safeJsonParseLocal(str) {
+    if (typeof str !== "string") return { ok: false, errorMessage: "expected string" };
+    try {
+      const value = JSON.parse(str);
+      return { ok: true, value };
+    } catch (parseErr) {
+      return { ok: false, errorMessage: parseErr?.message ? String(parseErr.message) : "Invalid JSON" };
+    }
+  }
+
   // A3.8.16: Top-level try/catch to ensure JSON response always
   try {
     // A3.8.17: Phase: parse_body
     phase = "parse_body";
     dbg.phase = phase;
     
-    // A3.8.16: Parse body safely
+    // A3.14.8: Parse body without throwing; return 400 with meta on invalid JSON
     let body;
-    try {
-      body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-      if (!body || typeof body !== "object") {
-        throw new Error("Body must be an object");
+    if (typeof req.body === "string") {
+      const parsed = safeJsonParseLocal(req.body);
+      if (!parsed.ok) {
+        const fatalErrorMessage = (parsed.errorMessage || "Invalid JSON").slice(0, 240);
+        console.log("[A3.14.8][REQ_BODY_INVALID_JSON]", {
+          bodyType: typeof req.body,
+          bodyLen: req.body.length,
+          contentType: req.headers["content-type"] || null,
+        });
+        return res.status(400).json({
+          ok: false,
+          statements: [],
+          references: [],
+          meta: {
+            fatalStage: "request_body_invalid_json",
+            fatalErrorClass: "invalid_json",
+            fatalErrorMessage,
+            bodyType: "string",
+          },
+        });
       }
-    } catch (parseErr) {
-      logA("[A3.9.53][BAD_REQUEST]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", phase, invalid: `JSON parse: ${parseErr.message}` });
+      body = parsed.value;
+    } else {
+      body = req.body || {};
+    }
+    if (!body || typeof body !== "object") {
+      logA("[A3.9.53][BAD_REQUEST]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", phase, invalid: "Body must be an object" });
       return res.status(400).json({
         ok: false,
-        error: {
-          code: "BAD_REQUEST",
-          message: "Request body must be valid JSON",
-          details: {
-            missing: [],
-            invalid: [`JSON parse error: ${parseErr.message}`],
-          },
+        statements: [],
+        references: [],
+        meta: {
+          fatalStage: "request_body_invalid_json",
+          fatalErrorClass: "invalid_json",
+          fatalErrorMessage: "Body must be an object",
+          bodyType: typeof req.body,
         },
       });
     }
@@ -281,7 +312,7 @@ export default async function handler(req, res) {
     const uploadedSourcesCount = Array.isArray(body?.uploadedSources) ? body.uploadedSources.length : 0;
     logA("[A3.9.53][REQ_SUMMARY]", { rid: req._brightlineRid || runId, route: "analyse-selected-statements", method: req.method, selectionUsed, selectionChars, uploadedSourcesCount, diagVerbose });
     // A3.9.34: Build marker — always-on handler-level marker
-    logA("[A3.9.34][BUILD_MARKER]", { active: true });
+    logA("[A3.9.34][BUILD_MARKER]", { active: true, build: "A3.14.8" });
     
     // A3.8.17: Phase: validate
     phase = "validate";
