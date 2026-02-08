@@ -13,62 +13,63 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-export default async function handler(req, res) {
-  console.log("[A3.8.6][START] analyse-statements invoked");
+const ROUTE = "analyse-statements";
 
-  // A3.7.6: Set CORS headers immediately, before any logic
+export default async function handler(req, res) {
+  const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  req._brightlineRid = rid;
+  console.log("[A3.14.2][HANDLER_ENTER]", { rid, route: ROUTE });
+
   setCorsHeaders(req, res);
 
-  // A3.7.6: Handle OPTIONS preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // A3.7.6: Reject non-POST methods
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "method_not_allowed" });
   }
 
-  // A3.9.35: Request RID (pre-import) for deterministic logging
-  const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-  req._brightlineRid = rid;
   const implHref = "./analyse-statements-entry.js";
   console.log("[A3.9.35][WRAPPER_MARKER]", {
     rid,
-    route: "analyse-statements",
+    route: ROUTE,
     method: req.method,
     ts: new Date().toISOString(),
     selectionUsed: Boolean(req.body && req.body.selectionText),
   });
-  console.log("[A3.9.35][WRAPPER_IMPL_URL]", { rid, implHref });
 
-  // A3.8.101: Lazy-load implementation using ESM dynamic import() inside try/catch to ensure CORS + JSON on import failures
-  // A3.8.130: Import via entry wrapper to avoid Vercel bundling issues with huge impl module
   try {
     const mod = await import(implHref);
-    console.log("[A3.9.35][WRAPPER_IMPORT_OK]", { rid });
     const implHandler = mod?.default;
-    
+
     if (typeof implHandler !== "function") {
       throw new Error("analyse-statements-entry.js default export is not a function");
     }
-    return await implHandler(req, res);
+
+    const payload = await implHandler(req, res);
+
+    if (res.headersSent) {
+      console.log("[A3.14.2][RES_ALREADY_SENT]", { rid, route: ROUTE });
+      return;
+    }
+    console.log("[A3.14.2][RES_SEND_START]", { rid, route: ROUTE, headersSent: res.headersSent });
+    res.status(200).json(payload != null ? payload : { ok: false, error: "internal_error", statements: [], references: [] });
+    console.log("[A3.14.2][RES_SEND_END]", { rid, route: ROUTE, headersSent: res.headersSent });
+    return;
   } catch (err) {
-    console.log("[A3.9.35][WRAPPER_IMPORT_FAIL]", {
-      rid,
-      name: err && err.name,
-      message: err && err.message,
-    });
-    // A3.7.6: Set CORS headers defensively (safe to repeat)
     setCorsHeaders(req, res);
-    
-    // A3.8.137: Log error concisely
+    console.log("[A3.9.35][WRAPPER_IMPORT_FAIL]", { rid, name: err?.name, message: err?.message });
     console.error("[A3.8.137][ANALYSE_STATEMENTS_WRAPPER_FATAL]", err?.name, err?.message);
-    
-    // Return JSON error response with CORS headers
+
+    if (res.headersSent) {
+      console.log("[A3.14.2][RES_ALREADY_SENT]", { rid, route: ROUTE });
+      return;
+    }
     return res.status(500).json({
       ok: false,
       error: "internal_error",
+      meta: { fatalStage: "route_exception" },
       message: err?.message ? String(err.message).slice(0, 300) : "Internal error",
     });
   }
