@@ -1,1 +1,1 @@
-{"version":2,"installCommand":"npm ci","functions":{"api/*.js":{"maxDuration":60,"includeFiles":"{api/_lib/web.js,lib/analyse-statements-impl.mjs,lib/analyse-statements-helpers.cjs,lib/extract-statements.mjs}"}}}
+{"version":2,"installCommand":"npm ci","functions":{"api/*.js":{"maxDuration":60,"includeFiles":"{api/_lib/web.js,lib/analyse-statements-impl.mjs,lib/analyse-statements-helpers.cjs,lib/extract-statements.mjs,node_modules/openai/**}"}}}
