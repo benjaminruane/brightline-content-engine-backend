@@ -4,6 +4,9 @@
   "functions": {
     "api/**/*.js": {
       "includeFiles": "{_lib/web.js,lib/analyse-statements-impl.mjs,lib/analyse-statements-helpers.cjs}"
-    }
+    },
+    "api/analyse-statements.js": { "maxDuration": 60 },
+    "api/analyse-statements-v2.js": { "maxDuration": 60 },
+    "api/analyse-selected-statements.js": { "maxDuration": 60 }
   }
 }
