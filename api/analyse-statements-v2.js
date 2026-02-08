@@ -46,12 +46,30 @@ export default async function handler(req, res) {
 
     const payload = await implHandler(req, res);
 
-    const safePayload = payload != null ? payload : {
+    let safePayload = payload != null ? payload : {
       ok: false,
       statements: [],
       references: [],
       meta: { fatal: "Internal error", fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["internal_error"] },
     };
+    // A3.14.15: Belt-and-braces — ok:true allowed only when fullPipelineCompleted; coerce otherwise
+    if (safePayload.ok === true && safePayload.meta?.fullPipelineCompleted !== true) {
+      console.log("[A3.14.15][CONTRACT_COERCE_OK_FALSE]", {
+        rid,
+        hadFullPipelineCompleted: safePayload.meta?.fullPipelineCompleted === true,
+        hadMeta: safePayload.meta != null,
+      });
+      safePayload = {
+        ...safePayload,
+        ok: false,
+        meta: {
+          ...(safePayload.meta || {}),
+          fatalStage: "contract_violation",
+          fatalErrorClass: "contract",
+          fatal: "ok:true returned without fullPipelineCompleted; coerced to ok:false",
+        },
+      };
+    }
     console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: safePayload?.statements?.length ?? null });
     res.status(200).json(safePayload);
     return;
