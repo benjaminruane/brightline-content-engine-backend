@@ -9,6 +9,8 @@
 // - Returns sourcesUsedRows[] at the top-level for convenient frontend consumption.
 // - The model is instructed to append a [SOURCES_USED] JSON block that we strip out.
 
+console.log("[A3.14.3][IMPORT_OK] api/generate.js loaded");
+
 import OpenAI from "openai";
 import {
   tavilySearch,
@@ -494,6 +496,7 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
 }
 
 export default async function handler(req, res) {
+  console.log("[A3.14.3][HANDLER_ENTER] generate");
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(204).end();
