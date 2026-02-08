@@ -487,20 +487,17 @@ export default async function handler(req, res) {
         throw e;
       }
       
-      // A3.8.169: Accept Node response objects (handler already responded)
-      if (payload === undefined || payload === null) {
-        // Handler already handled the response, continue as normal
-      } else if (
+      // A3.14.5: Impl never sends; always returns payload. Wrapper sends once.
+      // A3.8.169: Defensive check for Node response object (should not occur under A3.14.5)
+      if (
         payload &&
         typeof payload === "object" &&
         (typeof payload.statusCode === "number" || typeof payload.end === "function" || typeof payload.writeHead === "function")
       ) {
-        // Handler returned Node response object (already sent response)
-        logV("[A3.8.169][ENTRY_RETURNED_NODE_RESPONSE][OK]", {
-          statusCode: payload?.statusCode ?? null,
-        });
-        return; // Response already sent, exit early
-      } else if (
+        logV("[A3.8.169][ENTRY_RETURNED_NODE_RESPONSE][OK]", { statusCode: payload?.statusCode ?? null });
+        return;
+      }
+      if (
         payload &&
         typeof payload === "object" &&
         ("_events" in payload || "outputData" in payload || typeof payload.status === "function")
@@ -599,10 +596,12 @@ export default async function handler(req, res) {
         if (err?.stack) console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err.stack);
       }
       
-      // A3.8.99: If headers not already sent, return error JSON with CORS headers
-      if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
-        return res.status(500).json({
+      // A3.14.5: Wrapper sends once; impl never sends. Use 200 + ok:false payload.
+      if (res && typeof res.status === "function" && typeof res.json === "function") {
+        return res.status(200).json({
           ok: false,
+          statements: [],
+          references: [],
           error: {
             code: "INTERNAL_ERROR",
             message: "Internal error in analyse-selected-statements",
@@ -612,12 +611,8 @@ export default async function handler(req, res) {
             name: err?.name || "Error",
             detail: String(err && err.message ? err.message : err),
           },
+          meta: { fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["route_exception"] },
         });
-      }
-      
-      // A3.8.99: If headers already sent, just end
-      if (res && typeof res.end === "function" && !res.headersSent) {
-        res.status(500).end();
       }
     }
     
@@ -626,18 +621,14 @@ export default async function handler(req, res) {
     logA("[A3.9.53][FATAL]", { rid: req._brightlineRid || rid, route: "analyse-selected-statements", phase: "pre_impl", name: err?.name, message: err?.message });
     if (earlyDiagVerbose && err?.stack) console.error("[A3.8.133][ANALYSE_SELECTED_FATAL]", err.stack);
     
-    // A3.8.99: If headers not already sent, return error JSON with CORS headers
-    if (res && typeof res.status === "function" && typeof res.json === "function" && !res.headersSent) {
-      return res.status(500).json({
+    // A3.14.5: Wrapper sends once. Use 200 + ok:false payload.
+    if (res && typeof res.status === "function" && typeof res.json === "function") {
+      return res.status(200).json({
         ok: false,
-        error: "Internal error",
-        detail: String(err && err.message ? err.message : err)
+        statements: [],
+        references: [],
+        meta: { fatal: String(err && err.message ? err.message : err).slice(0, 300), fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["route_exception"] },
       });
-    }
-    
-    // A3.8.99: If headers already sent, just end
-    if (res && typeof res.end === "function" && !res.headersSent) {
-      res.status(500).end();
     }
   }
 }

@@ -16,7 +16,7 @@ const ROUTE = "analyse-statements-v2";
 export default async function handler(req, res) {
   const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   req._brightlineRid = rid;
-  console.log("[A3.14.2][HANDLER_ENTER]", { rid, route: ROUTE });
+  console.log("[A3.14.5][HANDLER_ENTER]", { rid, route: ROUTE });
   console.log("[A3.14.0][V2_ROUTE] route=analyse-statements-v2");
 
   setCorsHeaders(req, res);
@@ -46,27 +46,31 @@ export default async function handler(req, res) {
 
     const payload = await implHandler(req, res);
 
-    if (res.headersSent) {
-      console.log("[A3.14.2][RES_ALREADY_SENT]", { rid, route: ROUTE });
-      return;
-    }
-    console.log("[A3.14.2][RES_SEND_START]", { rid, route: ROUTE, headersSent: res.headersSent });
-    res.status(200).json(payload != null ? payload : { ok: false, error: "internal_error", statements: [], references: [] });
-    console.log("[A3.14.2][RES_SEND_END]", { rid, route: ROUTE, headersSent: res.headersSent });
+    const safePayload = payload != null ? payload : {
+      ok: false,
+      statements: [],
+      references: [],
+      meta: { fatal: "Internal error", fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["internal_error"] },
+    };
+    console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: safePayload?.statements?.length ?? null });
+    res.status(200).json(safePayload);
     return;
   } catch (err) {
     setCorsHeaders(req, res);
     console.error("[A3.8.137][ANALYSE_STATEMENTS_WRAPPER_FATAL]", err?.name, err?.message);
 
-    if (res.headersSent) {
-      console.log("[A3.14.2][RES_ALREADY_SENT]", { rid, route: ROUTE });
-      return;
-    }
-    return res.status(500).json({
+    const safeInternalErrorPayload = {
       ok: false,
-      error: "internal_error",
-      meta: { fatalStage: "route_exception" },
-      message: err?.message ? String(err.message).slice(0, 300) : "Internal error",
-    });
+      statements: [],
+      references: [],
+      meta: {
+        fatal: err?.message ? String(err.message).slice(0, 300) : "Internal error",
+        fatalStage: "route_exception",
+        extractionQuality: "failed",
+        extractionQualityReasons: ["route_exception"],
+      },
+    };
+    res.status(200).json(safeInternalErrorPayload);
+    return;
   }
 }
