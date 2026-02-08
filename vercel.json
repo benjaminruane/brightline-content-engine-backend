@@ -1,1 +1,1 @@
-{"version":2,"installCommand":"npm ci","functions":{"api/*.js":{"maxDuration":60,"includeFiles":"api/_lib/web.js,lib/analyse-statements-impl.mjs,lib/analyse-statements-helpers.cjs,lib/extract-statements.mjs,node_modules/**"}}}
+{"version":2,"installCommand":"npm ci","functions":{"api/*.js":{"maxDuration":60,"includeFiles":"{api/_lib/web.js,lib/**,node_modules/{openai,node-fetch,whatwg-url,formdata-node,node-domexception,web-streams-polyfill,agentkeepalive,humanize-ms,abort-controller,event-target-shim,form-data-encoder}/**}"}}}
