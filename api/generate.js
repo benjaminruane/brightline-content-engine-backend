@@ -498,6 +498,11 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
 export default async function handler(req, res) {
   console.log("[A3.14.3][HANDLER_ENTER] generate");
   setCorsHeaders(req, res);
+  const header = req?.headers?.["x-brightline-diag"] || null;
+  const gateAllowsHeader = process.env.BRIGHTLINE_ALLOW_DIAG_HEADER === "1" || process.env.VERCEL_ENV !== "production";
+  const envVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE === "1";
+  const diagVerbose = envVerbose || (gateAllowsHeader && header === "verbose");
+  console.log("[A3.14.24][VERBOSE_EFFECTIVE]", { header, gateAllowsHeader, envVerbose, diagVerbose });
 
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });

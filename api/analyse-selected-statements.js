@@ -308,6 +308,8 @@ export default async function handler(req, res) {
     const headerWantsVerbose = req?.headers?.["x-brightline-diag"] === "verbose";
     const gateAllowsHeader = process.env.BRIGHTLINE_ALLOW_DIAG_HEADER === "1" || process.env.VERCEL_ENV !== "production";
     const diagVerbose = Boolean(body?._diag?.verbose) || (process.env.BRIGHTLINE_DIAG_VERBOSE === "1") || (gateAllowsHeader && headerWantsVerbose);
+    const envVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE === "1";
+    console.log("[A3.14.24][VERBOSE_EFFECTIVE]", { rid: req._brightlineRid || runId, header: req?.headers?.["x-brightline-diag"] || null, gateAllowsHeader, envVerbose, diagVerbose });
     const logV = (...args) => { if (diagVerbose) console.log(...args); };
     // A3.9.53: Always-on request summary (one line per request); replaces START/END spam
     const selectionUsed = Boolean(body?.selectionText);
