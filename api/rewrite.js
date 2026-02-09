@@ -562,6 +562,16 @@ Return ONLY JSON:
       messages: [{ role: "user", content: prompt }],
     });
 
+    if (diagVerbose) {
+      const rid = req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null;
+      const usage = completion?.usage;
+      if (usage != null) {
+        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: usage.prompt_tokens ?? null, completion_tokens: usage.completion_tokens ?? null, total_tokens: usage.total_tokens ?? null });
+      } else {
+        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: null, completion_tokens: null, total_tokens: null, usageMissing: true });
+      }
+    }
+
     const raw = completion?.choices?.[0]?.message?.content || "";
     const parsed = safeJsonParse(raw) || {};
     const draftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
