@@ -304,7 +304,10 @@ export default async function handler(req, res) {
       });
     }
     // A3.9.53: Quiet-by-default — diagVerbose from body or BRIGHTLINE_DIAG_VERBOSE; log tiers
-    const diagVerbose = Boolean(body?._diag?.verbose) || (process.env.BRIGHTLINE_DIAG_VERBOSE === "1");
+    // A3.14.23: Allow header override only when gated (BRIGHTLINE_ALLOW_DIAG_HEADER or non-production)
+    const headerWantsVerbose = req?.headers?.["x-brightline-diag"] === "verbose";
+    const gateAllowsHeader = process.env.BRIGHTLINE_ALLOW_DIAG_HEADER === "1" || process.env.VERCEL_ENV !== "production";
+    const diagVerbose = Boolean(body?._diag?.verbose) || (process.env.BRIGHTLINE_DIAG_VERBOSE === "1") || (gateAllowsHeader && headerWantsVerbose);
     const logV = (...args) => { if (diagVerbose) console.log(...args); };
     // A3.9.53: Always-on request summary (one line per request); replaces START/END spam
     const selectionUsed = Boolean(body?.selectionText);
