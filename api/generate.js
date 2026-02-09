@@ -24,7 +24,7 @@ import {
 function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-brightline-diag");
   res.setHeader("Access-Control-Max-Age", "86400");
 }
 
