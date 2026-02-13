@@ -171,3 +171,10 @@ Explicit boundaries beyond which further tightening adds negligible investment-g
 - Diminishing-returns boundaries are respected: no over-sync of canonical, no over-exposure of matcher internals, no extra micro-gates.
 
 **Conclusion:** Statement Analysis can be considered **investment-grade complete for v1 commercial release** when **Phase D** is done and the above four conditions hold. Phases A–C are the correctness and explanation closure; Phase D is the UX translation that makes the guarantee visible and usable in one place.
+
+---
+
+## A3.20.9 — IC Attention Signals + Evidence Gap Priority (Implementation Summary)
+
+**Plain Language Implementation Summary (1–3 sentences):**  
+IC attention prioritisation lets analysts and IC quickly see which statements need review first—for example, strong economic claims with high risk, salient claims with fragile evidence, or claims that disagree across the document. Gap prioritisation ranks which missing deal fields matter most for decisions (e.g. missing valuation when investment is present, or missing ownership when both investment and valuation exist), so the memo owner knows what to fill in first to support pricing and outcome validation.
