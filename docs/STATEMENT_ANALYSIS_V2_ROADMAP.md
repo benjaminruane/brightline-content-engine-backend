@@ -178,3 +178,10 @@ Explicit boundaries beyond which further tightening adds negligible investment-g
 
 **Plain Language Implementation Summary (1–3 sentences):**  
 IC attention prioritisation lets analysts and IC quickly see which statements need review first—for example, strong economic claims with high risk, salient claims with fragile evidence, or claims that disagree across the document. Gap prioritisation ranks which missing deal fields matter most for decisions (e.g. missing valuation when investment is present, or missing ownership when both investment and valuation exist), so the memo owner knows what to fill in first to support pricing and outcome validation.
+
+---
+
+## A3.20.10 — IC Attention Synthesis Refinement + IC-Weighted Coverage Summary (Implementation Summary)
+
+**Plain Language Implementation Summary (1–3 sentences):**  
+Attention prioritisation is refined so the most important items rise to the top: primary salient-but-fragile claims and single-source strong claims are escalated to critical, while low-salience underdescribed claims are de-escalated, and each statement shows at most three signals to cut noise. The IC coverage summary gives analysts and IC a single view of how complete the deal picture is (strong / moderate / thin), which key fields are missing (valuation, ownership, round, instrument), and short impact notes in plain language—so they can see what’s missing and why it matters for pricing, outcome validation, and comparability.
