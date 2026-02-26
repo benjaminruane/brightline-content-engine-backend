@@ -55,9 +55,12 @@ export default async function handler(req, res) {
       references: [],
       meta: { fatal: "Internal error", fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["internal_error"] },
     };
-    // X1.2b: Reject PDF-as-inline with 400
+    // X1.2b: Reject PDF-as-inline with 400. X1.3: 422 when ENFORCE_INGESTION_GUARDS=1 and extraction ERROR
     const ingestionErrorCode = safePayload?.meta?.sourceIngestionError?.code;
-    const statusCode = ingestionErrorCode === "PDF_INLINE_TEXT_NOT_ALLOWED" ? 400 : 200;
+    const guardStatusCode = safePayload?.meta?.extractionGuardStatusCode;
+    let statusCode = 200;
+    if (guardStatusCode === 422) statusCode = 422;
+    else if (ingestionErrorCode === "PDF_INLINE_TEXT_NOT_ALLOWED") statusCode = 400;
     console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: safePayload?.statements?.length ?? null, statusCode });
     res.status(statusCode).json(safePayload);
     return;

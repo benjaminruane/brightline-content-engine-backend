@@ -72,7 +72,11 @@ export default async function handler(req, res) {
     }
     // X1.2b: Reject PDF-as-inline with 400 so clients get a clear contract violation
     const ingestionErrorCode = safePayload?.meta?.sourceIngestionError?.code;
-    const statusCode = ingestionErrorCode === "PDF_INLINE_TEXT_NOT_ALLOWED" ? 400 : 200;
+    // X1.3: Optional 422 when ENFORCE_INGESTION_GUARDS=1 and extraction overallStatus=ERROR
+    const guardStatusCode = safePayload?.meta?.extractionGuardStatusCode;
+    let statusCode = 200;
+    if (guardStatusCode === 422) statusCode = 422;
+    else if (ingestionErrorCode === "PDF_INLINE_TEXT_NOT_ALLOWED") statusCode = 400;
     console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: safePayload?.statements?.length ?? null, statusCode });
     res.status(statusCode).json(safePayload);
     return;
