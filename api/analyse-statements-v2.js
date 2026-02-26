@@ -70,8 +70,11 @@ export default async function handler(req, res) {
         },
       };
     }
-    console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: safePayload?.statements?.length ?? null });
-    res.status(200).json(safePayload);
+    // X1.2b: Reject PDF-as-inline with 400 so clients get a clear contract violation
+    const ingestionErrorCode = safePayload?.meta?.sourceIngestionError?.code;
+    const statusCode = ingestionErrorCode === "PDF_INLINE_TEXT_NOT_ALLOWED" ? 400 : 200;
+    console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: safePayload?.statements?.length ?? null, statusCode });
+    res.status(statusCode).json(safePayload);
     return;
   } catch (err) {
     setCorsHeaders(req, res);
