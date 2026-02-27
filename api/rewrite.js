@@ -18,6 +18,11 @@ import {
   buildOutputIntent,
   getPromptGuidance,
 } from "../lib/output-intent.js";
+import {
+  normalizeEventType,
+  getEventTypeLabel,
+  getEventTypeFraming,
+} from "../lib/event-type.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -482,6 +487,9 @@ export default async function handler(req, res) {
     // SPEC X2.0: Rewrite reuses same intent unless explicitly changed
     const outputType = normalizeOutputType(body.outputType ?? body.selectedTypes?.[0] ?? null);
     const visibility = normalizeVisibility(body.visibility ?? body.versionType ?? null);
+    const rawEventType = typeof body.eventType === "string" ? body.eventType : (typeof body.scenario === "string" ? body.scenario : "");
+    const eventType = normalizeEventType(rawEventType);
+    const eventTypeLabel = getEventTypeLabel(eventType);
     const maxWordsRaw = body.maxWords;
     const effectiveMaxWords =
       typeof maxWordsRaw === "number" && Number.isFinite(maxWordsRaw) && maxWordsRaw > 0
@@ -517,10 +525,15 @@ export default async function handler(req, res) {
       ? "Write in second-person voice (use 'you', 'your')."
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
+    const eventFraming = getEventTypeFraming(eventType);
     const prompt = `
 Rewrite the draft based on the instructions. Keep the same output format and visibility intent unless the instructions ask to change it.
 
 FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
+${eventFraming ? `
+EVENT TYPE FRAMING (${eventTypeLabel}):
+${eventFraming}
+` : ""}
 
 INSTRUCTIONS:
 ${instructions}
@@ -632,6 +645,8 @@ Return ONLY JSON:
       draftText,
       meta: {
         outputIntent: metaOutputIntent,
+        eventType,
+        eventTypeLabel,
       },
       sourcesUsed: {
         web: {

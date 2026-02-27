@@ -24,6 +24,11 @@ import {
   buildOutputIntent,
   getPromptGuidance,
 } from "../lib/output-intent.js";
+import {
+  normalizeEventType,
+  getEventTypeLabel,
+  getEventTypeFraming,
+} from "../lib/event-type.js";
 
 // ------------------------------------------------------------------
 // CORS
@@ -545,7 +550,10 @@ export default async function handler(req, res) {
 
     const safeTitle = typeof title === "string" ? title : "";
     const safeNotes = typeof notes === "string" ? notes : "";
-    const safeScenario = typeof scenario === "string" ? scenario : "";
+    const rawEventType = typeof scenario === "string" ? scenario : "";
+    const eventType = normalizeEventType(rawEventType);
+    const eventTypeLabel = getEventTypeLabel(eventType);
+    const safeScenario = rawEventType;
     const safeSelectedTypes = Array.isArray(selectedTypes) ? selectedTypes : [];
     // SPEC X2.0: Accept outputType/visibility; fallback to selectedTypes[0]/versionType; apply defaults
     const rawOutputType = typeof bodyOutputType === "string" && bodyOutputType.trim()
@@ -603,6 +611,10 @@ Visibility: ${visibility}
 Version type: ${safeVersionType || "(none)"}
 
 FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
+${getEventTypeFraming(eventType) ? `
+EVENT TYPE FRAMING (${eventTypeLabel}):
+${getEventTypeFraming(eventType)}
+` : ""}
 
 Web search enabled: ${safePublicSearch ? "true" : "false"}
 
@@ -782,6 +794,8 @@ Return ONLY JSON:
       sourcesUsedRows,
       meta: {
         outputIntent: metaOutputIntent,
+        eventType,
+        eventTypeLabel,
       },
       sourcesUsed: {
         web: {
