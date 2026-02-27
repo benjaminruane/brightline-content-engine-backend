@@ -18,6 +18,12 @@ import {
   webResultsToReferences,
   deriveQueryFromDraft,
 } from "../lib/web.js";
+import {
+  normalizeOutputType,
+  normalizeVisibility,
+  buildOutputIntent,
+  getPromptGuidance,
+} from "../lib/output-intent.js";
 
 // ------------------------------------------------------------------
 // CORS
@@ -521,6 +527,8 @@ export default async function handler(req, res) {
       scenario,
       selectedTypes,
       versionType,
+      outputType: bodyOutputType,
+      visibility: bodyVisibility,
       maxWords,
       model,
       publicSearch,
@@ -534,7 +542,16 @@ export default async function handler(req, res) {
     const safeNotes = typeof notes === "string" ? notes : "";
     const safeScenario = typeof scenario === "string" ? scenario : "";
     const safeSelectedTypes = Array.isArray(selectedTypes) ? selectedTypes : [];
-    const safeVersionType = typeof versionType === "string" ? versionType : "";
+    // SPEC X2.0: Accept outputType/visibility; fallback to selectedTypes[0]/versionType; apply defaults
+    const rawOutputType = typeof bodyOutputType === "string" && bodyOutputType.trim()
+      ? bodyOutputType
+      : (safeSelectedTypes[0] ?? null);
+    const rawVisibility = typeof bodyVisibility === "string" && bodyVisibility.trim()
+      ? bodyVisibility
+      : (typeof versionType === "string" ? versionType : null);
+    const outputType = normalizeOutputType(rawOutputType);
+    const visibility = normalizeVisibility(rawVisibility);
+    const safeVersionType = visibility === "PUBLIC" ? "public" : "complete";
     const safePublicSearch = Boolean(publicSearch);
     const safeSources = Array.isArray(sources) ? sources : [];
 
@@ -576,8 +593,11 @@ Inputs:
 Title: ${safeTitle || "(none)"}
 Notes: ${safeNotes || "(none)"}
 Scenario: ${safeScenario || "(none)"}
-Selected types: ${safeSelectedTypes.length ? safeSelectedTypes.join(", ") : "(none)"}
+Output type: ${outputType}
+Visibility: ${visibility}
 Version type: ${safeVersionType || "(none)"}
+
+FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
 
 Web search enabled: ${safePublicSearch ? "true" : "false"}
 
@@ -692,10 +712,20 @@ Return ONLY JSON:
       unattributedEnrichmentNotes: enrichmentResult.notes || null,
     };
 
+    const outputIntent = buildOutputIntent(outputType, visibility);
+
     return res.status(200).json({
       ok: true,
       draftText,
       sourcesUsedRows,
+      meta: {
+        outputIntent: {
+          outputType: outputIntent.outputType,
+          visibility: outputIntent.visibility,
+          outputTypeLabel: outputIntent.outputTypeLabel,
+          visibilityLabel: outputIntent.visibilityLabel,
+        },
+      },
       sourcesUsed: {
         web: {
           enabled: Boolean(safePublicSearch),

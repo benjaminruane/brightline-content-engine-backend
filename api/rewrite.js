@@ -12,6 +12,12 @@ import {
   webResultsToReferences,
   deriveQueryFromDraft,
 } from "../lib/web.js";
+import {
+  normalizeOutputType,
+  normalizeVisibility,
+  buildOutputIntent,
+  getPromptGuidance,
+} from "../lib/output-intent.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -473,6 +479,9 @@ export default async function handler(req, res) {
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
     const publicSearch = Boolean(body.publicSearch);
     const sources = Array.isArray(body.sources) ? body.sources : [];
+    // SPEC X2.0: Rewrite reuses same intent unless explicitly changed
+    const outputType = normalizeOutputType(body.outputType ?? body.selectedTypes?.[0] ?? null);
+    const visibility = normalizeVisibility(body.visibility ?? body.versionType ?? null);
 
     if (!text.trim()) return res.status(400).json({ error: "Missing text" });
     if (!instructions.trim()) return res.status(400).json({ error: "Missing instructions" });
@@ -504,7 +513,9 @@ export default async function handler(req, res) {
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
     const prompt = `
-Rewrite the draft based on the instructions.
+Rewrite the draft based on the instructions. Keep the same output format and visibility intent unless the instructions ask to change it.
+
+FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
 
 INSTRUCTIONS:
 ${instructions}
@@ -599,9 +610,19 @@ Return ONLY JSON:
       unattributedEnrichmentNotes: enrichmentResult.notes || null,
     };
 
+    const outputIntent = buildOutputIntent(outputType, visibility);
+
     return res.status(200).json({
       ok: true,
       draftText,
+      meta: {
+        outputIntent: {
+          outputType: outputIntent.outputType,
+          visibility: outputIntent.visibility,
+          outputTypeLabel: outputIntent.outputTypeLabel,
+          visibilityLabel: outputIntent.visibilityLabel,
+        },
+      },
       sourcesUsed: {
         web: {
           enabled: Boolean(publicSearch),
