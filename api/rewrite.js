@@ -482,6 +482,11 @@ export default async function handler(req, res) {
     // SPEC X2.0: Rewrite reuses same intent unless explicitly changed
     const outputType = normalizeOutputType(body.outputType ?? body.selectedTypes?.[0] ?? null);
     const visibility = normalizeVisibility(body.visibility ?? body.versionType ?? null);
+    const maxWordsRaw = body.maxWords;
+    const effectiveMaxWords =
+      typeof maxWordsRaw === "number" && Number.isFinite(maxWordsRaw) && maxWordsRaw > 0
+        ? Math.floor(maxWordsRaw)
+        : null;
 
     if (!text.trim()) return res.status(400).json({ error: "Missing text" });
     if (!instructions.trim()) return res.status(400).json({ error: "Missing instructions" });
@@ -560,6 +565,7 @@ Rules:
 - Use only information from the uploaded sources provided above.
 - You may paraphrase and synthesize uploaded content freely.
 `}
+${effectiveMaxWords != null ? `\nOutput constraints:\n- Keep output under ~${effectiveMaxWords} words where possible.\n` : ""}
 
 Return ONLY JSON:
 {
@@ -611,17 +617,21 @@ Return ONLY JSON:
     };
 
     const outputIntent = buildOutputIntent(outputType, visibility);
+    const metaOutputIntent = {
+      outputType: outputIntent.outputType,
+      visibility: outputIntent.visibility,
+      outputTypeLabel: outputIntent.outputTypeLabel,
+      visibilityLabel: outputIntent.visibilityLabel,
+    };
+    if (effectiveMaxWords != null) {
+      metaOutputIntent.maxWords = effectiveMaxWords;
+    }
 
     return res.status(200).json({
       ok: true,
       draftText,
       meta: {
-        outputIntent: {
-          outputType: outputIntent.outputType,
-          visibility: outputIntent.visibility,
-          outputTypeLabel: outputIntent.outputTypeLabel,
-          visibilityLabel: outputIntent.visibilityLabel,
-        },
+        outputIntent: metaOutputIntent,
       },
       sourcesUsed: {
         web: {

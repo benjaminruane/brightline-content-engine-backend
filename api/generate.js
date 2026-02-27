@@ -713,18 +713,22 @@ Return ONLY JSON:
     };
 
     const outputIntent = buildOutputIntent(outputType, visibility);
+    const metaOutputIntent = {
+      outputType: outputIntent.outputType,
+      visibility: outputIntent.visibility,
+      outputTypeLabel: outputIntent.outputTypeLabel,
+      visibilityLabel: outputIntent.visibilityLabel,
+    };
+    if (effectiveMaxWords != null) {
+      metaOutputIntent.maxWords = effectiveMaxWords;
+    }
 
     return res.status(200).json({
       ok: true,
       draftText,
       sourcesUsedRows,
       meta: {
-        outputIntent: {
-          outputType: outputIntent.outputType,
-          visibility: outputIntent.visibility,
-          outputTypeLabel: outputIntent.outputTypeLabel,
-          visibilityLabel: outputIntent.visibilityLabel,
-        },
+        outputIntent: metaOutputIntent,
       },
       sourcesUsed: {
         web: {

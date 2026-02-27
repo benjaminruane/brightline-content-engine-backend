@@ -56,6 +56,19 @@ export default async function handler(req, res) {
     const targetVisibility = normalizeVisibility(body.targetVisibility ?? body.target_visibility ?? null);
     const modelId = typeof body.model === "string" && body.model.trim() ? body.model.trim() : "gpt-5.1";
     const publicSearch = Boolean(body.publicSearch);
+    // X2.2: Optional word-limit override for Adapt (per-output cap persistence)
+    const rawOverride = body.wordLimitOverride ?? body.word_limit_override ?? null;
+    const overrideNum = typeof rawOverride === "number" && Number.isFinite(rawOverride) ? rawOverride : (typeof rawOverride === "string" && rawOverride.trim() !== "" ? parseInt(rawOverride, 10) : null);
+    const MIN_WORDS = 20;
+    const MAX_WORDS = 5000;
+    let wordLimitOverride = null;
+    if (overrideNum != null && !Number.isNaN(overrideNum)) {
+      const clamped = Math.floor(Number(overrideNum));
+      if (clamped >= MIN_WORDS && clamped <= MAX_WORDS) {
+        wordLimitOverride = clamped;
+      }
+      // If out of bounds: ignore and could record warning in meta (do not fail request)
+    }
 
     if (!baseDraftText.trim()) {
       return res.status(400).json({ error: "Missing baseDraftText" });
@@ -102,6 +115,7 @@ Rules:
 - Restructure and re-tone for the target type and visibility.
 - Do not add claims that are not in the base draft or sources.
 ${publicSearch && webReferences.length ? "- If you use web results, cite with [1], [2], etc." : ""}
+${wordLimitOverride != null ? `- Keep output under ~${wordLimitOverride} words where possible.` : ""}
 
 Return ONLY JSON:
 {
@@ -132,16 +146,21 @@ Return ONLY JSON:
       toVisibility: targetVisibility,
     };
 
+    const responseOutputIntent = {
+      outputType: outputIntent.outputType,
+      visibility: outputIntent.visibility,
+      outputTypeLabel: outputIntent.outputTypeLabel,
+      visibilityLabel: outputIntent.visibilityLabel,
+    };
+    if (wordLimitOverride != null) {
+      responseOutputIntent.maxWords = wordLimitOverride;
+    }
+
     return res.status(200).json({
       ok: true,
       draftText,
       meta: {
-        outputIntent: {
-          outputType: outputIntent.outputType,
-          visibility: outputIntent.visibility,
-          outputTypeLabel: outputIntent.outputTypeLabel,
-          visibilityLabel: outputIntent.visibilityLabel,
-        },
+        outputIntent: responseOutputIntent,
         derivation,
       },
     });
