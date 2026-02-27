@@ -104,6 +104,11 @@ function clampMaxWords(maxWords) {
   return Math.floor(maxWords);
 }
 
+function countWords(text) {
+  if (typeof text !== "string" || !text.trim()) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
 function stripSourcesUsedBlock(text) {
   if (typeof text !== "string") return "";
   const marker = "[SOURCES_USED]";
@@ -642,7 +647,8 @@ Rules:
 Output constraints:
 ${
   effectiveMaxWords
-    ? `- Keep output under ~${effectiveMaxWords} words where possible.`
+    ? `- Target ~${effectiveMaxWords} words (soft target). Acceptable range: roughly ${Math.round(0.9 * effectiveMaxWords)} to ${Math.round(1.1 * effectiveMaxWords)} words.
+- If you are trending long, rewrite tighter before finalising. Do not truncate mid-sentence; produce a coherent draft.`
     : "- No explicit word limit provided."
 }
 
@@ -684,24 +690,68 @@ Return ONLY JSON:
     const parsed = safeJsonParse(raw) || {};
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText);
-    const draftText = stripSourcesUsedBlock(rawDraftText);
+    let currentDraftText = stripSourcesUsedBlock(rawDraftText);
 
-    if (!draftText.trim()) {
+    if (!currentDraftText.trim()) {
       return res.status(500).json({
         ok: false,
         error: "Draft could not be generated. Please try again, or provide more notes and/or sources.",
       });
     }
 
+    // X2.4: Word-limit soft target — post-check and optional single correction pass (no truncation)
+    let wordLimitMiss = false;
+    if (effectiveMaxWords != null) {
+      const words = countWords(currentDraftText);
+      const highThreshold = 1.25 * effectiveMaxWords;
+      const lowThreshold = 0.75 * effectiveMaxWords;
+      if (words > highThreshold || words < lowThreshold) {
+        const targetMin = Math.round(0.9 * effectiveMaxWords);
+        const targetMax = Math.round(1.1 * effectiveMaxWords);
+        const correctionPrompt = `Rewrite the following draft to land within approximately ${targetMin} to ${targetMax} words (target ~${effectiveMaxWords} words).
+Do not invent facts; preserve all factual claims from the draft; remove lower-priority detail first.
+Do not truncate mid-sentence; produce a coherent final draft.
+
+DRAFT:
+---
+${currentDraftText}
+---
+
+Return ONLY JSON:
+{
+  "draftText": "string"
+}`.trim();
+        try {
+          const correctionCompletion = await client.chat.completions.create({
+            model: modelId,
+            temperature: 0.2,
+            messages: [{ role: "user", content: correctionPrompt }],
+          });
+          const correctionRaw = correctionCompletion?.choices?.[0]?.message?.content || "";
+          const correctionParsed = safeJsonParse(correctionRaw) || {};
+          const correctedText = typeof correctionParsed.draftText === "string" ? correctionParsed.draftText.trim() : "";
+          if (correctedText) {
+            currentDraftText = correctedText;
+            const wordsAfter = countWords(currentDraftText);
+            if (wordsAfter > highThreshold || wordsAfter < lowThreshold) {
+              wordLimitMiss = true;
+            }
+          }
+        } catch {
+          wordLimitMiss = true;
+        }
+      }
+    }
+
     // Extract citations and derive usedReferenceIds
-    const citations = extractCitations(draftText);
+    const citations = extractCitations(currentDraftText);
     const usedReferenceIds = citations.filter((id) => 
       webReferences.some((ref) => ref.id === id)
     );
 
     // Detect unattributed enrichment (hybrid approach)
     const enrichmentResult = detectUnattributedEnrichment(
-      draftText,
+      currentDraftText,
       safePublicSearch,
       usedReferenceIds,
       safeSources
@@ -722,10 +772,13 @@ Return ONLY JSON:
     if (effectiveMaxWords != null) {
       metaOutputIntent.maxWords = effectiveMaxWords;
     }
+    if (wordLimitMiss) {
+      metaOutputIntent.wordLimitMiss = true;
+    }
 
     return res.status(200).json({
       ok: true,
-      draftText,
+      draftText: currentDraftText,
       sourcesUsedRows,
       meta: {
         outputIntent: metaOutputIntent,
