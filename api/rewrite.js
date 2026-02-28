@@ -501,7 +501,8 @@ export default async function handler(req, res) {
     const rawEventType = typeof body.eventType === "string" ? body.eventType : (typeof body.scenario === "string" ? body.scenario : "");
     const eventType = normalizeEventType(rawEventType);
     const eventTypeLabel = getEventTypeLabel(eventType);
-    // A5.12 / X3.2.2: Rewrite is authoritative — when rewrite sends a word target, it replaces prior (no Math.min with generate cap)
+    // X3.2.3: Rewrite authority — value flow: body.maxWords (rewrite target) → effectiveMaxWords → meta.outputIntent.maxWords → version store → UI + report.
+    // MUST NOT: clamp vs generate cap, fall back to generate, merge limits, or retain legacy cap. When rewrite sends a word target it fully replaces prior.
     const rewriteOverrideMaxWords =
       typeof body.maxWords === "number" && Number.isFinite(body.maxWords) && body.maxWords > 0
         ? Math.floor(body.maxWords)
@@ -791,7 +792,7 @@ Return ONLY JSON:
       outputTypeLabel: outputIntent.outputTypeLabel,
       visibilityLabel: outputIntent.visibilityLabel,
     };
-    // A5.12: Version-level maxWords from rewrite authority only (no copy-forward of Generate cap)
+    // X3.2.3: Version meta from rewrite only — effectiveMaxWords (new target or preserved prior). Never from generate cap or previousVersion.
     if (effectiveMaxWords != null) {
       metaOutputIntent.maxWords = effectiveMaxWords;
     }
