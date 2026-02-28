@@ -654,6 +654,20 @@ Return ONLY valid JSON with no markdown or extra text:
     let instructionChecklist = [];
     let warnings = null;
 
+    // X3.1b: Conservative instruction matching — user must have requested the intent for item to be scored
+    const normalizedInstructions = instructions.toLowerCase();
+    const LENGTH_REGEX = /word|length|short|tight|reduce|expand/;
+    const DETAIL_REGEX = /add|expand|more detail|elaborate|include/;
+    const TONE_REGEX = /tone|formal|neutral|concise|punchy/;
+
+    function userRequestedCategory(itemInstruction) {
+      const lower = (itemInstruction || "").toLowerCase();
+      if (LENGTH_REGEX.test(lower)) return LENGTH_REGEX.test(normalizedInstructions);
+      if (DETAIL_REGEX.test(lower)) return DETAIL_REGEX.test(normalizedInstructions);
+      if (TONE_REGEX.test(lower)) return TONE_REGEX.test(normalizedInstructions);
+      return false;
+    }
+
     if (rawReport && typeof rawReport === "object") {
       if (typeof rawReport.summary === "string" && rawReport.summary.trim()) {
         summary = rawReport.summary.trim();
@@ -661,11 +675,17 @@ Return ONLY valid JSON with no markdown or extra text:
       if (Array.isArray(rawReport.instructionChecklist)) {
         instructionChecklist = rawReport.instructionChecklist
           .filter((item) => item && typeof item === "object" && typeof item.instruction === "string")
-          .map((item) => ({
-            instruction: String(item.instruction).trim() || "—",
-            status: ["done", "partial", "not_done"].includes(item.status) ? item.status : "partial",
-            notes: typeof item.notes === "string" ? item.notes.trim() || null : null,
-          }));
+          .map((item) => {
+            const instruction = String(item.instruction).trim() || "—";
+            const rawStatus = ["done", "partial", "not_done"].includes(item.status) ? item.status : "partial";
+            const requested = userRequestedCategory(instruction);
+            const status = requested ? rawStatus : "not_requested";
+            return {
+              instruction,
+              status,
+              notes: typeof item.notes === "string" ? item.notes.trim() || null : null,
+            };
+          });
       }
       if (Array.isArray(rawReport.warnings) && rawReport.warnings.length > 0) {
         warnings = rawReport.warnings
@@ -686,6 +706,7 @@ Return ONLY valid JSON with no markdown or extra text:
         targetMaxWords,
         hitTarget,
       },
+      wordTarget: effectiveMaxWords ?? null,
       instructionChecklist,
       warnings,
     };
