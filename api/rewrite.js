@@ -695,7 +695,7 @@ Return ONLY JSON:
     const wordsBefore = countWords(text);
     const wordsAfter = countWords(currentDraftText);
     const charsBefore = countChars(text);
-    const charsAfter = countChars(draftText);
+    const charsAfter = countChars(currentDraftText);
     const targetMaxWords = effectiveMaxWords;
     const hitTarget =
       targetMaxWords == null
