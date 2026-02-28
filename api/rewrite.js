@@ -501,10 +501,20 @@ export default async function handler(req, res) {
     const rawEventType = typeof body.eventType === "string" ? body.eventType : (typeof body.scenario === "string" ? body.scenario : "");
     const eventType = normalizeEventType(rawEventType);
     const eventTypeLabel = getEventTypeLabel(eventType);
-    const maxWordsRaw = body.maxWords;
+    // A5.12: Rewrite word-limit authority — override wins, else inherit prior version, else no limit
+    const rewriteOverrideMaxWords =
+      typeof body.maxWords === "number" && Number.isFinite(body.maxWords) && body.maxWords > 0
+        ? Math.floor(body.maxWords)
+        : null;
+    const priorMaxWords =
+      typeof body.priorMaxWords === "number" && Number.isFinite(body.priorMaxWords) && body.priorMaxWords > 0
+        ? Math.floor(body.priorMaxWords)
+        : null;
     const effectiveMaxWords =
-      typeof maxWordsRaw === "number" && Number.isFinite(maxWordsRaw) && maxWordsRaw > 0
-        ? Math.floor(maxWordsRaw)
+      Number.isFinite(rewriteOverrideMaxWords)
+        ? rewriteOverrideMaxWords
+        : Number.isFinite(priorMaxWords)
+        ? priorMaxWords
         : null;
 
     if (!text.trim()) return res.status(400).json({ error: "Missing text" });
@@ -631,15 +641,59 @@ Return ONLY valid JSON with no markdown or extra text:
     const match = raw.match(codeFence);
     if (match) raw = match[1].trim();
     const parsed = safeJsonParse(raw) || {};
-    const draftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
+    let currentDraftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
 
-    if (!draftText) {
+    if (!currentDraftText) {
       return res.status(500).json({ ok: false, error: "Rewrite failed. Please try again." });
     }
 
-    // X3.1: Deterministic metrics (authoritative)
+    // A5.12: Soft-target correction pass (single pass, no truncation) when word limit set
+    let wordLimitMiss = false;
+    if (effectiveMaxWords != null) {
+      const words = countWords(currentDraftText);
+      const highThreshold = 1.25 * effectiveMaxWords;
+      const lowThreshold = 0.75 * effectiveMaxWords;
+      if (words > highThreshold || words < lowThreshold) {
+        const targetMin = Math.round(0.9 * effectiveMaxWords);
+        const targetMax = Math.round(1.1 * effectiveMaxWords);
+        const correctionPrompt = `Rewrite the following draft to land within approximately ${targetMin} to ${targetMax} words (target ~${effectiveMaxWords} words).
+Do not invent facts; preserve all factual claims from the draft; remove lower-priority detail first.
+Do not truncate mid-sentence; produce a coherent final draft.
+
+DRAFT:
+---
+${currentDraftText}
+---
+
+Return ONLY JSON:
+{
+  "draftText": "string"
+}`.trim();
+        try {
+          const correctionCompletion = await client.chat.completions.create({
+            model: modelId,
+            temperature: 0.2,
+            messages: [{ role: "user", content: correctionPrompt }],
+          });
+          const correctionRaw = correctionCompletion?.choices?.[0]?.message?.content || "";
+          const correctionParsed = safeJsonParse(correctionRaw) || {};
+          const correctedText = typeof correctionParsed.draftText === "string" ? correctionParsed.draftText.trim() : "";
+          if (correctedText) {
+            currentDraftText = correctedText;
+            const wordsAfterCorrection = countWords(currentDraftText);
+            if (wordsAfterCorrection > highThreshold || wordsAfterCorrection < lowThreshold) {
+              wordLimitMiss = true;
+            }
+          }
+        } catch {
+          wordLimitMiss = true;
+        }
+      }
+    }
+
+    // X3.1: Deterministic metrics (authoritative) — use final draft text
     const wordsBefore = countWords(text);
-    const wordsAfter = countWords(draftText);
+    const wordsAfter = countWords(currentDraftText);
     const charsBefore = countChars(text);
     const charsAfter = countChars(draftText);
     const targetMaxWords = effectiveMaxWords;
@@ -712,14 +766,14 @@ Return ONLY valid JSON with no markdown or extra text:
     };
 
     // Extract citations and derive usedReferenceIds
-    const citations = extractCitations(draftText);
+    const citations = extractCitations(currentDraftText);
     const usedReferenceIds = citations.filter((id) => 
       webReferences.some((ref) => ref.id === id)
     );
 
     // Detect unattributed enrichment (hybrid approach)
     const enrichmentResult = detectUnattributedEnrichment(
-      draftText,
+      currentDraftText,
       publicSearch,
       usedReferenceIds,
       sources
@@ -737,13 +791,17 @@ Return ONLY valid JSON with no markdown or extra text:
       outputTypeLabel: outputIntent.outputTypeLabel,
       visibilityLabel: outputIntent.visibilityLabel,
     };
+    // A5.12: Version-level maxWords from rewrite authority only (no copy-forward of Generate cap)
     if (effectiveMaxWords != null) {
       metaOutputIntent.maxWords = effectiveMaxWords;
+    }
+    if (wordLimitMiss) {
+      metaOutputIntent.wordLimitMiss = true;
     }
 
     return res.status(200).json({
       ok: true,
-      draftText,
+      draftText: currentDraftText,
       meta: {
         outputIntent: metaOutputIntent,
         eventType,
