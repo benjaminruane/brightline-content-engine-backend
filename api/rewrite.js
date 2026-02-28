@@ -501,7 +501,7 @@ export default async function handler(req, res) {
     const rawEventType = typeof body.eventType === "string" ? body.eventType : (typeof body.scenario === "string" ? body.scenario : "");
     const eventType = normalizeEventType(rawEventType);
     const eventTypeLabel = getEventTypeLabel(eventType);
-    // A5.12: Rewrite word-limit authority — override wins, else inherit prior version, else no limit
+    // A5.12 / X3.2.2: Rewrite is authoritative — when rewrite sends a word target, it replaces prior (no Math.min with generate cap)
     const rewriteOverrideMaxWords =
       typeof body.maxWords === "number" && Number.isFinite(body.maxWords) && body.maxWords > 0
         ? Math.floor(body.maxWords)
