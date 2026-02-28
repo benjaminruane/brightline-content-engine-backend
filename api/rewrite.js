@@ -51,6 +51,52 @@ function countChars(text) {
   return text.length;
 }
 
+// A5.13: Guards against low-signal instructions (e.g. "asdf")
+// so the model does not invent behavior from meaningless input.
+function normalizeRewriteInstructions(raw) {
+  if (!raw || typeof raw !== "string") {
+    return { text: "", ignored: false, reason: null };
+  }
+
+  const trimmed = raw.trim();
+
+  if (!trimmed) {
+    return { text: "", ignored: false, reason: null };
+  }
+
+  const alphaCount = (trimmed.match(/[a-zA-Z]/g) || []).length;
+  const uniqueChars = new Set(trimmed).size;
+
+  const looksGibberish =
+    trimmed.length >= 6 &&
+    alphaCount / trimmed.length < 0.6 &&
+    uniqueChars < Math.min(4, trimmed.length);
+
+  const shortWhitelist = [
+    "shorter",
+    "tighten",
+    "expand",
+    "clarify",
+    "polish",
+    "simplify",
+  ];
+
+  const isWhitelistedShort =
+    trimmed.length <= 10 &&
+    shortWhitelist.includes(trimmed.toLowerCase());
+
+  if (looksGibberish && !isWhitelistedShort) {
+    return {
+      text: "",
+      ignored: true,
+      reason:
+        "Instructions appeared to be low-signal placeholder text and were ignored.",
+    };
+  }
+
+  return { text: trimmed, ignored: false, reason: null };
+}
+
 // Detect voice override in user instructions (Notes or Rewrite instructions)
 function detectVoiceOverride(text) {
   if (typeof text !== "string" || !text.trim()) return null;
@@ -486,11 +532,14 @@ export default async function handler(req, res) {
     // - instructions (preferred)
     // - notes (Phase 2 frontend)
     // - rewriteNotes (defensive)
-    const instructions =
+    const instructionsRaw =
       (typeof body.instructions === "string" ? body.instructions : "") ||
       (typeof body.notes === "string" ? body.notes : "") ||
       (typeof body.rewriteNotes === "string" ? body.rewriteNotes : "");
-    
+
+    const normalized = normalizeRewriteInstructions(instructionsRaw);
+    const rewriteInstructions = normalized.text;
+
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
     const publicSearch = Boolean(body.publicSearch);
@@ -518,7 +567,7 @@ export default async function handler(req, res) {
         ? priorMaxWords
         : null;
 
-    const hasInstructions = typeof instructions === "string" && instructions.trim().length > 0;
+    const hasInstructions = typeof rewriteInstructions === "string" && rewriteInstructions.length > 0;
     const hasTarget = Number.isFinite(effectiveMaxWords);
     const isLengthOnly = !hasInstructions && hasTarget;
 
@@ -530,7 +579,7 @@ export default async function handler(req, res) {
     let web = { ok: false };
 
     if (publicSearch) {
-      const query = deriveQueryFromDraft([instructions, text].filter(Boolean).join("\n\n"));
+      const query = deriveQueryFromDraft([rewriteInstructions, text].filter(Boolean).join("\n\n"));
       try {
         const results = await tavilySearch({ query, maxResults: 6 });
         webResultsForPrompt = formatWebResultsForPrompt(results);
@@ -543,8 +592,8 @@ export default async function handler(req, res) {
       }
     }
 
-    // Detect voice override in Rewrite instructions
-    const voiceOverride = detectVoiceOverride(instructions);
+    // Detect voice override in Rewrite instructions (A5.13: use normalized only)
+    const voiceOverride = detectVoiceOverride(rewriteInstructions);
     const voiceInstruction = voiceOverride === "first"
       ? "Write in first-person voice (use 'I', 'we', 'our', 'us')."
       : voiceOverride === "second"
@@ -552,6 +601,7 @@ export default async function handler(req, res) {
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
     const eventFraming = getEventTypeFraming(eventType);
+    // A5.13 HARD RULE: Prompt must use normalized instructions only. Raw instructions must never reach the model.
     const prompt = isLengthOnly
       ? `LENGTH-ONLY REWRITE: Adjust the draft to approximately ${effectiveMaxWords} words (acceptable range: ${Math.round(0.9 * effectiveMaxWords)}–${Math.round(1.1 * effectiveMaxWords)} words). Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first; do not truncate mid-sentence.
 
@@ -581,7 +631,7 @@ ${eventFraming}
 ` : ""}
 
 INSTRUCTIONS:
-${instructions}
+${rewriteInstructions}
 
 DRAFT:
 ${text}
@@ -737,7 +787,7 @@ Return ONLY JSON:
     let warnings = null;
 
     // X3.1b: Conservative instruction matching — user must have requested the intent for item to be scored
-    const normalizedInstructions = instructions.toLowerCase();
+    const normalizedInstructions = (rewriteInstructions || "").toLowerCase();
     const LENGTH_REGEX = /word|length|short|tight|reduce|expand/;
     const DETAIL_REGEX = /add|expand|more detail|elaborate|include/;
     const TONE_REGEX = /tone|formal|neutral|concise|punchy/;
@@ -789,6 +839,7 @@ Return ONLY JSON:
       );
     }
 
+    // A5.13: Explicit transparency for instruction handling.
     const rewriteReport = {
       summary,
       metrics: {
@@ -803,6 +854,9 @@ Return ONLY JSON:
       isLengthOnly: isLengthOnly || undefined,
       instructionChecklist,
       warnings,
+      instructionsReceived: instructionsRaw ?? "",
+      instructionsUsed: rewriteInstructions,
+      instructionsIgnored: normalized.ignored ? normalized.reason : null,
     };
 
     // Extract citations and derive usedReferenceIds
