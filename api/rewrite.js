@@ -40,6 +40,17 @@ function safeJsonParse(s) {
   }
 }
 
+// X3.1: Deterministic metrics for rewrite report
+function countWords(text) {
+  if (typeof text !== "string" || !text.trim()) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function countChars(text) {
+  if (typeof text !== "string") return 0;
+  return text.length;
+}
+
 // Detect voice override in user instructions (Notes or Rewrite instructions)
 function detectVoiceOverride(text) {
   if (typeof text !== "string" || !text.trim()) return null;
@@ -580,9 +591,21 @@ Rules:
 `}
 ${effectiveMaxWords != null ? `\nOutput constraints:\n- Keep output under ~${effectiveMaxWords} words where possible.\n` : ""}
 
-Return ONLY JSON:
+REWRITE REPORT (self-assessment, optional but requested):
+After producing the revised draft, provide a brief machine-readable report:
+- summary: 1–2 sentences in plain language describing what you did.
+- instructionChecklist: for each distinct instruction from the user, one entry: { "instruction": "short phrase", "status": "done" | "partial" | "not_done", "notes": "string or null" }. If you could not fully comply, explain in notes (e.g., "instruction conflicts with evidence", "insufficient source support").
+- warnings: array of strings (or empty). Include if you could not add requested facts due to missing source support, or if any instruction was only partially applied.
+Do NOT claim that facts were added unless they are supported by the provided sources. If you could not comply with an instruction, say why in notes or warnings.
+
+Return ONLY valid JSON with no markdown or extra text:
 {
-  "draftText": "string"
+  "draftText": "string",
+  "rewriteReport": {
+    "summary": "string",
+    "instructionChecklist": [ { "instruction": "string", "status": "done" | "partial" | "not_done", "notes": "string or null" } ],
+    "warnings": [ "string" ]
+  }
 }
 `.trim();
 
@@ -602,13 +625,70 @@ Return ONLY JSON:
       }
     }
 
-    const raw = completion?.choices?.[0]?.message?.content || "";
+    let raw = completion?.choices?.[0]?.message?.content || "";
+    // Strip optional markdown code fence so JSON parse succeeds
+    const codeFence = /^```(?:json)?\s*\n?([\s\S]*?)\n?```\s*$/;
+    const match = raw.match(codeFence);
+    if (match) raw = match[1].trim();
     const parsed = safeJsonParse(raw) || {};
     const draftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
 
     if (!draftText) {
       return res.status(500).json({ ok: false, error: "Rewrite failed. Please try again." });
     }
+
+    // X3.1: Deterministic metrics (authoritative)
+    const wordsBefore = countWords(text);
+    const wordsAfter = countWords(draftText);
+    const charsBefore = countChars(text);
+    const charsAfter = countChars(draftText);
+    const targetMaxWords = effectiveMaxWords;
+    const hitTarget =
+      targetMaxWords == null
+        ? null
+        : wordsAfter >= Math.round(0.9 * targetMaxWords) && wordsAfter <= Math.round(1.1 * targetMaxWords);
+
+    // X3.1: Parse optional rewriteReport from model (best-effort)
+    const rawReport = parsed.rewriteReport;
+    let summary = "Rewrite completed.";
+    let instructionChecklist = [];
+    let warnings = null;
+
+    if (rawReport && typeof rawReport === "object") {
+      if (typeof rawReport.summary === "string" && rawReport.summary.trim()) {
+        summary = rawReport.summary.trim();
+      }
+      if (Array.isArray(rawReport.instructionChecklist)) {
+        instructionChecklist = rawReport.instructionChecklist
+          .filter((item) => item && typeof item === "object" && typeof item.instruction === "string")
+          .map((item) => ({
+            instruction: String(item.instruction).trim() || "—",
+            status: ["done", "partial", "not_done"].includes(item.status) ? item.status : "partial",
+            notes: typeof item.notes === "string" ? item.notes.trim() || null : null,
+          }));
+      }
+      if (Array.isArray(rawReport.warnings) && rawReport.warnings.length > 0) {
+        warnings = rawReport.warnings
+          .filter((w) => typeof w === "string" && w.trim())
+          .map((w) => w.trim());
+      }
+    } else {
+      warnings = ["Rewrite report unavailable for this run."];
+    }
+
+    const rewriteReport = {
+      summary,
+      metrics: {
+        wordsBefore,
+        wordsAfter,
+        charsBefore,
+        charsAfter,
+        targetMaxWords,
+        hitTarget,
+      },
+      instructionChecklist,
+      warnings,
+    };
 
     // Extract citations and derive usedReferenceIds
     const citations = extractCitations(draftText);
@@ -647,6 +727,7 @@ Return ONLY JSON:
         outputIntent: metaOutputIntent,
         eventType,
         eventTypeLabel,
+        rewriteReport,
       },
       sourcesUsed: {
         web: {
