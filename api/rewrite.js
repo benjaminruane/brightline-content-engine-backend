@@ -504,8 +504,8 @@ export default async function handler(req, res) {
     // X3.2.3: Rewrite authority — value flow: body.maxWords (rewrite target) → effectiveMaxWords → meta.outputIntent.maxWords → version store → UI + report.
     // MUST NOT: clamp vs generate cap, fall back to generate, merge limits, or retain legacy cap. When rewrite sends a word target it fully replaces prior.
     const rewriteOverrideMaxWords =
-      typeof body.maxWords === "number" && Number.isFinite(body.maxWords) && body.maxWords > 0
-        ? Math.floor(body.maxWords)
+      typeof body.maxWords === "number" && Number.isFinite(body.maxWords) && body.maxWords >= 1
+        ? Math.min(2000, Math.max(1, Math.floor(body.maxWords)))
         : null;
     const priorMaxWords =
       typeof body.priorMaxWords === "number" && Number.isFinite(body.priorMaxWords) && body.priorMaxWords > 0
@@ -518,8 +518,12 @@ export default async function handler(req, res) {
         ? priorMaxWords
         : null;
 
+    const hasInstructions = typeof instructions === "string" && instructions.trim().length > 0;
+    const hasTarget = Number.isFinite(effectiveMaxWords);
+    const isLengthOnly = !hasInstructions && hasTarget;
+
     if (!text.trim()) return res.status(400).json({ error: "Missing text" });
-    if (!instructions.trim()) return res.status(400).json({ error: "Missing instructions" });
+    if (!hasInstructions && !hasTarget) return res.status(400).json({ error: "Missing instructions or word limit" });
 
     let webResultsForPrompt = "";
     let webReferences = [];
@@ -548,7 +552,26 @@ export default async function handler(req, res) {
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
     const eventFraming = getEventTypeFraming(eventType);
-    const prompt = `
+    const prompt = isLengthOnly
+      ? `LENGTH-ONLY REWRITE: Adjust the draft to approximately ${effectiveMaxWords} words (acceptable range: ${Math.round(0.9 * effectiveMaxWords)}–${Math.round(1.1 * effectiveMaxWords)} words). Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first; do not truncate mid-sentence.
+
+DRAFT:
+${text}
+
+SOURCES (for context only; do not add new content):
+${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
+
+Return ONLY valid JSON with no markdown or extra text:
+{
+  "draftText": "string",
+  "rewriteReport": {
+    "summary": "string (e.g. 'Length-only rewrite: adjusted to ~N words.')",
+    "instructionChecklist": [],
+    "warnings": [ "string" ]
+  }
+}
+`.trim()
+      : `
 Rewrite the draft based on the instructions. Keep the same output format and visibility intent unless the instructions ask to change it.
 
 FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
@@ -642,16 +665,16 @@ Return ONLY valid JSON with no markdown or extra text:
     const match = raw.match(codeFence);
     if (match) raw = match[1].trim();
     const parsed = safeJsonParse(raw) || {};
-    let currentDraftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
+    let finalDraftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
 
-    if (!currentDraftText) {
-      return res.status(500).json({ ok: false, error: "Rewrite failed. Please try again." });
+    if (!finalDraftText || typeof finalDraftText !== "string") {
+      return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
     }
 
     // A5.12: Soft-target correction pass (single pass, no truncation) when word limit set
     let wordLimitMiss = false;
     if (effectiveMaxWords != null) {
-      const words = countWords(currentDraftText);
+      const words = countWords(finalDraftText);
       const highThreshold = 1.25 * effectiveMaxWords;
       const lowThreshold = 0.75 * effectiveMaxWords;
       if (words > highThreshold || words < lowThreshold) {
@@ -663,7 +686,7 @@ Do not truncate mid-sentence; produce a coherent final draft.
 
 DRAFT:
 ---
-${currentDraftText}
+${finalDraftText}
 ---
 
 Return ONLY JSON:
@@ -680,8 +703,8 @@ Return ONLY JSON:
           const correctionParsed = safeJsonParse(correctionRaw) || {};
           const correctedText = typeof correctionParsed.draftText === "string" ? correctionParsed.draftText.trim() : "";
           if (correctedText) {
-            currentDraftText = correctedText;
-            const wordsAfterCorrection = countWords(currentDraftText);
+            finalDraftText = correctedText;
+            const wordsAfterCorrection = countWords(finalDraftText);
             if (wordsAfterCorrection > highThreshold || wordsAfterCorrection < lowThreshold) {
               wordLimitMiss = true;
             }
@@ -692,11 +715,15 @@ Return ONLY JSON:
       }
     }
 
+    if (!finalDraftText || typeof finalDraftText !== "string") {
+      return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
+    }
+
     // X3.1: Deterministic metrics (authoritative) — use final draft text
     const wordsBefore = countWords(text);
-    const wordsAfter = countWords(currentDraftText);
+    const wordsAfter = countWords(finalDraftText);
     const charsBefore = countChars(text);
-    const charsAfter = countChars(currentDraftText);
+    const charsAfter = countChars(finalDraftText);
     const targetMaxWords = effectiveMaxWords;
     const hitTarget =
       targetMaxWords == null
@@ -751,6 +778,17 @@ Return ONLY JSON:
       warnings = ["Rewrite report unavailable for this run."];
     }
 
+    if (isLengthOnly && typeof summary === "string" && !summary.toLowerCase().includes("length-only")) {
+      summary = `Length-only rewrite: adjusted to ~${effectiveMaxWords} words. ${summary}`.trim();
+    }
+
+    const EXTRACTION_WARNING_CANONICAL = "Source formatting limited deep extraction of some details.";
+    if (Array.isArray(warnings) && warnings.length > 0) {
+      warnings = warnings.map((w) =>
+        typeof w === "string" && /source|formatting|extraction|pdf|limited.*detail/i.test(w) ? EXTRACTION_WARNING_CANONICAL : w
+      );
+    }
+
     const rewriteReport = {
       summary,
       metrics: {
@@ -762,19 +800,20 @@ Return ONLY JSON:
         hitTarget,
       },
       wordTarget: effectiveMaxWords ?? null,
+      isLengthOnly: isLengthOnly || undefined,
       instructionChecklist,
       warnings,
     };
 
     // Extract citations and derive usedReferenceIds
-    const citations = extractCitations(currentDraftText);
+    const citations = extractCitations(finalDraftText);
     const usedReferenceIds = citations.filter((id) => 
       webReferences.some((ref) => ref.id === id)
     );
 
     // Detect unattributed enrichment (hybrid approach)
     const enrichmentResult = detectUnattributedEnrichment(
-      currentDraftText,
+      finalDraftText,
       publicSearch,
       usedReferenceIds,
       sources
@@ -802,7 +841,7 @@ Return ONLY JSON:
 
     return res.status(200).json({
       ok: true,
-      draftText: currentDraftText,
+      draftText: finalDraftText,
       meta: {
         outputIntent: metaOutputIntent,
         eventType,
