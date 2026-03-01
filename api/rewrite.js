@@ -17,12 +17,14 @@ import {
   normalizeVisibility,
   buildOutputIntent,
   getPromptGuidance,
+  getOutputTypeLabel,
 } from "../lib/output-intent.js";
 import {
   normalizeEventType,
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
+import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -601,9 +603,19 @@ export default async function handler(req, res) {
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
     const eventFraming = getEventTypeFraming(eventType);
+    const { basePromptText } = buildBasePrompt({ outputType, visibility, eventType });
+
     // A5.13 HARD RULE: Prompt must use normalized instructions only. Raw instructions must never reach the model.
+    const rewriteWinsLine =
+      "User rewrite instructions are authoritative and override base guidance if they conflict (advisory conflicts may be reported, but do not block).";
+
     const prompt = isLengthOnly
       ? `LENGTH-ONLY REWRITE: Adjust the draft to approximately ${effectiveMaxWords} words (acceptable range: ${Math.round(0.9 * effectiveMaxWords)}–${Math.round(1.1 * effectiveMaxWords)} words). Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first; do not truncate mid-sentence.
+
+${rewriteWinsLine}
+
+BASE GUIDANCE (output type):
+${basePromptText}
 
 DRAFT:
 ${text}
@@ -623,6 +635,11 @@ Return ONLY valid JSON with no markdown or extra text:
 `.trim()
       : `
 Rewrite the draft based on the instructions. Keep the same output format and visibility intent unless the instructions ask to change it.
+
+${rewriteWinsLine}
+
+BASE GUIDANCE (output type):
+${basePromptText}
 
 FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
 ${eventFraming ? `
@@ -837,6 +854,15 @@ Return ONLY JSON:
       warnings = warnings.map((w) =>
         typeof w === "string" && /source|formatting|extraction|pdf|limited.*detail/i.test(w) ? EXTRACTION_WARNING_CANONICAL : w
       );
+    }
+
+    // X3.1.0: Advisory clash warning when rewrite instructions likely conflict with base guidance (do not block).
+    const clash = detectRewriteClash({ outputType, rewriteInstructions });
+    if (clash.hasClash) {
+      const label = getOutputTypeLabel(outputType);
+      const advisory = `Rewrite instructions may conflict with base guidance for ${label} (e.g. voice/output-type). Proceeding with rewrite as requested.`;
+      if (!Array.isArray(warnings)) warnings = [];
+      warnings.push(advisory);
     }
 
     // A5.13: Explicit transparency for instruction handling.

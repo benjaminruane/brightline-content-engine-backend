@@ -29,6 +29,7 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
+import { buildBasePrompt } from "../lib/prompt-library/index.js";
 
 // ------------------------------------------------------------------
 // CORS
@@ -599,6 +600,9 @@ export default async function handler(req, res) {
       ? "Write in second-person voice (use 'you', 'your')."
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
+    const { basePromptText } = buildBasePrompt({ outputType, visibility, eventType });
+    const systemContent = [STYLE_GUIDE_INSTRUCTIONS, basePromptText].filter(Boolean).join("\n\n");
+
     const userPrompt = `
 You are generating a draft. Follow the style guide.
 
@@ -683,7 +687,7 @@ Return ONLY JSON:
       model: modelId,
       temperature: 0.2,
       messages: [
-        { role: "system", content: STYLE_GUIDE_INSTRUCTIONS },
+        { role: "system", content: systemContent },
         { role: "user", content: userPrompt },
       ],
     });
