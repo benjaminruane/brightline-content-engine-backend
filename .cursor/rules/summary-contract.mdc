@@ -1,0 +1,13 @@
+---
+description: Require technical + plain-language summaries for implementation work
+alwaysApply: true
+---
+
+# Cursor summary contract
+
+When completing an implementation spec or task, your final response **must** include **both**:
+
+1. **Technical summary** — What changed in code (files, behavior). Enough for a developer to review the diff.
+2. **Plain-language summary** — One to three sentences on **user-visible impact** (what users/operators will notice).
+
+A spec is **not** complete until both sections are present. See `docs/CURSOR_SUMMARY_CONTRACT.md` for the full contract.
