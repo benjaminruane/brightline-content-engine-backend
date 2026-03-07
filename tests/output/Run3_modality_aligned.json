@@ -239,13 +239,13 @@
         },
         "supportingReferences": {
           "supportingReferenceIds": [
-            "1",
             "2",
+            "1",
             "3"
           ],
           "supportingReferenceTitles": [
-            "TEST_numeric_near_source.txt",
             "D2_shopify_unit_economics_discussion.txt",
+            "TEST_numeric_near_source.txt",
             "D3_shopify_risk_factors_summary.txt"
           ],
           "supportingReferenceCount": 3
@@ -313,7 +313,7 @@
         "sourceIntelligence": {
           "perSource": [
             {
-              "sourceId": "1",
+              "sourceId": "2",
               "role": "unknown",
               "distanceFromFact": "interpretive",
               "independenceContribution": "neutral",
@@ -324,7 +324,7 @@
               }
             },
             {
-              "sourceId": "2",
+              "sourceId": "1",
               "role": "unknown",
               "distanceFromFact": "interpretive",
               "independenceContribution": "neutral",
@@ -807,7 +807,7 @@
         "reasoningParagraph": "Confirmed using provided sources: \"D2_shopify_unit_economics_discussion.txt\" [2]: \"Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking\" This matches the draft statement.",
         "displayMode": "confirmed"
       },
-      "id": "stmt_mmg44tnw-2k3oli_1"
+      "id": "stmt_mmg6lwud-fzsg84_1"
     }
   ],
   "references": [
@@ -1355,6 +1355,6 @@
       "excludedSourceIds": []
     },
     "openaiCompleted": true,
-    "analysedAt": "2026-03-07T09:20:30.232Z"
+    "analysedAt": "2026-03-07T10:29:42.855Z"
   }
 }

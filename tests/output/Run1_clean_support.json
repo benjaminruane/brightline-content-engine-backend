@@ -693,7 +693,7 @@
         "reasoningParagraph": "Confirmed using provided sources: \"B1_shopify_source_1_7m.txt\" [1]: \"Shopify raised $7 million in Series A funding. The round was led by Bessemer Venture Partners.\" The draft restates this information in different wording.",
         "displayMode": "confirmed"
       },
-      "id": "stmt_mmg44oq4-uowioi_1"
+      "id": "stmt_mmg6lqzi-175zdy_1"
     }
   ],
   "references": [
@@ -1233,6 +1233,6 @@
       "excludedSourceIds": []
     },
     "openaiCompleted": true,
-    "analysedAt": "2026-03-07T09:20:20.075Z"
+    "analysedAt": "2026-03-07T10:29:35.446Z"
   }
 }

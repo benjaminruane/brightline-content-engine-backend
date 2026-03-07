@@ -239,14 +239,14 @@
         },
         "supportingReferences": {
           "supportingReferenceIds": [
-            "1",
             "2",
-            "3"
+            "3",
+            "1"
           ],
           "supportingReferenceTitles": [
-            "TEST_numeric_near_source.txt",
             "D2_shopify_unit_economics_discussion.txt",
-            "D3_shopify_risk_factors_summary.txt"
+            "D3_shopify_risk_factors_summary.txt",
+            "TEST_numeric_near_source.txt"
           ],
           "supportingReferenceCount": 3
         },
@@ -303,17 +303,6 @@
         "sourceIntelligence": {
           "perSource": [
             {
-              "sourceId": "1",
-              "role": "unknown",
-              "distanceFromFact": "interpretive",
-              "independenceContribution": "neutral",
-              "numericSupport": {
-                "matchKind": "format_equivalent",
-                "statementValueNormalized": 250,
-                "sourceValueNormalized": 250
-              }
-            },
-            {
               "sourceId": "2",
               "role": "unknown",
               "distanceFromFact": "interpretive",
@@ -326,6 +315,17 @@
             },
             {
               "sourceId": "3",
+              "role": "unknown",
+              "distanceFromFact": "interpretive",
+              "independenceContribution": "neutral",
+              "numericSupport": {
+                "matchKind": "format_equivalent",
+                "statementValueNormalized": 250,
+                "sourceValueNormalized": 250
+              }
+            },
+            {
+              "sourceId": "1",
               "role": "unknown",
               "distanceFromFact": "interpretive",
               "independenceContribution": "neutral",
@@ -806,7 +806,7 @@
         "reasoningParagraph": "The cited source \"D2_shopify_unit_economics_discussion.txt\" [2] refers to a potential or scenario-based figure rather than a confirmed reported figure.",
         "displayMode": "partial"
       },
-      "id": "stmt_mmg44qy8-d53mv6_1"
+      "id": "stmt_mmg6lt91-ehf07w_1"
     }
   ],
   "references": [
@@ -1354,6 +1354,6 @@
       "excludedSourceIds": []
     },
     "openaiCompleted": true,
-    "analysedAt": "2026-03-07T09:20:23.589Z"
+    "analysedAt": "2026-03-07T10:29:40.107Z"
   }
 }
