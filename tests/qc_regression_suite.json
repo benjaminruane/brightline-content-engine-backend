@@ -1,0 +1,39 @@
+{
+  "runs": [
+    {
+      "name": "Run1_clean_support",
+      "sourceFiles": [
+        "B1_shopify_source_1_7m.txt",
+        "C1_shopify_source_relevant.txt"
+      ],
+      "draft": "Shopify raised $7 million in funding.",
+      "expect": {
+        "supportState": "confirmed"
+      }
+    },
+    {
+      "name": "Run2_modality_mismatch",
+      "sourceFiles": [
+        "TEST_numeric_near_source.txt",
+        "D2_shopify_unit_economics_discussion.txt",
+        "D3_shopify_risk_factors_summary.txt"
+      ],
+      "draft": "The company's valuation was around $250 million.",
+      "expect": {
+        "supportState": ["partially_confirmed", "no_clear_support"]
+      }
+    },
+    {
+      "name": "Run3_modality_aligned",
+      "sourceFiles": [
+        "TEST_numeric_near_source.txt",
+        "D2_shopify_unit_economics_discussion.txt",
+        "D3_shopify_risk_factors_summary.txt"
+      ],
+      "draft": "The company could reach a valuation of around $250 million in a long-term scenario.",
+      "expect": {
+        "supportState": ["confirmed", "partially_confirmed"]
+      }
+    }
+  ]
+}

@@ -148,4 +148,10 @@ These invariants define the minimum trust bar for **Statement Analysis (Review)*
 8) **Deterministic safeguards for anchors**  
    Numeric/anchor facts (valuation, funding, dates, percentages) must be normalized (e.g., `$25mm` == `$25 million`) before declaring mismatch/absence.
 
+---
+
+## Testing — QC regression
+
+See [docs/testing-qc-regression.md](docs/testing-qc-regression.md) for the test corpus location, how to enable the test-only QC endpoint locally, and how to run the regression suite.
+
 trigger rollback deployment
