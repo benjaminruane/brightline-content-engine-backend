@@ -25,19 +25,126 @@ function parseExpectSupportState(expect) {
   return null;
 }
 
-function primarySupportState(payload) {
+function primaryStatement(payload) {
   const statements = payload?.statements;
   if (!Array.isArray(statements) || statements.length === 0) return null;
-  const first = statements[0];
+  return statements[0];
+}
+
+function primarySupportState(payload) {
+  const first = primaryStatement(payload);
   const qc = first?.qcCard;
   return qc?.supportState ?? null;
 }
 
-function checkPass(actual, expectedList) {
+function checkSupportStatePass(actual, expectedList) {
   if (expectedList == null || expectedList.length === 0) return { pass: true, note: "no expectation" };
   if (actual == null) return { pass: false, note: "no primary statement or qcCard" };
   const pass = expectedList.includes(actual);
   return { pass, note: pass ? "match" : `expected one of [${expectedList.join(", ")}], got ${actual}` };
+}
+
+/** R2.1: Optional structural assertions. Each returns { pass, note } or null if not asserted. */
+function assertSupportRefIdsUnique(qcCard, expect) {
+  if (expect?.supportRefIdsUnique !== true) return null;
+  const ids = qcCard?.supportRefIds;
+  if (!Array.isArray(ids)) return { pass: false, note: "supportRefIdsUnique: no supportRefIds" };
+  const seen = new Set();
+  for (const id of ids) {
+    if (seen.has(id)) return { pass: false, note: "supportRefIdsUnique: duplicate refId" };
+    seen.add(id);
+  }
+  return { pass: true, note: "supportRefIdsUnique" };
+}
+
+function assertConcernState(qcCard, expect) {
+  const v = expect?.concernState;
+  if (v == null) return null;
+  const expectedList = Array.isArray(v) ? v : [v];
+  const actual = qcCard?.concernState ?? null;
+  const pass = expectedList.includes(actual);
+  return { pass, note: pass ? "concernState" : `concernState: expected one of [${expectedList.join(", ")}], got ${actual}` };
+}
+
+function assertReasoningHeadline(qcCard, expect) {
+  const v = expect?.reasoningHeadline;
+  if (v == null) return null;
+  const expectedList = Array.isArray(v) ? v : [v];
+  const actual = qcCard?.reasoningHeadline ?? null;
+  const pass = expectedList.includes(actual);
+  return { pass, note: pass ? "reasoningHeadline" : `reasoningHeadline: expected one of [${expectedList.join(", ")}], got ${actual}` };
+}
+
+function assertReasoningParagraphIncludes(qcCard, expect) {
+  const arr = expect?.reasoningParagraphIncludes;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const p = qcCard?.reasoningParagraph;
+  const str = typeof p === "string" ? p : "";
+  for (const sub of arr) {
+    if (typeof sub !== "string" || !str.includes(sub)) return { pass: false, note: `reasoningParagraphIncludes: missing "${sub.slice(0, 24)}..."` };
+  }
+  return { pass: true, note: "reasoningParagraphIncludes" };
+}
+
+/** R2.1: If paragraph exists, it must include at least one of the listed substrings. */
+function assertReasoningParagraphIncludesAny(qcCard, expect) {
+  const arr = expect?.reasoningParagraphIncludesAny;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const p = qcCard?.reasoningParagraph;
+  const str = typeof p === "string" ? p : "";
+  if (!str.trim()) return { pass: true, note: "reasoningParagraphIncludesAny (no paragraph)" };
+  const pass = arr.some((sub) => typeof sub === "string" && str.includes(sub));
+  return { pass, note: pass ? "reasoningParagraphIncludesAny" : `reasoningParagraphIncludesAny: none of [${arr.join(", ")}] in paragraph` };
+}
+
+function assertReasoningParagraphExcludes(qcCard, expect) {
+  const arr = expect?.reasoningParagraphExcludes;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const p = qcCard?.reasoningParagraph;
+  const str = typeof p === "string" ? p : "";
+  for (const sub of arr) {
+    if (typeof sub === "string" && str.includes(sub)) return { pass: false, note: `reasoningParagraphExcludes: found "${sub.slice(0, 24)}..."` };
+  }
+  return { pass: true, note: "reasoningParagraphExcludes" };
+}
+
+function assertPrimaryRefTitleIncludes(qcCard, expect) {
+  const arr = expect?.primaryRefTitleIncludes;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const title = qcCard?.primaryRefTitle;
+  const str = typeof title === "string" ? title : "";
+  const pass = arr.some((sub) => typeof sub === "string" && str.includes(sub));
+  return { pass, note: pass ? "primaryRefTitleIncludes" : `primaryRefTitleIncludes: none of [${arr.map((s) => s.slice(0, 20)).join(", ")}] in title` };
+}
+
+function assertSupportRefTitlesInclude(qcCard, expect) {
+  const arr = expect?.supportRefTitlesInclude;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const titles = Array.isArray(qcCard?.supportRefTitles) ? qcCard.supportRefTitles : [];
+  for (const want of arr) {
+    if (typeof want !== "string") continue;
+    if (!titles.includes(want)) return { pass: false, note: `supportRefTitlesInclude: missing "${want.slice(0, 24)}..."` };
+  }
+  return { pass: true, note: "supportRefTitlesInclude" };
+}
+
+function runStructuralAssertions(qcCard, expect) {
+  const results = [];
+  const checks = [
+    () => assertSupportRefIdsUnique(qcCard, expect),
+    () => assertConcernState(qcCard, expect),
+    () => assertReasoningHeadline(qcCard, expect),
+    () => assertReasoningParagraphIncludes(qcCard, expect),
+    () => assertReasoningParagraphIncludesAny(qcCard, expect),
+    () => assertReasoningParagraphExcludes(qcCard, expect),
+    () => assertPrimaryRefTitleIncludes(qcCard, expect),
+    () => assertSupportRefTitlesInclude(qcCard, expect),
+  ];
+  for (const fn of checks) {
+    const r = fn();
+    if (r != null) results.push(r);
+  }
+  return results;
 }
 
 async function runOne(spec) {
@@ -51,9 +158,20 @@ async function runOne(spec) {
     }),
   });
   const payload = await res.json();
+  const first = primaryStatement(payload);
+  const qcCard = first?.qcCard ?? null;
   const actual = primarySupportState(payload);
   const expectedList = parseExpectSupportState(spec.expect);
-  const { pass, note } = checkPass(actual, expectedList);
+  const supportStateResult = checkSupportStatePass(actual, expectedList);
+  const structuralResults = qcCard ? runStructuralAssertions(qcCard, spec.expect) : [];
+  const allStructuralPass = structuralResults.every((r) => r.pass);
+  const firstStructuralFail = structuralResults.find((r) => !r.pass);
+  const pass = supportStateResult.pass && allStructuralPass;
+  const note = pass
+    ? (supportStateResult.note === "match" && structuralResults.length === 0 ? "match" : [supportStateResult.note, ...structuralResults.map((r) => r.note)].filter(Boolean).join("; "))
+    : !supportStateResult.pass
+      ? supportStateResult.note
+      : firstStructuralFail?.note ?? "structural assertion failed";
   return {
     name: spec.name,
     expected: expectedList ? (expectedList.length === 1 ? expectedList[0] : expectedList.join("|")) : "-",

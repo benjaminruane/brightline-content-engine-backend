@@ -664,7 +664,7 @@
         "matchType": "exact",
         "reasoning": {
           "headline": "confirmed",
-          "paragraph": "Confirmed using provided sources: \"D2_shopify_unit_economics_discussion.txt\" [2]: \"Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking\" This matches the draft statement.",
+          "paragraph": "The cited source \"D2_shopify_unit_economics_discussion.txt\" [2] describes a scenario-based figure that aligns with the draft's conditional wording.",
           "deterministicVariantKey": "c1dd9aa0"
         },
         "supportBindings": [
@@ -786,7 +786,7 @@
       "supportReasoningSources": [],
       "qcCard": {
         "supportState": "confirmed",
-        "concernState": "none",
+        "concernState": "soft",
         "supportRefIds": [
           "2",
           "1",
@@ -804,10 +804,10 @@
         "hasConflict": false,
         "conflictValues": null,
         "reasoningHeadline": "confirmed",
-        "reasoningParagraph": "Confirmed using provided sources: \"D2_shopify_unit_economics_discussion.txt\" [2]: \"Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking\" This matches the draft statement.",
+        "reasoningParagraph": "The cited source \"D2_shopify_unit_economics_discussion.txt\" [2] describes a scenario-based figure that aligns with the draft's conditional wording.",
         "displayMode": "confirmed"
       },
-      "id": "stmt_mmg6lwud-fzsg84_1"
+      "id": "stmt_mmg73va2-g1s7i7_1"
     }
   ],
   "references": [
@@ -1355,6 +1355,6 @@
       "excludedSourceIds": []
     },
     "openaiCompleted": true,
-    "analysedAt": "2026-03-07T10:29:42.855Z"
+    "analysedAt": "2026-03-07T10:43:40.224Z"
   }
 }
