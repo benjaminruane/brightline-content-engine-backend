@@ -1,0 +1,1164 @@
+{
+  "ok": true,
+  "statements": [
+    {
+      "text": "The company's valuation was around $250 million",
+      "assessment": {
+        "reliabilityScore": 85,
+        "reliabilityLabel": "High",
+        "reasons": [
+          "This statement is consistent with the provided source(s). [1, 2, 3]"
+        ],
+        "citations": [
+          1,
+          2,
+          3
+        ],
+        "evidence": [
+          {
+            "title": "TEST_numeric_near_source.txt",
+            "url": null,
+            "sourceType": "uploaded"
+          },
+          {
+            "title": "D2_shopify_unit_economics_discussion.txt",
+            "url": null,
+            "sourceType": "uploaded"
+          },
+          {
+            "title": "D3_shopify_risk_factors_summary.txt",
+            "url": null,
+            "sourceType": "uploaded"
+          }
+        ],
+        "canonicalClaims": [
+          {
+            "id": "a14feb989e12931c091932229b277c90",
+            "type": "valuation_pre_money",
+            "value": 250000000,
+            "unit": "USD",
+            "currency": "USD",
+            "displayText": "The company's valuation was around $250 million",
+            "company": null,
+            "round": null,
+            "roleKeywords": [
+              "valuation"
+            ],
+            "anchorFamily": "valuation_250000000",
+            "signalAnchors": [
+              "valuation_250000000"
+            ],
+            "sourceSpan": {
+              "start": 0,
+              "end": 47
+            },
+            "citations": [
+              1,
+              2,
+              3
+            ],
+            "reliability": "High",
+            "reliabilityScore": null,
+            "evidenceNotes": [],
+            "rawClaimIds": [
+              "raw_0"
+            ],
+            "selectionScope": {
+              "selectionMode": false,
+              "selectionHash": null
+            },
+            "_statementIndex": 0
+          }
+        ],
+        "rawClaims": [
+          {
+            "claimText": "The company's valuation was around $250 million",
+            "reliability": "High",
+            "comment": "Confirmed in provided source",
+            "anchor": "qual_valuation",
+            "citations": [
+              1,
+              2,
+              3
+            ]
+          }
+        ],
+        "claims": [
+          {
+            "claimText": "The company's valuation was around $250 million",
+            "reliability": "High",
+            "reliabilityScore": 90,
+            "comment": "Supported by sources",
+            "anchor": "valuation_250000000",
+            "citations": [
+              1,
+              2,
+              3
+            ],
+            "_canonicalId": "a14feb989e12931c091932229b277c90"
+          }
+        ],
+        "reasonsSource": "canonical",
+        "_claimsError": false
+      },
+      "__candidateIndex": 0,
+      "__draftPosition": 0,
+      "meta": {
+        "displayTextOrigin": "verbatim",
+        "numericSupportBySourceId": {
+          "1": {
+            "matchKind": "format_equivalent",
+            "statementValueNormalized": 250,
+            "sourceValueNormalized": 250
+          },
+          "2": {
+            "matchKind": "format_equivalent",
+            "statementValueNormalized": 250,
+            "sourceValueNormalized": 250
+          },
+          "3": {
+            "matchKind": "format_equivalent",
+            "statementValueNormalized": 250,
+            "sourceValueNormalized": 250
+          }
+        },
+        "v2Reasoning": {
+          "version": "v1",
+          "agreementStrength": {
+            "score": 98,
+            "level": "strong",
+            "basis": {
+              "totalClaims": 1,
+              "supportedClaims": 1,
+              "avgSupportRatio": 1,
+              "matchQualityAvg": 0.85,
+              "supportingSourceCount": 3,
+              "supportingSourceIds": []
+            }
+          },
+          "conflictSignals": {
+            "present": false,
+            "count": 0,
+            "items": []
+          },
+          "evidenceCoverage": {
+            "totalClaims": 1,
+            "supportedClaims": 1,
+            "claimCoverageRatio": 1,
+            "missingClaimTypes": []
+          },
+          "sourceSpread": {
+            "supportingSourceCount": 3,
+            "totalSourcesConsidered": 3,
+            "ratio": 1,
+            "supportingSourceIds": []
+          },
+          "notes": []
+        },
+        "matcherSupport": {
+          "agreementStrength": {
+            "supportingSourceCount": 3,
+            "supportingSourceIds": [
+              "1",
+              "2",
+              "3"
+            ]
+          },
+          "sourceSpread": {
+            "supportingSourceCount": 3,
+            "supportingSourceIds": [
+              "1",
+              "2",
+              "3"
+            ],
+            "ratio": 1
+          }
+        },
+        "supportTopology": {
+          "supportingSourceCount": 3,
+          "supportingReferenceCount": 3,
+          "totalSourceCount": 3,
+          "totalReferenceCount": 3,
+          "supportSpread": "multi_source",
+          "agreementStrength": "strong",
+          "evidenceDensity": "medium",
+          "coverageSignal": "broad",
+          "conflictingSourceCount": 0,
+          "claimCorroboration": {
+            "claimCount": 1,
+            "multiCitedClaimCount": 1,
+            "corroborationRatio": 1,
+            "minCitationsPerClaim": 3,
+            "maxCitationsPerClaim": 3
+          }
+        },
+        "coverageGap": {
+          "totalSourceCount": 3,
+          "referencedSourceCount": 3,
+          "missingSourceCount": 0
+        },
+        "contradictionSignals": {
+          "level": "none",
+          "conflictTypes": [],
+          "conflictingTypeCount": 0,
+          "source": "corpus"
+        },
+        "truthSemantics": {
+          "statementSupportTruth": "emitted_evidence",
+          "canonicalSupportTruth": "claim_internal",
+          "canonicalMayExceedStatement": false
+        },
+        "evidenceExplanation": {
+          "emittedSupportCount": 3,
+          "totalSourcesConsidered": 3,
+          "supportCoverageRatio": 1,
+          "supportClassification": "multi_source_consistent"
+        },
+        "analystExplanation": {
+          "supportLevelSummary": "Supported by multiple consistent sources",
+          "conflictSummary": "No material source conflicts detected",
+          "coverageSummary": "Evidence coverage spans multiple sources"
+        },
+        "confidenceUplift": {
+          "primaryConstraint": "No primary constraint detected",
+          "suggestedEvidenceDirection": "No additional evidence required to improve confidence"
+        },
+        "conflictNarrative": {
+          "hasConflict": false,
+          "severity": "none",
+          "summary": "No material source conflicts detected",
+          "recommendedAction": "No conflict resolution required"
+        },
+        "conflictValues": null,
+        "evidenceGap": {
+          "gapType": "none",
+          "shortSummary": "No material evidence gap detected",
+          "targetDelta": {
+            "additionalSupportingSourcesNeeded": 0
+          }
+        },
+        "supportingReferences": {
+          "supportingReferenceIds": [
+            "1",
+            "2",
+            "3"
+          ],
+          "supportingReferenceTitles": [
+            "TEST_numeric_near_source.txt",
+            "D2_shopify_unit_economics_discussion.txt",
+            "D3_shopify_risk_factors_summary.txt"
+          ],
+          "supportingReferenceCount": 3
+        },
+        "explanationConsistency": {
+          "notesContradictEmittedSupport": false,
+          "shouldHideV2ReasoningNotes": false,
+          "reasonCodes": []
+        },
+        "evidenceStrength": {
+          "band": "very_strong",
+          "rationale": "High multi-source coverage"
+        },
+        "sourceRelianceRisk": {
+          "level": "low",
+          "rationale": "Support distributed across sources"
+        },
+        "editorialStructuralSignals": [],
+        "supportMismatch": null,
+        "complianceSignals": [],
+        "evidenceJudgement": {
+          "fragilityIndex": 0,
+          "fragilityBand": "robust",
+          "evidenceDiversityBand": "high",
+          "languageSupportMismatch": {
+            "isMismatch": false,
+            "direction": null,
+            "reason": null
+          },
+          "densityMismatch": {
+            "isMismatch": true,
+            "direction": "underclaim",
+            "claimDensity": 0,
+            "evidenceDensity": 3,
+            "reason": "Evidence density strong with no claim-intensity signals."
+          },
+          "fragilityDrivers": [],
+          "consistency": {
+            "inConflict": false
+          },
+          "crossStatementNumericFragility": {
+            "fragilityFlag": "none",
+            "docConsistencyBand": "uniform_strong"
+          }
+        },
+        "numericConfidenceHint": "high",
+        "evidenceJudgementInputs": {
+          "numericEvidenceQuality": {
+            "qualityBand": "strong",
+            "approxSourceRatio": 0,
+            "exactSourceRatio": 1,
+            "sourceCount": 3
+          }
+        },
+        "sourceIntelligence": {
+          "perSource": [
+            {
+              "sourceId": "1",
+              "role": "unknown",
+              "distanceFromFact": "interpretive",
+              "independenceContribution": "neutral",
+              "numericSupport": {
+                "matchKind": "format_equivalent",
+                "statementValueNormalized": 250,
+                "sourceValueNormalized": 250
+              }
+            },
+            {
+              "sourceId": "2",
+              "role": "unknown",
+              "distanceFromFact": "interpretive",
+              "independenceContribution": "neutral",
+              "numericSupport": {
+                "matchKind": "format_equivalent",
+                "statementValueNormalized": 250,
+                "sourceValueNormalized": 250
+              }
+            },
+            {
+              "sourceId": "3",
+              "role": "unknown",
+              "distanceFromFact": "interpretive",
+              "independenceContribution": "neutral",
+              "numericSupport": {
+                "matchKind": "format_equivalent",
+                "statementValueNormalized": 250,
+                "sourceValueNormalized": 250
+              }
+            }
+          ],
+          "independenceBand": "medium",
+          "evidenceQualityBand": "medium"
+        },
+        "judgement": {
+          "fragilityPosture": "robust",
+          "primaryDrivers": [],
+          "confidence": "high",
+          "narrative": "Evidence appears strong and well supported across sources."
+        },
+        "scoringBridge": {
+          "fragilitySeverityScore": 10,
+          "evidenceQualityScore": 90,
+          "confidenceScore": 85
+        },
+        "suggestPriority": {
+          "riskPriorityScore": 11,
+          "riskPriorityBand": "low"
+        },
+        "corpusConflictRelevance": {
+          "involved": false,
+          "candidateCount": 0,
+          "candidateTypes": []
+        },
+        "corpusConflictMapping": {
+          "candidateKeys": [],
+          "candidateSummaries": [],
+          "highestSeverity": "none"
+        },
+        "corpusPresence": {
+          "clusterMatchCount": 1,
+          "externalSourcePresence": "limited",
+          "clusterKeys": [
+            "money|valuation_pre_money|USD|250000000"
+          ]
+        },
+        "dealSignalStrength": {
+          "level": "strong",
+          "score": 70,
+          "drivers": [
+            "numeric_deal_term_present",
+            "role_keyword_present",
+            "multi_source_support"
+          ],
+          "diagnostics": {
+            "hasNumericDealTerm": true,
+            "hasRoleKeyword": true,
+            "cueDensityBand": "low",
+            "corpusPresenceBand": "single",
+            "supportTopologyBand": "multi_source"
+          }
+        },
+        "dealSalience": {
+          "level": "supporting",
+          "score": 70,
+          "drivers": [
+            "lead_position_signal",
+            "strong_deal_signal"
+          ],
+          "diagnostics": {
+            "draftPositionBand": "lead",
+            "statementDealDensityBand": "medium",
+            "corpusDealDensityBand": "low",
+            "signalStrengthBand": "strong"
+          }
+        },
+        "crossSourceConviction": {
+          "level": "high",
+          "score": 82,
+          "drivers": [
+            "multi_source_corroboration",
+            "high_claim_redundancy",
+            "strong_evidence_band"
+          ],
+          "diagnostics": {
+            "supportingSourceCount": 3,
+            "corroborationRatio": 1,
+            "evidenceStrengthBand": "very_strong",
+            "topologyBand": "multi_source"
+          }
+        },
+        "dealNarrativeCoherence": {
+          "level": "insufficient_data",
+          "score": 0,
+          "drivers": [
+            "cross_source_structure_consistent",
+            "high_cross_source_conviction",
+            "insufficient_data_no_inference"
+          ],
+          "diagnostics": {
+            "valuationInvestmentMathBand": "not_available",
+            "ownershipConsistencyBand": "not_available",
+            "dealStructureConsistencyBand": "consistent",
+            "dealBundleCompletenessBand": "minimal"
+          }
+        },
+        "dealStructureSufficiency": {
+          "level": "insufficient",
+          "score": 30,
+          "drivers": [
+            "has_valuation",
+            "multi_source_support"
+          ],
+          "diagnostics": {
+            "fieldsPresent": {
+              "investmentAmount": false,
+              "valuation": true,
+              "ownershipPct": false,
+              "roundType": false,
+              "instrumentOrModality": false
+            },
+            "fieldCount": 1,
+            "hasMathTriplet": false,
+            "hasMultiSourceSupport": true
+          }
+        },
+        "evidenceFragilitySignals": [
+          {
+            "code": "narrow_corpus_support",
+            "severity": "medium",
+            "drivers": [
+              "corpus_presence_limited_or_single_deal_signal_strong_or_moderate"
+            ]
+          }
+        ],
+        "crossStatementConsistency": {
+          "level": "insufficient_data",
+          "score": 0,
+          "drivers": [],
+          "diagnostics": {
+            "tupleFamily": "money",
+            "tupleKey": "money|valuation_pre_money|250000000|USD",
+            "clusterKey": "money|valuation_pre_money|USD|250000000",
+            "peerStatementCount": 1,
+            "conflictingPeerCount": 0,
+            "conflictTypes": []
+          }
+        },
+        "icAttentionSignals": [
+          {
+            "code": "strong_claim_structurally_underdescribed",
+            "priority": "high",
+            "drivers": [
+              "deal_signal_strong",
+              "deal_structure_insufficient"
+            ]
+          }
+        ],
+        "editorialDensitySignals": [],
+        "editorialFramingSignals": [],
+        "editorialBalanceSignals": [],
+        "narrativeIntegritySignals": [
+          {
+            "code": "evidence_without_implication",
+            "severity": "low",
+            "drivers": [
+              "strong_evidence_indicators",
+              "no_implication_language"
+            ],
+            "fixGuidance": "Add one sentence explaining why this evidence matters for the investment or thesis."
+          }
+        ],
+        "suggest": {
+          "items": [
+            {
+              "id": "narrative_integrity:evidence_without_implication:idx1:low",
+              "type": "add_context",
+              "severity": "low",
+              "title": "Add reasoning bridge",
+              "suggestion": "Add one sentence explaining why this evidence matters for the investment or thesis.",
+              "source": "narrative_integrity",
+              "appliesTo": {
+                "stmtId": null,
+                "stmtIndex": 1
+              },
+              "actionKey": "add_context:Add reasoning bridge",
+              "groupKey": "narrative",
+              "groupTitle": "Narrative",
+              "priorityScore": 20,
+              "priorityBand": "P3"
+            }
+          ],
+          "summary": {
+            "total": 1,
+            "byGroup": {
+              "evidence": 0,
+              "compliance": 0,
+              "narrative": 1,
+              "editorial": 0
+            },
+            "byPriorityBand": {
+              "P1": 0,
+              "P2": 0,
+              "P3": 1
+            },
+            "primaryActions": [
+              {
+                "actionKey": "add_context:Add reasoning bridge",
+                "title": "Add reasoning bridge",
+                "priorityBand": "P3"
+              }
+            ]
+          }
+        },
+        "debug": {
+          "conflictBinding": {
+            "stmtIndex": 0,
+            "stmtTextPreview": "The company's valuation was around $250 million",
+            "hasMetaConflictValues": false,
+            "corpusCandidateCount": 0,
+            "usedPath": "none",
+            "candidateKey": null,
+            "valueA": null,
+            "valueB": null,
+            "citationA": null,
+            "citationB": null,
+            "refAResolvedTitle": null,
+            "refBResolvedTitle": null,
+            "gateFailureReason": null,
+            "narrativeType": "fallback",
+            "narrativePreview": "Conflicting sources — The cited materials disagree on this point. Reconcile the draft to one value and cite the chosen source."
+          }
+        }
+      },
+      "citations": [
+        1,
+        2,
+        3
+      ],
+      "evidence": [
+        {
+          "title": "TEST_numeric_near_source.txt",
+          "url": null,
+          "sourceType": "uploaded"
+        },
+        {
+          "title": "D2_shopify_unit_economics_discussion.txt",
+          "url": null,
+          "sourceType": "uploaded"
+        },
+        {
+          "title": "D3_shopify_risk_factors_summary.txt",
+          "url": null,
+          "sourceType": "uploaded"
+        }
+      ],
+      "__selectionSegmentId": null,
+      "evidenceBundle": {
+        "primary": null,
+        "additional": [],
+        "matchType": "none",
+        "reasoning": {
+          "headline": "no_clear_support",
+          "paragraph": null,
+          "deterministicVariantKey": "30"
+        },
+        "supportBindings": [],
+        "relatedReferences": []
+      },
+      "supportReasoning": null,
+      "supportReasoningSources": [],
+      "qcCard": {
+        "supportState": "no_clear_support",
+        "concernState": "none",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": null,
+        "primaryExcerpt": null,
+        "hasRealExcerpt": false,
+        "hasConflict": false,
+        "conflictValues": null,
+        "reasoningHeadline": "no_clear_support",
+        "reasoningParagraph": null,
+        "displayMode": "unsupported"
+      },
+      "id": "stmt_mmfz07z0-p48rg1_1"
+    }
+  ],
+  "references": [
+    {
+      "id": 1,
+      "title": "TEST_numeric_near_source.txt",
+      "url": null,
+      "type": "uploaded",
+      "sourceType": "uploaded"
+    },
+    {
+      "id": 2,
+      "title": "D2_shopify_unit_economics_discussion.txt",
+      "url": null,
+      "type": "uploaded",
+      "sourceType": "uploaded"
+    },
+    {
+      "id": 3,
+      "title": "D3_shopify_risk_factors_summary.txt",
+      "url": null,
+      "type": "uploaded",
+      "sourceType": "uploaded"
+    }
+  ],
+  "meta": {
+    "web": {
+      "enabled": false,
+      "used": false,
+      "provider": "tavily",
+      "mode": "OFF",
+      "references": [],
+      "usedReferenceIds": [],
+      "rescue": {
+        "candidatesCount": 0,
+        "candidatesCapped": false,
+        "pass2Executed": false,
+        "webRefsCount": 0,
+        "upgradesCount": 0,
+        "limitedByCredibility": false
+      }
+    },
+    "webSearch": {
+      "mode": "OFF",
+      "enabled": false,
+      "tavilyEnabled": true,
+      "pass1": {
+        "ran": false,
+        "reasonSkip": "session_off",
+        "queriesCount": 0,
+        "resultsRawCount": 0,
+        "resultsKeptCount": 0,
+        "resultsDroppedCount": 0,
+        "filterSummary": null,
+        "error": null,
+        "used": false
+      },
+      "rescue": {
+        "ran": true,
+        "reasonSkip": "no_candidates",
+        "candidatesCount": 0,
+        "queriesCount": 0,
+        "resultsRawCount": 0,
+        "resultsKeptCount": 0,
+        "resultsDroppedCount": 0,
+        "upgradedStatementsCount": 0,
+        "error": null,
+        "used": false
+      },
+      "used": false
+    },
+    "extractionQuality": "ok",
+    "uploadedSourcesCount": 3,
+    "webSourcesCount": 0,
+    "verification": {
+      "ok": true
+    },
+    "selectionUsed": false,
+    "selectionHash": null,
+    "selectionPreview": null,
+    "corpusContradictions": {
+      "tupleCount": 2,
+      "conflictingTupleCount": 0,
+      "items": []
+    },
+    "evidenceJudgementSummary": {
+      "consistentCount": 1,
+      "inConflictCount": 0
+    },
+    "evidenceJudgement": {
+      "numericConsistency": {
+        "consistencyBand": "uniform_strong",
+        "strongStatementRatio": 1,
+        "approxHeavyStatementRatio": 0,
+        "statementCount": 1
+      },
+      "numericApproxSpread": {
+        "approxStatementRatio": 0,
+        "hasMixedQuality": false,
+        "hasApproxDominance": false
+      },
+      "density": {
+        "claimCount": 1,
+        "evidenceSupportingStatementCount": 1,
+        "uniqueSupportingSourceCount": 3,
+        "claimToEvidenceRatio": 0.3333333333333333,
+        "densityBand": "balanced"
+      },
+      "reuse": {
+        "mostReusedSourceShare": 1,
+        "reusePressureBand": "high"
+      },
+      "spread": {
+        "avgSourcesPerSupportedStatement": 3,
+        "spreadBand": "broad"
+      },
+      "fragilityDrivers": [
+        "single_source_over_reliance"
+      ]
+    },
+    "judgement": {
+      "fragilityPosture": "fragile",
+      "dominantRiskPattern": "evidence concentrated in few sources",
+      "primaryDrivers": [
+        "single_source_over_reliance"
+      ],
+      "confidence": "low",
+      "narrative": "Overall evidence is concentrated or limited, increasing document-level fragility. Evidence is heavily concentrated in a small number of sources."
+    },
+    "scoringBridge": {
+      "fragilitySeverityScore": 85,
+      "evidenceQualityScore": 42,
+      "confidenceScore": 40
+    },
+    "suggestSummary": {
+      "totalItems": 1,
+      "byGroup": {
+        "evidence": 0,
+        "compliance": 0,
+        "narrative": 1,
+        "editorial": 0
+      },
+      "byPriorityBand": {
+        "P1": 0,
+        "P2": 0,
+        "P3": 1
+      }
+    },
+    "corpusClaimInventory": {
+      "version": "A3.16.1",
+      "totals": {
+        "statementCount": 1,
+        "referenceCount": 3,
+        "sourceCount": 3
+      },
+      "buckets": {
+        "money": {
+          "itemCount": 1,
+          "items": [
+            {
+              "family": "money",
+              "type": "valuation_pre_money",
+              "currency": "USD",
+              "value": 250000000,
+              "unit": "USD",
+              "citations": [
+                "1",
+                "2",
+                "3"
+              ],
+              "sourceCount": 3,
+              "statementCount": 1
+            }
+          ]
+        },
+        "percent": {
+          "itemCount": 0,
+          "items": []
+        },
+        "quantity": {
+          "itemCount": 0,
+          "items": []
+        },
+        "time": {
+          "itemCount": 0,
+          "items": []
+        },
+        "entity": {
+          "itemCount": 0,
+          "items": []
+        },
+        "qualitativeTag": {
+          "itemCount": 3,
+          "items": [
+            {
+              "family": "qualitativeTag",
+              "type": "inferred_type",
+              "tag": "unknown",
+              "citations": [
+                "1",
+                "2",
+                "3"
+              ],
+              "sourceCount": 3,
+              "statementCount": 1
+            },
+            {
+              "family": "qualitativeTag",
+              "type": "role_keyword",
+              "tag": "valuation",
+              "citations": [
+                "1",
+                "2",
+                "3"
+              ],
+              "sourceCount": 3,
+              "statementCount": 1
+            },
+            {
+              "family": "qualitativeTag",
+              "type": "signal_anchor",
+              "tag": "valuation_250000000",
+              "citations": [
+                "1",
+                "2",
+                "3"
+              ],
+              "sourceCount": 3,
+              "statementCount": 1
+            }
+          ]
+        }
+      }
+    },
+    "corpusTupleClusters": [
+      {
+        "clusterKey": "money|valuation_pre_money|USD|250000000",
+        "family": "money",
+        "type": "valuation_pre_money",
+        "value": 250000000,
+        "unit": "USD",
+        "company": null,
+        "round": null,
+        "citations": [
+          "1",
+          "2",
+          "3"
+        ],
+        "sources": 3,
+        "statements": 1,
+        "members": [
+          {
+            "origin": "inventory",
+            "originDetail": "money",
+            "stmtIndex": null
+          },
+          {
+            "origin": "source_scan",
+            "originDetail": "A4.58_source_side",
+            "stmtIndex": null
+          }
+        ]
+      },
+      {
+        "clusterKey": "qualitativeTag|role_keyword||valuation",
+        "family": "qualitativeTag",
+        "type": "role_keyword",
+        "value": "valuation",
+        "unit": null,
+        "company": null,
+        "round": null,
+        "citations": [
+          "1",
+          "2",
+          "3"
+        ],
+        "sources": 3,
+        "statements": 1,
+        "members": [
+          {
+            "origin": "inventory",
+            "originDetail": "qualitativeTag",
+            "stmtIndex": null
+          }
+        ]
+      }
+    ],
+    "corpusTupleIndex": {
+      "totalClusters": 2,
+      "byFamily": {
+        "money": 1,
+        "percent": 0,
+        "quantity": 0,
+        "time": 0,
+        "entity": 0,
+        "qualitativeTag": 1
+      },
+      "withCompany": 0,
+      "withRound": 0
+    },
+    "corpusConflictCandidates": [],
+    "corpusConflictIndex": {
+      "totalCandidates": 0,
+      "byFamily": {
+        "money": 0,
+        "percent": 0,
+        "quantity": 0,
+        "time": 0,
+        "entity": 0,
+        "qualitativeTag": 0
+      },
+      "highSeverity": 0,
+      "withCompany": 0,
+      "withRound": 0
+    },
+    "corpusTelemetry": {
+      "dealTermsTyping": {
+        "methodCounts": {
+          "value_level_v1": 0,
+          "baseline_only": 0,
+          "fallback_used": 0
+        },
+        "typeCounts": {},
+        "confidenceCounts": {
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "warningsCount": 0,
+        "warnings": []
+      }
+    },
+    "dealCoverageMap": {
+      "fieldsPresent": {
+        "investmentAmount": false,
+        "valuation": true,
+        "ownershipPct": false,
+        "roundType": false,
+        "instrumentOrModality": false
+      },
+      "sources": {
+        "statementCount": 1,
+        "referenceCount": 3,
+        "supportingSourceCount": 3
+      },
+      "missingFields": [
+        "investmentAmount",
+        "ownershipPct",
+        "roundType",
+        "instrumentOrModality"
+      ],
+      "notes": [
+        "Deal structure coverage is thin"
+      ]
+    },
+    "evidenceGapPriority": [
+      {
+        "field": "instrument",
+        "priority": "medium",
+        "rationale": "Instrument type helps validate deal structure and economics"
+      },
+      {
+        "field": "round",
+        "priority": "medium",
+        "rationale": "Round context helps validate deal stage and comparability"
+      }
+    ],
+    "explanationOverview": {
+      "totals": {
+        "statementCount": 1
+      },
+      "evidenceStrength": {
+        "none": 0,
+        "weak": 0,
+        "moderate": 0,
+        "strong": 0,
+        "very_strong": 1
+      },
+      "sourceRelianceRisk": {
+        "high": 0,
+        "moderate": 0,
+        "low": 1
+      },
+      "evidenceGaps": {
+        "none": 1,
+        "no_support": 0,
+        "single_source": 0,
+        "limited_coverage": 0,
+        "conflict": 0
+      },
+      "conflicts": {
+        "statementConflictCount": 0
+      },
+      "unsupported": {
+        "unsupportedStatementCount": 0
+      }
+    },
+    "icCoverageSummary": {
+      "coverageBand": "thin",
+      "missingCritical": [
+        "ownershipPct"
+      ],
+      "missingImportant": [
+        "roundType",
+        "instrumentOrModality"
+      ],
+      "missingOptional": [],
+      "impactNotes": [
+        "Missing ownership limits assessment of economic outcome.",
+        "Missing round/stage reduces comparability across deals.",
+        "Missing instrument/modality reduces clarity on capital structure."
+      ]
+    },
+    "fullPipelineCompleted": true,
+    "fullPipelineCheckpoint": "success_final_response",
+    "extractionHealth": {
+      "totalExtractedTextLength": 500,
+      "thresholds": {
+        "minTextLenPdf": 200,
+        "veryLowTextLenPdf": 50,
+        "minTotalTextLen": 300
+      },
+      "sources": [
+        {
+          "sourceId": "1",
+          "title": "TEST_numeric_near_source.txt",
+          "fileType": "txt",
+          "method": "inline",
+          "textLength": 187,
+          "numLines": 2,
+          "hasDigits": true,
+          "hasCurrencyToken": true,
+          "warnings": [],
+          "originalFileName": "TEST_numeric_near_source.txt",
+          "originalMimeType": null,
+          "ingestionPath": "inline_text",
+          "extractedTextLength": 187,
+          "detectedNumberCount": 1,
+          "detectedNumbersSample": [
+            250
+          ],
+          "tokenProbeHits": {
+            "hasAnyDigits": true,
+            "hasCurrencySymbol": true,
+            "hasCompactMagnitude": false,
+            "hasWordMillion": true,
+            "hasWordBillion": false,
+            "hasSevenMillionHints": false
+          },
+          "guardrailStatus": "OK",
+          "guardrailReasons": [],
+          "guardrailMetrics": {
+            "extractedTextLength": 187,
+            "rawBytesLength": null,
+            "printableCharRatio": 0.995,
+            "hasAnyDigits": true,
+            "hasCurrencySymbol": true,
+            "hasCompactMagnitude": false,
+            "detectedNumberCount": 1
+          },
+          "extractedTextSample": "The company’s valuation was around $250 million. The company could reach a valuation of around $250 million in a long-term scenario. Numeric values near source text for modality testing."
+        },
+        {
+          "sourceId": "2",
+          "title": "D2_shopify_unit_economics_discussion.txt",
+          "fileType": "txt",
+          "method": "inline",
+          "textLength": 183,
+          "numLines": 2,
+          "hasDigits": true,
+          "hasCurrencyToken": true,
+          "warnings": [],
+          "originalFileName": "D2_shopify_unit_economics_discussion.txt",
+          "originalMimeType": null,
+          "ingestionPath": "inline_text",
+          "extractedTextLength": 183,
+          "detectedNumberCount": 1,
+          "detectedNumbersSample": [
+            250
+          ],
+          "tokenProbeHits": {
+            "hasAnyDigits": true,
+            "hasCurrencySymbol": true,
+            "hasCompactMagnitude": false,
+            "hasWordMillion": true,
+            "hasWordBillion": false,
+            "hasSevenMillionHints": false
+          },
+          "guardrailStatus": "OK",
+          "guardrailReasons": [],
+          "guardrailMetrics": {
+            "extractedTextLength": 183,
+            "rawBytesLength": null,
+            "printableCharRatio": 1,
+            "hasAnyDigits": true,
+            "hasCurrencySymbol": true,
+            "hasCompactMagnitude": false,
+            "detectedNumberCount": 1
+          },
+          "extractedTextSample": "Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking statements and projections."
+        },
+        {
+          "sourceId": "3",
+          "title": "D3_shopify_risk_factors_summary.txt",
+          "fileType": "txt",
+          "method": "inline",
+          "textLength": 130,
+          "numLines": 2,
+          "hasDigits": true,
+          "hasCurrencyToken": true,
+          "warnings": [],
+          "originalFileName": "D3_shopify_risk_factors_summary.txt",
+          "originalMimeType": null,
+          "ingestionPath": "inline_text",
+          "extractedTextLength": 130,
+          "detectedNumberCount": 1,
+          "detectedNumbersSample": [
+            250
+          ],
+          "tokenProbeHits": {
+            "hasAnyDigits": true,
+            "hasCurrencySymbol": true,
+            "hasCompactMagnitude": false,
+            "hasWordMillion": true,
+            "hasWordBillion": false,
+            "hasSevenMillionHints": false
+          },
+          "guardrailStatus": "OK",
+          "guardrailReasons": [],
+          "guardrailMetrics": {
+            "extractedTextLength": 130,
+            "rawBytesLength": null,
+            "printableCharRatio": 1,
+            "hasAnyDigits": true,
+            "hasCurrencySymbol": true,
+            "hasCompactMagnitude": false,
+            "detectedNumberCount": 1
+          },
+          "extractedTextSample": "Risk factors and disclaimers. Scenarios and hypotheticals. Valuation of around $250 million may be cited in sensitivity analysis."
+        }
+      ],
+      "overallStatus": "OK",
+      "overallReasons": [],
+      "excludedSourceCount": 0,
+      "excludedSourceIds": []
+    },
+    "openaiCompleted": true,
+    "analysedAt": "2026-03-07T06:56:53.581Z"
+  }
+}
