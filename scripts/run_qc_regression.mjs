@@ -128,6 +128,17 @@ function assertSupportRefTitlesInclude(qcCard, expect) {
   return { pass: true, note: "supportRefTitlesInclude" };
 }
 
+/** R2.2: Assert qcCard.draftSpan exists and startChar < endChar. */
+function assertDraftSpanPresent(qcCard, expect) {
+  if (expect?.draftSpanPresent !== true) return null;
+  const ds = qcCard?.draftSpan;
+  if (ds == null || typeof ds !== "object") return { pass: false, note: "draftSpan: missing" };
+  const start = ds.startChar;
+  const end = ds.endChar;
+  if (typeof start !== "number" || typeof end !== "number" || start >= end) return { pass: false, note: "draftSpan: invalid startChar/endChar" };
+  return { pass: true, note: "draftSpan" };
+}
+
 function runStructuralAssertions(qcCard, expect) {
   const results = [];
   const checks = [
@@ -139,6 +150,7 @@ function runStructuralAssertions(qcCard, expect) {
     () => assertReasoningParagraphExcludes(qcCard, expect),
     () => assertPrimaryRefTitleIncludes(qcCard, expect),
     () => assertSupportRefTitlesInclude(qcCard, expect),
+    () => assertDraftSpanPresent(qcCard, expect),
   ];
   for (const fn of checks) {
     const r = fn();
