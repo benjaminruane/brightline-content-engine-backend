@@ -152,6 +152,6 @@ These invariants define the minimum trust bar for **Statement Analysis (Review)*
 
 ## Testing — QC regression
 
-See [docs/testing-qc-regression.md](docs/testing-qc-regression.md) for the test corpus location, how to enable the test-only QC endpoint locally, and how to run the regression suite.
+See [docs/testing-qc-regression.md](docs/testing-qc-regression.md) for the test corpus location, how to enable the test-only QC endpoint locally, and how to run the regression suite. Standard command: **`npm run qc:test`**. Run this before handoff when backend logic affecting QC analysis changes.
 
 trigger rollback deployment

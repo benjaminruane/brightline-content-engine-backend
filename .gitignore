@@ -1,2 +1,8 @@
 .vercel
 .env*.local
+
+# QC regression generated outputs
+tests/output/*.json
+
+# macOS system files
+.DS_Store

@@ -10,18 +10,18 @@
           "This statement is consistent with the provided source(s). [1, 2, 3]"
         ],
         "citations": [
-          1,
-          2,
-          3
+          "2",
+          "1",
+          "3"
         ],
         "evidence": [
           {
-            "title": "TEST_numeric_near_source.txt",
+            "title": "D2_shopify_unit_economics_discussion.txt",
             "url": null,
             "sourceType": "uploaded"
           },
           {
-            "title": "D2_shopify_unit_economics_discussion.txt",
+            "title": "TEST_numeric_near_source.txt",
             "url": null,
             "sourceType": "uploaded"
           },
@@ -592,18 +592,18 @@
         }
       },
       "citations": [
-        1,
-        2,
-        3
+        "2",
+        "1",
+        "3"
       ],
       "evidence": [
         {
-          "title": "TEST_numeric_near_source.txt",
+          "title": "D2_shopify_unit_economics_discussion.txt",
           "url": null,
           "sourceType": "uploaded"
         },
         {
-          "title": "D2_shopify_unit_economics_discussion.txt",
+          "title": "TEST_numeric_near_source.txt",
           "url": null,
           "sourceType": "uploaded"
         },
@@ -615,35 +615,199 @@
       ],
       "__selectionSegmentId": null,
       "evidenceBundle": {
-        "primary": null,
-        "additional": [],
-        "matchType": "none",
-        "reasoning": {
-          "headline": "no_clear_support",
-          "paragraph": null,
-          "deterministicVariantKey": "30"
+        "primary": {
+          "refId": "2",
+          "sourceType": "uploaded",
+          "title": "D2_shopify_unit_economics_discussion.txt",
+          "url": null,
+          "pageHint": null,
+          "excerpt": "Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking",
+          "excerptType": "corpus_hit",
+          "excerptConfidence": "medium",
+          "quoteFingerprint": "85e9cb28"
         },
-        "supportBindings": [],
-        "relatedReferences": []
+        "additional": [
+          {
+            "refId": "1",
+            "sourceType": "uploaded",
+            "title": "TEST_numeric_near_source.txt",
+            "url": null,
+            "pageHint": null,
+            "excerpt": "The company’s valuation was around $250 million. The company could reach a valuation of around $250 million in a long-term scenario. Numeric values n",
+            "excerptType": "corpus_hit",
+            "excerptConfidence": "medium",
+            "quoteFingerprint": "729fa189"
+          },
+          {
+            "refId": "3",
+            "sourceType": "uploaded",
+            "title": "D3_shopify_risk_factors_summary.txt",
+            "url": null,
+            "pageHint": null,
+            "excerpt": "Risk factors and disclaimers. Scenarios and hypotheticals. Valuation of around $250 million may be cited in sensitivity analysis.",
+            "excerptType": "corpus_hit",
+            "excerptConfidence": "medium",
+            "quoteFingerprint": "6a48193c"
+          },
+          {
+            "refId": "3",
+            "sourceType": "uploaded",
+            "title": "D3_shopify_risk_factors_summary.txt",
+            "url": null,
+            "pageHint": null,
+            "excerpt": "Risk factors and disclaimers. Scenarios and hypotheticals. Valuation of around $250 million may be cited in sensitivity analysis.",
+            "excerptType": "corpus_hit",
+            "excerptConfidence": "medium",
+            "quoteFingerprint": "6a48193c"
+          }
+        ],
+        "matchType": "exact",
+        "reasoning": {
+          "headline": "confirmed",
+          "paragraph": "Confirmed using provided sources: \"D2_shopify_unit_economics_discussion.txt\" [2]: \"Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking\" This matches the draft statement.",
+          "deterministicVariantKey": "c1dd9aa0"
+        },
+        "supportBindings": [
+          {
+            "refId": "2",
+            "sourceType": "uploaded",
+            "title": "D2_shopify_unit_economics_discussion.txt",
+            "url": null,
+            "excerpt": "Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking",
+            "role": "valuation_pre_money",
+            "matchType": "exact",
+            "provenance": "corpus_hit",
+            "normalizedValue": 250000000,
+            "currency": "USD",
+            "unit": "USD",
+            "sourceModality": "scenario",
+            "sourceModalityStrength": "strong",
+            "sourceModalityTriggers": [
+              "scenario"
+            ]
+          },
+          {
+            "refId": "1",
+            "sourceType": "uploaded",
+            "title": "TEST_numeric_near_source.txt",
+            "url": null,
+            "excerpt": "The company’s valuation was around $250 million. The company could reach a valuation of around $250 million in a long-term scenario. Numeric values n",
+            "role": "valuation_pre_money",
+            "matchType": "exact",
+            "provenance": "corpus_hit",
+            "normalizedValue": 250000000,
+            "currency": "USD",
+            "unit": "USD",
+            "sourceModality": "scenario",
+            "sourceModalityStrength": "strong",
+            "sourceModalityTriggers": [
+              "scenario"
+            ]
+          },
+          {
+            "refId": "3",
+            "sourceType": "uploaded",
+            "title": "D3_shopify_risk_factors_summary.txt",
+            "url": null,
+            "excerpt": "Risk factors and disclaimers. Scenarios and hypotheticals. Valuation of around $250 million may be cited in sensitivity analysis.",
+            "role": "valuation_pre_money",
+            "matchType": "exact",
+            "provenance": "corpus_hit",
+            "normalizedValue": 250000000,
+            "currency": "USD",
+            "unit": "USD",
+            "sourceModality": "scenario",
+            "sourceModalityStrength": "strong",
+            "sourceModalityTriggers": [
+              "scenario"
+            ]
+          },
+          {
+            "refId": "3",
+            "sourceType": "uploaded",
+            "title": "D3_shopify_risk_factors_summary.txt",
+            "url": null,
+            "excerpt": "Risk factors and disclaimers. Scenarios and hypotheticals. Valuation of around $250 million may be cited in sensitivity analysis.",
+            "role": "valuation_pre_money",
+            "matchType": "paraphrase",
+            "provenance": "corpus_hit",
+            "normalizedValue": 250000000,
+            "currency": "USD",
+            "unit": "USD",
+            "sourceModality": "scenario",
+            "sourceModalityStrength": "strong",
+            "sourceModalityTriggers": [
+              "scenario"
+            ]
+          }
+        ],
+        "relatedReferences": [],
+        "modalityCompatibility": {
+          "compatible": true,
+          "mismatchSeverity": "none",
+          "reasonCode": "draft_soft_source_soft"
+        },
+        "numericTupleDebug": {
+          "statementNumericTuple": {
+            "role": "valuation_pre_money",
+            "normalizedValue": 250000000,
+            "currency": "USD",
+            "unit": "USD"
+          },
+          "selectedPrimaryBindingRefId": "2",
+          "selectedPrimaryBindingExcerptFingerprint": "85e9cb28",
+          "selectedPrimaryBindingRole": "valuation_pre_money",
+          "selectedPrimaryBindingNormalizedValue": 250000000,
+          "primaryExcerptSource": "support_binding",
+          "selectedPrimaryBindingHasNumericCue": true,
+          "numericCueMatchMode": "parsed_equivalent",
+          "reasoningBindingRefId": "2",
+          "reasoningBindingScore": 7,
+          "reasoningBindingExcerptFingerprint": "85e9cb28",
+          "draftClaimCertainty": "hypothetical",
+          "draftClaimCertaintyTriggers": [
+            "scenario/hypothetical"
+          ],
+          "reasoningBindingSourceModality": "scenario",
+          "reasoningBindingSourceModalityTriggers": [
+            "scenario"
+          ],
+          "modalityCompatibility": {
+            "compatible": true,
+            "mismatchSeverity": "none",
+            "reasonCode": "draft_soft_source_soft"
+          },
+          "modalityMismatchSeverity": "none",
+          "modalityReasonCode": "draft_soft_source_soft",
+          "scenarioBindingPreserved": false
+        }
       },
       "supportReasoning": null,
       "supportReasoningSources": [],
       "qcCard": {
-        "supportState": "no_clear_support",
+        "supportState": "confirmed",
         "concernState": "none",
-        "supportRefIds": [],
-        "supportRefTitles": [],
-        "primaryRefId": null,
-        "primaryRefTitle": null,
-        "primaryExcerpt": null,
-        "hasRealExcerpt": false,
+        "supportRefIds": [
+          "2",
+          "1",
+          "3"
+        ],
+        "supportRefTitles": [
+          "D2_shopify_unit_economics_discussion.txt",
+          "TEST_numeric_near_source.txt",
+          "D3_shopify_risk_factors_summary.txt"
+        ],
+        "primaryRefId": "2",
+        "primaryRefTitle": "D2_shopify_unit_economics_discussion.txt",
+        "primaryExcerpt": "Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking",
+        "hasRealExcerpt": true,
         "hasConflict": false,
         "conflictValues": null,
-        "reasoningHeadline": "no_clear_support",
-        "reasoningParagraph": null,
-        "displayMode": "unsupported"
+        "reasoningHeadline": "confirmed",
+        "reasoningParagraph": "Confirmed using provided sources: \"D2_shopify_unit_economics_discussion.txt\" [2]: \"Unit economics and long-term scenarios were discussed. The company could reach a valuation of around $250 million in a long-term scenario. Forward-looking\" This matches the draft statement.",
+        "displayMode": "confirmed"
       },
-      "id": "stmt_mmfz0a4q-4kwrdb_1"
+      "id": "stmt_mmg44tnw-2k3oli_1"
     }
   ],
   "references": [
@@ -1191,6 +1355,6 @@
       "excludedSourceIds": []
     },
     "openaiCompleted": true,
-    "analysedAt": "2026-03-07T06:56:56.547Z"
+    "analysedAt": "2026-03-07T09:20:30.232Z"
   }
 }
