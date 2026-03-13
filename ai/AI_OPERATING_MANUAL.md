@@ -43,3 +43,15 @@ Brightline Content Engine is an evidence-first, deterministic, audit-safe review
 
 ## Product Constraint
 - QC output must be practically useful, not only technically correct
+
+## Change Surface Discipline
+
+When proposing development specs:
+
+1. First identify the smallest viable change surface in the existing codebase.
+2. Prefer modifying the narrowest module that directly affects the desired behaviour.
+3. Avoid proposing changes across multiple pipeline stages unless absolutely necessary.
+4. Do not introduce new architectural layers when a local modification would achieve the goal.
+5. Do not modify upstream extraction, canonical claims, or evidence binding unless the problem specifically originates there.
+
+Specs should aim for the smallest safe intervention that materially improves the user-visible outcome.
