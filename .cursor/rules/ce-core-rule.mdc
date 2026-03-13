@@ -1,0 +1,15 @@
+---
+description: Brightline Content Engine core rule
+alwaysApply: true
+---
+
+Before making implementation changes, read:
+- ai/AI_OPERATING_MANUAL.md
+- docs/ARCHITECTURE.md
+
+Follow these rules:
+- Keep diffs minimal
+- Do not redesign stable plumbing unless explicitly requested
+- Backend is authoritative
+- Be concrete and operational
+- Do not add vague generative fallback behaviour
