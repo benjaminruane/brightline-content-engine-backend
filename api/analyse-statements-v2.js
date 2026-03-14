@@ -53,12 +53,14 @@ export default async function handler(req, res) {
       meta: { fatal: "Internal error", fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["internal_error"] },
     };
     // A3.14.15: Belt-and-braces — ok:true allowed only when fullPipelineCompleted; coerce otherwise
+    let failureReason = safePayload?.meta?.zeroStatementReason ?? safePayload?.meta?.fatal ?? null;
     if (safePayload.ok === true && safePayload.meta?.fullPipelineCompleted !== true) {
       console.log("[A3.14.15][CONTRACT_COERCE_OK_FALSE]", {
         rid,
         hadFullPipelineCompleted: safePayload.meta?.fullPipelineCompleted === true,
         hadMeta: safePayload.meta != null,
       });
+      failureReason = "qc_contract_failure";
       safePayload = {
         ...safePayload,
         ok: false,
@@ -67,9 +69,17 @@ export default async function handler(req, res) {
           fatalStage: "contract_violation",
           fatalErrorClass: "contract",
           fatal: "ok:true returned without fullPipelineCompleted; coerced to ok:false",
+          zeroStatementReason: failureReason,
         },
       };
     }
+    const statementsCount = safePayload?.statements?.length ?? 0;
+    console.log("REVIEW_RUNTIME_QC_CONTRACT", JSON.stringify({
+      ok: safePayload?.ok ?? false,
+      statementsCount,
+      qcCardsCount: statementsCount,
+      failureReason: failureReason ?? (safePayload?.ok === false ? (safePayload?.meta?.zeroStatementReason || safePayload?.meta?.fatal || "unknown") : null),
+    }));
     // X1.2b: Reject PDF-as-inline with 400 so clients get a clear contract violation
     const ingestionErrorCode = safePayload?.meta?.sourceIngestionError?.code;
     // X1.3: Optional 422 when ENFORCE_INGESTION_GUARDS=1 and extraction overallStatus=ERROR
@@ -77,7 +87,7 @@ export default async function handler(req, res) {
     let statusCode = 200;
     if (guardStatusCode === 422) statusCode = 422;
     else if (ingestionErrorCode === "PDF_INLINE_TEXT_NOT_ALLOWED") statusCode = 400;
-    console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: safePayload?.statements?.length ?? null, statusCode });
+    console.log("[A3.14.5][RES_SEND]", { rid, route: ROUTE, ok: safePayload?.ok, statements: statementsCount, statusCode });
     res.status(statusCode).json(safePayload);
     return;
   } catch (err) {
