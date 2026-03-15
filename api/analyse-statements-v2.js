@@ -52,9 +52,10 @@ export default async function handler(req, res) {
       references: [],
       meta: { fatal: "Internal error", fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["internal_error"] },
     };
-    // A3.14.15: Belt-and-braces — ok:true allowed only when fullPipelineCompleted; coerce otherwise
+    // A6.41: When QC V2, do not coerce ok:false for legacy contract; V2 cards render from authority only
+    const qcEngineV2 = (typeof process.env.QC_ENGINE_VERSION === "string" ? process.env.QC_ENGINE_VERSION.trim().toLowerCase() : "v2") === "v2";
     let failureReason = safePayload?.meta?.zeroStatementReason ?? safePayload?.meta?.fatal ?? null;
-    if (safePayload.ok === true && safePayload.meta?.fullPipelineCompleted !== true) {
+    if (!qcEngineV2 && safePayload.ok === true && safePayload.meta?.fullPipelineCompleted !== true) {
       console.log("[A3.14.15][CONTRACT_COERCE_OK_FALSE]", {
         rid,
         hadFullPipelineCompleted: safePayload.meta?.fullPipelineCompleted === true,
