@@ -8,11 +8,13 @@
       ],
       "draft": "Shopify raised $7 million in funding.",
       "expect": {
-        "supportState": "confirmed",
-        "concernState": "none",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "hasUsableExcerpt": true,
+        "supportRefIdsLength": 2,
+        "citationHoversLength": 2,
         "supportRefIdsUnique": true,
-        "reasoningHeadline": "confirmed",
-        "reasoningParagraphIncludes": ["Confirmed using provided sources"],
+        "reasoningParagraphIncludes": ["confirms", "source"],
         "reasoningParagraphExcludes": ["potential", "scenario-based figure"]
       }
     },
@@ -25,11 +27,13 @@
       ],
       "draft": "The company's valuation was around $250 million.",
       "expect": {
-        "supportState": ["partially_confirmed", "no_clear_support"],
-        "supportRefIdsUnique": true,
-        "reasoningHeadline": ["partially_confirmed", "no_clear_support"],
-        "reasoningParagraphIncludesAny": ["scenario", "illustrative", "potential"],
-        "reasoningParagraphExcludes": ["The draft states this in line with the source.", "This matches the draft statement."]
+        "displayVerdict": "not_supported",
+        "concernLevel": "high",
+        "hasUsableExcerpt": false,
+        "downgrade": true,
+        "supportRefIdsLength": 0,
+        "citationHoversLength": 0,
+        "reasoningParagraphIncludesAny": ["discusses", "does not confirm", "No source directly confirms"]
       }
     },
     {
@@ -41,14 +45,13 @@
       ],
       "draft": "The company could reach a valuation of around $250 million in a long-term scenario.",
       "expect": {
-        "supportState": ["confirmed", "partially_confirmed"],
-        "supportRefIdsUnique": true,
-        "primaryRefTitleIncludes": [
-          "D2_shopify_unit_economics_discussion.txt",
-          "TEST_numeric_near_source.txt",
-          "D3_shopify_risk_factors_summary.txt"
-        ],
-        "reasoningParagraphIncludes": ["scenario"],
+        "displayVerdict": "not_supported",
+        "concernLevel": "high",
+        "hasUsableExcerpt": false,
+        "downgrade": true,
+        "supportRefIdsLength": 0,
+        "citationHoversLength": 0,
+        "reasoningParagraphIncludesAny": ["discusses", "does not confirm", "No source directly confirms"],
         "reasoningParagraphExcludes": ["confirmed reported figure"]
       }
     }

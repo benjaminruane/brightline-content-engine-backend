@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 /**
- * T1.1: QC regression runner. Loads tests/qc_regression_suite.json, POSTs each run to
- * /api/test/run-qc, saves full JSON to tests/output/<runName>.json, compares supportState, prints PASS/FAIL.
- * Exit non-zero if any run fails.
+ * QC regression runner — validates the displayed QC contract (V2):
+ * qcCard.displayVerdict, qcCard.concernLevel, pattern-based reasoningParagraph,
+ * meta.qcEvidenceAuthorities[0] alignment, optional downgrade / sentence aggregation.
+ *
+ * Loads tests/qc_regression_suite.json, POSTs each run to /api/test/run-qc,
+ * saves full JSON to tests/output/<runName>.json, exits non-zero if any run fails.
+ *
  * Base URL: QC_REGRESSION_BASE_URL or http://localhost:3000
  */
 
@@ -17,8 +21,8 @@ const OUTPUT_DIR = path.join(ROOT, "tests", "output");
 const BASE_URL = process.env.QC_REGRESSION_BASE_URL || "http://localhost:3000";
 const RUN_QC_URL = `${BASE_URL.replace(/\/$/, "")}/api/test/run-qc`;
 
-function parseExpectSupportState(expect) {
-  const v = expect?.supportState;
+/** @param {unknown} v */
+function parseExpectList(v) {
   if (v == null) return null;
   if (Array.isArray(v)) return v;
   if (typeof v === "string") return [v];
@@ -31,20 +35,16 @@ function primaryStatement(payload) {
   return statements[0];
 }
 
-function primarySupportState(payload) {
-  const first = primaryStatement(payload);
-  const qc = first?.qcCard;
-  return qc?.supportState ?? null;
-}
-
-function checkSupportStatePass(actual, expectedList) {
+function checkListPass(actual, expectedList, label) {
   if (expectedList == null || expectedList.length === 0) return { pass: true, note: "no expectation" };
-  if (actual == null) return { pass: false, note: "no primary statement or qcCard" };
+  if (actual == null) return { pass: false, note: `${label}: missing` };
   const pass = expectedList.includes(actual);
-  return { pass, note: pass ? "match" : `expected one of [${expectedList.join(", ")}], got ${actual}` };
+  return {
+    pass,
+    note: pass ? "match" : `${label}: expected one of [${expectedList.join(", ")}], got ${actual}`,
+  };
 }
 
-/** R2.1: Optional structural assertions. Each returns { pass, note } or null if not asserted. */
 function assertSupportRefIdsUnique(qcCard, expect) {
   if (expect?.supportRefIdsUnique !== true) return null;
   const ids = qcCard?.supportRefIds;
@@ -57,36 +57,19 @@ function assertSupportRefIdsUnique(qcCard, expect) {
   return { pass: true, note: "supportRefIdsUnique" };
 }
 
-function assertConcernState(qcCard, expect) {
-  const v = expect?.concernState;
-  if (v == null) return null;
-  const expectedList = Array.isArray(v) ? v : [v];
-  const actual = qcCard?.concernState ?? null;
-  const pass = expectedList.includes(actual);
-  return { pass, note: pass ? "concernState" : `concernState: expected one of [${expectedList.join(", ")}], got ${actual}` };
-}
-
-function assertReasoningHeadline(qcCard, expect) {
-  const v = expect?.reasoningHeadline;
-  if (v == null) return null;
-  const expectedList = Array.isArray(v) ? v : [v];
-  const actual = qcCard?.reasoningHeadline ?? null;
-  const pass = expectedList.includes(actual);
-  return { pass, note: pass ? "reasoningHeadline" : `reasoningHeadline: expected one of [${expectedList.join(", ")}], got ${actual}` };
-}
-
 function assertReasoningParagraphIncludes(qcCard, expect) {
   const arr = expect?.reasoningParagraphIncludes;
   if (!Array.isArray(arr) || arr.length === 0) return null;
   const p = qcCard?.reasoningParagraph;
   const str = typeof p === "string" ? p : "";
   for (const sub of arr) {
-    if (typeof sub !== "string" || !str.includes(sub)) return { pass: false, note: `reasoningParagraphIncludes: missing "${sub.slice(0, 24)}..."` };
+    if (typeof sub !== "string" || !str.includes(sub)) {
+      return { pass: false, note: `reasoningParagraphIncludes: missing "${sub.slice(0, 40)}"` };
+    }
   }
   return { pass: true, note: "reasoningParagraphIncludes" };
 }
 
-/** R2.1: If paragraph exists, it must include at least one of the listed substrings. */
 function assertReasoningParagraphIncludesAny(qcCard, expect) {
   const arr = expect?.reasoningParagraphIncludesAny;
   if (!Array.isArray(arr) || arr.length === 0) return null;
@@ -94,7 +77,12 @@ function assertReasoningParagraphIncludesAny(qcCard, expect) {
   const str = typeof p === "string" ? p : "";
   if (!str.trim()) return { pass: true, note: "reasoningParagraphIncludesAny (no paragraph)" };
   const pass = arr.some((sub) => typeof sub === "string" && str.includes(sub));
-  return { pass, note: pass ? "reasoningParagraphIncludesAny" : `reasoningParagraphIncludesAny: none of [${arr.join(", ")}] in paragraph` };
+  return {
+    pass,
+    note: pass
+      ? "reasoningParagraphIncludesAny"
+      : `reasoningParagraphIncludesAny: none of [${arr.join(", ")}] in paragraph`,
+  };
 }
 
 function assertReasoningParagraphExcludes(qcCard, expect) {
@@ -103,7 +91,9 @@ function assertReasoningParagraphExcludes(qcCard, expect) {
   const p = qcCard?.reasoningParagraph;
   const str = typeof p === "string" ? p : "";
   for (const sub of arr) {
-    if (typeof sub === "string" && str.includes(sub)) return { pass: false, note: `reasoningParagraphExcludes: found "${sub.slice(0, 24)}..."` };
+    if (typeof sub === "string" && str.includes(sub)) {
+      return { pass: false, note: `reasoningParagraphExcludes: found "${sub.slice(0, 40)}"` };
+    }
   }
   return { pass: true, note: "reasoningParagraphExcludes" };
 }
@@ -114,7 +104,12 @@ function assertPrimaryRefTitleIncludes(qcCard, expect) {
   const title = qcCard?.primaryRefTitle;
   const str = typeof title === "string" ? title : "";
   const pass = arr.some((sub) => typeof sub === "string" && str.includes(sub));
-  return { pass, note: pass ? "primaryRefTitleIncludes" : `primaryRefTitleIncludes: none of [${arr.map((s) => s.slice(0, 20)).join(", ")}] in title` };
+  return {
+    pass,
+    note: pass
+      ? "primaryRefTitleIncludes"
+      : `primaryRefTitleIncludes: none of [${arr.map((s) => s.slice(0, 20)).join(", ")}] in title`,
+  };
 }
 
 function assertSupportRefTitlesInclude(qcCard, expect) {
@@ -123,40 +118,124 @@ function assertSupportRefTitlesInclude(qcCard, expect) {
   const titles = Array.isArray(qcCard?.supportRefTitles) ? qcCard.supportRefTitles : [];
   for (const want of arr) {
     if (typeof want !== "string") continue;
-    if (!titles.includes(want)) return { pass: false, note: `supportRefTitlesInclude: missing "${want.slice(0, 24)}..."` };
+    if (!titles.includes(want)) return { pass: false, note: `supportRefTitlesInclude: missing "${want.slice(0, 24)}"` };
   }
   return { pass: true, note: "supportRefTitlesInclude" };
 }
 
-/** R2.2: Assert qcCard.draftSpan exists and startChar < endChar. */
 function assertDraftSpanPresent(qcCard, expect) {
   if (expect?.draftSpanPresent !== true) return null;
   const ds = qcCard?.draftSpan;
   if (ds == null || typeof ds !== "object") return { pass: false, note: "draftSpan: missing" };
   const start = ds.startChar;
   const end = ds.endChar;
-  if (typeof start !== "number" || typeof end !== "number" || start >= end) return { pass: false, note: "draftSpan: invalid startChar/endChar" };
+  if (typeof start !== "number" || typeof end !== "number" || start >= end) {
+    return { pass: false, note: "draftSpan: invalid startChar/endChar" };
+  }
   return { pass: true, note: "draftSpan" };
 }
 
-function runStructuralAssertions(qcCard, expect) {
+/** Optional exact lengths for qcCard.supportRefIds / qcCard.citationHovers */
+function assertRefAndHoverLengths(qcCard, expect) {
+  if (expect?.supportRefIdsLength == null && expect?.citationHoversLength == null) return null;
+  const refs = Array.isArray(qcCard?.supportRefIds) ? qcCard.supportRefIds.length : 0;
+  const hovers = Array.isArray(qcCard?.citationHovers) ? qcCard.citationHovers.length : 0;
+  if (expect?.supportRefIdsLength != null && refs !== expect.supportRefIdsLength) {
+    return { pass: false, note: `supportRefIds.length: expected ${expect.supportRefIdsLength}, got ${refs}` };
+  }
+  if (expect?.citationHoversLength != null && hovers !== expect.citationHoversLength) {
+    return { pass: false, note: `citationHovers.length: expected ${expect.citationHoversLength}, got ${hovers}` };
+  }
+  return { pass: true, note: "ref/hover lengths" };
+}
+
+/**
+ * meta.qcEvidenceAuthorities[0] must align with qcCard and optional hasUsableExcerpt.
+ */
+function assertPrimaryAuthority(statement, qcCard, expect) {
+  if (expect?.assertAuthority === false) return null;
+  const auth = statement?.meta?.qcEvidenceAuthorities?.[0];
+  if (!auth && (expect?.displayVerdict != null || expect?.hasUsableExcerpt != null)) {
+    return { pass: false, note: "authority: missing meta.qcEvidenceAuthorities[0]" };
+  }
+  if (!auth) return null;
+
+  const expDv = parseExpectList(expect?.displayVerdict);
+  if (expDv != null && expDv.length > 0) {
+    if (!expDv.includes(auth.displayVerdict)) {
+      return {
+        pass: false,
+        note: `authority.displayVerdict: expected one of [${expDv.join(", ")}], got ${auth.displayVerdict}`,
+      };
+    }
+    if (qcCard?.displayVerdict != null && auth.displayVerdict !== qcCard.displayVerdict) {
+      return {
+        pass: false,
+        note: `authority.displayVerdict (${auth.displayVerdict}) !== qcCard.displayVerdict (${qcCard.displayVerdict})`,
+      };
+    }
+  }
+
+  if (expect?.hasUsableExcerpt != null && auth.hasUsableExcerpt !== expect.hasUsableExcerpt) {
+    return {
+      pass: false,
+      note: `authority.hasUsableExcerpt: expected ${expect.hasUsableExcerpt}, got ${auth.hasUsableExcerpt}`,
+    };
+  }
+
+  return { pass: true, note: "authority" };
+}
+
+/** Downgrade: no usable excerpt → empty refs/hovers and hasUsableExcerpt false */
+function assertDowngrade(statement, qcCard, expect) {
+  if (expect?.downgrade !== true) return null;
+  const refs = Array.isArray(qcCard?.supportRefIds) ? qcCard.supportRefIds.length : 0;
+  const hovers = Array.isArray(qcCard?.citationHovers) ? qcCard.citationHovers.length : 0;
+  if (refs !== 0) return { pass: false, note: `downgrade: supportRefIds.length expected 0, got ${refs}` };
+  if (hovers !== 0) return { pass: false, note: `downgrade: citationHovers.length expected 0, got ${hovers}` };
+  const auth = statement?.meta?.qcEvidenceAuthorities?.[0];
+  if (auth != null && auth.hasUsableExcerpt !== false) {
+    return { pass: false, note: `downgrade: hasUsableExcerpt expected false, got ${auth.hasUsableExcerpt}` };
+  }
+  return { pass: true, note: "downgrade" };
+}
+
+function assertSentenceVerdict(statement, expect) {
+  const want = expect?.sentenceVerdict;
+  if (want == null) return null;
+  const actual = statement?.sentence_verdict ?? null;
+  if (actual !== want) {
+    return { pass: false, note: `sentence_verdict: expected "${want}", got ${actual ?? "(none)"}` };
+  }
+  return { pass: true, note: "sentence_verdict" };
+}
+
+function runStructuralAssertions(statement, qcCard, expect) {
   const results = [];
   const checks = [
     () => assertSupportRefIdsUnique(qcCard, expect),
-    () => assertConcernState(qcCard, expect),
-    () => assertReasoningHeadline(qcCard, expect),
     () => assertReasoningParagraphIncludes(qcCard, expect),
     () => assertReasoningParagraphIncludesAny(qcCard, expect),
     () => assertReasoningParagraphExcludes(qcCard, expect),
     () => assertPrimaryRefTitleIncludes(qcCard, expect),
     () => assertSupportRefTitlesInclude(qcCard, expect),
     () => assertDraftSpanPresent(qcCard, expect),
+    () => assertRefAndHoverLengths(qcCard, expect),
+    () => assertPrimaryAuthority(statement, qcCard, expect),
+    () => assertDowngrade(statement, qcCard, expect),
+    () => assertSentenceVerdict(statement, expect),
   ];
   for (const fn of checks) {
     const r = fn();
     if (r != null) results.push(r);
   }
   return results;
+}
+
+/** Explanation / structural pattern checks: OK if all assertions pass */
+function explanationPatternSummary(structuralResults) {
+  if (structuralResults.length === 0) return "—";
+  return structuralResults.every((r) => r.pass) ? "OK" : "FAIL";
 }
 
 async function runOne(spec) {
@@ -172,22 +251,35 @@ async function runOne(spec) {
   const payload = await res.json();
   const first = primaryStatement(payload);
   const qcCard = first?.qcCard ?? null;
-  const actual = primarySupportState(payload);
-  const expectedList = parseExpectSupportState(spec.expect);
-  const supportStateResult = checkSupportStatePass(actual, expectedList);
-  const structuralResults = qcCard ? runStructuralAssertions(qcCard, spec.expect) : [];
+
+  const expDv = parseExpectList(spec.expect?.displayVerdict);
+  const expCl = parseExpectList(spec.expect?.concernLevel);
+
+  const dvResult = checkListPass(qcCard?.displayVerdict ?? null, expDv, "displayVerdict");
+  const clResult = checkListPass(qcCard?.concernLevel ?? null, expCl, "concernLevel");
+
+  const structuralResults = qcCard ? runStructuralAssertions(first, qcCard, spec.expect) : [];
+  const patternSummary = explanationPatternSummary(structuralResults);
   const allStructuralPass = structuralResults.every((r) => r.pass);
   const firstStructuralFail = structuralResults.find((r) => !r.pass);
-  const pass = supportStateResult.pass && allStructuralPass;
+
+  const corePass = dvResult.pass && clResult.pass;
+  const pass = corePass && allStructuralPass;
   const note = pass
-    ? (supportStateResult.note === "match" && structuralResults.length === 0 ? "match" : [supportStateResult.note, ...structuralResults.map((r) => r.note)].filter(Boolean).join("; "))
-    : !supportStateResult.pass
-      ? supportStateResult.note
-      : firstStructuralFail?.note ?? "structural assertion failed";
+    ? [dvResult.note, clResult.note, ...structuralResults.map((r) => r.note)].filter((n) => n && n !== "match" && n !== "no expectation").join("; ") || "ok"
+    : !dvResult.pass
+      ? dvResult.note
+      : !clResult.pass
+        ? clResult.note
+        : firstStructuralFail?.note ?? "assertion failed";
+
   return {
     name: spec.name,
-    expected: expectedList ? (expectedList.length === 1 ? expectedList[0] : expectedList.join("|")) : "-",
-    actual: actual ?? "(none)",
+    expectedDisplayVerdict: expDv ? (expDv.length === 1 ? expDv[0] : expDv.join("|")) : "-",
+    actualDisplayVerdict: qcCard?.displayVerdict ?? "(none)",
+    expectedConcernLevel: expCl ? (expCl.length === 1 ? expCl[0] : expCl.join("|")) : "-",
+    actualConcernLevel: qcCard?.concernLevel ?? "(none)",
+    explanationPatterns: patternSummary,
     pass,
     note,
     payload,
@@ -221,10 +313,16 @@ async function main() {
       const outPath = path.join(OUTPUT_DIR, `${run.name}.json`);
       await writeFile(outPath, JSON.stringify(result.payload, null, 2), "utf8");
     } catch (e) {
+      const exp = run.expect ?? {};
+      const expDv = parseExpectList(exp.displayVerdict);
+      const expCl = parseExpectList(exp.concernLevel);
       results.push({
         name: run.name,
-        expected: run.expect?.supportState ?? "-",
-        actual: "(error)",
+        expectedDisplayVerdict: expDv ? (expDv.length === 1 ? expDv[0] : expDv.join("|")) : "-",
+        actualDisplayVerdict: "(error)",
+        expectedConcernLevel: expCl ? (expCl.length === 1 ? expCl[0] : expCl.join("|")) : "-",
+        actualConcernLevel: "(error)",
+        explanationPatterns: "—",
         pass: false,
         note: e?.message || String(e),
         payload: null,
@@ -236,17 +334,30 @@ async function main() {
   const passCount = results.filter((r) => r.pass).length;
   const failCount = results.length - passCount;
 
-  console.log("\nrun\t\texpected\tactual\t\tpass\tnote");
-  console.log("-".repeat(72));
+  console.log("\nQC regression (display QC contract)\n");
+  console.log(
+    "run".padEnd(28)
+      + "exp DV".padEnd(18)
+      + "act DV".padEnd(18)
+      + "exp CL".padEnd(14)
+      + "act CL".padEnd(14)
+      + "patterns".padEnd(10)
+      + "pass",
+  );
+  console.log("-".repeat(104));
   for (const r of results) {
-    const run = r.name.padEnd(24);
-    const exp = (r.expected ?? "-").toString().padEnd(16);
-    const act = (r.actual ?? "-").toString().padEnd(16);
-    const pass = r.pass ? "PASS" : "FAIL";
-    const note = (r.note ?? "").slice(0, 32);
-    console.log(`${run}\t${exp}\t${act}\t${pass}\t${note}`);
+    const line =
+      (r.name ?? "").toString().padEnd(28)
+      + (r.expectedDisplayVerdict ?? "-").toString().padEnd(18)
+      + (r.actualDisplayVerdict ?? "-").toString().padEnd(18)
+      + (r.expectedConcernLevel ?? "-").toString().padEnd(14)
+      + (r.actualConcernLevel ?? "-").toString().padEnd(14)
+      + (r.explanationPatterns ?? "—").toString().padEnd(10)
+      + (r.pass ? "PASS" : "FAIL");
+    console.log(line);
+    if (!r.pass && r.note) console.log(`  └ ${(r.note ?? "").slice(0, 200)}`);
   }
-  console.log("-".repeat(72));
+  console.log("-".repeat(104));
   console.log(`Total: ${passCount} passed, ${failCount} failed. Outputs saved to ${OUTPUT_DIR}\n`);
 
   if (failCount > 0) process.exit(1);

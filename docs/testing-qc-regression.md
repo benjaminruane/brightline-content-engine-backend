@@ -1,54 +1,78 @@
-# QC regression testing (T1.1 / R2.1)
+# QC regression testing
 
 - **Test corpus:** `tests/qc_corpus/` — fixed source files for deterministic QC runs. Source filenames in requests are resolved only from this directory.
 - **Enabling the test endpoint:** Set `ENABLE_QC_TEST_ENDPOINT=true` in the environment. The endpoint is **disabled** otherwise (returns 404). Do not set this in production.
 
 ## Running the QC regression suite
 
-Run the regression harness with:
-
 ```bash
 npm run qc:test
 ```
 
-This command executes the deterministic QC regression suite using the test corpus in `tests/qc_corpus`.
-
-Outputs are written to:
-
-- **`tests/output/`**
-
-These files are generated artifacts and are ignored by Git.
-
 Optional: `QC_REGRESSION_BASE_URL=http://localhost:3000` (default). Start the backend (e.g. `npm run dev` or `vercel dev`) before running the suite.
 
-## Suite format and assertions (R2.1)
+Outputs are written to **`tests/output/`** (generated artifacts; typically gitignored).
 
-The suite file `tests/qc_regression_suite.json` defines one or more runs. Each run can specify optional expectation fields under `expect`:
+## Suite format — displayed QC contract (V2)
 
-- **supportState** — required; value or array of allowed values for the first statement’s `qcCard.supportState`.
-- **concernState** — optional; value or array of allowed values for `qcCard.concernState`.
-- **supportRefIdsUnique** — optional; if `true`, asserts `qcCard.supportRefIds` has no duplicates.
-- **reasoningHeadline** — optional; value or array of allowed values for `qcCard.reasoningHeadline`.
-- **reasoningParagraphIncludes** — optional; array of substrings that must all appear in `qcCard.reasoningParagraph`.
-- **reasoningParagraphIncludesAny** — optional; array of substrings; if a paragraph exists, it must include at least one.
-- **reasoningParagraphExcludes** — optional; array of substrings that must not appear in `qcCard.reasoningParagraph`.
-- **primaryRefTitleIncludes** — optional; array of substrings; `qcCard.primaryRefTitle` must include at least one.
-- **supportRefTitlesInclude** — optional; array of titles that must each appear in `qcCard.supportRefTitles`.
+File: `tests/qc_regression_suite.json`. Each run has `name`, `draft`, `sourceFiles`, and `expect`.
 
-All of these except `supportState` are optional. If any assertion fails, the run fails and the harness exits non-zero.
+### Required (primary statement / first claim)
 
-## Implementation handoff rule
+- **`displayVerdict`** — string or array of allowed values for `qcCard.displayVerdict`  
+  API values: `supported_full`, `supported_partial`, `not_supported`, `conflict`  
+  (Plain-language “supported” in specs = `supported_full` in JSON.)
 
-When backend logic affecting QC analysis is implemented:
+- **`concernLevel`** — string or array of allowed values for `qcCard.concernLevel`  
+  Typical mapping: `supported_full` → `none`; `supported_partial` → `moderate`; `not_supported` / `conflict` → `high`.
 
-1. Run the regression suite:
+### Authority alignment (default on)
 
-   ```bash
-   npm run qc:test
-   ```
+Unless `assertAuthority` is `false`, the harness checks `meta.qcEvidenceAuthorities[0]`:
 
+- `displayVerdict` matches the same expectation as `qcCard.displayVerdict` and equals `qcCard.displayVerdict`.
+- Optional **`hasUsableExcerpt`** — must match `meta.qcEvidenceAuthorities[0].hasUsableExcerpt`.
+
+### Pattern-based explanation (no exact full-string match)
+
+- **`reasoningParagraphIncludes`** — array of substrings; all must appear in `qcCard.reasoningParagraph`.
+- **`reasoningParagraphIncludesAny`** — at least one substring must appear (when paragraph non-empty).
+- **`reasoningParagraphExcludes`** — substrings that must not appear.
+
+### Structural / counts
+
+- **`supportRefIdsUnique`** — if `true`, `qcCard.supportRefIds` has no duplicate ids.
+- **`supportRefIdsLength`**, **`citationHoversLength`** — optional exact lengths.
+- **`primaryRefTitleIncludes`**, **`supportRefTitlesInclude`**, **`draftSpanPresent`** — unchanged behaviour.
+
+### Downgrade (no usable excerpt)
+
+When **`downgrade`** is `true`:
+
+- `qcCard.supportRefIds.length === 0`
+- `qcCard.citationHovers.length === 0`
+- If `meta.qcEvidenceAuthorities[0]` exists, `hasUsableExcerpt === false`
+
+### Sentence aggregation (optional)
+
+- **`sentenceVerdict`** — if set, must equal `statements[0].sentence_verdict` (e.g. `"Supported by sources (partial)"` when the sentence mixes supported and unsupported subclaims). Omit when the run has a single sentence/claim.
+
+## Summary table
+
+The runner prints **expected vs actual** `displayVerdict`, `concernLevel`, and whether structural/pattern assertions **OK** or **FAIL**.
+
+## Removed legacy assumptions
+
+The harness **no longer** asserts:
+
+- `qcCard.supportState`, `qcCard.concernState`, or legacy verdict tokens (`confirmed`, `partially_confirmed`, `no_clear_support`) as the primary contract.
+- `qcCard.reasoningHeadline` or exact legacy commentary phrases (e.g. “Confirmed using provided sources”).
+- `selectedExcerptDirectness` or other internal matcher fields.
+
+## Handoff
+
+After QC engine changes:
+
+1. Run `npm run qc:test` with the test endpoint enabled.
 2. Confirm all runs PASS.
-
-3. If any run fails, investigate and resolve before committing.
-
-This ensures deterministic QC behaviour is preserved across implementations.
+3. If a run fails, inspect `tests/output/<name>.json` and adjust expectations only when behaviour is intentionally changed.
