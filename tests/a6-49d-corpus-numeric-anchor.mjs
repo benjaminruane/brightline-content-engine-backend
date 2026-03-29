@@ -114,6 +114,56 @@ function runB_numericConflictRealExcerpts() {
   }
 }
 
+/** A6.49e: quantity-type mismatch + real excerpt → supported_partial (not not_supported). */
+function runD_supportMismatchPartial() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const stmt = {
+    text: claimText,
+    assessment: {
+      canonicalClaims: [
+        {
+          id: "mismatch_e",
+          type: "investment_amount",
+          displayText: claimText,
+          citations: [1],
+        },
+      ],
+    },
+    evidenceBundle: { supportBindings: [] },
+    meta: {
+      _evidenceBundleCorpusResult: {
+        found: true,
+        hits: [
+          {
+            docId: 1,
+            excerpt: "Investors are evaluating up to $5 million for Shopify Series A.",
+            matchType: "number",
+          },
+        ],
+      },
+    },
+  };
+  const uploadedDocs = [
+    { id: 1, title: "Term sheet", text: "Investors are evaluating up to $5 million for Shopify Series A." },
+  ];
+  runQcV2Pipeline([stmt], {
+    unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
+    uploadedLen: 1,
+    assignCredibilityTier: () => "LOW",
+    uploadedDocs,
+  });
+  const auth = stmt.meta.qcEvidenceAuthorities?.[0];
+  assert.ok(auth, "Run D: authority");
+  assert.equal(auth.displayVerdict, "supported_partial", "Run D: partial verdict");
+  assert.equal(auth.hasUsableExcerpt, true, "Run D: usable excerpt");
+  assert.equal(auth.concernLevel, "moderate", "Run D: moderate concern");
+  assert.ok(
+    typeof auth.commentaryPayload === "string" && auth.commentaryPayload.toLowerCase().includes("investor"),
+    "Run D: commentary describes quantity-type mismatch",
+  );
+  assert.ok(Array.isArray(auth.displaySourceItems) && auth.displaySourceItems.length >= 1, "Run D: surviving display items");
+}
+
 function runC_anchorFailureRejection() {
   const r = resolveNumericCorpusHitExcerpt(
     "no monetary tokens in this sentence",
@@ -138,6 +188,7 @@ function main() {
   runA_numericSupportRealExcerpt();
   runB_numericConflictRealExcerpts();
   runC_anchorFailureRejection();
+  runD_supportMismatchPartial();
   console.log("a6-49d: all regression runs passed");
 }
 
