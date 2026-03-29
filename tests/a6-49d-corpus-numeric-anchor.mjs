@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * A6.49d–A6.49j regression: numeric corpus anchoring, V2 handoff, mismatch partial,
+ * A6.49d–A6.49k regression: numeric corpus anchoring, V2 handoff, mismatch partial,
  * excerpt quality gate, corpus-hit ↔ citation association, and ref routing by source metadata.
  */
 import assert from "node:assert/strict";
@@ -709,6 +709,265 @@ function runQ_a649j_nonQuantityMismatchGateFail() {
   );
 }
 
+/** A6.49k-A/E: partial_support binding (scoped to claim) does not block inferred quantity mismatch; rows survive suppression. */
+function runA649k_nonDirectBindingPartialSupport() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const stmt = {
+    text: claimText,
+    assessment: {
+      canonicalClaims: [
+        {
+          id: "a649k_a",
+          type: "investment_amount",
+          displayText: claimText,
+          citations: [4],
+        },
+      ],
+    },
+    evidenceBundle: {
+      supportBindings: [
+        {
+          claimId: "a649k_a",
+          matchType: "partial_support",
+          excerpt: "Investors are evaluating up to $5 million for Shopify Series A.",
+        },
+      ],
+    },
+    meta: {
+      _evidenceBundleCorpusResult: {
+        found: true,
+        hits: [
+          {
+            docId: 1,
+            refId: 4,
+            excerpt: "Investors are evaluating up to $5 million for Shopify Series A.",
+            matchType: "number",
+          },
+        ],
+      },
+    },
+  };
+  const uploadedDocs = [
+    { id: 1, title: "Term sheet", text: "Investors are evaluating up to $5 million for Shopify Series A." },
+  ];
+  const policyLines = [];
+  const prevVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE;
+  const origLog = console.log;
+  console.log = (name, payload) => {
+    if (name === "QC_V2_MISMATCH_BINDING_POLICY" && typeof payload === "string") {
+      try {
+        policyLines.push(JSON.parse(payload));
+      } catch {
+        /* ignore */
+      }
+    }
+    origLog(name, payload);
+  };
+  process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
+  try {
+    runQcV2Pipeline([stmt], {
+      unifiedReferences: [{ id: 4, title: "Term sheet", url: null, sourceType: "uploaded" }],
+      uploadedLen: 1,
+      assignCredibilityTier: () => "LOW",
+      uploadedDocs,
+    });
+  } finally {
+    console.log = origLog;
+    process.env.BRIGHTLINE_DIAG_VERBOSE = prevVerbose;
+  }
+  const auth = stmt.meta.qcEvidenceAuthorities?.[0];
+  assert.ok(auth, "A6.49k-A: authority");
+  const pol = policyLines.find((p) => p.claimId === "a649k_a");
+  assert.ok(pol, "A6.49k-A: policy diag");
+  assert.equal(pol.directSupportingBindingsCount, 0, "A6.49k-A: no direct binding");
+  assert.equal(pol.quantityMismatchInferenceSkipped, false, "A6.49k-A: inference not skipped");
+  assert.equal(pol.mismatchPartialEligible, true, "A6.49k-A: mismatch partial eligible");
+  assert.ok((auth.displaySourceItems?.length ?? 0) >= 1, "A6.49k-A: display rows");
+  assert.equal(auth.hasUsableExcerpt, true, "A6.49k-A: hasUsableExcerpt");
+  assert.equal(auth.displayVerdict, "supported_partial", "A6.49k-A: partial verdict");
+  assert.equal(auth.concernLevel, "moderate", "A6.49k-A: moderate concern");
+}
+
+/** A6.49k-B: exact binding counts as direct — heuristic mismatch skipped; full support path unchanged. */
+function runA649k_directBindingSkipsMismatchInference() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const stmt = {
+    text: claimText,
+    assessment: {
+      canonicalClaims: [
+        {
+          id: "a649k_b",
+          type: "investment_amount",
+          displayText: claimText,
+          citations: [1],
+        },
+      ],
+    },
+    evidenceBundle: {
+      supportBindings: [
+        {
+          claimId: "a649k_b",
+          matchType: "exact",
+          excerpt: "Shopify raised $5 million in its Series A funding round.",
+        },
+      ],
+    },
+    meta: {
+      _evidenceBundleCorpusResult: {
+        found: true,
+        hits: [
+          {
+            docId: 1,
+            refId: 1,
+            excerpt: "Shopify raised $5 million in its Series A funding round.",
+            matchType: "number",
+          },
+        ],
+      },
+    },
+  };
+  const uploadedDocs = [{ id: 1, title: "Pitch deck", text: "Shopify raised $5 million in its Series A funding round." }];
+  const policyLines = [];
+  const prevVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE;
+  const origLog = console.log;
+  console.log = (name, payload) => {
+    if (name === "QC_V2_MISMATCH_BINDING_POLICY" && typeof payload === "string") {
+      try {
+        policyLines.push(JSON.parse(payload));
+      } catch {
+        /* ignore */
+      }
+    }
+    origLog(name, payload);
+  };
+  process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
+  try {
+    runQcV2Pipeline([stmt], {
+      unifiedReferences: [{ id: 1, title: "Pitch deck", url: null, sourceType: "uploaded" }],
+      uploadedLen: 1,
+      assignCredibilityTier: () => "LOW",
+      uploadedDocs,
+    });
+  } finally {
+    console.log = origLog;
+    process.env.BRIGHTLINE_DIAG_VERBOSE = prevVerbose;
+  }
+  const auth = stmt.meta.qcEvidenceAuthorities?.[0];
+  const pol = policyLines.find((p) => p.claimId === "a649k_b");
+  assert.ok(pol, "A6.49k-B: policy diag");
+  assert.ok(pol.directSupportingBindingsCount >= 1, "A6.49k-B: direct binding count");
+  assert.equal(pol.quantityMismatchInferenceSkipped, true, "A6.49k-B: inference skipped");
+  assert.equal(pol.mismatchPartialEligible, false, "A6.49k-B: not mismatch partial");
+  assert.equal(auth.displayVerdict, "supported_full", "A6.49k-B: full support");
+}
+
+/** A6.49k-C: empty supportBindings — unchanged mismatch partial (same as run D behaviour). */
+function runA649k_noBindingsUnchanged() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const stmt = {
+    text: claimText,
+    assessment: {
+      canonicalClaims: [
+        {
+          id: "a649k_c",
+          type: "investment_amount",
+          displayText: claimText,
+          citations: [1],
+        },
+      ],
+    },
+    evidenceBundle: { supportBindings: [] },
+    meta: {
+      _evidenceBundleCorpusResult: {
+        found: true,
+        hits: [
+          {
+            docId: 1,
+            excerpt: "Investors are evaluating up to $5 million for Shopify Series A.",
+            matchType: "number",
+          },
+        ],
+      },
+    },
+  };
+  const uploadedDocs = [
+    { id: 1, title: "Term sheet", text: "Investors are evaluating up to $5 million for Shopify Series A." },
+  ];
+  const policyLines = [];
+  const prevVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE;
+  const origLog = console.log;
+  console.log = (name, payload) => {
+    if (name === "QC_V2_MISMATCH_BINDING_POLICY" && typeof payload === "string") {
+      try {
+        policyLines.push(JSON.parse(payload));
+      } catch {
+        /* ignore */
+      }
+    }
+    origLog(name, payload);
+  };
+  process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
+  try {
+    runQcV2Pipeline([stmt], {
+      unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
+      uploadedLen: 1,
+      assignCredibilityTier: () => "LOW",
+      uploadedDocs,
+    });
+  } finally {
+    console.log = origLog;
+    process.env.BRIGHTLINE_DIAG_VERBOSE = prevVerbose;
+  }
+  const pol = policyLines.find((p) => p.claimId === "a649k_c");
+  assert.ok(pol, "A6.49k-C: policy diag");
+  assert.equal(pol.supportBindings, 0);
+  assert.equal(pol.quantityMismatchInferenceSkipped, false);
+  assert.equal(pol.mismatchPartialEligible, true);
+}
+
+/** A6.49k-D: related + no structured mismatch (no inference cues in uploaded docs) — suppression still clears. */
+function runA649k_relatedNoStructuredMismatchSuppressed() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const stmt = {
+    text: claimText,
+    assessment: {
+      canonicalClaims: [
+        {
+          id: "a649k_d",
+          type: "investment_amount",
+          displayText: claimText,
+          citations: [1],
+        },
+      ],
+    },
+    evidenceBundle: { supportBindings: [] },
+    meta: {
+      _evidenceBundleCorpusResult: {
+        found: true,
+        hits: [
+          {
+            docId: 1,
+            excerpt: "Shopify Series A financing was discussed in the board materials.",
+            matchType: "phrase",
+          },
+        ],
+      },
+    },
+  };
+  const uploadedDocs = [{ id: 1, title: "Board deck", text: "Shopify Series A financing was discussed in the board materials." }];
+  runQcV2Pipeline([stmt], {
+    unifiedReferences: [{ id: 1, title: "Board deck", url: null, sourceType: "uploaded" }],
+    uploadedLen: 1,
+    assignCredibilityTier: () => "LOW",
+    uploadedDocs,
+  });
+  const auth = stmt.meta.qcEvidenceAuthorities?.[0];
+  assert.ok(auth, "A6.49k-D: authority");
+  assert.equal(auth.displayVerdict, "not_supported", "A6.49k-D: not_supported");
+  assert.equal(auth.hasUsableExcerpt, false, "A6.49k-D: no usable excerpt");
+  assert.ok(!auth.displaySourceItems?.length, "A6.49k-D: no display rows");
+}
+
 function runC_anchorFailureRejection() {
   const r = resolveNumericCorpusHitExcerpt(
     "no monetary tokens in this sentence",
@@ -749,6 +1008,10 @@ function main() {
   runQ_a649j_numericMismatchFixture();
   runQ_a649j_cleanFullNoNumericMismatchBranch();
   runQ_a649j_nonQuantityMismatchGateFail();
+  runA649k_nonDirectBindingPartialSupport();
+  runA649k_directBindingSkipsMismatchInference();
+  runA649k_noBindingsUnchanged();
+  runA649k_relatedNoStructuredMismatchSuppressed();
   console.log("a6-49d: all regression runs passed");
 }
 
