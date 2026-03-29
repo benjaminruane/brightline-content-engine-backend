@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * A6.49d–A6.49k regression: numeric corpus anchoring, V2 handoff, mismatch partial,
+ * A6.49d–A6.49l regression: numeric corpus anchoring, V2 handoff, mismatch partial,
  * excerpt quality gate, corpus-hit ↔ citation association, and ref routing by source metadata.
  */
 import assert from "node:assert/strict";
@@ -161,9 +161,18 @@ function runD_supportMismatchPartial() {
   assert.equal(auth.hasUsableExcerpt, true, "Run D: usable excerpt");
   assert.equal(auth.concernLevel, "moderate", "Run D: moderate concern");
   assert.ok(
-    typeof auth.commentaryPayload === "string" && auth.commentaryPayload.toLowerCase().includes("investor"),
-    "Run D: commentary describes quantity-type mismatch",
+    typeof auth.commentaryPayload === "string"
+    && auth.commentaryPayload.includes("The source refers to")
+    && auth.commentaryPayload.includes("total amount raised"),
+    "Run D: A6.49l editorial mismatch commentary",
   );
+  const row = auth.displaySourceItems?.[0];
+  assert.ok(
+    row?.whatThisShows && String(row.whatThisShows).includes("The source refers to"),
+    "Run D: popup whatThisShows editorial",
+  );
+  assert.ok(!String(auth.commentaryPayload).includes("e.g."), "Run D: no bracketed e.g. in commentary");
+  assert.ok(!/\binvestment amount\b/i.test(String(auth.commentaryPayload)), "Run D: no taxonomy investment amount");
   assert.ok(Array.isArray(auth.displaySourceItems) && auth.displaySourceItems.length >= 1, "Run D: surviving display items");
 }
 
@@ -786,6 +795,12 @@ function runA649k_nonDirectBindingPartialSupport() {
   assert.equal(auth.hasUsableExcerpt, true, "A6.49k-A: hasUsableExcerpt");
   assert.equal(auth.displayVerdict, "supported_partial", "A6.49k-A: partial verdict");
   assert.equal(auth.concernLevel, "moderate", "A6.49k-A: moderate concern");
+  const wts = auth.displaySourceItems?.[0]?.whatThisShows ?? "";
+  assert.ok(
+    wts.includes("The source refers to") && wts.includes("total amount raised"),
+    "A6.49l: editorial whatThisShows (partial_support binding + mismatch)",
+  );
+  assert.ok(!wts.includes("Shows that"), "A6.49l: no generic Shows-that lead");
 }
 
 /** A6.49k-B: exact binding counts as direct — heuristic mismatch skipped; full support path unchanged. */
@@ -859,6 +874,8 @@ function runA649k_directBindingSkipsMismatchInference() {
   assert.equal(pol.quantityMismatchInferenceSkipped, true, "A6.49k-B: inference skipped");
   assert.equal(pol.mismatchPartialEligible, false, "A6.49k-B: not mismatch partial");
   assert.equal(auth.displayVerdict, "supported_full", "A6.49k-B: full support");
+  const wts = auth.displaySourceItems?.[0]?.whatThisShows ?? "";
+  assert.ok(wts.includes("Shows that"), "A6.49l-B: full support keeps confirming popup lead");
 }
 
 /** A6.49k-C: empty supportBindings — unchanged mismatch partial (same as run D behaviour). */
