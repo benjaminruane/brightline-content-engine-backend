@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * A6.49d–A6.49m regression: numeric corpus anchoring, V2 handoff, mismatch partial,
+ * A6.49d–A6.49n regression: numeric corpus anchoring, V2 handoff, mismatch partial,
  * excerpt quality gate, corpus-hit ↔ citation association, ref routing by source metadata,
  * and canonical binding directness (A6.49m).
  */
@@ -8,6 +8,7 @@ import assert from "node:assert/strict";
 import { resolveNumericCorpusHitExcerpt, findDeterministicNumericAnchorIndex } from "../lib/corpus-numeric-anchor.mjs";
 import { corpusSearch } from "../lib/analyse-statements-impl.mjs";
 import {
+  QUANTITY_MISMATCH_SKIP_REASONS,
   countDirectSupportingBindings,
   isBindingMismatchCompatible,
   isBindingPlaceholderSynthetic,
@@ -797,6 +798,8 @@ function runA649k_nonDirectBindingPartialSupport() {
   assert.ok(pol, "A6.49k-A: policy diag");
   assert.equal(pol.directSupportingBindingsCount, 0, "A6.49k-A: no direct binding");
   assert.equal(pol.quantityMismatchInferenceSkipped, false, "A6.49k-A: inference not skipped");
+  assert.ok(QUANTITY_MISMATCH_SKIP_REASONS.includes(pol.skipReason), "A6.49n: skipReason in contract");
+  assert.equal(pol.skipReason, "no_direct_support", "A6.49n: inferred quantity path");
   assert.equal(pol.mismatchPartialEligible, true, "A6.49k-A: mismatch partial eligible");
   assert.ok((auth.displaySourceItems?.length ?? 0) >= 1, "A6.49k-A: display rows");
   assert.equal(auth.hasUsableExcerpt, true, "A6.49k-A: hasUsableExcerpt");
@@ -879,6 +882,7 @@ function runA649k_directBindingSkipsMismatchInference() {
   assert.ok(pol, "A6.49k-B: policy diag");
   assert.ok(pol.directSupportingBindingsCount >= 1, "A6.49k-B: direct binding count");
   assert.equal(pol.quantityMismatchInferenceSkipped, true, "A6.49k-B: inference skipped");
+  assert.equal(pol.skipReason, "direct_support_found", "A6.49n: skip only via direct count");
   assert.equal(pol.mismatchPartialEligible, false, "A6.49k-B: not mismatch partial");
   assert.equal(auth.displayVerdict, "supported_full", "A6.49k-B: full support");
   const wts = auth.displaySourceItems?.[0]?.whatThisShows ?? "";
@@ -946,6 +950,7 @@ function runA649k_noBindingsUnchanged() {
   assert.ok(pol, "A6.49k-C: policy diag");
   assert.equal(pol.supportBindings, 0);
   assert.equal(pol.quantityMismatchInferenceSkipped, false);
+  assert.equal(pol.skipReason, "no_direct_support");
   assert.equal(pol.mismatchPartialEligible, true);
 }
 
@@ -1017,6 +1022,7 @@ function runA649m_shopifyParaphraseRef4Canonical() {
   assert.ok(pol, "A6.49m-A: policy diag");
   assert.equal(pol.directSupportingBindingsCount, 0);
   assert.equal(pol.quantityMismatchInferenceSkipped, false);
+  assert.equal(pol.skipReason, "no_direct_support");
   assert.equal(pol.mismatchPartialEligible, true);
   assert.equal(pol.mismatchCompatibleBindingsCount, 1);
   assert.equal(pol.placeholderBindingsCount, 0);
@@ -1119,6 +1125,169 @@ function runA649m_looseBindingIgnoredForDirectCount() {
   assert.equal(pol.supportBindingsLength, 1);
   assert.equal(pol.directSupportingBindingsCount, 0);
   assert.equal(pol.quantityMismatchInferenceSkipped, false);
+  assert.equal(pol.skipReason, "no_direct_support");
+  assert.equal(pol.mismatchPartialEligible, true);
+}
+
+/** A6.49n-D: Paraphrase binding (mismatch-compatible) but no structured quantity mismatch — partial path off; suppression clears. */
+function runA649n_paraphraseNoStructuredMismatchSuppressed() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const stmt = {
+    text: claimText,
+    assessment: {
+      canonicalClaims: [
+        {
+          id: "a649n_d",
+          type: "investment_amount",
+          displayText: claimText,
+          citations: [1],
+        },
+      ],
+    },
+    evidenceBundle: {
+      supportBindings: [
+        {
+          claimId: "a649n_d",
+          matchType: "paraphrase",
+          excerpt: "Board materials discussed Series A financing.",
+        },
+      ],
+    },
+    meta: {
+      _evidenceBundleCorpusResult: {
+        found: true,
+        hits: [
+          {
+            docId: 1,
+            excerpt: "Shopify Series A financing was discussed in the board materials.",
+            matchType: "phrase",
+          },
+        ],
+      },
+    },
+  };
+  const uploadedDocs = [{ id: 1, title: "Board deck", text: "Shopify Series A financing was discussed in the board materials." }];
+  const policyLines = [];
+  const prevVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE;
+  const origLog = console.log;
+  console.log = (name, payload) => {
+    if (name === "QC_V2_MISMATCH_BINDING_POLICY" && typeof payload === "string") {
+      try {
+        policyLines.push(JSON.parse(payload));
+      } catch {
+        /* ignore */
+      }
+    }
+    origLog(name, payload);
+  };
+  process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
+  try {
+    runQcV2Pipeline([stmt], {
+      unifiedReferences: [{ id: 1, title: "Board deck", url: null, sourceType: "uploaded" }],
+      uploadedLen: 1,
+      assignCredibilityTier: () => "LOW",
+      uploadedDocs,
+    });
+  } finally {
+    console.log = origLog;
+    process.env.BRIGHTLINE_DIAG_VERBOSE = prevVerbose;
+  }
+  const pol = policyLines.find((p) => p.claimId === "a649n_d");
+  assert.ok(pol, "A6.49n-D: policy diag");
+  assert.equal(pol.mismatchCompatibleBindingsCount, 1, "A6.49n-D: tier-1 paraphrase");
+  assert.equal(pol.skipReason, "structured_quantity_mismatch_absent");
+  assert.equal(pol.mismatchPartialEligible, false, "A6.49n-D: no partial without structured quantity mismatch");
+  const auth = stmt.meta.qcEvidenceAuthorities?.[0];
+  assert.equal(auth.displayVerdict, "not_supported");
+  assert.ok(!auth.displaySourceItems?.length, "A6.49n-D: related/none suppression");
+}
+
+/** A6.49n-F: Exact matchType but mismatch-compatible by Tier-2 metadata — precedence over direct. */
+function runA649n_overlapPrecedenceExactWithMetadata() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const claim = { id: "a649n_f", type: "investment_amount", displayText: claimText, citations: [1] };
+  const binding = {
+    claimId: "a649n_f",
+    matchType: "exact",
+    excerpt: "Shopify raised $5 million in its Series A funding round.",
+    reasonCode: "quantity mismatch",
+  };
+  assert.equal(isBindingMismatchCompatible(binding, claim, claimText), true, "A6.49n-F: tier-2 metadata");
+  assert.equal(isDirectConfirmingSupportBinding(binding, claim, claimText), false, "A6.49n-F: mismatch wins first");
+  assert.equal(countDirectSupportingBindings([binding], claim, claimText), 0);
+}
+
+/** A6.49n-C: Placeholder binding — placeholderBindingsCount >= 1; inference not blocked by direct count. */
+function runA649n_placeholderBindingPolicyCounts() {
+  const claimText = "Shopify raised $5 million in its Series A funding round.";
+  const stmt = {
+    text: claimText,
+    assessment: {
+      canonicalClaims: [
+        {
+          id: "a649n_ph_pol",
+          type: "investment_amount",
+          displayText: claimText,
+          citations: [1],
+        },
+      ],
+    },
+    evidenceBundle: {
+      supportBindings: [
+        {
+          claimId: "a649n_ph_pol",
+          matchType: "exact",
+          placeholder: true,
+          excerpt: "Shopify raised $5 million in its Series A funding round.",
+        },
+      ],
+    },
+    meta: {
+      _evidenceBundleCorpusResult: {
+        found: true,
+        hits: [
+          {
+            docId: 1,
+            excerpt: "Investors are evaluating up to $5 million for Shopify Series A.",
+            matchType: "number",
+          },
+        ],
+      },
+    },
+  };
+  const uploadedDocs = [
+    { id: 1, title: "Term sheet", text: "Investors are evaluating up to $5 million for Shopify Series A." },
+  ];
+  const policyLines = [];
+  const prevVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE;
+  const origLog = console.log;
+  console.log = (name, payload) => {
+    if (name === "QC_V2_MISMATCH_BINDING_POLICY" && typeof payload === "string") {
+      try {
+        policyLines.push(JSON.parse(payload));
+      } catch {
+        /* ignore */
+      }
+    }
+    origLog(name, payload);
+  };
+  process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
+  try {
+    runQcV2Pipeline([stmt], {
+      unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
+      uploadedLen: 1,
+      assignCredibilityTier: () => "LOW",
+      uploadedDocs,
+    });
+  } finally {
+    console.log = origLog;
+    process.env.BRIGHTLINE_DIAG_VERBOSE = prevVerbose;
+  }
+  const pol = policyLines.find((p) => p.claimId === "a649n_ph_pol");
+  assert.ok(pol, "A6.49n-C: policy diag");
+  assert.ok(pol.placeholderBindingsCount >= 1, "A6.49n-C: placeholder count");
+  assert.equal(pol.directSupportingBindingsCount, 0);
+  assert.equal(pol.quantityMismatchInferenceSkipped, false);
 }
 
 /** A6.49k-D: related + no structured mismatch (no inference cues in uploaded docs) — suppression still clears. */
@@ -1212,6 +1381,9 @@ function main() {
   runA649m_exactDirectPredicates();
   runA649m_placeholderNotDirect();
   runA649m_looseBindingIgnoredForDirectCount();
+  runA649n_paraphraseNoStructuredMismatchSuppressed();
+  runA649n_overlapPrecedenceExactWithMetadata();
+  runA649n_placeholderBindingPolicyCounts();
   console.log("a6-49d: all regression runs passed");
 }
 
