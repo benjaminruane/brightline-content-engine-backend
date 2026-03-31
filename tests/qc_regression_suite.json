@@ -54,6 +54,18 @@
         "reasoningParagraphIncludesAny": ["discusses", "does not confirm", "No source directly confirms"],
         "reasoningParagraphExcludes": ["confirmed reported figure"]
       }
+    },
+    {
+      "name": "shopify_series_a_v1",
+      "sourceFiles": [
+        "Shopify (text).txt"
+      ],
+      "draft": "The firm is evaluating a proposed Series A investment of up to $7 million in Shopify, a profitable, largely bootstrapped SaaS provider of e-commerce software for SMBs. Shopify enables small merchants and at-home entrepreneurs to launch online stores quickly, with an open API and App Store that extend functionality and support larger customers. The portfolio company thesis centers on strong organic growth, attractive unit economics, and exposure to the consumerization of enterprise software and continued e-commerce penetration among SMBs.",
+      "expect": {
+        "okTrue": true,
+        "statementsReturned": true,
+        "assertAuthority": false
+      }
     }
   ]
 }
