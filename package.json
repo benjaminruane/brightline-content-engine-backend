@@ -1,6 +1,6 @@
 {
   "name": "brightline-content-engine-backend",
-  "version": "1.0.0",
+  "version": "dev",
   "private": true,
   "type": "module",
   "packageManager": "npm@10",
