@@ -44,6 +44,19 @@ Brightline Content Engine is an evidence-first, deterministic, audit-safe review
 ## Product Constraint
 - QC output must be practically useful, not only technically correct
 
+## QC Output Language Standard
+
+All QC output shown to users — verdicts, commentary, explanations, hover text, and popups — must be written in plain language as an experienced reviewer or editor would write to a writer. Requirements:
+
+- No system language (e.g. "entity", "relation", "canonical claim", "corpus")
+- No generic filler (e.g. "the source discusses related subject matter")
+- No technical jargon
+- Always specific and concrete — reference the actual claim and the actual source content
+- Always actionable — tell the writer what the issue is and what to do about it
+- Tone: direct, professional, constructive
+
+This standard applies to all commentary fields: `commentaryPayload`, `whatThisShows`, `whatIsNotShown`, `whyItMattersText`, `evidenceSummary`, and any other user-facing text fields in the QC output.
+
 ## Change Surface Discipline
 
 When proposing development specs:
