@@ -64,7 +64,15 @@
       "expect": {
         "okTrue": true,
         "statementsReturned": true,
-        "assertAuthority": false
+        "assertAuthority": false,
+        "aggregateStatementQc": {
+          "minSupportedFullCount": 2,
+          "noConflictVerdicts": true,
+          "requireConcernNoneForVerdicts": [
+            "supported_full",
+            "supported_partial"
+          ]
+        }
       }
     }
   ]

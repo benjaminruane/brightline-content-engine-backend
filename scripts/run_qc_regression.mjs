@@ -210,6 +210,65 @@ function assertSentenceVerdict(statement, expect) {
   return { pass: true, note: "sentence_verdict" };
 }
 
+/**
+ * Cross-statement QC checks (e.g. shopify_series_a_v1): min supported_full count, no conflict, concern none for selected verdicts.
+ * @param {unknown} payload
+ * @param {Record<string, unknown> | undefined} expect
+ */
+function assertAggregateStatementQc(payload, expect) {
+  const agg = expect?.aggregateStatementQc;
+  if (agg == null || typeof agg !== "object") return null;
+
+  const statements = Array.isArray(payload?.statements) ? payload.statements : [];
+  if (statements.length === 0) {
+    return { pass: false, note: "aggregateStatementQc: no statements in payload" };
+  }
+
+  const minSupportedFull = agg.minSupportedFullCount;
+  const noConflict = agg.noConflictVerdicts === true;
+  const concernNoneFor = Array.isArray(agg.requireConcernNoneForVerdicts)
+    ? agg.requireConcernNoneForVerdicts.filter((v) => typeof v === "string")
+    : [];
+
+  let supportedFullCount = 0;
+  let conflictCount = 0;
+
+  for (let i = 0; i < statements.length; i++) {
+    const stmt = statements[i];
+    const qc = stmt?.qcCard;
+    const dv = qc?.displayVerdict ?? null;
+    const cl = qc?.concernLevel ?? null;
+
+    if (dv === "supported_full") supportedFullCount++;
+    if (dv === "conflict") conflictCount++;
+
+    if (concernNoneFor.length > 0 && dv != null && concernNoneFor.includes(dv)) {
+      if (cl !== "none") {
+        return {
+          pass: false,
+          note: `aggregateStatementQc: statement[${i}] displayVerdict=${dv} expected concernLevel none, got ${cl ?? "(none)"}`,
+        };
+      }
+    }
+  }
+
+  if (typeof minSupportedFull === "number" && minSupportedFull > 0 && supportedFullCount < minSupportedFull) {
+    return {
+      pass: false,
+      note: `aggregateStatementQc: minSupportedFullCount ${minSupportedFull}, got ${supportedFullCount}`,
+    };
+  }
+
+  if (noConflict && conflictCount > 0) {
+    return {
+      pass: false,
+      note: `aggregateStatementQc: noConflictVerdicts expected 0 conflict, got ${conflictCount}`,
+    };
+  }
+
+  return { pass: true, note: "aggregateStatementQc" };
+}
+
 function runStructuralAssertions(statement, qcCard, expect) {
   const results = [];
   const checks = [
@@ -259,19 +318,23 @@ async function runOne(spec) {
   const clResult = checkListPass(qcCard?.concernLevel ?? null, expCl, "concernLevel");
 
   const structuralResults = qcCard ? runStructuralAssertions(first, qcCard, spec.expect) : [];
+  const aggregateResult = assertAggregateStatementQc(payload, spec.expect);
   const patternSummary = explanationPatternSummary(structuralResults);
   const allStructuralPass = structuralResults.every((r) => r.pass);
   const firstStructuralFail = structuralResults.find((r) => !r.pass);
+  const aggregatePass = aggregateResult == null || aggregateResult.pass;
 
   const corePass = dvResult.pass && clResult.pass;
-  const pass = corePass && allStructuralPass;
+  const pass = corePass && allStructuralPass && aggregatePass;
   const note = pass
-    ? [dvResult.note, clResult.note, ...structuralResults.map((r) => r.note)].filter((n) => n && n !== "match" && n !== "no expectation").join("; ") || "ok"
+    ? [dvResult.note, clResult.note, ...structuralResults.map((r) => r.note), aggregateResult?.note].filter((n) => n && n !== "match" && n !== "no expectation").join("; ") || "ok"
     : !dvResult.pass
       ? dvResult.note
       : !clResult.pass
         ? clResult.note
-        : firstStructuralFail?.note ?? "assertion failed";
+        : !aggregatePass
+          ? aggregateResult?.note ?? "aggregate assertion failed"
+          : firstStructuralFail?.note ?? "assertion failed";
 
   return {
     name: spec.name,
