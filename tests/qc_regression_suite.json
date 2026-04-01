@@ -14,7 +14,7 @@
         "supportRefIdsLength": 2,
         "citationHoversLength": 2,
         "supportRefIdsUnique": true,
-        "reasoningParagraphIncludes": ["confirms", "source"],
+        "reasoningParagraphIncludes": ["Supported", "source"],
         "reasoningParagraphExcludes": ["potential", "scenario-based figure"]
       }
     },
@@ -33,7 +33,7 @@
         "downgrade": true,
         "supportRefIdsLength": 0,
         "citationHoversLength": 0,
-        "reasoningParagraphIncludesAny": ["discusses", "does not confirm", "No source directly confirms"]
+        "reasoningParagraphIncludesAny": ["related content", "doesn't directly confirm", "more specific passage", "consider revising"]
       }
     },
     {
@@ -51,7 +51,7 @@
         "downgrade": true,
         "supportRefIdsLength": 0,
         "citationHoversLength": 0,
-        "reasoningParagraphIncludesAny": ["discusses", "does not confirm", "No source directly confirms"],
+        "reasoningParagraphIncludesAny": ["related content", "doesn't directly confirm", "more specific passage", "consider revising"],
         "reasoningParagraphExcludes": ["confirmed reported figure"]
       }
     },
