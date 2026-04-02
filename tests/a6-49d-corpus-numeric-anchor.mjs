@@ -16,7 +16,7 @@ import {
 } from "../lib/qc/binding-directness.mjs";
 import { deriveComponents, getCandidatesForClaim, pickCorpusHitForCitation, runQcV2Pipeline } from "../lib/qc/qc-v2-pipeline.mjs";
 
-function runA_numericSupportRealExcerpt() {
+async function runA_numericSupportRealExcerpt() {
   const statementText = "Shopify raised $5 million in its Series A funding round.";
   // Paraphrased body so the corpus does not take the exact-phrase path (which skips numeric anchoring).
   const uploadedDocs = [
@@ -53,7 +53,7 @@ function runA_numericSupportRealExcerpt() {
       _evidenceBundleCorpusResult: res,
     },
   };
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [{ id: 1, title: "Pitch deck", url: null, sourceType: "uploaded" }],
     uploadedLen: 1,
     assignCredibilityTier: () => "LOW",
@@ -71,7 +71,7 @@ function runA_numericSupportRealExcerpt() {
   assert.equal(auth.concernLevel, "none", "Run A: concern none");
 }
 
-function runB_numericConflictRealExcerpts() {
+async function runB_numericConflictRealExcerpts() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const corpusResult = {
     found: true,
@@ -107,7 +107,7 @@ function runB_numericConflictRealExcerpts() {
       _evidenceBundleCorpusResult: corpusResult,
     },
   };
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [
       { id: 1, title: "Doc A", url: null, sourceType: "uploaded" },
       { id: 2, title: "Doc B", url: null, sourceType: "uploaded" },
@@ -126,7 +126,7 @@ function runB_numericConflictRealExcerpts() {
 }
 
 /** A6.49e / A6.49g-A: live-style mismatch — body excerpt with invest/evaluating/up to + corpus matchType number → supported_partial. */
-function runD_supportMismatchPartial() {
+async function runD_supportMismatchPartial() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -157,7 +157,7 @@ function runD_supportMismatchPartial() {
   const uploadedDocs = [
     { id: 1, title: "Term sheet", text: "Investors are evaluating up to $5 million for Shopify Series A." },
   ];
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
     uploadedLen: 1,
     assignCredibilityTier: () => "LOW",
@@ -187,7 +187,7 @@ function runD_supportMismatchPartial() {
 /**
  * A6.49f: No entity token in excerpt — legacy entity+keyValue gate failed; upstream corpus_hit_number + cue must pass.
  */
-function runE_numericQualityGateWithoutEntityToken() {
+async function runE_numericQualityGateWithoutEntityToken() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -218,7 +218,7 @@ function runE_numericQualityGateWithoutEntityToken() {
   const uploadedDocs = [
     { id: 1, title: "Term sheet", text: "The investment amount is up to $5 million for the Series A round." },
   ];
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
     uploadedLen: 1,
     assignCredibilityTier: () => "LOW",
@@ -238,7 +238,7 @@ function runE_numericQualityGateWithoutEntityToken() {
 /**
  * A6.49g-B: Claim has no parsed $ amount in deriveComponents, but corpus matchType number + body excerpt still passes numeric_evidence gate.
  */
-function runH_upstreamCorpusNumericTruthWithoutEvalAmount() {
+async function runH_upstreamCorpusNumericTruthWithoutEvalAmount() {
   const claimText = "Shopify raised five million dollars in its Series A funding round.";
   assert.equal(deriveComponents(claimText).amount, null, "Run H: no $ token in claim — amount component absent");
   const stmt = {
@@ -270,7 +270,7 @@ function runH_upstreamCorpusNumericTruthWithoutEvalAmount() {
   const uploadedDocs = [
     { id: 1, title: "Term sheet", text: "Investors are evaluating up to $5 million for Shopify Series A." },
   ];
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
     uploadedLen: 1,
     assignCredibilityTier: () => "LOW",
@@ -285,7 +285,7 @@ function runH_upstreamCorpusNumericTruthWithoutEvalAmount() {
 }
 
 /** A6.49g-C: Title-only synthetic excerpt with a dollar figure must not pass numeric_evidence or produce rows. */
-function runF_titleOnlyNumericStillBlocked() {
+async function runF_titleOnlyNumericStillBlocked() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -305,7 +305,7 @@ function runF_titleOnlyNumericStillBlocked() {
     },
   };
   const uploadedDocs = [{ id: 1, title: "Series A term sheet $5 million commitment", text: "" }];
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [
       { id: 1, title: "Series A term sheet $5 million commitment", url: null, sourceType: "uploaded" },
     ],
@@ -321,7 +321,7 @@ function runF_titleOnlyNumericStillBlocked() {
 }
 
 /** Genuine unrelated excerpt: classification none — stays not_supported. */
-function runG_unrelatedExcerptNoSupport() {
+async function runG_unrelatedExcerptNoSupport() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -348,7 +348,7 @@ function runG_unrelatedExcerptNoSupport() {
       },
     },
   };
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [{ id: 1, title: "Weather report", url: null, sourceType: "uploaded" }],
     uploadedLen: 1,
     assignCredibilityTier: () => "LOW",
@@ -361,7 +361,7 @@ function runG_unrelatedExcerptNoSupport() {
 }
 
 /** A6.49h-A: refId on hit matches citation; docId differs — association via refId path. */
-function runI_a649h_refIdNotEqualDocId() {
+async function runI_a649h_refIdNotEqualDocId() {
   const hits = [
     {
       docId: 1,
@@ -387,7 +387,7 @@ function runI_a649h_refIdNotEqualDocId() {
 }
 
 /** A6.49h-B: backward-compatible docId-only hit (no citation refId field on hit). */
-function runJ_a649h_docIdFallbackOnly() {
+async function runJ_a649h_docIdFallbackOnly() {
   const hits = [
     {
       docId: 4,
@@ -409,7 +409,7 @@ function runJ_a649h_docIdFallbackOnly() {
 }
 
 /** A6.49h-C: cited ref has no corpus row by refId or docId — title/binding only; no corpus upstream. */
-function runK_a649h_unrelatedCitedRefNoHit() {
+async function runK_a649h_unrelatedCitedRefNoHit() {
   const hits = [
     { docId: 1, refId: 1, excerpt: "Unrelated doc one excerpt.", matchType: "phrase" },
   ];
@@ -426,7 +426,7 @@ function runK_a649h_unrelatedCitedRefNoHit() {
 }
 
 /** A6.49h-D: title_fallback with numeric title — no corpus_hit_number from title alone. */
-function runL_a649h_titleFallbackNumericTitle() {
+async function runL_a649h_titleFallbackNumericTitle() {
   const stmt = {
     meta: { _evidenceBundleCorpusResult: { found: true, hits: [] } },
     evidenceBundle: { supportBindings: [] },
@@ -441,7 +441,7 @@ function runL_a649h_titleFallbackNumericTitle() {
 }
 
 /** A6.49h-E: end-to-end mismatch with cited ref 4 and hit { refId: 4, docId: 1 }. */
-function runM_a649h_e2eMismatchRef4Doc1() {
+async function runM_a649h_e2eMismatchRef4Doc1() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -479,7 +479,7 @@ function runM_a649h_e2eMismatchRef4Doc1() {
   const uploadedDocs = [
     { id: 1, refId: 4, title: "Term sheet", text: "Investors are evaluating up to $5 million for Shopify Series A." },
   ];
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [{ id: 4, title: "Term sheet", url: null, sourceType: "uploaded" }],
     uploadedLen: 1,
     assignCredibilityTier: () => "LOW",
@@ -494,7 +494,7 @@ function runM_a649h_e2eMismatchRef4Doc1() {
 }
 
 /** A6.49i-A: refId > uploadedLen but sourceType uploaded → uploaded path + corpus upstream. */
-function runN_a649i_highRefIdUploadedMetadata() {
+async function runN_a649i_highRefIdUploadedMetadata() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     meta: {
@@ -515,7 +515,7 @@ function runN_a649i_highRefIdUploadedMetadata() {
 }
 
 /** A6.49i-B: authoritative web ref stays on web path. */
-function runO_a649i_webRefAuthoritative() {
+async function runO_a649i_webRefAuthoritative() {
   const stmt = {
     meta: { _evidenceBundleCorpusResult: { found: true, hits: [] } },
     evidenceBundle: { supportBindings: [] },
@@ -530,7 +530,7 @@ function runO_a649i_webRefAuthoritative() {
 }
 
 /** A6.49i-C: no sourceType/type → heuristic (refId 5 > uploadedLen 1 ⇒ web). */
-function runP_a649i_heuristicFallback() {
+async function runP_a649i_heuristicFallback() {
   const stmt = {
     meta: { _evidenceBundleCorpusResult: { found: true, hits: [] } },
     evidenceBundle: { supportBindings: [] },
@@ -543,7 +543,7 @@ function runP_a649i_heuristicFallback() {
 }
 
 /** A6.49j-A: Quantity mismatch fixture — gate passes via numeric_mismatch_excerpt (diag when verbose). */
-function runQ_a649j_numericMismatchFixture() {
+async function runQ_a649j_numericMismatchFixture() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -589,7 +589,7 @@ function runQ_a649j_numericMismatchFixture() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -610,7 +610,7 @@ function runQ_a649j_numericMismatchFixture() {
 }
 
 /** A6.49j-D: Clean full support — entity_relation path; numeric_mismatch_excerpt not used. */
-function runQ_a649j_cleanFullNoNumericMismatchBranch() {
+async function runQ_a649j_cleanFullNoNumericMismatchBranch() {
   const statementText = "Shopify raised $5 million in its Series A funding round.";
   const uploadedDocs = [{ id: 1, title: "Pitch deck", text: "Raised $5 million Series A (Shopify)." }];
   const res = corpusSearch(statementText, uploadedDocs, { diagVerbose: false });
@@ -637,7 +637,7 @@ function runQ_a649j_cleanFullNoNumericMismatchBranch() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 1, title: "Pitch deck", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -655,7 +655,7 @@ function runQ_a649j_cleanFullNoNumericMismatchBranch() {
 }
 
 /** A6.49j-E: Non-quantity meta mismatch — gate fails; numeric_mismatch_excerpt not triggered. */
-function runQ_a649j_nonQuantityMismatchGateFail() {
+async function runQ_a649j_nonQuantityMismatchGateFail() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -706,7 +706,7 @@ function runQ_a649j_nonQuantityMismatchGateFail() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -727,7 +727,7 @@ function runQ_a649j_nonQuantityMismatchGateFail() {
 }
 
 /** A6.49k-A/E: partial_support binding (scoped to claim) does not block inferred quantity mismatch; rows survive suppression. */
-function runA649k_nonDirectBindingPartialSupport() {
+async function runA649k_nonDirectBindingPartialSupport() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -782,7 +782,7 @@ function runA649k_nonDirectBindingPartialSupport() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 4, title: "Term sheet", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -814,7 +814,7 @@ function runA649k_nonDirectBindingPartialSupport() {
 }
 
 /** A6.49k-B: exact binding counts as direct — heuristic mismatch skipped; full support path unchanged. */
-function runA649k_directBindingSkipsMismatchInference() {
+async function runA649k_directBindingSkipsMismatchInference() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -867,7 +867,7 @@ function runA649k_directBindingSkipsMismatchInference() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 1, title: "Pitch deck", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -890,7 +890,7 @@ function runA649k_directBindingSkipsMismatchInference() {
 }
 
 /** A6.49k-C: empty supportBindings — unchanged mismatch partial (same as run D behaviour). */
-function runA649k_noBindingsUnchanged() {
+async function runA649k_noBindingsUnchanged() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -936,7 +936,7 @@ function runA649k_noBindingsUnchanged() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -955,7 +955,7 @@ function runA649k_noBindingsUnchanged() {
 }
 
 /** A6.49m-A: Shopify-style paraphrase on ref 4 — canonical predicates + policy contract (structured mismatch). */
-function runA649m_shopifyParaphraseRef4Canonical() {
+async function runA649m_shopifyParaphraseRef4Canonical() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const claim = {
     id: "a649m_shopify",
@@ -1008,7 +1008,7 @@ function runA649m_shopifyParaphraseRef4Canonical() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 4, title: "Term sheet", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -1031,7 +1031,7 @@ function runA649m_shopifyParaphraseRef4Canonical() {
 }
 
 /** A6.49m-B: Exact direct-support — predicates match A6.49k-B behaviour. */
-function runA649m_exactDirectPredicates() {
+async function runA649m_exactDirectPredicates() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const claim = { id: "a649m_exact", type: "investment_amount", displayText: claimText, citations: [1] };
   const binding = {
@@ -1045,7 +1045,7 @@ function runA649m_exactDirectPredicates() {
 }
 
 /** A6.49m-C: Placeholder / empty excerpt — not direct; does not satisfy confirming support. */
-function runA649m_placeholderNotDirect() {
+async function runA649m_placeholderNotDirect() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const claim = { id: "a649m_ph", type: "investment_amount", displayText: claimText, citations: [1] };
   const emptyEx = { claimId: "a649m_ph", matchType: "exact", excerpt: "" };
@@ -1057,7 +1057,7 @@ function runA649m_placeholderNotDirect() {
 }
 
 /** A6.49m-E: Loose binding for another claimId — ignored for direct count and inference skip. */
-function runA649m_looseBindingIgnoredForDirectCount() {
+async function runA649m_looseBindingIgnoredForDirectCount() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const claim = { id: "a649m_scope", type: "investment_amount", displayText: claimText, citations: [4] };
   const bindings = [
@@ -1109,7 +1109,7 @@ function runA649m_looseBindingIgnoredForDirectCount() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 4, title: "Term sheet", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -1130,7 +1130,7 @@ function runA649m_looseBindingIgnoredForDirectCount() {
 }
 
 /** A6.49n-D: Paraphrase binding (mismatch-compatible) but no structured quantity mismatch — partial path off; suppression clears. */
-function runA649n_paraphraseNoStructuredMismatchSuppressed() {
+async function runA649n_paraphraseNoStructuredMismatchSuppressed() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -1182,7 +1182,7 @@ function runA649n_paraphraseNoStructuredMismatchSuppressed() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 1, title: "Board deck", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -1203,7 +1203,7 @@ function runA649n_paraphraseNoStructuredMismatchSuppressed() {
 }
 
 /** A6.49n-F: Exact matchType but mismatch-compatible by Tier-2 metadata — precedence over direct. */
-function runA649n_overlapPrecedenceExactWithMetadata() {
+async function runA649n_overlapPrecedenceExactWithMetadata() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const claim = { id: "a649n_f", type: "investment_amount", displayText: claimText, citations: [1] };
   const binding = {
@@ -1218,7 +1218,7 @@ function runA649n_overlapPrecedenceExactWithMetadata() {
 }
 
 /** A6.49n-C: Placeholder binding — placeholderBindingsCount >= 1; inference not blocked by direct count. */
-function runA649n_placeholderBindingPolicyCounts() {
+async function runA649n_placeholderBindingPolicyCounts() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -1273,7 +1273,7 @@ function runA649n_placeholderBindingPolicyCounts() {
   };
   process.env.BRIGHTLINE_DIAG_VERBOSE = "1";
   try {
-    runQcV2Pipeline([stmt], {
+    await runQcV2Pipeline([stmt], {
       unifiedReferences: [{ id: 1, title: "Term sheet", url: null, sourceType: "uploaded" }],
       uploadedLen: 1,
       assignCredibilityTier: () => "LOW",
@@ -1291,7 +1291,7 @@ function runA649n_placeholderBindingPolicyCounts() {
 }
 
 /** A6.49k-D: related + no structured mismatch (no inference cues in uploaded docs) — suppression still clears. */
-function runA649k_relatedNoStructuredMismatchSuppressed() {
+async function runA649k_relatedNoStructuredMismatchSuppressed() {
   const claimText = "Shopify raised $5 million in its Series A funding round.";
   const stmt = {
     text: claimText,
@@ -1320,7 +1320,7 @@ function runA649k_relatedNoStructuredMismatchSuppressed() {
     },
   };
   const uploadedDocs = [{ id: 1, title: "Board deck", text: "Shopify Series A financing was discussed in the board materials." }];
-  runQcV2Pipeline([stmt], {
+  await runQcV2Pipeline([stmt], {
     unifiedReferences: [{ id: 1, title: "Board deck", url: null, sourceType: "uploaded" }],
     uploadedLen: 1,
     assignCredibilityTier: () => "LOW",
@@ -1333,7 +1333,7 @@ function runA649k_relatedNoStructuredMismatchSuppressed() {
   assert.ok(!auth.displaySourceItems?.length, "A6.49k-D: no display rows");
 }
 
-function runC_anchorFailureRejection() {
+async function runC_anchorFailureRejection() {
   const r = resolveNumericCorpusHitExcerpt(
     "no monetary tokens in this sentence",
     5_000_000,
@@ -1353,38 +1353,48 @@ function runC_anchorFailureRejection() {
   }
 }
 
-function main() {
-  runA_numericSupportRealExcerpt();
-  runB_numericConflictRealExcerpts();
-  runC_anchorFailureRejection();
-  runD_supportMismatchPartial();
-  runE_numericQualityGateWithoutEntityToken();
-  runH_upstreamCorpusNumericTruthWithoutEvalAmount();
-  runF_titleOnlyNumericStillBlocked();
-  runG_unrelatedExcerptNoSupport();
-  runI_a649h_refIdNotEqualDocId();
-  runJ_a649h_docIdFallbackOnly();
-  runK_a649h_unrelatedCitedRefNoHit();
-  runL_a649h_titleFallbackNumericTitle();
-  runM_a649h_e2eMismatchRef4Doc1();
-  runN_a649i_highRefIdUploadedMetadata();
-  runO_a649i_webRefAuthoritative();
-  runP_a649i_heuristicFallback();
-  runQ_a649j_numericMismatchFixture();
-  runQ_a649j_cleanFullNoNumericMismatchBranch();
-  runQ_a649j_nonQuantityMismatchGateFail();
-  runA649k_nonDirectBindingPartialSupport();
-  runA649k_directBindingSkipsMismatchInference();
-  runA649k_noBindingsUnchanged();
-  runA649k_relatedNoStructuredMismatchSuppressed();
-  runA649m_shopifyParaphraseRef4Canonical();
-  runA649m_exactDirectPredicates();
-  runA649m_placeholderNotDirect();
-  runA649m_looseBindingIgnoredForDirectCount();
-  runA649n_paraphraseNoStructuredMismatchSuppressed();
-  runA649n_overlapPrecedenceExactWithMetadata();
-  runA649n_placeholderBindingPolicyCounts();
+async function main() {
+  const savedOpenAiKey = process.env.OPENAI_API_KEY;
+  delete process.env.OPENAI_API_KEY;
+  try {
+  await runA_numericSupportRealExcerpt();
+  await runB_numericConflictRealExcerpts();
+  await runC_anchorFailureRejection();
+  await runD_supportMismatchPartial();
+  await runE_numericQualityGateWithoutEntityToken();
+  await runH_upstreamCorpusNumericTruthWithoutEvalAmount();
+  await runF_titleOnlyNumericStillBlocked();
+  await runG_unrelatedExcerptNoSupport();
+  await runI_a649h_refIdNotEqualDocId();
+  await runJ_a649h_docIdFallbackOnly();
+  await runK_a649h_unrelatedCitedRefNoHit();
+  await runL_a649h_titleFallbackNumericTitle();
+  await runM_a649h_e2eMismatchRef4Doc1();
+  await runN_a649i_highRefIdUploadedMetadata();
+  await runO_a649i_webRefAuthoritative();
+  await runP_a649i_heuristicFallback();
+  await runQ_a649j_numericMismatchFixture();
+  await runQ_a649j_cleanFullNoNumericMismatchBranch();
+  await runQ_a649j_nonQuantityMismatchGateFail();
+  await runA649k_nonDirectBindingPartialSupport();
+  await runA649k_directBindingSkipsMismatchInference();
+  await runA649k_noBindingsUnchanged();
+  await runA649k_relatedNoStructuredMismatchSuppressed();
+  await runA649m_shopifyParaphraseRef4Canonical();
+  await runA649m_exactDirectPredicates();
+  await runA649m_placeholderNotDirect();
+  await runA649m_looseBindingIgnoredForDirectCount();
+  await runA649n_paraphraseNoStructuredMismatchSuppressed();
+  await runA649n_overlapPrecedenceExactWithMetadata();
+  await runA649n_placeholderBindingPolicyCounts();
   console.log("a6-49d: all regression runs passed");
+  } finally {
+    if (savedOpenAiKey === undefined) delete process.env.OPENAI_API_KEY;
+    else process.env.OPENAI_API_KEY = savedOpenAiKey;
+  }
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
