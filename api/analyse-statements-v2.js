@@ -52,28 +52,7 @@ export default async function handler(req, res) {
       references: [],
       meta: { fatal: "Internal error", fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["internal_error"] },
     };
-    // A6.41: When QC V2, do not coerce ok:false for legacy contract; V2 cards render from authority only
-    const qcEngineV2 = (typeof process.env.QC_ENGINE_VERSION === "string" ? process.env.QC_ENGINE_VERSION.trim().toLowerCase() : "v2") === "v2";
     let failureReason = safePayload?.meta?.zeroStatementReason ?? safePayload?.meta?.fatal ?? null;
-    if (!qcEngineV2 && safePayload.ok === true && safePayload.meta?.fullPipelineCompleted !== true) {
-      console.log("[A3.14.15][CONTRACT_COERCE_OK_FALSE]", {
-        rid,
-        hadFullPipelineCompleted: safePayload.meta?.fullPipelineCompleted === true,
-        hadMeta: safePayload.meta != null,
-      });
-      failureReason = "qc_contract_failure";
-      safePayload = {
-        ...safePayload,
-        ok: false,
-        meta: {
-          ...(safePayload.meta || {}),
-          fatalStage: "contract_violation",
-          fatalErrorClass: "contract",
-          fatal: "ok:true returned without fullPipelineCompleted; coerced to ok:false",
-          zeroStatementReason: failureReason,
-        },
-      };
-    }
     const statementsCount = safePayload?.statements?.length ?? 0;
     console.log("REVIEW_RUNTIME_QC_CONTRACT", JSON.stringify({
       ok: safePayload?.ok ?? false,
