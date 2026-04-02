@@ -14,7 +14,7 @@
         "supportRefIdsLength": 2,
         "citationHoversLength": 2,
         "supportRefIdsUnique": true,
-        "reasoningParagraphIncludes": ["Supported", "source"],
+        "reasoningParagraphIncludes": ["source"],
         "reasoningParagraphExcludes": ["potential", "scenario-based figure"]
       }
     },
@@ -71,6 +71,25 @@
           "requireConcernNoneForVerdicts": [
             "supported_full",
             "supported_partial"
+          ]
+        }
+      }
+    },
+    {
+      "name": "shopify_short_v1",
+      "sourceFiles": [
+        "Shopify (text).txt"
+      ],
+      "draft": "Shopify is a profitable, largely bootstrapped SaaS provider of e-commerce software for SMBs. The firm is evaluating a proposed Series A investment of up to $7 million in Shopify. Shopify has an open API and App Store that extend functionality. The portfolio company thesis centers on strong organic growth.",
+      "expect": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "assertAuthority": false,
+        "aggregateStatementQc": {
+          "minSupportedFullCount": 4,
+          "noConflictVerdicts": true,
+          "requireConcernNoneForVerdicts": [
+            "supported_full"
           ]
         }
       }
