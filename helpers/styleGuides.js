@@ -46,6 +46,14 @@ CURRENCIES
 - Write large amounts using a readable combination of numerals and words:
   - EUR 1.2 billion, USD 350 million, GBP 25’000.
 
+LANGUAGE STANDARD
+- Write in US English throughout.
+- Follow Merriam-Webster as the authority for spelling,
+  hyphenation, and word choice where not otherwise specified
+  by these rules.
+- Examples: 'analyze' not 'analyse', 'color' not 'colour',
+  'program' not 'programme', 'center' not 'centre'.
+
 PUNCTUATION & TYPOGRAPHY
 - Avoid em dashes (—). Use normal hyphens (-), commas, parentheses, or semicolons instead.
 - Do not use smart quotes (“ ” ‘ ’). Use straight quotes only:
