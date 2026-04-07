@@ -42,6 +42,17 @@ function safeJsonParse(s) {
   }
 }
 
+function normalizeBannedWords(input) {
+  if (!Array.isArray(input)) return [];
+  return Array.from(
+    new Set(
+      input
+        .map((word) => (typeof word === "string" ? word.trim().toLowerCase() : ""))
+        .filter(Boolean)
+    )
+  );
+}
+
 // X3.1: Deterministic metrics for rewrite report
 function countWords(text) {
   if (typeof text !== "string" || !text.trim()) return 0;
@@ -544,6 +555,10 @@ export default async function handler(req, res) {
 
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
+    const bannedWords = normalizeBannedWords(body.bannedWords);
+    const bannedWordsInstruction = bannedWords.length
+      ? `Do not use any of the following words in your output: ${bannedWords.join(", ")}.`
+      : "";
     const publicSearch = Boolean(body.publicSearch);
     const sources = Array.isArray(body.sources) ? body.sources : [];
     // SPEC X2.0: Rewrite reuses same intent unless explicitly changed
@@ -604,6 +619,7 @@ export default async function handler(req, res) {
 
     const eventFraming = getEventTypeFraming(eventType);
     const { basePromptText } = buildBasePrompt({ outputType, visibility, eventType });
+    const systemPrompt = [basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
     // A5.13 HARD RULE: Prompt must use normalized instructions only. Raw instructions must never reach the model.
     const rewriteWinsLine =
@@ -713,7 +729,10 @@ Return ONLY valid JSON with no markdown or extra text:
     const completion = await client.chat.completions.create({
       model: modelId,
       temperature: 0.2,
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: prompt },
+      ],
     });
 
     if (diagVerbose) {

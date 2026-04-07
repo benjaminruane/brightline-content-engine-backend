@@ -110,6 +110,17 @@ function clampMaxWords(maxWords) {
   return Math.floor(maxWords);
 }
 
+function normalizeBannedWords(input) {
+  if (!Array.isArray(input)) return [];
+  return Array.from(
+    new Set(
+      input
+        .map((word) => (typeof word === "string" ? word.trim().toLowerCase() : ""))
+        .filter(Boolean)
+    )
+  );
+}
+
 function countWords(text) {
   if (typeof text !== "string" || !text.trim()) return 0;
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -544,6 +555,7 @@ export default async function handler(req, res) {
       model,
       publicSearch,
       sources,
+      bannedWords: rawBannedWords,
     } = body;
 
     const modelId = typeof model === "string" && model.trim() ? model.trim() : "gpt-5.1";
@@ -568,6 +580,10 @@ export default async function handler(req, res) {
     const safeVersionType = visibility === "PUBLIC" ? "public" : "complete";
     const safePublicSearch = Boolean(publicSearch);
     const safeSources = Array.isArray(sources) ? sources : [];
+    const bannedWords = normalizeBannedWords(rawBannedWords);
+    const bannedWordsInstruction = bannedWords.length
+      ? `Do not use any of the following words in your output: ${bannedWords.join(", ")}.`
+      : "";
 
     let webResultsForPrompt = "";
     let webReferences = [];
@@ -601,7 +617,7 @@ export default async function handler(req, res) {
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
     const { basePromptText } = buildBasePrompt({ outputType, visibility, eventType });
-    const systemContent = [STYLE_GUIDE_INSTRUCTIONS, basePromptText].filter(Boolean).join("\n\n");
+    const systemContent = [STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
     const userPrompt = `
 You are generating a draft. Follow the style guide.

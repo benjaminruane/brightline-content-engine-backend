@@ -13,6 +13,50 @@ function setCorsHeaders(req, res) {
 
 const ROUTE = "analyse-statements-v2";
 
+function escapeRegex(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function normalizeBannedWords(input) {
+  if (!Array.isArray(input)) return [];
+  return Array.from(
+    new Set(
+      input
+        .map((word) => (typeof word === "string" ? word.trim().toLowerCase() : ""))
+        .filter(Boolean)
+    )
+  );
+}
+
+function extractSentenceAtIndex(text, index) {
+  if (typeof text !== "string" || index < 0 || index >= text.length) return "";
+  const left = text.slice(0, index + 1);
+  const right = text.slice(index);
+  const startOffset = Math.max(left.lastIndexOf("."), left.lastIndexOf("!"), left.lastIndexOf("?"));
+  let endOffset = right.search(/[.!?]/);
+  if (endOffset === -1) endOffset = right.length - 1;
+  const start = startOffset === -1 ? 0 : startOffset + 1;
+  const end = index + endOffset + 1;
+  return text.slice(start, end).trim();
+}
+
+function getBannedWordHits(draftText, bannedWords) {
+  const safeText = typeof draftText === "string" ? draftText : "";
+  if (!safeText.trim()) return [];
+  const out = [];
+  for (const word of bannedWords) {
+    const pattern = new RegExp(`\\b${escapeRegex(word)}\\b`, "gi");
+    let match;
+    while ((match = pattern.exec(safeText)) !== null) {
+      out.push({
+        word,
+        sentence: extractSentenceAtIndex(safeText, match.index),
+      });
+    }
+  }
+  return out;
+}
+
 export default async function handler(req, res) {
   const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   req._brightlineRid = rid;
@@ -51,6 +95,13 @@ export default async function handler(req, res) {
       statements: [],
       references: [],
       meta: { fatal: "Internal error", fatalStage: "route_exception", extractionQuality: "failed", extractionQualityReasons: ["internal_error"] },
+    };
+    const draftText = typeof req?.body?.draftText === "string" ? req.body.draftText : "";
+    const bannedWords = normalizeBannedWords(req?.body?.bannedWords);
+    const bannedWordHits = bannedWords.length > 0 ? getBannedWordHits(draftText, bannedWords) : [];
+    safePayload = {
+      ...safePayload,
+      bannedWordHits,
     };
     let failureReason = safePayload?.meta?.zeroStatementReason ?? safePayload?.meta?.fatal ?? null;
     const statementsCount = safePayload?.statements?.length ?? 0;
