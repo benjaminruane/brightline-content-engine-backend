@@ -55,16 +55,39 @@ function buildReviewData(qcResult) {
   const statements = Array.isArray(qcResult?.statements) ? qcResult.statements : [];
   const normalizedStatements = statements.map((s) => {
     const qcCard = s?.qcCard && typeof s.qcCard === "object" ? s.qcCard : {};
+    const statementText = typeof qcCard.statement === "string" ? qcCard.statement.trim() : "";
     const verdict = normalizeVerdict(qcCard.displayVerdict);
-    const editorialConcerns = Array.isArray(qcCard.editorialConcerns) ? qcCard.editorialConcerns : [];
-    const complianceConcerns = Array.isArray(qcCard.complianceConcerns) ? qcCard.complianceConcerns : [];
+    const concernLevel = typeof qcCard.concernLevel === "string" && qcCard.concernLevel.trim()
+      ? qcCard.concernLevel.trim()
+      : null;
+    const evidenceFinding = typeof qcCard.reasoningParagraph === "string" && qcCard.reasoningParagraph.trim()
+      ? qcCard.reasoningParagraph.trim()
+      : (typeof qcCard.reasoningHeadline === "string" && qcCard.reasoningHeadline.trim()
+        ? qcCard.reasoningHeadline.trim()
+        : "No evidence finding recorded.");
+    const excerpt = qcCard.hasRealExcerpt === true && typeof qcCard.primaryExcerptText === "string" && qcCard.primaryExcerptText.trim()
+      ? qcCard.primaryExcerptText.trim()
+      : null;
+    const editorialNote = typeof qcCard.editorialNote === "string" && qcCard.editorialNote.trim()
+      ? qcCard.editorialNote.trim()
+      : null;
+    const complianceNote = typeof qcCard.complianceNote === "string" && qcCard.complianceNote.trim()
+      ? qcCard.complianceNote.trim()
+      : null;
+    const reviewerVerdict = qcCard.reviewerVerdict == null ? null : String(qcCard.reviewerVerdict).trim() || null;
+    const editorialFlag = isConcerned(qcCard.editorialVerdict) || editorialNote != null;
+    const complianceFlag = isConcerned(qcCard.complianceVerdict) || complianceNote != null;
     return {
-      text: typeof s?.text === "string" ? s.text : "",
+      statementText,
       verdict,
-      editorialVerdict: qcCard.editorialVerdict,
-      complianceVerdict: qcCard.complianceVerdict,
-      editorialConcerns,
-      complianceConcerns,
+      concernLevel,
+      evidenceFinding,
+      excerpt,
+      editorialNote,
+      complianceNote,
+      reviewerVerdict,
+      editorialFlag,
+      complianceFlag,
     };
   });
 
@@ -81,8 +104,8 @@ function buildReviewData(qcResult) {
     else if (s.verdict === "Conflicted") counts.conflicted += 1;
     else if (s.verdict === "Not Supported") counts.notSupported += 1;
     else counts.unverifiable += 1;
-    if (isConcerned(s.editorialVerdict) || s.editorialConcerns.length > 0) counts.editorialFlags += 1;
-    if (isConcerned(s.complianceVerdict) || s.complianceConcerns.length > 0) counts.complianceFlags += 1;
+    if (s.editorialFlag) counts.editorialFlags += 1;
+    if (s.complianceFlag) counts.complianceFlags += 1;
   }
 
   const total = normalizedStatements.length;
@@ -193,19 +216,15 @@ async function renderPdf(payload) {
     sectionGap();
     sectionHeading("Statement Review");
     for (const s of review.statements) {
-      labelValue("Statement", s.text || "");
+      body(s.statementText || "", { bold: true });
+      doc.moveDown(0.2);
       body(`Verdict: ${s.verdict}`, { bold: true });
-      const notes = [];
-      if (isConcerned(s.editorialVerdict) || s.editorialConcerns.length > 0) {
-        const note = s.editorialConcerns[0]?.note ? String(s.editorialConcerns[0].note) : "";
-        if (note) notes.push(`- Editorial note: ${note}`);
-      }
-      if (isConcerned(s.complianceVerdict) || s.complianceConcerns.length > 0) {
-        const note = s.complianceConcerns[0]?.note ? String(s.complianceConcerns[0].note) : "";
-        if (note) notes.push(`- Compliance note: ${note}`);
-      }
-      if (notes.length === 0) body("No concerns raised.");
-      else notes.forEach((line) => body(line));
+      if (s.concernLevel) body(`Concern level: ${s.concernLevel}`);
+      body(`Evidence finding: ${s.evidenceFinding}`);
+      if (s.excerpt) body(`Excerpt: "${s.excerpt}"`);
+      if (s.editorialNote) body(`Editorial note: ${s.editorialNote}`);
+      if (s.complianceNote) body(`Compliance note: ${s.complianceNote}`);
+      if (s.reviewerVerdict) body(`Reviewer verdict: ${s.reviewerVerdict}`);
       doc.moveDown(0.45);
       doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
       doc.moveDown(0.95);
@@ -283,19 +302,16 @@ function buildDocx(payload) {
 
     children.push(heading("Statement Review"));
     for (const s of review.statements) {
-      children.push(new Paragraph({ children: [new TextRun({ text: "Statement: ", bold: true }), new TextRun(s.text || "")] }));
+      children.push(new Paragraph({ children: [new TextRun({ text: s.statementText || "", bold: true })] }));
       children.push(new Paragraph({ children: [new TextRun({ text: `Verdict: ${s.verdict}`, bold: true })] }));
-      const notes = [];
-      if (isConcerned(s.editorialVerdict) || s.editorialConcerns.length > 0) {
-        const note = s.editorialConcerns[0]?.note ? String(s.editorialConcerns[0].note) : "";
-        if (note) notes.push(`- Editorial note: ${note}`);
-      }
-      if (isConcerned(s.complianceVerdict) || s.complianceConcerns.length > 0) {
-        const note = s.complianceConcerns[0]?.note ? String(s.complianceConcerns[0].note) : "";
-        if (note) notes.push(`- Compliance note: ${note}`);
-      }
-      if (notes.length === 0) children.push(new Paragraph({ text: "No concerns raised." }));
-      else notes.forEach((line) => children.push(new Paragraph({ text: line })));
+      if (s.concernLevel) children.push(new Paragraph({ text: `Concern level: ${s.concernLevel}` }));
+      children.push(new Paragraph({ text: `Evidence finding: ${s.evidenceFinding}` }));
+      if (s.excerpt) children.push(new Paragraph({
+        children: [new TextRun({ text: `Excerpt: "${s.excerpt}"`, italics: true })],
+      }));
+      if (s.editorialNote) children.push(new Paragraph({ text: `Editorial note: ${s.editorialNote}` }));
+      if (s.complianceNote) children.push(new Paragraph({ text: `Compliance note: ${s.complianceNote}` }));
+      if (s.reviewerVerdict) children.push(new Paragraph({ text: `Reviewer verdict: ${s.reviewerVerdict}` }));
       children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
     }
   }
