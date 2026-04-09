@@ -181,14 +181,14 @@ function buildInternalApiUrl(req, path) {
   return `${protocol}://${host}${path}`;
 }
 
-function fireAndForgetSourceUsageSummaries(req, rows, draftText) {
+async function populateSourceUsageSummaries(req, rows, draftText) {
   if (!Array.isArray(rows) || rows.length === 0 || typeof fetch !== "function") return;
   const apiUrl = buildInternalApiUrl(req, "/api/summarize-source-usage");
   if (!apiUrl) return;
   const draftExcerpt = typeof draftText === "string" ? draftText.slice(0, 1000) : "";
   if (!draftExcerpt) return;
 
-  rows.forEach((row) => {
+  const tasks = rows.map((row) => {
     const sourceName =
       (typeof row?.title === "string" && row.title.trim()) ||
       (typeof row?.name === "string" && row.name.trim()) ||
@@ -196,9 +196,9 @@ function fireAndForgetSourceUsageSummaries(req, rows, draftText) {
     const snippet = typeof row?.snippet === "string" ? row.snippet.trim() : "";
 
     row.usedFor = "";
-    if (!sourceName || !snippet) return;
+    if (!sourceName || !snippet) return Promise.resolve("");
 
-    fetch(apiUrl, {
+    return fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -210,11 +210,15 @@ function fireAndForgetSourceUsageSummaries(req, rows, draftText) {
       .then((resp) => (resp?.ok ? resp.json() : null))
       .then((payload) => {
         row.usedFor = typeof payload?.usedFor === "string" ? payload.usedFor : "";
+        return row.usedFor;
       })
       .catch(() => {
         row.usedFor = "";
+        return "";
       });
   });
+
+  await Promise.allSettled(tasks);
 }
 
 // Extract citation numbers from text (e.g., [1], [2] -> [1, 2])
@@ -787,7 +791,7 @@ Return ONLY JSON:
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
     let currentDraftText = stripSourcesUsedBlock(rawDraftText);
-    fireAndForgetSourceUsageSummaries(req, sourcesUsedRows, currentDraftText);
+    await populateSourceUsageSummaries(req, sourcesUsedRows, currentDraftText);
 
     if (!currentDraftText.trim()) {
       return res.status(500).json({
