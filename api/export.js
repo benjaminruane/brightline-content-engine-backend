@@ -39,6 +39,18 @@ function isConcerned(verdict) {
   return verdict === "soft_concern" || verdict === "hard_concern";
 }
 
+function formatSourceFileType(rawType) {
+  const t = String(rawType || "").trim().toLowerCase();
+  if (!t) return "Unknown";
+  if (t.includes("pdf")) return "PDF";
+  if (t.includes("txt") || t.includes("text")) return "TXT";
+  if (t.includes("docx")) return "DOCX";
+  if (t.includes("doc")) return "DOC";
+  if (t.includes("web") || t.includes("url")) return "WEB";
+  if (t === "file") return "File";
+  return t.toUpperCase();
+}
+
 function buildReviewData(qcResult) {
   const statements = Array.isArray(qcResult?.statements) ? qcResult.statements : [];
   const normalizedStatements = statements.map((s) => {
@@ -74,8 +86,7 @@ function buildReviewData(qcResult) {
   }
 
   const total = normalizedStatements.length;
-  const health = `${total} statements reviewed - ${counts.supported} supported, ${counts.conflicted} conflicted, ${counts.notSupported} not supported. ${counts.editorialFlags} editorial concerns, ${counts.complianceFlags} compliance flags.`;
-  return { statements: normalizedStatements, counts, total, health };
+  return { statements: normalizedStatements, counts, total };
 }
 
 async function renderPdf(payload) {
@@ -103,10 +114,10 @@ async function renderPdf(payload) {
     doc.on("error", reject);
   });
 
+  const sectionGap = () => doc.moveDown(1.9); // ~24-32pt visual separation
   const sectionHeading = (text) => {
-    doc.moveDown(0.2);
     doc.font("Helvetica-Bold").fontSize(16).fillColor("#0f172a").text(text);
-    doc.moveDown(0.4);
+    doc.moveDown(0.6);
   };
   const body = (text, opts = {}) => {
     doc.font(opts.bold ? "Helvetica-Bold" : "Helvetica").fontSize(11).fillColor("#0f172a").text(String(text ?? ""), { lineGap: 2 });
@@ -116,17 +127,20 @@ async function renderPdf(payload) {
     doc.font("Helvetica").text(String(value ?? ""));
   };
 
-  sectionHeading("Section 1 - Header");
-  labelValue("Document title", meta.documentTitle || "Draft Output");
-  labelValue("Output type", meta.outputTypeLabel || "Unknown");
-  labelValue("Version", meta.versionLabel || "V1");
-  labelValue("Export date and time", exportAt);
-  labelValue("Word count", Number(meta.wordCount || 0));
-  labelValue("Character count", Number(meta.charCount || 0));
+  // Header block (no label prefixes for title/summary lines)
+  doc.font("Helvetica-Bold").fontSize(20).fillColor("#0f172a").text(meta.documentTitle || "Draft Output");
+  doc.moveDown(0.25);
+  doc.font("Helvetica").fontSize(11).fillColor("#334155").text(`${meta.outputTypeLabel || "Unknown"}  |  ${meta.versionLabel || "V1"}`);
+  doc.moveDown(0.15);
+  doc
+    .font("Helvetica")
+    .fontSize(10.5)
+    .fillColor("#475569")
+    .text(`${exportAt}  |  ${Number(meta.wordCount || 0)} words  |  ${Number(meta.charCount || 0)} characters`);
 
   if (includeDraft) {
-    doc.addPage();
-    sectionHeading("Section 2 - Draft Text");
+    sectionGap();
+    sectionHeading("Draft Text");
     for (const p of toParagraphs(draft)) {
       body(p);
       doc.moveDown(0.4);
@@ -134,20 +148,22 @@ async function renderPdf(payload) {
   }
 
   if (includeSources) {
-    doc.addPage();
-    sectionHeading("Section 3 - Sources Used");
+    sectionGap();
+    sectionHeading("Sources Used");
     for (const s of sources) {
       labelValue("Source name", s?.name || "Untitled source");
-      labelValue("File type", s?.fileType || "Unknown");
+      labelValue("File type", formatSourceFileType(s?.fileType));
       if (s?.description) labelValue("Description", s.description);
       if (s?.usedFor) labelValue("Used for", s.usedFor);
-      doc.moveDown(0.8);
+      doc.moveDown(0.45);
+      doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
+      doc.moveDown(0.75);
     }
   }
 
   if (includeReview) {
-    doc.addPage();
-    sectionHeading("Section 4 - Review Summary");
+    sectionGap();
+    sectionHeading("Review Summary");
     labelValue("Total statements reviewed", review.total);
     labelValue("Supported", review.counts.supported);
     labelValue("Conflicted", review.counts.conflicted);
@@ -155,28 +171,25 @@ async function renderPdf(payload) {
     labelValue("Unverifiable", review.counts.unverifiable);
     labelValue("Editorial flags", review.counts.editorialFlags);
     labelValue("Compliance flags", review.counts.complianceFlags);
-    labelValue("QC health", review.health);
 
-    doc.addPage();
-    sectionHeading("Section 5 - Statement Review");
+    sectionGap();
+    sectionHeading("Statement Review");
     for (const s of review.statements) {
       labelValue("Statement", s.text || "");
       body(`Verdict: ${s.verdict}`, { bold: true });
       if (isConcerned(s.editorialVerdict) || s.editorialConcerns.length > 0) {
-        const note = s.editorialConcerns[0]?.note ? ` - ${s.editorialConcerns[0].note}` : "";
-        body(`Editorial signal: ${s.editorialVerdict || "Concern"}${note}`);
+        const note = s.editorialConcerns[0]?.note ? String(s.editorialConcerns[0].note) : "";
+        if (note) body(`Editorial note: ${note}`);
       }
       if (isConcerned(s.complianceVerdict) || s.complianceConcerns.length > 0) {
-        const note = s.complianceConcerns[0]?.note ? ` - ${s.complianceConcerns[0].note}` : "";
-        body(`Compliance signal: ${s.complianceVerdict || "Concern"}${note}`);
+        const note = s.complianceConcerns[0]?.note ? String(s.complianceConcerns[0].note) : "";
+        if (note) body(`Compliance note: ${note}`);
       }
-      doc.moveDown(0.9);
+      doc.moveDown(0.45);
+      doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
+      doc.moveDown(0.95);
     }
   }
-
-  doc.addPage();
-  sectionHeading("Section 6 - Footer");
-  body(exportAt);
 
   const range = doc.bufferedPageRange();
   for (let i = range.start; i < range.start + range.count; i += 1) {
@@ -202,33 +215,45 @@ function buildDocx(payload) {
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
   const children = [];
+  const heading = (text, opts = {}) => new Paragraph({
+    text,
+    heading: HeadingLevel.HEADING_1,
+    spacing: { after: 240 },
+    ...opts,
+  });
 
-  children.push(new Paragraph({ text: "Section 1 - Header", heading: HeadingLevel.HEADING_1 }));
-  children.push(new Paragraph({ children: [new TextRun({ text: "Document title: ", bold: true }), new TextRun(meta.documentTitle || "Draft Output")] }));
-  children.push(new Paragraph({ children: [new TextRun({ text: "Output type: ", bold: true }), new TextRun(meta.outputTypeLabel || "Unknown")] }));
-  children.push(new Paragraph({ children: [new TextRun({ text: "Version: ", bold: true }), new TextRun(meta.versionLabel || "V1")] }));
-  children.push(new Paragraph({ children: [new TextRun({ text: "Export date and time: ", bold: true }), new TextRun(meta.exportedAtLabel || "")] }));
-  children.push(new Paragraph({ children: [new TextRun({ text: "Word count: ", bold: true }), new TextRun(String(meta.wordCount || 0))] }));
-  children.push(new Paragraph({ children: [new TextRun({ text: "Character count: ", bold: true }), new TextRun(String(meta.charCount || 0))] }));
+  children.push(new Paragraph({
+    children: [new TextRun({ text: meta.documentTitle || "Draft Output", bold: true, size: 36 })],
+    spacing: { after: 120 },
+  }));
+  children.push(new Paragraph({
+    text: `${meta.outputTypeLabel || "Unknown"}  |  ${meta.versionLabel || "V1"}`,
+    spacing: { after: 120 },
+  }));
+  children.push(new Paragraph({
+    text: `${meta.exportedAtLabel || ""}  |  ${String(meta.wordCount || 0)} words  |  ${String(meta.charCount || 0)} characters`,
+    spacing: { after: 480 },
+  }));
 
   if (includeDraft) {
-    children.push(new Paragraph({ text: "Section 2 - Draft Text", heading: HeadingLevel.HEADING_1, pageBreakBefore: true }));
+    children.push(heading("Draft Text"));
     for (const p of toParagraphs(draft)) children.push(new Paragraph({ text: p }));
+    children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
   }
 
   if (includeSources) {
-    children.push(new Paragraph({ text: "Section 3 - Sources Used", heading: HeadingLevel.HEADING_1, pageBreakBefore: true }));
+    children.push(heading("Sources Used"));
     for (const s of sources) {
       children.push(new Paragraph({ children: [new TextRun({ text: "Source name: ", bold: true }), new TextRun(s?.name || "Untitled source")] }));
-      children.push(new Paragraph({ children: [new TextRun({ text: "File type: ", bold: true }), new TextRun(s?.fileType || "Unknown")] }));
+      children.push(new Paragraph({ children: [new TextRun({ text: "File type: ", bold: true }), new TextRun(formatSourceFileType(s?.fileType))] }));
       if (s?.description) children.push(new Paragraph({ children: [new TextRun({ text: "Description: ", bold: true }), new TextRun(s.description)] }));
       if (s?.usedFor) children.push(new Paragraph({ children: [new TextRun({ text: "Used for: ", bold: true }), new TextRun(s.usedFor)] }));
-      children.push(new Paragraph({ text: "" }));
+      children.push(new Paragraph({ text: "", spacing: { after: 280 } }));
     }
   }
 
   if (includeReview) {
-    children.push(new Paragraph({ text: "Section 4 - Review Summary", heading: HeadingLevel.HEADING_1, pageBreakBefore: true }));
+    children.push(heading("Review Summary"));
     children.push(new Paragraph({ text: `Total statements reviewed: ${review.total}` }));
     children.push(new Paragraph({ text: `Supported: ${review.counts.supported}` }));
     children.push(new Paragraph({ text: `Conflicted: ${review.counts.conflicted}` }));
@@ -236,26 +261,23 @@ function buildDocx(payload) {
     children.push(new Paragraph({ text: `Unverifiable: ${review.counts.unverifiable}` }));
     children.push(new Paragraph({ text: `Editorial flags: ${review.counts.editorialFlags}` }));
     children.push(new Paragraph({ text: `Compliance flags: ${review.counts.complianceFlags}` }));
-    children.push(new Paragraph({ text: review.health }));
+    children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
 
-    children.push(new Paragraph({ text: "Section 5 - Statement Review", heading: HeadingLevel.HEADING_1, pageBreakBefore: true }));
+    children.push(heading("Statement Review"));
     for (const s of review.statements) {
       children.push(new Paragraph({ children: [new TextRun({ text: "Statement: ", bold: true }), new TextRun(s.text || "")] }));
       children.push(new Paragraph({ children: [new TextRun({ text: `Verdict: ${s.verdict}`, bold: true })] }));
       if (isConcerned(s.editorialVerdict) || s.editorialConcerns.length > 0) {
-        const note = s.editorialConcerns[0]?.note ? ` - ${s.editorialConcerns[0].note}` : "";
-        children.push(new Paragraph({ text: `Editorial signal: ${s.editorialVerdict || "Concern"}${note}` }));
+        const note = s.editorialConcerns[0]?.note ? String(s.editorialConcerns[0].note) : "";
+        if (note) children.push(new Paragraph({ text: `Editorial note: ${note}` }));
       }
       if (isConcerned(s.complianceVerdict) || s.complianceConcerns.length > 0) {
-        const note = s.complianceConcerns[0]?.note ? ` - ${s.complianceConcerns[0].note}` : "";
-        children.push(new Paragraph({ text: `Compliance signal: ${s.complianceVerdict || "Concern"}${note}` }));
+        const note = s.complianceConcerns[0]?.note ? String(s.complianceConcerns[0].note) : "";
+        if (note) children.push(new Paragraph({ text: `Compliance note: ${note}` }));
       }
-      children.push(new Paragraph({ text: "" }));
+      children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
     }
   }
-
-  children.push(new Paragraph({ text: "Section 6 - Footer", heading: HeadingLevel.HEADING_1, pageBreakBefore: true }));
-  children.push(new Paragraph({ text: meta.exportedAtLabel || "" }));
 
   const doc = new Document({ sections: [{ children }] });
   return Packer.toBuffer(doc);
