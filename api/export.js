@@ -51,6 +51,14 @@ function formatSourceFileType(rawType) {
   return t.toUpperCase();
 }
 
+function deriveDocumentTitle(meta, outputTypeName) {
+  const subjectRaw = meta?.subject ?? meta?.title ?? null;
+  const subject = typeof subjectRaw === "string" ? subjectRaw.trim() : "";
+  if (subject) return `${subject} — ${outputTypeName}`;
+  const existing = typeof meta?.documentTitle === "string" ? meta.documentTitle.trim() : "";
+  return existing || outputTypeName;
+}
+
 function buildReviewData(qcResult) {
   const statements = Array.isArray(qcResult?.statements) ? qcResult.statements : [];
   const normalizedStatements = statements.map((s) => {
@@ -68,11 +76,11 @@ function buildReviewData(qcResult) {
     const excerpt = qcCard.hasRealExcerpt === true && typeof qcCard.primaryExcerptText === "string" && qcCard.primaryExcerptText.trim()
       ? qcCard.primaryExcerptText.trim()
       : null;
-    const editorialNote = typeof qcCard.editorialNote === "string" && qcCard.editorialNote.trim()
-      ? qcCard.editorialNote.trim()
+    const editorialNote = (qcCard.editorialNote != null && qcCard.editorialNote !== "")
+      ? qcCard.editorialNote
       : null;
-    const complianceNote = typeof qcCard.complianceNote === "string" && qcCard.complianceNote.trim()
-      ? qcCard.complianceNote.trim()
+    const complianceNote = (qcCard.complianceNote != null && qcCard.complianceNote !== "")
+      ? qcCard.complianceNote
       : null;
     const reviewerVerdict = qcCard.reviewerVerdict == null ? null : String(qcCard.reviewerVerdict).trim() || null;
     const editorialFlag = isConcerned(qcCard.editorialVerdict) || editorialNote != null;
@@ -108,8 +116,10 @@ function buildReviewData(qcResult) {
     if (s.complianceFlag) counts.complianceFlags += 1;
   }
 
-  const total = normalizedStatements.length;
-  return { statements: normalizedStatements, counts, total };
+  // Serialization break to prevent nested refs/prototypes reaching renderers.
+  const safeStatements = JSON.parse(JSON.stringify(normalizedStatements));
+  const total = safeStatements.length;
+  return { statements: safeStatements, counts, total };
 }
 
 async function renderPdf(payload) {
@@ -125,6 +135,7 @@ async function renderPdf(payload) {
   const exportAt = String(meta.exportedAtLabel || "");
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
+  const documentTitle = deriveDocumentTitle(meta, outputTypeName);
 
   const doc = new PDFDocument({
     size: "A4",
@@ -168,7 +179,7 @@ async function renderPdf(payload) {
   });
 
   // Header block (no label prefixes for title/summary lines)
-  doc.font("Helvetica-Bold").fontSize(20).fillColor("#0f172a").text(meta.documentTitle || outputTypeName);
+  doc.font("Helvetica-Bold").fontSize(20).fillColor("#0f172a").text(documentTitle);
   doc.moveDown(0.25);
   labelValue("Output type", outputTypeName);
   labelValue("Required version", requiredVersionLabel);
@@ -193,9 +204,9 @@ async function renderPdf(payload) {
     sectionHeading("Sources Used");
     for (const s of sources) {
       body(s?.name || "Untitled source", { bold: true });
-      body(`- File type: ${formatSourceFileType(s?.fileType)}`);
-      if (s?.description) body(`- Description: ${s.description}`);
-      if (s?.usedFor) body(`- Used for: ${s.usedFor}`);
+      labelValue("• File type", formatSourceFileType(s?.fileType));
+      if (s?.description) labelValue("• Description", s.description);
+      if (s?.usedFor) labelValue("• Used for", s.usedFor);
       doc.moveDown(0.45);
       doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
       doc.moveDown(0.75);
@@ -218,13 +229,13 @@ async function renderPdf(payload) {
     for (const s of review.statements) {
       body(s.statementText || "", { bold: true });
       doc.moveDown(0.2);
-      body(`Verdict: ${s.verdict}`, { bold: true });
-      if (s.concernLevel) body(`Concern level: ${s.concernLevel}`);
-      body(`Evidence finding: ${s.evidenceFinding}`);
-      if (s.excerpt) body(`Excerpt: "${s.excerpt}"`);
-      if (s.editorialNote) body(`Editorial note: ${s.editorialNote}`);
-      if (s.complianceNote) body(`Compliance note: ${s.complianceNote}`);
-      if (s.reviewerVerdict) body(`Reviewer verdict: ${s.reviewerVerdict}`);
+      labelValue("Verdict", s.verdict);
+      if (s.concernLevel) labelValue("Concern level", s.concernLevel);
+      labelValue("Evidence finding", s.evidenceFinding);
+      if (s.excerpt) labelValue("Excerpt", `"${s.excerpt}"`);
+      if (s.editorialNote) labelValue("Editorial note", s.editorialNote);
+      if (s.complianceNote) labelValue("Compliance note", s.complianceNote);
+      if (s.reviewerVerdict) labelValue("Reviewer verdict", s.reviewerVerdict);
       doc.moveDown(0.45);
       doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
       doc.moveDown(0.95);
@@ -248,6 +259,7 @@ function buildDocx(payload) {
   const children = [];
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
+  const documentTitle = deriveDocumentTitle(meta, outputTypeName);
   const heading = (text, opts = {}) => new Paragraph({
     text,
     heading: HeadingLevel.HEADING_1,
@@ -256,7 +268,7 @@ function buildDocx(payload) {
   });
 
   children.push(new Paragraph({
-    children: [new TextRun({ text: meta.documentTitle || outputTypeName, bold: true, size: 36 })],
+    children: [new TextRun({ text: documentTitle, bold: true, size: 36 })],
     spacing: { after: 120 },
   }));
   children.push(new Paragraph({
@@ -282,9 +294,9 @@ function buildDocx(payload) {
     children.push(heading("Sources Used"));
     for (const s of sources) {
       children.push(new Paragraph({ children: [new TextRun({ text: s?.name || "Untitled source", bold: true })] }));
-      children.push(new Paragraph({ text: `- File type: ${formatSourceFileType(s?.fileType)}` }));
-      if (s?.description) children.push(new Paragraph({ text: `- Description: ${s.description}` }));
-      if (s?.usedFor) children.push(new Paragraph({ text: `- Used for: ${s.usedFor}` }));
+      children.push(new Paragraph({ children: [new TextRun("• "), new TextRun({ text: "File type: ", bold: true }), new TextRun(String(formatSourceFileType(s?.fileType) || ""))] }));
+      if (s?.description) children.push(new Paragraph({ children: [new TextRun("• "), new TextRun({ text: "Description: ", bold: true }), new TextRun(String(s.description))] }));
+      if (s?.usedFor) children.push(new Paragraph({ children: [new TextRun("• "), new TextRun({ text: "Used for: ", bold: true }), new TextRun(String(s.usedFor))] }));
       children.push(new Paragraph({ text: "", spacing: { after: 280 } }));
     }
   }
@@ -303,15 +315,15 @@ function buildDocx(payload) {
     children.push(heading("Statement Review"));
     for (const s of review.statements) {
       children.push(new Paragraph({ children: [new TextRun({ text: s.statementText || "", bold: true })] }));
-      children.push(new Paragraph({ children: [new TextRun({ text: `Verdict: ${s.verdict}`, bold: true })] }));
-      if (s.concernLevel) children.push(new Paragraph({ text: `Concern level: ${s.concernLevel}` }));
-      children.push(new Paragraph({ text: `Evidence finding: ${s.evidenceFinding}` }));
+      children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict || ""))] }));
+      if (s.concernLevel) children.push(new Paragraph({ children: [new TextRun({ text: "Concern level: ", bold: true }), new TextRun(String(s.concernLevel))] }));
+      children.push(new Paragraph({ children: [new TextRun({ text: "Evidence finding: ", bold: true }), new TextRun(String(s.evidenceFinding || ""))] }));
       if (s.excerpt) children.push(new Paragraph({
-        children: [new TextRun({ text: `Excerpt: "${s.excerpt}"`, italics: true })],
+        children: [new TextRun({ text: "Excerpt: ", bold: true }), new TextRun({ text: `"${s.excerpt}"`, italics: true })],
       }));
-      if (s.editorialNote) children.push(new Paragraph({ text: `Editorial note: ${s.editorialNote}` }));
-      if (s.complianceNote) children.push(new Paragraph({ text: `Compliance note: ${s.complianceNote}` }));
-      if (s.reviewerVerdict) children.push(new Paragraph({ text: `Reviewer verdict: ${s.reviewerVerdict}` }));
+      if (s.editorialNote) children.push(new Paragraph({ children: [new TextRun({ text: "Editorial note: ", bold: true }), new TextRun(String(s.editorialNote))] }));
+      if (s.complianceNote) children.push(new Paragraph({ children: [new TextRun({ text: "Compliance note: ", bold: true }), new TextRun(String(s.complianceNote))] }));
+      if (s.reviewerVerdict) children.push(new Paragraph({ children: [new TextRun({ text: "Reviewer verdict: ", bold: true }), new TextRun(String(s.reviewerVerdict))] }));
       children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
     }
   }
