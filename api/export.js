@@ -51,12 +51,22 @@ function formatSourceFileType(rawType) {
   return t.toUpperCase();
 }
 
+function normalizeOptionalString(value) {
+  if (value == null) return null;
+  const out = String(value);
+  return out === "" ? null : out;
+}
+
 function deriveDocumentTitle(meta, outputTypeName) {
-  const subjectRaw = meta?.subject ?? meta?.title ?? null;
-  const subject = typeof subjectRaw === "string" ? subjectRaw.trim() : "";
-  if (subject) return `${subject} — ${outputTypeName}`;
-  const existing = typeof meta?.documentTitle === "string" ? meta.documentTitle.trim() : "";
-  return existing || outputTypeName;
+  const subject = normalizeOptionalString(meta?.subject)?.trim() || null;
+  const title = normalizeOptionalString(meta?.title)?.trim() || null;
+  const documentTitle = normalizeOptionalString(meta?.documentTitle)?.trim() || null;
+  let resolvedSubject = subject || title || null;
+  if (!resolvedSubject && documentTitle) {
+    const [left] = documentTitle.split("—").map((x) => x.trim());
+    if (left && left.toLowerCase() !== outputTypeName.toLowerCase()) resolvedSubject = left;
+  }
+  return resolvedSubject ? `${resolvedSubject} — ${outputTypeName}` : outputTypeName;
 }
 
 function buildReviewData(qcResult) {
@@ -76,12 +86,16 @@ function buildReviewData(qcResult) {
     const excerpt = qcCard.hasRealExcerpt === true && typeof qcCard.primaryExcerptText === "string" && qcCard.primaryExcerptText.trim()
       ? qcCard.primaryExcerptText.trim()
       : null;
-    const editorialNote = (qcCard.editorialNote != null && qcCard.editorialNote !== "")
+    const editorialConcerns = Array.isArray(qcCard.editorialConcerns) ? qcCard.editorialConcerns : [];
+    const complianceConcerns = Array.isArray(qcCard.complianceConcerns) ? qcCard.complianceConcerns : [];
+    const editorialFallback = editorialConcerns.map((c) => c?.note).filter((x) => typeof x === "string" && x.trim()).join(" ");
+    const complianceFallback = complianceConcerns.map((c) => c?.note).filter((x) => typeof x === "string" && x.trim()).join(" ");
+    const editorialNote = typeof qcCard.editorialNote === "string" && qcCard.editorialNote !== ""
       ? qcCard.editorialNote
-      : null;
-    const complianceNote = (qcCard.complianceNote != null && qcCard.complianceNote !== "")
+      : (editorialFallback || null);
+    const complianceNote = typeof qcCard.complianceNote === "string" && qcCard.complianceNote !== ""
       ? qcCard.complianceNote
-      : null;
+      : (complianceFallback || null);
     const reviewerVerdict = qcCard.reviewerVerdict == null ? null : String(qcCard.reviewerVerdict).trim() || null;
     const editorialFlag = isConcerned(qcCard.editorialVerdict) || editorialNote != null;
     const complianceFlag = isConcerned(qcCard.complianceVerdict) || complianceNote != null;
@@ -129,7 +143,8 @@ async function renderPdf(payload) {
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
   const review = buildReviewData(qcResult);
-  const includeReview = !!sections?.reviewSummary && review.total > 0;
+  const includeReview = !!sections?.reviewSummary;
+  const includeStatementReview = includeReview && review.total > 0;
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
   const exportAt = String(meta.exportedAtLabel || "");
@@ -224,21 +239,26 @@ async function renderPdf(payload) {
     labelValue("Editorial flags", review.counts.editorialFlags);
     labelValue("Compliance flags", review.counts.complianceFlags);
 
-    sectionGap();
-    sectionHeading("Statement Review");
-    for (const s of review.statements) {
-      body(s.statementText || "", { bold: true });
-      doc.moveDown(0.2);
-      labelValue("Verdict", s.verdict);
-      if (s.concernLevel) labelValue("Concern level", s.concernLevel);
-      labelValue("Evidence finding", s.evidenceFinding);
-      if (s.excerpt) labelValue("Excerpt", `"${s.excerpt}"`);
-      if (s.editorialNote) labelValue("Editorial note", s.editorialNote);
-      if (s.complianceNote) labelValue("Compliance note", s.complianceNote);
-      if (s.reviewerVerdict) labelValue("Reviewer verdict", s.reviewerVerdict);
-      doc.moveDown(0.45);
-      doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
-      doc.moveDown(0.95);
+    if (includeStatementReview) {
+      sectionGap();
+      sectionHeading("Statement Review");
+      for (const s of review.statements) {
+        body(`"${s.statementText || ""}"`, { bold: true });
+        doc.moveDown(0.2);
+        const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
+          ? ` (${s.concernLevel} concern)`
+          : "";
+        doc.font("Helvetica-Bold").fontSize(11).fillColor("#0f172a").text("Verdict: ", { continued: true });
+        doc.font("Helvetica").fontSize(11).fillColor("#0f172a").text(`${s.verdict}${concernSuffix}`);
+        labelValue("Evidence finding", s.evidenceFinding);
+        if (s.excerpt) labelValue("Excerpt", `"${s.excerpt}"`);
+        if (s.editorialNote) labelValue("Editorial note", s.editorialNote);
+        if (s.complianceNote) labelValue("Compliance note", s.complianceNote);
+        if (s.reviewerVerdict) labelValue("Reviewer verdict", s.reviewerVerdict);
+        doc.moveDown(0.45);
+        doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
+        doc.moveDown(0.95);
+      }
     }
   }
 
@@ -253,7 +273,8 @@ function buildDocx(payload) {
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
   const review = buildReviewData(qcResult);
-  const includeReview = !!sections?.reviewSummary && review.total > 0;
+  const includeReview = !!sections?.reviewSummary;
+  const includeStatementReview = includeReview && review.total > 0;
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
   const children = [];
@@ -312,19 +333,23 @@ function buildDocx(payload) {
     children.push(new Paragraph({ text: `Compliance flags: ${review.counts.complianceFlags}` }));
     children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
 
-    children.push(heading("Statement Review"));
-    for (const s of review.statements) {
-      children.push(new Paragraph({ children: [new TextRun({ text: s.statementText || "", bold: true })] }));
-      children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict || ""))] }));
-      if (s.concernLevel) children.push(new Paragraph({ children: [new TextRun({ text: "Concern level: ", bold: true }), new TextRun(String(s.concernLevel))] }));
-      children.push(new Paragraph({ children: [new TextRun({ text: "Evidence finding: ", bold: true }), new TextRun(String(s.evidenceFinding || ""))] }));
-      if (s.excerpt) children.push(new Paragraph({
-        children: [new TextRun({ text: "Excerpt: ", bold: true }), new TextRun({ text: `"${s.excerpt}"`, italics: true })],
-      }));
-      if (s.editorialNote) children.push(new Paragraph({ children: [new TextRun({ text: "Editorial note: ", bold: true }), new TextRun(String(s.editorialNote))] }));
-      if (s.complianceNote) children.push(new Paragraph({ children: [new TextRun({ text: "Compliance note: ", bold: true }), new TextRun(String(s.complianceNote))] }));
-      if (s.reviewerVerdict) children.push(new Paragraph({ children: [new TextRun({ text: "Reviewer verdict: ", bold: true }), new TextRun(String(s.reviewerVerdict))] }));
-      children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
+    if (includeStatementReview) {
+      children.push(heading("Statement Review"));
+      for (const s of review.statements) {
+        children.push(new Paragraph({ children: [new TextRun({ text: `"${s.statementText || ""}"`, bold: true })] }));
+        const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
+          ? ` (${s.concernLevel} concern)`
+          : "";
+        children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict || "") + concernSuffix)] }));
+        children.push(new Paragraph({ children: [new TextRun({ text: "Evidence finding: ", bold: true }), new TextRun(String(s.evidenceFinding || ""))] }));
+        if (s.excerpt) children.push(new Paragraph({
+          children: [new TextRun({ text: "Excerpt: ", bold: true }), new TextRun({ text: `"${s.excerpt}"`, italics: true })],
+        }));
+        if (s.editorialNote) children.push(new Paragraph({ children: [new TextRun({ text: "Editorial note: ", bold: true }), new TextRun(String(s.editorialNote))] }));
+        if (s.complianceNote) children.push(new Paragraph({ children: [new TextRun({ text: "Compliance note: ", bold: true }), new TextRun(String(s.complianceNote))] }));
+        if (s.reviewerVerdict) children.push(new Paragraph({ children: [new TextRun({ text: "Reviewer verdict: ", bold: true }), new TextRun(String(s.reviewerVerdict))] }));
+        children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
+      }
     }
   }
 
@@ -343,10 +368,18 @@ export default async function handler(req, res) {
     const sections = body?.sections && typeof body.sections === "object" ? body.sections : {};
     const data = body?.data && typeof body.data === "object" ? body.data : {};
     const payload = { format, sections, data };
+    const meta = data?.meta && typeof data.meta === "object" ? data.meta : {};
+    console.log("[EXPORT_SUBJECT_FIELDS]", {
+      subject: meta?.subject ?? null,
+      title: meta?.title ?? null,
+      documentTitle: meta?.documentTitle ?? null,
+    });
     const filename = typeof body?.filename === "string" && body.filename.trim() ? body.filename.trim() : `export.${format}`;
 
     if (format === "pdf") {
-      const buffer = await renderPdf(payload);
+      const fullReviewPayload = payload;
+      const safePdfPayload = JSON.parse(JSON.stringify(fullReviewPayload));
+      const buffer = await renderPdf(safePdfPayload);
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
       return res.status(200).send(buffer);
