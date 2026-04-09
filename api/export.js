@@ -100,11 +100,12 @@ async function renderPdf(payload) {
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
   const exportAt = String(meta.exportedAtLabel || "");
+  const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
+  const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
 
   const doc = new PDFDocument({
     size: "A4",
     margins: { top: 71, right: 71, bottom: 71, left: 71 }, // ~25mm
-    bufferPages: true,
     compress: true,
   });
   const chunks = [];
@@ -126,11 +127,28 @@ async function renderPdf(payload) {
     doc.font("Helvetica-Bold").fontSize(11).text(`${label}: `, { continued: true });
     doc.font("Helvetica").text(String(value ?? ""));
   };
+  let pageNumber = 1;
+  const drawFooter = (n) => {
+    const prevX = doc.x;
+    const prevY = doc.y;
+    const y = doc.page.height - 46;
+    doc.font("Helvetica").fontSize(9).fillColor("#475569");
+    doc.text(exportAt, doc.page.margins.left, y, { width: 250, align: "left", lineBreak: false });
+    doc.text(String(n), doc.page.width - doc.page.margins.right - 40, y, { width: 40, align: "right", lineBreak: false });
+    doc.x = prevX;
+    doc.y = prevY;
+  };
+  drawFooter(pageNumber);
+  doc.on("pageAdded", () => {
+    pageNumber += 1;
+    drawFooter(pageNumber);
+  });
 
   // Header block (no label prefixes for title/summary lines)
-  doc.font("Helvetica-Bold").fontSize(20).fillColor("#0f172a").text(meta.documentTitle || "Draft Output");
+  doc.font("Helvetica-Bold").fontSize(20).fillColor("#0f172a").text(meta.documentTitle || outputTypeName);
   doc.moveDown(0.25);
-  doc.font("Helvetica").fontSize(11).fillColor("#334155").text(`${meta.outputTypeLabel || "Unknown"}  |  ${meta.versionLabel || "V1"}`);
+  labelValue("Output type", outputTypeName);
+  labelValue("Required version", requiredVersionLabel);
   doc.moveDown(0.15);
   doc
     .font("Helvetica")
@@ -151,10 +169,10 @@ async function renderPdf(payload) {
     sectionGap();
     sectionHeading("Sources Used");
     for (const s of sources) {
-      labelValue("Source name", s?.name || "Untitled source");
-      labelValue("File type", formatSourceFileType(s?.fileType));
-      if (s?.description) labelValue("Description", s.description);
-      if (s?.usedFor) labelValue("Used for", s.usedFor);
+      body(s?.name || "Untitled source", { bold: true });
+      body(`- File type: ${formatSourceFileType(s?.fileType)}`);
+      if (s?.description) body(`- Description: ${s.description}`);
+      if (s?.usedFor) body(`- Used for: ${s.usedFor}`);
       doc.moveDown(0.45);
       doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
       doc.moveDown(0.75);
@@ -177,27 +195,21 @@ async function renderPdf(payload) {
     for (const s of review.statements) {
       labelValue("Statement", s.text || "");
       body(`Verdict: ${s.verdict}`, { bold: true });
+      const notes = [];
       if (isConcerned(s.editorialVerdict) || s.editorialConcerns.length > 0) {
         const note = s.editorialConcerns[0]?.note ? String(s.editorialConcerns[0].note) : "";
-        if (note) body(`Editorial note: ${note}`);
+        if (note) notes.push(`- Editorial note: ${note}`);
       }
       if (isConcerned(s.complianceVerdict) || s.complianceConcerns.length > 0) {
         const note = s.complianceConcerns[0]?.note ? String(s.complianceConcerns[0].note) : "";
-        if (note) body(`Compliance note: ${note}`);
+        if (note) notes.push(`- Compliance note: ${note}`);
       }
+      if (notes.length === 0) body("No concerns raised.");
+      else notes.forEach((line) => body(line));
       doc.moveDown(0.45);
       doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
       doc.moveDown(0.95);
     }
-  }
-
-  const range = doc.bufferedPageRange();
-  for (let i = range.start; i < range.start + range.count; i += 1) {
-    doc.switchToPage(i);
-    const footerY = doc.page.height - 46;
-    doc.font("Helvetica").fontSize(9).fillColor("#475569");
-    doc.text(exportAt, doc.page.margins.left, footerY, { width: 250, align: "left" });
-    doc.text(String(i + 1), doc.page.width - doc.page.margins.right - 40, footerY, { width: 40, align: "right" });
   }
 
   doc.end();
@@ -215,6 +227,8 @@ function buildDocx(payload) {
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
   const children = [];
+  const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
+  const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
   const heading = (text, opts = {}) => new Paragraph({
     text,
     heading: HeadingLevel.HEADING_1,
@@ -223,11 +237,15 @@ function buildDocx(payload) {
   });
 
   children.push(new Paragraph({
-    children: [new TextRun({ text: meta.documentTitle || "Draft Output", bold: true, size: 36 })],
+    children: [new TextRun({ text: meta.documentTitle || outputTypeName, bold: true, size: 36 })],
     spacing: { after: 120 },
   }));
   children.push(new Paragraph({
-    text: `${meta.outputTypeLabel || "Unknown"}  |  ${meta.versionLabel || "V1"}`,
+    children: [new TextRun({ text: "Output type: ", bold: true }), new TextRun(outputTypeName)],
+    spacing: { after: 120 },
+  }));
+  children.push(new Paragraph({
+    children: [new TextRun({ text: "Required version: ", bold: true }), new TextRun(requiredVersionLabel)],
     spacing: { after: 120 },
   }));
   children.push(new Paragraph({
@@ -244,10 +262,10 @@ function buildDocx(payload) {
   if (includeSources) {
     children.push(heading("Sources Used"));
     for (const s of sources) {
-      children.push(new Paragraph({ children: [new TextRun({ text: "Source name: ", bold: true }), new TextRun(s?.name || "Untitled source")] }));
-      children.push(new Paragraph({ children: [new TextRun({ text: "File type: ", bold: true }), new TextRun(formatSourceFileType(s?.fileType))] }));
-      if (s?.description) children.push(new Paragraph({ children: [new TextRun({ text: "Description: ", bold: true }), new TextRun(s.description)] }));
-      if (s?.usedFor) children.push(new Paragraph({ children: [new TextRun({ text: "Used for: ", bold: true }), new TextRun(s.usedFor)] }));
+      children.push(new Paragraph({ children: [new TextRun({ text: s?.name || "Untitled source", bold: true })] }));
+      children.push(new Paragraph({ text: `- File type: ${formatSourceFileType(s?.fileType)}` }));
+      if (s?.description) children.push(new Paragraph({ text: `- Description: ${s.description}` }));
+      if (s?.usedFor) children.push(new Paragraph({ text: `- Used for: ${s.usedFor}` }));
       children.push(new Paragraph({ text: "", spacing: { after: 280 } }));
     }
   }
@@ -267,14 +285,17 @@ function buildDocx(payload) {
     for (const s of review.statements) {
       children.push(new Paragraph({ children: [new TextRun({ text: "Statement: ", bold: true }), new TextRun(s.text || "")] }));
       children.push(new Paragraph({ children: [new TextRun({ text: `Verdict: ${s.verdict}`, bold: true })] }));
+      const notes = [];
       if (isConcerned(s.editorialVerdict) || s.editorialConcerns.length > 0) {
         const note = s.editorialConcerns[0]?.note ? String(s.editorialConcerns[0].note) : "";
-        if (note) children.push(new Paragraph({ text: `Editorial note: ${note}` }));
+        if (note) notes.push(`- Editorial note: ${note}`);
       }
       if (isConcerned(s.complianceVerdict) || s.complianceConcerns.length > 0) {
         const note = s.complianceConcerns[0]?.note ? String(s.complianceConcerns[0].note) : "";
-        if (note) children.push(new Paragraph({ text: `Compliance note: ${note}` }));
+        if (note) notes.push(`- Compliance note: ${note}`);
       }
+      if (notes.length === 0) children.push(new Paragraph({ text: "No concerns raised." }));
+      else notes.forEach((line) => children.push(new Paragraph({ text: line })));
       children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
     }
   }
