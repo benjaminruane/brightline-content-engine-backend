@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         {
           role: "system",
           content:
-            "You are a document analyst. In one concise sentence of maximum 20 words, describe how the source document was used in producing the draft text. Begin with a verb (e.g. 'Provided', 'Supplied', 'Contributed'). Be specific to the actual content used. Do not use filler phrases.",
+            "You are a document analyst. In one sentence of maximum 20 words, describe specifically what content from this source document was used in the draft. Begin with a verb (e.g. 'Provided', 'Supplied', 'Contributed'). Reference the actual subject matter — for example financial figures, product details, market context. Do not write generic descriptions. Do not describe the source document type.",
         },
         {
           role: "user",
