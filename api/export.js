@@ -57,16 +57,10 @@ function normalizeOptionalString(value) {
   return out === "" ? null : out;
 }
 
-function deriveDocumentTitle(meta, outputTypeName, filename = "") {
+function deriveDocumentTitle(meta, outputTypeName) {
   const subject = normalizeOptionalString(meta?.subject)?.trim() || null;
   const title = normalizeOptionalString(meta?.title)?.trim() || null;
-  let resolvedSubject = subject || title || null;
-  if (!resolvedSubject) {
-    const firstToken = String(filename || "").split("_")[0]?.trim() || "";
-    if (firstToken && firstToken.toLowerCase() !== String(outputTypeName || "").trim().toLowerCase()) {
-      resolvedSubject = firstToken;
-    }
-  }
+  const resolvedSubject = subject || title || null;
   return resolvedSubject ? `${resolvedSubject} — ${outputTypeName}` : outputTypeName;
 }
 
@@ -134,13 +128,12 @@ async function renderPdf(payload) {
   const exportAt = String(meta.exportedAtLabel || "");
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
-  const documentTitle = deriveDocumentTitle(meta, outputTypeName, payload?.filename);
+  const documentTitle = deriveDocumentTitle(meta, outputTypeName);
 
   const doc = new PDFDocument({
     size: "A4",
     margins: { top: 71, right: 71, bottom: 71, left: 71 }, // ~25mm
     compress: true,
-    bufferPages: true,
   });
   const chunks = [];
   doc.on("data", (c) => chunks.push(c));
@@ -160,16 +153,6 @@ async function renderPdf(payload) {
   const labelValue = (label, value) => {
     doc.font("Helvetica-Bold").fontSize(11).text(`${label}: `, { continued: true });
     doc.font("Helvetica").text(String(value ?? ""));
-  };
-  const drawFooter = (n) => {
-    const prevX = doc.x;
-    const prevY = doc.y;
-    const y = doc.page.height - 46;
-    doc.font("Helvetica").fontSize(9).fillColor("#475569");
-    doc.text(exportAt, doc.page.margins.left, y, { width: 250, align: "left", lineBreak: false });
-    doc.text(String(n), doc.page.width - doc.page.margins.right - 40, y, { width: 40, align: "right", lineBreak: false });
-    doc.x = prevX;
-    doc.y = prevY;
   };
 
   // Header block (no label prefixes for title/summary lines)
@@ -229,11 +212,6 @@ async function renderPdf(payload) {
     }
   }
 
-  const pageCount = doc.bufferedPageRange().count;
-  for (let i = 0; i < pageCount; i += 1) {
-    doc.switchToPage(i);
-    drawFooter(i + 1);
-  }
   doc.end();
   return finished;
 }
@@ -335,8 +313,6 @@ export default async function handler(req, res) {
       documentTitle: meta?.documentTitle ?? null,
     });
     const filename = typeof body?.filename === "string" && body.filename.trim() ? body.filename.trim() : `export.${format}`;
-    payload.filename = filename;
-
     if (format === "pdf") {
       const fullReviewPayload = payload;
       let safePdfPayload;
