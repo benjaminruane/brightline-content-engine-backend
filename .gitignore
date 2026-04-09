@@ -1,5 +1,6 @@
 .vercel
 .env*.local
+node_modules/
 
 # QC regression generated outputs
 tests/output/*.json
