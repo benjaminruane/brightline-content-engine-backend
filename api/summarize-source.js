@@ -60,7 +60,7 @@ export default async function handler(req, res) {
         {
           role: "system",
           content:
-            "You are a document analyst. Summarise what this document is in exactly 2 concise sentences. Be factual and specific. Cover document type, subject matter, and key content. Do not use filler phrases. Do not start with 'This document'. Do not describe file format or technical metadata.",
+            "You are a document analyst. Summarise what this document is in exactly 2 short sentences, maximum 30 words per sentence. Be factual and specific. Cover document type, subject matter, and key content. Do not use filler phrases. Do not start with 'This document'. Do not describe file format or technical metadata.",
         },
         { role: "user", content: llmInput },
       ],
