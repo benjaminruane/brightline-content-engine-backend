@@ -57,15 +57,15 @@ function normalizeOptionalString(value) {
   return out === "" ? null : out;
 }
 
-function deriveDocumentTitle(meta, outputTypeName) {
+function deriveDocumentTitle(meta, outputTypeName, filename = "") {
   const subject = normalizeOptionalString(meta?.subject)?.trim() || null;
   const title = normalizeOptionalString(meta?.title)?.trim() || null;
-  const documentTitle = normalizeOptionalString(meta?.documentTitle)?.trim() || null;
   let resolvedSubject = subject || title || null;
-  if (!resolvedSubject && documentTitle) {
-    const parts = documentTitle.split(" — ");
-    const left = parts[0] ? String(parts[0]).trim() : "";
-    if (left) resolvedSubject = left;
+  if (!resolvedSubject) {
+    const firstToken = String(filename || "").split("_")[0]?.trim() || "";
+    if (firstToken && firstToken.toLowerCase() !== String(outputTypeName || "").trim().toLowerCase()) {
+      resolvedSubject = firstToken;
+    }
   }
   return resolvedSubject ? `${resolvedSubject} — ${outputTypeName}` : outputTypeName;
 }
@@ -134,12 +134,13 @@ async function renderPdf(payload) {
   const exportAt = String(meta.exportedAtLabel || "");
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
-  const documentTitle = deriveDocumentTitle(meta, outputTypeName);
+  const documentTitle = deriveDocumentTitle(meta, outputTypeName, payload?.filename);
 
   const doc = new PDFDocument({
     size: "A4",
     margins: { top: 71, right: 71, bottom: 71, left: 71 }, // ~25mm
     compress: true,
+    bufferPages: true,
   });
   const chunks = [];
   doc.on("data", (c) => chunks.push(c));
@@ -160,7 +161,6 @@ async function renderPdf(payload) {
     doc.font("Helvetica-Bold").fontSize(11).text(`${label}: `, { continued: true });
     doc.font("Helvetica").text(String(value ?? ""));
   };
-  let pageNumber = 1;
   const drawFooter = (n) => {
     const prevX = doc.x;
     const prevY = doc.y;
@@ -171,11 +171,6 @@ async function renderPdf(payload) {
     doc.x = prevX;
     doc.y = prevY;
   };
-  drawFooter(pageNumber);
-  doc.on("pageAdded", () => {
-    pageNumber += 1;
-    drawFooter(pageNumber);
-  });
 
   // Header block (no label prefixes for title/summary lines)
   doc.font("Helvetica-Bold").fontSize(20).fillColor("#0f172a").text(documentTitle);
@@ -234,6 +229,11 @@ async function renderPdf(payload) {
     }
   }
 
+  const pageCount = doc.bufferedPageRange().count;
+  for (let i = 0; i < pageCount; i += 1) {
+    doc.switchToPage(i);
+    drawFooter(i + 1);
+  }
   doc.end();
   return finished;
 }
@@ -335,6 +335,7 @@ export default async function handler(req, res) {
       documentTitle: meta?.documentTitle ?? null,
     });
     const filename = typeof body?.filename === "string" && body.filename.trim() ? body.filename.trim() : `export.${format}`;
+    payload.filename = filename;
 
     if (format === "pdf") {
       const fullReviewPayload = payload;
