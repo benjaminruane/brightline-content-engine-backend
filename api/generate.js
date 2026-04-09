@@ -134,7 +134,7 @@ function stripSourcesUsedBlock(text) {
   return text.slice(0, idx).trim();
 }
 
-function extractSourcesUsedRows(text) {
+function extractSourcesUsedRows(text, sessionSources = []) {
   if (typeof text !== "string") return [];
   const marker = "[SOURCES_USED]";
   const idx = text.lastIndexOf(marker);
@@ -143,12 +143,28 @@ function extractSourcesUsedRows(text) {
   const jsonPart = text.slice(idx + marker.length).trim();
   const parsed = safeJsonParse(jsonPart);
   const rows = Array.isArray(parsed?.sourcesUsedRows) ? parsed.sourcesUsedRows : [];
+  const safeSessionSources = Array.isArray(sessionSources) ? sessionSources : [];
+  const resolveSourceId = (row) => {
+    const rowTitle = typeof row?.title === "string" ? row.title.trim() : "";
+    const rowUrl = typeof row?.url === "string" ? row.url.trim() : "";
+    if (!rowTitle && !rowUrl) return null;
+    const matched = safeSessionSources.find((src) => {
+      const srcName = typeof src?.name === "string" ? src.name.trim() : "";
+      const srcUrl = typeof src?.url === "string" ? src.url.trim() : "";
+      if (rowTitle && srcName && rowTitle === srcName) return true;
+      if (rowUrl && srcUrl && rowUrl === srcUrl) return true;
+      return false;
+    });
+    return matched?.id != null ? String(matched.id) : null;
+  };
+
   return rows
     .filter((r) => r && typeof r === "object")
     .map((r) => ({
       title: typeof r.title === "string" ? r.title : "",
       url: typeof r.url === "string" ? r.url : "",
       snippet: typeof r.snippet === "string" ? r.snippet : "",
+      sourceId: resolveSourceId(r),
     }))
     .filter((r) => r.title || r.url || r.snippet);
 }
@@ -721,7 +737,7 @@ Return ONLY JSON:
     const raw = completion?.choices?.[0]?.message?.content || "";
     const parsed = safeJsonParse(raw) || {};
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
-    const sourcesUsedRows = extractSourcesUsedRows(rawDraftText);
+    const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
     let currentDraftText = stripSourcesUsedBlock(rawDraftText);
 
     if (!currentDraftText.trim()) {
