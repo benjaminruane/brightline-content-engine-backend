@@ -80,9 +80,57 @@ function extractSourcesUsedRows(text, sessionSources = []) {
       title: typeof r.title === "string" ? r.title : "",
       url: typeof r.url === "string" ? r.url : "",
       snippet: typeof r.snippet === "string" ? r.snippet : "",
+      usedFor: typeof r.usedFor === "string" ? r.usedFor : "",
       sourceId: resolveSourceId(r),
     }))
     .filter((r) => r.title || r.url || r.snippet);
+}
+
+function buildInternalApiUrl(req, path) {
+  const explicitBase = typeof process.env.BRIGHTLINE_API_BASE_URL === "string" ? process.env.BRIGHTLINE_API_BASE_URL.trim() : "";
+  if (explicitBase) return `${explicitBase.replace(/\/$/, "")}${path}`;
+
+  const host = req?.headers?.host;
+  if (!host || typeof host !== "string") return null;
+  const protoHeader = req?.headers?.["x-forwarded-proto"];
+  const protocol = typeof protoHeader === "string" && protoHeader.trim() ? protoHeader.split(",")[0].trim() : "https";
+  return `${protocol}://${host}${path}`;
+}
+
+function fireAndForgetSourceUsageSummaries(req, rows, draftText) {
+  if (!Array.isArray(rows) || rows.length === 0 || typeof fetch !== "function") return;
+  const apiUrl = buildInternalApiUrl(req, "/api/summarize-source-usage");
+  if (!apiUrl) return;
+  const draftExcerpt = typeof draftText === "string" ? draftText.slice(0, 1000) : "";
+  if (!draftExcerpt) return;
+
+  rows.forEach((row) => {
+    const sourceName =
+      (typeof row?.title === "string" && row.title.trim()) ||
+      (typeof row?.name === "string" && row.name.trim()) ||
+      "";
+    const snippet = typeof row?.snippet === "string" ? row.snippet.trim() : "";
+
+    row.usedFor = "";
+    if (!sourceName || !snippet) return;
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sourceName,
+        snippet,
+        draftText: draftExcerpt,
+      }),
+    })
+      .then((resp) => (resp?.ok ? resp.json() : null))
+      .then((payload) => {
+        row.usedFor = typeof payload?.usedFor === "string" ? payload.usedFor : "";
+      })
+      .catch(() => {
+        row.usedFor = "";
+      });
+  });
 }
 
 function normalizeBannedWords(input) {
@@ -797,6 +845,7 @@ Return ONLY valid JSON with no markdown or extra text:
     let finalDraftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
     const sourcesUsedRows = extractSourcesUsedRows(finalDraftText, sources);
     finalDraftText = stripSourcesUsedBlock(finalDraftText);
+    fireAndForgetSourceUsageSummaries(req, sourcesUsedRows, finalDraftText);
 
     if (!finalDraftText || typeof finalDraftText !== "string") {
       return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });

@@ -164,9 +164,57 @@ function extractSourcesUsedRows(text, sessionSources = []) {
       title: typeof r.title === "string" ? r.title : "",
       url: typeof r.url === "string" ? r.url : "",
       snippet: typeof r.snippet === "string" ? r.snippet : "",
+      usedFor: typeof r.usedFor === "string" ? r.usedFor : "",
       sourceId: resolveSourceId(r),
     }))
     .filter((r) => r.title || r.url || r.snippet);
+}
+
+function buildInternalApiUrl(req, path) {
+  const explicitBase = typeof process.env.BRIGHTLINE_API_BASE_URL === "string" ? process.env.BRIGHTLINE_API_BASE_URL.trim() : "";
+  if (explicitBase) return `${explicitBase.replace(/\/$/, "")}${path}`;
+
+  const host = req?.headers?.host;
+  if (!host || typeof host !== "string") return null;
+  const protoHeader = req?.headers?.["x-forwarded-proto"];
+  const protocol = typeof protoHeader === "string" && protoHeader.trim() ? protoHeader.split(",")[0].trim() : "https";
+  return `${protocol}://${host}${path}`;
+}
+
+function fireAndForgetSourceUsageSummaries(req, rows, draftText) {
+  if (!Array.isArray(rows) || rows.length === 0 || typeof fetch !== "function") return;
+  const apiUrl = buildInternalApiUrl(req, "/api/summarize-source-usage");
+  if (!apiUrl) return;
+  const draftExcerpt = typeof draftText === "string" ? draftText.slice(0, 1000) : "";
+  if (!draftExcerpt) return;
+
+  rows.forEach((row) => {
+    const sourceName =
+      (typeof row?.title === "string" && row.title.trim()) ||
+      (typeof row?.name === "string" && row.name.trim()) ||
+      "";
+    const snippet = typeof row?.snippet === "string" ? row.snippet.trim() : "";
+
+    row.usedFor = "";
+    if (!sourceName || !snippet) return;
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sourceName,
+        snippet,
+        draftText: draftExcerpt,
+      }),
+    })
+      .then((resp) => (resp?.ok ? resp.json() : null))
+      .then((payload) => {
+        row.usedFor = typeof payload?.usedFor === "string" ? payload.usedFor : "";
+      })
+      .catch(() => {
+        row.usedFor = "";
+      });
+  });
 }
 
 // Extract citation numbers from text (e.g., [1], [2] -> [1, 2])
@@ -739,6 +787,7 @@ Return ONLY JSON:
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
     let currentDraftText = stripSourcesUsedBlock(rawDraftText);
+    fireAndForgetSourceUsageSummaries(req, sourcesUsedRows, currentDraftText);
 
     if (!currentDraftText.trim()) {
       return res.status(500).json({
