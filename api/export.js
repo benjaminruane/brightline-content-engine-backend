@@ -63,8 +63,9 @@ function deriveDocumentTitle(meta, outputTypeName) {
   const documentTitle = normalizeOptionalString(meta?.documentTitle)?.trim() || null;
   let resolvedSubject = subject || title || null;
   if (!resolvedSubject && documentTitle) {
-    const [left] = documentTitle.split("—").map((x) => x.trim());
-    if (left && left.toLowerCase() !== outputTypeName.toLowerCase()) resolvedSubject = left;
+    const parts = documentTitle.split(" — ");
+    const left = parts[0] ? String(parts[0]).trim() : "";
+    if (left) resolvedSubject = left;
   }
   return resolvedSubject ? `${resolvedSubject} — ${outputTypeName}` : outputTypeName;
 }
@@ -113,27 +114,10 @@ function buildReviewData(qcResult) {
     };
   });
 
-  const counts = {
-    supported: 0,
-    conflicted: 0,
-    notSupported: 0,
-    unverifiable: 0,
-    editorialFlags: 0,
-    complianceFlags: 0,
-  };
-  for (const s of normalizedStatements) {
-    if (s.verdict === "Supported") counts.supported += 1;
-    else if (s.verdict === "Conflicted") counts.conflicted += 1;
-    else if (s.verdict === "Not Supported") counts.notSupported += 1;
-    else counts.unverifiable += 1;
-    if (s.editorialFlag) counts.editorialFlags += 1;
-    if (s.complianceFlag) counts.complianceFlags += 1;
-  }
-
   // Serialization break to prevent nested refs/prototypes reaching renderers.
   const safeStatements = JSON.parse(JSON.stringify(normalizedStatements));
   const total = safeStatements.length;
-  return { statements: safeStatements, counts, total };
+  return { statements: safeStatements, total };
 }
 
 async function renderPdf(payload) {
@@ -230,35 +214,23 @@ async function renderPdf(payload) {
 
   if (includeReview) {
     sectionGap();
-    sectionHeading("Review Summary");
-    labelValue("Total statements reviewed", review.total);
-    labelValue("Supported", review.counts.supported);
-    labelValue("Conflicted", review.counts.conflicted);
-    labelValue("Not Supported", review.counts.notSupported);
-    labelValue("Unverifiable", review.counts.unverifiable);
-    labelValue("Editorial flags", review.counts.editorialFlags);
-    labelValue("Compliance flags", review.counts.complianceFlags);
-
-    if (includeStatementReview) {
-      sectionGap();
-      sectionHeading("Statement Review");
-      for (const s of review.statements) {
-        body(`"${s.statementText || ""}"`, { bold: true });
-        doc.moveDown(0.2);
-        const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
-          ? ` (${s.concernLevel} concern)`
-          : "";
-        doc.font("Helvetica-Bold").fontSize(11).fillColor("#0f172a").text("Verdict: ", { continued: true });
-        doc.font("Helvetica").fontSize(11).fillColor("#0f172a").text(`${s.verdict}${concernSuffix}`);
-        labelValue("Evidence finding", s.evidenceFinding);
-        if (s.excerpt) labelValue("Excerpt", `"${s.excerpt}"`);
-        if (s.editorialNote) labelValue("Editorial note", s.editorialNote);
-        if (s.complianceNote) labelValue("Compliance note", s.complianceNote);
-        if (s.reviewerVerdict) labelValue("Reviewer verdict", s.reviewerVerdict);
-        doc.moveDown(0.45);
-        doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
-        doc.moveDown(0.95);
-      }
+    sectionHeading("Statement Review");
+    for (const s of review.statements) {
+      body(`"${s.statementText || ""}"`, { bold: true });
+      doc.moveDown(0.2);
+      const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
+        ? ` (${s.concernLevel} concern)`
+        : "";
+      doc.font("Helvetica-Bold").fontSize(11).fillColor("#0f172a").text("Verdict: ", { continued: true });
+      doc.font("Helvetica").fontSize(11).fillColor("#0f172a").text(`${s.verdict}${concernSuffix}`);
+      labelValue("Evidence finding", s.evidenceFinding);
+      if (s.excerpt) labelValue("Excerpt", `"${s.excerpt}"`);
+      if (s.editorialNote) labelValue("Editorial note", s.editorialNote);
+      if (s.complianceNote) labelValue("Compliance note", s.complianceNote);
+      if (s.reviewerVerdict) labelValue("Reviewer verdict", s.reviewerVerdict);
+      doc.moveDown(0.45);
+      doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
+      doc.moveDown(0.95);
     }
   }
 
@@ -323,33 +295,21 @@ function buildDocx(payload) {
   }
 
   if (includeReview) {
-    children.push(heading("Review Summary"));
-    children.push(new Paragraph({ text: `Total statements reviewed: ${review.total}` }));
-    children.push(new Paragraph({ text: `Supported: ${review.counts.supported}` }));
-    children.push(new Paragraph({ text: `Conflicted: ${review.counts.conflicted}` }));
-    children.push(new Paragraph({ text: `Not Supported: ${review.counts.notSupported}` }));
-    children.push(new Paragraph({ text: `Unverifiable: ${review.counts.unverifiable}` }));
-    children.push(new Paragraph({ text: `Editorial flags: ${review.counts.editorialFlags}` }));
-    children.push(new Paragraph({ text: `Compliance flags: ${review.counts.complianceFlags}` }));
-    children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
-
-    if (includeStatementReview) {
-      children.push(heading("Statement Review"));
-      for (const s of review.statements) {
-        children.push(new Paragraph({ children: [new TextRun({ text: `"${s.statementText || ""}"`, bold: true })] }));
-        const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
-          ? ` (${s.concernLevel} concern)`
-          : "";
-        children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict || "") + concernSuffix)] }));
-        children.push(new Paragraph({ children: [new TextRun({ text: "Evidence finding: ", bold: true }), new TextRun(String(s.evidenceFinding || ""))] }));
-        if (s.excerpt) children.push(new Paragraph({
-          children: [new TextRun({ text: "Excerpt: ", bold: true }), new TextRun({ text: `"${s.excerpt}"`, italics: true })],
-        }));
-        if (s.editorialNote) children.push(new Paragraph({ children: [new TextRun({ text: "Editorial note: ", bold: true }), new TextRun(String(s.editorialNote))] }));
-        if (s.complianceNote) children.push(new Paragraph({ children: [new TextRun({ text: "Compliance note: ", bold: true }), new TextRun(String(s.complianceNote))] }));
-        if (s.reviewerVerdict) children.push(new Paragraph({ children: [new TextRun({ text: "Reviewer verdict: ", bold: true }), new TextRun(String(s.reviewerVerdict))] }));
-        children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
-      }
+    children.push(heading("Statement Review"));
+    for (const s of review.statements) {
+      children.push(new Paragraph({ children: [new TextRun({ text: `"${s.statementText || ""}"`, bold: true })] }));
+      const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
+        ? ` (${s.concernLevel} concern)`
+        : "";
+      children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict || "") + concernSuffix)] }));
+      children.push(new Paragraph({ children: [new TextRun({ text: "Evidence finding: ", bold: true }), new TextRun(String(s.evidenceFinding || ""))] }));
+      if (s.excerpt) children.push(new Paragraph({
+        children: [new TextRun({ text: "Excerpt: ", bold: true }), new TextRun({ text: `"${s.excerpt}"`, italics: true })],
+      }));
+      if (s.editorialNote) children.push(new Paragraph({ children: [new TextRun({ text: "Editorial note: ", bold: true }), new TextRun(String(s.editorialNote))] }));
+      if (s.complianceNote) children.push(new Paragraph({ children: [new TextRun({ text: "Compliance note: ", bold: true }), new TextRun(String(s.complianceNote))] }));
+      if (s.reviewerVerdict) children.push(new Paragraph({ children: [new TextRun({ text: "Reviewer verdict: ", bold: true }), new TextRun(String(s.reviewerVerdict))] }));
+      children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
     }
   }
 
@@ -378,11 +338,28 @@ export default async function handler(req, res) {
 
     if (format === "pdf") {
       const fullReviewPayload = payload;
-      const safePdfPayload = JSON.parse(JSON.stringify(fullReviewPayload));
-      const buffer = await renderPdf(safePdfPayload);
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
-      return res.status(200).send(buffer);
+      let safePdfPayload;
+      try {
+        safePdfPayload = JSON.parse(JSON.stringify(fullReviewPayload));
+      } catch (serializationErr) {
+        console.error("[EXPORT_PDF_SERIALIZATION_FAIL]", {
+          message: serializationErr?.message || "Unknown serialization error",
+          stack: serializationErr?.stack || null,
+        });
+        throw serializationErr;
+      }
+      try {
+        const buffer = await renderPdf(safePdfPayload);
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+        return res.status(200).send(buffer);
+      } catch (pdfErr) {
+        console.error("[EXPORT_PDF_RENDER_FAIL]", {
+          message: pdfErr?.message || "Unknown PDF render error",
+          stack: pdfErr?.stack || null,
+        });
+        throw pdfErr;
+      }
     }
 
     const buffer = await buildDocx(payload);
