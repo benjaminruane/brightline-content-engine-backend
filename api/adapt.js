@@ -16,6 +16,7 @@ import {
   normalizeVisibility,
   buildOutputIntent,
   getPromptGuidance,
+  OUTPUT_TYPE,
 } from "../lib/output-intent.js";
 
 function setCorsHeaders(req, res) {
@@ -32,6 +33,39 @@ function safeJsonParse(s) {
   } catch {
     return null;
   }
+}
+
+/**
+ * A9.6: Optional press-quote and LinkedIn URL lines for the adapt prompt only.
+ * @param {string} targetOutputType
+ * @param {{ name?: string, title?: string, quote?: string } | null} quoteAttribution
+ * @param {string} linkedInUrl
+ * @returns {string}
+ */
+function buildAdaptOptionalGuidance(targetOutputType, quoteAttribution, linkedInUrl) {
+  const lines = [];
+  if (targetOutputType === OUTPUT_TYPE.PRESS_RELEASE && quoteAttribution && typeof quoteAttribution === "object") {
+    const name = typeof quoteAttribution.name === "string" ? quoteAttribution.name.trim() : "";
+    const title = typeof quoteAttribution.title === "string" ? quoteAttribution.title.trim() : "";
+    const quote = typeof quoteAttribution.quote === "string" ? quoteAttribution.quote.trim() : "";
+    if (name && title) {
+      lines.push(`Include a quote attributed to ${name}, ${title}.`);
+      if (quote) {
+        lines.push(`Use this exact quote text: ${JSON.stringify(quote)}`);
+      } else {
+        lines.push(
+          "No quote text was provided; use the bracketed QUOTE placeholder from the structural guidance (with the given speaker name and title) instead of inventing a quote."
+        );
+      }
+    }
+  }
+  if (targetOutputType === OUTPUT_TYPE.LINKEDIN_POST) {
+    const url = typeof linkedInUrl === "string" ? linkedInUrl.trim() : "";
+    if (url) {
+      lines.push(`Include this URL as the final line of the post with a natural call to action: ${url}`);
+    }
+  }
+  return lines.length ? `${lines.join("\n")}\n` : "";
 }
 
 export default async function handler(req, res) {
@@ -70,6 +104,18 @@ export default async function handler(req, res) {
       // If out of bounds: ignore and could record warning in meta (do not fail request)
     }
 
+    const rawQuoteAttribution = body.quoteAttribution ?? body.quote_attribution;
+    let quoteAttribution = null;
+    if (rawQuoteAttribution && typeof rawQuoteAttribution === "object" && !Array.isArray(rawQuoteAttribution)) {
+      quoteAttribution = {
+        name: typeof rawQuoteAttribution.name === "string" ? rawQuoteAttribution.name : "",
+        title: typeof rawQuoteAttribution.title === "string" ? rawQuoteAttribution.title : "",
+        quote: typeof rawQuoteAttribution.quote === "string" ? rawQuoteAttribution.quote : "",
+      };
+    }
+    const linkedInRaw = body.linkedInUrl ?? body.linked_in_url;
+    const linkedInUrl = typeof linkedInRaw === "string" ? linkedInRaw : "";
+
     if (!baseDraftText.trim()) {
       return res.status(400).json({ error: "Missing baseDraftText" });
     }
@@ -90,6 +136,7 @@ export default async function handler(req, res) {
 
     const targetGuidance = getPromptGuidance(targetOutputType, targetVisibility);
     const outputIntent = buildOutputIntent(targetOutputType, targetVisibility);
+    const optionalGuidance = buildAdaptOptionalGuidance(targetOutputType, quoteAttribution, linkedInUrl);
 
     const prompt = `
 You are adapting an existing draft to a new output format and visibility. Use the SAME facts and source material; do not invent new facts.
@@ -98,7 +145,7 @@ FROM: ${fromOutputType} (${fromVisibility})
 TO: ${targetOutputType} (${targetVisibility})
 
 FORMAT GUIDANCE FOR TARGET: ${targetGuidance}
-
+${optionalGuidance ? `ADDITIONAL TARGET INSTRUCTIONS:\n${optionalGuidance}` : ""}
 BASE DRAFT (adapt this content):
 ---
 ${baseDraftText}
