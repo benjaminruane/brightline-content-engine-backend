@@ -95,6 +95,12 @@ Last updated: April 2026
 - Accept / reject / refine workflow for suggested rewrites
 - Rewrite notes redesign
 
+### Audio Input
+- Optional microphone input for selected text fields: Generate notes, Rewrite instructions, Ask AI
+- Browser-native Web Speech API preferred (no backend speech-to-text responsibility)
+- Transcribed text treated identically to typed input
+- Must not interfere with existing Enter-to-execute behaviour
+
 ### Quality Scores
 - Definition and rubric TBD
 - Parked until scoring criteria confirmed
@@ -152,3 +158,18 @@ Last updated: April 2026
 ## Where This File Lives
 
 Backend repo only (`brightline-content-engine-backend`). Single source of truth. Do not duplicate into the frontend repo.
+
+---
+
+## Review Correctness Principles (Non-Negotiable)
+
+These invariants define the minimum trust bar for the QC evidence pipeline. If any are violated, Review output must be treated as unreliable. All backend development affecting statement analysis must be checked against these before handoff.
+
+1. **Truthful absence claims** — Review must never say a fact, term, or number is "not mentioned" or "not supported" unless a corpus-level search over the full uploaded text was performed and found no match.
+2. **No false "missing sources" language** — If uploaded sources exist, Review must not imply the user "provided no sources" or that "no sources exist."
+3. **Citation–evidence consistency** — If citations are present, evidence must be resolvable to reference titles or URLs. Uploaded sources may have `url: null` and are still valid. "Citations missing" only when citations are actually empty.
+4. **Correctness over confidence** — Review must not emit confident absence claims if the system has not checked the full relevant corpus.
+5. **Ambiguity is not absence** — If multiple plausible anchor values exist (e.g. multiple valuations), Review must flag ambiguity and name the competing values — never claim "not mentioned."
+6. **Contradiction scope** — "Contradicted" applies only to statement-vs-sources conflicts. Draft-to-draft internal consistency is out of scope for Review.
+7. **Explain, don't rewrite** — Review diagnoses and explains; it may provide structural or evidentiary guidance but must not propose rewritten sentences verbatim.
+8. **Deterministic safeguards for anchors** — Numeric and anchor facts (valuation, funding, dates, percentages) must be normalised (e.g. `$25mm` == `$25 million`) before declaring mismatch or absence.
