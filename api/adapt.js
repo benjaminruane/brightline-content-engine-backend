@@ -188,6 +188,20 @@ export default async function handler(req, res) {
 
     const sourcesForPrompt = await prepareSourcesForAdaptPrompt(sources);
 
+    // TEMP: confirm PDF → plain text in Adapt prompt (remove after Shopify session verification)
+    console.log(
+      "[ADAPT][TEMP] sourcesForPrompt text field (first 500 chars per source)",
+      JSON.stringify(
+        sourcesForPrompt.map((s, i) => ({
+          index: i,
+          name: s?.name ?? s?.title ?? null,
+          textHead: typeof s?.text === "string" ? s.text.slice(0, 500) : "",
+        })),
+        null,
+        2
+      )
+    );
+
     const prompt = `
 You are adapting an existing draft to a new output format and visibility. Use the SAME facts and source material; do not invent new facts.
 
