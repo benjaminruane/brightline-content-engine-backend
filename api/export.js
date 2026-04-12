@@ -29,6 +29,7 @@ function toParagraphs(text) {
 }
 
 function normalizeVerdict(displayVerdict) {
+  if (String(displayVerdict || "").toLowerCase() === "not reviewed") return null;
   if (displayVerdict === "supported_full" || displayVerdict === "supported_partial") return "Supported";
   if (displayVerdict === "conflict") return "Conflicted";
   if (displayVerdict === "not_supported" || displayVerdict === "no_clear_support") return "Not Supported";
@@ -64,23 +65,50 @@ function deriveDocumentTitle(meta, outputTypeName) {
   return resolvedSubject ? `${resolvedSubject} — ${outputTypeName}` : outputTypeName;
 }
 
+/** A9.14: ISO YYYY-MM-DD or other non-empty string → DD/MM/YYYY for export when ISO */
+function formatDealDateForExport(value) {
+  const t = String(value ?? "").trim();
+  if (!t) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
+    const [y, m, d] = t.split("-");
+    return `${d}/${m}/${y}`;
+  }
+  return t;
+}
+
+function hasAnyDealInfo(deal) {
+  if (!deal || typeof deal !== "object") return false;
+  const inv = normalizeOptionalString(deal.investmentName);
+  const prog = normalizeOptionalString(deal.programName);
+  const rd = formatDealDateForExport(deal.referenceDate);
+  const td = formatDealDateForExport(deal.transactionDate);
+  return !!(inv || prog || rd || td);
+}
+
 function buildReviewData(qcResult) {
   const statements = Array.isArray(qcResult?.statements) ? qcResult.statements : [];
   const normalizedStatements = statements.map((s) => {
     const qcCard = s?.qcCard && typeof s.qcCard === "object" ? s.qcCard : {};
     const statementText = typeof qcCard.statement === "string" ? qcCard.statement.trim() : "";
-    const verdict = normalizeVerdict(qcCard.displayVerdict);
+    const evidenceSkipped =
+      qcCard.supportState === "skipped" ||
+      String(qcCard.displayVerdict || "").toLowerCase() === "not reviewed";
+    const verdict = evidenceSkipped ? null : normalizeVerdict(qcCard.displayVerdict);
     const concernLevel = typeof qcCard.concernLevel === "string" && qcCard.concernLevel.trim()
       ? qcCard.concernLevel.trim()
       : null;
-    const evidenceFinding = typeof qcCard.reasoningParagraph === "string" && qcCard.reasoningParagraph.trim()
-      ? qcCard.reasoningParagraph.trim()
-      : (typeof qcCard.reasoningHeadline === "string" && qcCard.reasoningHeadline.trim()
-        ? qcCard.reasoningHeadline.trim()
-        : "No evidence finding recorded.");
-    const excerpt = qcCard.hasRealExcerpt === true && typeof qcCard.primaryExcerptText === "string" && qcCard.primaryExcerptText.trim()
-      ? qcCard.primaryExcerptText.trim()
-      : null;
+    const evidenceFinding = evidenceSkipped
+      ? null
+      : (typeof qcCard.reasoningParagraph === "string" && qcCard.reasoningParagraph.trim()
+        ? qcCard.reasoningParagraph.trim()
+        : (typeof qcCard.reasoningHeadline === "string" && qcCard.reasoningHeadline.trim()
+          ? qcCard.reasoningHeadline.trim()
+          : "No evidence finding recorded."));
+    const excerpt = evidenceSkipped
+      ? null
+      : (qcCard.hasRealExcerpt === true && typeof qcCard.primaryExcerptText === "string" && qcCard.primaryExcerptText.trim()
+        ? qcCard.primaryExcerptText.trim()
+        : null);
     const editorialConcerns = Array.isArray(qcCard.editorialConcerns) ? qcCard.editorialConcerns : [];
     const complianceConcerns = Array.isArray(qcCard.complianceConcerns) ? qcCard.complianceConcerns : [];
     const editorialFallback = editorialConcerns.map((c) => c?.note).filter((x) => typeof x === "string" && x.trim()).join(" ");
@@ -117,6 +145,7 @@ function buildReviewData(qcResult) {
 async function renderPdf(payload) {
   const { sections, data } = payload;
   const meta = data?.meta || {};
+  const dealInfo = data?.dealInfo && typeof data.dealInfo === "object" ? data.dealInfo : {};
   const draft = typeof data?.draft === "string" ? data.draft : "";
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
@@ -167,6 +196,18 @@ async function renderPdf(payload) {
     .fillColor("#475569")
     .text(`${exportAt}  |  ${Number(meta.wordCount || 0)} words  |  ${Number(meta.charCount || 0)} characters`);
 
+  if (hasAnyDealInfo(dealInfo)) {
+    doc.moveDown(0.45);
+    const inv = normalizeOptionalString(dealInfo.investmentName);
+    const prog = normalizeOptionalString(dealInfo.programName);
+    const rd = formatDealDateForExport(dealInfo.referenceDate);
+    const td = formatDealDateForExport(dealInfo.transactionDate);
+    if (inv) labelValue("Investment name", inv);
+    if (prog) labelValue("Program / Mandate / Product name", prog);
+    if (rd) labelValue("Reference date", rd);
+    if (td) labelValue("Transaction date", td);
+  }
+
   if (includeDraft) {
     sectionGap();
     sectionHeading("Draft Text");
@@ -199,9 +240,11 @@ async function renderPdf(payload) {
       const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
         ? ` (${s.concernLevel} concern)`
         : "";
-      doc.font("Helvetica-Bold").fontSize(11).fillColor("#0f172a").text("Verdict: ", { continued: true });
-      doc.font("Helvetica").fontSize(11).fillColor("#0f172a").text(`${s.verdict}${concernSuffix}`);
-      labelValue("Evidence finding", s.evidenceFinding);
+      if (s.verdict) {
+        doc.font("Helvetica-Bold").fontSize(11).fillColor("#0f172a").text("Verdict: ", { continued: true });
+        doc.font("Helvetica").fontSize(11).fillColor("#0f172a").text(`${s.verdict}${concernSuffix}`);
+      }
+      if (s.evidenceFinding) labelValue("Evidence finding", s.evidenceFinding);
       if (s.excerpt) labelValue("Excerpt", `"${s.excerpt}"`);
       if (s.editorialNote) labelValue("Editorial note", s.editorialNote);
       if (s.complianceNote) labelValue("Compliance note", s.complianceNote);
@@ -219,6 +262,7 @@ async function renderPdf(payload) {
 function buildDocx(payload) {
   const { sections, data } = payload;
   const meta = data?.meta || {};
+  const dealInfo = data?.dealInfo && typeof data.dealInfo === "object" ? data.dealInfo : {};
   const draft = typeof data?.draft === "string" ? data.draft : "";
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
@@ -252,8 +296,40 @@ function buildDocx(payload) {
   }));
   children.push(new Paragraph({
     text: `${meta.exportedAtLabel || ""}  |  ${String(meta.wordCount || 0)} words  |  ${String(meta.charCount || 0)} characters`,
-    spacing: { after: 480 },
+    spacing: { after: 200 },
   }));
+
+  if (hasAnyDealInfo(dealInfo)) {
+    const inv = normalizeOptionalString(dealInfo.investmentName);
+    const prog = normalizeOptionalString(dealInfo.programName);
+    const rd = formatDealDateForExport(dealInfo.referenceDate);
+    const td = formatDealDateForExport(dealInfo.transactionDate);
+    if (inv) {
+      children.push(new Paragraph({
+        children: [new TextRun({ text: "Investment name: ", bold: true }), new TextRun(inv)],
+        spacing: { after: 120 },
+      }));
+    }
+    if (prog) {
+      children.push(new Paragraph({
+        children: [new TextRun({ text: "Program / Mandate / Product name: ", bold: true }), new TextRun(prog)],
+        spacing: { after: 120 },
+      }));
+    }
+    if (rd) {
+      children.push(new Paragraph({
+        children: [new TextRun({ text: "Reference date: ", bold: true }), new TextRun(rd)],
+        spacing: { after: 120 },
+      }));
+    }
+    if (td) {
+      children.push(new Paragraph({
+        children: [new TextRun({ text: "Transaction date: ", bold: true }), new TextRun(td)],
+        spacing: { after: 120 },
+      }));
+    }
+    children.push(new Paragraph({ text: "", spacing: { after: 280 } }));
+  }
 
   if (includeDraft) {
     children.push(heading("Draft Text"));
@@ -279,8 +355,12 @@ function buildDocx(payload) {
       const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
         ? ` (${s.concernLevel} concern)`
         : "";
-      children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict || "") + concernSuffix)] }));
-      children.push(new Paragraph({ children: [new TextRun({ text: "Evidence finding: ", bold: true }), new TextRun(String(s.evidenceFinding || ""))] }));
+      if (s.verdict) {
+        children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict) + concernSuffix)] }));
+      }
+      if (s.evidenceFinding) {
+        children.push(new Paragraph({ children: [new TextRun({ text: "Evidence finding: ", bold: true }), new TextRun(String(s.evidenceFinding))] }));
+      }
       if (s.excerpt) children.push(new Paragraph({
         children: [new TextRun({ text: "Excerpt: ", bold: true }), new TextRun({ text: `"${s.excerpt}"`, italics: true })],
       }));
