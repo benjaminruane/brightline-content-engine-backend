@@ -18,6 +18,7 @@ import {
   getPromptGuidance,
   OUTPUT_TYPE,
 } from "../lib/output-intent.js";
+import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -32,6 +33,53 @@ function safeJsonParse(s) {
     return JSON.parse(s);
   } catch {
     return null;
+  }
+}
+
+/** A9.10: Drop bulky base64 from prompt JSON when extracted text is present. */
+function adaptSourceJsonForPrompt(s) {
+  if (!s || typeof s !== "object") return s;
+  const o = { ...s };
+  if (typeof o.text === "string" && o.text.trim().length > 0 && "contentBase64" in o) {
+    delete o.contentBase64;
+  }
+  return o;
+}
+
+/**
+ * A9.10: PDF (and other file) sources → plain text via pipeline; never throws.
+ * On batch failure, uses successful prefix then per-source extraction; falls back to original.
+ */
+async function prepareSourcesForAdaptPrompt(sources) {
+  if (!Array.isArray(sources) || sources.length === 0) return sources;
+
+  try {
+    const prep = await prepareUploadedSourcesForPipeline(sources);
+    if (!prep.error && Array.isArray(prep.sources) && prep.sources.length === sources.length) {
+      return prep.sources.map(adaptSourceJsonForPrompt);
+    }
+
+    const head = Array.isArray(prep.sources) ? prep.sources : [];
+    const merged = [];
+    for (let i = 0; i < sources.length; i++) {
+      if (i < head.length) {
+        merged.push(adaptSourceJsonForPrompt(head[i]));
+        continue;
+      }
+      try {
+        const one = await prepareUploadedSourcesForPipeline([sources[i]]);
+        if (!one.error && one.sources?.[0]) {
+          merged.push(adaptSourceJsonForPrompt(one.sources[0]));
+        } else {
+          merged.push(adaptSourceJsonForPrompt(sources[i]));
+        }
+      } catch {
+        merged.push(adaptSourceJsonForPrompt(sources[i]));
+      }
+    }
+    return merged;
+  } catch {
+    return sources.map(adaptSourceJsonForPrompt);
   }
 }
 
@@ -138,6 +186,8 @@ export default async function handler(req, res) {
     const outputIntent = buildOutputIntent(targetOutputType, targetVisibility);
     const optionalGuidance = buildAdaptOptionalGuidance(targetOutputType, quoteAttribution, linkedInUrl);
 
+    const sourcesForPrompt = await prepareSourcesForAdaptPrompt(sources);
+
     const prompt = `
 You are adapting an existing draft to a new output format and visibility. Use the SAME facts and source material; do not invent new facts.
 
@@ -152,7 +202,7 @@ ${baseDraftText}
 ---
 
 SOURCES (same universe; do not add facts not present here or in the draft):
-${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
+${sourcesForPrompt.length ? JSON.stringify(sourcesForPrompt, null, 2) : "(none)"}
 
 WEB RESULTS (optional; cite [1], [2] if you use them):
 ${webResultsForPrompt || "(none)"}
