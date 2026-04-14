@@ -22,12 +22,18 @@ export default async function handler(req, res) {
   const notSupportedStatements = Array.isArray(body.notSupportedStatements) ? body.notSupportedStatements : [];
   const editorialConcerns = Array.isArray(body.editorialConcerns) ? body.editorialConcerns : [];
   const complianceConcerns = Array.isArray(body.complianceConcerns) ? body.complianceConcerns : [];
+  const context = body.context === "writing" ? "writing" : "assess";
   const signoffVerdict =
     summary.signoffVerdict === "Ready for signoff" ||
     summary.signoffVerdict === "Needs targeted revision" ||
     summary.signoffVerdict === "Needs significant work"
       ? summary.signoffVerdict
       : "Needs targeted revision";
+
+  const roleFraming =
+    context === "writing"
+      ? "Role: senior investment content editor reviewing your own draft before signoff."
+      : "Role: senior investment content editor reviewing a draft for signoff readiness.";
 
   try {
     const openai = new OpenAI({ apiKey });
@@ -38,16 +44,20 @@ export default async function handler(req, res) {
         {
           role: "system",
           content:
-            "You are a senior investment content editor reviewing a draft for signoff readiness. Return one narrative paragraph only, 100-200 words, direct and authoritative, no bullet points, no headers, no system language.",
+            "You are a senior investment content editor. Return one narrative paragraph only, 100-200 words, direct and authoritative, no bullet points, no headers, no system language. Write as a senior editor speaking directly to a colleague - authoritative but not stiff. Contractions are acceptable. Vary sentence length. Avoid sounding like a report.",
         },
         {
           role: "user",
           content: JSON.stringify(
             {
+              roleFraming,
               instructions: [
                 "Assess what is working and what needs fixing with specific references to claims and issues.",
                 "Use direct, constructive editorial language in a senior FT-style voice.",
                 `Conclude explicitly with one of these exact labels: ${signoffVerdict}.`,
+                ...(context === "writing"
+                  ? ["Address the writer directly using language like 'your draft', 'you should', and 'this needs' where appropriate."]
+                  : []),
               ],
               draftText,
               qcSummary: summary,

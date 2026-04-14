@@ -147,13 +147,15 @@ async function renderPdf(payload) {
   const meta = data?.meta || {};
   const dealInfo = data?.dealInfo && typeof data.dealInfo === "object" ? data.dealInfo : {};
   const draft = typeof data?.draft === "string" ? data.draft : "";
+  const reviewerAssessment = typeof data?.reviewerAssessment === "string" ? data.reviewerAssessment.trim() : "";
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
   const review = buildReviewData(qcResult);
-  const includeReview = !!sections?.reviewSummary;
-  const includeStatementReview = includeReview && review.total > 0;
+  const includeReviewSummary = !!sections?.reviewSummary;
+  const includeStatementReview = !!sections?.statementReview && review.total > 0;
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
+  const includeReviewerAssessment = !!sections?.reviewerAssessment && !!reviewerAssessment;
   const exportAt = String(meta.exportedAtLabel || "");
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
@@ -208,9 +210,15 @@ async function renderPdf(payload) {
     if (td) labelValue("Transaction date", td);
   }
 
+  if (includeReviewerAssessment) {
+    sectionGap();
+    sectionHeading("Reviewer Assessment");
+    body(reviewerAssessment);
+  }
+
   if (includeDraft) {
     sectionGap();
-    sectionHeading("Draft Text");
+    sectionHeading(String(meta?.draftHeading || "Draft Text"));
     for (const p of toParagraphs(draft)) {
       body(p);
       doc.moveDown(0.4);
@@ -231,7 +239,13 @@ async function renderPdf(payload) {
     }
   }
 
-  if (includeReview) {
+  if (includeReviewSummary) {
+    sectionGap();
+    sectionHeading("Quality Review Summary");
+    body(`Total statements reviewed: ${review.total}`);
+  }
+
+  if (includeStatementReview) {
     sectionGap();
     sectionHeading("Statement Review");
     for (const s of review.statements) {
@@ -264,13 +278,15 @@ function buildDocx(payload) {
   const meta = data?.meta || {};
   const dealInfo = data?.dealInfo && typeof data.dealInfo === "object" ? data.dealInfo : {};
   const draft = typeof data?.draft === "string" ? data.draft : "";
+  const reviewerAssessment = typeof data?.reviewerAssessment === "string" ? data.reviewerAssessment.trim() : "";
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
   const review = buildReviewData(qcResult);
-  const includeReview = !!sections?.reviewSummary;
-  const includeStatementReview = includeReview && review.total > 0;
+  const includeReviewSummary = !!sections?.reviewSummary;
+  const includeStatementReview = !!sections?.statementReview && review.total > 0;
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
+  const includeReviewerAssessment = !!sections?.reviewerAssessment && !!reviewerAssessment;
   const children = [];
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
@@ -331,8 +347,14 @@ function buildDocx(payload) {
     children.push(new Paragraph({ text: "", spacing: { after: 280 } }));
   }
 
+  if (includeReviewerAssessment) {
+    children.push(heading("Reviewer Assessment"));
+    children.push(new Paragraph({ text: reviewerAssessment }));
+    children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
+  }
+
   if (includeDraft) {
-    children.push(heading("Draft Text"));
+    children.push(heading(String(meta?.draftHeading || "Draft Text")));
     for (const p of toParagraphs(draft)) children.push(new Paragraph({ text: p }));
     children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
   }
@@ -348,7 +370,13 @@ function buildDocx(payload) {
     }
   }
 
-  if (includeReview) {
+  if (includeReviewSummary) {
+    children.push(heading("Quality Review Summary"));
+    children.push(new Paragraph({ text: `Total statements reviewed: ${review.total}` }));
+    children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
+  }
+
+  if (includeStatementReview) {
     children.push(heading("Statement Review"));
     for (const s of review.statements) {
       children.push(new Paragraph({ children: [new TextRun({ text: `"${s.statementText || ""}"`, bold: true })] }));
