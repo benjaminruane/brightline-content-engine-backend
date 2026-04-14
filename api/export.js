@@ -156,7 +156,6 @@ async function renderPdf(payload) {
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
   const includeReviewerAssessment = !!sections?.reviewerAssessment && !!reviewerAssessment;
-  const isAssessExport = String(meta?.draftHeading || "") === "Assessed Draft";
   const exportAt = String(meta.exportedAtLabel || "");
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
@@ -213,7 +212,7 @@ async function renderPdf(payload) {
 
   if (includeDraft) {
     sectionGap();
-    sectionHeading(String(meta?.draftHeading || "Draft Text"));
+    sectionHeading(String(meta?.draftHeading || "Draft output").replace("Assessed Draft", "Assessed draft"));
     for (const p of toParagraphs(draft)) {
       body(p);
       doc.moveDown(0.4);
@@ -221,14 +220,14 @@ async function renderPdf(payload) {
   }
 
   if (includeReviewerAssessment) {
-    if (!isAssessExport || includeDraft) sectionGap();
-    sectionHeading("Reviewer Assessment");
+    sectionGap();
+    sectionHeading("Reviewer assessment");
     body(reviewerAssessment);
   }
 
   if (includeSources) {
     sectionGap();
-    sectionHeading("Sources Used");
+    sectionHeading("Sources used");
     for (const s of sources) {
       body(s?.name || "Untitled source", { bold: true });
       labelValue("• File type", formatSourceFileType(s?.fileType));
@@ -242,13 +241,13 @@ async function renderPdf(payload) {
 
   if (includeReviewSummary) {
     sectionGap();
-    sectionHeading("Quality Review Summary");
+    sectionHeading("Quality review summary");
     body(`Total statements reviewed: ${review.total}`);
   }
 
   if (includeStatementReview) {
     sectionGap();
-    sectionHeading("Statement Review");
+    sectionHeading("Statement review");
     for (const s of review.statements) {
       body(`"${s.statementText || ""}"`, { bold: true });
       doc.moveDown(0.2);
@@ -349,19 +348,19 @@ function buildDocx(payload) {
   }
 
   if (includeDraft) {
-    children.push(heading(String(meta?.draftHeading || "Draft Text")));
+    children.push(heading(String(meta?.draftHeading || "Draft output").replace("Assessed Draft", "Assessed draft")));
     for (const p of toParagraphs(draft)) children.push(new Paragraph({ text: p }));
     children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
   }
 
   if (includeReviewerAssessment) {
-    children.push(heading("Reviewer Assessment"));
+    children.push(heading("Reviewer assessment"));
     children.push(new Paragraph({ text: reviewerAssessment }));
     children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
   }
 
   if (includeSources) {
-    children.push(heading("Sources Used"));
+    children.push(heading("Sources used"));
     for (const s of sources) {
       children.push(new Paragraph({ children: [new TextRun({ text: s?.name || "Untitled source", bold: true })] }));
       children.push(new Paragraph({ children: [new TextRun("• "), new TextRun({ text: "File type: ", bold: true }), new TextRun(String(formatSourceFileType(s?.fileType) || ""))] }));
@@ -372,13 +371,13 @@ function buildDocx(payload) {
   }
 
   if (includeReviewSummary) {
-    children.push(heading("Quality Review Summary"));
+    children.push(heading("Quality review summary"));
     children.push(new Paragraph({ text: `Total statements reviewed: ${review.total}` }));
     children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
   }
 
   if (includeStatementReview) {
-    children.push(heading("Statement Review"));
+    children.push(heading("Statement review"));
     for (const s of review.statements) {
       children.push(new Paragraph({ children: [new TextRun({ text: `"${s.statementText || ""}"`, bold: true })] }));
       const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"

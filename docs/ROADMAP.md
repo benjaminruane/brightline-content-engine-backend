@@ -65,6 +65,7 @@ Last updated: April 2026
 - Assess module: paste/upload draft, run QC, reviewer synthesis in senior editor voice
 - Reviewer Assessment in Quality Review panel (Writing view), Assess export, config panel aligned with Document Setup
 - A10.3 polish - state persistence, layout, scroll, export order, refresh behaviour
+- A10.4 - Assess final polish
 
 ### Backend Architecture
 - LLM-last architecture: verdict, classification, and concern level deterministic; LLM commentary runs after
