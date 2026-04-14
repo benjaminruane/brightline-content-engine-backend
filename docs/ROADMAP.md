@@ -151,7 +151,7 @@ Last updated: April 2026
 
 ## Where This File Lives
 
-Backend repo only (`brightline-content-engine-backend`). Single source of truth. Do not duplicate into the frontend repo.
+Backend repo only (`brightline-content-engine-backend`), at `docs/ROADMAP.md`. Single source of truth. Do not duplicate into the frontend repo or the repo root.
 
 ---
 
