@@ -22,6 +22,12 @@ export default async function handler(req, res) {
   const notSupportedStatements = Array.isArray(body.notSupportedStatements) ? body.notSupportedStatements : [];
   const editorialConcerns = Array.isArray(body.editorialConcerns) ? body.editorialConcerns : [];
   const complianceConcerns = Array.isArray(body.complianceConcerns) ? body.complianceConcerns : [];
+  const reviewOptions = body.reviewOptions && typeof body.reviewOptions === "object" ? body.reviewOptions : {};
+  const activeReviewOptions = {
+    evidenceEnabled: reviewOptions.evidenceEnabled !== false,
+    editorialEnabled: reviewOptions.editorialEnabled !== false,
+    complianceEnabled: reviewOptions.complianceEnabled !== false,
+  };
   const context = body.context === "writing" ? "writing" : "assess";
   const signoffVerdict =
     summary.signoffVerdict === "Ready for signoff" ||
@@ -54,12 +60,14 @@ export default async function handler(req, res) {
               instructions: [
                 "Assess what is working and what needs fixing with specific references to claims and issues.",
                 "Use direct, constructive editorial language in a senior FT-style voice.",
+                "Your assessment must only cover the review types that were run. Do not comment on editorial matters if editorial review was not run, and do not comment on evidence if evidence review was not run.",
                 `Conclude explicitly with one of these exact labels: ${signoffVerdict}.`,
                 ...(context === "writing"
                   ? ["Address the writer directly using language like 'your draft', 'you should', and 'this needs' where appropriate."]
                   : []),
               ],
               draftText,
+              activeReviewOptions,
               qcSummary: summary,
               notSupportedStatements,
               editorialConcerns,
