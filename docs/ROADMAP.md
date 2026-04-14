@@ -62,6 +62,7 @@ Last updated: April 2026
 - LLM-generated source description on upload
 - Source type detection (PDF, text, URL)
 - Source text extraction pipeline (`lib/extract-text-from-source.mjs`)
+- Assess module: paste/upload draft, run QC, reviewer synthesis in senior editor voice
 
 ### Backend Architecture
 - LLM-last architecture: verdict, classification, and concern level deterministic; LLM commentary runs after
@@ -80,11 +81,6 @@ Last updated: April 2026
 - Atomised subclaim problem — A7.38 reverted, needs redesign
 - Statement 1 currency hallucination — deferred, revisit in this sprint
 - Public version flag in writing prompt — deferred, revisit in this sprint
-
-### Reviewer Module
-- Upload or paste existing draft text for review without going through Generate
-- Full QC pipeline runs on uploaded text against uploaded sources
-- Scope TBD — to be specced next
 
 ### Web Search Functionality Sprint
 - Scope and reliability of public search integration
