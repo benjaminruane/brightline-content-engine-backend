@@ -156,6 +156,7 @@ async function renderPdf(payload) {
   const includeSources = !!sections?.sources && sources.length > 0;
   const includeDraft = !!sections?.draft;
   const includeReviewerAssessment = !!sections?.reviewerAssessment && !!reviewerAssessment;
+  const isAssessExport = String(meta?.draftHeading || "") === "Assessed Draft";
   const exportAt = String(meta.exportedAtLabel || "");
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
@@ -210,12 +211,6 @@ async function renderPdf(payload) {
     if (td) labelValue("Transaction date", td);
   }
 
-  if (includeReviewerAssessment) {
-    sectionGap();
-    sectionHeading("Reviewer Assessment");
-    body(reviewerAssessment);
-  }
-
   if (includeDraft) {
     sectionGap();
     sectionHeading(String(meta?.draftHeading || "Draft Text"));
@@ -223,6 +218,12 @@ async function renderPdf(payload) {
       body(p);
       doc.moveDown(0.4);
     }
+  }
+
+  if (includeReviewerAssessment) {
+    if (!isAssessExport || includeDraft) sectionGap();
+    sectionHeading("Reviewer Assessment");
+    body(reviewerAssessment);
   }
 
   if (includeSources) {
@@ -347,15 +348,15 @@ function buildDocx(payload) {
     children.push(new Paragraph({ text: "", spacing: { after: 280 } }));
   }
 
-  if (includeReviewerAssessment) {
-    children.push(heading("Reviewer Assessment"));
-    children.push(new Paragraph({ text: reviewerAssessment }));
-    children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
-  }
-
   if (includeDraft) {
     children.push(heading(String(meta?.draftHeading || "Draft Text")));
     for (const p of toParagraphs(draft)) children.push(new Paragraph({ text: p }));
+    children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
+  }
+
+  if (includeReviewerAssessment) {
+    children.push(heading("Reviewer Assessment"));
+    children.push(new Paragraph({ text: reviewerAssessment }));
     children.push(new Paragraph({ text: "", spacing: { after: 360 } }));
   }
 

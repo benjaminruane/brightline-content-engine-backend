@@ -64,6 +64,7 @@ Last updated: April 2026
 - Source text extraction pipeline (`lib/extract-text-from-source.mjs`)
 - Assess module: paste/upload draft, run QC, reviewer synthesis in senior editor voice
 - Reviewer Assessment in Quality Review panel (Writing view), Assess export, config panel aligned with Document Setup
+- A10.3 polish - state persistence, layout, scroll, export order, refresh behaviour
 
 ### Backend Architecture
 - LLM-last architecture: verdict, classification, and concern level deterministic; LLM commentary runs after
