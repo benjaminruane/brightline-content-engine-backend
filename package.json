@@ -10,7 +10,6 @@
   "main": "api/generate.js",
   "scripts": {
     "test": "echo \"no tests\"",
-    "test:a6-49d": "node tests/a6-49d-corpus-numeric-anchor.mjs",
     "qc:test": "node scripts/run_qc_regression.mjs",
     "audit:inits": "node tools/audit-statement-analysis-inits.mjs --out init-audit.json"
   },

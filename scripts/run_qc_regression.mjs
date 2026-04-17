@@ -4,26 +4,25 @@
  * qcCard.displayVerdict, qcCard.concernLevel, pattern-based reasoningParagraph,
  * meta.qcEvidenceAuthorities[0] alignment, optional downgrade / sentence aggregation.
  *
- * Loads tests/qc_regression_suite.json, POSTs each run to /api/test/run-qc,
+ * Loads tests/qc_regression_suite.json, POSTs each run to /api/analyse-statements,
  * saves full JSON to tests/output/<runName>.json, exits non-zero if any run fails.
  *
- * Base URL: QC_REGRESSION_BASE_URL or http://localhost:3000
+ * Base URL: QC_REGRESSION_BASE_URL or http://localhost:3000 (v3 default)
  */
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveQcTestSourceFiles } from "../lib/resolve-qc-test-sources.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const SUITE_PATH = path.join(ROOT, "tests", "qc_regression_suite.json");
 const OUTPUT_DIR = path.join(ROOT, "tests", "output");
-const QC_PIPELINE = process.env.QC_PIPELINE;
+const QC_PIPELINE = process.env.QC_PIPELINE || "v3";
 const USE_V3_ENDPOINT = QC_PIPELINE === "v3";
 const BASE_URL = process.env.QC_REGRESSION_BASE_URL || "http://localhost:3000";
-const RUN_QC_URL = USE_V3_ENDPOINT
-  ? "http://localhost:3000/api/qc-v3-dev"
-  : `${BASE_URL.replace(/\/$/, "")}/api/test/run-qc`;
+const RUN_QC_URL = `${BASE_URL.replace(/\/$/, "")}/api/analyse-statements`;
 
 /** @param {unknown} v */
 function parseExpectList(v) {
@@ -340,13 +339,23 @@ function explanationPatternSummary(structuralResults) {
 
 async function runOne(spec) {
   const requestBody = {
-    draft: spec.draft,
+    draftText: spec.draft,
     options: { webEnabled: false },
   };
   if (Array.isArray(spec.sources) && spec.sources.length > 0) {
     requestBody.sources = spec.sources;
-  } else {
-    requestBody.sourceFiles = spec.sourceFiles;
+  } else if (Array.isArray(spec.sourceFiles) && spec.sourceFiles.length > 0) {
+    const resolved = await resolveQcTestSourceFiles(spec.sourceFiles);
+    if (resolved?.error) {
+      throw new Error(`source resolution failed: ${resolved.error.message}`);
+    }
+    requestBody.sources = (resolved.sources || []).map((src, index) => ({
+      text: src?.text ?? "",
+      label: src?.title || src?.name || `Source ${index + 1}`,
+      name: src?.name || src?.title || `Source ${index + 1}`,
+      title: src?.title || src?.name || `Source ${index + 1}`,
+      sourceType: src?.sourceType || "uploaded",
+    }));
   }
 
   const res = await fetch(RUN_QC_URL, {
@@ -399,11 +408,7 @@ async function runOne(spec) {
 }
 
 async function main() {
-  console.log(
-    USE_V3_ENDPOINT
-      ? "regression: running against v3 endpoint"
-      : "regression: running against v2 endpoint (default)"
-  );
+  console.log("regression: running against v3 endpoint");
 
   let suite;
   try {
@@ -424,10 +429,6 @@ async function main() {
 
   const results = [];
   for (const run of runs) {
-    if (!USE_V3_ENDPOINT && run?.v3Only === true) {
-      console.log(`skipping v3-only fixture: ${run.name}`);
-      continue;
-    }
     try {
       const result = await runOne(run);
       results.push(result);

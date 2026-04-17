@@ -20,7 +20,6 @@
     },
     {
       "name": "Run2_numeric_conflict",
-      "v3Only": true,
       "description": "Tests that v3 correctly returns conflicting when the source contains figures that directly contradict both the revenue and growth rate stated in the draft. No ambiguity — both numbers differ materially.",
       "sources": [
         {
@@ -40,7 +39,6 @@
     },
     {
       "name": "Run3_not_supported",
-      "v3Only": true,
       "description": "Tests that v3 correctly returns not_supported when uploaded sources are genuinely silent on the specific claim. Sources discuss the company but contain no mention of any funding round, investors, or capital raised.",
       "sources": [
         {
