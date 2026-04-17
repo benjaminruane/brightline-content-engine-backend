@@ -18,8 +18,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const SUITE_PATH = path.join(ROOT, "tests", "qc_regression_suite.json");
 const OUTPUT_DIR = path.join(ROOT, "tests", "output");
+const QC_PIPELINE = process.env.QC_PIPELINE;
+const USE_V3_ENDPOINT = QC_PIPELINE === "v3";
 const BASE_URL = process.env.QC_REGRESSION_BASE_URL || "http://localhost:3000";
-const RUN_QC_URL = `${BASE_URL.replace(/\/$/, "")}/api/test/run-qc`;
+const RUN_QC_URL = USE_V3_ENDPOINT
+  ? "http://localhost:3000/api/qc-v3-dev"
+  : `${BASE_URL.replace(/\/$/, "")}/api/test/run-qc`;
 
 /** @param {unknown} v */
 function parseExpectList(v) {
@@ -33,6 +37,14 @@ function primaryStatement(payload) {
   const statements = payload?.statements;
   if (!Array.isArray(statements) || statements.length === 0) return null;
   return statements[0];
+}
+
+function extractCards(payload) {
+  if (Array.isArray(payload?.qcCards)) return payload.qcCards;
+  const statements = Array.isArray(payload?.statements) ? payload.statements : [];
+  return statements
+    .map((s) => s?.qcCard)
+    .filter((card) => card && typeof card === "object");
 }
 
 function checkListPass(actual, expectedList, label) {
@@ -135,6 +147,29 @@ function assertDraftSpanPresent(qcCard, expect) {
   return { pass: true, note: "draftSpan" };
 }
 
+function assertHasConflict(qcCard, expect) {
+  if (typeof expect?.hasConflict !== "boolean") return null;
+  const actual = qcCard?.hasConflict === true;
+  if (actual !== expect.hasConflict) {
+    return { pass: false, note: `hasConflict: expected ${expect.hasConflict}, got ${actual}` };
+  }
+  return { pass: true, note: "hasConflict" };
+}
+
+function assertPrimaryExcerpt(qcCard, expect) {
+  if (expect?.primaryExcerptPresent !== true && expect?.primaryExcerpt !== null) return null;
+  const primaryExcerpt = qcCard?.primaryExcerpt ?? null;
+  if (expect?.primaryExcerptPresent === true) {
+    if (primaryExcerpt == null) return { pass: false, note: "primaryExcerpt: expected non-null" };
+    return { pass: true, note: "primaryExcerpt non-null" };
+  }
+  if (expect?.primaryExcerpt === null) {
+    if (primaryExcerpt !== null) return { pass: false, note: "primaryExcerpt: expected null" };
+    return { pass: true, note: "primaryExcerpt null" };
+  }
+  return null;
+}
+
 /** Optional exact lengths for qcCard.supportRefIds / qcCard.citationHovers */
 function assertRefAndHoverLengths(qcCard, expect) {
   if (expect?.supportRefIdsLength == null && expect?.citationHoversLength == null) return null;
@@ -219,7 +254,11 @@ function assertAggregateStatementQc(payload, expect) {
   const agg = expect?.aggregateStatementQc;
   if (agg == null || typeof agg !== "object") return null;
 
-  const statements = Array.isArray(payload?.statements) ? payload.statements : [];
+  const statements = Array.isArray(payload?.statements)
+    ? payload.statements
+    : Array.isArray(payload?.qcCards)
+      ? payload.qcCards.map((qcCard) => ({ qcCard }))
+      : [];
   if (statements.length === 0) {
     return { pass: false, note: "aggregateStatementQc: no statements in payload" };
   }
@@ -279,6 +318,8 @@ function runStructuralAssertions(statement, qcCard, expect) {
     () => assertPrimaryRefTitleIncludes(qcCard, expect),
     () => assertSupportRefTitlesInclude(qcCard, expect),
     () => assertDraftSpanPresent(qcCard, expect),
+    () => assertHasConflict(qcCard, expect),
+    () => assertPrimaryExcerpt(qcCard, expect),
     () => assertRefAndHoverLengths(qcCard, expect),
     () => assertPrimaryAuthority(statement, qcCard, expect),
     () => assertDowngrade(statement, qcCard, expect),
@@ -298,18 +339,25 @@ function explanationPatternSummary(structuralResults) {
 }
 
 async function runOne(spec) {
+  const requestBody = {
+    draft: spec.draft,
+    options: { webEnabled: false },
+  };
+  if (Array.isArray(spec.sources) && spec.sources.length > 0) {
+    requestBody.sources = spec.sources;
+  } else {
+    requestBody.sourceFiles = spec.sourceFiles;
+  }
+
   const res = await fetch(RUN_QC_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      draft: spec.draft,
-      sourceFiles: spec.sourceFiles,
-      options: { webEnabled: false },
-    }),
+    body: JSON.stringify(requestBody),
   });
   const payload = await res.json();
   const first = primaryStatement(payload);
-  const qcCard = first?.qcCard ?? null;
+  const cards = extractCards(payload);
+  const qcCard = cards[0] ?? null;
 
   const expDv = parseExpectList(spec.expect?.displayVerdict);
   const expCl = parseExpectList(spec.expect?.concernLevel);
@@ -351,6 +399,12 @@ async function runOne(spec) {
 }
 
 async function main() {
+  console.log(
+    USE_V3_ENDPOINT
+      ? "regression: running against v3 endpoint"
+      : "regression: running against v2 endpoint (default)"
+  );
+
   let suite;
   try {
     const raw = await readFile(SUITE_PATH, "utf8");
@@ -370,6 +424,10 @@ async function main() {
 
   const results = [];
   for (const run of runs) {
+    if (!USE_V3_ENDPOINT && run?.v3Only === true) {
+      console.log(`skipping v3-only fixture: ${run.name}`);
+      continue;
+    }
     try {
       const result = await runOne(run);
       results.push(result);

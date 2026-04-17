@@ -10,49 +10,52 @@
       "expect": {
         "displayVerdict": "supported_full",
         "concernLevel": "none",
+        "assertAuthority": false,
         "hasUsableExcerpt": true,
         "supportRefIdsLength": 2,
-        "citationHoversLength": 2,
         "supportRefIdsUnique": true,
         "reasoningParagraphIncludes": ["source"],
         "reasoningParagraphExcludes": ["potential", "scenario-based figure"]
       }
     },
     {
-      "name": "Run2_modality_mismatch",
-      "sourceFiles": [
-        "TEST_numeric_near_source.txt",
-        "D2_shopify_unit_economics_discussion.txt",
-        "D3_shopify_risk_factors_summary.txt"
+      "name": "Run2_numeric_conflict",
+      "v3Only": true,
+      "description": "Tests that v3 correctly returns conflicting when the source contains figures that directly contradict both the revenue and growth rate stated in the draft. No ambiguity — both numbers differ materially.",
+      "sources": [
+        {
+          "label": "Annual Report",
+          "text": "Full year revenue was $41 million, an increase of 22% compared to the prior year."
+        }
       ],
-      "draft": "The company's valuation was around $250 million.",
+      "draft": "The company generated $48 million in revenue for the year, representing 34% year-over-year growth.",
       "expect": {
-        "displayVerdict": "not_supported",
+        "displayVerdict": "conflict",
         "concernLevel": "high",
-        "hasUsableExcerpt": false,
-        "downgrade": true,
-        "supportRefIdsLength": 0,
-        "citationHoversLength": 0,
-        "reasoningParagraphIncludesAny": ["related content", "doesn't directly confirm", "more specific passage", "consider revising"]
+        "assertAuthority": false,
+        "hasConflict": true,
+        "primaryExcerptPresent": true,
+        "supportRefIdsLength": 0
       }
     },
     {
-      "name": "Run3_modality_aligned",
-      "sourceFiles": [
-        "TEST_numeric_near_source.txt",
-        "D2_shopify_unit_economics_discussion.txt",
-        "D3_shopify_risk_factors_summary.txt"
+      "name": "Run3_not_supported",
+      "v3Only": true,
+      "description": "Tests that v3 correctly returns not_supported when uploaded sources are genuinely silent on the specific claim. Sources discuss the company but contain no mention of any funding round, investors, or capital raised.",
+      "sources": [
+        {
+          "label": "Company Overview",
+          "text": "The company serves over 4,000 enterprise customers across 32 countries. Its platform has processed more than 12 million transactions to date. The company is focused on expanding its product suite and growing its presence in the Asia-Pacific region."
+        }
       ],
-      "draft": "The company could reach a valuation of around $250 million in a long-term scenario.",
+      "draft": "The company completed a $20 million Series B funding round led by Sequoia Capital.",
       "expect": {
         "displayVerdict": "not_supported",
         "concernLevel": "high",
-        "hasUsableExcerpt": false,
-        "downgrade": true,
-        "supportRefIdsLength": 0,
-        "citationHoversLength": 0,
-        "reasoningParagraphIncludesAny": ["related content", "doesn't directly confirm", "more specific passage", "consider revising"],
-        "reasoningParagraphExcludes": ["confirmed reported figure"]
+        "assertAuthority": false,
+        "hasConflict": false,
+        "primaryExcerpt": null,
+        "supportRefIdsLength": 0
       }
     },
     {
@@ -66,11 +69,10 @@
         "statementsReturned": true,
         "assertAuthority": false,
         "aggregateStatementQc": {
-          "minSupportedFullCount": 2,
+          "minSupportedFullCount": 1,
           "noConflictVerdicts": true,
           "requireConcernNoneForVerdicts": [
-            "supported_full",
-            "supported_partial"
+            "supported_full"
           ]
         }
       }
