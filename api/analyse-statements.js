@@ -110,6 +110,7 @@ export default async function handler(req, res) {
         (typeof card?.statement === "string" && card.statement) ||
         (typeof stage1Statements[index]?.text === "string" ? stage1Statements[index].text : "");
       return {
+        id: String(card.index),
         text: statementText,
         qcCard: card,
         draftSpan:
