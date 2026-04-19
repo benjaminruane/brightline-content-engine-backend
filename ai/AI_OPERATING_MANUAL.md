@@ -68,3 +68,31 @@ When proposing development specs:
 5. Do not modify upstream extraction, canonical claims, or evidence binding unless the problem specifically originates there.
 
 Specs should aim for the smallest safe intervention that materially improves the user-visible outcome.
+
+## Diagnostic Discipline
+
+When a recurring issue persists across multiple spec iterations,
+stop writing specs and diagnose instead. The signal is simple:
+two or more spec rounds targeting the same symptom without
+resolution means the issue isn't where the specs assume it is.
+
+Instead of a third attempt, run a diagnostic:
+
+1. Ask Cursor to inspect the deployed code and confirm it matches
+   the spec that was supposedly implemented.
+2. Add temporary logging to capture what the runtime is actually
+   doing — what prompts are sent, what outputs are returned, what
+   state flows between stages.
+3. Run one representative test case through the instrumented code
+   and capture the evidence.
+4. Produce a short diagnostic report identifying the real root
+   cause.
+5. Only then write the fix spec.
+
+This avoids the common failure mode of repeatedly patching around
+a symptom because the real cause sits somewhere the specs haven't
+looked. Diagnosis is cheap, specs that keep missing are expensive.
+
+Early diagnosis is preferred over blind speccing. If a spec's
+testing reveals unexpected behaviour, prefer a diagnostic pass
+before the next spec.
