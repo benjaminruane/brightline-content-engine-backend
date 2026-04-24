@@ -1,11 +1,7 @@
 // api/query.js
 
 import { deriveQueryFromAsk, runWebSearch } from "../lib/web.js";
-import { OpenAI } from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 /**
  * Heuristic: detect whether results are generic / listicle-like.
@@ -103,13 +99,17 @@ Web sources:
 ${references.map(r => `[${r.id}] ${r.title}`).join("\n")}
 `;
 
-    const completion = await client.chat.completions.create({
+    const completion = await callOpenAI({
       model: "gpt-5.1",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
       temperature: 0.2,
+    }, {
+      traceName: "ask-query",
+      spanName: "ask-query-answer",
+      metadata: { route: "query" },
     });
 
     const answer = completion.choices[0]?.message?.content || "";
@@ -145,5 +145,7 @@ ${references.map(r => `[${r.id}] ${r.title}`).join("\n")}
       ok: false,
       error: err.message || "Ask AI failed",
     });
+  } finally {
+    await flushObservability();
   }
 }

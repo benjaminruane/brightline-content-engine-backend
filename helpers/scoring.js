@@ -1,6 +1,6 @@
 // helpers/scoring.js
 
-import OpenAI from "openai";
+import { callOpenAI } from "../lib/observability.js";
 
 /**
  * Ask the model to score an output against a simple rubric.
@@ -59,11 +59,7 @@ Return ONLY a JSON object following the schema, with no extra text.
 `;
 
   try {
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
-
-    const completion = await client.chat.completions.create({
+    const completion = await callOpenAI({
       model: "gpt-4o-mini",
       temperature: 0,
       max_completion_tokens: 300,
@@ -71,6 +67,10 @@ Return ONLY a JSON object following the schema, with no extra text.
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
       ]
+    }, {
+      traceName: "output-scoring",
+      spanName: "output-scoring",
+      metadata: { helper: "scoring" },
     });
 
     let raw = "{}";

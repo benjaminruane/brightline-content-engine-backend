@@ -5,7 +5,7 @@
 // - publicSearch === true: enrich with web search results
 // - publicSearch === false: do not retrieve from web
 
-import OpenAI from "openai";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -630,8 +630,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
   }
 
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
     const text = typeof body.text === "string" ? body.text : "";
@@ -821,13 +819,17 @@ Return ONLY valid JSON with no markdown or extra text:
 }
 `.trim();
 
-    const completion = await client.chat.completions.create({
+    const completion = await callOpenAI({
       model: modelId,
       temperature: 0.2,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt },
       ],
+    }, {
+      traceName: "writing-rewrite",
+      spanName: "writing-rewrite",
+      metadata: { route: "rewrite" },
     });
 
     if (diagVerbose) {
@@ -878,10 +880,14 @@ Return ONLY JSON:
   "draftText": "string"
 }`.trim();
         try {
-          const correctionCompletion = await client.chat.completions.create({
+          const correctionCompletion = await callOpenAI({
             model: modelId,
             temperature: 0.2,
             messages: [{ role: "user", content: correctionPrompt }],
+          }, {
+            traceName: "writing-rewrite",
+            spanName: "writing-rewrite-word-limit-correction",
+            metadata: { route: "rewrite" },
           });
           const correctionRaw = correctionCompletion?.choices?.[0]?.message?.content || "";
           const correctionParsed = safeJsonParse(correctionRaw) || {};
@@ -1060,5 +1066,7 @@ Return ONLY JSON:
     });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Rewrite failed" });
+  } finally {
+    await flushObservability();
   }
 }

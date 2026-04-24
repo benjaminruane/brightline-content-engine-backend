@@ -4,8 +4,8 @@
 // Uses provenance sources only (uploaded sources + webReferences from Generate/Rewrite).
 // Does NOT perform fresh web search.
 
-import OpenAI from "openai";
 import { formatWebResultsForPrompt } from "../lib/web.js";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -39,8 +39,6 @@ export default async function handler(req, res) {
   if (!process.env.OPENAI_API_KEY) {
     return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
   }
-
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
@@ -145,13 +143,17 @@ ${webSourcesSection}
 ${hasUnattributedEnrichment ? `\n\nATTRIBUTION FLAG: This draft version contains unattributed enrichment (facts not supported by uploaded sources and not cited to web sources).` : ""}
 `.trim();
 
-    const completion = await client.chat.completions.create({
+    const completion = await callOpenAI({
       model: modelId,
       temperature: 0.2,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
       ],
+    }, {
+      traceName: "query-sources",
+      spanName: "query-sources-answer",
+      metadata: { route: "query-sources" },
     });
 
     const raw = completion?.choices?.[0]?.message?.content || "";
@@ -173,5 +175,7 @@ ${hasUnattributedEnrichment ? `\n\nATTRIBUTION FLAG: This draft version contains
     });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Query sources failed" });
+  } finally {
+    await flushObservability();
   }
 }

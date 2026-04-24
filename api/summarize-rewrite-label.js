@@ -1,5 +1,5 @@
 // A8.2: Short LLM summary of rewrite instructions (fire-and-forget from client; non-blocking for save).
-import OpenAI from "openai";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -32,8 +32,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const openai = new OpenAI({ apiKey });
-    const completion = await openai.chat.completions.create({
+    const completion = await callOpenAI({
       model: "gpt-4o-mini",
       temperature: 0,
       messages: [
@@ -46,11 +45,17 @@ ${instruction}`,
         },
       ],
       max_tokens: 80,
+    }, {
+      traceName: "rewrite-label-summary",
+      spanName: "rewrite-label-summary",
+      metadata: { route: "summarize-rewrite-label" },
     });
     const raw = completion?.choices?.[0]?.message?.content;
     const label = stripTrailingPunctuation(typeof raw === "string" ? raw.trim() : "");
     return res.status(200).json({ ok: true, label: label || "" });
   } catch (err) {
     return res.status(200).json({ ok: true, label: "" });
+  } finally {
+    await flushObservability();
   }
 }

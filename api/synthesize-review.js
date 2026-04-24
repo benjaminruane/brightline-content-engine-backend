@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -42,8 +42,7 @@ export default async function handler(req, res) {
       : "Role: senior investment content editor reviewing a draft for signoff readiness.";
 
   try {
-    const openai = new OpenAI({ apiKey });
-    const completion = await openai.chat.completions.create({
+    const completion = await callOpenAI({
       model: "gpt-4o",
       temperature: 0,
       messages: [
@@ -79,10 +78,16 @@ export default async function handler(req, res) {
         },
       ],
       max_tokens: 350,
+    }, {
+      traceName: "assess-reviewer-synthesis",
+      spanName: "assess-reviewer-synthesis",
+      metadata: { route: "synthesize-review" },
     });
     const narrative = typeof completion?.choices?.[0]?.message?.content === "string" ? completion.choices[0].message.content.trim() : "";
     return res.status(200).json({ ok: true, narrative });
   } catch {
     return res.status(200).json({ ok: false, narrative: "" });
+  } finally {
+    await flushObservability();
   }
 }

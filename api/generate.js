@@ -11,7 +11,6 @@
 
 console.log("[A3.14.3][IMPORT_OK] api/generate.js loaded");
 
-import OpenAI from "openai";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -30,6 +29,7 @@ import {
   getEventTypeFraming,
 } from "../lib/event-type.js";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 // ------------------------------------------------------------------
 // CORS
@@ -607,8 +607,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
   }
 
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
     const {
@@ -767,13 +765,17 @@ Return ONLY JSON:
 }
 `.trim();
 
-    const completion = await client.chat.completions.create({
+    const completion = await callOpenAI({
       model: modelId,
       temperature: 0.2,
       messages: [
         { role: "system", content: systemContent },
         { role: "user", content: userPrompt },
       ],
+    }, {
+      traceName: "writing-generate",
+      spanName: "writing-generate",
+      metadata: { route: "generate" },
     });
 
     if (diagVerbose) {
@@ -823,10 +825,14 @@ Return ONLY JSON:
   "draftText": "string"
 }`.trim();
         try {
-          const correctionCompletion = await client.chat.completions.create({
+          const correctionCompletion = await callOpenAI({
             model: modelId,
             temperature: 0.2,
             messages: [{ role: "user", content: correctionPrompt }],
+          }, {
+            traceName: "writing-generate",
+            spanName: "writing-generate-word-limit-correction",
+            metadata: { route: "generate" },
           });
           const correctionRaw = correctionCompletion?.choices?.[0]?.message?.content || "";
           const correctionParsed = safeJsonParse(correctionRaw) || {};
@@ -903,5 +909,7 @@ Return ONLY JSON:
       ok: false,
       error: err?.message || "Unknown error",
     });
+  } finally {
+    await flushObservability();
   }
 }

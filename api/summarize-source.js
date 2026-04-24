@@ -1,5 +1,5 @@
-import OpenAI from "openai";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -52,8 +52,7 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(200).json({ ok: true, description: "" });
 
   try {
-    const openai = new OpenAI({ apiKey });
-    const completion = await openai.chat.completions.create({
+    const completion = await callOpenAI({
       model: "gpt-4o-mini",
       temperature: 0,
       messages: [
@@ -65,6 +64,10 @@ export default async function handler(req, res) {
         { role: "user", content: llmInput },
       ],
       max_tokens: 180,
+    }, {
+      traceName: "source-description-generation",
+      spanName: "source-description-generation",
+      metadata: { route: "summarize-source" },
     });
     const description = typeof completion?.choices?.[0]?.message?.content === "string"
       ? completion.choices[0].message.content.trim()
@@ -72,5 +75,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, description });
   } catch {
     return res.status(200).json({ ok: true, description: "" });
+  } finally {
+    await flushObservability();
   }
 }

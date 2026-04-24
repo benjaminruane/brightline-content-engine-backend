@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 const OUTPUT_TYPES = new Set([
   "reporting_commentary",
@@ -37,8 +37,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const openai = new OpenAI({ apiKey });
-    const completion = await openai.chat.completions.create({
+    const completion = await callOpenAI({
       model: "gpt-4o-mini",
       temperature: 0,
       max_tokens: 80,
@@ -54,6 +53,10 @@ export default async function handler(req, res) {
           content: draftText.slice(0, 6000),
         },
       ],
+    }, {
+      traceName: "detect-output-type",
+      spanName: "detect-output-type",
+      metadata: { route: "detect-output-type" },
     });
 
     const raw = completion?.choices?.[0]?.message?.content;
@@ -66,5 +69,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ outputType, confidence });
   } catch {
     return res.status(200).json(fallbackResponse());
+  } finally {
+    await flushObservability();
   }
 }

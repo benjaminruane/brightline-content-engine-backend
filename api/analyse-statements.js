@@ -6,6 +6,7 @@
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
 import { runPipelineV3 } from "../lib/qc/pipeline-v3/qc-pipeline-v3.mjs";
+import { createTraceId, flushObservability } from "../lib/observability.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -78,6 +79,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    const traceId = createTraceId();
     const body = typeof req?.body === "string" ? JSON.parse(req.body) : (req?.body || {});
     const draftText = typeof body?.draftText === "string" ? body.draftText : "";
     const candidateSources = Array.isArray(body?.uploadedSources)
@@ -98,7 +100,7 @@ export default async function handler(req, res) {
       })
       .filter(Boolean);
 
-    const v3 = await runPipelineV3(draftText, v3Sources, body?.options || {});
+    const v3 = await runPipelineV3(draftText, v3Sources, { ...(body?.options || {}), traceId });
     const qcCards = Array.isArray(v3?.qcCards) ? v3.qcCards : [];
     if (qcCards.length === 0) {
       throw new Error("V3 pipeline returned empty qcCards");
@@ -132,6 +134,7 @@ export default async function handler(req, res) {
       meta: {
         pipelineVersion: "v3",
         stagesComplete: v3?._stagesComplete ?? null,
+        traceId,
       },
       bannedWordHits,
     });
@@ -150,5 +153,7 @@ export default async function handler(req, res) {
     };
     res.status(200).json(safeInternalErrorPayload);
     return;
+  } finally {
+    await flushObservability();
   }
 }

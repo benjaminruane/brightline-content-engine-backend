@@ -4,7 +4,6 @@
 // Same source set; fresh retrieval within that set allowed.
 // No invention of facts.
 
-import OpenAI from "openai";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -19,6 +18,7 @@ import {
   OUTPUT_TYPE,
 } from "../lib/output-intent.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -125,8 +125,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
   }
 
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
     const baseDraftId = typeof body.baseDraftId === "string" ? body.baseDraftId.trim() : null;
@@ -220,10 +218,14 @@ Return ONLY JSON:
 }
 `.trim();
 
-    const completion = await client.chat.completions.create({
+    const completion = await callOpenAI({
       model: modelId,
       temperature: 0.2,
       messages: [{ role: "user", content: prompt }],
+    }, {
+      traceName: "adapt-generate",
+      spanName: "adapt-generate",
+      metadata: { route: "adapt" },
     });
 
     const raw = completion?.choices?.[0]?.message?.content || "";
@@ -266,5 +268,7 @@ Return ONLY JSON:
       ok: false,
       error: err?.message || "Adapt failed",
     });
+  } finally {
+    await flushObservability();
   }
 }

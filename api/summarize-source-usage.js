@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import { callOpenAI, flushObservability } from "../lib/observability.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -44,8 +44,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const completion = await client.chat.completions.create({
+    const completion = await callOpenAI({
       model: "gpt-4o-mini",
       temperature: 0,
       messages: [
@@ -59,11 +58,17 @@ export default async function handler(req, res) {
           content: `Source name: ${sourceName}\nSnippet: ${snippet}\nDraft excerpt: ${draftText}`,
         },
       ],
+    }, {
+      traceName: "used-for-synthesis",
+      spanName: "used-for-synthesis",
+      metadata: { route: "summarize-source-usage" },
     });
 
     const usedFor = normalizeUsedFor(completion?.choices?.[0]?.message?.content || "");
     return res.status(200).json({ ok: true, usedFor });
   } catch {
     return res.status(200).json({ ok: true, usedFor: "" });
+  } finally {
+    await flushObservability();
   }
 }
