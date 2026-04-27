@@ -6,7 +6,8 @@
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
 import { runPipelineV3 } from "../lib/qc/pipeline-v3/qc-pipeline-v3.mjs";
-import { createTraceId, flushObservability } from "../lib/observability.js";
+import { createTraceId, flushObservability, startTrace, updateTraceMetadata } from "../lib/observability.js";
+import { getDraftHashPrefix } from "../lib/draft-hash.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -17,6 +18,17 @@ function setCorsHeaders(req, res) {
 }
 
 const ROUTE = "analyse-statements";
+const OUTPUT_TYPES = new Set([
+  "reporting_commentary",
+  "investor_letter",
+  "press_release",
+  "linkedin_post",
+]);
+
+function normalizeRequiredVersion(value) {
+  const v = typeof value === "string" ? value.trim().toLowerCase() : "";
+  return v === "public" ? "public" : "complete";
+}
 
 function escapeRegex(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -99,6 +111,28 @@ export default async function handler(req, res) {
         return { text, label };
       })
       .filter(Boolean);
+    const sourceLabels = v3Sources.map((source) => source.label);
+    const sourceCount = new Set(sourceLabels).size;
+    const requiredVersion = normalizeRequiredVersion(body?.options?.requiredVersion ?? body?.options?.visibility);
+    const runStartedAt = new Date().toISOString();
+    const draftMetadata = {
+      draftHash: getDraftHashPrefix(draftText),
+      draftCharCount: draftText.length,
+      sourceCount,
+      sourceLabels,
+      requiredVersion,
+      runStartedAt,
+    };
+    startTrace({
+      traceId,
+      traceName: "qc-run",
+      metadata: draftMetadata,
+    });
+
+    const outputType = typeof body?.options?.outputType === "string" ? body.options.outputType.trim() : "";
+    if (OUTPUT_TYPES.has(outputType)) {
+      updateTraceMetadata(traceId, { outputType });
+    }
 
     const v3 = await runPipelineV3(draftText, v3Sources, { ...(body?.options || {}), traceId });
     const qcCards = Array.isArray(v3?.qcCards) ? v3.qcCards : [];
@@ -107,6 +141,7 @@ export default async function handler(req, res) {
     }
 
     const stage1Statements = Array.isArray(v3?.stage1?.statements) ? v3.stage1.statements : [];
+    updateTraceMetadata(traceId, { statementCount: stage1Statements.length });
     const statements = qcCards.map((card, index) => {
       const statementText =
         (typeof card?.statement === "string" && card.statement) ||
