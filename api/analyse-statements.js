@@ -30,6 +30,18 @@ function normalizeRequiredVersion(value) {
   return v === "public" ? "public" : "complete";
 }
 
+function resolveOutputType(body) {
+  const fromOptions = typeof body?.options?.outputType === "string" ? body.options.outputType.trim() : "";
+  if (OUTPUT_TYPES.has(fromOptions)) return fromOptions;
+  const fromRoot = typeof body?.outputType === "string" ? body.outputType.trim() : "";
+  if (OUTPUT_TYPES.has(fromRoot)) return fromRoot;
+  const fromSelected = Array.isArray(body?.selectedTypes) && typeof body.selectedTypes[0] === "string"
+    ? body.selectedTypes[0].trim()
+    : "";
+  if (OUTPUT_TYPES.has(fromSelected)) return fromSelected;
+  return "";
+}
+
 function escapeRegex(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -129,9 +141,15 @@ export default async function handler(req, res) {
       metadata: draftMetadata,
     });
 
-    const outputType = typeof body?.options?.outputType === "string" ? body.options.outputType.trim() : "";
-    if (OUTPUT_TYPES.has(outputType)) {
+    const outputType = resolveOutputType(body);
+    if (outputType) {
       updateTraceMetadata(traceId, { outputType });
+    } else {
+      console.warn("[langfuse] outputType missing or invalid for qc-run trace", {
+        rawOptionsOutputType: body?.options?.outputType,
+        rawRootOutputType: body?.outputType,
+        rawSelectedType: Array.isArray(body?.selectedTypes) ? body.selectedTypes[0] : undefined,
+      });
     }
 
     const v3 = await runPipelineV3(draftText, v3Sources, { ...(body?.options || {}), traceId });
