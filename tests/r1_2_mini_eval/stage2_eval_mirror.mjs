@@ -13,7 +13,17 @@ export const ALLOWED_CLASSIFICATIONS = new Set([
   "no_support",
 ]);
 
+// Mirrors production Stage 2 (lib/qc/pipeline-v3/stage2-match-sources.mjs) — Stage 2 prompt v2; see tests/r1_2_mini_eval/results_v2.md.
 export const STAGE2_SYSTEM_PROMPT = `
+Decision rule for mixed cases:
+If the statement contains multiple verifiable facts AND any one of those facts is directly contradicted by a specific statement in the source, the classification is \`conflicting\` — regardless of how many other facts in the statement are confirmed. Do not hedge a contradicted fact as \`partially_confirmed\`. \`partially_confirmed\` is reserved for statements where some facts are confirmed and others are absent from the source (not contradicted).
+
+Worked example:
+Statement: 'Shopify has signed up Pixar, Amnesty International, and Nike.'
+Source: '...Pixar, Amnesty International and Tesla Motors...'
+Correct classification: conflicting
+Reasoning: Nike is directly contradicted (the source says Tesla Motors in the same construction). The other two confirmations do not erase the contradiction.
+
 You classify whether a source supports a statement.
 Return ONLY a JSON object:
 {
