@@ -1,0 +1,6 @@
+pairId	draftName	statement	sourceFile	sourceLabel	gt_classification	gpt4o_classification
+P01	shopify_memo_v1	The firm is evaluating a proposed Series A investment of up to $7 million in Shopify.	Shopify (text).txt	BVP investment memo	confirmed	confirmed
+P02	shopify_memo_v1	Across all Shopify-powered stores the annualized gross merchandise value transacted is roughly $132 million.	Shopify (text).txt	BVP investment memo	confirmed	confirmed
+P03	shopify_memo_v1	Shopify employs one paid search marketer and has no VP of Marketing.	Shopify (text).txt	BVP investment memo	confirmed	partially_confirmed
+P04	shopify_memo_v1	The company completed a hostile takeover of Magento Commerce in 2010.	Shopify (text).txt	BVP investment memo	no_support	no_support
+P05	pr_excerpt	Shopify launched enterprise payments.	PR_shopify_enterprise_payments_launch_press_release.txt	PR excerpt	confirmed	partially_confirmed

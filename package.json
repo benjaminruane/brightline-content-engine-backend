@@ -11,6 +11,11 @@
   "scripts": {
     "test": "echo \"no tests\"",
     "qc:test": "node scripts/run_qc_regression.mjs",
+    "r1_2:build-eval-inputs": "node tests/r1_2_mini_eval/build_inputs.mjs",
+    "r1_2:mini-eval": "node tests/r1_2_mini_eval/run_eval.mjs",
+    "r1_2:score": "node tests/r1_2_mini_eval/run_eval.mjs --score-only",
+    "r1_2:2": "node tests/r1_2_mini_eval/run_r1_2_2.mjs",
+    "r1_2:2-report": "node tests/r1_2_mini_eval/run_r1_2_2.mjs --report-only",
     "audit:inits": "node tools/audit-statement-analysis-inits.mjs --out init-audit.json"
   },
   "dependencies": {
@@ -27,6 +32,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "acorn": "^8.15.0"
+    "acorn": "^8.15.0",
+    "csv-parse": "^6.2.1"
   }
 }
