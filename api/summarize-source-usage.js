@@ -1,4 +1,5 @@
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -39,13 +40,15 @@ export default async function handler(req, res) {
   const snippet = typeof body?.snippet === "string" ? body.snippet.trim() : "";
   const draftText = typeof body?.draftText === "string" ? body.draftText.trim().slice(0, 1000) : "";
 
-  if (!sourceName || !snippet || !draftText || !process.env.OPENAI_API_KEY) {
+  const modelConfig = STAGE_MODELS["summarize-source-usage"];
+  if (!sourceName || !snippet || !draftText || !hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json({ ok: true, usedFor: "" });
   }
 
   try {
-    const completion = await callOpenAI({
-      model: "gpt-4o-mini",
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
       temperature: 0,
       messages: [
         {
@@ -58,13 +61,12 @@ export default async function handler(req, res) {
           content: `Source name: ${sourceName}\nSnippet: ${snippet}\nDraft excerpt: ${draftText}`,
         },
       ],
-    }, {
       traceName: "used-for-synthesis",
       spanName: "used-for-synthesis",
       metadata: { route: "summarize-source-usage" },
     });
 
-    const usedFor = normalizeUsedFor(completion?.choices?.[0]?.message?.content || "");
+    const usedFor = normalizeUsedFor(completion?.text || "");
     return res.status(200).json({ ok: true, usedFor });
   } catch {
     return res.status(200).json({ ok: true, usedFor: "" });

@@ -19,6 +19,7 @@
     "audit:inits": "node tools/audit-statement-analysis-inits.mjs --out init-audit.json"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.93.0",
     "@mozilla/readability": "^0.5.0",
     "docx": "^9.6.1",
     "jsdom": "^24.0.0",

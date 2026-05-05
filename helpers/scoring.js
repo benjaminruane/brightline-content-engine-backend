@@ -1,6 +1,7 @@
 // helpers/scoring.js
 
-import { callOpenAI } from "../lib/observability.js";
+import { callLLM } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 /**
  * Ask the model to score an output against a simple rubric.
@@ -59,15 +60,16 @@ Return ONLY a JSON object following the schema, with no extra text.
 `;
 
   try {
-    const completion = await callOpenAI({
-      model: "gpt-4o-mini",
+    const modelConfig = STAGE_MODELS["output-scoring"];
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
       temperature: 0,
-      max_completion_tokens: 300,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
-      ]
-    }, {
+      ],
+      responseFormat: "json",
       traceName: "output-scoring",
       spanName: "output-scoring",
       metadata: { helper: "scoring" },
@@ -75,16 +77,8 @@ Return ONLY a JSON object following the schema, with no extra text.
 
     let raw = "{}";
 
-    if (
-      completion &&
-      completion.choices &&
-      Array.isArray(completion.choices) &&
-      completion.choices.length > 0 &&
-      completion.choices[0] &&
-      completion.choices[0].message &&
-      typeof completion.choices[0].message.content === "string"
-    ) {
-      raw = completion.choices[0].message.content.trim();
+    if (typeof completion?.text === "string") {
+      raw = completion.text.trim();
     }
 
     let parsed;

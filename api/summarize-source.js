@@ -1,5 +1,6 @@
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -48,12 +49,13 @@ export default async function handler(req, res) {
 
   if (!llmInput) return res.status(200).json({ ok: true, description: "" });
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return res.status(200).json({ ok: true, description: "" });
+  const modelConfig = STAGE_MODELS["summarize-source"];
+  if (!hasProviderApiKey(modelConfig.provider)) return res.status(200).json({ ok: true, description: "" });
 
   try {
-    const completion = await callOpenAI({
-      model: "gpt-4o-mini",
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
       temperature: 0,
       messages: [
         {
@@ -63,14 +65,12 @@ export default async function handler(req, res) {
         },
         { role: "user", content: llmInput },
       ],
-      max_tokens: 180,
-    }, {
       traceName: "source-description-generation",
       spanName: "source-description-generation",
       metadata: { route: "summarize-source" },
     });
-    const description = typeof completion?.choices?.[0]?.message?.content === "string"
-      ? completion.choices[0].message.content.trim()
+    const description = typeof completion?.text === "string"
+      ? completion.text.trim()
       : "";
     return res.status(200).json({ ok: true, description });
   } catch {

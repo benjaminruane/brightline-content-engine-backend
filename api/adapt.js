@@ -18,7 +18,8 @@ import {
   OUTPUT_TYPE,
 } from "../lib/output-intent.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -121,8 +122,9 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
+  const modelConfig = STAGE_MODELS.adapt;
+  if (!hasProviderApiKey(modelConfig.provider)) {
+    return res.status(500).json({ ok: false, error: "Server is missing provider API key for adapt" });
   }
 
   try {
@@ -134,7 +136,7 @@ export default async function handler(req, res) {
     const fromVisibility = normalizeVisibility(body.fromVisibility ?? body.from_visibility ?? null);
     const targetOutputType = normalizeOutputType(body.targetOutputType ?? body.target_output_type ?? null);
     const targetVisibility = normalizeVisibility(body.targetVisibility ?? body.target_visibility ?? null);
-    const modelId = typeof body.model === "string" && body.model.trim() ? body.model.trim() : "gpt-5.1";
+    const modelId = typeof body.model === "string" && body.model.trim() ? body.model.trim() : modelConfig.model;
     const publicSearch = Boolean(body.publicSearch);
     // X2.2: Optional word-limit override for Adapt (per-output cap persistence)
     const rawOverride = body.wordLimitOverride ?? body.word_limit_override ?? null;
@@ -218,17 +220,17 @@ Return ONLY JSON:
 }
 `.trim();
 
-    const completion = await callOpenAI({
+    const completion = await callLLM({
+      provider: modelConfig.provider,
       model: modelId,
       temperature: 0.2,
       messages: [{ role: "user", content: prompt }],
-    }, {
       traceName: "adapt-generate",
       spanName: "adapt-generate",
       metadata: { route: "adapt" },
     });
 
-    const raw = completion?.choices?.[0]?.message?.content || "";
+    const raw = completion?.text || "";
     const parsed = safeJsonParse(raw) || {};
     const draftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
 

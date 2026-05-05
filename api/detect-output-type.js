@@ -1,4 +1,5 @@
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 const OUTPUT_TYPES = new Set([
   "reporting_commentary",
@@ -31,17 +32,17 @@ export default async function handler(req, res) {
     return res.status(200).json(fallbackResponse());
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  const modelConfig = STAGE_MODELS["detect-output-type"];
+  if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json(fallbackResponse());
   }
 
   try {
-    const completion = await callOpenAI({
-      model: "gpt-4o-mini",
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
       temperature: 0,
-      max_tokens: 80,
-      response_format: { type: "json_object" },
+      responseFormat: "json",
       messages: [
         {
           role: "system",
@@ -53,13 +54,12 @@ export default async function handler(req, res) {
           content: draftText.slice(0, 6000),
         },
       ],
-    }, {
       traceName: "detect-output-type",
       spanName: "detect-output-type",
       metadata: { route: "detect-output-type" },
     });
 
-    const raw = completion?.choices?.[0]?.message?.content;
+    const raw = completion?.text;
     const parsed = typeof raw === "string" ? JSON.parse(raw) : null;
     const outputType = typeof parsed?.outputType === "string" ? parsed.outputType.trim() : "";
     const confidence = typeof parsed?.confidence === "string" ? parsed.confidence.trim() : "";

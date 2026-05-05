@@ -1,4 +1,5 @@
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -13,8 +14,8 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return res.status(200).json({ ok: false, narrative: "" });
+  const modelConfig = STAGE_MODELS["synthesize-review"];
+  if (!hasProviderApiKey(modelConfig.provider)) return res.status(200).json({ ok: false, narrative: "" });
 
   const body = req.body && typeof req.body === "object" ? req.body : {};
   const draftText = typeof body.draftText === "string" ? body.draftText.trim() : "";
@@ -42,8 +43,9 @@ export default async function handler(req, res) {
       : "Role: senior investment content editor reviewing a draft for signoff readiness.";
 
   try {
-    const completion = await callOpenAI({
-      model: "gpt-4o",
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
       temperature: 0,
       messages: [
         {
@@ -77,13 +79,11 @@ export default async function handler(req, res) {
           ),
         },
       ],
-      max_tokens: 350,
-    }, {
       traceName: "assess-reviewer-synthesis",
       spanName: "assess-reviewer-synthesis",
       metadata: { route: "synthesize-review" },
     });
-    const narrative = typeof completion?.choices?.[0]?.message?.content === "string" ? completion.choices[0].message.content.trim() : "";
+    const narrative = typeof completion?.text === "string" ? completion.text.trim() : "";
     return res.status(200).json({ ok: true, narrative });
   } catch {
     return res.status(200).json({ ok: false, narrative: "" });

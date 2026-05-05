@@ -7,7 +7,7 @@ Vercel serverless backend for the Brightline Content Engine. Handles draft gener
 ## Stack
 
 - **Runtime:** Node.js (Vercel serverless functions)
-- **LLM:** OpenAI API (`gpt-4o` for editorial/compliance and generation, `gpt-4o-mini` for commentary)
+- **LLM:** OpenAI + Anthropic (provider/model selection via `lib/qc/model-config.mjs`)
 - **Local dev:** `npx vercel dev` (not `npm run dev`)
 - **PDF extraction:** `pdf-parse`
 - **Export:** PDFKit (PDF), `docx` library (DOCX)
@@ -21,6 +21,7 @@ Vercel serverless backend for the Brightline Content Engine. Handles draft gener
 - Node.js 18+
 - Vercel CLI: `npm i -g vercel`
 - OpenAI API key
+- Anthropic API key (for multi-provider routing)
 
 ### Install
 
@@ -34,6 +35,10 @@ Create a `.env` file in the repo root (or set via Vercel dashboard):
 
 ```
 OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=...
+LANGFUSE_PUBLIC_KEY=...
+LANGFUSE_SECRET_KEY=...
+LANGFUSE_HOST=...
 BRIGHTLINE_EDITORIAL_REVIEW=1
 ```
 

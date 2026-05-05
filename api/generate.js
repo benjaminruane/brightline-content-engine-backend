@@ -29,7 +29,8 @@ import {
   getEventTypeFraming,
 } from "../lib/event-type.js";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 // ------------------------------------------------------------------
 // CORS
@@ -603,8 +604,9 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
+  const modelConfig = STAGE_MODELS["writing-generate"];
+  if (!hasProviderApiKey(modelConfig.provider)) {
+    return res.status(500).json({ ok: false, error: "Server is missing provider API key for writing-generate" });
   }
 
   try {
@@ -624,7 +626,7 @@ export default async function handler(req, res) {
       bannedWords: rawBannedWords,
     } = body;
 
-    const modelId = typeof model === "string" && model.trim() ? model.trim() : "gpt-5.1";
+    const modelId = typeof model === "string" && model.trim() ? model.trim() : modelConfig.model;
     const effectiveMaxWords = clampMaxWords(maxWords);
 
     const safeTitle = typeof title === "string" ? title : "";
@@ -765,14 +767,14 @@ Return ONLY JSON:
 }
 `.trim();
 
-    const completion = await callOpenAI({
+    const completion = await callLLM({
+      provider: modelConfig.provider,
       model: modelId,
       temperature: 0.2,
       messages: [
         { role: "system", content: systemContent },
         { role: "user", content: userPrompt },
       ],
-    }, {
       traceName: "writing-generate",
       spanName: "writing-generate",
       metadata: { route: "generate" },
@@ -782,13 +784,13 @@ Return ONLY JSON:
       const rid = req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null;
       const usage = completion?.usage;
       if (usage != null) {
-        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "generate", model: completion?.model ?? null, prompt_tokens: usage.prompt_tokens ?? null, completion_tokens: usage.completion_tokens ?? null, total_tokens: usage.total_tokens ?? null });
+        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "generate", model: completion?.model ?? null, prompt_tokens: usage.inputTokens ?? null, completion_tokens: usage.outputTokens ?? null, total_tokens: (Number(usage.inputTokens) || 0) + (Number(usage.outputTokens) || 0) });
       } else {
         console.log("[DIAG][OPENAI_USAGE]", { rid, route: "generate", model: completion?.model ?? null, prompt_tokens: null, completion_tokens: null, total_tokens: null, usageMissing: true });
       }
     }
 
-    const raw = completion?.choices?.[0]?.message?.content || "";
+    const raw = completion?.text || "";
     const parsed = safeJsonParse(raw) || {};
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
@@ -825,16 +827,16 @@ Return ONLY JSON:
   "draftText": "string"
 }`.trim();
         try {
-          const correctionCompletion = await callOpenAI({
+          const correctionCompletion = await callLLM({
+            provider: modelConfig.provider,
             model: modelId,
             temperature: 0.2,
             messages: [{ role: "user", content: correctionPrompt }],
-          }, {
             traceName: "writing-generate",
             spanName: "writing-generate-word-limit-correction",
             metadata: { route: "generate" },
           });
-          const correctionRaw = correctionCompletion?.choices?.[0]?.message?.content || "";
+          const correctionRaw = correctionCompletion?.text || "";
           const correctionParsed = safeJsonParse(correctionRaw) || {};
           const correctedText = typeof correctionParsed.draftText === "string" ? correctionParsed.draftText.trim() : "";
           if (correctedText) {

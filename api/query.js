@@ -1,7 +1,8 @@
 // api/query.js
 
 import { deriveQueryFromAsk, runWebSearch } from "../lib/web.js";
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 /**
  * Heuristic: detect whether results are generic / listicle-like.
@@ -99,20 +100,24 @@ Web sources:
 ${references.map(r => `[${r.id}] ${r.title}`).join("\n")}
 `;
 
-    const completion = await callOpenAI({
-      model: "gpt-5.1",
+    const modelConfig = STAGE_MODELS["ask-query"];
+    if (!hasProviderApiKey(modelConfig.provider)) {
+      return res.status(500).json({ ok: false, error: "Missing provider API key for ask-query" });
+    }
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
       temperature: 0.2,
-    }, {
       traceName: "ask-query",
       spanName: "ask-query-answer",
       metadata: { route: "query" },
     });
 
-    const answer = completion.choices[0]?.message?.content || "";
+    const answer = completion?.text || "";
 
     // Simple confidence heuristic
     const confidence =

@@ -1,5 +1,6 @@
 // A8.2: Short LLM summary of rewrite instructions (fire-and-forget from client; non-blocking for save).
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -26,14 +27,15 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, label: "" });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  const modelConfig = STAGE_MODELS["summarize-rewrite-label"];
+  if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json({ ok: true, label: "" });
   }
 
   try {
-    const completion = await callOpenAI({
-      model: "gpt-4o-mini",
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
       temperature: 0,
       messages: [
         {
@@ -44,13 +46,11 @@ Instruction:
 ${instruction}`,
         },
       ],
-      max_tokens: 80,
-    }, {
       traceName: "rewrite-label-summary",
       spanName: "rewrite-label-summary",
       metadata: { route: "summarize-rewrite-label" },
     });
-    const raw = completion?.choices?.[0]?.message?.content;
+    const raw = completion?.text;
     const label = stripTrailingPunctuation(typeof raw === "string" ? raw.trim() : "");
     return res.status(200).json({ ok: true, label: label || "" });
   } catch (err) {

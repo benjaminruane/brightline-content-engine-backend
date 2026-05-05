@@ -5,7 +5,8 @@
 // Does NOT perform fresh web search.
 
 import { formatWebResultsForPrompt } from "../lib/web.js";
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -36,8 +37,9 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
+  const modelConfig = STAGE_MODELS["query-sources"];
+  if (!hasProviderApiKey(modelConfig.provider)) {
+    return res.status(500).json({ ok: false, error: "Server is missing provider API key for query-sources" });
   }
 
   try {
@@ -51,7 +53,7 @@ export default async function handler(req, res) {
     const flags = body.flags || {};
     const versionNumber = typeof body.versionNumber === "number" ? body.versionNumber : null;
     const modelId =
-      typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
+      typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : modelConfig.model;
 
     if (!question) return res.status(400).json({ error: "Missing question" });
 
@@ -143,20 +145,20 @@ ${webSourcesSection}
 ${hasUnattributedEnrichment ? `\n\nATTRIBUTION FLAG: This draft version contains unattributed enrichment (facts not supported by uploaded sources and not cited to web sources).` : ""}
 `.trim();
 
-    const completion = await callOpenAI({
+    const completion = await callLLM({
+      provider: modelConfig.provider,
       model: modelId,
       temperature: 0.2,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
       ],
-    }, {
       traceName: "query-sources",
       spanName: "query-sources-answer",
       metadata: { route: "query-sources" },
     });
 
-    const raw = completion?.choices?.[0]?.message?.content || "";
+    const raw = completion?.text || "";
     const parsed = safeJsonParse(raw) || {};
 
     const answer =

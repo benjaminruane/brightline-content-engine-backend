@@ -5,7 +5,8 @@
 // - publicSearch === true: enrich with web search results
 // - publicSearch === false: do not retrieve from web
 
-import { callOpenAI, flushObservability } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -626,8 +627,9 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ ok: false, error: "Server is missing OPENAI_API_KEY" });
+  const modelConfig = STAGE_MODELS["writing-rewrite"];
+  if (!hasProviderApiKey(modelConfig.provider)) {
+    return res.status(500).json({ ok: false, error: "Server is missing provider API key for writing-rewrite" });
   }
 
   try {
@@ -647,7 +649,7 @@ export default async function handler(req, res) {
     const rewriteInstructions = normalized.text;
 
     const modelId =
-      typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : "gpt-5.1";
+      typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : modelConfig.model;
     const bannedWords = normalizeBannedWords(body.bannedWords);
     const bannedWordsInstruction = bannedWords.length
       ? `Do not use any of the following words in your output: ${bannedWords.join(", ")}.`
@@ -819,14 +821,14 @@ Return ONLY valid JSON with no markdown or extra text:
 }
 `.trim();
 
-    const completion = await callOpenAI({
+    const completion = await callLLM({
+      provider: modelConfig.provider,
       model: modelId,
       temperature: 0.2,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt },
       ],
-    }, {
       traceName: "writing-rewrite",
       spanName: "writing-rewrite",
       metadata: { route: "rewrite" },
@@ -836,13 +838,13 @@ Return ONLY valid JSON with no markdown or extra text:
       const rid = req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null;
       const usage = completion?.usage;
       if (usage != null) {
-        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: usage.prompt_tokens ?? null, completion_tokens: usage.completion_tokens ?? null, total_tokens: usage.total_tokens ?? null });
+        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: usage.inputTokens ?? null, completion_tokens: usage.outputTokens ?? null, total_tokens: (Number(usage.inputTokens) || 0) + (Number(usage.outputTokens) || 0) });
       } else {
         console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: null, completion_tokens: null, total_tokens: null, usageMissing: true });
       }
     }
 
-    let raw = completion?.choices?.[0]?.message?.content || "";
+    let raw = completion?.text || "";
     // Strip optional markdown code fence so JSON parse succeeds
     const codeFence = /^```(?:json)?\s*\n?([\s\S]*?)\n?```\s*$/;
     const match = raw.match(codeFence);
@@ -880,16 +882,16 @@ Return ONLY JSON:
   "draftText": "string"
 }`.trim();
         try {
-          const correctionCompletion = await callOpenAI({
+          const correctionCompletion = await callLLM({
+            provider: modelConfig.provider,
             model: modelId,
             temperature: 0.2,
             messages: [{ role: "user", content: correctionPrompt }],
-          }, {
             traceName: "writing-rewrite",
             spanName: "writing-rewrite-word-limit-correction",
             metadata: { route: "rewrite" },
           });
-          const correctionRaw = correctionCompletion?.choices?.[0]?.message?.content || "";
+          const correctionRaw = correctionCompletion?.text || "";
           const correctionParsed = safeJsonParse(correctionRaw) || {};
           const correctedText = typeof correctionParsed.draftText === "string" ? correctionParsed.draftText.trim() : "";
           if (correctedText) {
