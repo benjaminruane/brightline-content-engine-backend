@@ -5,6 +5,11 @@ node_modules/
 # QC regression generated outputs
 tests/output/*.json
 
+# R1.2.5 eval generated outputs (regenerable)
+tests/r1_2_5_eval/*_outputs*.json
+tests/r1_2_5_eval/results.md
+tests/r1_2_5_eval/results_reproducibility.md
+
 # macOS system files (never commit; any directory)
 .DS_Store
 **/.DS_Store
