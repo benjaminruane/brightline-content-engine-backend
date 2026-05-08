@@ -20,7 +20,7 @@ const ROOT = path.resolve(__dirname, "..");
 const SUITE_PATH = path.join(ROOT, "tests", "qc_regression_suite.json");
 const OUTPUT_DIR = path.join(ROOT, "tests", "output");
 const QC_PIPELINE = process.env.QC_PIPELINE || "v3";
-const USE_V3_ENDPOINT = QC_PIPELINE === "v3";
+const USE_V4_ROUTE = process.env.QC_PIPELINE_V4 === "1" || QC_PIPELINE === "v4";
 const BASE_URL = process.env.QC_REGRESSION_BASE_URL || "http://localhost:3000";
 const RUN_QC_URL = `${BASE_URL.replace(/\/$/, "")}/api/analyse-statements`;
 
@@ -340,7 +340,10 @@ function explanationPatternSummary(structuralResults) {
 async function runOne(spec) {
   const requestBody = {
     draftText: spec.draft,
-    options: { webEnabled: false },
+    options: {
+      webEnabled: false,
+      ...(USE_V4_ROUTE ? { pipelineRoute: "v4" } : {}),
+    },
   };
   if (Array.isArray(spec.sources) && spec.sources.length > 0) {
     requestBody.sources = spec.sources;

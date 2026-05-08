@@ -11,6 +11,8 @@ npm run qc:test
 
 Optional: `QC_REGRESSION_BASE_URL=http://localhost:3000` (default). Start the backend (e.g. `npm run dev` or `vercel dev`) before running the suite.
 
+Set `QC_PIPELINE_V4=1` to target the QC pipeline v4 rebuild route (R2.1+); by default the suite exercises the existing v3 route.
+
 Outputs are written to **`tests/output/`** (generated artifacts; typically gitignored).
 
 ## Suite format — displayed QC contract (V2)

@@ -6,6 +6,7 @@
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
 import { runPipelineV3 } from "../lib/qc/pipeline-v3/qc-pipeline-v3.mjs";
+import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, startTrace, updateTraceMetadata } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
 
@@ -141,6 +142,12 @@ export default async function handler(req, res) {
       metadata: draftMetadata,
     });
 
+    const useV4 =
+      process.env.QC_PIPELINE_V4 === "1" || (body?.options && body.options.pipelineRoute === "v4");
+    if (useV4) {
+      updateTraceMetadata(traceId, { pipelineRoute: "v4" });
+    }
+
     const outputType = resolveOutputType(body);
     if (outputType) {
       updateTraceMetadata(traceId, { outputType });
@@ -152,13 +159,17 @@ export default async function handler(req, res) {
       });
     }
 
-    const v3 = await runPipelineV3(draftText, v3Sources, { ...(body?.options || {}), traceId });
-    const qcCards = Array.isArray(v3?.qcCards) ? v3.qcCards : [];
+    const pipelineResult = useV4
+      ? await runPipelineV4(draftText, v3Sources, { ...(body?.options || {}), traceId })
+      : await runPipelineV3(draftText, v3Sources, { ...(body?.options || {}), traceId });
+    const qcCards = Array.isArray(pipelineResult?.qcCards) ? pipelineResult.qcCards : [];
     if (qcCards.length === 0) {
-      throw new Error("V3 pipeline returned empty qcCards");
+      throw new Error("QC pipeline returned empty qcCards");
     }
 
-    const stage1Statements = Array.isArray(v3?.stage1?.statements) ? v3.stage1.statements : [];
+    const stage1Statements = Array.isArray(pipelineResult?.stage1?.statements)
+      ? pipelineResult.stage1.statements
+      : [];
     updateTraceMetadata(traceId, { statementCount: stage1Statements.length });
     const statements = qcCards.map((card, index) => {
       const statementText =
@@ -185,8 +196,8 @@ export default async function handler(req, res) {
       statements,
       references: [],
       meta: {
-        pipelineVersion: "v3",
-        stagesComplete: v3?._stagesComplete ?? null,
+        pipelineVersion: useV4 ? "v4" : "v3",
+        stagesComplete: pipelineResult?._stagesComplete ?? null,
         traceId,
       },
       bannedWordHits,
