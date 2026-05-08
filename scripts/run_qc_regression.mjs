@@ -411,7 +411,11 @@ async function runOne(spec) {
 }
 
 async function main() {
-  console.log("regression: running against v3 endpoint");
+  console.log(
+    USE_V4_ROUTE
+      ? "regression: running against v4 pipeline (via /api/analyse-statements)"
+      : "regression: running against v3 pipeline (via /api/analyse-statements)"
+  );
 
   let suite;
   try {

@@ -91,7 +91,6 @@ export default async function handler(req, res) {
   const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   req._brightlineRid = rid;
   console.log("[A3.14.5][HANDLER_ENTER]", { rid, route: ROUTE });
-  console.log("qc-handler: v3");
 
   setCorsHeaders(req, res);
 
@@ -144,6 +143,7 @@ export default async function handler(req, res) {
 
     const useV4 =
       process.env.QC_PIPELINE_V4 === "1" || (body?.options && body.options.pipelineRoute === "v4");
+    console.log(`[handler] route selected: ${useV4 ? "v4" : "v3"}`);
     if (useV4) {
       updateTraceMetadata(traceId, { pipelineRoute: "v4" });
     }
