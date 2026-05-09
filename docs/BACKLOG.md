@@ -5,7 +5,7 @@ This document is the single source of truth for known issues, deferred work, fut
 It complements:
 - `docs/ROADMAP.md` — the active sprint plan
 - `docs/ARCHITECTURE.md` — the system design
-- `docs/AI_OPERATING_MANUAL.md` — how Claude/Cursor work on this codebase
+- `ai/AI_OPERATING_MANUAL.md` — how Claude/Cursor work on this codebase
 
 ---
 
@@ -70,7 +70,7 @@ The backlog is split into four tables by character of work:
 | ID  | Item | Source / context | Priority | Notes |
 |-----|------|------------------|----------|-------|
 | P1  | Cost model spreadsheet update | R1.2.6 close-out | M | Replace the gpt-5-mini placeholder in the Projections sheet with locked gpt-4o numbers from R1.2.5 results.md. Manual edit on the spreadsheet, not in repo. |
-| P2  | Reproducibility test pattern for future model evals | R1.2.5.3 finding | M | Standard for any future eval involving reasoning models or temperature > 0: run 2–3 times, check for stability, average results. Add to `AI_OPERATING_MANUAL.md` when next updated. |
+| P2  | Reproducibility test pattern for future model evals | R1.2.5.3 finding | M | Standard for any future eval involving reasoning models or temperature > 0: run 2–3 times, check for stability, average results. Add to `ai/AI_OPERATING_MANUAL.md` when next updated. |
 | P3  | Re-eval trigger: new gpt-5-family model with materially better latency | R1.2.6 conclusion | -- | Watch only. Re-run R1.2.5 if a candidate appears that addresses gpt-5's latency profile. |
 | P4  | Re-eval trigger: new Anthropic Sonnet/Haiku with closed agreement gap | R1.2.6 conclusion | -- | Watch only. |
 | P5  | Single technical opinion risk | userMemories | M | Pre-existing. Claude is the only technical sounding board. No current cross-validation. Worth flagging if anything goes wrong. |
