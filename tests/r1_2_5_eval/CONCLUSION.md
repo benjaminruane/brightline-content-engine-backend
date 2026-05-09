@@ -4,6 +4,8 @@
 **Scope:** Stage 2 source matching (47-pair locked Shopify ground truth)  
 **Prompt:** Stage 2 v2 system prompt (decision rule for mixed cases + Nike/Tesla example), unchanged from production.
 
+**R2.5.2.1 addendum (May 2026):** Locked GT labels for `P33` and `P44` were corrected from `confirmed` to `partially_confirmed` to match the architecture's stricter reading. Against this corrected GT, gpt-4o + prompt v3 scores **97.87%** agreement (`tests/r1_2_5_eval/results_v3prompt_relabelled.md`), while gpt-4o + prompt v2 scores **93.62%** (`tests/r1_2_5_eval/results_v2_relabelled.md`).
+
 ## Candidates Evaluated
 
 - **openai / gpt-4o** (temperature 0, v2 prompt) — baseline

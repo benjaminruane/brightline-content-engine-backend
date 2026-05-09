@@ -9,6 +9,9 @@ tests/output/*.json
 tests/r1_2_5_eval/*_outputs*.json
 tests/r1_2_5_eval/results.md
 tests/r1_2_5_eval/results_reproducibility.md
+tests/r1_2_5_eval/results_v3prompt.md
+tests/r1_2_5_eval/results_v3prompt_relabelled.md
+tests/r1_2_5_eval/results_v2_relabelled.md
 
 # macOS system files (never commit; any directory)
 .DS_Store

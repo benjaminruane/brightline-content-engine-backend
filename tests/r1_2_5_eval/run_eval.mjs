@@ -31,20 +31,30 @@ const DIR = __dirname;
 const LOCKED_DIR = join(__dirname, "..", "r1_2_mini_eval");
 const INPUTS_PATH = join(LOCKED_DIR, "inputs.json");
 const PROMPT_V2_PATH = join(LOCKED_DIR, "prompts", "stage2_v2.md");
+const PROMPT_V3_PATH = join(LOCKED_DIR, "prompts", "stage2_v3.md");
+const LOCKED_V2_OUTPUTS_PATH = join(__dirname, "openai_gpt4o_outputs.json");
 const RESULTS_PATH = join(DIR, "results.md");
 
 const CLASS_ORDER = ["confirmed", "partially_confirmed", "conflicting", "no_support"];
 const GT_CONFLICT_PAIR_IDS = new Set(["P01", "P04", "P27", "P30", "P47"]);
-const LOCKED_GT_VS_GPT4O_MISMATCH_IDS = ["P04", "P27", "P29", "P30", "P33", "P44", "P47"];
-const BASELINE_AGREEMENT_RATE = 46 / 47;
+const LOCKED_GT_VS_GPT4O_MISMATCH_IDS = ["P33", "P44", "P46"];
+const BASELINE_AGREEMENT_RATE = 44 / 47;
 const AGREEMENT_FLOOR = BASELINE_AGREEMENT_RATE - 0.02;
 const PROD_STAGE2_CALLS_PER_RUN = 75; // 25 statements x 3 sources
 
 function validateLockedReferenceStats(pairs) {
   if (!Array.isArray(pairs) || pairs.length !== 47) return;
+  const lockedV2Rows = loadJson(LOCKED_V2_OUTPUTS_PATH);
+  if (!Array.isArray(lockedV2Rows) || lockedV2Rows.length !== 47) {
+    throw new Error(
+      `Locked sanity: expected 47 rows in ${LOCKED_V2_OUTPUTS_PATH}, got ${Array.isArray(lockedV2Rows) ? lockedV2Rows.length : "invalid"}`
+    );
+  }
+  const byPairId = new Map(lockedV2Rows.map((row) => [String(row?.pairId), String(row?.classification || "")]));
   const mismatches = [];
   for (const pair of pairs) {
-    if (pair?.gt_classification !== pair?.gpt4o_classification) mismatches.push(String(pair?.pairId));
+    const pred = byPairId.get(String(pair?.pairId));
+    if (pair?.gt_classification !== pred) mismatches.push(String(pair?.pairId));
   }
   mismatches.sort();
   const expected = [...LOCKED_GT_VS_GPT4O_MISMATCH_IDS].sort();
@@ -54,9 +64,9 @@ function validateLockedReferenceStats(pairs) {
       `Locked sanity: GT vs gpt4o mismatch pairs expected [${expected.join(", ")}], got [${mismatches.join(", ")}]`
     );
   }
-  const agree = pairs.filter((pair) => pair?.gt_classification === pair?.gpt4o_classification).length;
-  if (agree !== 40) {
-    throw new Error(`Locked sanity: expected 40 agreements between gpt4o_classification and GT, got ${agree}`);
+  const agree = pairs.filter((pair) => pair?.gt_classification === byPairId.get(String(pair?.pairId))).length;
+  if (agree !== 44) {
+    throw new Error(`Locked sanity: expected 44 agreements between openai_gpt4o_outputs and GT, got ${agree}`);
   }
 }
 
@@ -68,6 +78,7 @@ const CANDIDATES = [
     temperature: 0,
     outputFile: "openai_gpt4o_outputs.json",
     label: "openai / gpt-4o",
+    promptVariant: "v2",
   },
   {
     id: "openai_gpt5",
@@ -76,6 +87,7 @@ const CANDIDATES = [
     temperature: 1,
     outputFile: "openai_gpt5_outputs.json",
     label: "openai / gpt-5",
+    promptVariant: "v2",
   },
   {
     id: "openai_gpt5mini",
@@ -84,6 +96,7 @@ const CANDIDATES = [
     temperature: 1,
     outputFile: "openai_gpt5mini_outputs.json",
     label: "openai / gpt-5-mini",
+    promptVariant: "v2",
   },
   {
     id: "anthropic_sonnet46",
@@ -92,6 +105,7 @@ const CANDIDATES = [
     temperature: 0,
     outputFile: "anthropic_sonnet46_outputs.json",
     label: "anthropic / claude-sonnet-4-6",
+    promptVariant: "v2",
   },
   {
     id: "anthropic_haiku45",
@@ -100,6 +114,16 @@ const CANDIDATES = [
     temperature: 0,
     outputFile: "anthropic_haiku45_outputs.json",
     label: "anthropic / claude-haiku-4-5",
+    promptVariant: "v2",
+  },
+  {
+    id: "openai_gpt4o_v3prompt",
+    provider: "openai",
+    model: "gpt-4o",
+    temperature: 0,
+    outputFile: "openai_gpt4o_v3prompt_outputs.json",
+    label: "openai / gpt-4o (prompt v3)",
+    promptVariant: "v3",
   },
 ];
 
@@ -107,8 +131,23 @@ function loadJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
-function loadPromptV2() {
-  return readFileSync(PROMPT_V2_PATH, "utf8").trim();
+function loadPromptVariant(variant) {
+  const v = typeof variant === "string" ? variant.trim().toLowerCase() : "v2";
+  const path = v === "v3" ? PROMPT_V3_PATH : PROMPT_V2_PATH;
+  return readFileSync(path, "utf8").trim();
+}
+
+function parseArgValue(name) {
+  const full = process.argv.find((arg) => arg.startsWith(`${name}=`));
+  if (!full) return "";
+  return full.slice(name.length + 1).trim();
+}
+
+function parseCandidateFilter() {
+  const raw = parseArgValue("--candidates");
+  if (!raw) return null;
+  const set = new Set(raw.split(",").map((x) => x.trim()).filter(Boolean));
+  return set.size > 0 ? set : null;
 }
 
 function outputPathFor(candidate) {
@@ -245,7 +284,8 @@ async function callOnePair(candidate, pair, systemPrompt) {
       traceName: "r1.2.5-stage2-eval",
       spanName: "qc-stage2-source-matching",
       metadata: {
-        eval: "r1.2.5",
+        eval: candidate.promptVariant === "v3" ? "r2.5.2" : "r1.2.5",
+        promptVariant: candidate.promptVariant || "v2",
         provider: candidate.provider,
         model: candidate.model,
         pairId: String(pair.pairId),
@@ -328,7 +368,7 @@ async function runCandidate(pairs, candidate, systemPrompt) {
 }
 
 function recommendationBlock(scoredById) {
-  const baseline = scoredById.openai_gpt4o;
+  const baseline = scoredById.openai_gpt4o || Object.values(scoredById)[0];
   const evaluations = Object.values(scoredById);
   const passing = evaluations.filter(
     (s) => s.conflictRate >= 1 - 1e-9 && s.agreementRate + 1e-9 >= AGREEMENT_FLOOR
@@ -336,15 +376,13 @@ function recommendationBlock(scoredById) {
 
   const lines = [];
   lines.push("## Recommendation", "");
-  lines.push(
-    `Baseline (openai / gpt-4o): ${(baseline.agreementRate * 100).toFixed(2)}% agreement, ${(baseline.conflictRate * 100).toFixed(1)}% conflict detection.`
-  );
+  lines.push(`Baseline (${baseline.candidate.label}): ${(baseline.agreementRate * 100).toFixed(2)}% agreement, ${(baseline.conflictRate * 100).toFixed(1)}% conflict detection.`);
   lines.push(`Decision thresholds: conflict 4/4 and agreement >= ${(AGREEMENT_FLOOR * 100).toFixed(2)}%.`, "");
 
   if (passing.length === 0) {
     lines.push("**Recommendation: KEEP gpt-4o + v2.** No candidate passed both criteria.", "");
     lines.push("Failure reasons by candidate:");
-    for (const s of evaluations.filter((e) => e.candidate.id !== "openai_gpt4o")) {
+    for (const s of evaluations.filter((e) => e.candidate.id !== baseline.candidate.id)) {
       const failedA = s.conflictRate < 1 - 1e-9;
       const failedB = s.agreementRate + 1e-9 < AGREEMENT_FLOOR;
       const reasons = [];
@@ -372,9 +410,9 @@ function recommendationBlock(scoredById) {
   return lines;
 }
 
-function buildResultsMd(pairs, scoredById) {
-  const scored = CANDIDATES.map((c) => scoredById[c.id]);
-  const baseline = scoredById.openai_gpt4o;
+function buildResultsMd(pairs, scoredById, candidates, resultsPath) {
+  const scored = candidates.map((c) => scoredById[c.id]).filter(Boolean);
+  const baseline = scoredById.openai_gpt4o || scored[0];
 
   const lines = [];
   lines.push("# R1.2.5 — Stage 2 model/provider comparison", "");
@@ -432,12 +470,11 @@ function buildResultsMd(pairs, scoredById) {
   }
 
   lines.push("## Cross-Candidate Pair Comparison", "");
-  lines.push(
-    "| PairId | GT | openai/gpt-4o | openai/gpt-5 | openai/gpt-5-mini | anthropic/sonnet-4-6 | anthropic/haiku-4-5 |"
-  );
-  lines.push("| --- | --- | --- | --- | --- | --- | --- |");
+  const compareHeader = ["PairId", "GT", ...candidates.map((c) => c.label)];
+  lines.push(`| ${compareHeader.join(" | ")} |`);
+  lines.push(`| ${compareHeader.map(() => "---").join(" | ")} |`);
   for (const pair of pairs) {
-    const preds = CANDIDATES.map((candidate) => {
+    const preds = candidates.map((candidate) => {
       const row = scoredById[candidate.id].byId.get(String(pair.pairId));
       return isValidClassification(row?.classification) ? row.classification : "schema_fail";
     });
@@ -448,8 +485,9 @@ function buildResultsMd(pairs, scoredById) {
   lines.push("## Cost Projection (75 Stage 2 calls)", "");
   lines.push("| Provider | Model | Avg cost/call | Projected Stage 2 cost/run | Delta vs gpt-4o |");
   lines.push("| --- | --- | --- | --- | --- |");
+  const baselineForCost = baseline || scored[0];
   for (const s of scored) {
-    const delta = s.projectionCost - baseline.projectionCost;
+    const delta = s.projectionCost - baselineForCost.projectionCost;
     const deltaLabel = `${delta >= 0 ? "+" : ""}$${delta.toFixed(4)}`;
     lines.push(
       `| ${s.candidate.provider} | ${s.candidate.model} | $${s.avgPerCallCost.toFixed(6)} | $${s.projectionCost.toFixed(4)} | ${deltaLabel} |`
@@ -459,8 +497,8 @@ function buildResultsMd(pairs, scoredById) {
 
   lines.push(...recommendationBlock(scoredById), "");
 
-  writeFileSync(RESULTS_PATH, lines.join("\n"), "utf8");
-  console.log(`Wrote ${RESULTS_PATH}`);
+  writeFileSync(resultsPath, lines.join("\n"), "utf8");
+  console.log(`Wrote ${resultsPath}`);
 }
 
 function validatePairs(inputs) {
@@ -480,18 +518,32 @@ function validatePairs(inputs) {
 async function main() {
   mkdirSync(DIR, { recursive: true });
   const scoreOnly = process.argv.includes("--score-only") || process.env.R1_2_5_SCORE_ONLY === "1";
+  const candidateFilter = parseCandidateFilter();
+  const promptVariantOverride = parseArgValue("--prompt-variant");
+  const resultsPathArg = parseArgValue("--results-path");
+  const resultsPath = resultsPathArg ? join(DIR, resultsPathArg) : RESULTS_PATH;
   const pairs = validatePairs(loadJson(INPUTS_PATH));
-  const systemPrompt = loadPromptV2();
+  const selectedCandidates = candidateFilter
+    ? CANDIDATES.filter((candidate) => candidateFilter.has(candidate.id))
+    : CANDIDATES;
+  if (selectedCandidates.length === 0) {
+    throw new Error("No candidates selected. Use --candidates=<id1,id2> with valid candidate ids.");
+  }
 
   if (!scoreOnly) {
-    for (const candidate of CANDIDATES) {
-      await runCandidate(pairs, candidate, systemPrompt);
+    for (const candidate of selectedCandidates) {
+      const effectiveCandidate =
+        promptVariantOverride
+          ? { ...candidate, promptVariant: promptVariantOverride }
+          : candidate;
+      const systemPrompt = loadPromptVariant(effectiveCandidate.promptVariant || "v2");
+      await runCandidate(pairs, effectiveCandidate, systemPrompt);
     }
     await flushObservability();
   }
 
   const scoredById = {};
-  for (const candidate of CANDIDATES) {
+  for (const candidate of selectedCandidates) {
     const rows = loadCandidateRows(candidate);
     if (rows.length !== pairs.length) {
       throw new Error(
@@ -501,7 +553,7 @@ async function main() {
     scoredById[candidate.id] = scoreCandidate(pairs, rows, candidate);
   }
 
-  buildResultsMd(pairs, scoredById);
+  buildResultsMd(pairs, scoredById, selectedCandidates, resultsPath);
 }
 
 main().catch((err) => {

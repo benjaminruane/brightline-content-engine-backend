@@ -42,6 +42,7 @@ The backlog is split into four tables by character of work:
 | F4  | Enter-to-execute on Assess module's primary action button | R2.3 user request | L | Standard UX pattern. Useful for power users. |
 | F5  | UI display labels misaligned with architecture rubric | R2.3 user observation | M | "Supported" should be "Confirmed". Align all four labels: confirmed / partially confirmed / conflicting / no support. Decision: more definitive language preferred for an audit-safe product. |
 | F6  | "1 claim have" grammar bug in Reviewer Assessment | userMemories | L | Pre-existing item from product backlog. |
+| F7  | Reinstate colour-coding of draft text and Highlight in Draft functionality in Assess module after Assess runs. Quality Review module has this in its Draft Context pane; Assess does not currently have a Draft Context pane, which is the limiting factor. | R2.4+R2.5 testing | M | |
 
 **Suggested grouping**: F1–F5 share the Assess module surface and could be bundled into a single frontend polish sprint, e.g. `v8.43-assess-polish`.
 
@@ -52,7 +53,7 @@ The backlog is split into four tables by character of work:
 | ID  | Item | Source / context | Priority | Notes |
 |-----|------|------------------|----------|-------|
 | B1  | Stage 2 prompt nuance: "all X, therefore not Y" patterns | R1.2.5.3 reproducibility findings (P02, P25) | L | When source says "all employees in Ottawa" and draft claims "offices in Berlin," current rubric drifts between `no_support` and `conflicting` at temp 1. Worth a prompt-tightening spec eventually, but not blocking. |
-| B2  | "Excerpt could not be retrieved" on conflict cards | R1.2.3, R2.3 testing | M | v3 Stage 4 artifact. Architecture says Stage 2 should already return the passage; v3's separate retrieval step is unnecessary. Should resolve when R2.5 (Stage 4 in v4) lands. |
+| B2  | "Excerpt could not be retrieved" on conflict cards | R1.2.3, R2.3 testing | L | v3 Stage 4 artifact. Architecture says Stage 2 should already return the passage; v3's separate retrieval step is unnecessary. Should resolve when R2.5 (Stage 4 in v4) lands. Substantially mitigated by r2.5.3 for bracket-abridgement cases. Residual placeholder appears only on silent-splice cases — see new backlog item B-next on splice handling. |
 | B3  | Anthropic prompt caching for Stage 2 source text | R1.2.4 finding | L | Stage 2 reads the same source repeatedly across statements. Anthropic cache hits are 10× cheaper on input. Potential meaningful cost saving when Anthropic models become viable for Stage 2. Currently dormant since gpt-4o is locked. |
 | B4  | LLM call consolidation: merge editorial + compliance + style | userMemories | M | Architecture-level optimisation. Three review calls per statement could potentially become one. Cost model projects ~19% saving on production runs. Defer until v4 is fully live. |
 | B5  | Stage 2 chunking cost ceiling for long sources | userMemories | L | Pre-existing. Long sources can blow up Stage 2 token cost. Defer. |
@@ -62,6 +63,10 @@ The backlog is split into four tables by character of work:
 | B9  | Implement-changes sprint (writer applies QC suggestions) | userMemories | L | Pre-existing. Defer. |
 | B10 | Spring clean / codebase hygiene | userMemories | L | Pre-existing. Defer to after v4 is live and v3 is deletable. |
 | B11 | Public version prompt | userMemories | L | Pre-existing. Defer. |
+| B12 | Add canary score for non-schema Stage 2 failures (network errors, timeouts) so they're tracked in Langfuse alongside schema failures. | R2.3 implementation review | L | |
+| B13 | Stage 5 commentary should explicitly distinguish 'pedantic gap' partials from 'material gap' partials. For partially_confirmed verdicts, commentary must name what's confirmed precisely, name the specific gap using the source's exact language, and suggest the reviewer's action. To be designed into the Stage 5 prompt during R2.6. | R2.5.2 user observation | M | |
+| B14 | Model non-compliance with explicit prompt rules: gpt-4o does not reliably honour negative constraints (e.g. 'do not abridge passages') on dense compound statements, even at temp 0. Future stages should design defensively — validation layers that handle expected non-compliance modes rather than rely on the model's adherence. | R2.5.2.1 diagnostic finding | M | |
+| B15 | Stage 2 occasionally returns silently spliced passages (multiple non-adjacent source spans presented as contiguous, with no ellipsis marker). Validator correctly rejects these, but the resulting placeholder appears on conflict cards. Possible mitigations: (a) two-call retry asking for a single contiguous span when first call's passage fails validation, (b) accept and surface explicitly as 'spliced excerpt - confirm against source'. To consider after pipeline-v4 fully live. | R2.5.3 testing | M | |
 
 ---
 
