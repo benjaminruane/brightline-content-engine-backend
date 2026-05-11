@@ -115,6 +115,42 @@ Last updated: April 2026
 
 ---
 
+## Architectural debt to revisit when v3 retires
+
+### R3.1 — Editorial+Style consolidation routing
+
+R3.1 introduced a v4-only combined Editorial+Style review call
+while leaving v3's separate Style and Editorial calls in place.
+Two coupling points were accepted as pragmatic trade-offs at
+the time and should be cleaned up when v3 is decommissioned:
+
+1. `runEditorialComplianceReview` in
+   `lib/qc/editorial-compliance-reviewer.mjs` now contains an
+   internal branch that selects between the legacy three-call
+   path (style + editorial + compliance) and the combined
+   two-call path (editorial+style + compliance) based on
+   `documentContext.pipelineRoute === "v4"`. The shared wrapper
+   carries pipeline-aware logic, which is slightly more coupling
+   than ideal. When v3 retires, the wrapper should be simplified
+   to call the combined function directly and the route flag
+   should be removed.
+
+2. The merged editorial result shape (`editorialConcerns`,
+   `editorialVerdict`, `editorialNote`, `editorialSuggestedDirection`,
+   `editorialSuggestedRewrite`) is now produced in two places:
+   `applyMergedEditorialAndStyle` (used by v3) and the
+   combined `runEditorialStyleReview` return contract (used by
+   v4). The two paths must stay in sync until v3 retires. When
+   v3 is removed, `applyMergedEditorialAndStyle` and the two
+   separate functions `runStyleGuideReview` and
+   `runEditorialReview` can all be deleted.
+
+No action required today. Note exists so the next person (or
+future Ben) doesn't wonder why two code paths produce the same
+shape.
+
+---
+
 ## Future Capabilities
 
 ### Writing & Intelligence
