@@ -76,6 +76,8 @@ Last updated: April 2026
 
 ## Active Backlog (Rough Priority Order)
 
+1. Watch Stage 2 conflict-vs-partial drift on absent-fact statements. Origin: R2.7.1 (Stage 2 explanation enrichment). After R2.7.1, Run 4 of the R2.7.1 testing plan ("Shopify plans to grow by investing in marketing, international expansion, and acquiring a competitor") came back as `conflicting` rather than the previously-observed `partially_confirmed`. Both are defensible under architecture section 5.2 — the source describes a different growth plan, which can be read as contradiction or absence depending on framing. Action: review Stage 2 classifications across the next 10-20 accumulated traces. If absent-fact statements consistently classify as `conflicting` rather than `partially_confirmed`, open a spec to tighten the Stage 2 prompt's distinction between "source describes something different" (partial) and "source directly contradicts" (conflict). No action required if the pattern does not recur.
+
 ### Evidence Pipeline Quality Sprint
 - False `not_supported` verdicts — most pressing accuracy issue
 - Excerpt quality and reliability
