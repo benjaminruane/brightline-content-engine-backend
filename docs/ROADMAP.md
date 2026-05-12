@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: April 2026
+Last updated: May 2026
 
 ---
 
@@ -123,6 +123,16 @@ Last updated: April 2026
 
 ---
 
+## Parked, evidence-gated
+
+These items are intentionally not in the active rebuild backlog. They stay visible so design intent is not lost, but work does not resume until the stated evidence triggers.
+
+### (C) Stage 2 chunking — cost ceiling for long sources
+
+**Parked.** R3.3 instrumentation now logs a warning whenever any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. Reactivate this item when source-length warnings start appearing regularly in dev or production logs, OR when typical Partners Group source documents in pilot testing exceed ~100k characters, OR when verdict quality begins to degrade on long sources. Architecture document section 10 already defines the chunking strategy; this is sequencing, not design.
+
+---
+
 ## Architectural debt to revisit when v3 retires
 
 ### R3.1 — Editorial+Style consolidation routing
@@ -156,6 +166,10 @@ the time and should be cleaned up when v3 is decommissioned:
 No action required today. Note exists so the next person (or
 future Ben) doesn't wonder why two code paths produce the same
 shape.
+
+### R3.3 — PDF extraction step shared by v3 and v4 routes
+
+R3.3 wired `prepareUploadedSourcesForPipeline` into `api/analyse-statements.js`, which feeds both v3 and v4. This is a preprocessing step in the API handler, not in either pipeline module. When v3 retires, the preprocessing step stays put — it is route-level, not pipeline-level. No cleanup needed. Logged here only so the location of source extraction is documented for future maintainers.
 
 ---
 
