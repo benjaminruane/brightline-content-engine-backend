@@ -9,6 +9,10 @@ import { runPipelineV3 } from "../lib/qc/pipeline-v3/qc-pipeline-v3.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, startTrace, updateTraceMetadata } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
+import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
+
+/** R3.3: soft observability threshold only — no truncation or rejection. */
+const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -87,6 +91,26 @@ function getBannedWordHits(draftText, bannedWords) {
   return out;
 }
 
+function mimeTypeForDropLog(original) {
+  const m = original && typeof original.mimeType === "string" ? original.mimeType.trim() : "";
+  return m || "(none)";
+}
+
+/**
+ * R3.3: classify why a source was dropped post-extraction (empty text after prepareUploadedSourcesForPipeline).
+ * @param {object|null|undefined} original - raw request source
+ * @param {object|undefined} preparedRow - entry from prep.sources at same index, if present
+ */
+function dropReasonAfterExtraction(original, preparedRow) {
+  if (!preparedRow) return "extraction_failed";
+  const text = typeof preparedRow.text === "string" ? preparedRow.text : "";
+  if (text.trim()) return null;
+  const hasB64 = typeof original?.contentBase64 === "string" && original.contentBase64.length > 0;
+  const hasTextString = typeof original?.text === "string";
+  if (!hasTextString && !hasB64) return "no_text_field";
+  return "empty_after_extraction";
+}
+
 export default async function handler(req, res) {
   const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   req._brightlineRid = rid;
@@ -111,10 +135,38 @@ export default async function handler(req, res) {
       : Array.isArray(body?.sources)
         ? body.sources
         : [];
-    const v3Sources = candidateSources
+
+    const prep = await prepareUploadedSourcesForPipeline(candidateSources);
+    const preparedSources = candidateSources.map((original, i) => {
+      const row = Array.isArray(prep.sources) && i < prep.sources.length ? prep.sources[i] : null;
+      if (row) return row;
+      return {
+        text: "",
+        name: original?.name,
+        title: original?.title,
+        label: original?.label,
+        mimeType: original?.mimeType,
+      };
+    });
+
+    const v3Sources = preparedSources
       .map((source, index) => {
         const text = typeof source?.text === "string" ? source.text : "";
-        if (!text.trim()) return null;
+        const original = candidateSources[index];
+        if (!text.trim()) {
+          const label =
+            (typeof source?.label === "string" && source.label.trim()) ||
+            (typeof source?.name === "string" && source.name.trim()) ||
+            (typeof source?.title === "string" && source.title.trim()) ||
+            `Source ${index + 1}`;
+          const reason = dropReasonAfterExtraction(original, prep.sources?.[index]);
+          console.warn(
+            `[analyse-statements] source dropped after extraction: label=${label}, mimeType=${mimeTypeForDropLog(
+              original
+            )}, reason=${reason}`
+          );
+          return null;
+        }
         const label =
           (typeof source?.label === "string" && source.label.trim()) ||
           (typeof source?.name === "string" && source.name.trim()) ||
@@ -123,6 +175,14 @@ export default async function handler(req, res) {
         return { text, label };
       })
       .filter(Boolean);
+
+    for (const source of v3Sources) {
+      if (source.text.length > LONG_SOURCE_SOFT_CHAR_WARN) {
+        console.warn(
+          `[analyse-statements] long source: label=${source.label}, charCount=${source.text.length}. Stage 2 chunking not yet implemented.`
+        );
+      }
+    }
     const sourceLabels = v3Sources.map((source) => source.label);
     const sourceCount = new Set(sourceLabels).size;
     const requiredVersion = normalizeRequiredVersion(
