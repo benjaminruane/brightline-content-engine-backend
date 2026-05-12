@@ -125,7 +125,22 @@ export default async function handler(req, res) {
       .filter(Boolean);
     const sourceLabels = v3Sources.map((source) => source.label);
     const sourceCount = new Set(sourceLabels).size;
-    const requiredVersion = normalizeRequiredVersion(body?.options?.requiredVersion ?? body?.options?.visibility);
+    const requiredVersion = normalizeRequiredVersion(
+      body?.options?.requiredVersion ??
+        body?.options?.visibility ??
+        body?.versionType ??
+        body?.visibility ??
+        body?.requiredVersion
+    );
+    const outputType = resolveOutputType(body);
+    const pipelineOptions = {
+      ...(body?.options || {}),
+      traceId,
+      requiredVersion,
+    };
+    if (outputType) {
+      pipelineOptions.outputType = outputType;
+    }
     const runStartedAt = new Date().toISOString();
     const draftMetadata = {
       draftHash: getDraftHashPrefix(draftText),
@@ -148,7 +163,6 @@ export default async function handler(req, res) {
       updateTraceMetadata(traceId, { pipelineRoute: "v4" });
     }
 
-    const outputType = resolveOutputType(body);
     if (outputType) {
       updateTraceMetadata(traceId, { outputType });
     } else {
@@ -160,8 +174,8 @@ export default async function handler(req, res) {
     }
 
     const pipelineResult = useV4
-      ? await runPipelineV4(draftText, v3Sources, { ...(body?.options || {}), traceId })
-      : await runPipelineV3(draftText, v3Sources, { ...(body?.options || {}), traceId });
+      ? await runPipelineV4(draftText, v3Sources, pipelineOptions)
+      : await runPipelineV3(draftText, v3Sources, pipelineOptions);
     const qcCards = Array.isArray(pipelineResult?.qcCards) ? pipelineResult.qcCards : [];
     if (qcCards.length === 0) {
       throw new Error("QC pipeline returned empty qcCards");
