@@ -89,7 +89,7 @@ The backlog is split into four tables by character of work:
 | ID  | Item | Source / context | Priority | Notes |
 |-----|------|------------------|----------|-------|
 | Pr1 | Reviewer Assessment synthesis (narrative, not dashboard) | userMemories | M | Pre-existing. |
-| Pr2 | Merge duplicate concerns | userMemories | L | Pre-existing. |
+| Pr2 | Merge duplicate concerns | userMemories | L | Merge duplicate concerns — partial fix shipped in R3.4. R3.4 addressed the Evidence-vs-Editorial duplication on conflicting statements by suppressing `overreach_unsupported_causal` and `internal_plausibility` from `editorialConcerns` when Evidence verdict is `conflicting`. The Langfuse canary `editorial_concern_suppressed_by_evidence` tracks suppression frequency. **Remaining open:** (a) Evidence-vs-Editorial duplication on `partially_confirmed` verdicts (R3.4 deliberately scoped to conflicting only). Reactivate if the same noise pattern shows up on partials. (b) Editorial-vs-Compliance overlap on promotional language (e.g. `marketing_language_excess` + `regulatory_prohibited_language` firing on the same sentence). Reviewed and judged intentional — both signals serve distinct reviewer decisions (craft vs regulatory). No fix planned; revisit if reviewer feedback indicates the overlap is genuinely noisy rather than complementary. |
 | Pr3 | Align Direction intensity — Evidence softer than others | userMemories | L | Pre-existing. |
 | Pr4 | Reviewer comments follow house style | userMemories | M | Pre-existing. |
 | Pr5 | Hide Editorial on conflict | userMemories | L | Pre-existing. |
