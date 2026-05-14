@@ -23,6 +23,7 @@ Last updated: May 2026
 - Signal strip on each QC card with badges, concern notes, direction
 - Worst-signal border logic driving card left border colour
 - Review options popup: Evidence, Editorial, Compliance independently toggleable per run
+- Pipeline v4 rebuild (R2.1–R3.6.1): ground-up replacement of the v3 evidence pipeline addressing the original Evidence Pipeline Quality Sprint items. Stages 1–5 owned by v4 modules; Editorial+Style consolidated into one call; Compliance separate; rule-based suppression of duplicate editorial concerns on conflicts; PDF source extraction; Visibility wiring; aligned summary blocks and pill logic. Sentence fragmentation, false `not_supported` verdicts, excerpt-quality issues, and subclaim atomisation corruption all resolved by architectural redesign rather than patching v3.
 
 ### Output Types & Adaptation
 - Four output types: Reporting commentary, Investor letter, Press release, LinkedIn post
@@ -94,14 +95,9 @@ Last updated: May 2026
 
 9. Investigate Editorial review run-to-run variance. R3.6 testing observed that the same draft (causal claim about GDP growth being "driven by expansion of real incomes") produced an editorial concern on one run and no concern on a later run, despite temperature 0. This is a known property of LLM APIs (provider-side variance even at temp 0). Action: assess the scale of the variance with a small repeatability study (run the same 5–10 drafts through Assess 3 times each, log which concerns fire each time, compare). If variance is material, consider mitigations: lower-variance models, ensemble-of-N voting on borderline cases, prompt strengthening on the specific rules that show variance.
 
-### Evidence Pipeline Quality Sprint
-- False `not_supported` verdicts — most pressing accuracy issue
-- Excerpt quality and reliability
-- Sentence splitting: fragmentation and incomplete statements
-- Editorial plausibility pass on evidence verdicts
-- Atomised subclaim problem — A7.38 reverted, needs redesign
-- Statement 1 currency hallucination — deferred, revisit in this sprint
-- Public version flag in writing prompt — deferred, revisit in this sprint
+10. Confirm that the Statement 1 currency hallucination bug from v3 does not recur on v4. Origin: Evidence Pipeline Quality Sprint (now retired). The v3 pipeline could produce a hallucinated currency reference on the first statement of certain drafts. v4's redesigned Stage 1 (LLM-based extraction with deterministic fallback) should not exhibit this, but it has not been explicitly tested. Action: construct a test draft known to have triggered the bug in v3 (or any draft whose first statement contains ambiguous currency phrasing), run on v4, confirm Stage 1 output and Stage 5 commentary are clean.
+
+11. Consider whether an editorial plausibility cross-check on evidence verdicts adds reviewer value. Origin: Evidence Pipeline Quality Sprint (now retired). The original idea: after Stage 3 deterministically aggregates the evidence verdict, run a lightweight LLM check that asks "given the statement and the source passages, does this verdict look reasonable?" — flagging cases where the deterministic aggregation might be brittle. v4's stages are individually more accurate than v3 was, so the marginal value of this cross-check has decreased. Not on active backlog. Reactivate if pilot testing surfaces cases where v4's verdict logic produces unintuitive results that a plausibility pass would have caught.
 
 ### Web Search Functionality Sprint
 - Scope and reliability of public search integration
