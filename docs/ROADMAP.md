@@ -131,6 +131,10 @@ Last updated: May 2026
 
 These items are intentionally not in the active rebuild backlog. They stay visible so design intent is not lost, but work does not resume until the stated evidence triggers.
 
+### Adapt (parked R4.1)
+
+Adapt is parked. The `api/adapt.js` endpoint and supporting code remain in the codebase but are not linked from any UI. Reactivation trigger: pilot user feedback indicating multi-output workflows are needed, OR an explicit product decision to launch multi-output capability.
+
 ### (C) Stage 2 chunking — cost ceiling for long sources
 
 **Parked.** R3.3 instrumentation now logs a warning whenever any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. Reactivate this item when source-length warnings start appearing regularly in dev or production logs, OR when typical Partners Group source documents in pilot testing exceed ~100k characters, OR when verdict quality begins to degrade on long sources. Architecture document section 10 already defines the chunking strategy; this is sequencing, not design.

@@ -1,4 +1,5 @@
 // api/adapt.js
+// Adapt is parked as of R4.1. Endpoint and code retained for future reactivation. Not wired to any UI.
 //
 // SPEC X2.0: Adapt creates a derived draft from a base draft.
 // Same source set; fresh retrieval within that set allowed.
