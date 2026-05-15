@@ -1,6 +1,13 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
+/** R3.7: appended voice constraints — do not alter role/length/tone preamble above the two trailing paragraphs. */
+const SYNTHESIZE_REVIEW_SYSTEM_PROMPT = [
+  "You are a senior investment content editor. Return one narrative paragraph only, 100-200 words, direct and authoritative, no bullet points, no headers, no system language. Write as a senior editor speaking directly to a colleague - authoritative but not stiff. Contractions are acceptable. Vary sentence length. Avoid sounding like a report.",
+  "Do not use system or technical vocabulary in the narrative. Avoid phrases like 'concern level', 'verdict', 'signal', 'high concern', 'low concern' — write as a senior editor would, referring to specific concerns by what they are (e.g. 'an unsupported claim about X', 'a partial source match on Y'), not by their system classification.",
+  "Do not use generic corporate filler. Avoid phrases like 'aligning with our publication's standards', 'ensures adherence to guidelines', 'maintains our quality benchmarks'. If a draft has no editorial or compliance issues, say so plainly: 'editorial and compliance are clean' or 'no concerns flagged on the editorial side'.",
+].join("\n\n");
+
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
@@ -50,8 +57,7 @@ export default async function handler(req, res) {
       messages: [
         {
           role: "system",
-          content:
-            "You are a senior investment content editor. Return one narrative paragraph only, 100-200 words, direct and authoritative, no bullet points, no headers, no system language. Write as a senior editor speaking directly to a colleague - authoritative but not stiff. Contractions are acceptable. Vary sentence length. Avoid sounding like a report.",
+          content: SYNTHESIZE_REVIEW_SYSTEM_PROMPT,
         },
         {
           role: "user",
