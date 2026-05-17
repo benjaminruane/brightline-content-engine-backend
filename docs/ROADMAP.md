@@ -79,6 +79,7 @@ Last updated: 2026-05-17
 
 - **R4.3 — Visibility wiring** (shipped 2026-05-17). Expanded confidential-detail rule, new disclosure-absent rule, new jargon rule (version-aware), Compliance and Editorial+Style system-prompt visibility calibration. Tag: `r4.3-visibility-wiring`.
 - **R5.1 — Per-concern span derivation on v4** (shipped 2026-05-17). Editorial coverage ~96%, Compliance ~56%. Tag: `r5.1-concern-spans`.
+- **R5.1.1 — Compliance prompt instructs phrase quoting** (shipped 2026-05-17). Compliance span coverage rose from ~56% to ~83% across post-deploy validation runs. Tag: `r5.1.1-compliance-phrase-quoting`.
 - **Reviewer Assessment synthesis** (closed in R4.x). Narrative synthesis in senior editor voice; see Completed → Source Management.
 - **Cost model spreadsheet** (closed in R1.x). See `docs/BACKLOG.md` Closed → P1.
 - **R1.2 gpt-4o-mini Stage 2 source-matching evaluation** (closed via R1.2, R1.2.4, R1.2.5). Production Stage 2 remains gpt-4o + prompt v2.
@@ -105,11 +106,14 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 | Spec | Summary | Status |
 |------|---------|--------|
 | **R5.1** | Per-concern span derivation on v4 | **SHIPPED** — `r5.1-concern-spans` |
-| **R5.1.1** | Compliance prompt encourages phrase quoting — small follow-up to lift Compliance span coverage from ~56% toward 75–85% | **Not yet spec'd** |
+| **R5.1.1** | Compliance prompt encourages phrase quoting | **SHIPPED** — `r5.1.1-compliance-phrase-quoting` |
+| **R5.1.2** | Confidential-detail rule covers unlabelled return multiples — expand `precise_confidential_detail_in_public_version` description to call out unlabelled return figures (e.g. “3.2x net of fees”, “delivered 4.5x”). LLM currently fires once per sentence and picks the most unambiguous metric (EV/EBITDA), missing MOIC-style figures. Promoted from R4.3 watch — pattern confirmed across two test batches. | Planned |
 | **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | Planned |
 | **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | Planned |
 | **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle, **off by default** | Planned |
 | **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight on the R5.3a surface | Planned |
+
+**R5.2 scoping note (deferred):** Span derivation currently picks the **first** quoted phrase from a concern note. When one concern quotes multiple phrases (e.g. `'2/20'`, `'soft hurdle'`, and `'ratcheted carry'`), only the first becomes a span. R5.2 should decide whether to: **(a)** emit multiple spans per concern, **(b)** extend a single span to encompass all quoted phrases, or **(c)** accept first-phrase-only behaviour and rely on R5.4 frontend highlighting broader statement context. Decision deferred to R5.2 scoping.
 
 ---
 
@@ -138,7 +142,6 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | 7 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
 | 8 | Spring clean / refactor | Open — see Active Backlog → Spring Clean |
 | 9 | Public version prompt | Open |
-| — | **R4.3 watch** — unlabelled return-multiple figures on Public | Watch only — see Watch items |
 
 ---
 
@@ -149,10 +152,6 @@ No spec until trigger conditions met. Do not schedule ahead of dogfooding signal
 ### R2.7.1 — Stage 2 conflict vs partial
 
 Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt. **No action** if the pattern does not recur on a diverse trace set.
-
-### R4.3 — Unlabelled return-multiple on Public
-
-Monitor dogfood runs on **Public** visibility: whether unlabelled return-multiple figures (e.g. “3.2x net of fees” without an explicit “MOIC” label) are flagged by the **confidential-detail** rule as intended. No prompt change until pattern is clear across real drafts.
 
 ---
 
