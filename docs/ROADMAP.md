@@ -78,7 +78,7 @@ Last updated: 2026-05-17
 ## Recently shipped (closed specs)
 
 - **R4.3 — Visibility wiring** (shipped 2026-05-17). Expanded confidential-detail rule, new disclosure-absent rule, new jargon rule (version-aware), Compliance and Editorial+Style system-prompt visibility calibration. Tag: `r4.3-visibility-wiring`.
-- **R5.1 — Per-concern span derivation on v4** (shipped 2026-05-17). Character-range `span` on editorial and compliance concerns derived from quoted phrases in note / suggestedDirection; Langfuse canary scores `editorial_concern_span_coverage` and `compliance_concern_span_coverage`. Early coverage: Editorial ~96%, Compliance ~56%. Tag: `r5.1-concern-spans`.
+- **R5.1 — Per-concern span derivation on v4** (shipped 2026-05-17). Editorial coverage ~96%, Compliance ~56%. Tag: `r5.1-concern-spans`.
 - **Reviewer Assessment synthesis** (closed in R4.x). Narrative synthesis in senior editor voice; see Completed → Source Management.
 - **Cost model spreadsheet** (closed in R1.x). See `docs/BACKLOG.md` Closed → P1.
 - **R1.2 gpt-4o-mini Stage 2 source-matching evaluation** (closed via R1.2, R1.2.4, R1.2.5). Production Stage 2 remains gpt-4o + prompt v2.
@@ -100,12 +100,12 @@ Status of rebuild optimisation and cost items from the v4 planning track:
 
 ## R5 — Concern spans & draft highlighting
 
-Sequence locked in 2026-05-17 planning session. R5.1 is shipped; remainder is planned.
+Sequence locked in 2026-05-17 planning session (in delivery order):
 
 | Spec | Summary | Status |
 |------|---------|--------|
-| **R5.1** | Per-concern span derivation on v4 (backend; no prompt changes) | Shipped — `r5.1-concern-spans` |
-| **R5.1.1** | Compliance prompt encourages phrase quoting — small follow-up to lift Compliance span coverage from ~56% toward 75–85% | Planned |
+| **R5.1** | Per-concern span derivation on v4 | **SHIPPED** — `r5.1-concern-spans` |
+| **R5.1.1** | Compliance prompt encourages phrase quoting — small follow-up to lift Compliance span coverage from ~56% toward 75–85% | **Not yet spec'd** |
 | **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | Planned |
 | **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | Planned |
 | **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle, **off by default** | Planned |
@@ -115,12 +115,11 @@ Sequence locked in 2026-05-17 planning session. R5.1 is shipped; remainder is pl
 
 ## R4.2 — Dead-code cleanup (parked)
 
-Parked pending dogfooding evidence (15–25 production traces, no canary fires). Bundle:
+Parked pending dogfooding evidence. Bundle:
 
-- **Cosmetic:** `[EDITORIAL_REVIEW] starting` log prints `visibility: null` before `normalize*` — should log post-normalisation resolved values (`lib/qc/editorial-compliance-reviewer.mjs`).
+- **Cosmetic:** `[EDITORIAL_REVIEW] starting` log prints `visibility: null` before `normalize*` — stale pre-normalisation values (`lib/qc/editorial-compliance-reviewer.mjs`).
 - **Cosmetic:** `qcCard.pipelineVersion: "v3"` appears on v4 runs (misleading label in `stage7-assemble-card.mjs`).
-- **Fidelity log traceability** (product backlog item 6): low priority — bundle here or Spring clean; add draft identifier to `[FIDELITY_DROP]` logs.
-- **v3 retirement:** decommission v3 route and dual-path editorial/compliance code once dogfooding criteria met (see Architectural debt → R3.1).
+- **v3 retirement:** decommission v3 route and dual-path editorial/compliance code once dogfooding evidence accumulates (target: 15–25 production traces, no canary fires; see Architectural debt → R3.1).
 
 ---
 
@@ -149,7 +148,7 @@ No spec until trigger conditions met. Do not schedule ahead of dogfooding signal
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
-Monitor Stage 2 classification across the **next 10–20 diverse v4 traces** (not the repeat ECB/Shopify test drafts). Origin: R2.7.1; reactivated R4.1.6 (Lumin product-description case). **Pattern to watch:** absent-fact or “source describes something different” statements landing as `conflicting` where `partially_confirmed` is also defensible. **Action if pattern persists:** tighten Stage 2 prompt distinction between “source describes something different” (partial) vs “source directly contradicts” (conflict). **No action** if distribution looks healthy on a diverse trace set.
+Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt. **No action** if the pattern does not recur on a diverse trace set.
 
 ### R4.3 — Unlabelled return-multiple on Public
 
