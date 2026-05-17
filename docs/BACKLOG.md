@@ -74,7 +74,6 @@ The backlog is split into four tables by character of work:
 
 | ID  | Item | Source / context | Priority | Notes |
 |-----|------|------------------|----------|-------|
-| P1  | Cost model spreadsheet update | R1.2.6 close-out | M | Replace the gpt-5-mini placeholder in the Projections sheet with locked gpt-4o numbers from R1.2.5 results.md. Manual edit on the spreadsheet, not in repo. |
 | P2  | Reproducibility test pattern for future model evals | R1.2.5.3 finding | M | Standard for any future eval involving reasoning models or temperature > 0: run 2–3 times, check for stability, average results. Add to `ai/AI_OPERATING_MANUAL.md` when next updated. |
 | P3  | Re-eval trigger: new gpt-5-family model with materially better latency | R1.2.6 conclusion | -- | Watch only. Re-run R1.2.5 if a candidate appears that addresses gpt-5's latency profile. |
 | P4  | Re-eval trigger: new Anthropic Sonnet/Haiku with closed agreement gap | R1.2.6 conclusion | -- | Watch only. |
@@ -88,7 +87,6 @@ The backlog is split into four tables by character of work:
 
 | ID  | Item | Source / context | Priority | Notes |
 |-----|------|------------------|----------|-------|
-| Pr1 | Reviewer Assessment synthesis (narrative, not dashboard) | userMemories | M | Pre-existing. |
 | Pr2 | Merge duplicate concerns | userMemories | L | Merge duplicate concerns — partial fix shipped in R3.4. R3.4 addressed the Evidence-vs-Editorial duplication on conflicting statements by suppressing `overreach_unsupported_causal` and `internal_plausibility` from `editorialConcerns` when Evidence verdict is `conflicting`. The Langfuse canary `editorial_concern_suppressed_by_evidence` tracks suppression frequency. **Remaining open:** (a) Evidence-vs-Editorial duplication on `partially_confirmed` verdicts (R3.4 deliberately scoped to conflicting only). Reactivate if the same noise pattern shows up on partials. (b) Editorial-vs-Compliance overlap on promotional language (e.g. `marketing_language_excess` + `regulatory_prohibited_language` firing on the same sentence). Reviewed and judged intentional — both signals serve distinct reviewer decisions (craft vs regulatory). No fix planned; revisit if reviewer feedback indicates the overlap is genuinely noisy rather than complementary. |
 | Pr3 | Align Direction intensity — Evidence softer than others | userMemories | L | Pre-existing. |
 | Pr4 | Reviewer comments follow house style | userMemories | M | Pre-existing. |
@@ -106,6 +104,9 @@ The backlog is split into four tables by character of work:
 |     | Multi-provider infrastructure (OpenAI + Anthropic) | r1.2.4-multi-provider-infra |
 |     | Cross-provider Stage 2 eval | r1.2.5-eval, r1.2.6-eval-closed |
 |     | gpt-5-mini reproducibility test | r1.2.5.3 (under r1.2.6-eval-closed) |
+| P1  | Cost model spreadsheet update | R1.x |
+| Pr1 | Reviewer Assessment synthesis (narrative, not dashboard) | R4.x |
+|     | R1.2 gpt-4o-mini Stage 2 source-matching eval | R1.2, R1.2.4, R1.2.5 |
 |     | Pipeline v4 scaffolding | r2.1-pipeline-scaffolding |
 |     | Stage 1 (statement extraction) in v4 | r2.2-stage1-extraction |
 |     | Stage 2 (source matching) in v4 | r2.3-stage2-matching |
