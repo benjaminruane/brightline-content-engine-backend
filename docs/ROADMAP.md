@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: May 2026
+Last updated: 2026-05-17
 
 ---
 
@@ -75,11 +75,93 @@ Last updated: May 2026
 
 ---
 
+## Recently shipped (closed specs)
+
+- **R4.3 — Visibility wiring** (shipped 2026-05-17). Expanded confidential-detail rule, new disclosure-absent rule, new jargon rule (version-aware), Compliance and Editorial+Style system-prompt visibility calibration. Tag: `r4.3-visibility-wiring`.
+- **R5.1 — Per-concern span derivation on v4** (shipped 2026-05-17). Character-range `span` on editorial and compliance concerns derived from quoted phrases in note / suggestedDirection; Langfuse canary scores `editorial_concern_span_coverage` and `compliance_concern_span_coverage`. Early coverage: Editorial ~96%, Compliance ~56%. Tag: `r5.1-concern-spans`.
+- **Reviewer Assessment synthesis** (closed in R4.x). Narrative synthesis in senior editor voice; see Completed → Source Management.
+- **Cost model spreadsheet** (closed in R1.x). See `docs/BACKLOG.md` Closed → P1.
+- **R1.2 gpt-4o-mini Stage 2 source-matching evaluation** (closed via R1.2, R1.2.4, R1.2.5). Production Stage 2 remains gpt-4o + prompt v2.
+
+---
+
+## QC rebuild backlog
+
+Status of rebuild optimisation and cost items from the v4 planning track:
+
+| ID | Item | Status |
+|----|------|--------|
+| **(A)** | LLM call consolidation | **R3.1 shipped** — Style+Editorial merged on v4 (`runEditorialStyleReview`). **Compliance deliberately kept separate** (different cognitive frame, reviewer trust; ~$0.02/run saving not worth signal dilution). **R3.2** (Stage 5 into Stage 2) **DEFERRED** — needs Stage 2 restructure; loses parallelisation. |
+| **(B)** | Visibility wiring (Complete vs Public) | **CLOSED** via R4.3 (`r4.3-visibility-wiring`). |
+| **(C)** | Stage 2 chunking cost ceiling for long sources | **Open** — evidence-gated; see Parked → (C) below. |
+| **(D)** | $2/run production cost target | **Open** — no spec yet; depends on (C), model choices, and call-count baseline after v4 dogfooding. |
+
+---
+
+## R5 — Concern spans & draft highlighting
+
+Sequence locked in 2026-05-17 planning session. R5.1 is shipped; remainder is planned.
+
+| Spec | Summary | Status |
+|------|---------|--------|
+| **R5.1** | Per-concern span derivation on v4 (backend; no prompt changes) | Shipped — `r5.1-concern-spans` |
+| **R5.1.1** | Compliance prompt encourages phrase quoting — small follow-up to lift Compliance span coverage from ~56% toward 75–85% | Planned |
+| **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | Planned |
+| **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | Planned |
+| **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle, **off by default** | Planned |
+| **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight on the R5.3a surface | Planned |
+
+---
+
+## R4.2 — Dead-code cleanup (parked)
+
+Parked pending dogfooding evidence (15–25 production traces, no canary fires). Bundle:
+
+- **Cosmetic:** `[EDITORIAL_REVIEW] starting` log prints `visibility: null` before `normalize*` — should log post-normalisation resolved values (`lib/qc/editorial-compliance-reviewer.mjs`).
+- **Cosmetic:** `qcCard.pipelineVersion: "v3"` appears on v4 runs (misleading label in `stage7-assemble-card.mjs`).
+- **Fidelity log traceability** (product backlog item 6): low priority — bundle here or Spring clean; add draft identifier to `[FIDELITY_DROP]` logs.
+- **v3 retirement:** decommission v3 route and dual-path editorial/compliance code once dogfooding criteria met (see Architectural debt → R3.1).
+
+---
+
+## Product backlog
+
+Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
+
+| # | Item | Status / notes |
+|---|------|----------------|
+| 1 | Merge duplicate concerns | **Reassigned to R5.2** (span-based within-signal merge). R3.4 partial fix (Evidence-vs-Editorial on `conflicting` only) remains shipped. |
+| 2 | Align Direction intensity — Evidence softer than others | Open |
+| 3 | Reviewer comments follow house style | Open |
+| 4 | Hide Editorial on conflict | Open (R3.4 scoped to two rule codes on conflicting Evidence only) |
+| 5 | E2 deterministic reimplementation | Open |
+| 6 | Fidelity log traceability | Low priority — bundle into R4.2 or Spring clean |
+| 7 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
+| 8 | Spring clean / refactor | Open — see Active Backlog → Spring Clean |
+| 9 | Public version prompt | Open |
+| — | **R4.3 watch** — unlabelled return-multiple figures on Public | Watch only — see Watch items |
+
+---
+
+## Watch items
+
+No spec until trigger conditions met. Do not schedule ahead of dogfooding signal.
+
+### R2.7.1 — Stage 2 conflict vs partial
+
+Monitor Stage 2 classification across the **next 10–20 diverse v4 traces** (not the repeat ECB/Shopify test drafts). Origin: R2.7.1; reactivated R4.1.6 (Lumin product-description case). **Pattern to watch:** absent-fact or “source describes something different” statements landing as `conflicting` where `partially_confirmed` is also defensible. **Action if pattern persists:** tighten Stage 2 prompt distinction between “source describes something different” (partial) vs “source directly contradicts” (conflict). **No action** if distribution looks healthy on a diverse trace set.
+
+### R4.3 — Unlabelled return-multiple on Public
+
+Monitor dogfood runs on **Public** visibility: whether unlabelled return-multiple figures (e.g. “3.2x net of fees” without an explicit “MOIC” label) are flagged by the **confidential-detail** rule as intended. No prompt change until pattern is clear across real drafts.
+
+---
+
 ## Active Backlog (Rough Priority Order)
 
-1. Watch Stage 2 conflict-vs-partial drift on absent-fact statements. Origin: R2.7.1 (Stage 2 explanation enrichment). After R2.7.1, Run 4 of the R2.7.1 testing plan ("Shopify plans to grow by investing in marketing, international expansion, and acquiring a competitor") came back as `conflicting` rather than the previously-observed `partially_confirmed`. Both are defensible under architecture section 5.2 — the source describes a different growth plan, which can be read as contradiction or absence depending on framing. If absent-fact statements consistently classify as `conflicting` rather than `partially_confirmed`, open a spec to tighten the Stage 2 prompt's distinction between "source describes something different" (partial) and "source directly contradicts" (conflict). No action required if the pattern does not recur. Status as of May 15, 2026: The accumulated v4 trace pool is dominated by two repeat test drafts (ECB GDP, Shopify Series A), so no meaningful drift assessment is possible today. Watch deferred until either pilot testing produces a more diverse trace pool, or a deliberate test set is constructed (covering absent-fact statements, paraphrased confirmations, numeric near-misses, and missing entities). Reactivation trigger: 20+ diverse v4 traces or first pilot user feedback indicating verdict drift.
+1. *(Consolidated into Watch items → R2.7.1.)* Stage 2 conflict-vs-partial classification — see **Watch items** above.
 
-2. Fix the misleading `[EDITORIAL_REVIEW] starting` log in `lib/qc/editorial-compliance-reviewer.mjs` (or wherever the log is emitted). The current log prints `documentContext.requiredVersion` / `outputType` / `eventType` **before** the `normalize*` calls run, so visibility and eventType often appear as `null` even when downstream behaviour is correct (visibility reaches the rule filter as `PUBLIC` / `COMPLETE` after normalisation). Change the log to print the post-normalisation resolved values so future debugging matches actual runtime behaviour. Origin: R3.2 diagnosis, where this misleading log cost roughly an hour of debugging on the wrong hypothesis.
+2. *(Bundled into R4.2 — parked.)* Misleading `[EDITORIAL_REVIEW] starting` log (`visibility: null` before normalisation) in `lib/qc/editorial-compliance-reviewer.mjs`.
 
 3. EventType is not reaching the backend on v4 runs. On the R3.2 test runs, `outputType` resolved correctly (`press_release`) and visibility resolved correctly (`PUBLIC` / `COMPLETE` based on rule firing), but `eventType` resolved to `null`. The Setup screen does not currently include an event-type control, so this may be intentional. Action: decide whether `eventType` is required in the MVP. If not required, remove `eventType` from the Editorial and Compliance prompt user payloads and from the `documentContext` shape rather than leaving `null` placeholders. If required, add the control to the Setup screen and wire it through.
 
@@ -87,7 +169,7 @@ Last updated: May 2026
 
 5. Document the Vercel dev env setup in the backend README. Today the v4 route selection silently fell back to v3 because `vercel dev` did not load `.env.local` into the function process. The durable fix is registering env vars in Vercel directly: `npx vercel env add QC_PIPELINE_V4 development` then `npx vercel env pull .env.development.local`. Add a "Local development environment" section to the backend README documenting this process — the env vars that must be registered for v4 to work locally (`QC_PIPELINE_V4` at minimum, plus any other vars discovered as the rebuild progresses), the two commands above, and a note that simply having a value in `.env.local` is not sufficient for `vercel dev` to inject it into the function process. This protects future sessions (and any future collaborators) from the same lost-hour debugging cycle.
 
-6. Merge duplicate concerns — partial fix shipped in R3.4. R3.4 addressed the Evidence-vs-Editorial duplication on conflicting statements by suppressing `overreach_unsupported_causal` and `internal_plausibility` from `editorialConcerns` when Evidence verdict is `conflicting`. The Langfuse canary `editorial_concern_suppressed_by_evidence` tracks suppression frequency. **Remaining open:** (a) Evidence-vs-Editorial duplication on `partially_confirmed` verdicts (R3.4 deliberately scoped to conflicting only). Reactivate if the same noise pattern shows up on partials. (b) Editorial-vs-Compliance overlap on promotional language (e.g. `marketing_language_excess` + `regulatory_prohibited_language` firing on the same sentence). Reviewed and judged intentional — both signals serve distinct reviewer decisions (craft vs regulatory). No fix planned; revisit if reviewer feedback indicates the overlap is genuinely noisy rather than complementary.
+6. *(Reassigned to R5.2 — Product backlog #1.)* Merge duplicate concerns within a signal using R5.1 spans. R3.4 partial fix remains (suppress `overreach_unsupported_causal` and `internal_plausibility` on Evidence `conflicting`; canary `editorial_concern_suppressed_by_evidence`). Editorial-vs-Compliance overlap on promotional language remains intentional unless reviewer feedback says otherwise.
 
 7. Recalibrate signoffVerdict thresholds. The current logic in `useAssessState.jsx` and `useDraftState.jsx` grades a single Conflicting evidence verdict as "Needs targeted revision". Reviewer feedback (R3.6 testing) suggests this is too soft — a direct numeric contradiction warrants stronger language than a "targeted revision". Action: review the thresholds in the signoffVerdict computation; consider grading any Conflicting evidence as "Needs significant work" regardless of overall concern count, or introduce a separate signoff state for unresolved factual contradictions.
 
@@ -101,7 +183,7 @@ Last updated: May 2026
 
 12. Stage 1 should filter sign-off blocks and document-structure text. Today Stage 1 sentence extraction treats sign-offs ("Yours sincerely,"), salutations, signature blocks ("The Investment Team"), dates, and "To:" / "From:" / "Re:" headers as content statements requiring evidence verification. This produces false-negative QC cards (Evidence Not Supported on text that shouldn't be checked) and downstream Editorial false positives (voice/tone concerns on closing blocks). Surfaced during R4.1.6 testing using the Lumin Robotics investment memo. Action: extend Stage 1's prompt or add a post-extraction filter to identify and exclude document-structure text. Document the patterns to filter (salutations, dates, signature blocks, header lines) and test against a fixture that contains them.
 
-13. R2.7.1 Stage 2 watch reactivated. A clear case emerged in R4.1.6 testing where Stage 2 classified a product/technology description mismatch as Conflicting where Partial would also be defensible. The Lumin draft claimed "AI-enabled autonomous mobile manipulation systems for high-mix, low-volume manufacturing" against a source describing "autonomous inspection drones for industrial logistics customers". The source doesn't directly contradict the manipulation claim — it describes a different product. Under the architecture's strict definitions, Partial fits as well as Conflicting. Stage 2 appears to be aggressive about labelling product/technology mismatches as conflicts. Action: when 20+ diverse v4 traces become available (likely through pilot testing or deliberate test set construction), review the conflict-vs-partial classification distribution on absent-fact statements. If the pattern persists, tighten Stage 2's prompt distinction between "source describes something different" (Partial) vs "source directly contradicts" (Conflicting).
+13. *(Consolidated into Watch items → R2.7.1.)*
 
 14. Expand R3.4 suppression scope to additional editorial rules. R3.4 currently suppresses `overreach_unsupported_causal` and `internal_plausibility` from `editorialConcerns` when Evidence verdict is `conflicting`. R4.1.6 testing surfaced a case where a `narrative_coherence` concern (or similar `internal_consistency` variant) fired on a conflicting statement with body text directly referencing the factual mismatch ("This inconsistency disrupts narrative coherence"). This is the same duplication pattern R3.4 was intended to prevent, but the rule code isn't in R3.4's suppression list. Action: audit the full editorial+style rulebook to identify all rules that fire on factual misalignment with sources. Extend the `SUPPRESSED_ON_EVIDENCE_CONFLICT` set in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. Candidates include `narrative_coherence`, `internal_consistency`, `claim_evidence_alignment`, and any others where the concern body references factual disagreement with sources.
 
@@ -145,7 +227,11 @@ Adapt is parked. The `api/adapt.js` endpoint and supporting code remain in the c
 
 ### (C) Stage 2 chunking — cost ceiling for long sources
 
-**Parked.** R3.3 instrumentation now logs a warning whenever any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. Reactivate this item when source-length warnings start appearing regularly in dev or production logs, OR when typical Partners Group source documents in pilot testing exceed ~100k characters, OR when verdict quality begins to degrade on long sources. Architecture document section 10 already defines the chunking strategy; this is sequencing, not design.
+**Open in QC rebuild backlog (C); evidence-gated here.** R3.3 instrumentation logs a warning when any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. Reactivate implementation when source-length warnings appear regularly in dev or production logs, OR when typical pilot source documents exceed ~100k characters, OR when verdict quality degrades on long sources. Architecture document section 10 defines the chunking strategy; this is sequencing, not design.
+
+### (D) $2/run production cost target
+
+**Open in QC rebuild backlog (D).** No spec yet. Depends on Stage 2 chunking (C), stable v4 call counts after dogfooding, and cost-model baseline from R1.x.
 
 ---
 
