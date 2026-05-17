@@ -96,3 +96,48 @@ looked. Diagnosis is cheap, specs that keep missing are expensive.
 Early diagnosis is preferred over blind speccing. If a spec's
 testing reveals unexpected behaviour, prefer a diagnostic pass
 before the next spec.
+
+## Diagnostic Discipline
+
+When a recurring issue persists across two or more spec iterations targeting the same symptom without resolution, ask Cursor to diagnose first before writing another fix spec. Diagnostic discipline applies before any behavioural change to existing modules — read the current code, confirm assumptions, inspect actual prompts and outputs, before speccing.
+
+Do not rely on memory or assumptions about the codebase state when the cost of being wrong is a wasted sprint. A read-only diagnostic is always cheaper than a wrong spec.
+
+Diagnostics are also the right tool when assumptions about prior work need confirming — e.g. "is X already wired through?", "did Y ship as I remember?". Cursor's diagnostic report becomes the source of truth, not conversation memory.
+
+The diagnostic itself should be:
+
+- Explicitly read-only
+- Scoped to specific questions
+- Structured so answers can be checked against the spec
+- Free of speculation or recommendations (those happen after the report lands)
+
+## Spec Sequencing
+
+Prefer multiple small sequenced sprints over one large bundled sprint when changes touch different surfaces (backend → frontend, multiple modules, different risk profiles).
+
+Bundling two architectural changes into one sprint means losing the ability to isolate which change caused any regression. Sequencing also produces natural checkpoints for evidence review and reduces test burden per sprint.
+
+When in doubt, split. A small sprint that ships cleanly is more valuable than a large sprint that ships with uncertainty about which component broke what.
+
+Concrete examples of correct sequencing:
+
+- **R5** split into R5.1 (backend spans), R5.2 (merge), R5.3a (frontend surface), R5.3b (colour-coding), R5.4 (click-to-locate). Five sprints, each independently testable.
+- **R3.1** merged Style + Editorial only. **R3.2** (Stage 5 into Stage 2) explicitly deferred as a separate sprint because Stage 2 restructure is a different change surface.
+
+## Doc-Sync Working Pattern
+
+When deferring, queuing, closing, or logging a follow-up item in conversation, generate a Cursor doc-update prompt at the same time. Do not wait to be asked.
+
+`docs/ROADMAP.md` and other governance documents (`docs/ARCHITECTURE.md`, this manual) are kept in sync with conversational decisions — not retroactively. The cost of writing the doc-update prompt at the moment of decision is small; the cost of reconstructing decisions from chat history later is large.
+
+Triggers that should generate a doc-update prompt:
+
+- "Add to backlog"
+- "Defer"
+- "Queue as later spec"
+- "Closed"
+- "Log as cleanup"
+- "Bundle into [other sprint]"
+- Any architectural decision (e.g. "Path Y locked")
+- Any working-pattern decision (e.g. additions to this manual)
