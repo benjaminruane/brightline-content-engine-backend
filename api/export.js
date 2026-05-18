@@ -245,6 +245,9 @@ async function renderPdf(payload) {
     body(`Total statements reviewed: ${review.total}`);
   }
 
+  const reviewDisclaimerText =
+    typeof meta.reviewDisclaimerText === "string" ? meta.reviewDisclaimerText.trim() : "";
+
   if (includeStatementReview) {
     sectionGap();
     sectionHeading("Statement review");
@@ -269,6 +272,22 @@ async function renderPdf(payload) {
     }
   }
 
+  if (reviewDisclaimerText) {
+    sectionGap();
+    doc
+      .moveTo(doc.page.margins.left, doc.y)
+      .lineTo(doc.page.width - doc.page.margins.right, doc.y)
+      .strokeColor("#e2e8f0")
+      .lineWidth(1)
+      .stroke();
+    doc.moveDown(0.75);
+    doc
+      .font("Helvetica-Oblique")
+      .fontSize(9)
+      .fillColor("#64748b")
+      .text(reviewDisclaimerText, { lineGap: 2 });
+  }
+
   doc.end();
   return finished;
 }
@@ -291,6 +310,8 @@ function buildDocx(payload) {
   const outputTypeName = String(meta.outputTypeName || "").trim() || String(meta.outputTypeLabel || "Unknown").split(" - ")[0];
   const requiredVersionLabel = String(meta.requiredVersionLabel || "").trim() || "Complete";
   const documentTitle = deriveDocumentTitle(meta, outputTypeName);
+  const reviewDisclaimerText =
+    typeof meta.reviewDisclaimerText === "string" ? meta.reviewDisclaimerText.trim() : "";
   const heading = (text, opts = {}) => new Paragraph({
     text,
     heading: HeadingLevel.HEADING_1,
@@ -397,6 +418,16 @@ function buildDocx(payload) {
       if (s.reviewerVerdict) children.push(new Paragraph({ children: [new TextRun({ text: "Reviewer verdict: ", bold: true }), new TextRun(String(s.reviewerVerdict))] }));
       children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
     }
+  }
+
+  if (reviewDisclaimerText) {
+    children.push(new Paragraph({ text: "", spacing: { before: 360, after: 120 } }));
+    children.push(
+      new Paragraph({
+        children: [new TextRun({ text: reviewDisclaimerText, italics: true, size: 18, color: "64748B" })],
+        spacing: { after: 200 },
+      })
+    );
   }
 
   const doc = new Document({ sections: [{ children }] });
