@@ -6,6 +6,15 @@ Last updated: 2026-05-18
 
 ---
 
+## Working rules
+
+### UI naming
+
+- The app's **UI name** is **Content Engine** (working title). User-visible strings — footers, modals, disclaimers, exports, and other copy shown to reviewers — use **Content Engine** or no product name. **Brightline** does not appear in UI strings.
+- **Brightline Content Engine** remains the **internal project name** (repos, roadmap, architecture docs, operator-facing material).
+
+---
+
 ## Completed
 
 ### Core Platform
@@ -77,7 +86,7 @@ Last updated: 2026-05-18
 
 ## Recently shipped (closed specs)
 
-- **R5.5 — Compliance disclaimer footer** (shipped 2026-05-18). Results panel page footer plus PDF/DOCX export footer (canonical copy, single constant); timestamp consistency audit with shared `formatRelativeTime` / `formatAbsoluteTime` helpers. Frontend tag: `v8.47.0-disclaimer-and-timestamps`. Backend tag: `r5.5-export-disclaimer`.
+- **R5.5 — Compliance disclaimer footer** (shipped 2026-05-18). Results panel page footer plus PDF/DOCX export footer (canonical copy, single constant); timestamp consistency audit with shared `formatRelativeTime` / `formatAbsoluteTime` helpers. **Frontend:** `v8.47.0-disclaimer-and-timestamps`. **Backend:** `r5.5-export-disclaimer`.
 - **R4.3 — Visibility wiring** (shipped 2026-05-17). Expanded confidential-detail rule, new disclosure-absent rule, new jargon rule (version-aware), Compliance and Editorial+Style system-prompt visibility calibration. Tag: `r4.3-visibility-wiring`.
 - **R5.1 — Per-concern span derivation on v4** (shipped 2026-05-17). Editorial coverage ~96%, Compliance ~56%. Tag: `r5.1-concern-spans`.
 - **R5.1.1 — Compliance prompt instructs phrase quoting** (shipped 2026-05-17). Compliance span coverage rose from ~56% to ~83% across post-deploy validation runs. Tag: `r5.1.1-compliance-phrase-quoting`.
