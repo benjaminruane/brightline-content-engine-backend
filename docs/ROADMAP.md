@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-17
+Last updated: 2026-05-18
 
 ---
 
@@ -77,12 +77,17 @@ Last updated: 2026-05-17
 
 ## Recently shipped (closed specs)
 
+- **R5.5 — Compliance disclaimer footer** (shipped 2026-05-18). Results panel page footer plus PDF/DOCX export footer (canonical copy, single constant); timestamp consistency audit with shared `formatRelativeTime` / `formatAbsoluteTime` helpers. Frontend tag: `v8.47.0-disclaimer-and-timestamps`. Backend tag: `r5.5-export-disclaimer`.
 - **R4.3 — Visibility wiring** (shipped 2026-05-17). Expanded confidential-detail rule, new disclosure-absent rule, new jargon rule (version-aware), Compliance and Editorial+Style system-prompt visibility calibration. Tag: `r4.3-visibility-wiring`.
 - **R5.1 — Per-concern span derivation on v4** (shipped 2026-05-17). Editorial coverage ~96%, Compliance ~56%. Tag: `r5.1-concern-spans`.
 - **R5.1.1 — Compliance prompt instructs phrase quoting** (shipped 2026-05-17). Compliance span coverage rose from ~56% to ~83% across post-deploy validation runs. Tag: `r5.1.1-compliance-phrase-quoting`.
 - **Reviewer Assessment synthesis** (closed in R4.x). Narrative synthesis in senior editor voice; see Completed → Source Management.
 - **Cost model spreadsheet** (closed in R1.x). See `docs/BACKLOG.md` Closed → P1.
 - **R1.2 gpt-4o-mini Stage 2 source-matching evaluation** (closed via R1.2, R1.2.4, R1.2.5). Production Stage 2 remains gpt-4o + prompt v2.
+
+### Governance docs (frontend repo)
+
+- **`docs/FRONTEND_CONVENTIONS.md`** (brightline-content-engine-frontend) — created with R5.5. Documents the user-visible timestamp convention: **relative** time for lists and drawers (`formatRelativeTime`, tier definitions: Just now → minutes/hours → Yesterday at HH:MM → days ago → DD/MM/YYYY); **absolute** time for audit moments (`formatAbsoluteTime`, `DD/MM/YYYY, HH:MM GMT+8`). Canonical review disclaimer constant location also noted.
 
 ---
 
@@ -112,6 +117,7 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 | **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | Planned |
 | **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle, **off by default** | Planned |
 | **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight on the R5.3a surface | Planned |
+| **R5.5** | Compliance disclaimer footer (Results panel + PDF/DOCX exports); timestamp consistency audit | **SHIPPED** — frontend `v8.47.0-disclaimer-and-timestamps`, backend `r5.5-export-disclaimer` |
 
 **R5.2 scoping note (deferred):** Span derivation currently picks the **first** quoted phrase from a concern note. When one concern quotes multiple phrases (e.g. `'2/20'`, `'soft hurdle'`, and `'ratcheted carry'`), only the first becomes a span. R5.2 should decide whether to: **(a)** emit multiple spans per concern, **(b)** extend a single span to encompass all quoted phrases, or **(c)** accept first-phrase-only behaviour and rely on R5.4 frontend highlighting broader statement context. Decision deferred to R5.2 scoping.
 
@@ -124,6 +130,7 @@ Parked pending dogfooding evidence. Bundle:
 - **Cosmetic:** `[EDITORIAL_REVIEW] starting` log prints `visibility: null` before `normalize*` — stale pre-normalisation values (`lib/qc/editorial-compliance-reviewer.mjs`).
 - **Cosmetic:** `qcCard.pipelineVersion: "v3"` appears on v4 runs (misleading label in `stage7-assemble-card.mjs`).
 - **v3 retirement:** decommission v3 route and dual-path editorial/compliance code once dogfooding evidence accumulates (target: 15–25 production traces, no canary fires; see Architectural debt → R3.1).
+- **Legacy timestamp formatting (frontend):** `DraftOutputPanel.jsx`, `WritingBadge.jsx`, and `DraftContextPanel.jsx` still use `toLocaleString` for timestamp display (legacy Writing/Quality surfaces). Intentionally not touched in R5.5 — surfaces may be unreachable post-R4.1 and could be removed with dead code. **R4.2 scoping:** confirm reachability; either migrate to `formatRelativeTime` / `formatAbsoluteTime` (see frontend `docs/FRONTEND_CONVENTIONS.md`) or delete with the unreachable panels.
 
 ---
 
