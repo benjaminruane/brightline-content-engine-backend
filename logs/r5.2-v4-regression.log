@@ -1,0 +1,18 @@
+
+> brightline-content-engine-backend@dev qc:test
+> node scripts/run_qc_regression.mjs
+
+regression: running against v4 pipeline (via /api/analyse-statements)
+
+QC regression (display QC contract)
+
+run                         exp DV            act DV            exp CL        act CL        patterns  pass
+--------------------------------------------------------------------------------------------------------
+Run1_clean_support          supported_full    supported_full    none          none          OK        PASS
+Run2_numeric_conflict       conflict          conflict          high          high          OK        PASS
+Run3_not_supported          not_supported     not_supported     high          high          OK        PASS
+shopify_series_a_v1         -                 supported_full    -             none          —         PASS
+shopify_short_v1            supported_full    supported_full    none          none          —         PASS
+--------------------------------------------------------------------------------------------------------
+Total: 5 passed, 0 failed. Outputs saved to /Users/benjaminruane/~GitHub/GitHub/brightline-content-engine-backend/tests/output
+
