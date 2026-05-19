@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-18
+Last updated: 2026-05-19
 
 ---
 
@@ -86,6 +86,7 @@ Last updated: 2026-05-18
 
 ## Recently shipped (closed specs)
 
+- **R5.2 — Span-based within-signal duplicate concern merge** (shipped 2026-05-18). Threshold: 80% overlap of the longer span. Format: numbered-list `(i)` `(ii)` … within a single concern. Multi-span derivation extended in R5.1 helper. Tag: `r5.2-duplicate-concern-merge`.
 - **R5.5 — Compliance disclaimer footer** (shipped 2026-05-18). Results panel page footer plus PDF/DOCX export footer (canonical copy, single constant); timestamp consistency audit with shared `formatRelativeTime` / `formatAbsoluteTime` helpers. **Frontend:** `v8.47.0-disclaimer-and-timestamps`. **Backend:** `r5.5-export-disclaimer`.
 - **R4.3 — Visibility wiring** (shipped 2026-05-17). Expanded confidential-detail rule, new disclosure-absent rule, new jargon rule (version-aware), Compliance and Editorial+Style system-prompt visibility calibration. Tag: `r4.3-visibility-wiring`.
 - **R5.1 — Per-concern span derivation on v4** (shipped 2026-05-17). Editorial coverage ~96%, Compliance ~56%. Tag: `r5.1-concern-spans`.
@@ -122,13 +123,13 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 | **R5.1** | Per-concern span derivation on v4 | **SHIPPED** — `r5.1-concern-spans` |
 | **R5.1.1** | Compliance prompt encourages phrase quoting | **SHIPPED** — `r5.1.1-compliance-phrase-quoting` |
 | **R5.1.2** | Confidential-detail rule covers unlabelled return multiples — expand `precise_confidential_detail_in_public_version` description to call out unlabelled return figures (e.g. “3.2x net of fees”, “delivered 4.5x”). LLM currently fires once per sentence and picks the most unambiguous metric (EV/EBITDA), missing MOIC-style figures. Promoted from R4.3 watch — pattern confirmed across two test batches. | Planned |
-| **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | Planned |
+| **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | **SHIPPED** — `r5.2-duplicate-concern-merge` |
 | **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | Planned |
 | **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle, **off by default** | Planned |
 | **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight on the R5.3a surface | Planned |
 | **R5.5** | Compliance disclaimer footer (Results panel + PDF/DOCX exports); timestamp consistency audit | **SHIPPED** — frontend `v8.47.0-disclaimer-and-timestamps`, backend `r5.5-export-disclaimer` |
 
-**R5.2 scoping note (deferred):** Span derivation currently picks the **first** quoted phrase from a concern note. When one concern quotes multiple phrases (e.g. `'2/20'`, `'soft hurdle'`, and `'ratcheted carry'`), only the first becomes a span. R5.2 should decide whether to: **(a)** emit multiple spans per concern, **(b)** extend a single span to encompass all quoted phrases, or **(c)** accept first-phrase-only behaviour and rely on R5.4 frontend highlighting broader statement context. Decision deferred to R5.2 scoping.
+**Span contract (R5.1 → R5.2):** R5.1 introduced `span` as a single `{ startChar, endChar, source }` object on each concern. R5.2 generalises this to an **array** of one or more such entries (multi-phrase concerns emit multiple spans; merge concatenates and dedupes). The frontend does not currently read `span`, so this is forward-compatible. **R5.4** will consume the array for click-to-highlight.
 
 ---
 
@@ -149,7 +150,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
 | # | Item | Status / notes |
 |---|------|----------------|
-| 1 | Merge duplicate concerns | **Reassigned to R5.2** (span-based within-signal merge). R3.4 partial fix (Evidence-vs-Editorial on `conflicting` only) remains shipped. |
+| 1 | Merge duplicate concerns | **CLOSED** — shipped in R5.2 (`r5.2-duplicate-concern-merge`). R3.4 partial fix (Evidence-vs-Editorial on `conflicting` only) remains shipped. |
 | 2 | Align Direction intensity — Evidence softer than others | Open |
 | 3 | Reviewer comments follow house style | Open |
 | 4 | Hide Editorial on conflict | Open (R3.4 scoped to two rule codes on conflicting Evidence only) |
@@ -164,6 +165,10 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 ## Watch items
 
 No spec until trigger conditions met. Do not schedule ahead of dogfooding signal.
+
+### R5.2 — Duplicate-merge threshold tuning
+
+Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_duplicate_concerns_merged`) across dogfooding traces. Initial test runs (3 cases) produced zero merges, all correctly per the 80% threshold. **Action if real reviewer use surfaces under-merging** — especially nested Compliance concerns on the same phrase (e.g. forward-looking + comparative basis): revisit threshold. Two paths: lower overlap to 60–65%, or add a containment rule (full nesting = duplicate). **Defer until evidence accumulates.**
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
@@ -183,7 +188,7 @@ Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20
 
 5. Document the Vercel dev env setup in the backend README. Today the v4 route selection silently fell back to v3 because `vercel dev` did not load `.env.local` into the function process. The durable fix is registering env vars in Vercel directly: `npx vercel env add QC_PIPELINE_V4 development` then `npx vercel env pull .env.development.local`. Add a "Local development environment" section to the backend README documenting this process — the env vars that must be registered for v4 to work locally (`QC_PIPELINE_V4` at minimum, plus any other vars discovered as the rebuild progresses), the two commands above, and a note that simply having a value in `.env.local` is not sufficient for `vercel dev` to inject it into the function process. This protects future sessions (and any future collaborators) from the same lost-hour debugging cycle.
 
-6. *(Reassigned to R5.2 — Product backlog #1.)* Merge duplicate concerns within a signal using R5.1 spans. R3.4 partial fix remains (suppress `overreach_unsupported_causal` and `internal_plausibility` on Evidence `conflicting`; canary `editorial_concern_suppressed_by_evidence`). Editorial-vs-Compliance overlap on promotional language remains intentional unless reviewer feedback says otherwise.
+6. *(Closed — R5.2 shipped; Product backlog #1.)* Within-signal duplicate concern merge. R3.4 partial fix remains (suppress `overreach_unsupported_causal` and `internal_plausibility` on Evidence `conflicting`; canary `editorial_concern_suppressed_by_evidence`). Editorial-vs-Compliance overlap on promotional language remains intentional unless reviewer feedback says otherwise. Threshold tuning: see **Watch items → R5.2**.
 
 7. Recalibrate signoffVerdict thresholds. The current logic in `useAssessState.jsx` and `useDraftState.jsx` grades a single Conflicting evidence verdict as "Needs targeted revision". Reviewer feedback (R3.6 testing) suggests this is too soft — a direct numeric contradiction warrants stronger language than a "targeted revision". Action: review the thresholds in the signoffVerdict computation; consider grading any Conflicting evidence as "Needs significant work" regardless of overall concern count, or introduce a separate signoff state for unresolved factual contradictions.
 
