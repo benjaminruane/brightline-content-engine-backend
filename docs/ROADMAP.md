@@ -160,6 +160,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | 7 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
 | 8 | Spring clean / refactor | Open — see Active Backlog → Spring Clean |
 | 9 | Public version prompt | Open |
+| 10 | Web Search relook for new UI | Open — deferred. Web Search was previously a toggle in the Writing module (collapsed into Review via R4.1); no longer in active UI. Decide: **(a)** reintroduce as draft-research aid alongside or within Review; **(b)** reintroduce as Compliance-supporting tool (e.g. verify whether a “confidential detail” is already public); **(c)** drop entirely. Defer until later sprint cycles. |
 
 ---
 
