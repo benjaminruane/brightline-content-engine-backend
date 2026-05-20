@@ -86,6 +86,7 @@ Last updated: 2026-05-19
 
 ## Recently shipped (closed specs)
 
+- **R5.3b.2 — Tint hygiene and signal-colour alignment** (shipped 2026-05-20). Tint alpha bumped from 0.08–0.10 to 0.12–0.15 for better visibility. Tints auto-clear when draft text changes after Review. QC card left-border colour now uses worst-signal-wins (matches tint colour for the same statement). Tag: `v8.49.2-tint-hygiene`.
 - **R5.3a — Convert “Your Draft” textarea to overlay-capable surface** (shipped 2026-05-18). Frontend foundation only; no visible behaviour change. Tag: `v8.48.0-draft-overlay`.
 - **R5.2 — Span-based within-signal duplicate concern merge** (shipped 2026-05-18). Threshold: 80% overlap of the longer span. Format: numbered-list `(i)` `(ii)` … within a single concern. Multi-span derivation extended in R5.1 helper. Tag: `r5.2-duplicate-concern-merge`.
 - **R5.5 — Compliance disclaimer footer** (shipped 2026-05-18). Results panel page footer plus PDF/DOCX export footer (canonical copy, single constant); timestamp consistency audit with shared `formatRelativeTime` / `formatAbsoluteTime` helpers. **Frontend:** `v8.47.0-disclaimer-and-timestamps`. **Backend:** `r5.5-export-disclaimer`.
@@ -126,11 +127,13 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 | **R5.1.2** | Confidential-detail rule covers unlabelled return multiples — expand `precise_confidential_detail_in_public_version` description to call out unlabelled return figures (e.g. “3.2x net of fees”, “delivered 4.5x”). LLM currently fires once per sentence and picks the most unambiguous metric (EV/EBITDA), missing MOIC-style figures. Promoted from R4.3 watch — pattern confirmed across two test batches. | Planned |
 | **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | **SHIPPED** — `r5.2-duplicate-concern-merge` |
 | **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | **SHIPPED** — `v8.48.0-draft-overlay`. Ready for R5.3b/R5.4 consumers. |
-| **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle, **off by default** — consumes R5.3a overlay | **Next** |
-| **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight on the R5.3a surface — after R5.3b | Planned |
+| **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle (auto-on after Review unless reviewer toggles off); draft→card click navigation; word/char count — consumes R5.3a overlay | **SHIPPED** — follow-ups **R5.3b.1** (transparent textarea, auto-on on `statementRows`, toggle keyboard), **R5.3b.2** (`v8.49.2-tint-hygiene`) |
+| **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight phrases in the draft area on the R5.3a surface | **Next** |
 | **R5.5** | Compliance disclaimer footer (Results panel + PDF/DOCX exports); timestamp consistency audit | **SHIPPED** — frontend `v8.47.0-disclaimer-and-timestamps`, backend `r5.5-export-disclaimer` |
 
 **Span contract (R5.1 → R5.2):** R5.1 introduced `span` as a single `{ startChar, endChar, source }` object on each concern. R5.2 generalises this to an **array** of one or more such entries (multi-phrase concerns emit multiple spans; merge concatenates and dedupes). The frontend does not currently read `span`, so this is forward-compatible. **R5.4** will consume the array for click-to-highlight.
+
+**Note — macOS Safari keyboard accessibility:** The Verdicts toggle (R5.3b) uses correct ARIA switch semantics on a native `<button>`, but macOS Safari does not tab to buttons by default. Users on Safari must enable **Preferences → Advanced → “Press Tab to highlight each item on a webpage”** to navigate the toggle via keyboard. This is a Safari preference, not a code defect.
 
 ---
 
