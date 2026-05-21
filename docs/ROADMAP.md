@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-19 (post-R5; R6 scoping)
+Last updated: 2026-05-19 (R2.7.2 logged)
 
 ---
 
@@ -179,6 +179,41 @@ Items in scope (order indicative, not locked):
 - **R2.7.1** — Stage 2 conflict-vs-partial-confirmed distinction. If pattern persists across next 10–20 traces, promote to action inside R6 (likely a Stage 2 prompt tightening sub-spec).
 - **Rebuild backlog (C)** — Stage 2 chunking ceiling. Scope during R6 because long-source quality work is wasted if Stage 2 silently drops content. Decide in scoping whether to address inside R6 or run as a parallel rebuild item.
 - **Rebuild backlog (D)** — Production cost tracking. One diagnostic pass during R6 to baseline call count and cost (~16 calls / 4 statements / 1 source; ~$2/run today) before any prompt changes.
+- **R2.7.2** — Stage 2 semantic frame matching (logged in open backlog #2). Independent of R6 UI work; also sharpens R2.7.1 partial-vs-conflict discrimination.
+
+---
+
+## R2.7.2 — Stage 2 semantic frame matching
+
+**Status:** **LOGGED** (open backlog #2)
+
+**One-line:** Extend Stage 2 matching to distinguish numeric equivalence from semantic frame equivalence. A figure in the source that numerically matches the draft but refers to a different period, scope, segment, basis, or metric definition must not return `confirmed`.
+
+**Why it matters:** Current Stage 2 handles numeric equivalence (rounding, formatting, `$132mm` vs `$132 million`) but is silent on semantic frame mismatches. Example: draft “Shopify did $132mm in revenue” vs source “$132mm in GMV” would currently return `confirmed` on the number alone — the most common real-world reference error in investment writing (same number, wrong frame). Also improves discrimination between “source describes something different” (`partially_confirmed`) and “source directly contradicts” (`conflicting`) — related to **R2.7.1** watch item.
+
+**Scope when picked up:** Stage 2 (Source Matching) prompt only. No changes to Stage 1, Stage 3 aggregation, Stage 4 excerpt selection, Stage 5 commentary, output schema, or frontend.
+
+**Key dimensions (prompt must cover):**
+
+- Period (quarterly / annual / monthly / trailing / point-in-time; YoY vs QoQ)
+- Scope / segment (total vs segment vs region; consolidated vs unconsolidated)
+- Basis (GAAP vs non-GAAP; adjusted vs reported; gross vs net; run-rate vs realised)
+- Metric definition (revenue vs GMV vs bookings vs ARR; customers vs active vs paying)
+
+**Constraints when specced:**
+
+- No new classification values; frame mismatch maps onto existing four-value enum (most often `partially_confirmed`, sometimes `conflicting`).
+- No new output fields; mismatch reported in existing `explanation` field.
+- No hard-coded synonym lookups; LLM judges, consistent with existing numeric-equivalence approach.
+- Approximate qualifiers (“approximately”, “roughly”, “around”) widen numeric tolerance but **not** frame tolerance.
+
+**Dependencies:** None. Independent of R5 sequence — can be picked up any time after R5.4 ships, or earlier if R5 slips.
+
+**Test fixtures when specced:**
+
+- Frame-mismatch draft against Shopify memo: “$132mm in revenue” → expect `partially_confirmed` with GMV-vs-revenue named.
+- Period-mismatch draft mixing 2010 customer count with 2019 growth rate → expect `partially_confirmed` with period mismatch named.
+- Regression: founding-draft must return identical verdicts to current pipeline.
 
 ---
 
@@ -216,15 +251,16 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
 | # | Item | Status / notes |
 |---|------|----------------|
-| 1 | **R6 — Review Quality** (active scoping) | See **R6 — Review Quality** above. Absorbs: Direction intensity (R6.1), Reviewer comments house style (R6.2), Hide Editorial on conflict (R6.3), Public version prompt calibration (R6.4). |
-| 2 | **R7 — Sources Drawer Revival** (logged, pre-spec) | See **R7 — Sources Drawer Revival** above. |
-| 3 | Fidelity log traceability | Low priority — bundle into R4.2 or Spring clean |
-| 4 | E2 deterministic reimplementation | Open |
-| 5 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
-| 6 | `visibility:null` stale log (R4.2) | Parked in **R4.2** — `[EDITORIAL_REVIEW] starting` log before normalisation |
-| 7 | Unlabelled return-multiple watch | **R5.1.2** planned — expand confidential-detail rule for MOIC-style figures |
-| 8 | Web Search relook | **DEFERRED** behind R6 and R7. Was product backlog #10. Pre-spec questions: (1) Where in the new UI — per-statement rescue vs reviewer-initiated per-card lookup? (2) Verdict contract — does web-sourced confirmation count as Supported, or a distinct badge for audit story? (3) Cost and latency budget on top of current ~16 calls/run. |
-| 9 | Spring clean / refactor | **Defer until after R6** — do not housekeep during a quality push. See Active Backlog → Spring Clean |
+| 1 | **R6 — Review Quality** (active scoping) | See **R6 — Review Quality** above. Absorbs: Reviewer comments house style (R6.2), Hide Editorial on conflict (R6.3), Public version prompt calibration (R6.4). **R6.1 Direction intensity** follows open backlog #2 (R2.7.2) when scheduling pipeline vs UI work. |
+| 2 | **R2.7.2 — Stage 2 semantic frame matching** | **LOGGED** — open backlog #2. Stage 2 prompt only. Numeric match must not imply `confirmed` when period, scope, basis, or metric definition differs. See **R2.7.2 — Stage 2 semantic frame matching** above. Independent of R5/R6; can ship before R6.1. |
+| 3 | **R7 — Sources Drawer Revival** (logged, pre-spec) | See **R7 — Sources Drawer Revival** above. |
+| 4 | Fidelity log traceability | Low priority — bundle into R4.2 or Spring clean |
+| 5 | E2 deterministic reimplementation | Open |
+| 6 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
+| 7 | `visibility:null` stale log (R4.2) | Parked in **R4.2** — `[EDITORIAL_REVIEW] starting` log before normalisation |
+| 8 | Unlabelled return-multiple watch | **R5.1.2** planned — expand confidential-detail rule for MOIC-style figures |
+| 9 | Web Search relook | **DEFERRED** behind R6 and R7. Was product backlog #10. Pre-spec questions: (1) Where in the new UI — per-statement rescue vs reviewer-initiated per-card lookup? (2) Verdict contract — does web-sourced confirmation count as Supported, or a distinct badge for audit story? (3) Cost and latency budget on top of current ~16 calls/run. |
+| 10 | Spring clean / refactor | **Defer until after R6** — do not housekeep during a quality push. See Active Backlog → Spring Clean |
 
 **Closed (removed from open list):**
 
@@ -248,7 +284,7 @@ Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_d
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
-Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt — promote to action inside **R6** (likely Stage 2 prompt tightening sub-spec). **No action** if the pattern does not recur on a diverse trace set. Folded into **R6 scoping**; see **R6 — Review Quality**.
+Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt — promote to action inside **R6** or ship **R2.7.2** (semantic frame matching also improves partial-vs-conflict discrimination). **No action** if the pattern does not recur on a diverse trace set. Folded into **R6 scoping**; see **R6 — Review Quality** and **R2.7.2** (open backlog #2).
 
 ### R4.3 — Public version prompt quality (folded into R6.4)
 
