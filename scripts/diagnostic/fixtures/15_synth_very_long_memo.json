@@ -1,0 +1,14 @@
+{
+  "id": "15",
+  "label": "synth_very_long_memo",
+  "sources": [
+    "15_synth_very_long_memo.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 15_synth_very_long_memo.txt"
+}

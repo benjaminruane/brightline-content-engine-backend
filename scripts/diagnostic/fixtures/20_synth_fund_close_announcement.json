@@ -1,0 +1,14 @@
+{
+  "id": "20",
+  "label": "synth_fund_close_announcement",
+  "sources": [
+    "20_synth_fund_close_announcement.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 20_synth_fund_close_announcement.txt"
+}

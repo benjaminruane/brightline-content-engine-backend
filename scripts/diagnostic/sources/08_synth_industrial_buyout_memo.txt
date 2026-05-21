@@ -1,0 +1,78 @@
+INVESTMENT MEMORANDUM — STRICTLY CONFIDENTIAL
+
+To:        Global Investment Committee
+From:      European Industrials Team — Stefan Brunner (Partner), Lena Hofmann (Member of Management), Tobias Reichmann (Senior Vice President)
+Date:      14 March 2025
+Subject:   Project Alpine — Proposed acquisition of Helvetia Precision Components AG
+
+RECOMMENDATION
+
+We seek approval for Partners Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG ("HPC" or "the Company"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets. The transaction values HPC at an enterprise value of EUR 1.15 billion, representing 11.2x trailing twelve months EBITDA of EUR 103 million. Partners Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management. The seller is being advised by Lincoln International.
+
+BUSINESS OVERVIEW
+
+HPC was founded in 1962 by Werner Schiller in Winterthur. The Company manufactures complex precision components — typically machined to tolerances of 5 microns or tighter — for applications where failure is not an option. Roughly 48% of revenue is generated from medical device customers, primarily orthopaedic implants and surgical instruments. A further 32% comes from aerospace, split between civil aviation engine components and defence applications. The remaining 20% serves semiconductor capital equipment manufacturers, where HPC supplies critical components used in wafer fabrication tools.
+
+The Company operates four manufacturing facilities: a headquarters site in Winterthur (Switzerland), a larger production facility in Olten (Switzerland), a US operation in Indianapolis acquired in 2018, and a smaller Czech facility in Brno established in 2021 to serve European aerospace customers at lower cost. Total headcount stands at 1,420 employees, of whom approximately 240 are based outside Switzerland.
+
+HPC has grown revenue from EUR 312 million in 2020 to EUR 587 million in 2024, a compound annual growth rate of 17.1%. EBITDA over the same period has expanded from EUR 48 million to EUR 103 million, with margins improving from 15.4% to 17.5%. Growth has been split roughly evenly between organic share gains and the contribution from the Indianapolis acquisition. Free cash flow conversion has averaged 71% across the period.
+
+INVESTMENT THESIS
+
+We are attracted to HPC for four reasons.
+
+First, the Company occupies an enviable competitive position. In its core medical implants vertical, HPC is one of three qualified suppliers globally for hip and knee replacement components meeting both FDA Class II and EU MDR requirements at scale. Switching costs for medical device OEMs are substantial — qualification of a new supplier typically takes 18 to 24 months and involves clinical trial impact assessments. As a result, customer relationships are durable: HPC's top 10 customers have been with the Company for an average of 14 years, and revenue retention from these accounts has been 102% over the past five years.
+
+Second, the end markets HPC serves are structurally attractive. The orthopaedic implants market is forecast to grow at 5–6% annually through 2030, driven by ageing demographics in Europe and the United States. Aerospace component demand is recovering strongly post-COVID, with Airbus and Boeing collectively targeting build-rate increases of approximately 40% over the next five years. Semiconductor capital equipment demand is more cyclical, but HPC's exposure is weighted toward EUV-related components, where structural demand growth is robust.
+
+Third, there is a clear margin expansion path. HPC's current EBITDA margin of 17.5% trails best-in-class peers (Burckhardt Compression at 19.8%, VAT Group at 31.2% — though VAT operates in a different segment) and our diligence has identified a coherent set of operational levers we believe can deliver 300 to 400 basis points of margin uplift over five years. The principal levers are: footprint consolidation in Switzerland (closing the Winterthur facility and absorbing volumes into Olten), procurement consolidation across the now-fragmented supplier base inherited from the Indianapolis acquisition, and a programme of automation investment in the Brno facility.
+
+Fourth, we see meaningful M&A opportunity. The European precision machining sector remains highly fragmented, with the top 10 players accounting for less than 30% of the market. We have already identified five actionable targets in the EUR 30–80 million enterprise value range that would be accretive on both growth and margin grounds. The founding family has historically been reluctant to pursue M&A; under our ownership we expect to complete two to three add-on acquisitions over the holding period.
+
+KEY RISKS
+
+We have identified four principal risks.
+
+The semiconductor exposure introduces cyclicality that the medical and aerospace segments do not. In the 2023 downcycle, HPC's semiconductor revenue declined by 28% year-on-year, though overall Company revenue still grew due to offsetting strength in the other segments. We are comfortable with this exposure given (a) the structural growth in EUV, and (b) HPC's flexible cost base, which allowed the Company to maintain EBITDA margins above 15% throughout the 2023 downturn.
+
+Customer concentration is a watch item. HPC's largest customer, a global orthopaedic implants manufacturer, accounted for 18% of revenue in 2024. While the relationship is multi-decade and contractually backed by long-term supply agreements, any meaningful disruption to this account would materially impact Company performance.
+
+Foreign exchange exposure is significant. Approximately 55% of revenue is denominated in EUR, 30% in USD, and the remainder in CHF and other currencies. Cost base is more heavily CHF-weighted given the Swiss manufacturing footprint. CHF strength against EUR over the past three years has cost HPC roughly 180 basis points of cumulative margin. We expect to hedge transaction exposure systematically post-close and have factored a normalised CHF/EUR rate of 0.98 into our base case.
+
+Founder transition risk is moderate. Andreas Schiller, son of the founder, has served as CEO for 17 years and will step back to the board post-close. The Company has identified an internal successor — Petra Köhler, currently COO — who is well-regarded by the management team and customers. We have completed extensive reference checks. Andreas Schiller has committed to remain on the board for the first three years post-close and will rollover approximately 8% of his proceeds into the transaction.
+
+VALUE CREATION PLAN
+
+Our base case underwrites a five-year hold with the following value drivers.
+
+Revenue growth of 9% CAGR, taking 2024 revenue of EUR 587 million to approximately EUR 905 million by 2029. This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A.
+
+EBITDA margin expansion from 17.5% to 21.0% over the hold period, delivering EBITDA of approximately EUR 190 million by 2029. The margin lift is sourced from the footprint consolidation programme (approximately 120 bps), procurement initiatives (approximately 80 bps), automation investment in Brno (approximately 60 bps), and operating leverage on incremental revenue (approximately 60 bps).
+
+Multiple expansion is not assumed in the base case. We underwrite an exit at 11.0x EBITDA, marginally below the entry multiple, reflecting prudence regarding sector multiples five years forward. In our upside case, multiple expansion to 12.5x reflects the higher-margin, more diversified, larger-scale platform we expect HPC to become.
+
+The base case generates a 2.4x gross MOIC and a 19% gross IRR. The upside case generates 3.1x gross MOIC and 24% gross IRR. The downside case — in which margin expansion delivers only 150 bps and revenue growth is held at 5% — generates 1.7x gross MOIC and 11% gross IRR.
+
+MANAGEMENT AND ORGANISATION
+
+Petra Köhler, age 49, will become CEO upon close. She joined HPC in 2009 from Sulzer, where she ran the rotating equipment business. She has held the COO role at HPC since 2018 and is credited internally with the success of the Indianapolis integration. Reference checks across customers, suppliers, and former colleagues have been uniformly positive.
+
+The CFO, Markus Zehnder, has been with HPC for 11 years and is well-regarded. We see no need to change this role. We will recruit a Chief Commercial Officer post-close — a role HPC has historically not had — to coordinate the global customer interface across the three end markets. We have already identified a strong candidate currently working in a senior commercial role at GF Machining Solutions.
+
+The broader management team is mature, but we have identified the procurement function as under-resourced relative to the Company's scale and complexity. A Chief Procurement Officer will be recruited in year one, with a mandate to deliver the EUR 8–12 million of annualised procurement savings identified in diligence.
+
+TRANSACTION STRUCTURE
+
+The transaction will be funded with EUR 480 million of equity from Partners Group, EUR 130 million of equity from co-investors (currently anticipated to include two existing LP relationships), and EUR 540 million of senior and second-lien debt. Total leverage at close is approximately 5.2x trailing EBITDA, which we view as appropriate given the Company's cash generation profile and recession-resilient end-market mix. Goldman Sachs and Credit Suisse have provided fully underwritten commitments.
+
+The Schiller family will retain a 15% economic interest. Management will hold the remaining 7%. We have negotiated standard tag-along and drag-along rights, and a clear governance framework giving Partners Group majority board representation (3 of 5 seats).
+
+CLOSING CONSIDERATIONS
+
+Diligence has been thorough. We engaged Bain & Company on commercial diligence (six weeks, completed late February), Deloitte on financial and tax diligence, Kirkland & Ellis on legal, and ERM on ESG and environmental diligence. The Bain report — circulated separately — confirms our market positioning thesis and identifies an additional EUR 14 million of revenue synergies from cross-selling between segments that we have not underwritten in the base case.
+
+We have agreed exclusivity through 31 March 2025 and expect to sign definitive documentation by 28 March. Closing is targeted for mid-June, subject to merger control clearances in the EU, US, and Switzerland. No competition issues are anticipated.
+
+CONCLUSION
+
+HPC represents an attractive opportunity to acquire a category leader in a structurally growing market with a clear operational improvement plan and proven through-cycle resilience. The base case returns of 2.4x / 19% are in line with our private equity portfolio benchmarks, and we see meaningful upside optionality from M&A and end-market acceleration. The risks are well-understood and manageable. We recommend approval.

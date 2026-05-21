@@ -1,0 +1,14 @@
+{
+  "id": "06",
+  "label": "synth_listed_pe_report_excerpt",
+  "sources": [
+    "06_synth_listed_pe_report_excerpt.pdf"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 06_synth_listed_pe_report_excerpt.pdf"
+}

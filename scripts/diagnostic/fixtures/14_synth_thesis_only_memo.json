@@ -1,0 +1,14 @@
+{
+  "id": "14",
+  "label": "synth_thesis_only_memo",
+  "sources": [
+    "14_synth_thesis_only_memo.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 14_synth_thesis_only_memo.txt"
+}

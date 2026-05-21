@@ -16,3 +16,7 @@ tests/r1_2_5_eval/results_v2_relabelled.md
 # macOS system files (never commit; any directory)
 .DS_Store
 **/.DS_Store
+
+# D1.1 diagnostic harness generated output
+scripts/diagnostic/runs/
+scripts/diagnostic/sources-extracted/

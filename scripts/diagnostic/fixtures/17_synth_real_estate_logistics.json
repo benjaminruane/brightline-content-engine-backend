@@ -1,0 +1,14 @@
+{
+  "id": "17",
+  "label": "synth_real_estate_logistics",
+  "sources": [
+    "17_synth_real_estate_logistics.pdf"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 17_synth_real_estate_logistics.pdf"
+}

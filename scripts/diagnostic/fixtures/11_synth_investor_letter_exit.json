@@ -1,0 +1,14 @@
+{
+  "id": "11",
+  "label": "synth_investor_letter_exit",
+  "sources": [
+    "11_synth_investor_letter_exit.pdf"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 11_synth_investor_letter_exit.pdf"
+}

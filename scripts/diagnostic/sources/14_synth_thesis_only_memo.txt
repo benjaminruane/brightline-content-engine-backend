@@ -1,0 +1,64 @@
+THEMATIC INVESTMENT REVIEW — STRICTLY CONFIDENTIAL
+
+To:        Thematic Research Committee
+From:      Healthcare Team — Anya Petrov (Member of Management), Felix Mertens (Senior Vice President)
+Date:      18 September 2025
+Subject:   Investment thesis — European clinical decision support software
+
+PURPOSE OF THIS MEMO
+
+This memo sets out a thematic investment thesis on European clinical decision support ("CDS") software. It is not a transaction memo. We are not yet in dialogue with any specific company. The purpose is to seek Committee endorsement of the thesis itself, which would authorise the team to begin active sourcing and to engage with potential targets at the appropriate level.
+
+THE OPPORTUNITY
+
+Clinical decision support software helps clinicians make better, faster, more consistent treatment decisions at the point of care. The category spans drug interaction checking, diagnostic decision trees, treatment protocol guidance, dosing calculators, and increasingly AI-augmented diagnostic assistance.
+
+The European CDS market is structurally distinct from the US market in several ways. European healthcare is dominated by national payers, which gives CDS products a clearer route to scale once adopted by a national authority. Reimbursement codes for digital health products have improved meaningfully across the major European markets over the past three years. Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway.
+
+We believe the European market is at an inflection point. Three forces are aligning. First, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances. Second, payer willingness to reimburse CDS software has improved markedly. Third, generative AI is creating both opportunity and pressure: opportunity to genuinely improve clinical workflows, pressure on incumbents who lack credible AI strategies.
+
+WHY THIS IS ATTRACTIVE FOR US
+
+The thesis fits our European healthcare investment platform well.
+
+The category produces businesses with strong recurring revenue characteristics, mission-critical product positioning, and high regulatory barriers. Gross retention of 95%+ is typical. EBITDA margins for scaled players can exceed 30%.
+
+The European competitive landscape is fragmented across national markets. National scale leaders exist in the UK, Germany, France, and the Nordics, but few players have meaningful pan-European presence. This creates the conditions for a buy-and-build strategy that pairs well with our M&A capabilities.
+
+The category has been under-served by private equity to date. Most scaled European CDS businesses are either bootstrapped, owned by clinical professional bodies, or sit inside larger health IT groups. There is meaningful opportunity for a thoughtful financial sponsor to play a constructive consolidation role.
+
+CHARACTERISTICS WE WOULD LOOK FOR
+
+We see the ideal target as having most of the following characteristics: leadership in at least one national European market; clinical credibility evidenced by professional society endorsement or integration into national clinical guidelines; recurring revenue base of at least EUR 25 million with growth above 15% annually; gross retention above 90%; demonstrated regulatory infrastructure under EU MDR; and a management team genuinely engaged with the AI shift rather than defensive about it.
+
+We would expect to invest at the platform level with a clear add-on programme. Typical deal size would be in the EUR 100 to 300 million equity ticket range, with an expected hold of five to seven years and a buy-and-build that aims to triple ARR over the hold.
+
+PROCESS GOING FORWARD
+
+If the Committee endorses this thesis we propose to:
+
+Conduct a structured market mapping exercise over the next eight weeks, working with a specialist healthcare technology advisor. We have approached Mariner Health (a London-based boutique) for an initial scoping conversation.
+
+Begin proactive outreach to a shortlist of approximately 15 to 20 potential targets identified through our preliminary work.
+
+Engage clinical advisors to support our diligence approach on individual opportunities. We have had preliminary conversations with two former chief clinical officers of major UK and German hospital networks.
+
+Plan to return to the Committee within six months with either a specific transaction memo or a refreshed thesis based on what we have learned.
+
+We are not recommending any specific investment at this time. We are seeking endorsement of the thesis and authorisation to invest sourcing time accordingly.
+
+OPEN QUESTIONS
+
+We acknowledge several questions that this thesis does not yet resolve.
+
+What is the right competitive response to generative AI from a CDS business that has not yet built native AI capability? Is the answer to acquire AI-native challengers, to partner with foundation model providers, or to invest in proprietary models?
+
+How should we think about the role of national health authorities as potential customers, partners, or competitors? In several markets there is active discussion of state-developed clinical decision tools.
+
+What is the realistic path to pan-European scale given the inherent fragmentation of European healthcare? Is true cross-border integration achievable, or is the realistic model a portfolio of national champions under common ownership?
+
+These questions will be sharpened through the sourcing and market mapping work. We would expect to return with clearer perspectives in the next thesis update.
+
+CONCLUSION
+
+European clinical decision support is a structurally attractive software category at an inflection point. We believe it fits our platform well and we recommend Committee endorsement of active sourcing.

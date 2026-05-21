@@ -1,0 +1,14 @@
+{
+  "id": "05",
+  "label": "synth_competitor_press_release",
+  "sources": [
+    "05_synth_competitor_press_release.pdf"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 05_synth_competitor_press_release.pdf"
+}

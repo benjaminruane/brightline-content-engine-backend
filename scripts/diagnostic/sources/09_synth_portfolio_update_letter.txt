@@ -1,0 +1,53 @@
+PORTFOLIO COMPANY UPDATE — STRICTLY CONFIDENTIAL
+
+Project Alpine — Helvetia Precision Components AG
+Six-Month Post-Close Review
+Period: June 2025 – November 2025
+Prepared by: Stefan Brunner (Partner), Lena Hofmann (Member of Management)
+Date: 12 December 2025
+
+EXECUTIVE SUMMARY
+
+Six months into our investment in HPC, performance is tracking modestly ahead of the base case underwritten at IC. Revenue for the period reached EUR 318 million, 4% above plan. EBITDA of EUR 58 million was 7% above plan, with margins of 18.3% reflecting early traction on the procurement programme and favourable mix. The leadership transition has proceeded smoothly, with Petra Köhler establishing herself well as CEO. Two material risks have emerged that we are actively managing: a slowdown in semiconductor capital equipment orders, and an unexpected quality issue at one medical device customer.
+
+LEADERSHIP AND ORGANISATION
+
+The CEO transition has gone better than expected. Petra Köhler took over from Andreas Schiller on 16 June and has moved decisively on early priorities — restructuring the procurement function, initiating the Winterthur footprint review, and establishing a monthly operating cadence with the Partners Group team. Andreas Schiller has integrated comfortably into his board role and continues to provide useful customer-facing support.
+
+We have recruited two of the three new senior hires planned in our underwriting. Klaus Wenger joined as Chief Procurement Officer in September, having previously held the same role at Belimo. He brings strong category management discipline that the Company has historically lacked. Sophie Lehmann joined as Chief Commercial Officer in October from GF Machining Solutions. The remaining priority hire — a VP of Digital and Automation — is in late-stage interviews with two strong candidates; we expect this role to be filled by end-Q1 2026.
+
+There has been one departure of concern: Tom Beasley, who ran the Indianapolis operation, resigned in August to join a US competitor. We have backfilled the role with Mark Rivera, previously plant manager at the Olten facility, on a 12-month assignment. This is a reasonable interim solution but the US business will need a permanent leader by mid-2026.
+
+FINANCIAL PERFORMANCE
+
+Period revenue of EUR 318 million represents growth of 11% versus the prior comparable period. The medical implants segment grew 14%, well ahead of expectations, driven by a 22% increase from our largest orthopaedic customer following their successful US product launch. Aerospace revenue grew 9%, broadly in line with build-rate increases at Airbus. Semiconductor revenue declined 6% in the period, reflecting weaker orders from two key customers (see Risks section below).
+
+EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX (CHF weakened to 1.02 against EUR over the period, against our base case of 0.98).
+
+Cash conversion was 68%, slightly below the 71% historical average, reflecting a planned working capital build to support the medical segment ramp. Net debt at period end stood at EUR 512 million, down EUR 28 million from close.
+
+OPERATIONAL PROGRESS
+
+Winterthur footprint review: Site closure is now under formal consultation with the workforce, with a target closure date of June 2026. Approximately 180 roles are affected; roughly 60 are expected to transfer to Olten. The associated restructuring charge of EUR 22 million has been provided in the period. We expect annualised savings of EUR 14 million from full transition, slightly above our underwriting estimate of EUR 12 million.
+
+Procurement programme: Klaus Wenger has built a 90-day diagnostic. He has identified EUR 11 million of addressable savings across consolidation, demand management, and renegotiation — broadly in line with our diligence estimate. EUR 2.1 million is now contracted; he expects to be at a EUR 6 million annualised run-rate by mid-2026.
+
+Brno automation: First-phase capex of EUR 18 million has been approved. Equipment ordering is underway, with installation targeted for Q3 2026. Payback period of 2.4 years is in line with diligence.
+
+M&A pipeline: We have advanced two of the five targets identified pre-close. The first — a French specialist in titanium machining — is in second-round bids; we expect to know within six weeks whether we have been selected. The second — a German family business in optical components — has agreed to enter exclusivity in January 2026 at a preliminary valuation of EUR 42 million.
+
+RISKS AND ISSUES
+
+Semiconductor slowdown: We flagged this as a cyclical risk in our underwriting and the early signals are now visible. Two semiconductor capital equipment customers have pushed orders by one to two quarters. We do not expect a deep downturn — the demand picture for EUV remains structurally strong — but we are guiding to flat semiconductor revenue for the next 12 months and have adjusted our full-year forecast accordingly. The full-year 2026 budget assumes semiconductor revenue of EUR 105 million versus our original underwriting of EUR 122 million.
+
+Medical device customer quality issue: In October, our second-largest medical customer raised a quality concern relating to a specific component lot manufactured in the Olten facility. Initial root cause analysis points to a tooling wear issue that was not detected by in-process inspection. The cost impact to HPC is limited — approximately EUR 3 million in returns, rework, and credit — but the relationship cost is more significant. Petra Köhler met the customer's COO in November and the customer is satisfied with the corrective action plan. However the customer has placed HPC on enhanced quality monitoring for 12 months, which is an unwelcome development. We are tracking this closely.
+
+CHF strength: Although the CHF has weakened modestly through the period, the structural Swiss currency exposure remains a concern. We have implemented a 12-month rolling hedge programme covering 70% of EUR revenue exposure. We expect to extend this to 24 months over the course of 2026.
+
+FORWARD VIEW
+
+For full-year 2025, we expect revenue of approximately EUR 625 million and EBITDA of approximately EUR 113 million, representing 6% revenue growth and 18.1% EBITDA margins on a full-year basis. This is broadly in line with our underwriting trajectory.
+
+We remain confident in our base case returns of 2.4x MOIC and 19% IRR. The early traction on procurement and the strength in medical implants are partial offsets to the semiconductor weakness and the customer quality issue. We do not at this stage see reason to revise our underwriting.
+
+The next major milestones are: completion of the French add-on (Q1 2026), Brno automation phase one going live (Q3 2026), and Winterthur consolidation completion (mid-2026). We will provide a further detailed update at the 12-month review in June 2026.

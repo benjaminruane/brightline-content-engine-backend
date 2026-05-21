@@ -1,0 +1,14 @@
+{
+  "id": "16",
+  "label": "synth_healthcare_consumer",
+  "sources": [
+    "16_synth_healthcare_consumer.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 16_synth_healthcare_consumer.txt"
+}

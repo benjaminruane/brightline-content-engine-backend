@@ -1,0 +1,15 @@
+{
+  "id": "18",
+  "label": "synth_cross_source_pair",
+  "sources": [
+    "18a_synth_cross_source_pair_initial.txt",
+    "18b_synth_cross_source_pair_update.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source pair: 18a_synth_cross_source_pair_initial.txt, 18b_synth_cross_source_pair_update.txt"
+}

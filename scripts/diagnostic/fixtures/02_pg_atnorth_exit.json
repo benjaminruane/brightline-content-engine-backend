@@ -1,0 +1,14 @@
+{
+  "id": "02",
+  "label": "pg_atnorth_exit",
+  "sources": [
+    "02_pg_atnorth_exit.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 02_pg_atnorth_exit.txt"
+}

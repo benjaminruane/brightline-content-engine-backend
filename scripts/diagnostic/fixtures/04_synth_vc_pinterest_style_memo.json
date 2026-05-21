@@ -1,0 +1,14 @@
+{
+  "id": "04",
+  "label": "synth_vc_pinterest_style_memo",
+  "sources": [
+    "04_synth_vc_pinterest_style_memo.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 04_synth_vc_pinterest_style_memo.txt"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "07",
+  "label": "synth_vc_thesis_post",
+  "sources": [
+    "07_synth_vc_thesis_post.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 07_synth_vc_thesis_post.txt"
+}

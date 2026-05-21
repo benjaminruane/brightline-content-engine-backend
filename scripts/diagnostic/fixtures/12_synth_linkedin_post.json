@@ -1,0 +1,14 @@
+{
+  "id": "12",
+  "label": "synth_linkedin_post",
+  "sources": [
+    "12_synth_linkedin_post.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 12_synth_linkedin_post.txt"
+}

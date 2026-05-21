@@ -1,0 +1,14 @@
+{
+  "id": "03",
+  "label": "pg_gestcompost_investment",
+  "sources": [
+    "03_pg_gestcompost_investment.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 03_pg_gestcompost_investment.txt"
+}

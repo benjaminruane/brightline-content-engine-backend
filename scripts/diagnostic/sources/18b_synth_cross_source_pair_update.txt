@@ -1,0 +1,36 @@
+POST-SIGNING CONFIRMATORY DILIGENCE — STRICTLY CONFIDENTIAL
+
+To:        Investment Committee
+From:      Tech Team — Sarah Klein (Member of Management), Marco Bianchi (Senior Vice President)
+Date:      28 May 2025
+Subject:   Project Lattice — Updated findings from confirmatory diligence, Nordic SaaS Holdings AB
+
+PURPOSE
+
+This memo provides an update to the Investment Committee following completion of confirmatory diligence on NSH. Two findings warrant Committee attention as they materially update the picture set out in the initial recommendation of 15 April.
+
+UPDATED FINANCIAL POSITION
+
+Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.
+
+This is a meaningful adjustment but does not fundamentally change the investment thesis. The cleaned ARR figure is reflected in our updated returns analysis below. We have agreed with Company management to migrate to the cleaned ARR convention for all future reporting.
+
+UPDATED EMPLOYEE COUNT
+
+The Company employs 167 people as of 28 May, not 142 as stated in our initial memo. The difference reflects (a) the closing of two Norwegian hiring rounds that completed in late April and (b) the inclusion of approximately 18 contractors who function as full-time team members but had been excluded from the headcount provided to us initially.
+
+This higher headcount has implications for our operating leverage assumptions. We have updated our base case to reflect the higher current cost base, partially offset by reduced incremental hiring in the early years of our ownership.
+
+UPDATED CUSTOMER COUNT
+
+The Company currently serves 412 property management companies, not 380 as stated in our initial memo. This is a positive update reflecting strong net new logo addition over the past two months.
+
+UPDATED RETURNS
+
+The combined effect of the above updates is a modest reduction in our underwritten returns. Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation. The investment remains attractive and we are not recommending changes to the transaction structure or pricing.
+
+OTHER FINDINGS
+
+Confirmatory diligence raised no other material issues. Bain & Company's customer reference work confirmed the strength of the product and the relationship picture. Deloitte's financial diligence confirmed the underlying revenue quality, cash generation, and working capital position. KPMG's tax review identified no items of concern. Slaughter and May's legal diligence identified two minor commercial contract items that have been addressed through specific indemnities in the SPA.
+
+We continue to recommend completion of the transaction on the terms set out in the original recommendation, subject to acknowledgment of the updated financial and operational figures above.

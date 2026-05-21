@@ -1,0 +1,14 @@
+{
+  "id": "13",
+  "label": "synth_internal_inconsistency_memo",
+  "sources": [
+    "13_synth_internal_inconsistency_memo.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 13_synth_internal_inconsistency_memo.txt"
+}

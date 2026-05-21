@@ -1,0 +1,14 @@
+{
+  "id": "19",
+  "label": "synth_annual_report",
+  "sources": [
+    "19_synth_annual_report.pdf"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 19_synth_annual_report.pdf"
+}

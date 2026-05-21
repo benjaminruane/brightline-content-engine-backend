@@ -1,0 +1,66 @@
+VENTURE CAPITAL INVESTMENT MEMO
+
+To:        Partnership
+From:      Jeremy Levine, James Cham
+Date:      14 May 2011
+Re:        Pinterest — Series A
+
+We seek partnership approval for a Series A investment of USD 10mm in Pinterest, Inc., a visual discovery and bookmarking platform, at a USD 40mm pre-money valuation. We would own approximately 20% on a fully-diluted basis.
+
+Pinterest is a young company. The product has been in market for roughly 16 months. The team is small — six full-time employees plus the two founders. Revenue is currently zero; the founders are deferring monetisation in favour of continued growth in user engagement and product depth. By conventional venture metrics this is an early-stage bet.
+
+What gives us conviction is the depth of user engagement we have observed.
+
+THE PRODUCT
+
+Pinterest is a visual discovery tool. Users create themed boards onto which they "pin" images they want to remember, organise, or return to. Boards are organised by topic — recipes, home decor projects, fashion, weddings, gardening, and so on. Other users can follow specific boards or specific users, repin content, and discover content through curated category pages.
+
+The mechanic sounds simple but the product has unusual characteristics. Most social products are conversation-focused; users post, others respond, and the engagement is fundamentally about communication between people. Pinterest is different. Users come to the site primarily to discover and organise — engagement is fundamentally with the content rather than with other people. This makes the engagement model unusually robust to network dynamics. A user can have meaningful, repeat engagement with Pinterest even with very few followers.
+
+USER BEHAVIOUR
+
+What persuaded us is the user behaviour we have observed in diligence.
+
+Average session length is 14 minutes — exceptional for a social product. By comparison, the average session length on Facebook is 7 minutes, and on most social bookmarking products is 2 to 3 minutes. The 14-minute average reflects the genuinely absorbing quality of the discovery experience.
+
+Average sessions per active user per week is approximately 6 — also exceptional. Users return to the product not as a check-in but as a destination.
+
+Pin rate per active user has been remarkably stable across the user base. Power users pin substantially more, but the median active user pins approximately 8 items per week. This is a measure of repeat creative engagement that we have not seen elsewhere.
+
+Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.
+
+The user demographic is unusual. Approximately 82% of active users are women, and the user base is heavily weighted to the 25 to 44 age range — meaningfully older than typical social product demographics. This is a desirable advertising audience.
+
+THE TEAM
+
+Ben Silbermann (co-founder, CEO) is a former Google product manager. Evan Sharp (co-founder, head of design) joined from Facebook earlier this year and has been instrumental in the product's distinctive visual aesthetic. Both founders are first-time founders.
+
+Our diligence on Ben has been deep. References from his time at Google are uniformly positive — he is described as exceptionally product-focused, calm under pressure, and unusually willing to listen to user feedback and to evolve product decisions based on it. We have spent significant time with both founders and find them thoughtful, deliberate, and genuinely passionate about the product.
+
+The team's small size is a feature, not a bug. The product is the consequence of intense focus by a small group of deeply involved people. We expect this to remain a defining cultural attribute as the team grows.
+
+WHAT WE DO NOT KNOW
+
+Several material questions remain unresolved.
+
+The product currently has no monetisation strategy. We expect monetisation to come eventually from native advertising — particularly from advertisers in categories such as home decor, fashion, and weddings that align naturally with user behaviour — but we have not underwritten any specific revenue projections.
+
+The product has not yet been pressure-tested at meaningful scale. Current monthly active users are approximately 1.5 million, growing rapidly. We do not yet know whether engagement metrics will hold up as the user base broadens beyond the early adopter cohort. There is a meaningful risk that the unusually strong engagement profile reflects the highly self-selected nature of the current user base rather than a sustainable property of the product.
+
+Defensibility is uncertain. The visual discovery mechanic is not patented. We see two potential sources of competitive moat: (1) network effects from the collaborative pinning and following dynamics, and (2) the accumulation of organised, categorised content that becomes increasingly valuable as it grows. Whether these prove durable in the face of well-funded competitive responses is uncertain.
+
+WHY THIS IS A GOOD INVESTMENT
+
+We are willing to invest at a USD 40mm pre-money valuation — which is undeniably expensive on conventional venture metrics — for three reasons.
+
+First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years. Strong engagement at the early stage tends to be predictive.
+
+Second, the user demographic and behavioural profile creates unusual monetisation potential. The combination of high-intent commercial categories (home decor, fashion, weddings) and a desirable demographic (women, 25 to 44) is genuinely scarce. We can envision multiple paths to a multi-billion-dollar revenue business.
+
+Third, the founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.
+
+We acknowledge that this is a higher-than-typical entry valuation for a Series A investment with zero revenue. We are comfortable with this on the basis that consumer products with the engagement profile we are seeing here are rare, and entry valuation in such cases is less important to ultimate returns than getting the call right.
+
+CONCLUSION
+
+We recommend approval. Our base case envisages a hold of approximately 5 to 7 years with a target return of 10 times or better. The downside case is total loss, which we have stress-tested and consider tolerable given the conviction in the engagement signal.

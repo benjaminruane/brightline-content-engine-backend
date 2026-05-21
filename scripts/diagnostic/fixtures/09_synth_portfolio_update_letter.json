@@ -1,0 +1,14 @@
+{
+  "id": "09",
+  "label": "synth_portfolio_update_letter",
+  "sources": [
+    "09_synth_portfolio_update_letter.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 09_synth_portfolio_update_letter.txt"
+}

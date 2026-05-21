@@ -1,0 +1,48 @@
+INVESTMENT MEMORANDUM — STRICTLY CONFIDENTIAL
+
+To:        Investment Committee
+From:      Tech Team — Sarah Klein (Member of Management), Marco Bianchi (Senior Vice President)
+Date:      15 April 2025
+Subject:   Project Lattice — Initial recommendation, Nordic SaaS Holdings AB
+
+RECOMMENDATION
+
+We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB ("NSH" or "the Company"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.
+
+COMPANY OVERVIEW
+
+NSH was founded in 2013 by Erik Lindqvist (current CEO) and three co-founders. The Company provides an integrated software platform for residential property managers, covering rent collection, maintenance management, tenant communication, and regulatory reporting. The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.
+
+The Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people). Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.
+
+FINANCIAL PROFILE
+
+Trailing twelve months revenue is EUR 34 million, with EBITDA of EUR 7.2 million representing a 21% margin. Gross margin is 76% and the Company is free cash flow positive. Net revenue retention is 118% and gross retention is 96%.
+
+The Company has raised approximately EUR 22 million across two prior funding rounds, with the most recent being a Series B led by Atomico in 2022 that valued NSH at EUR 110 million pre-money.
+
+INVESTMENT THESIS
+
+NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction.
+
+First, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support. NPS scores are in the high 60s, exceptional for B2B software.
+
+Second, the Nordic property management technology market remains structurally underpenetrated. Approximately 40% of Nordic property management companies still use legacy systems or spreadsheets. NSH has a clear runway to continue penetrating this addressable market.
+
+Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+
+VALUE CREATION PLAN
+
+Our base case envisages ARR growth from EUR 38 million today to approximately EUR 95 million over a five-year hold. This is supported by continued strong organic growth (we underwrite 22% ARR CAGR over the hold period), modest expansion into adjacent verticals (commercial property management), and selective add-on M&A.
+
+EBITDA margin is expected to expand from 21% to 32% over the hold as the Company achieves greater operational scale and as Rule of 40 discipline drives more efficient growth.
+
+The base case generates a 2.8x MOIC and 23% IRR.
+
+KEY RISKS
+
+The principal risks are (a) competitive response from Yardi or other larger international software platforms entering the Nordic market more aggressively, (b) consolidation of property management companies themselves, which could reduce the addressable customer base, and (c) execution risk in the planned adjacent expansion into commercial property management, where NSH has limited current presence.
+
+CONCLUSION
+
+NSH is a high-quality Nordic vertical SaaS asset with strong unit economics, exceptional product strength, and a clear growth runway. We recommend approval.

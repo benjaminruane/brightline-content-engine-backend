@@ -1,0 +1,78 @@
+INVESTMENT MEMORANDUM — STRICTLY CONFIDENTIAL
+
+To:        Investment Committee
+From:      Tech & Software Team — Jonas Eberhardt (Partner), Sarah Klein (Member of Management)
+Date:      6 November 2025
+Subject:   Project Borealis — Proposed acquisition of CloudPivot Systems Limited
+
+RECOMMENDATION
+
+We seek IC approval for an investment of EUR 285 million for a 64% controlling stake in CloudPivot Systems Limited ("CloudPivot" or "the Company"), a London-headquartered vertical SaaS platform serving the European logistics and freight forwarding industry. The transaction values CloudPivot at an enterprise value of EUR 445 million.
+
+[NOTE FOR REVIEWERS: This memo contains deliberate internal numeric inconsistencies for QC pipeline testing purposes. Specifically: ARR figures are stated differently in sections 2 and 4; employee count is stated differently in sections 1 and 6; the EBITDA margin is stated differently in the executive summary and the financial overview. These inconsistencies are intentional.]
+
+1. BUSINESS OVERVIEW
+
+CloudPivot was founded in London in 2014 by Tom Fairfield (currently CEO) and James O'Brien (currently CTO). The Company provides a comprehensive SaaS platform for freight forwarders and customs brokers, replacing the legacy ERP-style software that dominates the industry. The platform handles shipment booking, customs documentation, rate management, invoicing, and customer portal functionality through a single integrated product.
+
+The Company serves over 1,200 freight forwarder and customs broker customers across 28 European countries. Customers range from single-office operators with 5 to 10 users up to mid-sized regional networks with 200+ users. CloudPivot has not yet meaningfully penetrated the largest global forwarders (Kuehne+Nagel, DHL, DB Schenker, DSV), although a recent pilot with DSV's Italian subsidiary has produced encouraging results.
+
+CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore. The Hamburg office serves DACH customers; the Lisbon office houses customer success and implementation teams; the Bangalore office is the primary engineering centre.
+
+2. FINANCIAL PROFILE
+
+CloudPivot generates annual recurring revenue ("ARR") of EUR 84 million as of October 2025, up from EUR 52 million two years prior — representing 27% CAGR. Net revenue retention has averaged 113% over the past 24 months, with gross retention of 94%. Customer acquisition cost payback is 14 months, broadly in line with vertical SaaS benchmarks.
+
+Trailing twelve months revenue stands at EUR 76 million, with EBITDA of EUR 8.4 million representing an EBITDA margin of 11.1%. Margins reflect significant ongoing investment in product and go-to-market: gross margin is 78%, with sales and marketing spending equivalent to 38% of revenue and R&D spending equivalent to 24% of revenue.
+
+The Company has been free cash flow positive since 2023. Cash on balance sheet at September 2025 stood at EUR 18 million with no debt.
+
+3. INVESTMENT THESIS
+
+We are attracted to CloudPivot for the following reasons.
+
+Vertical SaaS economics. Freight forwarding is a deeply specialised industry with workflow patterns that horizontal ERP systems handle poorly. CloudPivot's product reflects ten years of domain investment and is genuinely differentiated. The closest international comparable, US-focused CargoOne, was acquired by Thoma Bravo in early 2024 at 11x ARR.
+
+Mission-critical software with very low churn. Once a forwarder is operating on CloudPivot, switching costs are very high. The platform integrates with customs authorities, carrier networks, and customer systems; reverting to alternative software would mean rebuilding all of these integrations. Gross retention of 94% reflects this.
+
+Large addressable market with limited modern competition. There are approximately 14,000 freight forwarders and customs brokers in Europe. CloudPivot serves 1,200 of these — an 8.6% penetration rate. The principal competition is fragmented legacy software (Riege, CargoWise — which is the dominant player in larger forwarders — and a long tail of regional incumbents). Most legacy products are visibly aged and customer satisfaction is consistently low.
+
+International expansion potential. CloudPivot is strong in the UK, Iberia, and the Nordics but under-represented in DACH, France, and Italy. Our diligence with prospective customers in these markets suggests strong appetite for a modern alternative.
+
+Founder-led with deep industry credibility. Tom Fairfield came from the industry — he ran technology at a mid-sized UK forwarder before founding CloudPivot — and has built a deeply respected position in the European logistics technology community.
+
+4. GROWTH OUTLOOK
+
+We underwrite the following base case trajectory.
+
+ARR growth from EUR 81 million today to approximately EUR 195 million over a five-year hold. This represents 19% CAGR, reflecting a measured deceleration from the recent 27% pace as the Company scales.
+
+Revenue is expected to grow from EUR 76 million in 2025 to approximately EUR 185 million by 2030, with EBITDA margins expanding from current levels to 28% as the business scales and sales efficiency improves. Our underwriting assumes EBITDA of EUR 51 million by 2030.
+
+Net revenue retention is held at 110% over the hold period (modestly below the recent 113%, reflecting prudence regarding pricing power as the business matures).
+
+5. RISKS
+
+Three principal risks.
+
+CargoWise competitive response. CargoWise is the entrenched leader in larger forwarders and would represent a meaningful threat if it chose to compete more aggressively in the mid-market. To date its product investment has been concentrated on the upper end of the market. We view this risk as real but moderate.
+
+Founder transition. CEO Tom Fairfield is 51 and has indicated willingness to remain for the duration of our hold. Should he wish to step back, we have identified the Chief Revenue Officer, Maria Santangelo, as a credible internal successor.
+
+Macroeconomic exposure. Freight volumes are correlated with global trade activity. A significant trade downturn could slow new logo acquisition and place pressure on existing customer spend. The 2023 freight cycle had limited impact on CloudPivot's growth, suggesting the platform is reasonably well-positioned through cycle, but a sharper downturn remains a watch item.
+
+6. MANAGEMENT AND ORGANISATION
+
+The senior team is strong. Tom Fairfield, CEO, and James O'Brien, CTO, are the co-founders and remain deeply engaged. Maria Santangelo, CRO, joined from HubSpot in 2022 and has rebuilt the European sales organisation. The CFO, Patrick Lawrence, joined from a private equity-backed UK SaaS business in 2024 and has tightened reporting and unit economics discipline.
+
+The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10. We see opportunities to invest further in product and in mid-market sales capacity in continental Europe.
+
+7. TRANSACTION STRUCTURE AND RETURNS
+
+We will invest EUR 285 million for 64% of the equity. The founders and management will retain 28% in aggregate (Tom Fairfield 14%, James O'Brien 7%, other management 7%) and existing growth equity investor Index Ventures will retain 8%. There is no third-party debt at close. We have negotiated standard governance with majority Partners Group board control (3 of 5 seats).
+
+Returns: our base case generates a 2.6x MOIC and 21% IRR. The upside case — assuming faster international expansion and modest multiple expansion at exit — generates 3.4x MOIC and 28% IRR. The downside case generates 1.5x MOIC and 9% IRR.
+
+8. CONCLUSION
+
+CloudPivot is a high-quality vertical SaaS asset with strong unit economics, a defensible competitive position, and a clear growth runway. We have strong conviction in the founders and the team. We recommend approval.

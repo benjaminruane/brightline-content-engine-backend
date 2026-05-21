@@ -1,0 +1,35 @@
+Why we believe the next decade of software belongs to vertical-AI agents
+
+A thesis post from the Quanta Ventures team
+
+For the last fifteen years, the software industry has been organised around a relatively stable architectural pattern. SaaS companies have built workflows for specific user roles, deployed them to enterprise customers, and competed on user experience, integration depth, and feature breadth. The pattern has been enormously successful — it built Salesforce, ServiceNow, Workday, Atlassian, and a generation of multi-billion-dollar vertical SaaS platforms.
+
+We believe this pattern is about to change in a fundamental way.
+
+The combination of frontier large language models, mature agent frameworks, and an installed base of digitised business processes is creating the conditions for a new category of software: vertical AI agents. These are software systems that do not present a workflow for a human to complete, but rather complete the workflow themselves, with the human stepping in only for exception handling, oversight, and high-stakes decisions.
+
+We have spent the past eighteen months meeting with founders, customers, and operators across a range of verticals to understand where vertical AI agents are most likely to take hold first. Our conclusions are summarised below.
+
+Vertical AI agents will succeed first in workflows with three characteristics. First, the workflow must be high-volume and currently labour-intensive — meaning the economic value of replacing the workflow with an agent is meaningful and the current state involves significant human time. Second, the workflow must be largely deterministic at the level of individual decisions, with the complexity coming from volume rather than from one-off judgement calls. Third, the workflow must produce outputs that can be verified ex post — meaning the agent's work can be checked for quality without re-doing the work.
+
+These three characteristics describe a meaningful share of back-office work in industries such as financial services, healthcare administration, logistics, legal services, and accounting. We expect vertical AI agents to displace meaningful portions of human work in these industries over the next five years. This is not a prediction about general intelligence — it is a prediction about the specific economic deployment of current and near-future AI capability.
+
+A few implications follow.
+
+We expect a meaningful share of new vertical SaaS company formation to be agent-first rather than workflow-first. We are already seeing this in early-stage pipeline. Where a traditional vertical SaaS company would have built a product for a human to use, a new generation of companies is building agents that perform the work the human would have done, with a thinner human-facing interface focused on oversight and exception handling.
+
+We expect significant disruption to the incumbent vertical SaaS industry. Incumbents have built defensible positions around workflow ownership, but those workflows are precisely what agents are positioned to replace. We expect incumbents to invest aggressively in their own agent capabilities — but we are sceptical that retrofitting agents onto products designed around human workflows will produce competitive outcomes. The architectural differences are too significant.
+
+We expect deep changes to the buyer journey and to commercial models. Workflow-first SaaS is bought per-seat by line-of-business buyers. Agent-first software is bought based on tasks completed, decisions made, or outcomes delivered — and is bought by executives interested in operating leverage rather than by managers interested in productivity tools. The commercial conversations look different, the procurement processes look different, and the success metrics look different.
+
+We expect vertical-specific defensibility to be the principal source of competitive moat. General-purpose AI capabilities are increasingly available to all builders. What distinguishes one agent from another, particularly in regulated or domain-specific verticals, is depth of vertical knowledge, integration with vertical-specific data sources and systems, and trust earned through track record. We expect to see strong winner-takes-most dynamics in specific verticals, with the leading agent in each category establishing a sustainable advantage through accumulation of training data, customer trust, and integration depth.
+
+We do not expect agents to replace all software. Many workflows do not fit the three characteristics above. Software for human use will remain enormously important — particularly in workflows that involve creative work, complex stakeholder management, or genuine judgement calls. The point is not that all software becomes agents; it is that an entire new category of software becomes possible alongside what already exists.
+
+We are actively investing behind this thesis. Quanta Ventures has made fifteen investments in the agent category over the past two years, with a particular focus on regulated verticals where the combination of high-value workflows, deep domain requirements, and meaningful regulatory constraint creates the conditions for sustainable competitive moats.
+
+We welcome conversations with founders building in this space. We are particularly interested in healthcare administration, financial services back-office, and legal services. We are also interested in agent infrastructure — the underlying tools, models, and frameworks that make vertical agents possible at scale.
+
+This thesis will evolve. We expect to be wrong about meaningful elements of it. We will share updates as our thinking develops.
+
+— The Quanta Ventures team

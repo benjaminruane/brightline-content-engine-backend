@@ -1,0 +1,214 @@
+INVESTMENT MEMORANDUM — STRICTLY CONFIDENTIAL
+
+To:        Global Investment Committee
+From:      European Consumer Team — Charlotte Verstappen (Partner), David Maguire (Member of Management), Hiroshi Tanaka (Member of Management, Asia), Lena Hofmann (Member of Management, Industrials)
+Date:      4 February 2026
+Subject:   Project Tabula — Proposed acquisition of Casa Verde Group S.p.A.
+
+EXECUTIVE SUMMARY
+
+We seek IC approval for an investment of up to EUR 720 million of equity in the acquisition of Casa Verde Group S.p.A. ("Casa Verde" or "the Company"), a Milan-headquartered premium European homeware and kitchenware retailer and brand owner. The transaction values Casa Verde at an enterprise value of EUR 1.85 billion, representing 12.4x trailing twelve months EBITDA of EUR 149 million.
+
+Casa Verde represents one of the most attractive opportunities our European Consumer team has reviewed in the past five years. The Company combines a strong direct-to-consumer brand with category-leading market share across four European countries, demonstrably strong unit economics, and a clear runway for international expansion that has been deliberately constrained under family ownership.
+
+BUSINESS OVERVIEW
+
+Casa Verde was founded in 1973 by Giovanni Esposito as a single homewares shop in Milan. The Company has grown organically and through measured acquisitions into a pan-European premium homeware and kitchenware specialist with operations across Italy, France, Spain, and Germany. The Company currently operates 184 retail stores, an e-commerce platform that generates 31% of group revenue, and a wholesale business that supplies independent design-led homeware retailers across Europe.
+
+The retail network is organised under three brand banners. Casa Verde itself accounts for 142 of the stores and approximately 78% of revenue, focused on the premium end of the everyday homeware market — ceramics, glassware, kitchen tools, table linens, and decorative objects. The Bellucci banner, acquired by Casa Verde in 2018, operates 24 stores at a higher price point with a stronger fashion-led aesthetic. The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores targeting younger urban customers with a curated, design-led assortment.
+
+The Company employs 3,840 people across the four countries, of whom approximately 2,900 are store-based, 540 work in distribution and logistics across three regional centres, 290 work in commercial and merchandising functions, and the remainder are corporate and group functions based in Milan.
+
+Total group revenue in the financial year ended 31 December 2025 was EUR 612 million, with EBITDA of EUR 149 million representing a margin of 24.3%. Revenue has grown at a compound annual rate of 11.4% since 2020, with EBITDA margins expanding by approximately 380 basis points over the same period.
+
+INVESTMENT THESIS
+
+Our thesis rests on five pillars.
+
+First, Casa Verde is a category leader in a structurally attractive sector. Premium homeware in Europe is a EUR 38 billion market growing at 4 to 5 percent annually, with structural tailwinds from continued urbanisation, smaller average household sizes, ongoing premiumisation of the home environment, and the durability of the home-as-sanctuary trend that accelerated through the pandemic. The Company holds an estimated 4.1% share of the addressable European premium market — a meaningful position in a fragmented category where the next largest specialist competitor holds roughly 2.7%.
+
+Second, the unit economics of Casa Verde stores are exceptional. The Company's average four-wall store EBITDA margin is 22%, with payback on new store openings averaging 2.4 years. This is materially better than premium homeware peers and reflects strong product margins (gross margin of 64.2%), well-managed rent and labour costs, and high inventory turn (4.8 times annually). E-commerce contributes an EBITDA margin of 19%, which is unusually strong for the category and reflects the Company's deliberate strategy of charging full price online rather than discounting to compete on price.
+
+Third, there is a clear and well-defined international expansion runway. The Company has built a successful playbook for entering new markets — typically starting with three to four flagship locations in a top-tier city, building brand awareness through these stores, then expanding the network and rolling out e-commerce in parallel. The playbook has been executed successfully in France (entered 2014, now 32 stores), Spain (entered 2017, now 21 stores), and Germany (entered 2019, now 24 stores). The next logical markets are the UK, the Netherlands, and the Nordic region, none of which have been entered. Our commercial diligence suggests substantial unmet demand for premium homeware in these markets that is currently served by department stores and online aggregators rather than dedicated category specialists.
+
+Fourth, there is meaningful product-side opportunity. The Company's own-brand product penetration has grown from 38% in 2020 to 54% in 2025, supported by investment in the in-house design studio. Each percentage point of own-brand penetration uplift is worth approximately EUR 4 million in gross margin. We see a credible path to 70% own-brand penetration over a five-year hold, contributing approximately 250 basis points of gross margin expansion.
+
+Fifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar. The 18 stores operating today generate average four-wall margins of 18%, slightly below the core Casa Verde concept, but the format is younger, less proven, and at much earlier scale. The format's appeal to a clearly differentiated customer cohort (younger, more design-led, more urban) gives the Company a vehicle to capture share in segments where the core Casa Verde brand does not naturally resonate. We have underwritten conservative growth for Atelier 73 in our base case but see meaningful upside if the concept proves out at scale.
+
+VALUE CREATION PLAN
+
+Our base case envisages revenue growth from EUR 612 million in 2025 to approximately EUR 1.04 billion in 2031, a compound annual growth rate of 9.2%. EBITDA is expected to grow from EUR 149 million to approximately EUR 295 million over the same period, with margins expanding modestly from 24.3% to 28.4%.
+
+The principal drivers are international expansion (contributing approximately EUR 240 million of incremental revenue, primarily from the UK and Nordic launches), own-brand penetration uplift (contributing approximately 250 basis points of gross margin), modest like-for-like growth in existing markets (averaging 3% annually), and continued e-commerce mix shift (contributing approximately 130 basis points of group margin).
+
+Three operational programmes underpin the plan.
+
+Footprint expansion. We will open approximately 95 new stores over a six-year hold — 35 in new markets (UK, Netherlands, Nordics) and 60 in existing markets. The new-market openings are weighted to the first three years; the existing-market openings are weighted to years three through six. Total capex investment in store expansion is expected to be EUR 180 million across the hold, with payback in line with historical norms.
+
+Own-brand acceleration. We will invest in the design studio (approximately 25 additional designers over three years), expand direct sourcing capabilities (a new sourcing office in Hanoi opening in 2026 to add to the existing offices in Milan and Porto), and incrementally increase own-brand share of new product introductions to 80% by year three. Total incremental investment of EUR 18 million is expected.
+
+E-commerce and digital. The current e-commerce contribution of 31% of group revenue is strong but has plateaued over the past 18 months. We will invest in a refreshed digital platform (replacement of the current Salesforce Commerce Cloud implementation with a more flexible composable architecture), in expanded personalisation capabilities, and in a CRM-led approach to repeat customer engagement. The investment is approximately EUR 22 million across the hold and is expected to support continued mix shift toward e-commerce at improved margins.
+
+KEY RISKS
+
+We have identified five principal risks.
+
+International expansion execution. The UK and Nordic launches are the largest single contributor to our base case, and execution risk is real. We have direct experience of homeware concepts that have failed to translate into the UK market (Habitat in its private equity ownership phase being a cautionary example). We have mitigated this risk through detailed commercial diligence in each of the prospective new markets, through identification of an experienced UK retail country manager (currently working at Heal's, who has agreed to join Casa Verde subject to deal completion), and through a phased rollout that allows us to learn from the first three to four stores before committing to broader expansion. Even so, this risk warrants close governance attention through the first 24 months.
+
+Consumer discretionary exposure. Homeware is a discretionary purchase, and the European consumer environment in 2025 is uneven. Italy and Spain have shown strong like-for-like growth (5% and 6% respectively in 2025); France has been weaker (1.5%); Germany has been actively negative (-2.8%) reflecting the broader weakness in German consumer spending. We have stress-tested our model assuming sustained German weakness through 2027 and the returns remain attractive. A broader European consumer downturn would put pressure on the plan; we are comfortable that the Company's premium positioning and resilient unit economics give meaningful downside protection.
+
+Family transition. The Esposito family has owned Casa Verde for 53 years. Marco Esposito, son of the founder, has served as Chairman and CEO since 2008. He will step back from day-to-day responsibilities post-close but will remain Chairman for at least three years. The current Chief Operating Officer, Elena Conti, will assume the CEO role. Elena has been with the Company for 17 years, is highly regarded across the management team, and has been involved in every major strategic decision over the past decade. Reference checks have been comprehensive and uniformly positive. We see this transition as well-managed but acknowledge that it represents change.
+
+Real estate exposure. The Company leases 167 of its 184 store locations (the remainder are owned). Lease commitments are EUR 38 million annually with a weighted average remaining term of 7.2 years. Most leases include break clauses at the five-year mark. We have stress-tested our model for the scenario in which 10% of leases are renegotiated upward by 20% at the next break, and the impact on returns is modest. We have not stress-tested for a more severe scenario but flag it as a watch item.
+
+Wholesale channel concentration. The wholesale channel — accounting for 14% of revenue — has meaningful customer concentration, with the top five wholesale accounts representing 40% of channel revenue. We have reviewed each of these relationships in diligence and they are stable, but we note the dependency.
+
+TRANSACTION STRUCTURE
+
+The transaction will be funded with EUR 720 million of equity from Partners Group, EUR 110 million of co-investment from two of our long-standing LP relationships (Singapore and Canadian institutions, both already informally committed), EUR 90 million of management rollover from the Esposito family and senior management, and EUR 480 million of senior debt and EUR 150 million of mezzanine financing.
+
+Total leverage at close is 4.3x trailing EBITDA, which we view as appropriately conservative given the consumer discretionary exposure. Goldman Sachs is leading the debt financing process and has provided a fully underwritten commitment letter.
+
+The Esposito family will retain a 10% interest. Management will retain 6%. Partners Group and co-investors will hold 84% in aggregate. We have negotiated majority Partners Group board control (3 of 5 seats) with the Esposito family retaining a board seat for the duration of Marco Esposito's chairmanship.
+
+The transaction has been negotiated bilaterally with the family over an 18-month period. We have not been through a competitive process, which has been deliberate on both sides. The agreed enterprise value of EUR 1.85 billion represents a discount of approximately 10 to 15 percent to what we estimate the asset would attract in a fully competitive auction, reflecting the family's stated preference for a partner over the highest price.
+
+MANAGEMENT AND ORGANISATION
+
+The management team is strong. Elena Conti (incoming CEO) is well-known to our team — we have had three independent diligence conversations with her over the past four months and the consistency and depth of her thinking across operating, financial, and strategic dimensions has been impressive. Marco Esposito (continuing Chairman) has run the business for 18 years with a steady hand and continues to bring genuine strategic value through customer relationships and industry credibility.
+
+The wider senior team comprises an experienced CFO (Roberto Marchetti, 12 years with the Company), a strong Head of Commercial (Anne-Laure Dubois, 6 years), an excellent Head of E-commerce (Hannah Schmidt, recruited in 2022 from Mytheresa), and the Head of Design and Sourcing (Lucia Marini, 22 years with the Company). The team has very low turnover and exceptional alignment.
+
+We have identified two gaps. There is no dedicated International Expansion Director — a role we will recruit pre-close to lead the UK, Netherlands, and Nordic launches. We have identified a strong candidate currently at H&M Home. There is also limited senior digital and data capability beyond the e-commerce function; we will recruit a Chief Digital Officer in year one to lead the platform replacement and the broader digitisation agenda.
+
+DUE DILIGENCE OBSERVATIONS
+
+Commercial diligence was conducted by Bain & Company over a ten-week period concluding in early January 2026. The Bain report (circulated separately) confirms market positioning, validates the international expansion thesis, and provides detailed competitive mapping. Key conclusions: Casa Verde occupies a defensible premium position with limited direct overlap with mass-market homeware retailers; international expansion potential in the prospective new markets is significant and consistent with the Company's own commercial assessment; the Atelier 73 concept has meaningful upside but is at an early stage of proof.
+
+Financial and tax diligence was conducted by Deloitte. No issues of material consequence. The financial reporting infrastructure is appropriate for the Company's current scale but will require investment to support our expansion ambitions; we have factored this into our planning.
+
+Legal diligence was conducted by Latham & Watkins. The legal review was clean, with the principal items being the standard employment law considerations associated with French and Italian operations, and a small number of historic intellectual property arrangements relating to specific brand partnerships that require formalisation post-close.
+
+ESG diligence was conducted by ERM. The Company has strong fundamentals on sourcing transparency (a function of the predominantly European supplier base for many product categories), employee practices (employee engagement scores in the top quartile for European retailers), and environmental footprint (well-developed sustainability framework, although Scope 3 emissions reporting requires significant enhancement). We have identified Scope 3 reporting and packaging recycling as priority areas for post-close work.
+
+OUR APPROACH TO VALUE CREATION
+
+This is a relatively unusual transaction for our team in that the Company is performing strongly and the value creation plan is a programme of acceleration rather than transformation. The principal risk in such transactions is that operational urgency can be hard to establish; the team is rightly proud of what they have built and may not see the need for change. We have given this risk careful thought.
+
+Our approach will rest on three principles.
+
+First, we will work alongside the management team to formalise a strategic roadmap with specific targets, timelines, and accountability mechanisms. The Company does not currently have this kind of structured strategic planning. Elena Conti has indicated strong appetite for it. We see this as foundational.
+
+Second, we will introduce greater performance management discipline, particularly around the international expansion and the digital transformation programmes. The Company has historically operated with a relatively informal management style that has served it well at its current scale but will need to evolve as the Company moves toward a more international and digitally-led future.
+
+Third, we will bring our broader portfolio expertise to bear. Several of our other portfolio companies have completed international expansion programmes, e-commerce platform replacements, and design-led product development initiatives. We will create active connections between these portfolio companies and Casa Verde to accelerate learning and to avoid common pitfalls.
+
+RETURNS ANALYSIS
+
+Our base case generates a 2.7x MOIC and 22% gross IRR over a six-year hold. The upside case — assuming international expansion delivers faster than planned and the Atelier 73 concept proves out as a meaningful third growth pillar — generates 3.5x MOIC and 28% gross IRR. The downside case — assuming a sustained European consumer downturn, slower international expansion, and modest multiple compression at exit — generates 1.7x MOIC and 11% gross IRR.
+
+Multiple expansion is not assumed in the base case. We underwrite an exit at 12.0x EBITDA, broadly in line with the entry multiple. The upside case assumes 13.0x at exit, reflecting the higher-growth, more international, more diversified platform that Casa Verde should become.
+
+We have stress-tested the downside case extensively. The principal driver of the downside is slower-than-expected international expansion combined with a 200 basis point EBITDA margin compression in the existing business. Under these assumptions returns are modest but positive; we do not see a credible scenario in which the investment produces a loss of capital absent a severe and sustained European consumer recession.
+
+DETAILED COMPETITIVE LANDSCAPE
+
+The European premium homeware market is fragmented but evolving. We have mapped the competitive landscape in detail through our commercial diligence.
+
+At the upper end, Casa Verde competes with department store homeware halls — particularly Galeries Lafayette, KaDeWe, El Corte Inglés, and La Rinascente — and with a number of high-end specialist retailers such as The Conran Shop (recently relaunched under new ownership), Habitat (now positioned more in the mid-market), and a small number of country-specific premium players such as Søstrene Grene (more cost-led but with strong brand presence in the Nordics) and Maisons du Monde (more mass-market but with substantial brand recognition).
+
+At the mid-premium tier where Casa Verde primarily operates, the principal competition consists of national specialist chains — typically with strong presence in one market but limited cross-border footprint. These include Coin Casa in Italy (less premium positioning), Habitat France (broadly mid-market), and a long tail of regional independent retailers. The fragmentation of this tier is precisely the opportunity that Casa Verde is positioned to consolidate.
+
+In e-commerce, Casa Verde competes with both pure-plays (Westwing, Mytheresa's home business, Made.com prior to its administration) and with the online channels of physical retailers. Casa Verde's e-commerce performance — 31% mix, 19% EBITDA margin — is notably stronger than category benchmarks, reflecting both the strength of the brand and the disciplined approach to digital pricing.
+
+The wholesale channel exposes Casa Verde to a different set of competitors — primarily the design and homeware divisions of larger lifestyle brands (LSA International, Iittala, Royal Copenhagen, Villeroy & Boch) — but the relationship dynamics are quite different given Casa Verde acts as a supplier rather than a direct competitor in this channel.
+
+We have considered the threat from large-scale online platforms (Amazon, Wayfair, Mano Mano). Our diligence suggests that the premium homeware customer is meaningfully differentiated from the mass-market homeware customer and that the platform threat is moderate at best. Casa Verde's average transaction value of EUR 87 in retail and EUR 134 in e-commerce reflects this customer profile.
+
+CHANNEL ECONOMICS IN DETAIL
+
+It is worth setting out the channel economics of Casa Verde in more detail given that channel mix is a meaningful contributor to our value creation thesis.
+
+The retail channel generates EUR 422 million of revenue in 2025, with gross margins of 65.1% and contribution margins after store costs of 22.4%. Average store revenue is EUR 2.3 million annually, with significant variance between flagship locations (some generating in excess of EUR 8 million annually) and smaller community-based stores. Store productivity has been broadly stable over the past three years, with like-for-like growth coming primarily from transaction value rather than transaction count.
+
+The e-commerce channel generates EUR 190 million of revenue in 2025, with gross margins of 61.8% (modestly lower than retail due to fulfilment costs) and contribution margins of 19.4%. The channel has grown at 18% annually since 2020 but has plateaued over the past 18 months, reflecting both maturation of the existing customer base and constraints on the current technology platform. The platform replacement programme is expected to unlock renewed growth.
+
+The wholesale channel generates the remaining EUR 86 million of revenue (14% of group), with gross margins of 38% (substantially lower than retail and e-commerce due to the wholesale pricing structure) and contribution margins of 28% (higher than retail despite the lower gross margin, reflecting the lower operating cost intensity of the wholesale business). Wholesale is a strategically important channel for brand reach and for managing inventory cycles but is unlikely to be a growth driver going forward.
+
+MARKET-BY-MARKET DETAIL
+
+Italy remains the cornerstone of the business, contributing EUR 247 million of revenue (40% of group). The 89 Italian stores include the strongest flagships (Milan Brera, Milan Porta Nuova, Rome Pantheon, Florence) and the most established customer base. Like-for-like growth in Italy was 5.2% in 2025. The Italian e-commerce business contributes 28% of country revenue.
+
+France is the second-largest market, contributing EUR 156 million of revenue (25% of group). The 32 French stores are concentrated in Paris (12 stores), Lyon (4), and other tier-1 cities. Like-for-like growth in France was 1.5% in 2025, reflecting the weaker French consumer environment. The French e-commerce business contributes 34% of country revenue, the highest share in the group.
+
+Spain contributes EUR 119 million of revenue (19% of group). The 21 Spanish stores are concentrated in Madrid (8), Barcelona (6), and other major cities. Like-for-like growth in Spain was a strong 6.1% in 2025. The Spanish e-commerce business contributes 33% of country revenue.
+
+Germany contributes EUR 90 million of revenue (15% of group). The 24 German stores are spread more thinly across Hamburg (5), Munich (5), Berlin (4), Frankfurt (3), and other cities. Like-for-like growth in Germany was -2.8% in 2025, reflecting the broader weakness in German consumer discretionary spending. The German e-commerce business contributes 35% of country revenue, the highest single-country share in the group, reflecting partly the more dispersed store footprint.
+
+The remaining EUR 0 million is from minimal cross-border e-commerce sales into other European countries, which represents the principal evidence base for the international expansion thesis.
+
+SUPPLY CHAIN AND SOURCING
+
+Casa Verde sources approximately 56% of its product (by value) from European suppliers, principally in Italy, Portugal, France, and Germany. The remaining 44% is sourced from Asia, primarily from a network of 38 long-standing suppliers in China and Vietnam, managed through the sourcing office in Porto and (in due course) the new office in Hanoi.
+
+The European supplier base provides differentiation in product quality and design (particularly for ceramics, glassware, and table linens) and is a meaningful contributor to the premium positioning. The Asian supplier base provides cost discipline on more commoditised product categories. The Company has been gradually shifting the European share upward over the past five years; it was 48% in 2020.
+
+Direct sourcing capability is well-developed for European suppliers but less mature for Asian sourcing, where the Company has historically relied more heavily on trading partner relationships. The new Hanoi office is intended to address this and to increase direct sourcing share in Asia from approximately 35% today to 65% over three years. This is a meaningful contributor to the gross margin expansion thesis.
+
+DIRECT SOURCING CAPABILITY ROADMAP
+
+Achieving the 65% direct sourcing target in Asia will require sustained investment over three years. The Hanoi office is scheduled to open in Q3 2026 with an initial team of nine people: a country head, two sourcing managers, three quality assurance specialists, two logistics coordinators, and one administrative support function. The office will be located in central Hanoi with regular travel to supplier locations across Vietnam and southern China.
+
+The first eighteen months will focus on transitioning the existing Vietnamese supplier relationships from agent-mediated to direct, conducting a structured supplier audit programme, and beginning to consolidate the supplier base. We expect to reduce the active Asian supplier count from approximately 38 today to a focused group of 20 to 25 over the three-year period, while increasing direct contracting share. This consolidation will deliver both procurement savings and improved quality consistency.
+
+The Hanoi office will also serve as the foundation for any future expansion into other Asian sourcing markets — Bangladesh and India for textiles, and potentially Thailand for ceramics — although these are not assumed in the base case.
+
+DETAILED VALUE CREATION ECONOMICS
+
+Our base case underwrites the following specific contribution to EBITDA growth over the hold.
+
+International expansion (UK, Netherlands, Nordics): EUR 42 million of incremental EBITDA by 2031, comprising EUR 22 million from the UK programme (28 stores by 2031, average mature-store contribution of EUR 800k), EUR 9 million from the Netherlands (10 stores, EUR 900k average), and EUR 11 million from the Nordics (14 stores across Sweden, Denmark, and Norway, average EUR 800k).
+
+Own-brand penetration uplift: EUR 28 million of incremental EBITDA, driven by 16 percentage points of own-brand mix improvement (from 54% to 70%) on a revenue base that will be EUR 1.04 billion by 2031, with each percentage point worth approximately EUR 1.75 million at scale.
+
+Direct sourcing expansion: EUR 12 million of incremental EBITDA from the Asian direct sourcing programme, reflecting approximately 280 basis points of gross margin improvement on the approximately EUR 460 million of Asian-sourced revenue at exit.
+
+Like-for-like growth in existing markets: EUR 18 million of incremental EBITDA, reflecting modest revenue growth in the existing 184-store base and modest operating leverage.
+
+Atelier 73 expansion: EUR 14 million of incremental EBITDA, assuming the format expands to 42 stores by 2031 (from 18 today) at a mature contribution profile consistent with current performance.
+
+E-commerce platform investment: EUR 8 million of incremental EBITDA, reflecting both renewed channel growth and improved conversion economics following the platform replacement.
+
+Cost discipline and operating leverage: EUR 24 million of incremental EBITDA from the natural operating leverage of the broader cost base on incremental revenue, partially offset by ongoing investment in central capabilities.
+
+Total incremental EBITDA: EUR 146 million, taking the base of EUR 149 million to EUR 295 million by 2031.
+
+GOVERNANCE FRAMEWORK
+
+Our governance approach will reflect both the high quality of the existing business and the meaningful change agenda we are introducing.
+
+The board will be composed of five members: three Partners Group representatives (Charlotte Verstappen as Chair of the Board post Marco Esposito's transition, plus two additional team members), Marco Esposito (continuing Chairman in the interim period, transitioning to senior advisor), and Elena Conti (incoming CEO). We have agreed standard reserved matters, with particular attention to capital allocation decisions above defined thresholds and to senior hiring decisions.
+
+We will establish four standing committees: Audit (chaired by a Partners Group representative with sector expertise), Remuneration (chaired by a Partners Group representative), International Expansion (chaired by Elena Conti with Partners Group representation), and Digital Transformation (chaired by the incoming Chief Digital Officer, reporting to the Board).
+
+The operating cadence will include monthly performance reviews (CFO-led, Partners Group team participation), quarterly board meetings, an annual strategy review, and a quarterly value creation programme review focused specifically on the key transformation initiatives.
+
+We will also implement a structured cadence of customer, employee, and supplier engagement at the Partners Group level, ensuring we maintain direct connection with the business beyond the formal governance forums.
+
+CAPITAL STRUCTURE AND FINANCING
+
+The senior debt package is EUR 480 million, structured as a EUR 380 million term loan and a EUR 100 million revolving credit facility. The term loan is priced at SOFR + 425 basis points with a 1.0% original issue discount. The maturity is seven years with no scheduled amortisation. Financial covenants are limited to a leverage covenant tested quarterly with substantial headroom relative to our base case forecasts.
+
+The mezzanine financing is EUR 150 million priced at SOFR + 750 basis points (split between cash pay and PIK) with an eight-year bullet maturity. The mezzanine is held by a consortium of three private credit managers, with our long-standing relationship Brookfield Private Credit acting as administrative agent.
+
+Total interest expense in year one is expected to be approximately EUR 45 million, well-covered by anticipated cash generation. The Company is expected to be deleveraging from year one onwards, with net debt expected to reduce from EUR 630 million at close to approximately EUR 480 million by end of year three, despite the significant capex programme.
+
+We have stress-tested the financing structure under multiple downside scenarios, including the severe downside case in which European consumer demand contracts by 8% sustained over two years. In this scenario the leverage covenant has approximately 25% headroom and the Company remains free cash flow positive throughout, even with elevated capex.
+
+SUMMARY AND RECOMMENDATION
+
+Casa Verde represents an outstanding opportunity to acquire a high-quality European consumer business with category leadership, strong unit economics, and a clear runway for international expansion. The transaction is being completed on a bilaterally negotiated basis with a long-standing family seller at attractive economics. The management team is strong, the value creation plan is well-defined, and the financing structure is appropriately conservative.
+
+The principal risks are well-understood and we have built specific mitigations into our approach. The base case returns of 2.7x MOIC and 22% gross IRR are attractive on a risk-adjusted basis. The upside potential is meaningful.
+
+We recommend approval of an investment of up to EUR 720 million of equity from Partners Group, with the right to syndicate up to EUR 110 million of co-investment, in the acquisition of Casa Verde Group S.p.A. on the terms described.

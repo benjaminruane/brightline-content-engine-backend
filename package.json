@@ -16,7 +16,9 @@
     "r1_2:score": "node tests/r1_2_mini_eval/run_eval.mjs --score-only",
     "r1_2:2": "node tests/r1_2_mini_eval/run_r1_2_2.mjs",
     "r1_2:2-report": "node tests/r1_2_mini_eval/run_r1_2_2.mjs --report-only",
-    "audit:inits": "node tools/audit-statement-analysis-inits.mjs --out init-audit.json"
+    "audit:inits": "node tools/audit-statement-analysis-inits.mjs --out init-audit.json",
+    "qc:diag:prep": "node scripts/diagnostic/prep-extract.mjs",
+    "qc:diag:run": "node scripts/diagnostic/run-batch.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.93.0",

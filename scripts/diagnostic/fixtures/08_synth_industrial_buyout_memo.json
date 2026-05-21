@@ -1,0 +1,14 @@
+{
+  "id": "08",
+  "label": "synth_industrial_buyout_memo",
+  "sources": [
+    "08_synth_industrial_buyout_memo.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 08_synth_industrial_buyout_memo.txt"
+}

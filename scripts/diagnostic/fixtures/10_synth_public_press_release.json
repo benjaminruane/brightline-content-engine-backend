@@ -1,0 +1,14 @@
+{
+  "id": "10",
+  "label": "synth_public_press_release",
+  "sources": [
+    "10_synth_public_press_release.txt"
+  ],
+  "draft": "PLACEHOLDER",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "Source: 10_synth_public_press_release.txt"
+}
