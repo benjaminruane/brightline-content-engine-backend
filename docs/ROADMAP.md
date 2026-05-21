@@ -245,22 +245,25 @@ Parked pending dogfooding evidence. Bundle:
 
 ---
 
-## Open backlog (priority order)
+## Open product backlog (prioritised)
 
-Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
+Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority. Full spec for **R2.7.2**: see **R2.7.2 — Stage 2 semantic frame matching** above.
 
-| # | Item | Status / notes |
-|---|------|----------------|
-| 1 | **R6 — Review Quality** (active scoping) | See **R6 — Review Quality** above. Absorbs: Reviewer comments house style (R6.2), Hide Editorial on conflict (R6.3), Public version prompt calibration (R6.4). **R6.1 Direction intensity** follows open backlog #2 (R2.7.2) when scheduling pipeline vs UI work. |
-| 2 | **R2.7.2 — Stage 2 semantic frame matching** | **LOGGED** — open backlog #2. Stage 2 prompt only. Numeric match must not imply `confirmed` when period, scope, basis, or metric definition differs. See **R2.7.2 — Stage 2 semantic frame matching** above. Independent of R5/R6; can ship before R6.1. |
-| 3 | **R7 — Sources Drawer Revival** (logged, pre-spec) | See **R7 — Sources Drawer Revival** above. |
-| 4 | Fidelity log traceability | Low priority — bundle into R4.2 or Spring clean |
-| 5 | E2 deterministic reimplementation | Open |
-| 6 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
-| 7 | `visibility:null` stale log (R4.2) | Parked in **R4.2** — `[EDITORIAL_REVIEW] starting` log before normalisation |
-| 8 | Unlabelled return-multiple watch | **R5.1.2** planned — expand confidential-detail rule for MOIC-style figures |
-| 9 | Web Search relook | **DEFERRED** behind R6 and R7. Was product backlog #10. Pre-spec questions: (1) Where in the new UI — per-statement rescue vs reviewer-initiated per-card lookup? (2) Verdict contract — does web-sourced confirmation count as Supported, or a distinct badge for audit story? (3) Cost and latency budget on top of current ~16 calls/run. |
-| 10 | Spring clean / refactor | **Defer until after R6** — do not housekeep during a quality push. See Active Backlog → Spring Clean |
+1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.4; see **R6 — Review Quality** above.
+2. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Addresses the R2.7.1 watch item.
+3. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
+4. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6; schedule after #2 when prioritising pipeline work.
+5. **Reviewer comments house style (R6.2)** — tighten commentary tone; enforce QC Output Language Standard.
+6. **Hide Editorial on conflict (R6.3)** — suppress Editorial signal when Evidence is conflicting.
+7. **Public version prompt calibration (R6.4)** — R4.3 shipped wiring; prompt quality pass for Public visibility.
+8. **Fidelity log traceability** — low priority; bundle into R4.2 or Spring clean.
+9. **E2 deterministic reimplementation** — open.
+10. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
+11. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
+12. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
+13. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+
+**Also tracked (below top 13):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
 **Closed (removed from open list):**
 
@@ -285,6 +288,8 @@ Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_d
 ### R2.7.1 — Stage 2 conflict vs partial
 
 Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt — promote to action inside **R6** or ship **R2.7.2** (semantic frame matching also improves partial-vs-conflict discrimination). **No action** if the pattern does not recur on a diverse trace set. Folded into **R6 scoping**; see **R6 — Review Quality** and **R2.7.2** (open backlog #2).
+
+**Backlog R2.7.2 is the planned remediation if the pattern persists.**
 
 ### R4.3 — Public version prompt quality (folded into R6.4)
 
