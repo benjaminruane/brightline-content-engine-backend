@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-19 (R5.4.6)
+Last updated: 2026-05-19 (post-R5; R6 scoping)
 
 ---
 
@@ -12,6 +12,13 @@ Last updated: 2026-05-19 (R5.4.6)
 
 - The app's **UI name** is **Content Engine** (working title). User-visible strings — footers, modals, disclaimers, exports, and other copy shown to reviewers — use **Content Engine** or no product name. **Brightline** does not appear in UI strings.
 - **Brightline Content Engine** remains the **internal project name** (repos, roadmap, architecture docs, operator-facing material).
+
+### Production baseline (post-R5)
+
+- **Pipeline:** v4 in production.
+- **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
+- **Current tags:** frontend `v8.50.6-concern-fallback-underline`; backend `r5.5-export-disclaimer`.
+- **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
 
@@ -86,7 +93,13 @@ Last updated: 2026-05-19 (R5.4.6)
 
 ## Recently shipped (closed specs)
 
-- **R5.4.6 — Concern-click fallback underline** (shipped 2026-05-19). When a concern has no R5.1 spans, the click now blue-underlines the whole statement instead of yellow-highlighting it. Yellow highlighter is reserved exclusively for “Highlight in draft” clicks. Blue underline serves as the universal “this is what the concern is about” visual. Tag: `v8.50.6-concern-fallback-underline`.
+- **R5 sequence — COMPLETE** (closed 2026-05-19). R5.1 (span derivation), R5.2 (span-based duplicate merge), R5.3a/b (overlay surface + traffic-light tints), R5.4 (Highlight in draft + concern scroll-and-underline), R5.4.1–R5.4.6 (card→draft navigation polish), R5.5 (disclaimer footer). Bidirectional draft↔card navigation is live. R5.1.2 remains planned separately.
+- **R5.4.6 — Concern-click fallback underline** (shipped 2026-05-19). When a concern has no R5.1 spans, the click now blue-underlines the whole statement instead of yellow-highlighting it. Yellow highlighter is reserved exclusively for “Highlight in draft” clicks. Tag: `v8.50.6-concern-fallback-underline`.
+- **R5.4.5 — Verdict tints clear during loading** (shipped 2026-05-19). Verdict tints hide when `analysisStatus === "loading"` on re-Review; toggle visual state unchanged.
+- **R5.4.4 — Single statement highlight + re-Review clear + toggle link** (shipped 2026-05-19). One yellow statement highlight at a time; highlights clear on re-Review; “Remove highlighting” toggle on active card.
+- **R5.4.3 — Highlight visibility under tints + statement/phrase coexistence** (shipped 2026-05-19). CSS cascade fix; split `activeStatementHighlight` / `activePhraseHighlight` state.
+- **R5.4.2 — Highlighter-yellow statement visual** (shipped 2026-05-19). Statement highlight uses yellow highlighter background.
+- **R5.4.1 — Statement highlight rendering fix + bolder phrase underline** (shipped 2026-05-19). Statement border → overlay highlighter; phrase underline weight increased.
 - **R5.3b.2 — Tint hygiene and signal-colour alignment** (shipped 2026-05-20). Tint alpha bumped from 0.08–0.10 to 0.12–0.15 for better visibility. Tints auto-clear when draft text changes after Review. QC card left-border colour now uses worst-signal-wins (matches tint colour for the same statement). Tag: `v8.49.2-tint-hygiene`.
 - **R5.3a — Convert “Your Draft” textarea to overlay-capable surface** (shipped 2026-05-18). Frontend foundation only; no visible behaviour change. Tag: `v8.48.0-draft-overlay`.
 - **R5.2 — Span-based within-signal duplicate concern merge** (shipped 2026-05-18). Threshold: 80% overlap of the longer span. Format: numbered-list `(i)` `(ii)` … within a single concern. Multi-span derivation extended in R5.1 helper. Tag: `r5.2-duplicate-concern-merge`.
@@ -112,8 +125,8 @@ Status of rebuild optimisation and cost items from the v4 planning track:
 |----|------|--------|
 | **(A)** | LLM call consolidation | **R3.1 shipped** — Style+Editorial merged on v4 (`runEditorialStyleReview`). **Compliance deliberately kept separate** (different cognitive frame, reviewer trust; ~$0.02/run saving not worth signal dilution). **R3.2** (Stage 5 into Stage 2) **DEFERRED** — needs Stage 2 restructure; loses parallelisation. |
 | **(B)** | Visibility wiring (Complete vs Public) | **CLOSED** via R4.3 (`r4.3-visibility-wiring`). |
-| **(C)** | Stage 2 chunking cost ceiling for long sources | **Open** — evidence-gated; see Parked → (C) below. |
-| **(D)** | $2/run production cost target | **Open** — no spec yet; depends on (C), model choices, and call-count baseline after v4 dogfooding. |
+| **(C)** | Stage 2 chunking cost ceiling for long sources | **Open** — to be scoped during **R6 Review Quality** (see Parked → (C) below). |
+| **(D)** | $2/run production cost target | **Tracking** — diagnostic pass scheduled inside **R6 scoping**; baseline call count and cost before prompt changes. |
 
 ---
 
@@ -129,14 +142,60 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 | **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | **SHIPPED** — `r5.2-duplicate-concern-merge` |
 | **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | **SHIPPED** — `v8.48.0-draft-overlay`. Ready for R5.3b/R5.4 consumers. |
 | **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle (auto-on after Review unless reviewer toggles off); draft→card click navigation; word/char count — consumes R5.3a overlay | **SHIPPED** — follow-ups **R5.3b.1** (transparent textarea, auto-on on `statementRows`, toggle keyboard), **R5.3b.2** (`v8.49.2-tint-hygiene`) |
-| **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight phrases in the draft area on the R5.3a surface | **SHIPPED** — follow-ups **R5.4.1** (statement border → yellow highlighter), **R5.4.2** (tint vs statement cascade), **R5.4.3** (split statement/phrase highlight state), **R5.4.4** (single statement highlight, clear on re-review, toggle link), **R5.4.5** (clear verdict tints while loading), **R5.4.6** (`v8.50.6-concern-fallback-underline`) |
+| **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight phrases in the draft area on the R5.3a surface | **SHIPPED** — `v8.50.6-concern-fallback-underline` (base card→draft navigation) |
+| **R5.4.1** | Statement highlight rendering fix + bolder phrase underline | **SHIPPED** |
+| **R5.4.2** | Highlighter-yellow as the statement highlight visual | **SHIPPED** |
+| **R5.4.3** | Highlight visibility under tints + statement/phrase coexistence | **SHIPPED** |
+| **R5.4.4** | Single statement highlight, clear on re-Review, toggle link text | **SHIPPED** |
+| **R5.4.5** | Verdict tints clear during loading state | **SHIPPED** |
+| **R5.4.6** | Concern-click fallback as whole-statement blue underline | **SHIPPED** — `v8.50.6-concern-fallback-underline` |
 | **R5.5** | Compliance disclaimer footer (Results panel + PDF/DOCX exports); timestamp consistency audit | **SHIPPED** — frontend `v8.47.0-disclaimer-and-timestamps`, backend `r5.5-export-disclaimer` |
 
-**R5 sequence: COMPLETE** (R5.1, R5.1.1, R5.2, R5.3a, R5.3b, R5.4, R5.5 shipped; R5.1.2 remains planned).
+**R5 sequence: COMPLETE.** All R5.x specs above shipped except **R5.1.2** (unlabelled return multiples — remains planned). **Bidirectional draft↔card navigation is live:** draft→card (R5.3b verdict tints + textarea click), card→draft (R5.4 concern underline + “Highlight in draft” yellow marker).
 
 **Span contract (R5.1 → R5.2 → R5.4):** R5.1 introduced `span` as a single `{ startChar, endChar, source }` object on each concern. R5.2 generalises this to an **array** of one or more such entries (multi-phrase concerns emit multiple spans; merge concatenates and dedupes). **R5.4** consumes the array for click-to-highlight in the Assess draft overlay (phrase underline from spans; whole-statement blue underline when spans are absent — see R5.4.6).
 
 **Note — macOS Safari keyboard accessibility:** The Verdicts toggle (R5.3b) uses correct ARIA switch semantics on a native `<button>`, but macOS Safari does not tab to buttons by default. Users on Safari must enable **Preferences → Advanced → “Press Tab to highlight each item on a webpage”** to navigate the toggle via keyboard. This is a Safari preference, not a code defect.
+
+---
+
+## R6 — Review Quality
+
+**Status:** **SCOPING** (no specs written yet)
+
+**Objective:** Lift the quality, reliability, and insight of Review output. This is the moat. Pure-UI sprints have diminishing returns until Review output catches up.
+
+Items in scope (order indicative, not locked):
+
+| Spec | Summary | Prior backlog |
+|------|---------|---------------|
+| **R6.1** | **Direction intensity** — surface how strong a concern is, not just that one exists | Was product backlog #2 |
+| **R6.2** | **Reviewer comments house style** — tighten commentary tone, remove filler, enforce QC Output Language Standard from AI Operating Manual | Was product backlog #3 |
+| **R6.3** | **Hide Editorial on conflict** — when a card is conflicting, suppress the Editorial signal so reviewer attention lands on the conflict | Was product backlog #4 |
+| **R6.4** | **Public version prompt calibration** — tighten Compliance + Editorial calibration for Public visibility; R4.3 shipped the wiring; this is the prompt quality pass | Was product backlog #9 |
+
+**Watch items to fold into R6 scoping:**
+
+- **R2.7.1** — Stage 2 conflict-vs-partial-confirmed distinction. If pattern persists across next 10–20 traces, promote to action inside R6 (likely a Stage 2 prompt tightening sub-spec).
+- **Rebuild backlog (C)** — Stage 2 chunking ceiling. Scope during R6 because long-source quality work is wasted if Stage 2 silently drops content. Decide in scoping whether to address inside R6 or run as a parallel rebuild item.
+- **Rebuild backlog (D)** — Production cost tracking. One diagnostic pass during R6 to baseline call count and cost (~16 calls / 4 statements / 1 source; ~$2/run today) before any prompt changes.
+
+---
+
+## R7 — Sources Drawer Revival
+
+**Status:** **LOGGED** (pre-spec discussion pending)
+
+**Objective:** Restore the Sources drawer to the UI and wire card→source navigation, completing the draft↔card↔source triangle.
+
+**Intended behaviour** (subject to pre-spec discussion):
+
+- Sources drawer reopens as a panel in the UI.
+- Drawer shows uploaded source files with their content browsable.
+- Clicking an Evidence comment / excerpt on a QC card opens the drawer and scrolls to the relevant source passage.
+- Excerpt span back to source is expected to come from existing `evidenceTrace`; no new backend extraction work anticipated.
+
+Frontend-heavy, modest backend work. Can run after R6 or in parallel since the surfaces do not overlap.
 
 ---
 
@@ -151,22 +210,31 @@ Parked pending dogfooding evidence. Bundle:
 
 ---
 
-## Product backlog
+## Open backlog (priority order)
 
-Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
+Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
 
 | # | Item | Status / notes |
 |---|------|----------------|
-| 1 | Merge duplicate concerns | **CLOSED** — shipped in R5.2 (`r5.2-duplicate-concern-merge`). R3.4 partial fix (Evidence-vs-Editorial on `conflicting` only) remains shipped. |
-| 2 | Align Direction intensity — Evidence softer than others | Open |
-| 3 | Reviewer comments follow house style | Open |
-| 4 | Hide Editorial on conflict | Open (R3.4 scoped to two rule codes on conflicting Evidence only) |
-| 5 | E2 deterministic reimplementation | Open |
-| 6 | Fidelity log traceability | Low priority — bundle into R4.2 or Spring clean |
-| 7 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
-| 8 | Spring clean / refactor | Open — see Active Backlog → Spring Clean |
-| 9 | Public version prompt | Open |
-| 10 | Web Search relook for new UI | Open — deferred. Web Search was previously a toggle in the Writing module (collapsed into Review via R4.1); no longer in active UI. Decide: **(a)** reintroduce as draft-research aid alongside or within Review; **(b)** reintroduce as Compliance-supporting tool (e.g. verify whether a “confidential detail” is already public); **(c)** drop entirely. Defer until later sprint cycles. |
+| 1 | **R6 — Review Quality** (active scoping) | See **R6 — Review Quality** above. Absorbs: Direction intensity (R6.1), Reviewer comments house style (R6.2), Hide Editorial on conflict (R6.3), Public version prompt calibration (R6.4). |
+| 2 | **R7 — Sources Drawer Revival** (logged, pre-spec) | See **R7 — Sources Drawer Revival** above. |
+| 3 | Fidelity log traceability | Low priority — bundle into R4.2 or Spring clean |
+| 4 | E2 deterministic reimplementation | Open |
+| 5 | Implement-changes sprint (`suggestedRewrite` → UI) | Open — see Active Backlog → Implement-Changes Sprint |
+| 6 | `visibility:null` stale log (R4.2) | Parked in **R4.2** — `[EDITORIAL_REVIEW] starting` log before normalisation |
+| 7 | Unlabelled return-multiple watch | **R5.1.2** planned — expand confidential-detail rule for MOIC-style figures |
+| 8 | Web Search relook | **DEFERRED** behind R6 and R7. Was product backlog #10. Pre-spec questions: (1) Where in the new UI — per-statement rescue vs reviewer-initiated per-card lookup? (2) Verdict contract — does web-sourced confirmation count as Supported, or a distinct badge for audit story? (3) Cost and latency budget on top of current ~16 calls/run. |
+| 9 | Spring clean / refactor | **Defer until after R6** — do not housekeep during a quality push. See Active Backlog → Spring Clean |
+
+**Closed (removed from open list):**
+
+| Item | Closed via |
+|------|------------|
+| Merge duplicate concerns | R5.2 (`r5.2-duplicate-concern-merge`) |
+| Align Direction intensity | Folded into **R6.1** |
+| Reviewer comments follow house style | Folded into **R6.2** |
+| Hide Editorial on conflict | Folded into **R6.3** |
+| Public version prompt | Folded into **R6.4** (R4.3 shipped wiring) |
 
 ---
 
@@ -180,7 +248,11 @@ Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_d
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
-Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt. **No action** if the pattern does not recur on a diverse trace set.
+Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt — promote to action inside **R6** (likely Stage 2 prompt tightening sub-spec). **No action** if the pattern does not recur on a diverse trace set. Folded into **R6 scoping**; see **R6 — Review Quality**.
+
+### R4.3 — Public version prompt quality (folded into R6.4)
+
+**R4.3** shipped visibility wiring (`r4.3-visibility-wiring`, 2026-05-17). Prompt calibration for Public visibility is tracked as **R6.4**, not a standalone backlog item. Lineage preserved here so R4.3 scope is not mistaken for complete.
 
 ### R5.1 — Span coverage gap (concern click fallback)
 
@@ -258,11 +330,11 @@ Adapt is parked. The `api/adapt.js` endpoint and supporting code remain in the c
 
 ### (C) Stage 2 chunking — cost ceiling for long sources
 
-**Open in QC rebuild backlog (C); evidence-gated here.** R3.3 instrumentation logs a warning when any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. Reactivate implementation when source-length warnings appear regularly in dev or production logs, OR when typical pilot source documents exceed ~100k characters, OR when verdict quality degrades on long sources. Architecture document section 10 defines the chunking strategy; this is sequencing, not design.
+**Open in QC rebuild backlog (C); to be scoped during R6 Review Quality.** R3.3 instrumentation logs a warning when any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. Reactivate implementation when source-length warnings appear regularly in dev or production logs, OR when typical pilot source documents exceed ~100k characters, OR when verdict quality degrades on long sources. Architecture document section 10 defines the chunking strategy; this is sequencing, not design.
 
 ### (D) $2/run production cost target
 
-**Open in QC rebuild backlog (D).** No spec yet. Depends on Stage 2 chunking (C), stable v4 call counts after dogfooding, and cost-model baseline from R1.x.
+**Tracking in QC rebuild backlog (D).** Diagnostic pass scheduled inside **R6 scoping** to baseline call count and cost before prompt changes. Current baseline: ~16 LLM calls per run at 4 statements / 1 source; ~$2/run in production. Depends on Stage 2 chunking (C), model choices, and cost-model baseline from R1.x.
 
 ---
 
