@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-19
+Last updated: 2026-05-19 (R5.4.6)
 
 ---
 
@@ -86,6 +86,7 @@ Last updated: 2026-05-19
 
 ## Recently shipped (closed specs)
 
+- **R5.4.6 — Concern-click fallback underline** (shipped 2026-05-19). When a concern has no R5.1 spans, the click now blue-underlines the whole statement instead of yellow-highlighting it. Yellow highlighter is reserved exclusively for “Highlight in draft” clicks. Blue underline serves as the universal “this is what the concern is about” visual. Tag: `v8.50.6-concern-fallback-underline`.
 - **R5.3b.2 — Tint hygiene and signal-colour alignment** (shipped 2026-05-20). Tint alpha bumped from 0.08–0.10 to 0.12–0.15 for better visibility. Tints auto-clear when draft text changes after Review. QC card left-border colour now uses worst-signal-wins (matches tint colour for the same statement). Tag: `v8.49.2-tint-hygiene`.
 - **R5.3a — Convert “Your Draft” textarea to overlay-capable surface** (shipped 2026-05-18). Frontend foundation only; no visible behaviour change. Tag: `v8.48.0-draft-overlay`.
 - **R5.2 — Span-based within-signal duplicate concern merge** (shipped 2026-05-18). Threshold: 80% overlap of the longer span. Format: numbered-list `(i)` `(ii)` … within a single concern. Multi-span derivation extended in R5.1 helper. Tag: `r5.2-duplicate-concern-merge`.
@@ -128,10 +129,12 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 | **R5.2** | Span-based within-signal duplicate concern merge (supersedes product backlog “merge duplicate concerns”; uses R5.1 spans) | **SHIPPED** — `r5.2-duplicate-concern-merge` |
 | **R5.3a** | Convert “Your Draft” textarea to overlay-capable surface (frontend foundation). **Path Y locked**; DraftContextPanel revival ruled out | **SHIPPED** — `v8.48.0-draft-overlay`. Ready for R5.3b/R5.4 consumers. |
 | **R5.3b** | Statement-level traffic-light colour-coding in draft area with toggle (auto-on after Review unless reviewer toggles off); draft→card click navigation; word/char count — consumes R5.3a overlay | **SHIPPED** — follow-ups **R5.3b.1** (transparent textarea, auto-on on `statementRows`, toggle keyboard), **R5.3b.2** (`v8.49.2-tint-hygiene`) |
-| **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight phrases in the draft area on the R5.3a surface | **Next** |
+| **R5.4** | Wire existing “Highlight in draft” button (dead since R4.1) plus concern bullets, using R5.1 spans, to scroll-and-highlight phrases in the draft area on the R5.3a surface | **SHIPPED** — follow-ups **R5.4.1** (statement border → yellow highlighter), **R5.4.2** (tint vs statement cascade), **R5.4.3** (split statement/phrase highlight state), **R5.4.4** (single statement highlight, clear on re-review, toggle link), **R5.4.5** (clear verdict tints while loading), **R5.4.6** (`v8.50.6-concern-fallback-underline`) |
 | **R5.5** | Compliance disclaimer footer (Results panel + PDF/DOCX exports); timestamp consistency audit | **SHIPPED** — frontend `v8.47.0-disclaimer-and-timestamps`, backend `r5.5-export-disclaimer` |
 
-**Span contract (R5.1 → R5.2):** R5.1 introduced `span` as a single `{ startChar, endChar, source }` object on each concern. R5.2 generalises this to an **array** of one or more such entries (multi-phrase concerns emit multiple spans; merge concatenates and dedupes). The frontend does not currently read `span`, so this is forward-compatible. **R5.4** will consume the array for click-to-highlight.
+**R5 sequence: COMPLETE** (R5.1, R5.1.1, R5.2, R5.3a, R5.3b, R5.4, R5.5 shipped; R5.1.2 remains planned).
+
+**Span contract (R5.1 → R5.2 → R5.4):** R5.1 introduced `span` as a single `{ startChar, endChar, source }` object on each concern. R5.2 generalises this to an **array** of one or more such entries (multi-phrase concerns emit multiple spans; merge concatenates and dedupes). **R5.4** consumes the array for click-to-highlight in the Assess draft overlay (phrase underline from spans; whole-statement blue underline when spans are absent — see R5.4.6).
 
 **Note — macOS Safari keyboard accessibility:** The Verdicts toggle (R5.3b) uses correct ARIA switch semantics on a native `<button>`, but macOS Safari does not tab to buttons by default. Users on Safari must enable **Preferences → Advanced → “Press Tab to highlight each item on a webpage”** to navigate the toggle via keyboard. This is a Safari preference, not a code defect.
 
@@ -178,6 +181,10 @@ Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_d
 ### R2.7.1 — Stage 2 conflict vs partial
 
 Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt. **No action** if the pattern does not recur on a diverse trace set.
+
+### R5.1 — Span coverage gap (concern click fallback)
+
+After **R5.4.6**, concerns without R5.1 quoted-phrase spans get a **whole-statement blue underline** in the draft rather than a phrase-level underline. Visually heavier than span-derived highlights. **Action if reviewers find this noisy:** improve R5.1 span coverage in a future sprint (Editorial ~96%, Compliance ~83% post-R5.1.1 — gaps remain on concerns that omit quoted phrases). No frontend change required until then.
 
 ---
 
