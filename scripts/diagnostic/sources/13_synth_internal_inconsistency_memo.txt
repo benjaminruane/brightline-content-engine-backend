@@ -7,9 +7,7 @@ Subject:   Project Borealis — Proposed acquisition of CloudPivot Systems Limit
 
 RECOMMENDATION
 
-We seek IC approval for an investment of EUR 285 million for a 64% controlling stake in CloudPivot Systems Limited ("CloudPivot" or "the Company"), a London-headquartered vertical SaaS platform serving the European logistics and freight forwarding industry. The transaction values CloudPivot at an enterprise value of EUR 445 million.
-
-[NOTE FOR REVIEWERS: This memo contains deliberate internal numeric inconsistencies for QC pipeline testing purposes. Specifically: ARR figures are stated differently in sections 2 and 4; employee count is stated differently in sections 1 and 6; the EBITDA margin is stated differently in the executive summary and the financial overview. These inconsistencies are intentional.]
+We seek IC approval for an investment of EUR 285 million for a 64% controlling stake in CloudPivot Systems Limited ("CloudPivot" or "the Company"), a London-headquartered vertical SaaS platform serving the European logistics and freight forwarding industry. The transaction values CloudPivot at an enterprise value of EUR 445 million. On a trailing basis the Company generates an EBITDA margin of approximately 13%, reflecting continued investment in product and go-to-market.
 
 1. BUSINESS OVERVIEW
 

@@ -4,11 +4,11 @@
   "sources": [
     "20_synth_fund_close_announcement.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "We are pleased to announce the final close of Meridian European Industrials Fund V at hard cap, with total commitments of EUR 4.8 billion. Fund V is the largest fund in Meridian's history, representing a meaningful step-up from Fund IV which closed at EUR 3.2 billion in 2021.\n\nThe fundraise was completed in eleven months from first close, well ahead of the original eighteen-month target. Demand exceeded the hard cap by approximately EUR 1.2 billion. Re-up rates from existing LPs were strong at 96 percent by capital, and the Fund welcomed new investors across three of the largest US public pension funds, two Asian sovereign wealth funds, and a number of European and North American family offices and endowments. The LP base spans 92 institutional investors across 26 countries.\n\nFund V will be deployed across European industrial sectors with a particular focus on advanced manufacturing, energy transition, and specialty chemicals. We anticipate 10 to 12 platform investments over the four-year deployment period, with typical equity tickets in the EUR 300 to 700 million range. Our investment team has been preparing Fund V's pipeline for many months and we expect first capital calls in the second quarter of 2026.\n\nWe thank our LPs for their continued partnership and trust.",
   "config": {
-    "outputType": "investor_letter",
-    "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "outputType": "reporting_commentary",
+    "requiredVersion": "public",
+    "eventType": "special_topic"
   },
   "notes": "Source: 20_synth_fund_close_announcement.txt"
 }

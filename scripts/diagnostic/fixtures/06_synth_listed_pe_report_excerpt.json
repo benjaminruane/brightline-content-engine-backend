@@ -4,11 +4,11 @@
   "sources": [
     "06_synth_listed_pe_report_excerpt.pdf"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "Cirrus Data Services has continued to perform strongly during 2025. Revenue grew to GBP 312 million for the year, up from GBP 187 million at the time of our investment in March 2022 — a compound annual growth rate of approximately 19 percent. Adjusted EBITDA grew from GBP 41 million to GBP 78 million over the same period, with margins expanding from 21.9 percent to 25.0 percent. We see continued strong demand for managed IT services in the UK and Irish mid-market and view Cirrus as well positioned to keep gaining share.\n\nMoreno Iberica has had a more challenging period. Revenue for the year ended 31 December 2025 was EUR 218 million, modestly above the EUR 196 million at the time of our investment, and EBITDA margins have been broadly stable at around 14 percent over the holding period. Operational changes introduced during 2025 — including a new Chief Commercial Officer and a new Chairman — are expected to begin contributing meaningfully in 2026, and we continue to view the underlying business as fundamentally sound. The holding period has lengthened from our original underwriting; we now expect a total hold of seven to eight years rather than the originally envisaged five to six years.\n\nAcross the portfolio, ESG performance continues to improve. Eighty-five percent of our portfolio companies now report Scope 1 and Scope 2 emissions on a comparable basis, up from 72 percent in 2024. Twelve portfolio companies have committed to Science-Based Targets initiative validation, with eight of these having received approval. Female representation in senior management across the portfolio reached 31 percent at the end of 2025, up from 26 percent at the end of 2024.",
   "config": {
-    "outputType": "investor_letter",
+    "outputType": "reporting_commentary",
     "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "eventType": "periodic_update"
   },
   "notes": "Source: 06_synth_listed_pe_report_excerpt.pdf"
 }

@@ -4,10 +4,10 @@
   "sources": [
     "03_pg_gestcompost_investment.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "Partners Group, through its infrastructure secondaries business, has agreed to invest over EUR 120 million in Gestcompost, the largest organic waste treatment manager in Spain. The investment will be made via a continuation fund managed by current owner Suma Capital, with Partners Group acting as cornerstone investor and taking two seats on the Company's board.\n\nGestcompost was founded in 2003 and operates three organic waste management sites with combined treatment capacity of 1.2 million tons of waste per year. The Company processes waste through composting and anaerobic digestion, with the latter producing biogas that can be upgraded to biomethane — an increasingly important alternative to natural gas in the European energy transition.\n\nSince Suma Capital's investment in 2020, Gestcompost has tripled its EBITDA, expanded its workforce, and grown its treatment capacity through new facilities. Partners Group's investment will support continued growth through increased waste volumes, the acquisition of additional biomethane plants, and operational improvements. Alejandro Lafarga, currently CEO of Madrilena Red de Gas, will join the Company's board as Vice Chairman on behalf of Partners Group's clients.\n\nThis is Partners Group's tenth continuation vehicle investment in the past three years and the firm's second investment in Spain since 2023. Partners Group's Infrastructure business manages USD 27 billion in assets globally.",
   "config": {
-    "outputType": "investor_letter",
-    "requiredVersion": "complete",
+    "outputType": "press_release",
+    "requiredVersion": "public",
     "eventType": "new_investment"
   },
   "notes": "Source: 03_pg_gestcompost_investment.txt"

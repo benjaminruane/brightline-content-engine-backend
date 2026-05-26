@@ -4,11 +4,11 @@
   "sources": [
     "11_synth_investor_letter_exit.pdf"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "We are pleased to inform you that Meridian Industrials Fund IV has completed the sale of NorTech Industries to Brookfield Asset Management. The transaction closed on 19 January 2026 at an enterprise value of SEK 18.4 billion, approximately EUR 1.62 billion.\n\nThe realisation generates gross proceeds to Fund IV of SEK 12.8 billion on invested capital of SEK 3.6 billion — a gross MOIC of 3.56x and a gross IRR of 31.4 percent over a 4.7-year hold. Net to LPs after carry and expenses, the realisation delivers 2.74x net MOIC and 24.2 percent net IRR. NorTech is the largest single realisation in Fund IV's history and moves the Fund's overall net IRR from 16.8 percent to 19.7 percent.\n\nThe value creation story is straightforward. International expansion took revenue contribution from outside the Nordic region from 19 percent at entry to 42 percent at exit. A modular product redesign drove gross margin from 28.4 percent to 34.1 percent. Four bolt-on acquisitions, anchored by HeatTech GmbH for SEK 1.1 billion, added meaningful scale. Manufacturing footprint optimisation and the new Polish facility completed the operational picture. Total Company revenue grew from SEK 4.2 billion at entry to SEK 11.4 billion at exit, with EBITDA expanding from SEK 480 million to SEK 2.08 billion and margins from 11.4 percent to 18.2 percent.\n\nThe exit process attracted seven preliminary offers, with Brookfield's SEK 18.4 billion bid meaningfully ahead of the next bid at SEK 16.9 billion. CEO Magnus Karlsson and the management team supported the Brookfield offer at the indicative stage; Brookfield's commitment to retain the Stockholm headquarters was an additional factor in the Company's preference.\n\nWith this realisation Fund IV becomes one of our strongest vintages. Our focus turns to the three remaining portfolio companies and to deployment of Fund V, which closed in August 2025 at hard cap.",
   "config": {
     "outputType": "investor_letter",
     "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "eventType": "direct_investment_exit"
   },
   "notes": "Source: 11_synth_investor_letter_exit.pdf"
 }

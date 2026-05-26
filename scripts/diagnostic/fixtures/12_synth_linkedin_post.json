@@ -4,11 +4,11 @@
   "sources": [
     "12_synth_linkedin_post.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "After more than four years of partnership, Meridian Capital has completed the sale of NorTech Industries to Brookfield this week. NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and when we invested in 2021 it was a strong but underexposed business — dominant in the Nordics and barely visible elsewhere.\n\nThe transformation since has been substantial. NorTech today operates across the Nordic region, Germany, France, the UK, and Poland, with international revenue having grown from a fifth of total revenue at entry to more than 40 percent at exit. Total revenue grew nearly threefold over the hold period and EBITDA margins moved from 11 to 18 percent. The numbers tell one story; the team's transformation tells the bigger one.\n\nThree people deserve particular credit. Magnus Karlsson, who took on the international expansion challenge with grace and decisiveness. Mikael Bergström, who navigated three generations of founding-family shareholder dynamics with patience and integrity. And the wider NorTech team across Stockholm and the new international footprint, who built something genuinely exceptional.\n\nExcited to see what NorTech does next under Brookfield's ownership.\n\n#privateequity #manufacturing #nordics",
   "config": {
-    "outputType": "investor_letter",
-    "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "outputType": "linkedin_post",
+    "requiredVersion": "public",
+    "eventType": "direct_investment_exit"
   },
   "notes": "Source: 12_synth_linkedin_post.txt"
 }

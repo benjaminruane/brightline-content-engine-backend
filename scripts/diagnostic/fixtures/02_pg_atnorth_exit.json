@@ -4,11 +4,11 @@
   "sources": [
     "02_pg_atnorth_exit.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "Partners Group has agreed to sell atNorth, a leading pan-Nordic data center platform, to Canada Pension Plan Investment Board and Equinix in a transaction valuing the Company at an enterprise value of USD 4 billion.\n\nPartners Group originally acquired atNorth in 2022. Under its ownership, atNorth has expanded to eight operational data centers across the Nordics, alongside several sites under development. Contracted EBITDA has grown 14-fold over the four-year holding period, delivering compounded annual returns of more than 30% and a 2.5x multiple on invested capital for Partners Group's clients.\n\nThe Company offers high-density compute infrastructure to a diversified base of over 100 international customers and has secured 1 GW of power to support continued expansion. As AI workloads continue to drive demand for location-agnostic compute, atNorth is exceptionally well positioned to capitalize on this opportunity. Partners Group will reinvest alongside CPP Investments and Equinix and retain up to 10% of the Company going forward.\n\nPartners Group's Infrastructure business has USD 36 billion in assets under management globally. This transaction marks a successful control exit from the firm's data center portfolio, although Partners Group remains thematically focused on the data center sector across multiple geographies.",
   "config": {
-    "outputType": "investor_letter",
-    "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "outputType": "press_release",
+    "requiredVersion": "public",
+    "eventType": "direct_investment_exit"
   },
   "notes": "Source: 02_pg_atnorth_exit.txt"
 }

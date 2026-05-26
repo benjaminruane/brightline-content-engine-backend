@@ -5,7 +5,7 @@
     "18a_synth_cross_source_pair_initial.txt",
     "18b_synth_cross_source_pair_update.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings AB, a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector. We have invested EUR 158 million for a 60 percent controlling stake, valuing the Company at an enterprise value of approximately EUR 240 million.\n\nNSH currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units. The Company generates ARR of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year. NSH employs 142 people across Stockholm, Oslo, and Helsinki.\n\nThe investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates NSH significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40 percent of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Erik Lindqvist and CTO Pekka Virtanen.\n\nOur base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A. The base case generates 2.8x MOIC and 23 percent gross IRR.",
   "config": {
     "outputType": "investor_letter",
     "requiredVersion": "complete",

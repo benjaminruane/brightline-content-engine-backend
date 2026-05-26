@@ -4,11 +4,11 @@
   "sources": [
     "09_synth_portfolio_update_letter.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "Six months after closing, our investment in Helvetia Precision Components is tracking modestly ahead of underwriting. Period revenue of EUR 318 million was 4 percent above plan, and EBITDA of EUR 58 million was 7 percent above plan with margins of 18.3 percent. Strong demand in medical implants, particularly from our largest orthopaedic customer, has been the principal driver of the upside.\n\nThe leadership transition has proceeded smoothly. Petra Köhler assumed the CEO role in June and has made decisive progress on the procurement, footprint, and commercial priorities identified at IC. Andreas Schiller has integrated comfortably into his board role and continues to support customer relationships.\n\nTwo material issues warrant attention. First, the semiconductor capital equipment cycle has softened, with two customers pushing orders by one to two quarters. We have lowered our 2026 semiconductor revenue forecast to EUR 105 million from the original underwriting of EUR 122 million. Our base case returns remain intact but the segment will be a moderating factor through 2026. Second, a quality issue at our second-largest medical customer was identified in October and is being addressed through a corrective action programme. The financial impact is small (approximately EUR 3 million in returns and rework) but the customer has placed HPC on enhanced quality monitoring for 12 months.\n\nKlaus Wenger joined as Chief Procurement Officer in September and has already secured EUR 2.1 million of annualised savings, against a year-one target of EUR 5 million. Sophie Lehmann joined as Chief Commercial Officer in October. The Brno automation programme has progressed to first-phase capex approval of EUR 18 million, with installation targeted for Q3 2026.\n\nWe continue to expect base case returns of 2.4x MOIC and 19 percent IRR.",
   "config": {
-    "outputType": "investor_letter",
+    "outputType": "reporting_commentary",
     "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "eventType": "periodic_update"
   },
   "notes": "Source: 09_synth_portfolio_update_letter.txt"
 }

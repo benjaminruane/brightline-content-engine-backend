@@ -4,9 +4,9 @@
   "sources": [
     "01_bvp_shopify_memo.txt"
   ],
-  "draft": "Shopify is a Canadian e-commerce platform that targets small and medium businesses. The company was founded in 2007 and has grown its customer base to nearly 10,000 customers. Monthly recurring revenue has increased to $438K over the past year.",
+  "draft": "Shopify is a Canadian e-commerce platform serving small and medium businesses, founded in 2007 in Ottawa. The company has grown rapidly, with customers increasing from 5,500 a year ago to nearly 10,000 today. Monthly recurring revenue has grown from $164K to $438K over the same period, representing growth of more than 150% year-on-year. The business is profitable and has raised just $1mm to date.\n\nShopify's strategic moat is its App Store, which two-thirds of customers actively use. The product is simple enough that a non-technical user can set up a fully functioning online store in a matter of hours. Customer acquisition has been almost entirely organic, with paid marketing remaining rudimentary. We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.\n\nThe team, led by founder-CEO Tobi Lütke, has demonstrated strong product and management instincts despite Tobi being a first-time CEO. Shopify's 24 employees are based in Ottawa, where the company has recruited strong design and engineering talent at a meaningful cost discount to Silicon Valley.",
   "config": {
-    "outputType": "investor_letter",
+    "outputType": "reporting_commentary",
     "requiredVersion": "complete",
     "eventType": "new_investment"
   },

@@ -4,9 +4,9 @@
   "sources": [
     "13_synth_internal_inconsistency_memo.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "CloudPivot Systems is a London-headquartered vertical SaaS platform for the European freight forwarding industry. The transaction values the Company at an enterprise value of EUR 445 million.\n\nThe Company has built strong fundamentals. CloudPivot now serves over 1,200 freight forwarder and customs broker customers across 28 European countries and generates ARR of EUR 84 million as of October 2025, up from EUR 52 million two years prior. EBITDA margin is 11.1 percent on trailing twelve months revenue of EUR 76 million. Net revenue retention has averaged 113 percent over the past 24 months.\n\nThe team is led by founder-CEO Tom Fairfield and CTO James O'Brien. CloudPivot employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore. The Company has built a clear competitive lead in the European mid-market against entrenched legacy software competitors.\n\nOur investment thesis rests on three pillars. First, the European freight forwarding software market remains structurally underpenetrated, with approximately 40 percent of forwarders still on legacy systems or spreadsheets. Second, CloudPivot's vertical product depth creates very high switching costs. Third, the addressable European market of 14,000 forwarders gives meaningful headroom from CloudPivot's current 8.6 percent penetration.\n\nWe project ARR growth from EUR 81 million today to approximately EUR 195 million over a five-year hold, representing 19 percent CAGR. Our base case generates 2.6x MOIC and 21 percent gross IRR.",
   "config": {
-    "outputType": "investor_letter",
+    "outputType": "reporting_commentary",
     "requiredVersion": "complete",
     "eventType": "new_investment"
   },

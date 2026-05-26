@@ -4,11 +4,11 @@
   "sources": [
     "07_synth_vc_thesis_post.txt"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "A few thoughts from our team on where we think the next decade of software is heading.\n\nWe believe the dominant pattern of the next decade will be vertical AI agents — software that doesn't just present a workflow for a human to complete, but completes the workflow itself, with the human stepping in only for exceptions, oversight, and high-stakes calls.\n\nThe workflows where this will hit hardest share three characteristics: they're high-volume and labour-intensive; they're largely deterministic at the level of individual decisions; and their outputs can be verified after the fact. That description covers a meaningful share of back-office work in financial services, healthcare administration, logistics, legal services, and accounting.\n\nThis is not a thesis about general intelligence. It's a thesis about the specific economic deployment of current and near-future AI capability. We expect significant disruption to the incumbent vertical SaaS industry, deep changes to commercial models, and strong winner-takes-most dynamics emerging within each vertical category.\n\nWe've made fifteen investments in this category over the past two years and are continuing to invest actively. If you're building in healthcare administration, financial services back-office, or legal services — or in agent infrastructure — we want to talk.",
   "config": {
-    "outputType": "investor_letter",
-    "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "outputType": "linkedin_post",
+    "requiredVersion": "public",
+    "eventType": "special_topic"
   },
   "notes": "Source: 07_synth_vc_thesis_post.txt"
 }

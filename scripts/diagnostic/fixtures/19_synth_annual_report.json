@@ -4,11 +4,11 @@
   "sources": [
     "19_synth_annual_report.pdf"
   ],
-  "draft": "PLACEHOLDER",
+  "draft": "Meridian European Industrials Fund IV continues to perform strongly. As of 31 December 2025, the Fund's net IRR stands at 19.7 percent, with net MOIC of 2.13x and net DPI of 0.94x. The exit of NorTech Industries — which closed in January 2026 at SEK 18.4 billion and generated a 3.56x gross MOIC / 31.4 percent gross IRR — is the largest realisation in the Fund's history and the principal driver of the Fund's current returns trajectory.\n\nAcross the remaining eight active portfolio companies, performance has been broadly positive with two notable challenges. Helvetia Precision Components, acquired in June 2025, is six months into the hold and tracking modestly ahead of underwriting; the recently-acquired Lumen Specialty Chemicals is on track with its 100-day plan; Brightway Industrial Coatings has had a strong 2025 with revenue and EBITDA growing 14 percent and 21 percent respectively; Eltex Power Systems has performed exceptionally, with revenue growing 23 percent and EBITDA growing 31 percent year-on-year supported by an order backlog that has grown from EUR 285 million at acquisition to EUR 480 million today.\n\nThe two challenges. Continental Plastics, acquired in March 2023, has had a more difficult 2025 with revenue growth of only 4 percent against an underwriting of 9 percent and broadly flat EBITDA. We have responded with operational changes including a new Chief Operating Officer and a structured cost reduction programme targeting EUR 22 million of annualised savings; early progress is encouraging but the realisation timeline has lengthened by approximately 12 months. Drift Logistics, our 2024 third-party logistics investment, faces a softer parcel volume environment (European parcel volumes down 3 percent year-on-year); the Company has nevertheless gained share, with revenue up 6 percent, but EBITDA margins have compressed from 14 to 12 percent.\n\nPortfolio ESG performance has continued to mature. All eight active portfolio companies have completed or are in the final stages of SBTi submission. Absolute Scope 1 and Scope 2 emissions reduced 8 percent during 2025 despite portfolio revenue growth of approximately 12 percent. Female representation in senior leadership across the portfolio reached 34 percent by year-end, up from 28 percent at the start of the year and 22 percent at fund inception, against a 40 percent target by 2027.\n\nWe expect two further realisations during 2026. Brightway Industrial Coatings and Eltex Power Systems are both progressing toward exit-readiness, with formal processes likely to launch in the first and third quarters respectively.",
   "config": {
-    "outputType": "investor_letter",
+    "outputType": "reporting_commentary",
     "requiredVersion": "complete",
-    "eventType": "new_investment"
+    "eventType": "periodic_update"
   },
   "notes": "Source: 19_synth_annual_report.pdf"
 }
