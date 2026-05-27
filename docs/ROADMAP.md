@@ -462,6 +462,30 @@ Adapt is parked. The `api/adapt.js` endpoint and supporting code remain in the c
 
 **Tracking in QC rebuild backlog (D).** Diagnostic pass scheduled inside **R6 scoping** to baseline call count and cost before prompt changes. Current baseline: ~16 LLM calls per run at 4 statements / 1 source; ~$2/run in production. Depends on Stage 2 chunking (C), model choices, and cost-model baseline from R1.x.
 
+### Collapsible left rail post-Review
+
+The left Setup panel takes significant horizontal space post-Review.
+The "Hide assessment summary" toggle (in the Results panel header)
+already addresses most vertical cramping for QC cards.
+
+A future enhancement could collapse the left Setup panel to an
+expandable rail post-Review, with Setup section icons visible (Sources,
+Drafting, Your Draft, Review settings) and click-to-expand behaviour.
+Reviewer Assessment and Quality Review Summary would move to a
+collapsible header above the cards (default expanded on first view of
+a run, collapsed after first card interaction).
+
+Three-panel composition post-Review:
+- Left: collapsed rail with Setup section icons
+- Middle: Your Draft (with R5.3a overlay surface)
+- Right: QC cards, full vertical height
+
+Reactivation trigger: vertical cramping recurs as a real issue in
+dogfooding, OR a demo/pilot reveals the current layout is hurting the
+reviewer experience.
+
+Discussed and parked 2026-05-27.
+
 ---
 
 ## Architectural debt to revisit when v3 retires
