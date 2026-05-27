@@ -321,7 +321,8 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 | ID | Summary | Priority |
 |----|---------|----------|
 | **D1.4** | Incremental `INDEX.md` write per fixture — currently written only at end of batch run; deviates from D1.1 spec | Low |
-| **D1.5** | Pipeline log analysis — examine `[FIDELITY_DROP]`, `[EDITORIAL_STYLE_REVIEW]` schema validation failures, and `[stage2]` passage rejections from runs `2026-05-26-205208` and `2026-05-26-212900`; count, bucket, identify affected fixtures. Feeds **R6.2d** | Medium |
+| **D1.5** | Pipeline log analysis — CLOSED 2026-05-27 without completion. Investigation found the diagnostic harness did not capture stdout to disk, so the historical `[FIDELITY_DROP]`, `[EDITORIAL_STYLE_REVIEW]`, and `[stage2]` log entries from runs `2026-05-26-205208` and `2026-05-26-212900` are not recoverable. Decision: skip the data-collection. The three qualitative **R6.2d** candidate patterns captured in R6.5 testing (fidelity-drop-on-corrected-phrase, contradictory-concern-fields, source-style-conflation) carry forward as primary evidence for **R6.2d** scoping. | Closed |
+| **D1.6** | Diagnostic harness stdout capture — modify `scripts/diagnostic/run-batch.mjs` to capture per-fixture stdout to a `pipeline.log` file alongside `result.json`. Surfaced during D1.5 attempt: the bracketed pipeline log entries (`[FIDELITY_DROP]` et al.) print to stdout but are not persisted to disk, making post-hoc analysis impossible. Small change; do before next diagnostic batch. | Low |
 | **D1.7** | Re-audit fixtures with unexpected verdict deltas (F06, F08, F09, F11, F17, F19) — per-statement walk to determine whether pipeline or expected outcome is correct | Low |
 
 ---
