@@ -81,6 +81,24 @@ The verification output (PASS/FAIL per check, plus verbatim grep results) must b
 
 **Canonical example:** D1.3.2 (26 May 2026) — after D1.3 reported v2 drafts loaded but disk state retained v1 content, D1.3.2 required 8 positive anchors and 17 negative contaminants, all of which had to pass before the implementer could claim success. All 25 checks passed; the verification mechanism itself is what gave Ben confidence the loading was correct.
 
+## Deterministic Backstops for Style Rules
+
+Where a style rule depends on a structurally-checkable property (e.g. comma counts for Oxford comma, regex patterns for thousand separator), the LLM rule wording is the primary instruction but a deterministic filter is the final arbiter. This protects against the LLM firing concerns on correctly-formatted text — a failure mode observed across multiple rules in R6.5 testing.
+
+Backstops live in `STYLE_RULE_DETERMINISTIC_FILTERS` in `lib/qc/editorial-compliance-reviewer.mjs`. Each predicate receives `(citedSpan, statementText, fullDraftText)` and returns TRUE to keep the concern, FALSE to drop. Predicates can be span-local (most rules), statement-scoped (`thousand_separator`, `currency_format`), or draft-aware (`defined_term_capitalisation`).
+
+Add a backstop when:
+- The rule has a structurally-checkable property (regex, character count, presence/absence of a pattern)
+- The LLM has demonstrated false-positive firing on correct text
+- The deterministic check is cheap and safe (errs toward keeping concerns rather than dropping them in ambiguous cases)
+
+Don't add a backstop when:
+- The rule requires semantic judgment (e.g. "promotional language")
+- The structural property is hard to define deterministically
+- The cost of a false-negative suppression is high
+
+When in doubt, write the rule wording first, observe behaviour, and add a backstop only if the LLM proves unreliable on a structurally-checkable case.
+
 ## Doc Sync Discipline
 
 When backlog items emerge, evolve, or close during a session, sync `docs/ROADMAP.md` and other governance docs accordingly. Default behaviour: sync immediately when items are settled and the moment is a natural pause.

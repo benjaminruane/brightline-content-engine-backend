@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-26 (D1.6 diagnostic session governance sync)
+Last updated: 2026-05-27 (R6.5 ship sync; R6.5.4–R6.5.6 deterministic backstops and defined-term refinement)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-26 (D1.6 diagnostic session governance sync)
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.50.6-concern-fallback-underline`; backend `r5.5-export-disclaimer`.
+- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r6.5.6-defined-term-refinement`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -102,6 +102,26 @@ Last updated: 2026-05-26 (D1.6 diagnostic session governance sync)
 - **D1.3.1 — Output type corrections** (closed 2026-05-26). Fixtures 01, 13, 16 set to `reporting_commentary` per v2 expected-outcomes doc.
 - **D1.3.2 — V2 drafts into 8 fixtures with verification** (closed 2026-05-26). Fixtures 01, 04, 08, 10, 13, 14, 15, 18 updated; positive-anchor and v1-contaminant grep verification required in summary.
 
+### R6.5 — Two-layer style guide framework (closed 27 May 2026)
+
+- **R6.5 — Two-layer structured style guide live** (closed 2026-05-27). `lib/qc/style-guide.mjs` introduces `STYLE_GUIDE_LAYER_1` (5 universal rules) and `STYLE_GUIDE_LAYER_2_CLIENT` (9 client-specific rules). Editorial reviewer scaffolds prompt from structured rules at call time; Layer 2 overrides Layer 1 by matching rule id with override logging. Diagnostic harness includes per-rule fixtures and `npm run diagnostic:style-guide` for 10-minute rule edit cycles. Tag: `r6.5-style-guide-framework`.
+
+- **R6.5.1 —** `date_format` and `oxford_comma` rule wording tightened; `number_spelling` fixture strengthened. Rule-authoring conventions comment added to `style-guide.mjs` (every rule must state standard, violation, AND explicit non-firing cases).
+
+- **R6.5.2 —** Deterministic backstop framework introduced. New `STYLE_RULE_DETERMINISTIC_FILTERS` registry in `editorial-compliance-reviewer.mjs` (v4 combined editorial+style path only). `oxford_comma` filter drops concerns where the cited span structurally cannot be a three-or-more-item list (no comma + conjunction).
+
+- **R6.5.3 —** `english_variant` deterministic backstop added. Drops concerns where cited span has no detectable British spelling. `US_ALLOWLIST` handles standalone `-ise` words (rise, wise, advise, etc.) as false-British matches.
+
+- **R6.5.4 —** Three more deterministic backstops added: `thousand_separator` (drops when cited span uses apostrophe and no comma), `currency_format` (drops when ISO 4217 code precedes amount), `defined_term_capitalisation` (drops when cited span starts with capitalised defined term).
+
+- **R6.5.5 —** Broadened `thousand_separator` and `currency_format` filters to statement scope (regex runs on full `statementText`, not the LLM-returned span which is often too narrow to contain the structural pattern).
+
+- **R6.5.6 —** `defined_term_capitalisation` made draft-aware. Rule now only applies when the term is defined in the draft (e.g. "Shopify (the Company)"). When no definition exists, the rule is silent. When a definition exists, only genuine violations fire (lowercase noun or omitted "the"); correct mid-sentence "the Company" is suppressed. Tag: `r6.5.6-defined-term-refinement`.
+
+- **F01 live regression validation:** total editorial concerns reduced from 8 (pre-R6.5) to 4 (post-R6.5.6). All remaining concerns are genuine (em-dash, marketing language, first-person plural in reporting commentary).
+
+- **Deterministic filter framework** now covers 5 of the 9 Layer 2 rules. Pattern available for future rules that have a structurally-checkable property.
+
 - **R5 sequence — COMPLETE** (closed 2026-05-19). R5.1 (span derivation), R5.2 (span-based duplicate merge), R5.3a/b (overlay surface + traffic-light tints), R5.4 (Highlight in draft + concern scroll-and-underline), R5.4.1–R5.4.6 (card→draft navigation polish), R5.5 (disclaimer footer). Bidirectional draft↔card navigation is live. R5.1.2 remains planned separately.
 - **R5.4.6 — Concern-click fallback underline** (shipped 2026-05-19). When a concern has no R5.1 spans, the click now blue-underlines the whole statement instead of yellow-highlighting it. Yellow highlighter is reserved exclusively for “Highlight in draft” clicks. Tag: `v8.50.6-concern-fallback-underline`.
 - **R5.4.5 — Verdict tints clear during loading** (shipped 2026-05-19). Verdict tints hide when `analysisStatus === "loading"` on re-Review; toggle visual state unchanged.
@@ -184,7 +204,7 @@ Items in scope (order indicative, not locked):
 | **R6.2** | **Reviewer comments house style** — tighten commentary tone, remove filler, enforce QC Output Language Standard from AI Operating Manual | — | Was product backlog #3 |
 | **R6.3** | **Hide Editorial on conflict** — when a card is conflicting, suppress the Editorial signal so reviewer attention lands on the conflict | — | Was product backlog #4 |
 | **R6.4** | **Public version compliance** — tighten Compliance + Editorial calibration for Public visibility; R4.3 shipped the wiring; this is the prompt quality pass | — | Was product backlog #9 |
-| **R6.5** | **House style framework** — Layer 1 (universal writing quality) + Layer 2 (PG default) + Layer 3 (client-specific overrides) as structured style guide input to the editorial reviewer, not embedded prompt rules | **High** | Diagnostic |
+| **R6.5** | **House style framework** — Layer 1 (universal writing quality) + Layer 2 (client default) + structured style guide input to the editorial reviewer | **SHIPPED 2026-05-27** | `r6.5.6-defined-term-refinement` — Framework + 5 deterministic backstops. See Recently shipped. |
 | **R6.6** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary | Medium | Diagnostic (F04, F12, F18) |
 | **R6.7** | **Forward-looking statement review** — distinguish forward-looking claims; hedging, plausibility, visibility-calibration, alignment with stated risks | Medium | Diagnostic (F02, F03, F05, F08, F09) |
 | **R6.8** | **Cross-source verdict aggregation** — whether to elevate conflict signals to Conflicting verdicts when supersession is implied (`hasConflict` vs aggregator output) | Medium | Diagnostic (F18) |
@@ -196,7 +216,12 @@ Items in scope (order indicative, not locked):
 - **R6.2a** — Disentangle promotional-language flags into hyperbole vs qualitative-descriptor. Evidence: every fixture flagged "strong", "exceptional", "leading" as promotional; calibration too strict.
 - **R6.2b** — Structural recommendations as editorial sub-dimension (bullet candidates, paragraph breaks). Evidence: F08, F11.
 - **R6.2c** — Dimension-naming for "off phrasing" feedback. Evidence: F08, F11, F19.
-- **R6.2d** — Fidelity discipline — eliminate fabricated quotes in editorial commentary. Evidence: `[FIDELITY_DROP]` log entries from both diagnostic runs; feeds **D1.5**.
+### R6.2d — Editorial fidelity discipline
+
+- Fidelity discipline — eliminate fabricated quotes in editorial commentary. Evidence: `[FIDELITY_DROP]` log entries from both diagnostic runs; feeds **D1.5**.
+- **Fidelity-drop-on-corrected-phrase pattern** (observed R6.5.1 testing): LLM cites the corrected form of a violation rather than the offending text. Examples: `number_spelling` cites `'12'` when statement contains `'7 investments'`; `currency_format` cites `'EUR 445 million'` when statement contains `'€445m'`; `english_variant` cites `'organize'` when statement contains `'organise'`. Fidelity guard correctly rejects but the concern is lost.
+- **Contradictory-concern-field pattern** (observed R6.5.1, R6.5.4 testing): LLM produces a concern where the note acknowledges the text is correct, the `suggestedDirection` asks for a change, and the `suggestedRewrite` is identical to the input. Examples: S3 `defined_term_capitalisation` pre-R6.5.4 produced "Change 'The Company is profitable' to 'The Company is profitable'"; S9 `defined_term_capitalisation` pre-R6.5.6 produced "Change 'the Company' to 'the Company'".
+- **Source-style conflation pattern** (observed R6.5 F01 live regression): LLM treats source text style as authoritative over house style. Statement uses `5'500` (PG-correct apostrophe separator); source uses `5,500` (comma separator); LLM fires `thousand_separator` concern recommending changing the correct draft to match the source's incorrect form. Resolved at the filter layer via R6.5.5.
 
 **R6.4 sub-items (Public version compliance):**
 
@@ -305,7 +330,7 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority. Full spec for **R2.7.2**: see **R2.7.2 — Stage 2 semantic frame matching** above.
 
-1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10; see **R6 — Review Quality** above. **R6.5 house style framework** is high priority within R6.
+1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10; see **R6 — Review Quality** above. **R6.5 house style framework** shipped 2026-05-27 (`r6.5.6-defined-term-refinement`).
 2. **Stage 2 conflict vs partial (R2.7.1)** — spec candidate elevated from watch item; diagnostic-confirmed. May ship before R6.
 3. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Complements **R2.7.1**.
 4. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
@@ -313,7 +338,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 6. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
 7. **Hide Editorial on conflict (R6.3)** — suppress Editorial signal when Evidence is conflicting.
 8. **Public version compliance (R6.4)** — R4.3 shipped wiring; sub-items R6.4a–R6.4c from diagnostic.
-9. **House style framework (R6.5)** — structured Layer 1/2/3 style guide as editorial reviewer input. **High priority.**
+9. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
 10. **Document-type appropriateness (R6.6)** — Medium. **Forward-looking statement review (R6.7)** — Medium. **Cross-source verdict aggregation (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — Medium. **Source quality audit (R6.10)** — Low.
 11. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
 12. **E2 deterministic reimplementation** — open.
@@ -334,6 +359,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | Reviewer comments follow house style | Folded into **R6.2** |
 | Hide Editorial on conflict | Folded into **R6.3** |
 | Public version prompt | Folded into **R6.4** (R4.3 shipped wiring) |
+| R6.5 (house style framework) | Shipped via `r6.5.6-defined-term-refinement` |
 
 ---
 
@@ -377,7 +403,7 @@ After **R5.4.6**, concerns without R5.1 quoted-phrase spans get a **whole-statem
 
 8. Tune the synthesise-review system prompt voice. Reviewer feedback (R3.6 testing) flagged two phrasings as off-key: "given the high concern level for evidence" reads as system language leaking into reviewer-facing prose; "aligning with our publication's standards" sounds canned and corporate. Action: revise the system prompt at `api/synthesize-review.js` to instruct the LLM against system-vocabulary leakage ("concern level", "verdict", "signal") and against generic corporate filler ("aligning with our standards", "ensures adherence to guidelines"). Replace with specific, concrete reviewer language.
 
-9. Investigate Editorial review run-to-run variance. R3.6 testing observed that the same draft (causal claim about GDP growth being "driven by expansion of real incomes") produced an editorial concern on one run and no concern on a later run, despite temperature 0. This is a known property of LLM APIs (provider-side variance even at temp 0). Action: assess the scale of the variance with a small repeatability study (run the same 5–10 drafts through Assess 3 times each, log which concerns fire each time, compare). If variance is material, consider mitigations: lower-variance models, ensemble-of-N voting on borderline cases, prompt strengthening on the specific rules that show variance.
+9. Investigate Editorial review run-to-run variance. R3.6 testing observed that the same draft (causal claim about GDP growth being "driven by expansion of real incomes") produced an editorial concern on one run and no concern on a later run, despite temperature 0. This is a known property of LLM APIs (provider-side variance even at temp 0). Action: assess the scale of the variance with a small repeatability study (run the same 5–10 drafts through Assess 3 times each, log which concerns fire each time, compare). If variance is material, consider mitigations: lower-variance models, ensemble-of-N voting on borderline cases, prompt strengthening on the specific rules that show variance. **Additional evidence (R6.5.4):** F01 live regression S10 `marketing_language_excess` fires on R6.5.4 run, does not fire on R6.5.5 run, with identical statement text and identical source.
 
 10. Confirm that the Statement 1 currency hallucination bug from v3 does not recur on v4. Origin: Evidence Pipeline Quality Sprint (now retired). The v3 pipeline could produce a hallucinated currency reference on the first statement of certain drafts. v4's redesigned Stage 1 (LLM-based extraction with deterministic fallback) should not exhibit this, but it has not been explicitly tested. Action: construct a test draft known to have triggered the bug in v3 (or any draft whose first statement contains ambiguous currency phrasing), run on v4, confirm Stage 1 output and Stage 5 commentary are clean.
 
