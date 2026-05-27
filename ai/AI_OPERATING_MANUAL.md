@@ -36,6 +36,19 @@ Brightline Content Engine is an evidence-first, deterministic, audit-safe review
 - Keep diffs minimal
 - Be operational and concrete
 
+## Verification-by-grep discipline
+
+When a previous spec produced incorrect output that was reported as correct by the implementer, the follow-up spec must require explicit verification with verbatim output of the verification results.
+
+Verification mechanisms include:
+
+- **Positive-anchor greps** — text that MUST be present after the operation
+- **Negative-contamination greps** — text that MUST NOT be present after the operation
+
+The verification output must be included verbatim in the implementer's summary so Ben can audit. Do not claim success without grep evidence when the spec requires it.
+
+**Canonical example:** **D1.3.2** — v2 drafts loaded into eight fixture JSONs; each fixture had unique v2 anchor strings (must match) and v1 contaminant strings (must not match); Cursor summary included one PASS/FAIL line per check plus verbatim `grep` output.
+
 ## Testing Expectations
 - Usually max 3 runs per batch
 - Reuse existing source files unless new ones are strictly necessary
