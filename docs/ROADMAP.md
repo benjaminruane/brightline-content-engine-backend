@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-19 (R2.7.2 logged)
+Last updated: 2026-05-26 (D1.6 diagnostic session governance sync)
 
 ---
 
@@ -93,6 +93,15 @@ Last updated: 2026-05-19 (R2.7.2 logged)
 
 ## Recently shipped (closed specs)
 
+### Diagnostic harness (closed 26 May 2026)
+
+- **D1.1 — Diagnostic harness build** (closed 2026-05-26). In-process batch runner under `scripts/diagnostic/`; fixtures through v4 pipeline; timestamped `runs/` output.
+- **D1.1.1 — Fixture regeneration from disk** (closed 2026-05-26). Inventory and fixture JSONs regenerated from actual `sources/` filenames.
+- **D1.2 — JSON copy button restored** (closed 2026-05-26). Frontend `<>` control beside Backend status for ad-hoc QC JSON capture.
+- **D1.3 — Populate fixture drafts** (closed 2026-05-26; **superseded by D1.3.2**). Initial load reported v2 drafts but disk state retained v1 content on several fixtures — follow-up required explicit grep verification (see D1.3.2).
+- **D1.3.1 — Output type corrections** (closed 2026-05-26). Fixtures 01, 13, 16 set to `reporting_commentary` per v2 expected-outcomes doc.
+- **D1.3.2 — V2 drafts into 8 fixtures with verification** (closed 2026-05-26). Fixtures 01, 04, 08, 10, 13, 14, 15, 18 updated; positive-anchor and v1-contaminant grep verification required in summary.
+
 - **R5 sequence — COMPLETE** (closed 2026-05-19). R5.1 (span derivation), R5.2 (span-based duplicate merge), R5.3a/b (overlay surface + traffic-light tints), R5.4 (Highlight in draft + concern scroll-and-underline), R5.4.1–R5.4.6 (card→draft navigation polish), R5.5 (disclaimer footer). Bidirectional draft↔card navigation is live. R5.1.2 remains planned separately.
 - **R5.4.6 — Concern-click fallback underline** (shipped 2026-05-19). When a concern has no R5.1 spans, the click now blue-underlines the whole statement instead of yellow-highlighting it. Yellow highlighter is reserved exclusively for “Highlight in draft” clicks. Tag: `v8.50.6-concern-fallback-underline`.
 - **R5.4.5 — Verdict tints clear during loading** (shipped 2026-05-19). Verdict tints hide when `analysisStatus === "loading"` on re-Review; toggle visual state unchanged.
@@ -125,7 +134,7 @@ Status of rebuild optimisation and cost items from the v4 planning track:
 |----|------|--------|
 | **(A)** | LLM call consolidation | **R3.1 shipped** — Style+Editorial merged on v4 (`runEditorialStyleReview`). **Compliance deliberately kept separate** (different cognitive frame, reviewer trust; ~$0.02/run saving not worth signal dilution). **R3.2** (Stage 5 into Stage 2) **DEFERRED** — needs Stage 2 restructure; loses parallelisation. |
 | **(B)** | Visibility wiring (Complete vs Public) | **CLOSED** via R4.3 (`r4.3-visibility-wiring`). |
-| **(C)** | Stage 2 chunking cost ceiling for long sources | **Open** — to be scoped during **R6 Review Quality** (see Parked → (C) below). |
+| **(C)** | Stage 2 chunking cost ceiling for long sources | **Open** — not an immediate concern (F15 ran clean at ~4,800 words in diagnostic). Scope during **R6 Review Quality** when long-source warnings recur (see Parked → (C) below). |
 | **(D)** | $2/run production cost target | **Tracking** — diagnostic pass scheduled inside **R6 scoping**; baseline call count and cost before prompt changes. |
 
 ---
@@ -161,25 +170,60 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 
 ## R6 — Review Quality
 
-**Status:** **SCOPING** (no specs written yet)
+**Status:** **SCOPING** (diagnostic batch complete 26 May 2026; candidates below informed by diagnostic findings)
 
 **Objective:** Lift the quality, reliability, and insight of Review output. This is the moat. Pure-UI sprints have diminishing returns until Review output catches up.
 
+**Evidence base:** Diagnostic batch runs `2026-05-26-205208` and `2026-05-26-212900` (see `diagnostic_batch_drafts_and_expected_outcomes.md` and per-fixture `runs/` output).
+
 Items in scope (order indicative, not locked):
 
-| Spec | Summary | Prior backlog |
-|------|---------|---------------|
-| **R6.1** | **Direction intensity** — surface how strong a concern is, not just that one exists | Was product backlog #2 |
-| **R6.2** | **Reviewer comments house style** — tighten commentary tone, remove filler, enforce QC Output Language Standard from AI Operating Manual | Was product backlog #3 |
-| **R6.3** | **Hide Editorial on conflict** — when a card is conflicting, suppress the Editorial signal so reviewer attention lands on the conflict | Was product backlog #4 |
-| **R6.4** | **Public version prompt calibration** — tighten Compliance + Editorial calibration for Public visibility; R4.3 shipped the wiring; this is the prompt quality pass | Was product backlog #9 |
+| Spec | Summary | Priority | Prior backlog |
+|------|---------|----------|---------------|
+| **R6.1** | **Direction intensity** — surface how strong a concern is, not just that one exists | — | Was product backlog #2 |
+| **R6.2** | **Reviewer comments house style** — tighten commentary tone, remove filler, enforce QC Output Language Standard from AI Operating Manual | — | Was product backlog #3 |
+| **R6.3** | **Hide Editorial on conflict** — when a card is conflicting, suppress the Editorial signal so reviewer attention lands on the conflict | — | Was product backlog #4 |
+| **R6.4** | **Public version compliance** — tighten Compliance + Editorial calibration for Public visibility; R4.3 shipped the wiring; this is the prompt quality pass | — | Was product backlog #9 |
+| **R6.5** | **House style framework** — Layer 1 (universal writing quality) + Layer 2 (PG default) + Layer 3 (client-specific overrides) as structured style guide input to the editorial reviewer, not embedded prompt rules | **High** | Diagnostic |
+| **R6.6** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary | Medium | Diagnostic (F04, F12, F18) |
+| **R6.7** | **Forward-looking statement review** — distinguish forward-looking claims; hedging, plausibility, visibility-calibration, alignment with stated risks | Medium | Diagnostic (F02, F03, F05, F08, F09) |
+| **R6.8** | **Cross-source verdict aggregation** — whether to elevate conflict signals to Conflicting verdicts when supersession is implied (`hasConflict` vs aggregator output) | Medium | Diagnostic (F18) |
+| **R6.9** | **Non-claim statement handling** — Stage 1 distinguishes claim vs non-claim (salutations, closings, transitions); skip evidence verification on non-claims | Medium | Diagnostic (F04, F11, F12, F14, F18, F20) |
+| **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
+
+**R6.2 sub-items (commentary quality):**
+
+- **R6.2a** — Disentangle promotional-language flags into hyperbole vs qualitative-descriptor. Evidence: every fixture flagged "strong", "exceptional", "leading" as promotional; calibration too strict.
+- **R6.2b** — Structural recommendations as editorial sub-dimension (bullet candidates, paragraph breaks). Evidence: F08, F11.
+- **R6.2c** — Dimension-naming for "off phrasing" feedback. Evidence: F08, F11, F19.
+- **R6.2d** — Fidelity discipline — eliminate fabricated quotes in editorial commentary. Evidence: `[FIDELITY_DROP]` log entries from both diagnostic runs; feeds **D1.5**.
+
+**R6.4 sub-items (Public version compliance):**
+
+- **R6.4a** — Visibility-context awareness (recognise when source is already public). Evidence: F02 and F03 over-fired on published PG press release content.
+- **R6.4b** — Jurisdiction-aware fund marketing rules. Evidence: F02.S5 `hard_concern` on "exceptionally well positioned" was fund-marketing-regulation flag misapplied to portfolio transaction release.
+- **R6.4c** — Sensitivity-tier calibration — some figures sensitive even when source is public; needs nuance.
 
 **Watch items to fold into R6 scoping:**
 
-- **R2.7.1** — Stage 2 conflict-vs-partial-confirmed distinction. If pattern persists across next 10–20 traces, promote to action inside R6 (likely a Stage 2 prompt tightening sub-spec).
-- **Rebuild backlog (C)** — Stage 2 chunking ceiling. Scope during R6 because long-source quality work is wasted if Stage 2 silently drops content. Decide in scoping whether to address inside R6 or run as a parallel rebuild item.
-- **Rebuild backlog (D)** — Production cost tracking. One diagnostic pass during R6 to baseline call count and cost (~16 calls / 4 statements / 1 source; ~$2/run today) before any prompt changes.
+- **R2.7.1** — **Elevated to spec candidate** (see **R2.7.1 — Stage 2 conflict vs partial** below). Diagnostic confirmed live (F12 voice-rephrasing-as-conflict; Stage 2 classification observations). May ship upstream of R6.
+- **Rebuild backlog (C)** — Stage 2 chunking ceiling. Not immediate (F15 clean at ~4,800 words). Scope when long-source warnings recur.
+- **Rebuild backlog (D)** — Production cost tracking. Diagnostic pass complete; baseline ~16 calls / 4 statements / 1 source; ~$2/run.
 - **R2.7.2** — Stage 2 semantic frame matching (logged in open backlog #2). Independent of R6 UI work; also sharpens R2.7.1 partial-vs-conflict discrimination.
+
+---
+
+## R2.7.1 — Stage 2 conflict vs partial (spec candidate)
+
+**Status:** **SPEC CANDIDATE** (elevated from watch item, 26 May 2026)
+
+**One-line:** Tighten Stage 2 distinction between `conflicting` and `partially_confirmed` — absent-fact statements, voice rephrasing, and semantic disagreement should not land as `conflicting` when the source does not directly contradict.
+
+**Why elevated now:** Diagnostic batch confirmed the issue is live — F12 voice-rephrasing-as-conflict; broader Stage 2 classification observations across fixtures. This is upstream of R6 editorial/compliance work and may need to ship sooner than the R6 umbrella.
+
+**Relationship to R2.7.2:** Semantic frame matching (R2.7.2) improves partial-vs-conflict discrimination on numeric/frame mismatches; R2.7.1 addresses classification tone and absence-vs-contradiction boundaries.
+
+**Scope when specced:** Stage 2 prompt and classification guidance. No new verdict enum values.
 
 ---
 
@@ -245,25 +289,41 @@ Parked pending dogfooding evidence. Bundle:
 
 ---
 
+## Diagnostic harness backlog
+
+Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 product work):
+
+| ID | Summary | Priority |
+|----|---------|----------|
+| **D1.4** | Incremental `INDEX.md` write per fixture — currently written only at end of batch run; deviates from D1.1 spec | Low |
+| **D1.5** | Pipeline log analysis — examine `[FIDELITY_DROP]`, `[EDITORIAL_STYLE_REVIEW]` schema validation failures, and `[stage2]` passage rejections from runs `2026-05-26-205208` and `2026-05-26-212900`; count, bucket, identify affected fixtures. Feeds **R6.2d** | Medium |
+| **D1.7** | Re-audit fixtures with unexpected verdict deltas (F06, F08, F09, F11, F17, F19) — per-statement walk to determine whether pipeline or expected outcome is correct | Low |
+
+---
+
 ## Open product backlog (prioritised)
 
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority. Full spec for **R2.7.2**: see **R2.7.2 — Stage 2 semantic frame matching** above.
 
-1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.4; see **R6 — Review Quality** above.
-2. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Addresses the R2.7.1 watch item.
-3. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
-4. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6; schedule after #2 when prioritising pipeline work.
-5. **Reviewer comments house style (R6.2)** — tighten commentary tone; enforce QC Output Language Standard.
-6. **Hide Editorial on conflict (R6.3)** — suppress Editorial signal when Evidence is conflicting.
-7. **Public version prompt calibration (R6.4)** — R4.3 shipped wiring; prompt quality pass for Public visibility.
-8. **Fidelity log traceability** — low priority; bundle into R4.2 or Spring clean.
-9. **E2 deterministic reimplementation** — open.
-10. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
-11. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
-12. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
-13. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10; see **R6 — Review Quality** above. **R6.5 house style framework** is high priority within R6.
+2. **Stage 2 conflict vs partial (R2.7.1)** — spec candidate elevated from watch item; diagnostic-confirmed. May ship before R6.
+3. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Complements **R2.7.1**.
+4. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
+5. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
+6. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
+7. **Hide Editorial on conflict (R6.3)** — suppress Editorial signal when Evidence is conflicting.
+8. **Public version compliance (R6.4)** — R4.3 shipped wiring; sub-items R6.4a–R6.4c from diagnostic.
+9. **House style framework (R6.5)** — structured Layer 1/2/3 style guide as editorial reviewer input. **High priority.**
+10. **Document-type appropriateness (R6.6)** — Medium. **Forward-looking statement review (R6.7)** — Medium. **Cross-source verdict aggregation (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — Medium. **Source quality audit (R6.10)** — Low.
+11. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
+12. **E2 deterministic reimplementation** — open.
+13. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
+14. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
+15. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
+16. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+17. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
 
-**Also tracked (below top 13):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
+**Also tracked (below top 17):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
 **Closed (removed from open list):**
 
@@ -287,9 +347,7 @@ Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_d
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
-Monitor Stage 2 **conflict-vs-partial** classification across the **next 10–20 traces**. **Pattern to watch:** absent-fact statements landing as `conflicting` rather than `partially_confirmed`. **Action if pattern persists:** tighten Stage 2 prompt — promote to action inside **R6** or ship **R2.7.2** (semantic frame matching also improves partial-vs-conflict discrimination). **No action** if the pattern does not recur on a diverse trace set. Folded into **R6 scoping**; see **R6 — Review Quality** and **R2.7.2** (open backlog #2).
-
-**Backlog R2.7.2 is the planned remediation if the pattern persists.**
+**Elevated to spec candidate (26 May 2026).** Diagnostic batch confirmed live misclassification (F12 voice-rephrasing-as-conflict; Stage 2 observations across fixtures). No longer a passive watch — see **R2.7.1 — Stage 2 conflict vs partial (spec candidate)**. **R2.7.2** remains complementary for semantic frame mismatches.
 
 ### R4.3 — Public version prompt quality (folded into R6.4)
 
@@ -371,7 +429,7 @@ Adapt is parked. The `api/adapt.js` endpoint and supporting code remain in the c
 
 ### (C) Stage 2 chunking — cost ceiling for long sources
 
-**Open in QC rebuild backlog (C); to be scoped during R6 Review Quality.** R3.3 instrumentation logs a warning when any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. Reactivate implementation when source-length warnings appear regularly in dev or production logs, OR when typical pilot source documents exceed ~100k characters, OR when verdict quality degrades on long sources. Architecture document section 10 defines the chunking strategy; this is sequencing, not design.
+**Open in QC rebuild backlog (C); not an immediate concern.** R3.3 instrumentation logs a warning when any source exceeds 60,000 characters. Initial real-world testing with a 71,463-character PDF source confirmed Stage 2 (`gpt-4o`) still produces clean verdicts at this scale. **Diagnostic evidence (26 May 2026):** F15 (`synth_very_long_memo`, ~4,800 words) ran clean without chunking issues. Reactivate implementation when source-length warnings appear regularly in dev or production logs, OR when typical pilot source documents exceed ~100k characters, OR when verdict quality degrades on long sources. Architecture document section 10 defines the chunking strategy; this is sequencing, not design.
 
 ### (D) $2/run production cost target
 
