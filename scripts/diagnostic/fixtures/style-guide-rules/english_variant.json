@@ -1,0 +1,16 @@
+{
+  "id": "sg_english_variant",
+  "label": "english_variant",
+  "ruleId": "english_variant",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The team will organise the investor day in London.\n\nThe team will organize the investor day in London.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "portfolio_update"
+  },
+  "cases": {
+    "violationContains": "organise",
+    "compliantContains": "organize"
+  }
+}

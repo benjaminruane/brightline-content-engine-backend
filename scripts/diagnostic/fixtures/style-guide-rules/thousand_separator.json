@@ -1,0 +1,16 @@
+{
+  "id": "sg_thousand_separator",
+  "label": "thousand_separator",
+  "ruleId": "thousand_separator",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The portfolio held 5,500 units at year end.\n\nThe portfolio held 5'500 units at year end.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "portfolio_update"
+  },
+  "cases": {
+    "violationContains": "5,500",
+    "compliantContains": "5'500"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "sg_smart_quotes",
+  "label": "smart_quotes",
+  "ruleId": "smart_quotes",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The CEO said \u201cgrowth remains on track\u201d.\n\nThe CEO said \"growth remains on track\".",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "portfolio_update"
+  },
+  "cases": {
+    "violationContains": "\u201cgrowth",
+    "compliantContains": "\"growth"
+  }
+}

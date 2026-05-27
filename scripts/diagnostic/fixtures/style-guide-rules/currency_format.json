@@ -1,0 +1,16 @@
+{
+  "id": "sg_currency_format",
+  "label": "currency_format",
+  "ruleId": "currency_format",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The transaction value was €445m.\n\nThe transaction value was EUR 445 million.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "cases": {
+    "violationContains": "€445m",
+    "compliantContains": "EUR 445 million"
+  }
+}

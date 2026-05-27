@@ -1,0 +1,17 @@
+{
+  "id": "sg_oxford_comma",
+  "label": "oxford_comma",
+  "ruleId": "oxford_comma",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The advisers included legal, tax and operations specialists.\n\nThe advisers included legal, tax, and operations specialists.\n\nThe team included legal and tax advisers.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "cases": {
+    "violationContains": "tax and operations",
+    "compliantContains": "tax, and operations",
+    "twoItemCompliantContains": "legal and tax advisers"
+  }
+}

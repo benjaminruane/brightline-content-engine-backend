@@ -1,0 +1,16 @@
+{
+  "id": "sg_em_dash",
+  "label": "em_dash",
+  "ruleId": "em_dash",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The Fund exited the position — ahead of plan.\n\nThe Fund exited the position - ahead of plan.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "exit"
+  },
+  "cases": {
+    "violationContains": "—",
+    "compliantContains": " - ahead"
+  }
+}

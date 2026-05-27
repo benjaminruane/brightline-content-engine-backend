@@ -1,0 +1,16 @@
+{
+  "id": "sg_date_format",
+  "label": "date_format",
+  "ruleId": "date_format",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The closing occurred on May 26, 2026.\n\nThe closing occurred on 26 May 2026.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "exit"
+  },
+  "cases": {
+    "violationContains": "May 26, 2026",
+    "compliantContains": "26 May 2026"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "sg_number_spelling",
+  "label": "number_spelling",
+  "ruleId": "number_spelling",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "The Fund made 7 new investments across the portfolio during the period.\n\nThe team has grown to twelve investment professionals and now operates across 14 sectors globally.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "cases": {
+    "violationContains": "7 new investments",
+    "compliantContains": "twelve investment professionals"
+  }
+}
