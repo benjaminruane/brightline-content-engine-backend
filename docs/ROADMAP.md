@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-28 (R6.9 ship sync; non-claim statement handling)
+Last updated: 2026-05-28 (R2.7.1 ship sync; Stage 2 conflict-vs-partial calibration)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-28 (R6.9 ship sync; non-claim statement handling)
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r6.9-non-claim-handling`.
+- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r2.7.1-conflict-partial-calibration`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -251,7 +251,9 @@ Rules to add:
 
 ## R2.7.1 — Stage 2 conflict vs partial (spec candidate)
 
-**Status:** **SPEC CANDIDATE** (elevated from watch item, 26 May 2026)
+**Status:** **SHIPPED 2026-05-28** — `r2.7.1-conflict-partial-calibration`
+
+**Shipped scope (prompt-only, stage2_v4.md):** (1) Voice/framing/person differences are not contradictions when the underlying fact is identical (F12.S0 fix). (2) Resolved an internal prompt contradiction on entity handling: a different entity in the same role (replacement) is `conflicting`; a missing entity not replaced (omission) is `partially_confirmed`. (3) A statement with no verifiable claim cannot be `conflicting` (at most `no_support`). Validated across four cases: voice difference -> confirmed; entity replacement -> conflicting; entity omission -> partially_confirmed; figure contradiction guard -> conflicting.
 
 **One-line:** Tighten Stage 2 distinction between `conflicting` and `partially_confirmed` — absent-fact statements, voice rephrasing, and semantic disagreement should not land as `conflicting` when the source does not directly contradict.
 
@@ -343,22 +345,21 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority. Full spec for **R2.7.2**: see **R2.7.2 — Stage 2 semantic frame matching** above.
 
 1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10; see **R6 — Review Quality** above. **R6.5 house style framework** shipped 2026-05-27 (`r6.5.6-defined-term-refinement`).
-2. **Stage 2 conflict vs partial (R2.7.1)** — spec candidate elevated from watch item; diagnostic-confirmed. May ship before R6.
-3. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Complements **R2.7.1**.
-4. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
-5. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
-6. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
-7. **Hide Editorial on conflict (R6.3)** — suppress Editorial signal when Evidence is conflicting.
-8. **Public version compliance (R6.4)** — R4.3 shipped wiring; sub-items R6.4a–R6.4c from diagnostic.
-9. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
-10. **Document-type appropriateness (R6.6)** — Medium. **Forward-looking statement review (R6.7)** — Medium. **Cross-source verdict aggregation (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — Medium. **Source quality audit (R6.10)** — Low.
-11. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
-12. **E2 deterministic reimplementation** — open.
-13. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
-14. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
-15. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
-16. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
-17. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
+2. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Complements **R2.7.1**.
+3. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
+4. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
+5. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
+6. **Hide Editorial on conflict (R6.3)** — suppress Editorial signal when Evidence is conflicting.
+7. **Public version compliance (R6.4)** — R4.3 shipped wiring; sub-items R6.4a–R6.4c from diagnostic.
+8. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
+9. **Document-type appropriateness (R6.6)** — Medium. **Forward-looking statement review (R6.7)** — Medium. **Cross-source verdict aggregation (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — Medium. **Source quality audit (R6.10)** — Low.
+10. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
+11. **E2 deterministic reimplementation** — open.
+12. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
+13. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
+14. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
+15. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+16. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
 
 **Also tracked (below top 17):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
@@ -372,6 +373,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | Hide Editorial on conflict | Folded into **R6.3** |
 | Public version prompt | Folded into **R6.4** (R4.3 shipped wiring) |
 | R6.5 (house style framework) | Shipped via `r6.5.6-defined-term-refinement` |
+| Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 
 ---
 
@@ -385,7 +387,7 @@ Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_d
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
-**Elevated to spec candidate (26 May 2026).** Diagnostic batch confirmed live misclassification (F12 voice-rephrasing-as-conflict; Stage 2 observations across fixtures). No longer a passive watch — see **R2.7.1 — Stage 2 conflict vs partial (spec candidate)**. **R2.7.2** remains complementary for semantic frame mismatches.
+**SHIPPED 2026-05-28** (`r2.7.1-conflict-partial-calibration`). Voice/framing no longer classified as conflict; entity replacement vs omission distinguished; no-claim statements cannot conflict. **R2.7.2** (semantic frame matching) remains complementary and separate — when R2.7.2 is specced, check that R2.7.1's voice/entity guidance does not fight the new frame-mismatch guidance in the same prompt.
 
 ### R4.3 — Public version prompt quality (folded into R6.4)
 
