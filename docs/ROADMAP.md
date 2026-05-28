@@ -216,6 +216,17 @@ Items in scope (order indicative, not locked):
 - **R6.2a** — Disentangle promotional-language flags into hyperbole vs qualitative-descriptor. Evidence: every fixture flagged "strong", "exceptional", "leading" as promotional; calibration too strict.
 - **R6.2b** — Structural recommendations as editorial sub-dimension (bullet candidates, paragraph breaks). Evidence: F08, F11.
 - **R6.2c** — Dimension-naming for "off phrasing" feedback. Evidence: F08, F11, F19.
+- Low-materiality / cosmetic-change over-firing (observed R6.9 edge-case testing 2026-05-28): editorial reviewer fired a concern suggesting "Yours sincerely," → "Sincerely," — a cosmetic change with no codified house rule behind it and no material improvement to the copy. Proposed R6.2 calibration principle: a concern is only worth surfacing if acting on it would change the copy in a way the writer would care about. Do not flag stylistic preferences that are not codified house rules, and do not flag changes whose substance is unchanged. Testable principle for R6.2a/c scoping.
+
+### Layer 2 style rules backlog (running list)
+
+The R6.5 two-layer style guide is designed to accrete client-specific rules over time. As the editorial reviewer fires stylistic concerns that contradict actual PG house style, those gaps are logged here and batched into periodic rule-addition passes (fast edit cycle: `style-guide.mjs` + `npm run diagnostic:style-guide`).
+
+Rules to add:
+- Salutation conventions per output type. PG house style uses "Dear valued investors," as the salutation for investor letter outputs. The editorial reviewer currently flags this as too personal and suggests "Dear Investors," because no Layer 2 rule covers salutations. Add a rule codifying correct salutations by output type. Surfaced 2026-05-28 (R6.9 edge-case testing).
+
+(Future salutation/style gaps appended here as discovered.)
+
 ### R6.2d — Editorial fidelity discipline
 
 - Fidelity discipline — eliminate fabricated quotes in editorial commentary. Evidence: `[FIDELITY_DROP]` log entries from both diagnostic runs; feeds **D1.5**.
