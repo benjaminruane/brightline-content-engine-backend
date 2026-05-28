@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-27 (R6.5 ship sync; R6.5.4–R6.5.6 deterministic backstops and defined-term refinement)
+Last updated: 2026-05-28 (R6.9 ship sync; non-claim statement handling)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-27 (R6.5 ship sync; R6.5.4–R6.5.6 deterministic backstop
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r6.5.6-defined-term-refinement`.
+- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r6.9-non-claim-handling`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -208,7 +208,7 @@ Items in scope (order indicative, not locked):
 | **R6.6** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary | Medium | Diagnostic (F04, F12, F18) |
 | **R6.7** | **Forward-looking statement review** — distinguish forward-looking claims; hedging, plausibility, visibility-calibration, alignment with stated risks | Medium | Diagnostic (F02, F03, F05, F08, F09) |
 | **R6.8** | **Cross-source verdict aggregation** — whether to elevate conflict signals to Conflicting verdicts when supersession is implied (`hasConflict` vs aggregator output) | Medium | Diagnostic (F18) |
-| **R6.9** | **Non-claim statement handling** — Stage 1 distinguishes claim vs non-claim (salutations, closings, transitions); skip evidence verification on non-claims | Medium | Diagnostic (F04, F11, F12, F14, F18, F20) |
+| **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20) |
 | **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
 
 **R6.2 sub-items (commentary quality):**
@@ -383,6 +383,15 @@ Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_d
 ### R5.1 — Span coverage gap (concern click fallback)
 
 After **R5.4.6**, concerns without R5.1 quoted-phrase spans get a **whole-statement blue underline** in the draft rather than a phrase-level underline. Visually heavier than span-derived highlights. **Action if reviewers find this noisy:** improve R5.1 span coverage in a future sprint (Editorial ~96%, Compliance ~83% post-R5.1.1 — gaps remain on concerns that omit quoted phrases). No frontend change required until then.
+
+### Evidence concern click-to-highlight
+
+Evidence findings (supported / partial / conflicting) currently lack the click-to-highlight-in-draft behaviour that editorial and compliance concerns have (R5.4). Clicking an evidence finding does not highlight the relevant text in the draft.
+
+- Minimum fix: clicking an evidence finding highlights the whole statement in the draft (reuse the R5.4.6 whole-statement blue-underline fallback).
+- Stretch: for partial / conflicting verdicts, highlight the specific unsupported or conflicting clause rather than the whole statement. Requires evidence sub-spans emitted from Stage 2 / Stage 4 — backend work, not just frontend wiring.
+
+Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R7 (Sources Drawer Revival) bidirectional-navigation work, or as an R5.x follow-up. Logged 2026-05-28.
 
 ---
 
