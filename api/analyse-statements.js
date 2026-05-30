@@ -10,6 +10,7 @@ import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, startTrace, updateTraceMetadata } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
+import { normalizePublicationState } from "../lib/source-publication-state.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -146,6 +147,7 @@ export default async function handler(req, res) {
         title: original?.title,
         label: original?.label,
         mimeType: original?.mimeType,
+        publicationState: normalizePublicationState(original?.publicationState),
       };
     });
 
@@ -172,7 +174,11 @@ export default async function handler(req, res) {
           (typeof source?.name === "string" && source.name.trim()) ||
           (typeof source?.title === "string" && source.title.trim()) ||
           `Source ${index + 1}`;
-        return { text, label };
+        return {
+          text,
+          label,
+          publicationState: normalizePublicationState(source?.publicationState ?? original?.publicationState),
+        };
       })
       .filter(Boolean);
 
