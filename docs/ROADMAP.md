@@ -354,15 +354,27 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 7. **Public version compliance (R6.4)** — R4.3 shipped wiring; sub-items R6.4a–R6.4c from diagnostic.
 8. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
 9. **Document-type appropriateness (R6.6)** — Medium. **Forward-looking statement review (R6.7)** — Medium. **Cross-source verdict aggregation (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — Medium. **Source quality audit (R6.10)** — Low.
-10. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
-11. **E2 deterministic reimplementation** — open.
-12. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
-13. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
-14. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
-15. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
-16. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
+10. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
 
-**Also tracked (below top 17):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
+    **Scope when picked up:**
+    - Inventory all tool-output text surfaces (~7 known: editorial concerns, compliance concerns, evidence summary, Stage 5 commentary, Quality Review Summary, Reviewer Assessment, sign-off labels).
+    - Determine which house-style rules apply to tool prose vs draft prose (e.g. thousand separators probably don't; em-dashes and hyperbole probably do; defined-term capitalisation probably doesn't).
+    - Define the tool's own voice register: direct, descriptive, third-person, no first-person plural, no schoolroom framing, no hyperbole — likely a short character document, not a rulebook.
+    - Choose mechanism per surface: prompt-level guidance (LLM-generated prose), deterministic post-filter (structural rules like em-dash, smart quotes), or both. The existing R6.5 deterministic-backstop pattern is a strong candidate for structural rules.
+    - Sequence by impact: editorial/compliance concern text is highest volume and most directly visible; Reviewer Assessment is the most prominent piece of prose.
+
+    **Connection to existing work:** `AI_OPERATING_MANUAL.md` already includes a "QC Output Language Standard" that articulates principles for tool prose but is not rigorously enforced via prompts or filters. This item is partly about strengthening that standard's enforcement, partly about extending it to cover house-style rules the standard doesn't currently mention.
+
+    **Priority:** High-leverage (touches every Review output) but not urgent — symptoms are addressable piecemeal as observed. Scope as R6.2b when ready. Logged 2026-05-30 from a one-off observation.
+11. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
+12. **E2 deterministic reimplementation** — open.
+13. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
+14. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
+15. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
+16. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+17. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
+
+**Also tracked (below top 18):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
 **Closed (removed from open list):**
 
