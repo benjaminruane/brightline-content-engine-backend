@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-30 (R6.2a + R6.2a.1 ship sync; promotional-language calibration)
+Last updated: 2026-05-30 (R5.2(a) ship sync; concern dedupe + UI balance backlog)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-30 (R6.2a + R6.2a.1 ship sync; promotional-language calibr
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r6.2a.1-promotional-language-calibration`.
+- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r5.2a-concern-dedupe`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -241,6 +241,8 @@ Rules to add:
 - **R6.4b** — Jurisdiction-aware fund marketing rules. Evidence: F02.S5 `hard_concern` on "exceptionally well positioned" was fund-marketing-regulation flag misapplied to portfolio transaction release.
 - **R6.4c** — Sensitivity-tier calibration — some figures sensitive even when source is public; needs nuance.
 
+**Side observation 2026-05-30** (R5.2(a) Run 3): compliance correctly fired on "The Fund is genuinely exceptional and unparalleled" (fund performance superlatives) and "is genuinely best-in-class" (fund performance superlative) in Runs 1 and 2, but did NOT fire on "the team is unparalleled" in Run 3 — superlative applied to the team, not fund performance or returns. This is correct behaviour: `regulatory_prohibited_language` is calibrated to flag superlatives applied to fund characteristics and performance, where fund marketing regulations apply. Confirms that compliance is well-calibrated on the "which superlatives carry regulatory weight" dimension. No action needed; banked as positive calibration evidence.
+
 **Watch items to fold into R6 scoping:**
 
 - **R2.7.1** — **Elevated to spec candidate** (see **R2.7.1 — Stage 2 conflict vs partial** below). Diagnostic confirmed live (F12 voice-rephrasing-as-conflict; Stage 2 classification observations). May ship upstream of R6.
@@ -373,8 +375,21 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 15. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
 16. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
 17. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
+18. **Short-draft visual balance.** On very short drafts (e.g. a single 13-word sentence), Review output volume is disproportionate to input — Reviewer Assessment prose, Quality Review Summary, and fixed-format QC cards combine to a >15:1 output-to-input ratio. Reviewer Assessment is the largest fixed-size contributor and its length does not scale with draft length.
 
-**Also tracked (below top 18):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
+    Possible directions when picked up:
+    - Length-scaled Reviewer Assessment: synthesise-review generates prose proportional to draft length (~30 words for short drafts scaling to ~150 words for long ones).
+    - Collapse Reviewer Assessment behind "Show assessment" by default; Quality Review Summary continues to handle quick triage.
+    - More structural — examine whether the assessment is doing real work beyond the Quality Review Summary bullets and card list, and either repurpose it (see next backlog item) or remove.
+
+    UX-shaped, not calibration-shaped. Worth a small scoping pass when next addressing UI. Logged 2026-05-30.
+19. **Reviewer Assessment purpose reframe.** Currently the Reviewer Assessment prose largely restates the QC cards in narrative form, duplicating information available in the Quality Review Summary bullets and the card list. Ben (practitioner) considers this high-value UI surface but in its current form it is under-earning its visual weight.
+
+    Intended direction: shift Reviewer Assessment from "restate the cards" to "writer-facing feedback — constructive suggestions and craft-oriented criticism, in the voice of a senior editor". The assessment should comment on the draft's overall shape (argument, flow, tone, register, what's working, what's not), not the mechanics of individual flags. Likely a meaningful change to `api/synthesize-review.js` system prompt, and possibly to the calling shape (the assessment may need different inputs than today to do constructive editing rather than card synthesis).
+
+    Cousin to **R6.2b (tool output style compliance)** — both touch tool-generated prose and benefit from the same voice/register standard. Could scope together or independently. Higher product value than several R6 calibration items but is a UX/voice reshape, not a calibration patch. Logged 2026-05-30.
+
+**Also tracked (below top 19):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
 **Closed (removed from open list):**
 
@@ -398,11 +413,9 @@ No spec until trigger conditions met. Do not schedule ahead of dogfooding signal
 
 Two related issues observed across multiple R6.2a / R6.2a.1 test runs:
 
-(a) **Dedupe gap on functionally-identical concerns.** When the LLM emits two concerns under the same rule whose substance is near-identical but whose surface wording differs, the R5.2 merge concatenates them as "(i) ... (ii) ..." rather than deduplicating. Examples: R6.2a Run D and R6.2a.1 Run D + F — same hyperbole pattern flagged twice with slightly different rewrite suggestions, rendered as a numbered-list concern instead of one concern. **Confirmed reproducible across multiple runs.** Likely fix: before applying "(i) (ii)" numbering, deduplicate concerns whose normalised text exceeds ~85% string similarity within the same rule id.
+(a) **Dedupe gap on functionally-identical concerns. SHIPPED 2026-05-30** — `r5.2a-concern-dedupe`. Backend `lib/qc/pipeline-v3/stage7-assemble-card.mjs`: added DUPLICATE_TEXT_SIMILARITY_THRESHOLD (0.85), normaliseConcernText and concernTextSimilarity helpers (token-set Jaccard on normalised text), and a dedupe pass inside mergeConcernGroup that runs after span grouping. When two concerns under the SAME concernCode have ≥85% normalised text similarity, the later one is dropped. Single survivors emit as unnumbered concerns (no "(i)" prefix), restoring the natural single-concern shape. ≥2 survivors continue to emit with "(i)/(ii)" labelling unchanged. New canary `${signalName}_duplicate_concerns_deduped` fires when the dedupe collapses a group. Validated across three live runs — previously duplicated concerns (R6.2a Run D, R6.2a.1 Runs D + F) now emit as single concerns; multi-concern path untouched. Item (b) (threshold tuning) remains in place and evidence-gated.
 
 (b) **Threshold tuning** (original watch item content). Merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_duplicate_concerns_merged`) — initial test runs produced zero merges, all correctly per 80% threshold. If reviewer use surfaces under-merging — especially nested Compliance concerns on the same phrase (e.g. forward-looking + comparative basis) — revisit threshold (lower overlap to 60–65%, or add containment rule).
-
-Both items remain in R5.2 backlog. Item (a) is now spec-candidate priority given the doubled evidence; item (b) remains evidence-gated.
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
@@ -460,6 +473,8 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 15. Upload draft button placement in Your Draft section. R4.1.8 made the Your Draft section flex-grow so the textarea resizes when other sections expand. The Upload draft button remains visible but its visual placement at the bottom of the textarea looks awkward when sections are tight — the button appears to overlap the textarea bottom edge rather than sitting cleanly below it. Two candidate fixes considered and deferred: (a) move the Upload draft button into the section header row alongside History/Save draft/Rewrite, treating it as a draft-loading action consistent with the other draft-management actions, or (b) reduce the textarea's minimum height to give the button more space. Action: pick a fix when next polishing the Setup panel; (a) is the recommended approach as it groups all draft-management actions in one location.
 
 16. **Two-direction concern violations.** `SUGGESTED_DIRECTION_FORMAT_META` in `lib/qc/editorial-compliance-reviewer.mjs` requires every `suggestedDirection` to be a single complete imperative sentence ("Do not emit two fragments joined by 'and'"). Observed in R6.2a.1 Run C that the LLM emitted two directions in one concern: "Replace with more measured language or provide supporting evidence. Replace 'genuinely exceptional and unparalleled in its sector' with 'strong performer in its sector' or similar language." First half is high-level guidance, second half is the specific rewrite — both useful, but split into two sentences violates the meta-rule and produces awkward UI output. Likely fix: strengthen the meta-rule wording to make explicit that "Replace... or provide..." constructions count as two directions, OR introduce a separate `suggestedGuidance` field for the high-level hint distinct from the concrete rewrite. The latter is the cleaner product fix but requires schema work. Lower priority than R5.2 (a). Logged 2026-05-30.
+
+    **Additional evidence 2026-05-30** (R5.2(a) validation runs): pattern observed across all three R5.2(a) test runs. Editorial concerns under `marketing_language_excess` consistently emit two-sentence suggestedDirection of the form "Replace with [high-level guidance]. Replace 'X' with [specific rewrite]." First sentence is generic guidance; second is the specific rewrite. Both are useful but the two-sentence format violates SUGGESTED_DIRECTION_FORMAT_META. Pattern is reproducible — fix is now well-supported by evidence. Likely the right product fix is a separate field for high-level guidance vs concrete rewrite, but a stronger meta-rule wording could also work as a contained interim fix.
 
 ### Web Search Functionality Sprint
 - Scope and reliability of public search integration
