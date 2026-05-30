@@ -20,12 +20,23 @@ Classify this source's publication state. Return one of:
   • published academic paper format (abstract, journal name, DOI, etc.)
   One clear marker is sufficient. Two or more leave no doubt.
 
-- 'internal_or_draft' when the document contains clear markers of being internal, confidential, or pre-publication. Treat any of the following as a clear marker:
-  • 'CONFIDENTIAL', 'INTERNAL USE ONLY', 'DO NOT DISTRIBUTE', 'NDA-bound' notices
-  • internal memo format with 'To:' / 'From:' / 'Re:' header fields addressed to a named internal audience (e.g. 'Investment Committee')
-  • investment committee paper, board paper, or IC discussion format
-  • explicit 'draft' tag or watermark
-  • internal investor update marked confidential
+- 'restricted' when the document is distributed under restricted-distribution terms — meaning the audience is defined and the content is not freely publishable. This includes both internal documents and external documents shared under restricted terms. Treat ANY of the following as clear markers:
+
+  Internal documents:
+  • 'CONFIDENTIAL', 'INTERNAL USE ONLY', 'DO NOT DISTRIBUTE', or 'NDA-bound' notices
+  • Internal memo format with 'To:' / 'From:' / 'Re:' header fields addressed to a named internal audience (e.g. 'Investment Committee')
+  • Investment committee paper, board paper, valuation paper, strategy note, market analysis for internal circulation
+  • Explicit 'draft' tag or watermark
+  • Internal investor update marked confidential
+  • Internal AGM/EGM materials or board packs
+
+  External-but-restricted documents:
+  • Investor letter, LP report, fund update, capital account statement, capital call notice, or distribution notice addressed to a defined audience of limited partners or investors
+  • Quarterly or annual report from an external fund or asset manager (e.g. another GP's quarterly investor letter)
+  • Investor presentation, pitch deck, or AGM/EGM materials addressed to LPs or a defined named audience
+  • Any document marked or contextually addressed to a specific named audience that is not the general public
+
+  Calibration note: polished production format does NOT equal public distribution. A professionally-designed LP presentation deck is still 'restricted' if its audience is a defined set of investors rather than the general public. Judge audience and distribution, not production quality.
 
 - 'unknown' for documents that lack clear markers either way. Examples:
   • generic prose that could be from anywhere
@@ -39,7 +50,7 @@ Return publicationState as a separate field in the JSON response.
 Return valid JSON only in this exact shape (no markdown, no code fences):
 {
   "description": "<two-sentence summary>",
-  "publicationState": "published_external" | "internal_or_draft" | "unknown"
+  "publicationState": "published_external" | "restricted" | "unknown"
 }`;
 
 function setCorsHeaders(req, res) {
