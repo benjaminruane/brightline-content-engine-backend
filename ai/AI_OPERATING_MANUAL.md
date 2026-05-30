@@ -49,6 +49,10 @@ The verification output must be included verbatim in the implementer's summary s
 
 **Canonical example:** **D1.3.2** — v2 drafts loaded into eight fixture JSONs; each fixture had unique v2 anchor strings (must match) and v1 contaminant strings (must not match); Cursor summary included one PASS/FAIL line per check plus verbatim `grep` output.
 
+**Trace the live execution path before iterating on prompt content.** R6.4a's classifier prompt was iterated twice (R6.4a then R6.4a.1) because the LLM was returning "unknown" on a press release with clear public-distribution markers. The actual root cause was that the classifier was never being called — the Assess module's upload handler did not invoke apiSummarizeSource. Spent two iteration cycles chasing prompt calibration for behaviour that wasn't being exercised. The signal that should have caught it earlier: the source object in frontend state was missing the long-stable "description" field alongside the new "publicationState" field, which indicated the summariser wasn't running at all.
+
+Discipline: when a feature shows no observable effect after a code change, **first verify the code path is being exercised end-to-end**, then iterate on what happens inside it. An "orient" task for an upcoming spec should ask "trace the live execution path from user action to outcome" rather than "show me the relevant code." The architectural fact that broke this for R6.4a (Assess module replaces Draft module's state hook) was not surfaced by show-me-the-code framings.
+
 ## Testing Expectations
 - Usually max 3 runs per batch
 - Reuse existing source files unless new ones are strictly necessary
