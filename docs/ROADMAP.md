@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-28 (R2.7.1 ship sync; Stage 2 conflict-vs-partial calibration)
+Last updated: 2026-05-30 (R6.2a + R6.2a.1 ship sync; promotional-language calibration)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-28 (R2.7.1 ship sync; Stage 2 conflict-vs-partial calibrat
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r2.7.1-conflict-partial-calibration`.
+- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r6.2a.1-promotional-language-calibration`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -213,10 +213,11 @@ Items in scope (order indicative, not locked):
 
 **R6.2 sub-items (commentary quality):**
 
-- **R6.2a** — Disentangle promotional-language flags into hyperbole vs qualitative-descriptor. Evidence: every fixture flagged "strong", "exceptional", "leading" as promotional; calibration too strict.
+- **R6.2a** — Disentangle promotional-language flags into hyperbole vs qualitative-descriptor. **SHIPPED 2026-05-30** — `r6.2a.1-promotional-language-calibration` (combined R6.2a + R6.2a.1). Option A locked: flag explicit hyperbole only when unsubstantiated; never flag standard qualitative descriptors. Three coordinated edits: `marketing_language_excess` (editorial rulebook) hyperbole list tightened with explicit do-not-flag list for standard descriptors; `hyperbole_vs_qualitative` (style guide Layer 1) aligned same; `VISIBILITY_CALIBRATION_EDITORIAL_STYLE` no longer tightens on promotional language. R6.2a.1 follow-up strengthened the substantiation carve-out (adjacent figure/comparator suppresses flag — Run E example: "exceptional 22% net IRR vs benchmark 14%" no longer fires), softened compliance "typically restricted under fund marketing regulations" prose, and removed schoolroom framing ("not permissible", "is not acceptable") from editorial concern text. Validated across 6-run suite: standard descriptors clean on both Complete and Public; hyperbole still fires when bare; substantiated hyperbole does not fire.
 - **R6.2b** — Structural recommendations as editorial sub-dimension (bullet candidates, paragraph breaks). Evidence: F08, F11.
 - **R6.2c** — Dimension-naming for "off phrasing" feedback. Evidence: F08, F11, F19.
 - Low-materiality / cosmetic-change over-firing (observed R6.9 edge-case testing 2026-05-28): editorial reviewer fired a concern suggesting "Yours sincerely," → "Sincerely," — a cosmetic change with no codified house rule behind it and no material improvement to the copy. Proposed R6.2 calibration principle: a concern is only worth surfacing if acting on it would change the copy in a way the writer would care about. Do not flag stylistic preferences that are not codified house rules, and do not flag changes whose substance is unchanged. Testable principle for R6.2a/c scoping.
+- **Side observation 2026-05-30** — R6.2a.1 Run F: the previously-observed voice misread ("The Fund has" interpreted as first-person, recommending "The Fund reports") did NOT recur after the schoolroom-framing guidance was added to `CONCERN_TEXT_META`. Plausible reason: the gatekeeping guidance generally raised the LLM's threshold for emitting concerns, so borderline/wrong-direction concerns dropped below the firing bar. Single observation only — do not treat as a fix; if the voice misread recurs in future testing, log under a dedicated rule-misclassification item.
 
 ### Layer 2 style rules backlog (running list)
 
@@ -383,7 +384,13 @@ No spec until trigger conditions met. Do not schedule ahead of dogfooding signal
 
 ### R5.2 — Duplicate-merge threshold tuning
 
-Monitor merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_duplicate_concerns_merged`) across dogfooding traces. Initial test runs (3 cases) produced zero merges, all correctly per the 80% threshold. **Action if real reviewer use surfaces under-merging** — especially nested Compliance concerns on the same phrase (e.g. forward-looking + comparative basis): revisit threshold. Two paths: lower overlap to 60–65%, or add a containment rule (full nesting = duplicate). **Defer until evidence accumulates.**
+Two related issues observed across multiple R6.2a / R6.2a.1 test runs:
+
+(a) **Dedupe gap on functionally-identical concerns.** When the LLM emits two concerns under the same rule whose substance is near-identical but whose surface wording differs, the R5.2 merge concatenates them as "(i) ... (ii) ..." rather than deduplicating. Examples: R6.2a Run D and R6.2a.1 Run D + F — same hyperbole pattern flagged twice with slightly different rewrite suggestions, rendered as a numbered-list concern instead of one concern. **Confirmed reproducible across multiple runs.** Likely fix: before applying "(i) (ii)" numbering, deduplicate concerns whose normalised text exceeds ~85% string similarity within the same rule id.
+
+(b) **Threshold tuning** (original watch item content). Merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_duplicate_concerns_merged`) — initial test runs produced zero merges, all correctly per 80% threshold. If reviewer use surfaces under-merging — especially nested Compliance concerns on the same phrase (e.g. forward-looking + comparative basis) — revisit threshold (lower overlap to 60–65%, or add containment rule).
+
+Both items remain in R5.2 backlog. Item (a) is now spec-candidate priority given the doubled evidence; item (b) remains evidence-gated.
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
@@ -439,6 +446,8 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 14. Expand R3.4 suppression scope to additional editorial rules. R3.4 currently suppresses `overreach_unsupported_causal` and `internal_plausibility` from `editorialConcerns` when Evidence verdict is `conflicting`. R4.1.6 testing surfaced a case where a `narrative_coherence` concern (or similar `internal_consistency` variant) fired on a conflicting statement with body text directly referencing the factual mismatch ("This inconsistency disrupts narrative coherence"). This is the same duplication pattern R3.4 was intended to prevent, but the rule code isn't in R3.4's suppression list. Action: audit the full editorial+style rulebook to identify all rules that fire on factual misalignment with sources. Extend the `SUPPRESSED_ON_EVIDENCE_CONFLICT` set in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. Candidates include `narrative_coherence`, `internal_consistency`, `claim_evidence_alignment`, and any others where the concern body references factual disagreement with sources.
 
 15. Upload draft button placement in Your Draft section. R4.1.8 made the Your Draft section flex-grow so the textarea resizes when other sections expand. The Upload draft button remains visible but its visual placement at the bottom of the textarea looks awkward when sections are tight — the button appears to overlap the textarea bottom edge rather than sitting cleanly below it. Two candidate fixes considered and deferred: (a) move the Upload draft button into the section header row alongside History/Save draft/Rewrite, treating it as a draft-loading action consistent with the other draft-management actions, or (b) reduce the textarea's minimum height to give the button more space. Action: pick a fix when next polishing the Setup panel; (a) is the recommended approach as it groups all draft-management actions in one location.
+
+16. **Two-direction concern violations.** `SUGGESTED_DIRECTION_FORMAT_META` in `lib/qc/editorial-compliance-reviewer.mjs` requires every `suggestedDirection` to be a single complete imperative sentence ("Do not emit two fragments joined by 'and'"). Observed in R6.2a.1 Run C that the LLM emitted two directions in one concern: "Replace with more measured language or provide supporting evidence. Replace 'genuinely exceptional and unparalleled in its sector' with 'strong performer in its sector' or similar language." First half is high-level guidance, second half is the specific rewrite — both useful, but split into two sentences violates the meta-rule and produces awkward UI output. Likely fix: strengthen the meta-rule wording to make explicit that "Replace... or provide..." constructions count as two directions, OR introduce a separate `suggestedGuidance` field for the high-level hint distinct from the concrete rewrite. The latter is the cleaner product fix but requires schema work. Lower priority than R5.2 (a). Logged 2026-05-30.
 
 ### Web Search Functionality Sprint
 - Scope and reliability of public search integration
