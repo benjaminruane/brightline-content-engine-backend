@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-30 (R5.2(a) ship sync; concern dedupe + UI balance backlog)
+Last updated: 2026-05-30 (R6.4a ship sync; UI/UX backlog items logged)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-30 (R5.2(a) ship sync; concern dedupe + UI balance backlog
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.51.0-json-copy-button-restored`; backend `r5.2a-concern-dedupe`.
+- **Current tags:** frontend `v8.52.0-r6.4a-publication-state`; backend `r6.4a-source-publication-state`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -237,7 +237,20 @@ Rules to add:
 
 **R6.4 sub-items (Public version compliance):**
 
-- **R6.4a** — Visibility-context awareness (recognise when source is already public). Evidence: F02 and F03 over-fired on published PG press release content.
+- **R6.4a** — Visibility-context awareness (recognise when source is already public). **SHIPPED 2026-05-30** — `r6.4a-source-publication-state` (backend) + `v8.52.0-r6.4a-publication-state` (frontend). Combined R6.4a + R6.4a.1 + R6.4a.2 in one tag.
+
+  **Scope shipped:**
+  - R6.4a: structured publicationState field on source objects (published_external / internal_or_draft / unknown). LLM inference at upload via api/summarize-source.js. Persistence through pipeline. Compliance receives per-source publication state in user payload. New SOURCE PUBLICATION STATE AWARENESS block in VISIBILITY_CALIBRATION_COMPLIANCE instructs the LLM to suppress confidential-detail, hyperbole, and marketing-language-superlative concerns when the offending content is materially present in a published_external source. Suppression is content-bound (new claims still fire) and rule-scoped (forward-looking, comparative, selective-hedging rules unaffected).
+  - R6.4a.1: classifier prompt recalibration — explicit markers list (FOR IMMEDIATE RELEASE, location+date header, media contact, About boilerplate, SEC identifiers, etc.) treated as sufficient for published_external without independent verification. Conservatism reframed as tie-breaker, not default.
+  - R6.4a.2: missing call site wired. The Assess upload path (useAssessState.jsx handleUploadSourceFiles) had never called apiSummarizeSource — every source defaulted to "unknown". Ported summariseSourceInBackground pattern from useDraftState.jsx. This was the actual unlock; R6.4a.1's prompt iteration was diagnosing a problem in the wrong layer because the classifier was never running.
+
+  **Validated end-to-end:**
+  - Published press release → published_external → Compliance suppressed (hyperbole + EV concerns dropped)
+  - Generic source → unknown → Compliance unchanged (regression intact)
+  - Mixed draft (source content + new claim) → suppression on source content, new claim still flagged correctly (content-bound)
+
+  **Out of scope, deferred:**
+  - UI surface for publicationState (read-only display + manual override) — partially addressed by upcoming small spec to expose metadata in the Sources panel; full override control logged separately.
 - **R6.4b** — Jurisdiction-aware fund marketing rules. Evidence: F02.S5 `hard_concern` on "exceptionally well positioned" was fund-marketing-regulation flag misapplied to portfolio transaction release.
 - **R6.4c** — Sensitivity-tier calibration — some figures sensitive even when source is public; needs nuance.
 
@@ -316,6 +329,14 @@ Rules to add:
 - Excerpt span back to source is expected to come from existing `evidenceTrace`; no new backend extraction work anticipated.
 
 Frontend-heavy, modest backend work. Can run after R6 or in parallel since the surfaces do not overlap.
+
+**Updated 2026-05-30 (R6.4a context):** R6.4a added structured `publicationState` per source (published_external / internal_or_draft / unknown) inferred at upload, with no UI surface. The Sources Drawer is the natural home for displaying source metadata to reviewers (description, publicationState, possibly manual override of classification). R7 scope now plausibly includes:
+
+  (a) source list display with metadata (description, publicationState as a read-only field)
+  (b) card→source navigation (original R7 intent)
+  (c) eventual user override of publicationState (separate spec)
+
+A small interim spec (R6.4b candidate) may surface publicationState in the existing Sources panel before the full R7 drawer is built — preserving R7's scope for the navigation work while addressing the immediate transparency gap from R6.4a.
 
 ---
 
@@ -475,6 +496,8 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 16. **Two-direction concern violations.** `SUGGESTED_DIRECTION_FORMAT_META` in `lib/qc/editorial-compliance-reviewer.mjs` requires every `suggestedDirection` to be a single complete imperative sentence ("Do not emit two fragments joined by 'and'"). Observed in R6.2a.1 Run C that the LLM emitted two directions in one concern: "Replace with more measured language or provide supporting evidence. Replace 'genuinely exceptional and unparalleled in its sector' with 'strong performer in its sector' or similar language." First half is high-level guidance, second half is the specific rewrite — both useful, but split into two sentences violates the meta-rule and produces awkward UI output. Likely fix: strengthen the meta-rule wording to make explicit that "Replace... or provide..." constructions count as two directions, OR introduce a separate `suggestedGuidance` field for the high-level hint distinct from the concrete rewrite. The latter is the cleaner product fix but requires schema work. Lower priority than R5.2 (a). Logged 2026-05-30.
 
     **Additional evidence 2026-05-30** (R5.2(a) validation runs): pattern observed across all three R5.2(a) test runs. Editorial concerns under `marketing_language_excess` consistently emit two-sentence suggestedDirection of the form "Replace with [high-level guidance]. Replace 'X' with [specific rewrite]." First sentence is generic guidance; second is the specific rewrite. Both are useful but the two-sentence format violates SUGGESTED_DIRECTION_FORMAT_META. Pattern is reproducible — fix is now well-supported by evidence. Likely the right product fix is a separate field for high-level guidance vs concrete rewrite, but a stronger meta-rule wording could also work as a contained interim fix.
+
+17. **Review-toggle wiring not honoured.** The Review modal exposes individual toggles for Editorial / Compliance / Evidence reviews. Observed during R6.4a testing (2026-05-30): selecting only Compliance and running Review still appears to invoke all three reviews. Wasted compute (~3x LLM cost on toggle-restricted runs) and confusing UX (the toggles imply selectivity that isn't honoured). Fix: trace the toggle state through to the analyse-statements call and ensure disabled signals are skipped end-to-end. Medium priority — affects cost on dev/test runs more than production, but the UX inconsistency erodes trust in the toggle controls.
 
 ### Web Search Functionality Sprint
 - Scope and reliability of public search integration
