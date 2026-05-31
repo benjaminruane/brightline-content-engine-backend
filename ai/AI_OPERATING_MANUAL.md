@@ -142,6 +142,19 @@ Concrete examples of correct sequencing:
 - **R5** split into R5.1 (backend spans), R5.2 (merge), R5.3a (frontend surface), R5.3b (colour-coding), R5.4 (click-to-locate). Five sprints, each independently testable.
 - **R3.1** merged Style + Editorial only. **R3.2** (Stage 5 into Stage 2) explicitly deferred as a separate sprint because Stage 2 restructure is a different change surface.
 
+## Principle-Based Signal Suppression
+
+Signal-suppression decisions should be principle-based and per-instance, not rule-ID-based and per-class.
+
+When the system needs to suppress a signal in some contexts (e.g. drop Editorial concerns that duplicate an Evidence-conflict finding), the suppression mechanism should:
+- Judge per-instance, not per-rule. Two concerns from the same rule code on different statements may differ in whether they warrant suppression.
+- Default to keeping the signal when the judgment is uncertain. False positives (keeping a redundant concern) are lower cost than false negatives (suppressing legitimate signal).
+- Use deterministic logic for verdict aggregation (Stage 3), but LLM judgment for language-level "is this the same as that?" decisions. Consistent with the LLM-last architecture principle.
+
+Rule-ID suppression sets are brittle: they require maintenance as new rules are added, they suppress at the wrong granularity, and they encode the suppression policy in two places (rulebook + suppression list) that drift apart over time.
+
+**Canonical example:** R6.3 (closed 2026-05-31). Replaced R3.4's two-rule-ID set with a per-statement gpt-4o-mini judgment that reads the Evidence-conflict explanation and decides which Editorial concerns materially restate it. Per-instance accuracy preserved; rulebook maintenance burden eliminated.
+
 ## Doc-Sync Working Pattern
 
 When deferring, queuing, closing, or logging a follow-up item in conversation, generate a Cursor doc-update prompt at the same time. Do not wait to be asked.

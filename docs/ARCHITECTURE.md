@@ -71,7 +71,7 @@ The backend produces the **qcCard** JSON contract. The frontend renders badges, 
 | **Evaluates** | Whether each statement is supported, partially supported, contradicted, or not addressed by uploaded sources. |
 | **Does not evaluate** | Writing quality, regulatory framing, or marketing register — delegated to Editorial+Style and Compliance. |
 | **qcCard fields** | `supportState`, `displayVerdict`, `concernLevel`, `hasConflict`, `statement`, `charStart` / `charEnd`, `draftSpan`, `primaryExcerpt`, `conflictExcerpt`, `evidenceSummary`, `reasoningParagraph`, `supportRefIds`, `supportRefTitles`, `hasRealExcerpt`, and related excerpt metadata. |
-| **Interaction with other signals** | **R3.4 (v4 only):** When evidence verdict is `conflicting`, two editorial concern codes are dropped at assembly (`overreach_unsupported_causal`, `internal_plausibility`) so the reviewer is not told twice that the claim does not match sources. Tracked via Langfuse canary `editorial_concern_suppressed_by_evidence`. No other cross-signal suppression is implemented. Editorial and Compliance concerns on the same promotional phrase may both appear — intentional (craft vs regulatory). |
+| **Interaction with other signals** | **R6.3 (v4 only):** When evidence verdict is `conflicting`, editorial concerns that duplicate the Evidence-conflict finding are dropped at card assembly via a gpt-4o-mini judgment call (`lib/qc/editorial-duplication-judge.mjs`). The judge runs only when Evidence verdict is `conflicting`. Errs toward keeping concerns when duplication is unclear. Tracked via Langfuse canary `editorial_concern_suppressed_by_judgment`. Editorial and Compliance concerns on the same promotional phrase may both appear — intentional (craft vs regulatory). |
 
 ### Editorial+Style (Stage 6, combined on v4)
 
@@ -80,7 +80,7 @@ The backend produces the **qcCard** JSON contract. The frontend renders badges, 
 | **Evaluates** | Craft: clarity, structure, register, overreach relative to evidence shown, narrative coherence (with adjacent context), style-guide mechanics, marketing language, audience-appropriate jargon — per rules in `lib/rulebook/editorialRules.js` and `lib/rulebook/styleGuide.js`. |
 | **Does not evaluate** | Source-by-source factual matching (Evidence) or fund-marketing regulatory rules (Compliance). |
 | **qcCard fields** | `editorialVerdict`, `editorialConcerns[]`, `editorialNote`, `editorialSuggestedDirection`, `editorialSuggestedRewrite`. |
-| **Interaction** | Subject to R3.4 suppression on conflicting evidence (above). Otherwise independent of Compliance; overlap on promotional language is accepted unless product feedback says otherwise. |
+| **Interaction** | Subject to R6.3 principle-based suppression on conflicting evidence (above). Otherwise independent of Compliance; overlap on promotional language is accepted unless product feedback says otherwise. |
 
 ### Compliance (Stage 6, separate call)
 

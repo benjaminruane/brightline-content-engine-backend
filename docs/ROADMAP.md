@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-30 (R6.4a.3 + R6.4b ship sync; suppression boundary and UI polish backlog logged)
+Last updated: 2026-05-31 (R6.4c, R6.3 ship sync; R6.4 chapter closed; principle-based suppression pattern banked)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-30 (R6.4a.3 + R6.4b ship sync; suppression boundary and UI
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.53.0-r6.4b-publication-state-ui`; backend `r6.4a.3-restricted-rename`.
+- **Current tags:** frontend `v8.53.0-r6.4b-publication-state-ui`; backend `r6.3-principle-based-suppression`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -122,6 +122,37 @@ Last updated: 2026-05-30 (R6.4a.3 + R6.4b ship sync; suppression boundary and UI
 
 - **Deterministic filter framework** now covers 5 of the 9 Layer 2 rules. Pattern available for future rules that have a structurally-checkable property.
 
+### R6.4 — Public version compliance (closed 2026-05-31)
+
+R6.4 chapter closed across four sub-items addressing the diagnostic finding on Compliance over-firing on already-public PG content (F02/F03).
+
+**R6.4a — Source publication state inference + Compliance suppression** (closed 2026-05-30, tag `r6.4a.3-restricted-rename` + frontend `v8.53.0-r6.4b-publication-state-ui`). See earlier "Recently shipped" entry for R6.4a/b detail.
+
+**R6.4c — Regulatory rule scope refinement** (closed 2026-05-31, tag `r6.4c-regulatory-rule-scope`). Refined the `description` field of compliance rule `regulatory_prohibited_language` in `lib/rulebook/complianceRules.js` to make fund-vs-portfolio scope explicit. Rule now applies to fund/firm claims (fund performance superlatives, firm-level absolute claims, promissory phrasing) and to language that solicits investment or links portfolio performance to a fund marketing pitch; rule does NOT apply to ordinary portfolio-company descriptive language in transaction releases or operational updates. Jurisdictional variance (SEC, FCA, MAS, BaFin) acknowledged in rule wording; reviewer note added to frame concerns as review prompts rather than determinations. Validated across three test runs (portfolio-company superlative cleared; fund-level superlative caught; solicitation crossover caught).
+
+**R6.4d — Sensitivity-tier calibration** (closed 2026-05-31, no ship). Diagnostic evidence was hypothetical, not observed. Real PG behaviour (F02 IRR/MOIC suppression) confirms current architecture is correct: if content is in a published source, suppression is appropriate by definition (the source has been through compliance review). User can manually override per source via R6.4b pill if stricter handling needed. No new code; closed as non-issue.
+
+### R6.3 — Principle-based Editorial concern suppression on Evidence conflict (closed 2026-05-31)
+
+Closed 2026-05-31, tag `r6.3-principle-based-suppression`. Replaces R3.4's rule-ID-based suppression list with per-instance semantic judgment via a gpt-4o-mini call at card assembly time.
+
+**Mechanism:** When Evidence verdict is `conflicting` and Editorial has concerns, a small LLM judge (gpt-4o-mini, temp 0, constrained JSON schema) reads the statement, the Evidence-conflict explanation, and the list of Editorial concerns. For each Editorial concern it decides DUPLICATE (the concern materially restates the Evidence finding) or INDEPENDENT (the concern is about register, voice, structure, defined terms, style, or any other dimension unrelated to the factual conflict). Defaults to INDEPENDENT when in doubt. Returns indices of concerns to suppress. Suppressed concerns are dropped from the card; remaining concerns render normally. Editorial verdict recomputes via existing `recomputeV4EditorialVerdictFromConcerns`; if all concerns suppress, Editorial renders Clean.
+
+**Why principle-based not rule-ID:** Rule-ID matching is the wrong granularity. Two concerns from the same rule code on different statements may differ in whether they duplicate the Evidence finding. Per-instance LLM judgment handles per-instance variance; rule-ID matching produces brittle coverage gaps as new rules are added.
+
+**Architecture:** Judge lives in new module `lib/qc/editorial-duplication-judge.mjs`. Suppression branch lives in `stage7-assemble-card.mjs` (replaced R3.4 logic, which is fully removed). Editorial review continues to run in parallel with Evidence — judge is downstream at card-assembly time only. `assembleCard` is now async, ripples to callers `qc-pipeline-v3.mjs` and `pipeline-v4/index.mjs` (await Promise.all).
+
+**Failure mode:** Schema-validation failure after one retry → suppress nothing, emit canary `editorial_duplication_judge_failed`. System errs toward showing the reviewer everything.
+
+**Observability:** Per-suppression canary `editorial_concern_suppressed_by_judgment` emitted via Langfuse `score()` with statementIndex, suppressedRuleId, and truncated concernText.
+
+**Validated:** Three test runs against `r6_4c_test_source.txt`:
+- Run 1 (Evidence Conflicting on IRR claim + hyperbole phrasing): judge suppressed the IRR-related Editorial concern (duplicative); kept the "absolutely stellar" hyperbole concern (independent). Editorial count: 1.
+- Run 2 (Evidence Supported): judge did not fire. Editorial Clean naturally.
+- Run 3 (Evidence Conflicting on IRR alone, no independent issues): judge suppressed all Editorial concerns. Editorial Clean.
+
+Per-instance behaviour confirmed across statements.
+
 - **R5 sequence — COMPLETE** (closed 2026-05-19). R5.1 (span derivation), R5.2 (span-based duplicate merge), R5.3a/b (overlay surface + traffic-light tints), R5.4 (Highlight in draft + concern scroll-and-underline), R5.4.1–R5.4.6 (card→draft navigation polish), R5.5 (disclaimer footer). Bidirectional draft↔card navigation is live. R5.1.2 remains planned separately.
 - **R5.4.6 — Concern-click fallback underline** (shipped 2026-05-19). When a concern has no R5.1 spans, the click now blue-underlines the whole statement instead of yellow-highlighting it. Yellow highlighter is reserved exclusively for “Highlight in draft” clicks. Tag: `v8.50.6-concern-fallback-underline`.
 - **R5.4.5 — Verdict tints clear during loading** (shipped 2026-05-19). Verdict tints hide when `analysisStatus === "loading"` on re-Review; toggle visual state unchanged.
@@ -202,8 +233,8 @@ Items in scope (order indicative, not locked):
 |------|---------|----------|---------------|
 | **R6.1** | **Direction intensity** — surface how strong a concern is, not just that one exists | — | Was product backlog #2 |
 | **R6.2** | **Reviewer comments house style** — tighten commentary tone, remove filler, enforce QC Output Language Standard from AI Operating Manual | — | Was product backlog #3 |
-| **R6.3** | **Hide Editorial on conflict** — when a card is conflicting, suppress the Editorial signal so reviewer attention lands on the conflict | — | Was product backlog #4 |
-| **R6.4** | **Public version compliance** — tighten Compliance + Editorial calibration for Public visibility; R4.3 shipped the wiring; this is the prompt quality pass | — | Was product backlog #9 |
+| **R6.3** | **Hide Editorial on conflict** — principle-based suppression of duplicative Editorial concerns when Evidence is conflicting | **SHIPPED 2026-05-31** | `r6.3-principle-based-suppression` |
+| **R6.4** | **Public version compliance** — R4.3 shipped wiring; sub-items R6.4a/b shipped 2026-05-30; R6.4c shipped 2026-05-31; R6.4d closed as non-issue | **SHIPPED — chapter closed 2026-05-31** | See Recently shipped → R6.4 |
 | **R6.5** | **House style framework** — Layer 1 (universal writing quality) + Layer 2 (client default) + structured style guide input to the editorial reviewer | **SHIPPED 2026-05-27** | `r6.5.6-defined-term-refinement` — Framework + 5 deterministic backstops. See Recently shipped. |
 | **R6.6** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary | Medium | Diagnostic (F04, F12, F18) |
 | **R6.7** | **Forward-looking statement review** — distinguish forward-looking claims; hedging, plausibility, visibility-calibration, alignment with stated risks | Medium | Diagnostic (F02, F03, F05, F08, F09) |
@@ -277,8 +308,9 @@ Rules to add:
   Confirmed across two test cases (AtNorth where subject "AtNorth" appears verbatim in source → suppression worked; Project Lumen where "the asset" was renamed to "Project Lumen" → suppression did not engage).
 
   Possible future fix: prompt edit to explicitly instruct that subject substitution is a normal editorial choice that does not unbind content from the source. Risk: looser suppression opens potential abuse (applying source hyperbole to a different subject). Not addressing tonight; revisit if real reviewer usage surfaces complaints. Logged 2026-05-30.
-- **R6.4b** — Jurisdiction-aware fund marketing rules. Evidence: F02.S5 `hard_concern` on "exceptionally well positioned" was fund-marketing-regulation flag misapplied to portfolio transaction release.
-- **R6.4c** — Sensitivity-tier calibration — some figures sensitive even when source is public; needs nuance.
+- **R6.4b** — Jurisdiction-aware fund marketing rules. Evidence: F02.S5 `hard_concern` on "exceptionally well positioned" was fund-marketing-regulation flag misapplied to portfolio transaction release. **Addressed by R6.4c** (regulatory rule scope refinement) — see Recently shipped → R6.4.
+- **R6.4c** — Regulatory rule scope refinement. **SHIPPED 2026-05-31** — `r6.4c-regulatory-rule-scope`. See Recently shipped → R6.4.
+- **R6.4d** — Sensitivity-tier calibration. **CLOSED 2026-05-31 as non-issue** — see Recently shipped → R6.4.
 
 **Side observation 2026-05-30** (R5.2(a) Run 3): compliance correctly fired on "The Fund is genuinely exceptional and unparalleled" (fund performance superlatives) and "is genuinely best-in-class" (fund performance superlative) in Runs 1 and 2, but did NOT fire on "the team is unparalleled" in Run 3 — superlative applied to the team, not fund performance or returns. This is correct behaviour: `regulatory_prohibited_language` is calibrated to flag superlatives applied to fund characteristics and performance, where fund marketing regulations apply. Confirms that compliance is well-calibrated on the "which superlatives carry regulatory weight" dimension. No action needed; banked as positive calibration evidence.
 
@@ -400,13 +432,13 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority. Full spec for **R2.7.2**: see **R2.7.2 — Stage 2 semantic frame matching** above.
 
-1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10; see **R6 — Review Quality** above. **R6.5 house style framework** shipped 2026-05-27 (`r6.5.6-defined-term-refinement`).
+1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31.
 2. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Complements **R2.7.1**.
 3. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
 4. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
 5. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
-6. **Hide Editorial on conflict (R6.3)** — suppress Editorial signal when Evidence is conflicting.
-7. **Public version compliance (R6.4)** — R4.3 shipped wiring; sub-items R6.4a–R6.4c from diagnostic.
+6. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
+7. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
 8. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
 9. **Document-type appropriateness (R6.6)** — Medium. **Forward-looking statement review (R6.7)** — Medium. **Cross-source verdict aggregation (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — Medium. **Source quality audit (R6.10)** — Low.
 10. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
@@ -454,6 +486,8 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | Hide Editorial on conflict | Folded into **R6.3** |
 | Public version prompt | Folded into **R6.4** (R4.3 shipped wiring) |
 | R6.5 (house style framework) | Shipped via `r6.5.6-defined-term-refinement` |
+| R6.3 (Hide Editorial on conflict) | Shipped via `r6.3-principle-based-suppression` |
+| R6.4 (Public version compliance, chapter) | Shipped via `r6.4a.3-restricted-rename`, `v8.53.0-r6.4b-publication-state-ui`, `r6.4c-regulatory-rule-scope` |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 
 ---
@@ -505,7 +539,7 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 
 5. Document the Vercel dev env setup in the backend README. Today the v4 route selection silently fell back to v3 because `vercel dev` did not load `.env.local` into the function process. The durable fix is registering env vars in Vercel directly: `npx vercel env add QC_PIPELINE_V4 development` then `npx vercel env pull .env.development.local`. Add a "Local development environment" section to the backend README documenting this process — the env vars that must be registered for v4 to work locally (`QC_PIPELINE_V4` at minimum, plus any other vars discovered as the rebuild progresses), the two commands above, and a note that simply having a value in `.env.local` is not sufficient for `vercel dev` to inject it into the function process. This protects future sessions (and any future collaborators) from the same lost-hour debugging cycle.
 
-6. *(Closed — R5.2 shipped; Product backlog #1.)* Within-signal duplicate concern merge. R3.4 partial fix remains (suppress `overreach_unsupported_causal` and `internal_plausibility` on Evidence `conflicting`; canary `editorial_concern_suppressed_by_evidence`). Editorial-vs-Compliance overlap on promotional language remains intentional unless reviewer feedback says otherwise. Threshold tuning: see **Watch items → R5.2**.
+6. *(Closed — R5.2 shipped; Product backlog #1.)* Within-signal duplicate concern merge. **R3.4 superseded by R6.3 (closed 2026-05-31):** per-instance LLM judgment via `editorial-duplication-judge.mjs` replaces the old rule-ID suppression set; canary `editorial_concern_suppressed_by_judgment`. Editorial-vs-Compliance overlap on promotional language remains intentional unless reviewer feedback says otherwise. Threshold tuning: see **Watch items → R5.2**.
 
 7. Recalibrate signoffVerdict thresholds. The current logic in `useAssessState.jsx` and `useDraftState.jsx` grades a single Conflicting evidence verdict as "Needs targeted revision". Reviewer feedback (R3.6 testing) suggests this is too soft — a direct numeric contradiction warrants stronger language than a "targeted revision". Action: review the thresholds in the signoffVerdict computation; consider grading any Conflicting evidence as "Needs significant work" regardless of overall concern count, or introduce a separate signoff state for unresolved factual contradictions.
 
@@ -521,7 +555,7 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 
 13. *(Consolidated into Watch items → R2.7.1.)*
 
-14. Expand R3.4 suppression scope to additional editorial rules. R3.4 currently suppresses `overreach_unsupported_causal` and `internal_plausibility` from `editorialConcerns` when Evidence verdict is `conflicting`. R4.1.6 testing surfaced a case where a `narrative_coherence` concern (or similar `internal_consistency` variant) fired on a conflicting statement with body text directly referencing the factual mismatch ("This inconsistency disrupts narrative coherence"). This is the same duplication pattern R3.4 was intended to prevent, but the rule code isn't in R3.4's suppression list. Action: audit the full editorial+style rulebook to identify all rules that fire on factual misalignment with sources. Extend the `SUPPRESSED_ON_EVIDENCE_CONFLICT` set in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. Candidates include `narrative_coherence`, `internal_consistency`, `claim_evidence_alignment`, and any others where the concern body references factual disagreement with sources.
+14. *(Closed 2026-05-31 via R6.3.)* Expand R3.4 suppression scope to additional editorial rules. **CLOSED 2026-05-31 via R6.3.** Principle-based per-instance LLM judgment replaces rule-ID suppression entirely. New rules added to the editorial rulebook automatically participate in the duplication judgment without requiring suppression-list maintenance. The brittleness this item was attempting to address is dissolved by the architecture change.
 
 15. Upload draft button placement in Your Draft section. R4.1.8 made the Your Draft section flex-grow so the textarea resizes when other sections expand. The Upload draft button remains visible but its visual placement at the bottom of the textarea looks awkward when sections are tight — the button appears to overlap the textarea bottom edge rather than sitting cleanly below it. Two candidate fixes considered and deferred: (a) move the Upload draft button into the section header row alongside History/Save draft/Rewrite, treating it as a draft-loading action consistent with the other draft-management actions, or (b) reduce the textarea's minimum height to give the button more space. Action: pick a fix when next polishing the Setup panel; (a) is the recommended approach as it groups all draft-management actions in one location.
 
@@ -608,6 +642,10 @@ Discussed and parked 2026-05-27.
 ---
 
 ## Architectural debt to revisit when v3 retires
+
+### R3.4 — Rule-ID Editorial suppression on Evidence conflict (superseded)
+
+**R3.4 superseded by R6.3 (closed 2026-05-31).** R6.3 removed the `SUPPRESSED_ON_EVIDENCE_CONFLICT` set and the rule-ID suppression branch entirely from `stage7-assemble-card.mjs`. Editorial concern suppression on Evidence conflict is now handled by per-instance LLM judgment via `editorial-duplication-judge.mjs`. The R3.4 entry is retained here as historical context; no further code references remain.
 
 ### R3.1 — Editorial+Style consolidation routing
 
