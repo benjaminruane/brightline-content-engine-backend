@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-30 (R6.4a ship sync; UI/UX backlog items logged)
+Last updated: 2026-05-30 (R6.4a.3 + R6.4b ship sync; suppression boundary and UI polish backlog logged)
 
 ---
 
@@ -17,7 +17,7 @@ Last updated: 2026-05-30 (R6.4a ship sync; UI/UX backlog items logged)
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags:** frontend `v8.52.0-r6.4a-publication-state`; backend `r6.4a-source-publication-state`.
+- **Current tags:** frontend `v8.53.0-r6.4b-publication-state-ui`; backend `r6.4a.3-restricted-rename`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -240,7 +240,7 @@ Rules to add:
 - **R6.4a** — Visibility-context awareness (recognise when source is already public). **SHIPPED 2026-05-30** — `r6.4a-source-publication-state` (backend) + `v8.52.0-r6.4a-publication-state` (frontend). Combined R6.4a + R6.4a.1 + R6.4a.2 in one tag.
 
   **Scope shipped:**
-  - R6.4a: structured publicationState field on source objects (published_external / internal_or_draft / unknown). LLM inference at upload via api/summarize-source.js. Persistence through pipeline. Compliance receives per-source publication state in user payload. New SOURCE PUBLICATION STATE AWARENESS block in VISIBILITY_CALIBRATION_COMPLIANCE instructs the LLM to suppress confidential-detail, hyperbole, and marketing-language-superlative concerns when the offending content is materially present in a published_external source. Suppression is content-bound (new claims still fire) and rule-scoped (forward-looking, comparative, selective-hedging rules unaffected).
+  - R6.4a: structured publicationState field on source objects (published_external / restricted / unknown). LLM inference at upload via api/summarize-source.js. Persistence through pipeline. Compliance receives per-source publication state in user payload. New SOURCE PUBLICATION STATE AWARENESS block in VISIBILITY_CALIBRATION_COMPLIANCE instructs the LLM to suppress confidential-detail, hyperbole, and marketing-language-superlative concerns when the offending content is materially present in a published_external source. Suppression is content-bound (new claims still fire) and rule-scoped (forward-looking, comparative, selective-hedging rules unaffected).
   - R6.4a.1: classifier prompt recalibration — explicit markers list (FOR IMMEDIATE RELEASE, location+date header, media contact, About boilerplate, SEC identifiers, etc.) treated as sufficient for published_external without independent verification. Conservatism reframed as tie-breaker, not default.
   - R6.4a.2: missing call site wired. The Assess upload path (useAssessState.jsx handleUploadSourceFiles) had never called apiSummarizeSource — every source defaulted to "unknown". Ported summariseSourceInBackground pattern from useDraftState.jsx. This was the actual unlock; R6.4a.1's prompt iteration was diagnosing a problem in the wrong layer because the classifier was never running.
 
@@ -250,7 +250,33 @@ Rules to add:
   - Mixed draft (source content + new claim) → suppression on source content, new claim still flagged correctly (content-bound)
 
   **Out of scope, deferred:**
-  - UI surface for publicationState (read-only display + manual override) — partially addressed by upcoming small spec to expose metadata in the Sources panel; full override control logged separately.
+  - Full source metadata UI (description display, drawer context) — R6.4b shipped publicationState pill + override in Assess Sources panel (2026-05-30); description display and drawer redesign deferred to R7.
+
+  **R6.4a.3 + R6.4b — Combined ship 2026-05-30:**
+  - Backend tag: `r6.4a.3-restricted-rename`
+  - Frontend tag: `v8.53.0-r6.4b-publication-state-ui`
+
+  R6.4a.3 (backend): Renamed the publicationState enum value `internal_or_draft` to `restricted`. The previous name was misleading for external-but-restricted documents (e.g. an external fund's investor report is neither internal nor a draft, but it is restricted-distribution and should not relax Compliance). Broadened classifier criteria to recognise:
+    - External-but-restricted: investor letters, LP reports, capital call notices, distribution notices, fund quarterly/annual reports, AGM/EGM materials, pitch decks for defined audiences
+    - Internal: IC papers, valuation papers, strategy/market decks, internal AGM materials, board papers (criteria already present, retained)
+
+  Calibration note added to classifier prompt: polished production format does NOT equal public distribution. A professionally-designed LP presentation deck is still 'restricted' if its audience is a defined set of investors rather than the general public. Judge audience and distribution, not production quality.
+
+  R6.4b (frontend): Added a small pill component to each source row in the Assess Sources panel showing the current publicationState as a plain English label ("Published externally" / "Restricted" / "Unclassified"). Clicking the pill opens a dropdown allowing the user to override the LLM's auto-inference. Override is session-scoped (resets on page reload / re-upload). Pill order in the dropdown: Published externally, Restricted, Unclassified.
+
+  Validation across four phases:
+  - Phase A (rename regression): published_press_release.txt → published_external; internal_memo.txt → restricted; generic_text.txt → unknown
+  - Phase B (broadened criteria): external_fund_investor_letter.txt, internal_valuation_paper.txt, lp_capital_call.txt all classify as restricted
+  - Phase C (UI override): override reaches Compliance; user can change pill value via dropdown; Compliance applies the user-selected state on next Review
+  - Phase D (R6.4a regression): R6.4a headline suppression behaviour preserved after rename; hyperbole and EV concerns on AtNorth draft still suppressed when source is published_external
+
+  **Suppression boundary — subject substitution.** Phase C live testing surfaced that Compliance suppression engages cleanly for confidential-detail concerns (specific figures present in the source) but does NOT engage for hyperbole concerns when the draft renames the subject of the claim. Example: source contains "the asset is exceptionally well positioned in its niche"; draft contains "Project Lumen is exceptionally well positioned in its niche". With the source overridden to published_external, the EV concern on a separate statement suppressed cleanly, but the hyperbole concern on the renamed statement still fired.
+
+  The LLM appears to treat subject renaming (a generic noun becoming a specific named entity not in the source) as breaking the content-bound link, even though the hyperbole language itself is verbatim from the source. This is defensible behaviour — it prevents abuse where someone could lift hyperbolic language from one source and apply it to a different subject — but it limits the perceived effectiveness of override on hyperbole concerns.
+
+  Confirmed across two test cases (AtNorth where subject "AtNorth" appears verbatim in source → suppression worked; Project Lumen where "the asset" was renamed to "Project Lumen" → suppression did not engage).
+
+  Possible future fix: prompt edit to explicitly instruct that subject substitution is a normal editorial choice that does not unbind content from the source. Risk: looser suppression opens potential abuse (applying source hyperbole to a different subject). Not addressing tonight; revisit if real reviewer usage surfaces complaints. Logged 2026-05-30.
 - **R6.4b** — Jurisdiction-aware fund marketing rules. Evidence: F02.S5 `hard_concern` on "exceptionally well positioned" was fund-marketing-regulation flag misapplied to portfolio transaction release.
 - **R6.4c** — Sensitivity-tier calibration — some figures sensitive even when source is public; needs nuance.
 
@@ -330,13 +356,19 @@ Rules to add:
 
 Frontend-heavy, modest backend work. Can run after R6 or in parallel since the surfaces do not overlap.
 
-**Updated 2026-05-30 (R6.4a context):** R6.4a added structured `publicationState` per source (published_external / internal_or_draft / unknown) inferred at upload, with no UI surface. The Sources Drawer is the natural home for displaying source metadata to reviewers (description, publicationState, possibly manual override of classification). R7 scope now plausibly includes:
+**Updated 2026-05-30 (R6.4a context):** R6.4a added structured `publicationState` per source (published_external / restricted / unknown) inferred at upload, with no UI surface at ship time. The Sources Drawer is the natural home for displaying source metadata to reviewers (description, publicationState, possibly manual override of classification). R7 scope now plausibly includes:
 
   (a) source list display with metadata (description, publicationState as a read-only field)
   (b) card→source navigation (original R7 intent)
   (c) eventual user override of publicationState (separate spec)
 
 A small interim spec (R6.4b candidate) may surface publicationState in the existing Sources panel before the full R7 drawer is built — preserving R7's scope for the navigation work while addressing the immediate transparency gap from R6.4a.
+
+**Further update 2026-05-30:** R6.4b shipped per-source publicationState display + override in the existing Sources panel — partial fulfilment of the metadata-display intent originally noted for R7. R7 scope is now more focused:
+  - Card→source navigation (original R7 intent) — still pending
+  - Full source description display (not in R6.4b due to row-height concerns) — natural for R7
+  - File preview / browsable source content — natural for R7
+  - publicationState badge can be reused; override control may need redesign for the drawer context
 
 ---
 
@@ -498,6 +530,12 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
     **Additional evidence 2026-05-30** (R5.2(a) validation runs): pattern observed across all three R5.2(a) test runs. Editorial concerns under `marketing_language_excess` consistently emit two-sentence suggestedDirection of the form "Replace with [high-level guidance]. Replace 'X' with [specific rewrite]." First sentence is generic guidance; second is the specific rewrite. Both are useful but the two-sentence format violates SUGGESTED_DIRECTION_FORMAT_META. Pattern is reproducible — fix is now well-supported by evidence. Likely the right product fix is a separate field for high-level guidance vs concrete rewrite, but a stronger meta-rule wording could also work as a contained interim fix.
 
 17. **Review-toggle wiring not honoured.** The Review modal exposes individual toggles for Editorial / Compliance / Evidence reviews. Observed during R6.4a testing (2026-05-30): selecting only Compliance and running Review still appears to invoke all three reviews. Wasted compute (~3x LLM cost on toggle-restricted runs) and confusing UX (the toggles imply selectivity that isn't honoured). Fix: trace the toggle state through to the analyse-statements call and ensure disabled signals are skipped end-to-end. Medium priority — affects cost on dev/test runs more than production, but the UX inconsistency erodes trust in the toggle controls.
+
+18. **R6.4b UI polish (deferred).** Two cosmetic items from R6.4b live testing (2026-05-30):
+  (a) Pills initially show "Unclassified" for several seconds while the LLM classifier runs in the background, then update to the inferred value once classification completes. Visually confusing — looks like the system is wrong, then "fixes itself". Replace initial pill state with an explicit in-flight indicator ("Classifying..." or a subtle loading state). Show one of the three terminal labels only once the publicationState is final.
+  (b) Pill positions are inconsistent across source rows because the filename column has variable width. Right-align pills (adjacent to the X remove button) so they line up in a column for cleaner scanning.
+
+Both items are cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival) or fold into a small polish pass when the broader source-row UI is touched.
 
 ### Web Search Functionality Sprint
 - Scope and reliability of public search integration
