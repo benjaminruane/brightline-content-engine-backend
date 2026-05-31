@@ -43,6 +43,9 @@ The backlog is split into four tables by character of work:
 | F5  | UI display labels misaligned with architecture rubric | R2.3 user observation | M | "Supported" should be "Confirmed". Align all four labels: confirmed / partially confirmed / conflicting / no support. Decision: more definitive language preferred for an audit-safe product. |
 | F6  | "1 claim have" grammar bug in Reviewer Assessment | userMemories | L | Pre-existing item from product backlog. |
 | F7  | Reinstate colour-coding of draft text and Highlight in Draft functionality in Assess module after Assess runs. Quality Review module has this in its Draft Context pane; Assess does not currently have a Draft Context pane, which is the limiting factor. | R2.4+R2.5 testing | M | |
+| F8  | Editorial 'spell out numbers 0–12' rule over-fires on quarter notation (flags 'Q3 2010', suggests 'third quarter'). Quarter labels are date references and should be exempt; structurally checkable (`/Q[1-4]\s?\d{4}/`) — candidate for a deterministic backstop. Belongs with R6.5 house-style cluster. | R2.7.2 Run 1 testing | L | |
+| F9  | Editorial concern text duplicates its replacement instruction within a single bullet (single thousand-separator concern rendered 'Replace "10,000" with "10'000".' twice). Check for duplicated suggestion text in concern generation/rendering. | R2.7.2 Run 2 testing | L | |
+| F10 | Single-concern Editorial cards may render the lone concern as a bullet — check rendering consistency across single-concern Editorial cards (bulleted vs inline). | R2.7.2 Run 1 testing | L | |
 
 **Suggested grouping**: F1–F5 share the Assess module surface and could be bundled into a single frontend polish sprint, e.g. `v8.43-assess-polish`.
 
@@ -67,7 +70,10 @@ The backlog is split into four tables by character of work:
 | B13 | Stage 5 commentary should explicitly distinguish 'pedantic gap' partials from 'material gap' partials. For partially_confirmed verdicts, commentary must name what's confirmed precisely, name the specific gap using the source's exact language, and suggest the reviewer's action. To be designed into the Stage 5 prompt during R2.6. | R2.5.2 user observation | M | |
 | B14 | Model non-compliance with explicit prompt rules: gpt-4o does not reliably honour negative constraints (e.g. 'do not abridge passages') on dense compound statements, even at temp 0. Future stages should design defensively — validation layers that handle expected non-compliance modes rather than rely on the model's adherence. | R2.5.2.1 diagnostic finding | M | |
 | B15 | Stage 2 occasionally returns silently spliced passages (multiple non-adjacent source spans presented as contiguous, with no ellipsis marker). Validator correctly rejects these, but the resulting placeholder appears on conflict cards. Possible mitigations: (a) two-call retry asking for a single contiguous span when first call's passage fails validation, (b) accept and surface explicitly as 'spliced excerpt - confirm against source'. To consider after pipeline-v4 fully live. | R2.5.3 testing | M | |
-| B16 | **R2.7.2 — Stage 2 semantic frame matching.** Extend Stage 2 to distinguish numeric equivalence from semantic frame equivalence (period, scope/segment, basis, metric definition). Same number + wrong frame must not return `confirmed`; maps to existing enum via `explanation`. Stage 2 prompt only. See `docs/ROADMAP.md` → **R2.7.2** and open backlog #2. | ROADMAP 2026-05-19 | H | Independent of R5/R6. Addresses R2.7.1 partial-vs-conflict gap. Test fixtures: Shopify GMV-vs-revenue; period-mismatch; founding-draft regression. |
+| B17 | **R2.7.2.1 — Relative-source-period resolution.** Stage 2 period matching only works explicit-vs-explicit; fails when the source period is a relative reference requiring document-date inference. Proposed fix: deterministic date-resolution pass pre-Stage-2. See ROADMAP **R2.7.2.1**. | R2.7.2 testing | M | |
+| B18 | Stage 5 evidence commentary editorialises rather than describes (e.g. 'This is a significant discrepancy'). Calibrate Stage 5 prompt toward neutral description per QC Output Language Standard. | R2.7.2 Run 1 testing | M | |
+| B19 | Stage 5 evidence commentary uses meta phrasing referencing the tool's own plumbing ('as stated in the excerpt', 'the excerpt directly supports this'). 'Excerpt' is an internal term the reader hasn't been introduced to; violates QC Output Language Standard (no system language). Calibrate Stage 5 to describe the source finding directly without referring to 'the excerpt'. | R2.7.2 Run 1/3 testing | M | |
+| B20 | UI Required version = Complete reaches the handler as `visibility:null`. Visibility selection not propagating frontend → QC handler on the ad-hoc analyse-statements path. Means R4.3 visibility-dependent rules are not exercised in manual testing. Investigate frontend payload vs handler field read. | R2.7.2 testing | M | |
 
 ---
 
@@ -89,7 +95,6 @@ The backlog is split into four tables by character of work:
 | ID  | Item | Source / context | Priority | Notes |
 |-----|------|------------------|----------|-------|
 | Pr2 | Merge duplicate concerns | userMemories | L | Merge duplicate concerns — R3.4 partial fix superseded by **R6.3** (shipped 2026-05-31, `r6.3-principle-based-suppression`). Evidence-vs-Editorial duplication on conflicting statements is now handled by per-instance LLM judgment via `editorial-duplication-judge.mjs` at card assembly (not rule-ID suppression). Canary: `editorial_concern_suppressed_by_judgment`. **Remaining open:** (a) Evidence-vs-Editorial duplication on `partially_confirmed` verdicts (R3.4/R6.3 deliberately scoped to conflicting only). Reactivate if the same noise pattern shows up on partials. (b) Editorial-vs-Compliance overlap on promotional language (e.g. `marketing_language_excess` + `regulatory_prohibited_language` firing on the same sentence). Reviewed and judged intentional — both signals serve distinct reviewer decisions (craft vs regulatory). No fix planned; revisit if reviewer feedback indicates the overlap is genuinely noisy rather than complementary. |
-| Pr2.7.2 | **R2.7.2 — Stage 2 semantic frame matching** | ROADMAP 2026-05-19 | H | **Open backlog #2** in `docs/ROADMAP.md`. Stage 2 prompt only; precedes Direction intensity (R6.1). Detail: ROADMAP → **R2.7.2**; pipeline row **B16**. |
 | Pr3 | Align Direction intensity — Evidence softer than others | userMemories | L | Folded into **R6.1** (ROADMAP). |
 | Pr4 | Reviewer comments follow house style | userMemories | M | Pre-existing. |
 | Pr5 | Hide Editorial on conflict | userMemories | L | Pre-existing. |
@@ -112,6 +117,9 @@ The backlog is split into four tables by character of work:
 |     | Pipeline v4 scaffolding | r2.1-pipeline-scaffolding |
 |     | Stage 1 (statement extraction) in v4 | r2.2-stage1-extraction |
 |     | Stage 2 (source matching) in v4 | r2.3-stage2-matching |
+| B16 | **R2.7.2 — Stage 2 semantic frame matching** | `r2.7.2-frame-matching` — period scope explicit-vs-explicit only; relative-source-period gap → **R2.7.2.1** (B17) |
+| Pr2.7.2 | **R2.7.2 — Stage 2 semantic frame matching** (Product duplicate ref) | `r2.7.2-frame-matching` — see ROADMAP **R2.7.2.1** |
+|     | qcCard.pipelineVersion hardcoded `"v3"` in shared `stage7-assemble-card.mjs`, now stamped from actual route | `fix-pipelineversion-label` |
 
 ---
 

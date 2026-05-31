@@ -176,6 +176,8 @@ Evidence quality now flows: Stage 2 LLM rubric → Stage 3 aggregation → Stage
 
 **As of 2026-05-17:** Production and development are configured to run **v4**. v3 remains in the codebase as a fallback during dogfooding.
 
+**qcCard.pipelineVersion:** Stamped from the route `assembleCard` runs under (`assemblyContext.pipelineRoute` → `"v3"` or `"v4"` in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`), so it matches handler `meta.pipelineVersion` on the same response. Fixed 2026-05-31 (`fix-pipelineversion-label`); v3 Stage 7 assembler is still shared by both routes.
+
 **Planned retirement:** **R4.2** — remove v3 route and dual-path editorial code after 15–25 production traces with no canary fires (see `docs/ROADMAP.md`).
 
 **Operational gap:** Route selection should log the resolved env var on every request so a missing `QC_PIPELINE_V4` in local `vercel dev` is obvious (roadmap item).

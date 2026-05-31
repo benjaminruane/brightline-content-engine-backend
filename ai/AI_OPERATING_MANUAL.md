@@ -74,6 +74,24 @@ All QC output shown to users — verdicts, commentary, explanations, hover text,
 
 This standard applies to all commentary fields: `commentaryPayload`, `whatThisShows`, `whatIsNotShown`, `whyItMattersText`, `evidenceSummary`, and any other user-facing text fields in the QC output.
 
+## Deterministic Backstops for Style Rules
+
+Where a style rule depends on a structurally-checkable property (e.g. comma counts for Oxford comma, regex patterns for thousand separator), the LLM rule wording is the primary instruction but a deterministic filter is the final arbiter. This protects against the LLM firing concerns on correctly-formatted text — a failure mode observed across multiple rules in R6.5 testing.
+
+Backstops live in `STYLE_RULE_DETERMINISTIC_FILTERS` in `lib/qc/editorial-compliance-reviewer.mjs`. Each predicate receives `(citedSpan, statementText, fullDraftText)` and returns TRUE to keep the concern, FALSE to drop. Predicates can be span-local (most rules), statement-scoped (`thousand_separator`, `currency_format`), or draft-aware (`defined_term_capitalisation`).
+
+Add a backstop when:
+- The rule has a structurally-checkable property (regex, character count, presence/absence of a pattern)
+- The LLM has demonstrated false-positive firing on correct text
+- The deterministic check is cheap and safe (errs toward keeping concerns rather than dropping them in ambiguous cases)
+
+Don't add a backstop when:
+- The rule requires semantic judgment (e.g. "promotional language")
+- The structural property is hard to define deterministically
+- The cost of a false-negative suppression is high
+
+When in doubt, write the rule wording first, observe behaviour, and add a backstop only if the LLM proves unreliable on a structurally-checkable case.
+
 ## Change Surface Discipline
 
 When proposing development specs:
@@ -88,12 +106,9 @@ Specs should aim for the smallest safe intervention that materially improves the
 
 ## Diagnostic Discipline
 
-When a recurring issue persists across multiple spec iterations,
-stop writing specs and diagnose instead. The signal is simple:
-two or more spec rounds targeting the same symptom without
-resolution means the issue isn't where the specs assume it is.
+When a recurring issue persists across two or more spec iterations targeting the same symptom without resolution, stop writing specs and diagnose instead — the issue isn't where the specs assume it is. Apply diagnostic discipline before any behavioural change to existing modules: read the current code, confirm assumptions, inspect actual prompts and outputs, before speccing.
 
-Instead of a third attempt, run a diagnostic:
+Instead of another fix attempt, run a diagnostic:
 
 1. Ask Cursor to inspect the deployed code and confirm it matches
    the spec that was supposedly implemented.
@@ -113,10 +128,6 @@ looked. Diagnosis is cheap, specs that keep missing are expensive.
 Early diagnosis is preferred over blind speccing. If a spec's
 testing reveals unexpected behaviour, prefer a diagnostic pass
 before the next spec.
-
-## Diagnostic Discipline
-
-When a recurring issue persists across two or more spec iterations targeting the same symptom without resolution, ask Cursor to diagnose first before writing another fix spec. Diagnostic discipline applies before any behavioural change to existing modules — read the current code, confirm assumptions, inspect actual prompts and outputs, before speccing.
 
 Do not rely on memory or assumptions about the codebase state when the cost of being wrong is a wasted sprint. A read-only diagnostic is always cheaper than a wrong spec.
 
@@ -157,7 +168,15 @@ Rule-ID suppression sets are brittle: they require maintenance as new rules are 
 
 ## Doc-Sync Working Pattern
 
-When deferring, queuing, closing, or logging a follow-up item in conversation, generate a Cursor doc-update prompt at the same time. Do not wait to be asked.
+When backlog items emerge, evolve, or close during a session, sync `docs/ROADMAP.md` and other governance documents (`docs/ARCHITECTURE.md`, this manual) accordingly. Default behaviour: sync immediately when items are settled and the moment is a natural pause.
+
+**Always draft the doc-update prompt at the moment of decision** — when deferring, queuing, closing, or logging a follow-up item in conversation. Do not wait to be asked. The prompt can be held for a batched sync, but drafting it when the decision is fresh ensures nothing is lost to chat history.
+
+**Defer the batched sync** (applying updates to governance docs) when:
+- **Convergence test:** items are still actively evolving in the same session (e.g. specs reshaping each other through ongoing work). Sync after they settle.
+- **Cognitive-cost test:** syncing would interrupt a substantive workflow (mid-spec, mid-diagnosis). Sync at the next natural pause.
+
+When deferring the batched sync, surface the choice explicitly so Ben can override if preferred. End-of-session batched syncs are acceptable when both tests above are satisfied.
 
 `docs/ROADMAP.md` and other governance documents (`docs/ARCHITECTURE.md`, this manual) are kept in sync with conversational decisions — not retroactively. The cost of writing the doc-update prompt at the moment of decision is small; the cost of reconstructing decisions from chat history later is large.
 

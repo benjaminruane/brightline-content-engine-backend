@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-31 (R6.4c, R6.3 ship sync; R6.4 chapter closed; principle-based suppression pattern banked)
+Last updated: 2026-05-31 (R2.7.2 frame matching shipped; pipelineVersion label fix; R2.7.2.1 logged)
 
 ---
 
@@ -131,6 +131,12 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 **R6.4c — Regulatory rule scope refinement** (closed 2026-05-31, tag `r6.4c-regulatory-rule-scope`). Refined the `description` field of compliance rule `regulatory_prohibited_language` in `lib/rulebook/complianceRules.js` to make fund-vs-portfolio scope explicit. Rule now applies to fund/firm claims (fund performance superlatives, firm-level absolute claims, promissory phrasing) and to language that solicits investment or links portfolio performance to a fund marketing pitch; rule does NOT apply to ordinary portfolio-company descriptive language in transaction releases or operational updates. Jurisdictional variance (SEC, FCA, MAS, BaFin) acknowledged in rule wording; reviewer note added to frame concerns as review prompts rather than determinations. Validated across three test runs (portfolio-company superlative cleared; fund-level superlative caught; solicitation crossover caught).
 
 **R6.4d — Sensitivity-tier calibration** (closed 2026-05-31, no ship). Diagnostic evidence was hypothetical, not observed. Real PG behaviour (F02 IRR/MOIC suppression) confirms current architecture is correct: if content is in a published source, suppression is appropriate by definition (the source has been through compliance review). User can manually override per source via R6.4b pill if stricter handling needed. No new code; closed as non-issue.
+
+### R2.7.2 — Stage 2 semantic frame matching (closed 2026-05-31)
+
+**R2.7.2 — Stage 2 semantic frame matching.** Shipped (`r2.7.2-frame-matching`). Distinguishes numeric equivalence from semantic frame equivalence across metric, basis/scope, and period dimensions. Metric and basis land reliably. **PERIOD is scoped to EXPLICIT-vs-EXPLICIT only:** a deterministic backstop (`applyPeriodGateBackstop`) downgrades `confirmed`→`conflicting` when both statement and source periods normalise to recognised tokens (Q[1-4] YYYY or bare YYYY) and differ. **LIMITATION:** when the source states the period as a **RELATIVE** reference ('over the same period', 'today'), gpt-4o resolves it unreliably at temp 0 — it resolves to whichever period confirms the match — across both prose and structured-field prompt mechanisms. Relative-source-period resolution descoped to **R2.7.2.1**. Mechanism retained: Stage-2-internal structured `periodAssessment` field + deterministic backstop. Verified: explicit mismatch (draft 2018 vs source 2019) → conflicting; explicit match (2019) → supported; metric mismatch (revenue vs GMV) → conflicting; paraphrase regression → confirmed.
+
+**fix-pipelineversion-label** (same session): `qcCard.pipelineVersion` in shared `stage7-assemble-card.mjs` now stamps from `assemblyContext.pipelineRoute` instead of hardcoding `"v3"`, aligning per-card label with handler `meta.pipelineVersion` on v4 runs.
 
 ### R6.3 — Principle-based Editorial concern suppression on Evidence conflict (closed 2026-05-31)
 
@@ -316,10 +322,9 @@ Rules to add:
 
 **Watch items to fold into R6 scoping:**
 
-- **R2.7.1** — **Elevated to spec candidate** (see **R2.7.1 — Stage 2 conflict vs partial** below). Diagnostic confirmed live (F12 voice-rephrasing-as-conflict; Stage 2 classification observations). May ship upstream of R6.
+- **R2.7.1** — **Watch OPEN** (see **Watch items → R2.7.1**). Shipped 2026-05-28; ongoing trace review for conflict/partial edge cases. **Not modified by R2.7.2** — period work did not touch conflict/partial routing for relative or absent-fact statements.
 - **Rebuild backlog (C)** — Stage 2 chunking ceiling. Not immediate (F15 clean at ~4,800 words). Scope when long-source warnings recur.
 - **Rebuild backlog (D)** — Production cost tracking. Diagnostic pass complete; baseline ~16 calls / 4 statements / 1 source; ~$2/run.
-- **R2.7.2** — Stage 2 semantic frame matching (logged in open backlog #2). Independent of R6 UI work; also sharpens R2.7.1 partial-vs-conflict discrimination.
 
 ---
 
@@ -341,35 +346,21 @@ Rules to add:
 
 ## R2.7.2 — Stage 2 semantic frame matching
 
-**Status:** **LOGGED** (open backlog #2)
+**Status:** **SHIPPED 2026-05-31** — `r2.7.2-frame-matching`. See **Recently shipped → R2.7.2** for full scope, period limitation, and verification notes.
 
-**One-line:** Extend Stage 2 matching to distinguish numeric equivalence from semantic frame equivalence. A figure in the source that numerically matches the draft but refers to a different period, scope, segment, basis, or metric definition must not return `confirmed`.
+---
 
-**Why it matters:** Current Stage 2 handles numeric equivalence (rounding, formatting, `$132mm` vs `$132 million`) but is silent on semantic frame mismatches. Example: draft “Shopify did $132mm in revenue” vs source “$132mm in GMV” would currently return `confirmed` on the number alone — the most common real-world reference error in investment writing (same number, wrong frame). Also improves discrimination between “source describes something different” (`partially_confirmed`) and “source directly contradicts” (`conflicting`) — related to **R2.7.1** watch item.
+## R2.7.2.1 — Relative-source-period resolution
 
-**Scope when picked up:** Stage 2 (Source Matching) prompt only. No changes to Stage 1, Stage 3 aggregation, Stage 4 excerpt selection, Stage 5 commentary, output schema, or frontend.
+**Status:** **LOGGED** (backlog **B17**)
 
-**Key dimensions (prompt must cover):**
+**One-line:** Stage 2 period matching fails when the **source** expresses the period relatively ('over the same period', 'today') requiring inference from the document date.
 
-- Period (quarterly / annual / monthly / trailing / point-in-time; YoY vs QoQ)
-- Scope / segment (total vs segment vs region; consolidated vs unconsolidated)
-- Basis (GAAP vs non-GAAP; adjusted vs reported; gross vs net; run-rate vs realised)
-- Metric definition (revenue vs GMV vs bookings vs ARR; customers vs active vs paying)
+Four prompt-mechanism attempts (two prose, two structured-field) all failed: the model resolves the relative reference to whatever period confirms the statement rather than computing it from the document date. Prompt-only approaches exhausted (B14 pattern).
 
-**Constraints when specced:**
+**Proposed mechanism:** a **deterministic date-resolution pass** that computes the source's calendar period from the document date **before** Stage 2 and hands the matcher a pre-normalised `sourcePeriod`. New capability, not a prompt tweak.
 
-- No new classification values; frame mismatch maps onto existing four-value enum (most often `partially_confirmed`, sometimes `conflicting`).
-- No new output fields; mismatch reported in existing `explanation` field.
-- No hard-coded synonym lookups; LLM judges, consistent with existing numeric-equivalence approach.
-- Approximate qualifiers (“approximately”, “roughly”, “around”) widen numeric tolerance but **not** frame tolerance.
-
-**Dependencies:** None. Independent of R5 sequence — can be picked up any time after R5.4 ships, or earlier if R5 slips.
-
-**Test fixtures when specced:**
-
-- Frame-mismatch draft against Shopify memo: “$132mm in revenue” → expect `partially_confirmed` with GMV-vs-revenue named.
-- Period-mismatch draft mixing 2010 customer count with 2019 growth rate → expect `partially_confirmed` with period mismatch named.
-- Regression: founding-draft must return identical verdicts to current pipeline.
+**Priority:** M. Independent of R6.
 
 ---
 
@@ -409,7 +400,6 @@ A small interim spec (R6.4b candidate) may surface publicationState in the exist
 Parked pending dogfooding evidence. Bundle:
 
 - **Cosmetic:** `[EDITORIAL_REVIEW] starting` log prints `visibility: null` before `normalize*` — stale pre-normalisation values (`lib/qc/editorial-compliance-reviewer.mjs`).
-- **Cosmetic:** `qcCard.pipelineVersion: "v3"` appears on v4 runs (misleading label in `stage7-assemble-card.mjs`).
 - **v3 retirement:** decommission v3 route and dual-path editorial/compliance code once dogfooding evidence accumulates (target: 15–25 production traces, no canary fires; see Architectural debt → R3.1).
 - **Legacy timestamp formatting (frontend):** `DraftOutputPanel.jsx`, `WritingBadge.jsx`, and `DraftContextPanel.jsx` still use `toLocaleString` for timestamp display (legacy Writing/Quality surfaces). Intentionally not touched in R5.5 — surfaces may be unreachable post-R4.1 and could be removed with dead code. **R4.2 scoping:** confirm reachability; either migrate to `formatRelativeTime` / `formatAbsoluteTime` (see frontend `docs/FRONTEND_CONVENTIONS.md`) or delete with the unreachable panels.
 
@@ -430,10 +420,10 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 
 ## Open product backlog (prioritised)
 
-Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority. Full spec for **R2.7.2**: see **R2.7.2 — Stage 2 semantic frame matching** above.
+Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
 
 1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31.
-2. **Stage 2 semantic frame matching (R2.7.2)** — extend Stage 2 prompt to flag period / scope / segment / basis / metric-definition mismatches as `partially_confirmed` or `conflicting`, not `confirmed`. Prompt-only change. Complements **R2.7.1**.
+2. **Relative-source-period resolution (R2.7.2.1)** — deterministic date-resolution pass pre-Stage 2; see **R2.7.2.1** above and backlog **B17**.
 3. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
 4. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
 5. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
@@ -489,6 +479,8 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | R6.3 (Hide Editorial on conflict) | Shipped via `r6.3-principle-based-suppression` |
 | R6.4 (Public version compliance, chapter) | Shipped via `r6.4a.3-restricted-rename`, `v8.53.0-r6.4b-publication-state-ui`, `r6.4c-regulatory-rule-scope` |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
+| Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
+| qcCard.pipelineVersion label | `fix-pipelineversion-label` |
 
 ---
 
@@ -506,7 +498,7 @@ Two related issues observed across multiple R6.2a / R6.2a.1 test runs:
 
 ### R2.7.1 — Stage 2 conflict vs partial
 
-**SHIPPED 2026-05-28** (`r2.7.1-conflict-partial-calibration`). Voice/framing no longer classified as conflict; entity replacement vs omission distinguished; no-claim statements cannot conflict. **R2.7.2** (semantic frame matching) remains complementary and separate — when R2.7.2 is specced, check that R2.7.1's voice/entity guidance does not fight the new frame-mismatch guidance in the same prompt.
+**SHIPPED 2026-05-28** (`r2.7.1-conflict-partial-calibration`). Voice/framing no longer classified as conflict; entity replacement vs omission distinguished; no-claim statements cannot conflict. **Watch remains OPEN** for the next 10–20 production traces — conflict/partial routing on relative or absent-fact edge cases. **R2.7.2 did not modify this routing** (period work is a separate dimension; frame-mismatch guidance coexists with R2.7.1 voice/entity rules in `stage2_v4.md`). **R2.7.2** shipped separately (`r2.7.2-frame-matching`); relative-source-period gap descoped to **R2.7.2.1**.
 
 ### R4.3 — Public version prompt quality (folded into R6.4)
 
