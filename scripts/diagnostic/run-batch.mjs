@@ -17,6 +17,7 @@ import {
 } from "./lib/fixtures.mjs";
 import { langfuseTraceUrl } from "./lib/langfuse-url.mjs";
 import { RUNS_DIR } from "./lib/paths.mjs";
+import { startPipelineLogCapture } from "./lib/pipeline-log-capture.mjs";
 import { copySourcesToRunDir, loadPipelineSources } from "./lib/sources.mjs";
 import { countVerdictMix, formatVerdictMix, statementCount } from "./lib/verdict-mix.mjs";
 
@@ -140,6 +141,7 @@ async function runOneFixture(fixture, runRoot) {
   let pipelineResult = null;
   let error = null;
   let stack = null;
+  let pipelineLog = "";
 
   try {
     const pipelineSources = await loadPipelineSources(sourceFiles);
@@ -149,7 +151,13 @@ async function runOneFixture(fixture, runRoot) {
       sourceLabels: pipelineSources.map((s) => s.label),
       draftCharCount: draft.length,
     });
-    pipelineResult = await runPipelineV4(draft, pipelineSources, options);
+    const logCapture = startPipelineLogCapture();
+    try {
+      pipelineResult = await runPipelineV4(draft, pipelineSources, options);
+    } finally {
+      logCapture.stop();
+      pipelineLog = logCapture.getText();
+    }
     updateTraceMetadata(traceId, { statementCount: statementCount(pipelineResult) });
   } catch (err) {
     error = err?.message ? String(err.message) : String(err);
@@ -164,6 +172,7 @@ async function runOneFixture(fixture, runRoot) {
   const stmtCount = pipelineResult ? statementCount(pipelineResult) : 0;
   const traceUrl = langfuseTraceUrl(traceId);
 
+  await writeFile(path.join(outDir, "pipeline.log"), pipelineLog, "utf8");
   await writeFile(path.join(outDir, "draft.txt"), draft, "utf8");
   await copySourcesToRunDir(path.join(outDir, "sources"), sourceFiles);
 
