@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-05-31 (R2.7.2 frame matching shipped; pipelineVersion label fix; R2.7.2.1 logged)
+Last updated: 2026-06-01 (R2.7.2 ship date corrected; diagnostic re-run 2026-06-01-122541; near-term review-quality work-streams logged)
 
 ---
 
@@ -18,6 +18,7 @@ Last updated: 2026-05-31 (R2.7.2 frame matching shipped; pipelineVersion label f
 - **Pipeline:** v4 in production.
 - **Cost / call volume:** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
 - **Current tags:** frontend `v8.53.0-r6.4b-publication-state-ui`; backend `r6.3-principle-based-suppression`.
+- **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
 ---
@@ -132,9 +133,9 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 
 **R6.4d — Sensitivity-tier calibration** (closed 2026-05-31, no ship). Diagnostic evidence was hypothetical, not observed. Real PG behaviour (F02 IRR/MOIC suppression) confirms current architecture is correct: if content is in a published source, suppression is appropriate by definition (the source has been through compliance review). User can manually override per source via R6.4b pill if stricter handling needed. No new code; closed as non-issue.
 
-### R2.7.2 — Stage 2 semantic frame matching (closed 2026-05-31)
+### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
 
-**R2.7.2 — Stage 2 semantic frame matching.** Shipped (`r2.7.2-frame-matching`). Distinguishes numeric equivalence from semantic frame equivalence across metric, basis/scope, and period dimensions. Metric and basis land reliably. **PERIOD is scoped to EXPLICIT-vs-EXPLICIT only:** a deterministic backstop (`applyPeriodGateBackstop`) downgrades `confirmed`→`conflicting` when both statement and source periods normalise to recognised tokens (Q[1-4] YYYY or bare YYYY) and differ. **LIMITATION:** when the source states the period as a **RELATIVE** reference ('over the same period', 'today'), gpt-4o resolves it unreliably at temp 0 — it resolves to whichever period confirms the match — across both prose and structured-field prompt mechanisms. Relative-source-period resolution descoped to **R2.7.2.1**. Mechanism retained: Stage-2-internal structured `periodAssessment` field + deterministic backstop. Verified: explicit mismatch (draft 2018 vs source 2019) → conflicting; explicit match (2019) → supported; metric mismatch (revenue vs GMV) → conflicting; paraphrase regression → confirmed.
+**R2.7.2 — Stage 2 semantic frame matching.** Shipped (`r2.7.2-frame-matching`; production sign-off **2026-06-01** after explicit-vs-explicit gating re-test). Distinguishes numeric equivalence from semantic frame equivalence across metric, basis/scope, and period dimensions. Metric and basis land reliably. **PERIOD is scoped to EXPLICIT-vs-EXPLICIT only:** a deterministic backstop (`applyPeriodGateBackstop`) downgrades `confirmed`→`conflicting` when both statement and source periods normalise to recognised tokens (Q[1-4] YYYY or bare YYYY) and differ. **LIMITATION:** when the source states the period as a **RELATIVE** reference ('over the same period', 'today'), gpt-4o resolves it unreliably at temp 0 — it resolves to whichever period confirms the match — across both prose and structured-field prompt mechanisms. Relative-source-period resolution descoped to **R2.7.2.1**. Mechanism retained: Stage-2-internal structured `periodAssessment` field + deterministic backstop. Verified: explicit mismatch (draft 2018 vs source 2019) → conflicting; explicit match (2019) → supported; metric mismatch (revenue vs GMV) → conflicting; paraphrase regression → confirmed.
 
 **fix-pipelineversion-label** (same session): `qcCard.pipelineVersion` in shared `stage7-assemble-card.mjs` now stamps from `assemblyContext.pipelineRoute` instead of hardcoding `"v3"`, aligning per-card label with handler `meta.pipelineVersion` on v4 runs.
 
@@ -231,7 +232,7 @@ Sequence locked in 2026-05-17 planning session (in delivery order):
 
 **Objective:** Lift the quality, reliability, and insight of Review output. This is the moat. Pure-UI sprints have diminishing returns until Review output catches up.
 
-**Evidence base:** Diagnostic batch runs `2026-05-26-205208` and `2026-05-26-212900` (see `diagnostic_batch_drafts_and_expected_outcomes.md` and per-fixture `runs/` output).
+**Evidence base:** Diagnostic batch runs `2026-05-26-205208` and `2026-05-26-212900` (see `docs/diagnostic_findings.md` and per-fixture `runs/` output); re-run `2026-06-01-122541` (see `docs/diagnostic_rerun_findings_2026-06-01.md`).
 
 Items in scope (order indicative, not locked):
 
@@ -242,10 +243,10 @@ Items in scope (order indicative, not locked):
 | **R6.3** | **Hide Editorial on conflict** — principle-based suppression of duplicative Editorial concerns when Evidence is conflicting | **SHIPPED 2026-05-31** | `r6.3-principle-based-suppression` |
 | **R6.4** | **Public version compliance** — R4.3 shipped wiring; sub-items R6.4a/b shipped 2026-05-30; R6.4c shipped 2026-05-31; R6.4d closed as non-issue | **SHIPPED — chapter closed 2026-05-31** | See Recently shipped → R6.4 |
 | **R6.5** | **House style framework** — Layer 1 (universal writing quality) + Layer 2 (client default) + structured style guide input to the editorial reviewer | **SHIPPED 2026-05-27** | `r6.5.6-defined-term-refinement` — Framework + 5 deterministic backstops. See Recently shipped. |
-| **R6.6** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary | Medium | Diagnostic (F04, F12, F18) |
+| **R6.6** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary; **expanded 2026-06-01:** document-type-aware voice/register (editorial norms must relax for social formats — LinkedIn over-firing, fixture 12). See near-term work-stream **R6.6 — DOCUMENT-TYPE-AWARE VOICE/REGISTER**. | Medium | Diagnostic (F04, F12, F18); comments review 2026-06-01 |
 | **R6.7** | **Forward-looking statement review** — distinguish forward-looking claims; hedging, plausibility, visibility-calibration, alignment with stated risks | Medium | Diagnostic (F02, F03, F05, F08, F09) |
-| **R6.8** | **Cross-source verdict aggregation** — whether to elevate conflict signals to Conflicting verdicts when supersession is implied (`hasConflict` vs aggregator output) | Medium | Diagnostic (F18) |
-| **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20) |
+| **R6.8** | **Cross-source display semantics** — cross-source detection now **works** (F18 resolved — 0→3 conflicting, correctly). Open question is **display semantics only:** statements supported-by-source-A but contradicted-by-source-B currently read 'supported + conflict flag' (F18 S3/4/5/7). Decision needed: keep supported-with-flag, or escalate to partial/conflicting. Risk: a reviewer skimming green verdicts may miss the flag on a material discrepancy. Ben's lean: escalate — but **decide only after** reviewing how prominently the conflict flag surfaces in the UI. Reframed from 'fix aggregation' to 'decide display'. | Medium | Diagnostic (F18); re-run 2026-06-01 |
+| **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. **Confirmed by 2026-06-01 diagnostic** as still scoped to functional-element / non-claim noise: recommendations ('We recommend approval'), salutations, sentiment lines return `not_supported` as if failed verification. Unchanged from 26-May; not regressed. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20) |
 | **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
 
 **R6.2 sub-items (commentary quality):**
@@ -346,7 +347,7 @@ Rules to add:
 
 ## R2.7.2 — Stage 2 semantic frame matching
 
-**Status:** **SHIPPED 2026-05-31** — `r2.7.2-frame-matching`. See **Recently shipped → R2.7.2** for full scope, period limitation, and verification notes.
+**Status:** **SHIPPED 2026-06-01** — `r2.7.2-frame-matching`. See **Recently shipped → R2.7.2** for full scope, period limitation, and verification notes.
 
 ---
 
@@ -361,6 +362,22 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 **Proposed mechanism:** a **deterministic date-resolution pass** that computes the source's calendar period from the document date **before** Stage 2 and hands the matcher a pre-normalised `sourcePeriod`. New capability, not a prompt tweak.
 
 **Priority:** M. Independent of R6.
+
+**PARKED (practical blocker, 2026-06-01 scoping).** Diagnostic confirmed no structured source publication date exists anywhere in the upload→Stage1→Stage2 path; only `publicationState` survives to Stage 2 and is dropped before matching. The deterministic date-resolution pass would require threading a new date field through the pipeline PLUS an upstream date-extraction step. Extraction is reliable only for press-release datelines; GP reports / IC docs carry dates unstructured and often multiple-per-document, where extraction would resolve the wrong date — re-introducing the inference unreliability upstream. Decision: stay parked at M; explicit-vs-explicit gating (shipped in R2.7.2) covers the tractable case. Reactivate only if relative-source-period mismatches prove common in real reviewer drafts.
+
+---
+
+## Near-term — Review output (2026-06-01 diagnostic + comments review)
+
+**Recommended order:** commentary calibration → editorial rule bug-fix pass → schema-fallback (below) → then R6.6 / source-public-state / R7. Front-loads cheap, broad, low-risk wins; defers feature-sized work.
+
+| Item | Summary | Priority |
+|------|---------|----------|
+| **COMMENTARY CALIBRATION (Stage 5 / reviewer-prompt)** | **Status: LOGGED, recommended first.** Principle-based prose calibration of evidence/editorial/compliance commentary. Anchor issue: the 'excerpt' meta-phrasing (53 instances in batch 2026-06-01) — commentary refers to internal tool plumbing ('as stated in the excerpt') and redundantly narrates the source AND the excerpt (which is a fragment of the source). Principle: describe the source's relationship to the statement ONCE; never refer to the evidence-selection mechanism or 'the excerpt'. Also: simplify technical register (voice_consistency phrased as active/passive not abstract terms; 'causal relationship/causation' → plainer wording; 'uncertainty qualifier' → 'hedging language'); remove preachy phrasing ('which is not appropriate for…'); cut verbosity where the Direction repeats the flagged phrase verbatim (state the change concisely, exclude the quoted statement); abstract marketing_language meta-clauses ('in the same or adjacent sentence' → 'in the immediate context' or omit); standardise the 'leading' flag to a short line ('"leading" is an unsubstantiated superlative; remove or substantiate'). **GUARDRAIL:** PRESERVE the depth and framing-commentary that works (e.g. evidence notes that observe framing like 'an unusual demographic concentration'; narrative_coherence and materiality substance). Reduce register/verbosity WITHOUT flattening substantive editorial observation. Prompt-only; principle-based, not per-example patching. | **H** |
+| **EDITORIAL RULE BUG-FIX PASS** | **Status: LOGGED, recommended second.** DIAGNOSE-FIRST: these are wrong/un-actionable outputs, not wording. Items: (1) `date_format` directs a correct date '19 January 2026' to be changed to a wrong format — rule's 'required format' is inverted/wrong; (2) `thousand_separator` flags the SOURCE/excerpt's comma style and directs a change to the statement — rule scoping bug; (3) `number_spelling` mis-targets ('5.4 percent' — numeral is fine; issue is 'percent' vs '%'); (4) `internal_plausibility` flags a deliberately-rounded figure (17% vs 17.1%) as implausible and garbles 'compound annual rate'/'growth rate' — over-firing on rounding; (5) `structural_integrity` false-positives a normal appositive sentence as a fragment; (6) `passive_voice_overuse` generates an incoherent rewrite Direction. PLUS minor scoping note: `materiality` fires 'no named benchmark' on 'largest in Meridian's history' where the basis IS stated — the legitimate half is 'add the figure'; possible miscategorisation (materiality vs comparative-claim). PLUS: `forward_looking_statement_without_qualifier` should recognise existing hedging ('we expect' IS the hedge) and not demand a second qualifier. Several are structurally checkable → candidates for `STYLE_RULE_DETERMINISTIC_FILTERS` backstops. Diagnose actual rule logic before fixing. | **H** |
+| **EDITORIAL SCHEMA-FALLBACK (silent failure)** | **Status: SCHEDULED NEXT (before R7).** The editorial reviewer applies a silent 'clean fallback' when its structured output fails schema validation twice, emitting zero concerns indistinguishably from a genuine clean pass (5 events/4 fixtures in batch 2026-06-01-122541; F14 ×2). Two parts: (a) **Observability** — mark a fallback distinctly from a real clean pass so the reviewer is not given a false 'clean' signal (primary concern; silent failure is unacceptable on an audit-safe product regardless of rate); (b) **Reliability** — diagnose why validation fails twice (F14 thesis-only clustering suggests a statement-type pattern); read malformed model output in `pipeline.log` first. Diagnose-first. | **H** |
+| **R6.6 — DOCUMENT-TYPE-AWARE VOICE/REGISTER (expand existing R6.6 scope)** | Editorial voice/register rules apply reporting-commentary norms to ALL document types, including LinkedIn posts — flagging 'Excited to see' (legitimate LinkedIn register) and third-person company description as wrong-voice/wrong-register. Rules must know the document type and relax voice/register enforcement for social formats. Folds the comments-review LinkedIn over-firing (fixture 12) into R6.6. | **M** |
+| **SOURCE-PUBLIC-STATE AWARENESS (one capability, three rules)** | Compliance must reason whether a figure/name/claim already appears in an already-public source, and suppress accordingly. Serves: (i) `precise_confidential_detail_in_public_version` (currently 'machine-guns' any figure, e.g. EUR 1.2bn, and fires on content from a published PR — F02.S0); (ii) `named_individual_attribution_in_public_content` (consent-check should survive for genuinely-unsourced names but suppress when the named individual appears in a public-state source — Ben confirmed); (iii) the broad public-source gap from the diagnostic. This is the top remaining compliance accuracy item; hits documents first PG users will recognise as their own cleared output. | **H** (within R6 compliance) |
 
 ---
 
@@ -422,16 +439,18 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
 
-1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31.
-2. **Relative-source-period resolution (R2.7.2.1)** — deterministic date-resolution pass pre-Stage 2; see **R2.7.2.1** above and backlog **B17**.
-3. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
-4. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
-5. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
-6. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
-7. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
-8. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
-9. **Document-type appropriateness (R6.6)** — Medium. **Forward-looking statement review (R6.7)** — Medium. **Cross-source verdict aggregation (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — Medium. **Source quality audit (R6.10)** — Low.
-10. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
+1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
+2. **EDITORIAL SCHEMA-FALLBACK (silent failure)** — **SCHEDULED NEXT (before R7).** Observability + reliability; see **Near-term — Review output** table.
+3. **COMMENTARY CALIBRATION** → **EDITORIAL RULE BUG-FIX PASS** → **SOURCE-PUBLIC-STATE AWARENESS** / **R6.6** — recommended sequence before R7; see **Near-term — Review output**.
+4. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
+5. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
+6. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
+7. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
+8. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
+9. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
+10. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
+11. **Document-type appropriateness (R6.6)** — Medium; expanded for document-type-aware voice/register (2026-06-01). **Forward-looking statement review (R6.7)** — Medium. **Cross-source display semantics (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — shipped; residual functional-element noise confirmed 2026-06-01. **Source quality audit (R6.10)** — Low.
+12. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
 
     **Scope when picked up:**
     - Inventory all tool-output text surfaces (~7 known: editorial concerns, compliance concerns, evidence summary, Stage 5 commentary, Quality Review Summary, Reviewer Assessment, sign-off labels).
@@ -443,14 +462,14 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
     **Connection to existing work:** `AI_OPERATING_MANUAL.md` already includes a "QC Output Language Standard" that articulates principles for tool prose but is not rigorously enforced via prompts or filters. This item is partly about strengthening that standard's enforcement, partly about extending it to cover house-style rules the standard doesn't currently mention.
 
     **Priority:** High-leverage (touches every Review output) but not urgent — symptoms are addressable piecemeal as observed. Scope as R6.2b when ready. Logged 2026-05-30 from a one-off observation.
-11. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
-12. **E2 deterministic reimplementation** — open.
-13. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
-14. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
-15. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
-16. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
-17. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
-18. **Short-draft visual balance.** On very short drafts (e.g. a single 13-word sentence), Review output volume is disproportionate to input — Reviewer Assessment prose, Quality Review Summary, and fixed-format QC cards combine to a >15:1 output-to-input ratio. Reviewer Assessment is the largest fixed-size contributor and its length does not scale with draft length.
+13. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
+14. **E2 deterministic reimplementation** — open.
+15. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
+16. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
+17. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
+18. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+19. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
+20. **Short-draft visual balance.** On very short drafts (e.g. a single 13-word sentence), Review output volume is disproportionate to input — Reviewer Assessment prose, Quality Review Summary, and fixed-format QC cards combine to a >15:1 output-to-input ratio. Reviewer Assessment is the largest fixed-size contributor and its length does not scale with draft length.
 
     Possible directions when picked up:
     - Length-scaled Reviewer Assessment: synthesise-review generates prose proportional to draft length (~30 words for short drafts scaling to ~150 words for long ones).
