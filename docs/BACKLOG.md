@@ -76,6 +76,7 @@ The backlog is split into four tables by character of work:
 | B22 | Commentary calibration work-stream — see ROADMAP. Anchor: 'excerpt' meta-phrasing (B19) + technical/preachy/verbose register across rules. | 2026-06-01 comments review | H | MVP | |
 | B23 | Editorial rule bug-fix pass — see ROADMAP. Six bugs (`date_format`, `thousand_separator`, `number_spelling`, `internal_plausibility`, `structural_integrity`, `passive_voice` direction) + materiality scoping + forward-looking hedging recognition. Diagnose-first. | 2026-06-01 comments review | H | MVP | |
 | B24 | Source-public-state awareness — see ROADMAP. One capability serving `precise_confidential_detail`, `named_individual_attribution`, and the public-source compliance gap. | 2026-06-01 diagnostic + comments review | H | MVP | |
+| B25 | Verdict-label consistency across surfaces. (1) Export (`api/export.js` `normalizeVerdict`) still reads "Supported"/"Not supported"; align to card vocabulary (Confirmed / Partially confirmed / Conflicting / No support) so the filed report matches the screen. (2) Correct the unrendered evidence verdict line in `displayVerdictLabels.js`: "Conflicting sources" → "Conflicts with sources" — the conflict verdict means the statement contradicts the source, not that sources disagree with each other. Display-only; no verdict enum or logic changes. | F5 implementation (2026-06-02) | M | MVP | Card / verdict-line / export must agree. Anchor on the shared `displayVerdictLabels.js` module. Audit-safety: screen and report must not disagree. |
 
 ---
 
