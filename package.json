@@ -19,7 +19,8 @@
     "audit:inits": "node tools/audit-statement-analysis-inits.mjs --out init-audit.json",
     "qc:diag:prep": "node scripts/diagnostic/prep-extract.mjs",
     "qc:diag:run": "node scripts/diagnostic/run-batch.mjs",
-    "diagnostic:style-guide": "node scripts/diagnostic/run-style-guide.mjs"
+    "diagnostic:style-guide": "node scripts/diagnostic/run-style-guide.mjs",
+    "mvp:summary": "node scripts/regen-mvp-summary.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.93.0",
