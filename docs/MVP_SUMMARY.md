@@ -13,7 +13,7 @@
 >
 > Last generated: 2026-06-02
 
-## MVP-designated items (16 total)
+## MVP-designated items (17 total)
 
 | ID | Item | Source | Priority |
 |----|------|--------|----------|
@@ -28,6 +28,7 @@
 | B22 | Commentary calibration work-stream — see ROADMAP. Anchor: 'excerpt' meta-phrasing (B19) + technical/preachy/verbose register across rules. | BACKLOG: Backend/Pipeline | H |
 | B23 | Editorial rule bug-fix pass — see ROADMAP. Six bugs (`date_format`, `thousand_separator`, `number_spelling`, `internal_plausibility`, `structural_integrity`, `passive_voice` direction) + materiality scoping + forward-looking hedging recognition. Diagnose-first. | BACKLOG: Backend/Pipeline | H |
 | B24 | Source-public-state awareness — see ROADMAP. One capability serving `precise_confidential_detail`, `named_individual_attribution`, and the public-source compliance gap. | BACKLOG: Backend/Pipeline | H |
+| B25 | Verdict-label consistency across surfaces. (1) Export (`api/export.js` `normalizeVerdict`) still reads "Supported"/"Not supported"; align to card vocabulary (Confirmed / Partially confirmed / Conflicting / No support) so the filed report matches the screen. (2) Correct the unrendered evidence verdict line in `displayVerdictLabels.js`: "Conflicting sources" → "Conflicts with sources" — the conflict verdict means the statement contradicts the source, not that sources disagree with each other. Display-only; no verdict enum or logic changes. | BACKLOG: Backend/Pipeline | M |
 | P6 | Business backlog gap | BACKLOG: Process & governance | M |
 | Pr8 | Reviewer Assessment reframe — turn the assessment from restating the QC cards into substantive senior-editor feedback on the draft. | BACKLOG: Product | H |
 | R5.1.2 | Confidential-detail rule covers unlabelled return multiples — expand `precise_confidential_detail_in_public_version` description to call out unlabelled return figures (e.g. “3.2x net of fees”, “delivered 4.5x”). LLM currently fires once per sentence and picks the most unambiguous metric (EV/EBITDA), missing MOIC-style figures. Promoted from R4.3 watch — pattern confirmed across two test batches. | ROADMAP | Planned |
