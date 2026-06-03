@@ -40,6 +40,15 @@ function isConcerned(verdict) {
   return verdict === "soft_concern" || verdict === "hard_concern";
 }
 
+function isEditorialExportConcerned(verdict) {
+  return (
+    verdict === "soft_concern" ||
+    verdict === "hard_concern" ||
+    verdict === "concern" ||
+    verdict === "not_reviewed"
+  );
+}
+
 function formatSourceFileType(rawType) {
   const t = String(rawType || "").trim().toLowerCase();
   if (!t) return "Unknown";
@@ -120,7 +129,8 @@ function buildReviewData(qcResult) {
       ? qcCard.complianceNote
       : (complianceFallback || null);
     const reviewerVerdict = qcCard.reviewerVerdict == null ? null : String(qcCard.reviewerVerdict).trim() || null;
-    const editorialFlag = isConcerned(qcCard.editorialVerdict) || editorialNote != null;
+    const editorialFlag =
+      isEditorialExportConcerned(qcCard.editorialVerdict) || editorialNote != null;
     const complianceFlag = isConcerned(qcCard.complianceVerdict) || complianceNote != null;
     return {
       statementText,
