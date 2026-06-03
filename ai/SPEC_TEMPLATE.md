@@ -4,10 +4,12 @@
 Write 1–3 short sentences explaining what this spec is intended to do.
 
 ## Commit Message
-A?.? — short description
+R?.? — short description
+
+Ref format and tag convention: see ai/AI_OPERATING_MANUAL.md.
 
 ## Spec
-SPEC ID: A?.?
+SPEC ID: R?.?
 
 OBJECTIVE
 ...

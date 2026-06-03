@@ -72,7 +72,6 @@ The backlog is split into four tables by character of work:
 | B18 | Stage 5 evidence commentary editorialises rather than describes (e.g. 'This is a significant discrepancy'). Calibrate Stage 5 prompt toward neutral description per QC Output Language Standard. **Watch item** — pending next diagnostic batch after `commentary-calibration` (2026-06-03); 0 editorialising tone markers in 2026-06-01 batch. Close if next batch also clean. | R2.7.2 Run 1 testing | M | Post-MVP | |
 | B20 | UI Required version = Complete reaches the handler as `visibility:null`. Visibility selection not propagating frontend → QC handler on the ad-hoc analyse-statements path. Means R4.3 visibility-dependent rules are not exercised in manual testing. Investigate frontend payload vs handler field read. | R2.7.2 testing | M | MVP | |
 | B21 | Editorial schema-fallback silent failure — see ROADMAP (SCHEDULED NEXT, before R7). Observability + reliability. | 2026-06-01 diagnostic | H | MVP | |
-| B23 | Editorial rule bug-fix pass — see ROADMAP. Six bugs (`date_format`, `thousand_separator`, `number_spelling`, `internal_plausibility`, `structural_integrity`, `passive_voice` direction) + materiality scoping + forward-looking hedging recognition. Diagnose-first. | 2026-06-01 comments review | H | MVP | |
 | B24 | Source-public-state awareness — see ROADMAP. One capability serving `precise_confidential_detail`, `named_individual_attribution`, and the public-source compliance gap. | 2026-06-01 diagnostic + comments review | H | MVP | |
 | B25 | Verdict-label consistency across surfaces. (1) Export (`api/export.js` `normalizeVerdict`) still reads "Supported"/"Not supported"; align to card vocabulary (Confirmed / Partially confirmed / Conflicting / No support) so the filed report matches the screen. (2) Correct the unrendered evidence verdict line in `displayVerdictLabels.js`: "Conflicting sources" → "Conflicts with sources" — the conflict verdict means the statement contradicts the source, not that sources disagree with each other. Display-only; no verdict enum or logic changes. | F5 implementation (2026-06-02) | M | MVP | Card / verdict-line / export must agree. Anchor on the shared `displayVerdictLabels.js` module. Audit-safety: screen and report must not disagree. |
 
@@ -102,6 +101,7 @@ The backlog is split into four tables by character of work:
 | Pr6 | Fidelity log traceability (add draft identifier) | userMemories | L | Post-MVP | Pre-existing. |
 | Pr7 | R6.6 document-type-aware voice/register — see ROADMAP. Editorial voice/register rules over-fire on LinkedIn posts (fixture 12). | 2026-06-01 comments review | M | Post-MVP | |
 | Pr8 | Reviewer Assessment reframe — turn the assessment from restating the QC cards into substantive senior-editor feedback on the draft. | 2026-06-02 MVP review | H | MVP | Deepens Pr1 (closed). Senior-editor-quality output; likely lands within R6 Review Quality umbrella — cross-ref R6.1 / R6.2. |
+| W1  | **internal_plausibility** — statement-vs-source rounding may still be attempted by the model; scope wording shipped (R6.2e); user-visible suppression often via fidelity gate (B14), not model obedience. Review on next diagnostic batch; deterministic backstop only if recurrence escapes fidelity. See ROADMAP **Watch items → internal_plausibility**. | R6.2e verification | -- | MVP | Watch only |
 
 ---
 
@@ -127,6 +127,7 @@ The backlog is split into four tables by character of work:
 | F4  | Enter-to-execute on Assess module's primary action button | shipped (small frontend change, tag not recorded) |
 | B19 | Stage 5 evidence commentary uses meta phrasing referencing the tool's own plumbing ('as stated in the excerpt', 'the excerpt directly supports this'). Also redundant (narrates source AND excerpt). | `commentary-calibration` — v4 `stage5_v2.md` |
 | B22 | Commentary calibration work-stream — excerpt meta-phrasing (B19) + technical/preachy/verbose register across reviewer concern prose. | `commentary-calibration` — see ROADMAP Near-term — Review output |
+| B23 | Editorial rule bug-fix pass — editorial/style (`date_format`, `percentage_notation`, `number_spelling`, `internal_plausibility`, `passive_voice_overuse`) + compliance (`comparative_claim_without_basis`, `forward_looking_statement_without_qualifier`). Diagnose-first then R6.2e/R6.2f. | `r6.2e-editorial-rule-bugfix` + `r6.2f-compliance-rule-bugfix` — see ROADMAP **EDITORIAL RULE BUG-FIX PASS** |
 
 ---
 

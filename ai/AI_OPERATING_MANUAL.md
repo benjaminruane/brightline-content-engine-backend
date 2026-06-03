@@ -36,6 +36,37 @@ Brightline Content Engine is an evidence-first, deterministic, audit-safe review
 - Keep diffs minimal
 - Be operational and concrete
 
+## Spec, commit, and tag naming convention
+
+Every unit of work has ONE reference (the "ref") that is identical everywhere it appears.
+
+### REF FORMAT
+
+- R-series for all post-rebuild work: R<major>.<minor>[.<patch>][<letter>] (e.g. R6.2, R6.2e, R2.7.2, R2.7.2.1).
+- The ref is assigned when the spec is written and never changes.
+
+### WHERE THE REF APPEARS (must match exactly)
+
+1. **SPEC ID** — `SPEC ID: R6.2e`
+2. **Commit message** — `R6.2e — <short description>` (ref, space, em-dash, space, lower-case description)
+3. **Git tag** — `r6.2e-<short-descriptor>` (lower-case ref, hyphen, hyphenated descriptor, no spaces)
+4. **docs/ROADMAP.md** — status line references R6.2e
+5. **docs/BACKLOG.md** — closing/logging row references R6.2e
+
+### TAG RULES
+
+- Backend and frontend tag in their own repos.
+- Tag the spec ref, not a version number, for backend feature work. (v8.x version tags are legacy from the qc-rebuild sprint, originally `v8.x-qc-rebuild-[descriptor]` per the rebuild architecture doc; not continued for new R-series work.)
+- One tag per shipped spec. Split specs (e.g. R6.2e / R6.2f) tag separately to preserve regression isolation.
+
+### NON-R WORK
+
+- Named work-streams without an R-ref (e.g. `commentary-calibration`) tag by their name, lower-case, hyphenated. Use sparingly; prefer assigning an R-ref.
+
+### THE INVARIANT
+
+- The point is traceability: any tag leads back through commit → SPEC ID → ROADMAP/BACKLOG to exactly what changed and why. If you can trace it, the prefix letter does not matter.
+
 ## Verification-by-grep discipline
 
 When a previous spec produced incorrect output that was reported as correct by the implementer, the follow-up spec must require explicit verification with verbatim output of the verification results.
