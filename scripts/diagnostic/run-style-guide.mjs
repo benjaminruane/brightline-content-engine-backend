@@ -5,18 +5,22 @@
 
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import editorialRules from "../../lib/rulebook/editorialRules.js";
-import {
+import { loadLocalEnvFiles } from "./lib/env.mjs";
+import { FIXTURES_DIR } from "./lib/paths.mjs";
+
+loadLocalEnvFiles();
+process.env.BRIGHTLINE_EDITORIAL_REVIEW = process.env.BRIGHTLINE_EDITORIAL_REVIEW || "1";
+
+const { default: editorialRules } = await import("../../lib/rulebook/editorialRules.js");
+const {
   getOutputTypeLabel,
   normalizeOutputType,
   normalizeVisibility,
   VISIBILITY,
-} from "../../lib/output-intent.js";
-import { getEventTypeLabel, normalizeEventType } from "../../lib/event-type.js";
-import { runEditorialStyleReview } from "../../lib/qc/editorial-compliance-reviewer.mjs";
-import { flushObservability } from "../../lib/observability.js";
-import { loadLocalEnvFiles } from "./lib/env.mjs";
-import { FIXTURES_DIR } from "./lib/paths.mjs";
+} = await import("../../lib/output-intent.js");
+const { normalizeEventType } = await import("../../lib/event-type.js");
+const { runEditorialStyleReview } = await import("../../lib/qc/editorial-compliance-reviewer.mjs");
+const { flushObservability } = await import("../../lib/observability.js");
 
 const STYLE_FIXTURES_DIR = path.join(FIXTURES_DIR, "style-guide-rules");
 
@@ -148,9 +152,6 @@ async function runFixture(fixture) {
 }
 
 async function main() {
-  loadLocalEnvFiles();
-  process.env.BRIGHTLINE_EDITORIAL_REVIEW = process.env.BRIGHTLINE_EDITORIAL_REVIEW || "1";
-
   const fixtures = await loadStyleGuideFixtures();
   if (fixtures.length === 0) {
     console.error("[style-guide] no fixtures in", STYLE_FIXTURES_DIR);

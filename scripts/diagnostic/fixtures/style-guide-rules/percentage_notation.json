@@ -1,0 +1,16 @@
+{
+  "id": "sg_percentage_notation",
+  "label": "percentage_notation",
+  "ruleId": "percentage_notation",
+  "sources": ["style_guide_stub.txt"],
+  "draft": "Net initial yield is 5.4 percent.\n\nNet initial yield is 5.4%.",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "cases": {
+    "violationContains": "5.4 percent",
+    "compliantContains": "5.4%"
+  }
+}

@@ -93,7 +93,7 @@ The backend produces the **qcCard** JSON contract. The frontend renders badges, 
 
 **Concern list shape (Editorial and Compliance):** Each item includes at least `concernCode`, `note`, and `category`. Optional: `suggestedDirection`, `suggestedRewrite`, `concernText`. On v4, optional `span: { startChar, endChar, source }` when R5.1 derivation succeeds.
 
-**2026-06-01 diagnostic + comments review:** A class of **rule bugs** (wrong or un-actionable outputs — inverted `date_format`, `thousand_separator` scoping, and related style-guide failures) and **commentary-register issues** (Stage 5 / concern prose meta-phrasing such as references to "the excerpt") are now scheduled in `docs/ROADMAP.md` under **Near-term — Review output** (**COMMENTARY CALIBRATION**, **EDITORIAL RULE BUG-FIX PASS**, **EDITORIAL SCHEMA-FALLBACK**, **SOURCE-PUBLIC-STATE AWARENESS**). These are prompt/rulebook calibration items, not changes to the three-signal contract above.
+**2026-06-01 diagnostic + comments review:** A class of **rule bugs** (wrong or un-actionable outputs — inverted `date_format`, `thousand_separator` scoping, and related style-guide failures) and **commentary-register issues** (Stage 5 / concern prose meta-phrasing such as references to "the excerpt") are tracked in `docs/ROADMAP.md` under **Near-term — Review output**. **COMMENTARY CALIBRATION** shipped 2026-06-03 (`commentary-calibration`). Remaining near-term: **EDITORIAL RULE BUG-FIX PASS**, **EDITORIAL SCHEMA-FALLBACK**, **SOURCE-PUBLIC-STATE AWARENESS**. These are prompt/rulebook calibration items, not changes to the three-signal contract above.
 
 ---
 
