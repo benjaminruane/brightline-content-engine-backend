@@ -72,9 +72,9 @@ R-series for post-rebuild work: **R<major>.<minor>[.<patch>][<letter>]** (e.g. R
 
 Named work-streams without a ref (e.g. `commentary-calibration`) tag by their name, lower-case, hyphenated. Use sparingly; prefer assigning a ref.
 
-### RELEASE VS SPEC TAG
+### RELEASE VERSIONING
 
-Spec tags trace changes. Release versions mark milestones (first external user, architecture inflection, completed work-stream). Separate series; do not conflate.
+GitHub releases use a continuous v<major>.<minor> product version, independent of spec tags. Backend release history continues in sequence (… v7.1 Reviewer Assist Foundations, v7.2 Review-output hardening); do not restart numbering. The legacy v8.x SPEC/sprint tags are a SEPARATE series from release versions despite the shared "v" prefix — they do not sort against release versions and must not be conflated. Pre-1.0 milestone (first external user) still to come.
 
 ### THE INVARIANT
 
