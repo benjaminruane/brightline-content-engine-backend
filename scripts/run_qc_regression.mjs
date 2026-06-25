@@ -244,6 +244,44 @@ function assertSentenceVerdict(statement, expect) {
   return { pass: true, note: "sentence_verdict" };
 }
 
+function complianceConcernCodes(qcCard) {
+  return (Array.isArray(qcCard?.complianceConcerns) ? qcCard.complianceConcerns : [])
+    .map((c) => (typeof c?.concernCode === "string" ? c.concernCode : ""))
+    .filter(Boolean);
+}
+
+function assertComplianceVerdict(qcCard, expect) {
+  const exp = parseExpectList(expect?.complianceVerdict);
+  if (exp == null || exp.length === 0) return null;
+  return checkListPass(qcCard?.complianceVerdict ?? null, exp, "complianceVerdict");
+}
+
+function assertComplianceConcernCodesAbsent(qcCard, expect) {
+  const arr = expect?.complianceConcernCodesAbsent;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const codes = complianceConcernCodes(qcCard);
+  for (const want of arr) {
+    if (typeof want !== "string" || !want.trim()) continue;
+    if (codes.includes(want)) {
+      return { pass: false, note: `complianceConcernCodesAbsent: found ${want}` };
+    }
+  }
+  return { pass: true, note: "complianceConcernCodesAbsent" };
+}
+
+function assertComplianceConcernCodesPresent(qcCard, expect) {
+  const arr = expect?.complianceConcernCodesPresent;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const codes = new Set(complianceConcernCodes(qcCard));
+  for (const want of arr) {
+    if (typeof want !== "string" || !want.trim()) continue;
+    if (!codes.has(want)) {
+      return { pass: false, note: `complianceConcernCodesPresent: missing ${want}` };
+    }
+  }
+  return { pass: true, note: "complianceConcernCodesPresent" };
+}
+
 /**
  * Cross-statement QC checks (e.g. shopify_series_a_v1): min supported_full count, no conflict, concern none for selected verdicts.
  * @param {unknown} payload
@@ -323,6 +361,9 @@ function runStructuralAssertions(statement, qcCard, expect) {
     () => assertPrimaryAuthority(statement, qcCard, expect),
     () => assertDowngrade(statement, qcCard, expect),
     () => assertSentenceVerdict(statement, expect),
+    () => assertComplianceVerdict(qcCard, expect),
+    () => assertComplianceConcernCodesAbsent(qcCard, expect),
+    () => assertComplianceConcernCodesPresent(qcCard, expect),
   ];
   for (const fn of checks) {
     const r = fn();
@@ -337,14 +378,36 @@ function explanationPatternSummary(structuralResults) {
   return structuralResults.every((r) => r.pass) ? "OK" : "FAIL";
 }
 
+function resolveSelectedTypes(spec) {
+  if (Array.isArray(spec?.selectedTypes) && spec.selectedTypes.length > 0) {
+    return spec.selectedTypes;
+  }
+  if (typeof spec?.outputType === "string" && spec.outputType.trim()) {
+    return [spec.outputType.trim()];
+  }
+  return null;
+}
+
+function useV4RouteForSpec(spec) {
+  return USE_V4_ROUTE || spec?.pipelineRoute === "v4";
+}
+
 async function runOne(spec) {
+  const useV4Route = useV4RouteForSpec(spec);
   const requestBody = {
     draftText: spec.draft,
     options: {
       webEnabled: false,
-      ...(USE_V4_ROUTE ? { pipelineRoute: "v4" } : {}),
+      ...(useV4Route ? { pipelineRoute: "v4" } : {}),
     },
   };
+  if (typeof spec?.versionType === "string" && spec.versionType.trim()) {
+    requestBody.versionType = spec.versionType.trim();
+  }
+  const selectedTypes = resolveSelectedTypes(spec);
+  if (selectedTypes) {
+    requestBody.selectedTypes = selectedTypes;
+  }
   if (Array.isArray(spec.sources) && spec.sources.length > 0) {
     requestBody.sources = spec.sources;
   } else if (Array.isArray(spec.sourceFiles) && spec.sourceFiles.length > 0) {
@@ -352,13 +415,19 @@ async function runOne(spec) {
     if (resolved?.error) {
       throw new Error(`source resolution failed: ${resolved.error.message}`);
     }
-    requestBody.sources = (resolved.sources || []).map((src, index) => ({
-      text: src?.text ?? "",
-      label: src?.title || src?.name || `Source ${index + 1}`,
-      name: src?.name || src?.title || `Source ${index + 1}`,
-      title: src?.title || src?.name || `Source ${index + 1}`,
-      sourceType: src?.sourceType || "uploaded",
-    }));
+    requestBody.sources = (resolved.sources || []).map((src, index) => {
+      const item = {
+        text: src?.text ?? "",
+        label: src?.title || src?.name || `Source ${index + 1}`,
+        name: src?.name || src?.title || `Source ${index + 1}`,
+        title: src?.title || src?.name || `Source ${index + 1}`,
+        sourceType: src?.sourceType || "uploaded",
+      };
+      if (typeof src?.publicationState === "string" && src.publicationState.trim()) {
+        item.publicationState = src.publicationState.trim();
+      }
+      return item;
+    });
   }
 
   const res = await fetch(RUN_QC_URL, {
@@ -402,6 +471,10 @@ async function runOne(spec) {
     actualDisplayVerdict: qcCard?.displayVerdict ?? "(none)",
     expectedConcernLevel: expCl ? (expCl.length === 1 ? expCl[0] : expCl.join("|")) : "-",
     actualConcernLevel: qcCard?.concernLevel ?? "(none)",
+    pipelineRoute: useV4Route ? "v4" : "v3",
+    pipelineVersion: qcCard?.pipelineVersion ?? "(none)",
+    complianceVerdict: qcCard?.complianceVerdict ?? "(none)",
+    complianceConcernCodes: complianceConcernCodes(qcCard),
     explanationPatterns: patternSummary,
     pass,
     note,

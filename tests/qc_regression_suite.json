@@ -93,6 +93,53 @@
           ]
         }
       }
+    },
+    {
+      "name": "calibration_published_suppression_v1",
+      "pipelineRoute": "v4",
+      "versionType": "public",
+      "sources": [
+        {
+          "label": "Published press release",
+          "publicationState": "published_external",
+          "text": "FOR IMMEDIATE RELEASE. Acme Corp announced the transaction values the business at an enterprise value of USD 2.4 billion."
+        }
+      ],
+      "draft": "Acme Corp announced the transaction values the business at an enterprise value of USD 2.4 billion.",
+      "expect": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "complianceVerdict": "clean",
+        "complianceConcernCodesAbsent": [
+          "precise_confidential_detail_in_public_version"
+        ],
+        "assertAuthority": false
+      }
+    },
+    {
+      "name": "calibration_public_press_release_v1",
+      "pipelineRoute": "v4",
+      "versionType": "public",
+      "selectedTypes": [
+        "press_release"
+      ],
+      "sources": [
+        {
+          "label": "Company facts",
+          "text": "Acme Corp is a software provider founded in 2010."
+        }
+      ],
+      "draft": "FOR IMMEDIATE RELEASE. Acme Corp will deliver record returns to investors this year.",
+      "expect": {
+        "complianceVerdict": [
+          "soft_concern",
+          "hard_concern"
+        ],
+        "complianceConcernCodesPresent": [
+          "expected_disclosure_language_absent_on_public"
+        ],
+        "assertAuthority": false
+      }
     }
   ]
 }
