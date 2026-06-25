@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-06-25 (R6.13-docsync: R6.13 substantially shipped; B20 closed)
+Last updated: 2026-06-25 (roadmap-eventtype: R6.14 event-type awareness scoped)
 
 ---
 
@@ -167,6 +167,25 @@ Silent-default wiring audit and fixes for review intent on the Writing QC path a
 
 **Tier D (no action):** v3 pipeline hardcodes `undefined` for `outputType` / `requiredVersion` / `eventType` (`qc-pipeline-v3.mjs:62-64`). Not fixed — v3 is retiring. Recorded so it isn't rediscovered as a bug.
 
+### R6.14 — Event-type awareness (scoped; shape undecided)
+
+**Status:** **SCOPED, SHAPE UNDECIDED.** Sequenced after the editorial cluster (B21, B22, B23 — shipped) — touches the rule/review model B23 reworked. **Prerequisite:** `eventType` must be wired (handler reads it, UI sends it) before any of the below engages — logged as Tier B (**BACKLOG B28**); independent of the shape decision below.
+
+**Writing side — settled in principle (not yet specced):** Generation prompts branch on event type **and** output type as a matrix (event type sets substance/scope; output type sets format). Independent of the review model.
+
+**Review/Assess side — need confirmed, mechanism open:** Reviews should reflect that different information is expected for different event types (e.g. a valuation basis expected for a revaluation but not a new-investment announcement). Recorded examples (2026-06-25 scoping):
+
+- **New direct investment:** context; investment identity; headline valuation; headline financials (revenue, EBITDA); thesis summary; value-creation strategy.
+- **Fund distribution:** fund identity; timing; trigger (e.g. sale of Company A); deal context; headline exit valuation; exit return metrics; [conditional: full exit → original entry date + value creation over hold].
+- **Fund revaluation:** fund identity; direction; trigger (write-up/down of Company A); driving factors; [conditional: writedown → mitigants / how addressed].
+
+**Open design question (no decision yet — do not pre-commit):** Two candidate shapes identified; trade-off understood; choice deferred:
+
+- **Option 1 — event type as a rule-model filter dimension** (`appliesToEvent`, symmetric with `appliesToVersion`); expected-element checks authored as individual event-scoped rules via the normal rule-addition cycle. Lower build/risk; sheds conditional-element complexity; rules stay in one maintainable cycle. Loses the grouped "completeness profile" view.
+- **Option 2 — per-event expectation profiles** as a new completeness-check review mode (gap signals distinct from concerns). Richer; supports conditionals and a grouped completeness view; new machinery; higher absence-detection risk (**B14** — false-present silently passes a gap).
+
+**Cross-cutting constraints** (hold under either shape): (a) **EXPECTED ≠ REQUIRED** — missing element is a soft, dismissable signal, never a hard concern or verdict downgrade; (b) **fail-safe bias** — when uncertain whether an element is present, flag as possibly-missing, never assume present.
+
 ### R6.3 — Principle-based Editorial concern suppression on Evidence conflict (closed 2026-05-31)
 
 Closed 2026-05-31, tag `r6.3-principle-based-suppression`. Replaces R3.4's rule-ID-based suppression list with per-instance semantic judgment via a gpt-4o-mini call at card assembly time.
@@ -278,6 +297,7 @@ Items in scope (order indicative, not locked):
 | **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
 | **R6.12** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary; **expanded 2026-06-01:** document-type-aware voice/register (editorial norms must relax for social formats — LinkedIn over-firing, fixture 12). See near-term work-stream **R6.12 — DOCUMENT-TYPE-AWARE VOICE/REGISTER**. | Medium | Diagnostic (F04, F12, F18); comments review 2026-06-01 |
 | **R6.13** | **Review-intent wiring** — silent-default audit (R6.13-audit); Writing-path QC payload + stale log fix (R6.13.1, closes B20); regression calibration guards (R6.13.2) | **SUBSTANTIALLY SHIPPED 2026-06-25** | Tier B open: BACKLOG B28–B31. See Recently shipped → R6.13 |
+| **R6.14** | **Event-type awareness** — writing matrix (event × output type); review-side expected-element handling (shape undecided: Option 1 rule filter vs Option 2 expectation profiles) | **SCOPED — SHAPE UNDECIDED** | Sequenced after B21–B23; prerequisite B28. See **R6.14 — Event-type awareness** |
 
 **R6.2 sub-items (commentary quality):**
 
