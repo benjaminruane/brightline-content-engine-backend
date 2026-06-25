@@ -1,6 +1,23 @@
 import { readFile, copyFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import { normalizePublicationState } from "../../../lib/source-publication-state.mjs";
 import { SOURCES_DIR, SOURCES_EXTRACTED_DIR } from "./paths.mjs";
+
+/**
+ * @param {string | { file?: string, filename?: string, publicationState?: string }} entry
+ * @returns {string}
+ */
+function sourceEntryFilename(entry) {
+  if (typeof entry === "string") return entry;
+  if (entry && typeof entry === "object") {
+    const name =
+      (typeof entry.file === "string" && entry.file.trim()) ||
+      (typeof entry.filename === "string" && entry.filename.trim()) ||
+      "";
+    return name;
+  }
+  return "";
+}
 
 /**
  * @param {string} filename
@@ -30,27 +47,36 @@ export async function resolveSourceText(filename) {
 }
 
 /**
- * @param {string[]} sourceFilenames
- * @returns {Promise<Array<{ text: string, label: string }>>}
+ * @param {Array<string | { file?: string, filename?: string, publicationState?: string }>} sourceEntries
+ * @returns {Promise<Array<{ text: string, label: string, publicationState: string }>>}
  */
-export async function loadPipelineSources(sourceFilenames) {
+export async function loadPipelineSources(sourceEntries) {
   const rows = [];
-  for (let i = 0; i < sourceFilenames.length; i++) {
-    const filename = sourceFilenames[i];
+  const entries = Array.isArray(sourceEntries) ? sourceEntries : [];
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
+    const filename = sourceEntryFilename(entry);
+    if (!filename) continue;
     const { text } = await resolveSourceText(filename);
     const label = filename.replace(/\.(txt|pdf)$/i, "");
-    rows.push({ text, label });
+    const publicationState = normalizePublicationState(
+      entry && typeof entry === "object" ? entry.publicationState : undefined
+    );
+    rows.push({ text, label, publicationState });
   }
   return rows;
 }
 
 /**
  * @param {string} destDir
- * @param {string[]} sourceFilenames
+ * @param {Array<string | { file?: string, filename?: string, publicationState?: string }>} sourceEntries
  */
-export async function copySourcesToRunDir(destDir, sourceFilenames) {
+export async function copySourcesToRunDir(destDir, sourceEntries) {
   await mkdir(destDir, { recursive: true });
-  for (const filename of sourceFilenames) {
+  const entries = Array.isArray(sourceEntries) ? sourceEntries : [];
+  for (const entry of entries) {
+    const filename = sourceEntryFilename(entry);
+    if (!filename) continue;
     const base = path.basename(filename);
     let from;
     if (base.endsWith(".txt")) {
