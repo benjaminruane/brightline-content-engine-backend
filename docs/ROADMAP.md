@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-06-25 (R6.6-docsync-2: R6.6 closed; B27 subtle-attribution-drift watch)
+Last updated: 2026-06-25 (R6.13-docsync: R6.13 substantially shipped; B20 closed)
 
 ---
 
@@ -157,6 +157,16 @@ Closed on substance. Suppression mechanism shipped in R6.4a; R6.6 chapter verifi
 
 **Watch:** subtle attribution-drift reliability on named-individual suppression — see **BACKLOG B27**.
 
+### R6.13 — Review-intent wiring (substantially shipped 2026-06-25)
+
+Silent-default wiring audit and fixes for review intent on the Writing QC path and regression suite. **Tier B decisions remain open** — see **BACKLOG B28–B31**.
+
+- **R6.13-audit** — silent-default wiring audit across six constructor paths. Report: `docs/audit_silent_defaults_2026-06-25.md`. (Working label during the run: **R6.6-audit** — both refs identify the same artifact.)
+- **R6.13.1** — wired Writing-path `versionType` + `selectedTypes` into the QC payload; fixed stale `visibility` log (`editorial-compliance-reviewer.mjs` now logs `requiredVersion`). Closes **B20**. Verified: 7→8 compliance rule-subset flip on Public + press_release.
+- **R6.13.2** — regression calibration coverage: per-spec v4 opt-in; `publicationState` / `versionType` / `selectedTypes` carry-through; two v4 guard fixtures (`calibration_published_suppression_v1`, `calibration_public_press_release_v1`).
+
+**Tier D (no action):** v3 pipeline hardcodes `undefined` for `outputType` / `requiredVersion` / `eventType` (`qc-pipeline-v3.mjs:62-64`). Not fixed — v3 is retiring. Recorded so it isn't rediscovered as a bug.
+
 ### R6.3 — Principle-based Editorial concern suppression on Evidence conflict (closed 2026-05-31)
 
 Closed 2026-05-31, tag `r6.3-principle-based-suppression`. Replaces R3.4's rule-ID-based suppression list with per-instance semantic judgment via a gpt-4o-mini call at card assembly time.
@@ -267,6 +277,7 @@ Items in scope (order indicative, not locked):
 | **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. **Confirmed by 2026-06-01 diagnostic** as still scoped to functional-element / non-claim noise: recommendations ('We recommend approval'), salutations, sentiment lines return `not_supported` as if failed verification. Unchanged from 26-May; not regressed. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20) |
 | **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
 | **R6.12** | **Document-type appropriateness** — salutations, business descriptions at first mention, completed-investment framing for investor letters, no internal-process references in external commentary; **expanded 2026-06-01:** document-type-aware voice/register (editorial norms must relax for social formats — LinkedIn over-firing, fixture 12). See near-term work-stream **R6.12 — DOCUMENT-TYPE-AWARE VOICE/REGISTER**. | Medium | Diagnostic (F04, F12, F18); comments review 2026-06-01 |
+| **R6.13** | **Review-intent wiring** — silent-default audit (R6.13-audit); Writing-path QC payload + stale log fix (R6.13.1, closes B20); regression calibration guards (R6.13.2) | **SUBSTANTIALLY SHIPPED 2026-06-25** | Tier B open: BACKLOG B28–B31. See Recently shipped → R6.13 |
 
 **R6.2 sub-items (commentary quality):**
 
