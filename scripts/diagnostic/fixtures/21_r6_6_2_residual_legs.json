@@ -1,0 +1,17 @@
+{
+  "id": "21",
+  "label": "r6_6_2_residual_legs",
+  "sources": [
+    {
+      "file": "21_r6_6_2_residual_legs.txt",
+      "publicationState": "published_external"
+    }
+  ],
+  "draft": "Meridian Capital has agreed to acquire Project Atlas, a Nordic battery storage platform.\n\nProject Atlas is exceptionally well positioned in the Nordic energy storage market.\n\nJames Ortiz, former Chief Executive Officer of GridCo Industries, advised Meridian Capital on the transaction structure.\n\nThe transaction is expected to close in the second quarter of 2026.",
+  "config": {
+    "outputType": "press_release",
+    "requiredVersion": "public",
+    "eventType": "new_investment"
+  },
+  "notes": "R6.6.2 residual verification: rename hyperbole leg (S1) + named-individual leg (S2); source published_external."
+}
