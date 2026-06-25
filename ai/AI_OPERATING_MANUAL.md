@@ -44,6 +44,10 @@ A **genuine clean** pass always carries the canonical note: *"No editorial or st
 
 Use `not_reviewed` as the audit signal for unreviewed statements when scanning JSON, exports, or diagnostic batches.
 
+## Editorial combined-review — first-person category routing (gpt-4o)
+
+At temp 0, gpt-4o routes first-person-voice concerns three ways for the same surface issue: `first_person_plural` as `style_guide` (correct), `first_person_plural` as `editorial` (mis-tag — reclassified by R6.11a), and `voice_consistency` as `editorial` (valid — passes through). All are handled at the normalizer/salvage layer. Category discipline is enforced downstream (salvage + reclassification), not via prompt constraint — a prompt fix would be whack-a-mole against non-deterministic category routing (**B14** pattern). Evidenced **B21-diag** + **B21-diag-confirm**.
+
 ## Spec, commit, and tag naming convention
 
 Every unit of work has ONE reference (the "ref") identical everywhere it appears.
