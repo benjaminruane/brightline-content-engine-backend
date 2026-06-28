@@ -17,7 +17,7 @@ Last updated: 2026-06-28 (docs-hygiene: post-editorial-cluster reconciliation)
 
 - **Pipeline:** v4 in production.
 - **Cost / call volume (baseline 2026-06-28):** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
-- **Current tags (latest-tagged in git — not deployment-verified):** frontend `v8.54.1-r6.13.1-writing-intent-wiring`; backend `b22.2-editorial-excerpt-removal` (also: `r6.13.2-regression-calibration-coverage`, `r6.13.1-visibility-log-fix`). Tags reflect repo state only; confirm against live deploy before treating as production truth.
+- **Production baseline (deployment-verified 2026-06-28 via Vercel):** live deploy `b23-docsync` (commit `9ab91c1`, main). All editorial-cluster code shipped and live — B21, B22 / B22.1 / B22.2 (latest code ship `b22.2-editorial-excerpt-removal`); subsequent commits (B22-docsync, b23-docsync, docs-hygiene) are documentation-only. Frontend `v8.54.1-r6.13.1-writing-intent-wiring`.
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
 
