@@ -107,6 +107,17 @@ The backlog is split into four tables by character of work:
 | W1  | **internal_plausibility** — may still attempt to fire on statement-vs-source figure discrepancies (rounded vs exact). Scope wording in place (R6.2e); in testing suppression came via the fidelity gate (cited source figure absent from statement), not the model obeying the scope constraint — B14 pattern. User-visible result correct. Action: review next diagnostic batch; add targeted deterministic backstop only if it recurs in a form the fidelity gate misses. See ROADMAP **Watch items → internal_plausibility**. | R6.2e verification | -- | MVP | Watch only |
 | B33 | **B21 residual (observable, not open):** a category mis-tag whose `ruleId` is in NEITHER rulebook cannot be salvaged by reclassification and would still fall back. Not observed across the B21-diag-confirm set (zero such drops). Now self-identifying in `pipeline.log` via `rejectReason` `ruleId_not_in_either_rulebook:<id>`. No action unless it appears. | B21 | L | Post-MVP | Watch only |
 
+### B26 — Scoping inputs (carried from Straits Times / Ren analysis)
+
+- Second-person, author-addressed register (adjacent-market convention)
+- Per-point rationale, not holistic summary
+- Each rationale anchored to a specific qcCard signal (Stage 4 excerpt, Editorial concern note, or Compliance concern note); generic guidance unanchored to a signal is not permitted
+- Output framed as editable first-pass draft, not finished feedback; UI microcopy should reinforce "draft to edit"
+
+### Long-horizon ideas (below top 13)
+
+- **Per-house / per-reviewer language profile** — capture preferred phrasings, tone, capitalisation, and term substitutions per reviewer or per house, included as prompt context for the language layer only (Stage 5 commentary, B26 register, future reviewer-facing prose). HARD BOUNDARY: this never touches Stage 2 classification, Stage 3/4/7 aggregation, or any verdict-layer logic. The deterministic LLM-last architecture is preserved. Origin: 'centurion vs learning' framing from Ren Education (Straits Times, June 2026).
+
 ---
 
 ## Closed

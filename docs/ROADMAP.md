@@ -434,6 +434,13 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 | **CONSTRUCTIVE FEEDBACK OUTPUT (working title)** | Generate action in the **Reviewer Assessment** section: a constructive, writer-addressed feedback synthesis over the existing QC result. Second register of the Reviewer Assessment synthesis primitive (not a new analysis pass, not a new module, no user-profile split — one user, one view). Draws on all three signals (evidence, editorial, compliance). Includes an overall assessment and specific points with per-point rationale, phrased to steer/teach. Deliberately produces **no revised text** (writer does the rewrite — that is the point). Output must be visually clear and clean to copy/paste into an email to the writer. Distinct from **implement-changes** (a future mechanical apply action) and from the shelved suggest→implement workflow (explicitly deferred; this feedback output is the near-term step). **Open scoping (resolve before spec):** (1) **signal selection** — surface all concerns vs lift material editorial/factual points and leave mechanical style nits in QC cards; (2) **copy/paste fidelity** — plain text vs rich paste vs generated artifact, must degrade cleanly without UI chrome; (3) **register calibration** — constructive without going soft, principle-based, tuned over testing rounds (same character as `commentary-calibration`). Source: reviewer's own Copilot-assisted feedback workflow, 2026-06. **Same work-stream:** **BACKLOG B26**, **BACKLOG Pr8**, open list **#19** below. | **M** |
 | **R6.6 — SOURCE-PUBLIC-STATE AWARENESS** | **SHIPPED 2026-06-25** — See Recently shipped → **R6.6**. Figure leg (R6.6.1 harness); rename leg out of scope; named-individual leg (R6.6.3 content-bound suppression, F21 both directions). Residual watch: **BACKLOG B27**. | Shipped |
 
+### CONSTRUCTIVE FEEDBACK OUTPUT (B26) — Scoping inputs (carried from Straits Times / Ren analysis)
+
+- Second-person, author-addressed register (adjacent-market convention)
+- Per-point rationale, not holistic summary
+- Each rationale anchored to a specific qcCard signal (Stage 4 excerpt, Editorial concern note, or Compliance concern note); generic guidance unanchored to a signal is not permitted
+- Output framed as editable first-pass draft, not finished feedback; UI microcopy should reinforce "draft to edit"
+
 ---
 
 ## R7 — Sources Drawer Revival [MVP]
@@ -518,6 +525,11 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
     **Priority:** High-leverage (touches every Review output) but not urgent — symptoms are addressable piecemeal as observed. Scope as R6.2b when ready. Logged 2026-05-30 from a one-off observation.
 13. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
+
+### Long-horizon ideas (below top 13)
+
+- **Per-house / per-reviewer language profile** — capture preferred phrasings, tone, capitalisation, and term substitutions per reviewer or per house, included as prompt context for the language layer only (Stage 5 commentary, B26 register, future reviewer-facing prose). HARD BOUNDARY: this never touches Stage 2 classification, Stage 3/4/7 aggregation, or any verdict-layer logic. The deterministic LLM-last architecture is preserved. Origin: 'centurion vs learning' framing from Ren Education (Straits Times, June 2026).
+
 14. **E2 deterministic reimplementation** — open.
 15. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
 16. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
