@@ -5,7 +5,7 @@ import {
   CLEAN_DRAFT_FEEDBACK_TEXT,
   CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
   normalizeConstructiveFeedbackPlainText,
-  selectConstructiveFeedbackPoints,
+  selectConstructiveFeedbackBundles,
 } from "../lib/qc/constructive-feedback.mjs";
 import { computeSignoffVerdict, isReadyForSignoff } from "../lib/qc/signoff-verdict.mjs";
 
@@ -49,9 +49,9 @@ export default async function handler(req, res) {
 
   const signoffVerdict = computeSignoffVerdict(rows);
   const isReady = isReadyForSignoff(signoffVerdict);
-  const feedbackPoints = selectConstructiveFeedbackPoints(rows, activeReviewOptions);
+  const feedbackBundles = selectConstructiveFeedbackBundles(rows, activeReviewOptions);
 
-  if (feedbackPoints.length === 0) {
+  if (feedbackBundles.length === 0) {
     return res.status(200).json({
       ok: true,
       feedbackText: CLEAN_DRAFT_FEEDBACK_TEXT,
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
               draftText,
               signoffVerdict,
               isReady,
-              feedbackPoints,
+              feedbackBundles,
             }),
             null,
             2
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
       ],
       traceName: "constructive-feedback",
       spanName: "constructive-feedback",
-      metadata: { route: "constructive-feedback", pointCount: feedbackPoints.length },
+      metadata: { route: "constructive-feedback", bundleCount: feedbackBundles.length },
     });
     const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
     const feedbackText = normalizeConstructiveFeedbackPlainText(raw);
