@@ -2,9 +2,18 @@ import assert from "node:assert/strict";
 import {
   selectConstructiveFeedbackBundles,
   normalizeConstructiveFeedbackPlainText,
+  normalizeConstructiveFeedbackCraftText,
+  splitCardFeedbackSections,
+  assembleConstructiveFeedbackText,
+  stripCraftPreamble,
+  extractNumberedPointBlocks,
+  renumberPointBlocks,
+  assembleCraftAndCardFeedback,
   isCardFullyClean,
   CLEAN_DRAFT_FEEDBACK_TEXT,
   CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER,
+  CONSTRUCTIVE_FEEDBACK_CRAFT_REGISTER_OBSERVATIONS_ONLY,
+  CONSTRUCTIVE_FEEDBACK_CRAFT_NONE,
 } from "../lib/qc/constructive-feedback.mjs";
 import { computeSignoffVerdict, isReadyForSignoff } from "../lib/qc/signoff-verdict.mjs";
 
@@ -130,6 +139,60 @@ const notReady = computeSignoffVerdict([evidenceIssueCard]);
 assert.equal(notReady, "Needs targeted revision");
 
 assert.ok(CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER.includes("No praise-sandwich"));
+
+assert.equal(normalizeConstructiveFeedbackCraftText(CONSTRUCTIVE_FEEDBACK_CRAFT_NONE), "");
+assert.equal(normalizeConstructiveFeedbackCraftText("  none  "), "");
+assert.equal(
+  normalizeConstructiveFeedbackCraftText("The opening buries the lede in paragraph two."),
+  "The opening buries the lede in paragraph two."
+);
+
+const split = splitCardFeedbackSections(
+  "This draft needs work.\n\n1. Fix the returns claim.\n\n2. Soften the forward-looking line.\n\nTighten and resubmit."
+);
+assert.equal(split.opening, "This draft needs work.");
+assert.ok(split.cardPoints.includes("1. Fix the returns claim."));
+assert.ok(split.cardPoints.includes("2. Soften the forward-looking line."));
+assert.equal(split.closing, "Tighten and resubmit.");
+
+const assembled = assembleConstructiveFeedbackText({
+  opening: "This draft needs work.",
+  craftSection: "The register drifts promotional in the back half.",
+  cardPoints: "1. Fix the returns claim.",
+  closing: "Tighten and resubmit.",
+});
+assert.ok(assembled.indexOf("This draft needs work.") === 0);
+assert.ok(assembled.includes("The register drifts promotional"));
+assert.ok(assembled.includes("1. Fix the returns claim."));
+assert.ok(assembled.endsWith("Tighten and resubmit."));
+
+assert.equal(
+  stripCraftPreamble(
+    "The draft needs significant work to improve its document-level craft.\n\n1. Structure: the lede is buried.\n\n2. Register drifts promotional."
+  ),
+  "1. Structure: the lede is buried.\n\n2. Register drifts promotional."
+);
+
+const craftBlocks = extractNumberedPointBlocks("1. Craft one.\n\n2. Craft two.");
+const cardBlocks = extractNumberedPointBlocks("1. Card one.\n\n2. Card two.");
+assert.equal(renumberPointBlocks([...craftBlocks, ...cardBlocks], 1), "1. Craft one.\n\n2. Craft two.\n\n3. Card one.\n\n4. Card two.");
+
+const combined = assembleCraftAndCardFeedback({
+  opening: "This draft needs work.",
+  craftSection:
+    "The draft needs significant work.\n\n1. Structure: lede buried.\n\n2. Register drifts.",
+  cardPoints: "1. Fix returns.\n\n2. Soften forward-looking line.",
+  closing: "Tighten and resubmit.",
+});
+assert.ok(combined.startsWith("This draft needs work."));
+assert.ok(!combined.includes("The draft needs significant work."));
+assert.ok(combined.includes("1. Structure: lede buried."));
+assert.ok(combined.includes("2. Register drifts."));
+assert.ok(combined.includes("3. Fix returns."));
+assert.ok(combined.includes("4. Soften forward-looking line."));
+assert.ok(combined.endsWith("Tighten and resubmit."));
+
+assert.ok(!CONSTRUCTIVE_FEEDBACK_CRAFT_REGISTER_OBSERVATIONS_ONLY.includes("Opening frames the read honestly"));
 
 console.log("constructive-feedback tests: PASS");
 console.log("clean draft message:", CLEAN_DRAFT_FEEDBACK_TEXT);

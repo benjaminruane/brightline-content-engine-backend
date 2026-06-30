@@ -1,11 +1,16 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
+  assembleCraftAndCardFeedback,
+  buildConstructiveFeedbackCraftSystemPrompt,
+  buildConstructiveFeedbackCraftUserPayload,
   buildConstructiveFeedbackUserPayload,
   CLEAN_DRAFT_FEEDBACK_TEXT,
   CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
+  normalizeConstructiveFeedbackCraftText,
   normalizeConstructiveFeedbackPlainText,
   selectConstructiveFeedbackBundles,
+  splitCardFeedbackSections,
 } from "../lib/qc/constructive-feedback.mjs";
 import { computeSignoffVerdict, isReadyForSignoff } from "../lib/qc/signoff-verdict.mjs";
 
@@ -27,12 +32,91 @@ function extractRows(body) {
   return [];
 }
 
+function resolveCraftInput(body, draftText) {
+  const snapshot = typeof body.analysedDraftText === "string" ? body.analysedDraftText : "";
+  if (snapshot.trim()) return snapshot;
+  return draftText;
+}
+
+async function runCraftPass({
+  craftInput,
+  signoffVerdict,
+  isReady,
+  includeOpeningClosing,
+  craftModelConfig,
+}) {
+  const completion = await callLLM({
+    provider: craftModelConfig.provider,
+    model: craftModelConfig.model,
+    temperature: 0,
+    messages: [
+      { role: "system", content: buildConstructiveFeedbackCraftSystemPrompt(includeOpeningClosing) },
+      {
+        role: "user",
+        content: JSON.stringify(
+          buildConstructiveFeedbackCraftUserPayload({
+            analysedDraftText: craftInput,
+            signoffVerdict,
+            isReady,
+            includeOpeningClosing,
+          }),
+          null,
+          2
+        ),
+      },
+    ],
+    traceName: "constructive-feedback-craft",
+    spanName: "constructive-feedback-craft",
+    metadata: { route: "constructive-feedback-craft" },
+  });
+  const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
+  return normalizeConstructiveFeedbackCraftText(raw);
+}
+
+async function runCardPass({
+  draftText,
+  signoffVerdict,
+  isReady,
+  feedbackBundles,
+  craftHandledSeparately,
+  modelConfig,
+}) {
+  const completion = await callLLM({
+    provider: modelConfig.provider,
+    model: modelConfig.model,
+    temperature: 0,
+    messages: [
+      { role: "system", content: CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: JSON.stringify(
+          buildConstructiveFeedbackUserPayload({
+            draftText,
+            signoffVerdict,
+            isReady,
+            feedbackBundles,
+            craftHandledSeparately,
+          }),
+          null,
+          2
+        ),
+      },
+    ],
+    traceName: "constructive-feedback",
+    spanName: "constructive-feedback",
+    metadata: { route: "constructive-feedback", bundleCount: feedbackBundles.length },
+  });
+  const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
+  return normalizeConstructiveFeedbackPlainText(raw);
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["constructive-feedback"];
+  const craftModelConfig = STAGE_MODELS["constructive-feedback-craft"];
   if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json({ ok: false, feedbackText: "", isReady: false });
   }
@@ -51,7 +135,13 @@ export default async function handler(req, res) {
   const isReady = isReadyForSignoff(signoffVerdict);
   const feedbackBundles = selectConstructiveFeedbackBundles(rows, activeReviewOptions);
 
-  if (feedbackBundles.length === 0) {
+  const craftInput = resolveCraftInput(body, draftText);
+  const canRunCraft =
+    typeof craftInput === "string" &&
+    craftInput.trim().length > 0 &&
+    hasProviderApiKey(craftModelConfig.provider);
+
+  if (feedbackBundles.length === 0 && !canRunCraft) {
     return res.status(200).json({
       ok: true,
       feedbackText: CLEAN_DRAFT_FEEDBACK_TEXT,
@@ -60,32 +150,56 @@ export default async function handler(req, res) {
   }
 
   try {
-    const completion = await callLLM({
-      provider: modelConfig.provider,
-      model: modelConfig.model,
-      temperature: 0,
-      messages: [
-        { role: "system", content: CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: JSON.stringify(
-            buildConstructiveFeedbackUserPayload({
-              draftText,
-              signoffVerdict,
-              isReady,
-              feedbackBundles,
-            }),
-            null,
-            2
-          ),
-        },
-      ],
-      traceName: "constructive-feedback",
-      spanName: "constructive-feedback",
-      metadata: { route: "constructive-feedback", bundleCount: feedbackBundles.length },
-    });
-    const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
-    const feedbackText = normalizeConstructiveFeedbackPlainText(raw);
+    const hasBundles = feedbackBundles.length > 0;
+    const craftIncludeOpeningClosing = !hasBundles;
+
+    const [craftSection, cardFeedback] = await Promise.all([
+      canRunCraft
+        ? runCraftPass({
+            craftInput,
+            signoffVerdict,
+            isReady,
+            includeOpeningClosing: craftIncludeOpeningClosing,
+            craftModelConfig,
+          })
+        : Promise.resolve(""),
+      hasBundles
+        ? runCardPass({
+            draftText,
+            signoffVerdict,
+            isReady,
+            feedbackBundles,
+            craftHandledSeparately: canRunCraft,
+            modelConfig,
+          })
+        : Promise.resolve(""),
+    ]);
+
+    const hasCraft = !!craftSection;
+
+    if (!hasBundles && !hasCraft) {
+      return res.status(200).json({
+        ok: true,
+        feedbackText: CLEAN_DRAFT_FEEDBACK_TEXT,
+        isReady,
+      });
+    }
+
+    let feedbackText;
+    if (!hasBundles && hasCraft) {
+      feedbackText = craftSection;
+    } else if (hasBundles && !hasCraft) {
+      feedbackText = cardFeedback || CLEAN_DRAFT_FEEDBACK_TEXT;
+    } else {
+      const { opening, cardPoints, closing } = splitCardFeedbackSections(cardFeedback);
+      feedbackText = assembleCraftAndCardFeedback({
+        opening,
+        craftSection,
+        cardPoints,
+        closing,
+      });
+    }
+
     return res.status(200).json({
       ok: true,
       feedbackText: feedbackText || CLEAN_DRAFT_FEEDBACK_TEXT,
