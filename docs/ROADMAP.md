@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-06-30 (B26 governance: active sprint + #19 resolved)
+Last updated: 2026-06-30 (B26.1 shipped: feedback consolidation + modal UX)
 
 ---
 
@@ -132,6 +132,20 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 **R6.4c — Regulatory rule scope refinement** (closed 2026-05-31, tag `r6.4c-regulatory-rule-scope`). Refined the `description` field of compliance rule `regulatory_prohibited_language` in `lib/rulebook/complianceRules.js` to make fund-vs-portfolio scope explicit. Rule now applies to fund/firm claims (fund performance superlatives, firm-level absolute claims, promissory phrasing) and to language that solicits investment or links portfolio performance to a fund marketing pitch; rule does NOT apply to ordinary portfolio-company descriptive language in transaction releases or operational updates. Jurisdictional variance (SEC, FCA, MAS, BaFin) acknowledged in rule wording; reviewer note added to frame concerns as review prompts rather than determinations. Validated across three test runs (portfolio-company superlative cleared; fund-level superlative caught; solicitation crossover caught).
 
 **R6.4d — Sensitivity-tier calibration** (closed 2026-05-31, no ship). Diagnostic evidence was hypothetical, not observed. Real PG behaviour (F02 IRR/MOIC suppression) confirms current architecture is correct: if content is in a published source, suppression is appropriate by definition (the source has been through compliance review). User can manually override per source via R6.4b pill if stricter handling needed. No new code; closed as non-issue.
+
+### B26 / B26.1 — Constructive Feedback Output (closed 2026-06-30)
+
+**B26 — Constructive Feedback (base).** On-demand author-addressed feedback synthesis from assembled qcCards (`api/constructive-feedback.js`). Reviewer Assessment unchanged (`api/synthesize-review.js`). Deterministic selection/ordering/signoff (`lib/qc/signoff-verdict.mjs`); LLM prose only (`gpt-4o`, temp 0). Resolves ROADMAP open list **#19** and **BACKLOG Pr8** (closed by not reframing Reviewer Assessment). Commit: `feat(B26): author-addressed constructive feedback synthesis from QC cards`.
+
+**B26.1 — Group-by-statement consolidation + editor register + modal** (shipped 2026-06-30). Tags: backend `b26.1-feedback-consolidation`, frontend `v8.56.0-b26.1-feedback-consolidation`. Commits: `feat(B26.1): group-by-statement consolidation, editor register, scrollable modal`; fixes `fix(B26.1.1)` (modal cache), `fix(B26.1.2)` (cache invalidation on new QC run, caption font size, Escape-to-close).
+
+- **Consolidation:** card-derived feedback bundled **group-by-statement** — one numbered point per flagged statement. Join key **`cardIndex`** (from v4 assembly `statementIndex`), **not** `statementText` (duplicate text must not merge distinct cards). Bundle shape: `{ cardIndex, statementText, evidence?, compliance[], editorial[] }`. **Within** each bundle: Evidence → Compliance → Editorial. **Between** statements (worst-first): conflicting/not_supported evidence → compliance-bearing → editorial-only; `cardIndex` ascending tiebreak. **Supersedes** B26's global Evidence→Compliance→Editorial **point** ordering — ordering is now between statements, not between signals.
+- **Register:** single editor-to-writer voice in `CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER` (warm-through-specificity, sparing earned praise, no praise-sandwich, no schoolroom/system language, third person on subject / imperative on fix, one voice — reused verbatim by B26.2).
+- **UI:** scrollable modal (not inline); Escape and backdrop close; focus trap; Copy copies plain `feedbackText`. Generated once per QC run, cached keyed to **`activeAnalysisRunId`**; cache clears when Review starts; explicit **Regenerate** in modal. **B26.1.1 / B26.1.2** folded: cache across open/close, invalidation fix (not `runKey`/`analysedAt`), caption `text-sm`, Escape-to-close.
+
+**Watch (carried):** signoff logic duplication — see **Watch items → B26 — Signoff logic duplication** and **BACKLOG B26 — Watch**.
+
+---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
 
@@ -421,36 +435,9 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 
 ---
 
-## Active sprint — B26 Constructive Feedback Output
-
-**Status:** **ACTIVE** (spec locked; implementation shipped — tag pending)
-
-**Commit:** `feat(B26): author-addressed constructive feedback synthesis from QC cards`
-
-**Locked decisions:**
-
-- **Separate on-demand surface** — "Generate constructive feedback" in the Quality Review / Reviewer Assessment area. **Reviewer Assessment unchanged** (auto-generated short reviewer-facing overview via `api/synthesize-review.js`).
-- **Signal selection** — skip fully clean cards (evidence confirmed, editorial clean, compliance clean); collect evidence summary when not confirmed; compliance and editorial from `concerns[].note` + `suggestedDirection` only; exclude all `suggestedRewrite` fields and card-level rewrite suggestions.
-- **Signal order** — **Evidence → Compliance → Editorial** (document order within each tier).
-- **Register** — third person on the subject, imperative on the fix (e.g. "The claim about X isn't supported — consider…"); **not** second person.
-- **UI** — in-app readable render + **Copy** button copies plain `feedbackText` only (not styled representation).
-- **Clean-draft case** — single short deterministic "ready" line; not empty.
-- **No revised draft text** in output.
-- **No role-based branching** — available to any user in the standard Review surface.
-
-**Backend:** `api/constructive-feedback.js`, `lib/qc/constructive-feedback.mjs`, `lib/qc/signoff-verdict.mjs` — deterministic selection/ordering/signoff; LLM prose only (`gpt-4o`, temp 0); plain-text post-filter as final arbiter. Output contract: `{ feedbackText, isReady }`.
-
-**Frontend:** `StatementAnalysisPanel.jsx`, `apiConstructiveFeedback` in `src/utils/api.js`.
-
-**Resolves ROADMAP open list #19 (Reviewer Assessment purpose reframe):** closed by **not** reframing Reviewer Assessment. **B26** takes the detailed author-facing role; Reviewer Assessment stays the short reviewer-facing overview.
-
-**Cross-ref:** BACKLOG **B26**, **Pr8** (resolved).
-
----
-
 ## Near-term — Review output (2026-06-01 diagnostic + comments review)
 
-**Recommended order:** ~~commentary calibration (B22 + B22.1 + B22.2)~~ → ~~editorial rule bug-fix pass (B23 / R6.2e + R6.2f)~~ → ~~editorial schema-fallback (R6.11a + R6.11b + B21)~~ → ~~**R6.6 (source-public-state)**~~ → ~~**B26 (constructive feedback output)**~~ → R7.
+**Recommended order:** ~~commentary calibration (B22 + B22.1 + B22.2)~~ → ~~editorial rule bug-fix pass (B23 / R6.2e + R6.2f)~~ → ~~editorial schema-fallback (R6.11a + R6.11b + B21)~~ → ~~**R6.6 (source-public-state)**~~ → ~~**B26 / B26.1 (constructive feedback output)**~~ → R7.
 
 | Item | Summary | Priority |
 |------|---------|----------|
@@ -458,12 +445,12 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 | **EDITORIAL RULE BUG-FIX PASS** | **SHIPPED 2026-06-03** — Tags: `r6.2e-editorial-rule-bugfix` (editorial/style), `r6.2f-compliance-rule-bugfix` (compliance). Outcome per rule: **`date_format`** — fixed; full-month house standard (`19 January 2026`) required; abbreviated/US/ISO flagged; deterministic backstop added. **`percentage_notation`** — new Layer 2 rule (`5.4%` not `5.4 percent`) + `number_spelling` guard + fidelity carve-out; silent-strip failure resolved. **`internal_plausibility`** — scope language added (intra-sentence only); see **Watch items → internal_plausibility** (B14 fidelity pattern). **`passive_voice_overuse`** — concise-Direction discipline added. **`comparative_claim_without_basis`** — recognises in-sentence/immediate-context basis; bare superlative still fires (R6.2f). **`forward_looking_statement_without_qualifier`** — `we expect` / `expect` / `expects` / `expected` adequate hedging on Complete and Public; visibility-calibration contradiction removed (R6.2f). **Parked (do not spec):** `structural_integrity` — not reproducible, watch only; `thousand_separator` — already fixed by R6.5.5 statement-scoped backstop — confirm clean on next diagnostic batch. Symptom mislabelled as `materiality` was **`comparative_claim_without_basis`** (fixed in R6.2f). | Shipped |
 | **R6.11 — EDITORIAL SCHEMA-FALLBACK (silent failure)** | **SHIPPED / chapter closed 2026-06-25** — Three layers: **R6.11a** reliability (per-concern salvage, cross-book reclassification, retry correction note; verified **B21-diag-confirm**); **R6.11b** card (`not_reviewed` — amber "Needs manual review", distinct from clean/concern); **B21** log (`[EDITORIAL_STYLE_REVIEW] fallback raw output` with per-attempt `rawOutput` + `rejectReason` in `pipeline.log`). Fallback emits `editorialVerdict: "not_reviewed"` with `editorialConcerns: []` and `editorialNote: ""`; genuine clean retains the canonical note. **Minor follow-up (no spec yet):** `not_reviewed` borrows the soft-concern tier in the frontend composite badge (`StatementAnalysisPanel`); counting and surfacing are correct. Residual watch: **BACKLOG B33**. | Shipped |
 | **R6.12 — DOCUMENT-TYPE-AWARE VOICE/REGISTER (expand existing R6.12 scope)** | Editorial voice/register rules apply reporting-commentary norms to ALL document types, including LinkedIn posts — flagging 'Excited to see' (legitimate LinkedIn register) and third-person company description as wrong-voice/wrong-register. Rules must know the document type and relax voice/register enforcement for social formats. Folds the comments-review LinkedIn over-firing (fixture 12) into R6.12. | **M** |
-| **B26 — CONSTRUCTIVE FEEDBACK OUTPUT** | **ACTIVE** — moved to **Active sprint — B26** above. On-demand author-addressed feedback synthesis from assembled qcCards; Reviewer Assessment unchanged. Locked decisions recorded there. **Resolves open list #19** (Reviewer Assessment not reframed). | Active |
+| **B26 / B26.1 — CONSTRUCTIVE FEEDBACK OUTPUT** | **SHIPPED 2026-06-30** — See **Recently shipped → B26 / B26.1**. Base **B26** + consolidation **B26.1** (group-by-statement bundles keyed on `cardIndex`, worst-first statement order, `CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER`, scrollable modal + per-run cache). Tags: `b26.1-feedback-consolidation`, `v8.56.0-b26.1-feedback-consolidation`. **Resolves open list #19** (Reviewer Assessment not reframed). | Shipped |
 | **R6.6 — SOURCE-PUBLIC-STATE AWARENESS** | **SHIPPED 2026-06-25** — See Recently shipped → **R6.6**. Figure leg (R6.6.1 harness); rename leg out of scope; named-individual leg (R6.6.3 content-bound suppression, F21 both directions). Residual watch: **BACKLOG B27**. | Shipped |
 
-### B26 — Scoping inputs (superseded by locked decisions)
+### B26 — Scoping inputs (superseded)
 
-Pre-spec scoping inputs from Straits Times / Ren analysis informed B26 but are **superseded** by locked decisions in **Active sprint — B26** above. Notable divergence: register locked to **third person on the subject / imperative on the fix** (not second-person author-addressed). Per-house language profile remains a long-horizon idea (below).
+Pre-spec inputs from Straits Times / Ren analysis informed B26 but are **superseded** by shipped **B26 / B26.1** (see **Recently shipped → B26 / B26.1**). Register: `CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER` (editor-to-writer, warm-through-specificity). Per-house language profile remains a long-horizon idea (below).
 
 ---
 
@@ -527,7 +514,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
 1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
 2. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
-3. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 (constructive feedback output)**~~ — **ACTIVE** — see **Active sprint — B26**. Next: **R7**.
+3. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. Next: **R7**.
 4. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
 5. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
 6. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
@@ -568,7 +555,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
     - More structural — examine whether the assessment is doing real work beyond the Quality Review Summary bullets and card list, and either repurpose it (see next backlog item) or remove.
 
     UX-shaped, not calibration-shaped. Worth a small scoping pass when next addressing UI. Logged 2026-05-30.
-19. ~~**Reviewer Assessment purpose reframe.**~~ **RESOLVED (B26, 2026-06-30)** — closed by **not** reframing Reviewer Assessment. **Constructive Feedback (B26)** is the separate on-demand author-facing surface (detailed per-point rationale, no revised text). Reviewer Assessment stays the short reviewer-facing overview (`api/synthesize-review.js` unchanged). See **Active sprint — B26**. **Same work-stream:** **BACKLOG B26**, **BACKLOG Pr8** (resolved).
+19. ~~**Reviewer Assessment purpose reframe.**~~ **RESOLVED (B26, 2026-06-30)** — closed by **not** reframing Reviewer Assessment. **Constructive Feedback (B26 / B26.1)** is the separate on-demand author-facing surface (per-statement consolidated rationale, no revised text). Reviewer Assessment stays the short reviewer-facing overview (`api/synthesize-review.js` unchanged). See **Recently shipped → B26 / B26.1**. **Same work-stream:** **BACKLOG B26** (closed), **BACKLOG Pr8** (resolved).
 
 **Also tracked (below top 19):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
@@ -584,7 +571,8 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | R6.5 (house style framework) | Shipped via `r6.5.6-defined-term-refinement` |
 | R6.3 (Hide Editorial on conflict) | Shipped via `r6.3-principle-based-suppression` |
 | R6.4 (Public version compliance, chapter) | Shipped via `r6.4a.3-restricted-rename`, `v8.53.0-r6.4b-publication-state-ui`, `r6.4c-regulatory-rule-scope` |
-| Reviewer Assessment purpose reframe (open list #19) | **B26** — resolved by not reframing; Constructive Feedback takes author-facing role |
+| Reviewer Assessment purpose reframe (open list #19) | **B26 / B26.1** — resolved by not reframing; Constructive Feedback takes author-facing role |
+| B26 / B26.1 — Constructive Feedback Output | `b26.1-feedback-consolidation` (backend), `v8.56.0-b26.1-feedback-consolidation` (frontend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
