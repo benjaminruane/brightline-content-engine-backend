@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-06-30 (B26.1 shipped: feedback consolidation + modal UX)
+Last updated: 2026-06-30 (B26.2 shipped: document-level craft pass + assembly fixes)
 
 ---
 
@@ -144,6 +144,17 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **UI:** scrollable modal (not inline); Escape and backdrop close; focus trap; Copy copies plain `feedbackText`. Generated once per QC run, cached keyed to **`activeAnalysisRunId`**; cache clears when Review starts; explicit **Regenerate** in modal. **B26.1.1 / B26.1.2** folded: cache across open/close, invalidation fix (not `runKey`/`analysedAt`), caption `text-sm`, Escape-to-close.
 
 **Watch (carried):** signoff logic duplication — see **Watch items → B26 — Signoff logic duplication** and **BACKLOG B26 — Watch**.
+
+### B26.2 — Document-level craft pass (closed 2026-06-30)
+
+**B26.2 — Craft pass + reviewed-draft snapshot** (shipped 2026-06-30). Tags: backend `b26.2.1-craft-assembly`, frontend `v8.57.0-b26.2-craft-pass`. Commits: `feat(B26.2): document-level craft feedback pass (FT-shaped, draft-anchored)` (backend); `feat(B26.2): snapshot analysed draft for craft pass` (frontend); fix `fix(B26.2.1): single opening, continuous numbering, active figure-coherence in craft pass` (backend assembly + prompts).
+
+- **Craft pass:** second temp-0 LLM call (`constructive-feedback-craft`, `gpt-4o`) reads the full **reviewed-draft snapshot** and produces craft feedback across six FT-shaped dimensions: structure/argument flow, core-message clarity, conciseness & precision, register & tone consistency, opening/closing strength, internal coherence. Draft-anchored, document-level patterns only (dimension 6 excepted — active figure-clash scan). Craft section precedes card-derived points in assembled `feedbackText`.
+- **Voice:** one editor voice — `CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER` shared with B26.1 card synthesis; observations-only craft register omits opening/closing framing (B26.2.1).
+- **Assembly (B26.2.1 folded):** single opening (card pass only), continuous numbering across craft then card points (deterministic renumber), deterministic craft-preamble strip before assembly.
+- **Scoping decision #3:** card-anchoring relaxed to **draft-anchoring for the craft section ONLY**; card-derived points remain strictly card-anchored.
+- **Internal coherence:** text-internal only — real-world plausibility excluded; dimension 6 actively compares figures/dates/quantities across the draft (single cross-sentence clash in scope).
+- **Consistency:** reviewed draft snapshotted at QC-run time (`analysedDraftTextByRunId`, keyed to analysis run id) in both `useDraftState` and `useAssessState`; craft pass reads `analysedDraftText` (fallback `draftText`). Craft and card feedback always describe the same draft version even after post-QC edits. Independent of assess-path `lastAssessedDraftText`.
 
 ---
 
@@ -437,7 +448,7 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 
 ## Near-term — Review output (2026-06-01 diagnostic + comments review)
 
-**Recommended order:** ~~commentary calibration (B22 + B22.1 + B22.2)~~ → ~~editorial rule bug-fix pass (B23 / R6.2e + R6.2f)~~ → ~~editorial schema-fallback (R6.11a + R6.11b + B21)~~ → ~~**R6.6 (source-public-state)**~~ → ~~**B26 / B26.1 (constructive feedback output)**~~ → R7.
+**Recommended order:** ~~commentary calibration (B22 + B22.1 + B22.2)~~ → ~~editorial rule bug-fix pass (B23 / R6.2e + R6.2f)~~ → ~~editorial schema-fallback (R6.11a + R6.11b + B21)~~ → ~~**R6.6 (source-public-state)**~~ → ~~**B26 / B26.1 (constructive feedback output)**~~ → ~~**B26.2 (constructive feedback craft pass)**~~ → R7.
 
 | Item | Summary | Priority |
 |------|---------|----------|
@@ -446,6 +457,7 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 | **R6.11 — EDITORIAL SCHEMA-FALLBACK (silent failure)** | **SHIPPED / chapter closed 2026-06-25** — Three layers: **R6.11a** reliability (per-concern salvage, cross-book reclassification, retry correction note; verified **B21-diag-confirm**); **R6.11b** card (`not_reviewed` — amber "Needs manual review", distinct from clean/concern); **B21** log (`[EDITORIAL_STYLE_REVIEW] fallback raw output` with per-attempt `rawOutput` + `rejectReason` in `pipeline.log`). Fallback emits `editorialVerdict: "not_reviewed"` with `editorialConcerns: []` and `editorialNote: ""`; genuine clean retains the canonical note. **Minor follow-up (no spec yet):** `not_reviewed` borrows the soft-concern tier in the frontend composite badge (`StatementAnalysisPanel`); counting and surfacing are correct. Residual watch: **BACKLOG B33**. | Shipped |
 | **R6.12 — DOCUMENT-TYPE-AWARE VOICE/REGISTER (expand existing R6.12 scope)** | Editorial voice/register rules apply reporting-commentary norms to ALL document types, including LinkedIn posts — flagging 'Excited to see' (legitimate LinkedIn register) and third-person company description as wrong-voice/wrong-register. Rules must know the document type and relax voice/register enforcement for social formats. Folds the comments-review LinkedIn over-firing (fixture 12) into R6.12. | **M** |
 | **B26 / B26.1 — CONSTRUCTIVE FEEDBACK OUTPUT** | **SHIPPED 2026-06-30** — See **Recently shipped → B26 / B26.1**. Base **B26** + consolidation **B26.1** (group-by-statement bundles keyed on `cardIndex`, worst-first statement order, `CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER`, scrollable modal + per-run cache). Tags: `b26.1-feedback-consolidation`, `v8.56.0-b26.1-feedback-consolidation`. **Resolves open list #19** (Reviewer Assessment not reframed). | Shipped |
+| **B26.2 — CONSTRUCTIVE FEEDBACK CRAFT PASS** | **SHIPPED 2026-06-30** — See **Recently shipped → B26.2**. Document-level craft pass + reviewed-draft snapshot; B26.2.1 assembly (single opening, continuous numbering, dimension-6 figure scan). Tags: `b26.2.1-craft-assembly` (backend), `v8.57.0-b26.2-craft-pass` (frontend). Queued follow-up: **BACKLOG B26.2.2** (readability calibration). | Shipped |
 | **R6.6 — SOURCE-PUBLIC-STATE AWARENESS** | **SHIPPED 2026-06-25** — See Recently shipped → **R6.6**. Figure leg (R6.6.1 harness); rename leg out of scope; named-individual leg (R6.6.3 content-bound suppression, F21 both directions). Residual watch: **BACKLOG B27**. | Shipped |
 
 ### B26 — Scoping inputs (superseded)
@@ -514,7 +526,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
 1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
 2. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
-3. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. Next: **R7**.
+3. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. Next: **R7**.
 4. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
 5. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
 6. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
@@ -573,6 +585,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | R6.4 (Public version compliance, chapter) | Shipped via `r6.4a.3-restricted-rename`, `v8.53.0-r6.4b-publication-state-ui`, `r6.4c-regulatory-rule-scope` |
 | Reviewer Assessment purpose reframe (open list #19) | **B26 / B26.1** — resolved by not reframing; Constructive Feedback takes author-facing role |
 | B26 / B26.1 — Constructive Feedback Output | `b26.1-feedback-consolidation` (backend), `v8.56.0-b26.1-feedback-consolidation` (frontend) |
+| B26.2 — Constructive Feedback craft pass | `b26.2.1-craft-assembly` (backend), `v8.57.0-b26.2-craft-pass` (frontend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
