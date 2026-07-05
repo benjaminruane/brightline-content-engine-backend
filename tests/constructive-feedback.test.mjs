@@ -9,6 +9,9 @@ import {
   extractNumberedPointBlocks,
   renumberPointBlocks,
   assembleCraftAndCardFeedback,
+  buildConstructiveFeedbackCraftSystemPrompt,
+  buildConstructiveFeedbackCraftUserPayload,
+  buildConstructiveFeedbackCraftOutputTypeGuidance,
   buildConstructiveFeedbackUserPayload,
   isCardFullyClean,
   CLEAN_DRAFT_FEEDBACK_TEXT,
@@ -17,7 +20,9 @@ import {
   CONSTRUCTIVE_FEEDBACK_CRAFT_NONE,
   CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
   CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE,
+  resolveConstructiveFeedbackCraftOutputType,
 } from "../lib/qc/constructive-feedback.mjs";
+import { OUTPUT_TYPE } from "../lib/output-intent.js";
 import { computeSignoffVerdict, isReadyForSignoff } from "../lib/qc/signoff-verdict.mjs";
 
 const cleanCard = {
@@ -212,6 +217,54 @@ assert.ok(cardPayload.instructions.some((line) => line.includes("reconciles agai
 assert.equal(
   cardPayload.craftSectionForFigureDedupe,
   "1. Internal coherence: $48 vs $50 on revenue."
+);
+
+// B26.2.4-test — craft output-type fallback coverage
+const CRAFT_PER_TYPE_MARKER = "Output type calibration";
+
+assert.equal(resolveConstructiveFeedbackCraftOutputType(undefined), null);
+assert.equal(resolveConstructiveFeedbackCraftOutputType(null), null);
+assert.equal(resolveConstructiveFeedbackCraftOutputType(""), null);
+assert.equal(resolveConstructiveFeedbackCraftOutputType("not_a_type"), null);
+assert.equal(resolveConstructiveFeedbackCraftOutputType("unknown_format"), null);
+assert.equal(resolveConstructiveFeedbackCraftOutputType(123), null);
+assert.equal(resolveConstructiveFeedbackCraftOutputType({}), null);
+assert.equal(resolveConstructiveFeedbackCraftOutputType("linkedin_post"), OUTPUT_TYPE.LINKEDIN_POST);
+
+assert.equal(buildConstructiveFeedbackCraftOutputTypeGuidance(null), null);
+assert.equal(buildConstructiveFeedbackCraftOutputTypeGuidance(undefined), null);
+
+const genericCraftPrompt = buildConstructiveFeedbackCraftSystemPrompt(false, null);
+assert.ok(!genericCraftPrompt.includes(CRAFT_PER_TYPE_MARKER));
+assert.ok(
+  !genericCraftPrompt.includes(
+    "Judge each dimension against the norms of the given output type"
+  )
+);
+
+const linkedinCraftPrompt = buildConstructiveFeedbackCraftSystemPrompt(false, "linkedin_post");
+assert.ok(linkedinCraftPrompt.includes("Output type calibration (LinkedIn post)"));
+
+const nullTypePayload = buildConstructiveFeedbackCraftUserPayload({
+  analysedDraftText: "Draft body.",
+  signoffVerdict: "Needs targeted revision",
+  isReady: false,
+  includeOpeningClosing: false,
+  outputType: null,
+});
+assert.ok(!nullTypePayload.instructions.some((line) => line.includes(CRAFT_PER_TYPE_MARKER)));
+assert.equal(nullTypePayload.outputType, undefined);
+
+const investorLetterPayload = buildConstructiveFeedbackCraftUserPayload({
+  analysedDraftText: "Dear Investors,\n\nWe are pleased to update you.",
+  signoffVerdict: "Needs targeted revision",
+  isReady: false,
+  includeOpeningClosing: false,
+  outputType: "investor_letter",
+});
+assert.equal(investorLetterPayload.outputType, OUTPUT_TYPE.INVESTOR_LETTER);
+assert.ok(
+  investorLetterPayload.instructions.some((line) => line.includes("Output type calibration (Investor letter)"))
 );
 
 console.log("constructive-feedback tests: PASS");

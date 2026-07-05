@@ -9,6 +9,7 @@ import {
   CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
   normalizeConstructiveFeedbackCraftText,
   normalizeConstructiveFeedbackPlainText,
+  resolveConstructiveFeedbackCraftOutputType,
   selectConstructiveFeedbackBundles,
   splitCardFeedbackSections,
 } from "../lib/qc/constructive-feedback.mjs";
@@ -43,6 +44,7 @@ async function runCraftPass({
   signoffVerdict,
   isReady,
   includeOpeningClosing,
+  outputType,
   craftModelConfig,
 }) {
   const completion = await callLLM({
@@ -50,7 +52,7 @@ async function runCraftPass({
     model: craftModelConfig.model,
     temperature: 0,
     messages: [
-      { role: "system", content: buildConstructiveFeedbackCraftSystemPrompt(includeOpeningClosing) },
+      { role: "system", content: buildConstructiveFeedbackCraftSystemPrompt(includeOpeningClosing, outputType) },
       {
         role: "user",
         content: JSON.stringify(
@@ -59,6 +61,7 @@ async function runCraftPass({
             signoffVerdict,
             isReady,
             includeOpeningClosing,
+            outputType,
           }),
           null,
           2
@@ -67,7 +70,7 @@ async function runCraftPass({
     ],
     traceName: "constructive-feedback-craft",
     spanName: "constructive-feedback-craft",
-    metadata: { route: "constructive-feedback-craft" },
+    metadata: { route: "constructive-feedback-craft", ...(outputType ? { outputType } : {}) },
   });
   const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
   return normalizeConstructiveFeedbackCraftText(raw);
@@ -138,6 +141,7 @@ export default async function handler(req, res) {
   const feedbackBundles = selectConstructiveFeedbackBundles(rows, activeReviewOptions);
 
   const craftInput = resolveCraftInput(body, draftText);
+  const craftOutputType = resolveConstructiveFeedbackCraftOutputType(body.outputType);
   const canRunCraft =
     typeof craftInput === "string" &&
     craftInput.trim().length > 0 &&
@@ -162,6 +166,7 @@ export default async function handler(req, res) {
         signoffVerdict,
         isReady,
         includeOpeningClosing: craftIncludeOpeningClosing,
+        outputType: craftOutputType,
         craftModelConfig,
       });
     }
