@@ -30,9 +30,10 @@ function toParagraphs(text) {
 
 function normalizeVerdict(displayVerdict) {
   if (String(displayVerdict || "").toLowerCase() === "not reviewed") return null;
-  if (displayVerdict === "supported_full" || displayVerdict === "supported_partial") return "Supported";
-  if (displayVerdict === "conflict") return "Conflicted";
-  if (displayVerdict === "not_supported" || displayVerdict === "no_clear_support") return "Not Supported";
+  if (displayVerdict === "supported_full") return "Confirmed";
+  if (displayVerdict === "supported_partial") return "Partially confirmed";
+  if (displayVerdict === "conflict") return "Conflicting";
+  if (displayVerdict === "not_supported" || displayVerdict === "no_clear_support") return "No support";
   return "Unverifiable";
 }
 
