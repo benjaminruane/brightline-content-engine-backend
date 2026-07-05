@@ -220,6 +220,15 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **Export:** already omits skipped-evidence verdict/finding line (B25). **All-off Review button** already disabled in UI.
 - **Resolves ROADMAP Active Backlog #17** and **BACKLOG B29**.
 
+### B28 — Remove unused eventType from QC path (closed 2026-07-05)
+
+**B28 — Remove unused eventType from QC path** (shipped 2026-07-05). Tag: backend `b28-remove-eventtype`.
+
+- **Removed from QC path:** editorial DOCUMENT CONTEXT `Event type` line (v3 split `buildEditorialUserPayload` + v4 combined `buildEditorialStyleUserPayload`); `eventType` field from `buildEditorialReviewContext` (`pipeline-v4/index.mjs`); `normalizeEventType(body?.eventType)` read in `evidence-skipped-fast-path.mjs`; `normalizeEventType` / `getEventTypeLabel` imports and normalize/store in `editorial-compliance-reviewer.mjs`.
+- **Unchanged:** compliance user payloads (already excluded `eventType`); rule filtering and verdict aggregation; Generate/Rewrite event-type framing (`api/generate.js`, `api/rewrite.js`, `lib/event-type.js`).
+- **Re-add to QC** if **R6.14** event-type-aware review ships (**BACKLOG B32**).
+- **Resolves ROADMAP Active Backlog #3** and **BACKLOG B28**.
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -251,7 +260,7 @@ Closed on substance. Suppression mechanism shipped in R6.4a; R6.6 chapter verifi
 
 ### R6.13 — Review-intent wiring (substantially shipped 2026-06-25)
 
-Silent-default wiring audit and fixes for review intent on the Writing QC path and regression suite. **Tier B decisions remain open** — see **BACKLOG B28, B30–B31** (review toggles closed **B29**, 2026-07-05).
+Silent-default wiring audit and fixes for review intent on the Writing QC path and regression suite. **Tier B decisions remain open** — see **BACKLOG B30–B31** (review toggles closed **B29**, 2026-07-05; `eventType` lean removal closed **B28**, 2026-07-05).
 
 - **R6.13-audit** — silent-default wiring audit across six constructor paths. Report: `docs/audit_silent_defaults_2026-06-25.md`. (Working label during the run: **R6.6-audit** — both refs identify the same artifact.)
 - **R6.13.1** — wired Writing-path `versionType` + `selectedTypes` into the QC payload; fixed stale `visibility` log (`editorial-compliance-reviewer.mjs` now logs `requiredVersion`). Closes **B20**. Verified: 7→8 compliance rule-subset flip on Public + press_release.
@@ -261,7 +270,7 @@ Silent-default wiring audit and fixes for review intent on the Writing QC path a
 
 ### R6.14 — Event-type awareness (scoped; shape undecided)
 
-**Status:** **SCOPED, SHAPE UNDECIDED.** Sequenced after the editorial cluster (B21, B22, B23 — shipped) — touches the rule/review model B23 reworked. **Prerequisite:** `eventType` must be wired (handler reads it, UI sends it) before any of the below engages — logged as Tier B (**BACKLOG B28**); independent of the shape decision below.
+**Status:** **SCOPED, SHAPE UNDECIDED.** Sequenced after the editorial cluster (B21, B22, B23 — shipped) — touches the rule/review model B23 reworked. QC path no longer carries `eventType` (**B28**, 2026-07-05); re-add when this spec ships. Generate/Rewrite framing retained via `lib/event-type.js`.
 
 **Writing side — settled in principle (not yet specced):** Generation prompts branch on event type **and** output type as a matrix (event type sets substance/scope; output type sets format). Independent of the review model.
 
@@ -388,8 +397,8 @@ Items in scope (order indicative, not locked):
 | **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20). **Residual watch (not R6.9 scope):** functional-element statements that survive Stage 1 (recommendations, sentiment lines) still return `not_supported` — see **Watch items → R6.9 residual functional-element noise**. |
 | **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
 | **R6.12** | **Document-type voice/register (editorial)** — output-type calibration block + LinkedIn `reviewerNoteByOutput` on voice/register/structural rules; closes editorial half of document-type-awareness gap (craft: **B26.2.4**). Broader salutation/business-description norms deferred to Layer 2 backlog. | **SHIPPED 2026-07-05** — `r6.12-editorial-output-type` | Diagnostic F12/F09; comments review 2026-06-01. Residual watch: F12 S6/S8 — see **Watch items → R6.12 residual LinkedIn editorial noise** |
-| **R6.13** | **Review-intent wiring** — silent-default audit (R6.13-audit); Writing-path QC payload + stale log fix (R6.13.1, closes B20); regression calibration guards (R6.13.2); v4 review toggles (**B29**, 2026-07-05) | **SUBSTANTIALLY SHIPPED 2026-06-25** (review toggles **B29** 2026-07-05) | Tier B open: BACKLOG B28, B30–B31. See Recently shipped → R6.13, **B29 / B29.1** |
-| **R6.14** | **Event-type awareness** — writing matrix (event × output type); review-side expected-element handling (shape undecided: Option 1 rule filter vs Option 2 expectation profiles) | **SCOPED — SHAPE UNDECIDED** | Sequenced after B21–B23; prerequisite B28. See **R6.14 — Event-type awareness** |
+| **R6.13** | **Review-intent wiring** — silent-default audit (R6.13-audit); Writing-path QC payload + stale log fix (R6.13.1, closes B20); regression calibration guards (R6.13.2); v4 review toggles (**B29**, 2026-07-05); QC `eventType` removal (**B28**, 2026-07-05) | **SUBSTANTIALLY SHIPPED 2026-06-25** (review toggles **B29**, `eventType` **B28** 2026-07-05) | Tier B open: BACKLOG B30–B31. See Recently shipped → R6.13, **B29 / B29.1**, **B28** |
+| **R6.14** | **Event-type awareness** — writing matrix (event × output type); review-side expected-element handling (shape undecided: Option 1 rule filter vs Option 2 expectation profiles) | **SCOPED — SHAPE UNDECIDED** | Sequenced after B21–B23; QC path cleaned (**B28**). See **R6.14 — Event-type awareness** |
 
 **R6.2 sub-items (commentary quality):**
 
@@ -733,7 +742,7 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 
 2. *(Resolved — R6.13.1 / **BACKLOG B20**.)* Misleading `[EDITORIAL_STYLE_REVIEW] starting` log (`visibility: null` before normalisation) in `lib/qc/editorial-compliance-reviewer.mjs`. Stale `visibility` field name fixed (`requiredVersion` logged); Writing-path review intent wired. Verified: 7→8 compliance rule-subset flip on Public + press_release.
 
-3. EventType is not reaching the backend on v4 runs. On the R3.2 test runs, `outputType` resolved correctly (`press_release`) and visibility resolved correctly (`PUBLIC` / `COMPLETE` based on rule firing), but `eventType` resolved to `null`. The Setup screen does not currently include an event-type control, so this may be intentional. Action: decide whether `eventType` is required in the MVP. If not required, remove `eventType` from the Editorial and Compliance prompt user payloads and from the `documentContext` shape rather than leaving `null` placeholders. If required, add the control to the Setup screen and wire it through.
+3. *(Closed — **B28** / `b28-remove-eventtype`, 2026-07-05.)* EventType not reaching backend on v4 QC runs — lean decision: removed dead `eventType` from QC path (editorial DOCUMENT CONTEXT line, `buildEditorialReviewContext`, evidence-skipped read, reviewer normalize/imports). Compliance already excluded it; no rule/verdict change. Generate/Rewrite framing retained. Re-add to QC if **R6.14** ships. See **Recently shipped → B28**.
 
 4. Route selection should fail loud. Today, an unset `QC_PIPELINE_V4` env var silently falls back to v3 without any warning. R3.2 testing was nearly invalidated because `vercel dev` did not load `.env.local` into the function process and the selector defaulted to v3 without indicating the env var was undefined. Action: add a one-line log in `api/analyse-statements.js` at the route selection point that prints the resolved env var value alongside the route choice, every request. Example: `console.log(\`[handler] route: ${route} (QC_PIPELINE_V4=${process.env.QC_PIPELINE_V4 ?? "unset"})\`);` — makes the env var state observable in dev logs without needing a Langfuse trace or a temporary log.
 
