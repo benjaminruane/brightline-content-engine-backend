@@ -79,6 +79,7 @@ async function runCardPass({
   isReady,
   feedbackBundles,
   craftHandledSeparately,
+  craftSectionContext,
   modelConfig,
 }) {
   const completion = await callLLM({
@@ -96,6 +97,7 @@ async function runCardPass({
             isReady,
             feedbackBundles,
             craftHandledSeparately,
+            craftSectionContext,
           }),
           null,
           2
@@ -153,27 +155,29 @@ export default async function handler(req, res) {
     const hasBundles = feedbackBundles.length > 0;
     const craftIncludeOpeningClosing = !hasBundles;
 
-    const [craftSection, cardFeedback] = await Promise.all([
-      canRunCraft
-        ? runCraftPass({
-            craftInput,
-            signoffVerdict,
-            isReady,
-            includeOpeningClosing: craftIncludeOpeningClosing,
-            craftModelConfig,
-          })
-        : Promise.resolve(""),
-      hasBundles
-        ? runCardPass({
-            draftText,
-            signoffVerdict,
-            isReady,
-            feedbackBundles,
-            craftHandledSeparately: canRunCraft,
-            modelConfig,
-          })
-        : Promise.resolve(""),
-    ]);
+    let craftSection = "";
+    if (canRunCraft) {
+      craftSection = await runCraftPass({
+        craftInput,
+        signoffVerdict,
+        isReady,
+        includeOpeningClosing: craftIncludeOpeningClosing,
+        craftModelConfig,
+      });
+    }
+
+    let cardFeedback = "";
+    if (hasBundles) {
+      cardFeedback = await runCardPass({
+        draftText,
+        signoffVerdict,
+        isReady,
+        feedbackBundles,
+        craftHandledSeparately: canRunCraft,
+        craftSectionContext: canRunCraft ? craftSection : "",
+        modelConfig,
+      });
+    }
 
     const hasCraft = !!craftSection;
 

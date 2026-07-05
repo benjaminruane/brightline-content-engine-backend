@@ -9,11 +9,14 @@ import {
   extractNumberedPointBlocks,
   renumberPointBlocks,
   assembleCraftAndCardFeedback,
+  buildConstructiveFeedbackUserPayload,
   isCardFullyClean,
   CLEAN_DRAFT_FEEDBACK_TEXT,
   CONSTRUCTIVE_FEEDBACK_EDITOR_REGISTER,
   CONSTRUCTIVE_FEEDBACK_CRAFT_REGISTER_OBSERVATIONS_ONLY,
   CONSTRUCTIVE_FEEDBACK_CRAFT_NONE,
+  CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
+  CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE,
 } from "../lib/qc/constructive-feedback.mjs";
 import { computeSignoffVerdict, isReadyForSignoff } from "../lib/qc/signoff-verdict.mjs";
 
@@ -193,6 +196,23 @@ assert.ok(combined.includes("4. Soften forward-looking line."));
 assert.ok(combined.endsWith("Tighten and resubmit."));
 
 assert.ok(!CONSTRUCTIVE_FEEDBACK_CRAFT_REGISTER_OBSERVATIONS_ONLY.includes("Opening frames the read honestly"));
+
+assert.ok(CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE.includes("~8–10 words"));
+assert.ok(CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT.includes(CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE));
+
+const cardPayload = buildConstructiveFeedbackUserPayload({
+  draftText: "Draft text.",
+  signoffVerdict: "Needs targeted revision",
+  isReady: false,
+  feedbackBundles: [{ cardIndex: 0, statementText: "Returns reached 15%.", compliance: [], editorial: [] }],
+  craftHandledSeparately: true,
+  craftSectionContext: "1. Internal coherence: $48 vs $50 on revenue.",
+});
+assert.ok(cardPayload.instructions.some((line) => line.includes("reconciles against the source")));
+assert.equal(
+  cardPayload.craftSectionForFigureDedupe,
+  "1. Internal coherence: $48 vs $50 on revenue."
+);
 
 console.log("constructive-feedback tests: PASS");
 console.log("clean draft message:", CLEAN_DRAFT_FEEDBACK_TEXT);
