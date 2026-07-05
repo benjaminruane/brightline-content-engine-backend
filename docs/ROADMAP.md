@@ -210,6 +210,16 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **Frontend:** conflict long-line in `displayVerdictLabels.js` (`evidenceVerdictLineFromCard` + `evidenceVerdictLineFromSupportState`) corrected "Conflicting sources" → "Conflicts with sources" (short badge "Conflicting" unchanged).
 - **Scope:** display strings only; no verdict enum or logic change.
 
+### B29 / B29.1 — v4 review toggles + skipped-signal card rows (closed 2026-07-05)
+
+**B29 / B29.1 — v4 review-toggle honouring + skipped-signal card rows** (shipped 2026-07-05). Tags: backend `b29-v4-review-toggles`, frontend `v8.65.0-b29.1-not-reviewed-rows`.
+
+- **Backend (B29):** v4 now honours `editorialEnabled` / `complianceEnabled` / `evidenceEnabled` from the analyse-statements request (default true when absent). Each stage skipped when its toggle is off — evidence via existing skipped fast path (`supportState: "skipped"`, `displayVerdict: "Not reviewed"`); editorial/compliance halves gated in `runEditorialComplianceReview`; all-off returns `nothingReviewed` with no LLM calls. Deterministic aggregation and card-assembly contract unchanged. `meta.reviewOptions` echoed on response.
+- **Frontend (B29):** evidence row shows **Not reviewed** + grey dot when evidence skipped (fixed misleading **Confirmed** fallback in `evidenceDisplayVerdictLabel`).
+- **Frontend (B29.1):** editorial/compliance rows show **Not reviewed** + grey dot when their toggle is off — keyed on `meta.reviewOptions`, not card `editorialVerdict` / `complianceVerdict` (unreliable: null on skipped path, `"clean"` on full path via assemble coercion).
+- **Export:** already omits skipped-evidence verdict/finding line (B25). **All-off Review button** already disabled in UI.
+- **Resolves ROADMAP Active Backlog #17** and **BACKLOG B29**.
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -241,7 +251,7 @@ Closed on substance. Suppression mechanism shipped in R6.4a; R6.6 chapter verifi
 
 ### R6.13 — Review-intent wiring (substantially shipped 2026-06-25)
 
-Silent-default wiring audit and fixes for review intent on the Writing QC path and regression suite. **Tier B decisions remain open** — see **BACKLOG B28–B31**.
+Silent-default wiring audit and fixes for review intent on the Writing QC path and regression suite. **Tier B decisions remain open** — see **BACKLOG B28, B30–B31** (review toggles closed **B29**, 2026-07-05).
 
 - **R6.13-audit** — silent-default wiring audit across six constructor paths. Report: `docs/audit_silent_defaults_2026-06-25.md`. (Working label during the run: **R6.6-audit** — both refs identify the same artifact.)
 - **R6.13.1** — wired Writing-path `versionType` + `selectedTypes` into the QC payload; fixed stale `visibility` log (`editorial-compliance-reviewer.mjs` now logs `requiredVersion`). Closes **B20**. Verified: 7→8 compliance rule-subset flip on Public + press_release.
@@ -378,7 +388,7 @@ Items in scope (order indicative, not locked):
 | **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20). **Residual watch (not R6.9 scope):** functional-element statements that survive Stage 1 (recommendations, sentiment lines) still return `not_supported` — see **Watch items → R6.9 residual functional-element noise**. |
 | **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
 | **R6.12** | **Document-type voice/register (editorial)** — output-type calibration block + LinkedIn `reviewerNoteByOutput` on voice/register/structural rules; closes editorial half of document-type-awareness gap (craft: **B26.2.4**). Broader salutation/business-description norms deferred to Layer 2 backlog. | **SHIPPED 2026-07-05** — `r6.12-editorial-output-type` | Diagnostic F12/F09; comments review 2026-06-01. Residual watch: F12 S6/S8 — see **Watch items → R6.12 residual LinkedIn editorial noise** |
-| **R6.13** | **Review-intent wiring** — silent-default audit (R6.13-audit); Writing-path QC payload + stale log fix (R6.13.1, closes B20); regression calibration guards (R6.13.2) | **SUBSTANTIALLY SHIPPED 2026-06-25** | Tier B open: BACKLOG B28–B31. See Recently shipped → R6.13 |
+| **R6.13** | **Review-intent wiring** — silent-default audit (R6.13-audit); Writing-path QC payload + stale log fix (R6.13.1, closes B20); regression calibration guards (R6.13.2); v4 review toggles (**B29**, 2026-07-05) | **SUBSTANTIALLY SHIPPED 2026-06-25** (review toggles **B29** 2026-07-05) | Tier B open: BACKLOG B28, B30–B31. See Recently shipped → R6.13, **B29 / B29.1** |
 | **R6.14** | **Event-type awareness** — writing matrix (event × output type); review-side expected-element handling (shape undecided: Option 1 rule filter vs Option 2 expectation profiles) | **SCOPED — SHAPE UNDECIDED** | Sequenced after B21–B23; prerequisite B28. See **R6.14 — Event-type awareness** |
 
 **R6.2 sub-items (commentary quality):**
@@ -649,6 +659,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | SRC1 — Source status pill alignment + override guard | `v8.60.0-src1-source-status-override` (frontend) |
 | B34 — Remove Assess Review Settings auto-detect | `b34-assess-auto-detect-removal` (backend), `v8.61.0-b34-assess-auto-detect-removal` (frontend) |
 | B25 — Verdict-label consistency across surfaces | `b25-verdict-label-consistency` (backend), `v8.63.0-b25-verdict-label-consistency` (frontend) |
+| B29 / B29.1 — v4 review toggles + skipped-signal card rows | `b29-v4-review-toggles` (backend), `v8.65.0-b29.1-not-reviewed-rows` (frontend) |
 | R6.12 — Editorial output-type voice/register calibration | `r6.12-editorial-output-type` (backend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
@@ -752,7 +763,7 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 
     **Additional evidence 2026-05-30** (R5.2(a) validation runs): pattern observed across all three R5.2(a) test runs. Editorial concerns under `marketing_language_excess` consistently emit two-sentence suggestedDirection of the form "Replace with [high-level guidance]. Replace 'X' with [specific rewrite]." First sentence is generic guidance; second is the specific rewrite. Both are useful but the two-sentence format violates SUGGESTED_DIRECTION_FORMAT_META. Pattern is reproducible — fix is now well-supported by evidence. Likely the right product fix is a separate field for high-level guidance vs concrete rewrite, but a stronger meta-rule wording could also work as a contained interim fix.
 
-17. **Review-toggle wiring not honoured (open decision — Tier B).** The Review modal exposes individual toggles for Editorial / Compliance / Evidence reviews. Observed during R6.4a testing (2026-05-30): selecting only Compliance and running Review still appears to invoke all three reviews. On v4, `editorialEnabled` / `complianceEnabled` / `evidenceEnabled` are sent by the UI but ignored (v4 always runs all stages). Wasted compute (~3x LLM cost on toggle-restricted runs) and confusing UX. **Cross-ref: BACKLOG B29** — PENDING DECISION (honour on v4 vs remove from UI); do not mark resolved until decided.
+17. ~~**Review-toggle wiring not honoured (open decision — Tier B).**~~ **RESOLVED (B29 / B29.1, 2026-07-05).** v4 now honours `editorialEnabled` / `complianceEnabled` / `evidenceEnabled` — each stage skipped when its toggle is off; frontend shows **Not reviewed** grey rows for skipped signals (keyed on `meta.reviewOptions`). Tags: `b29-v4-review-toggles`, `v8.65.0-b29.1-not-reviewed-rows`. See **Recently shipped → B29 / B29.1**, **BACKLOG B29** (closed).
 
 18. **R6.4b UI polish (deferred).** Two cosmetic items from R6.4b live testing (2026-05-30):
   (a) Pills initially show "Unclassified" for several seconds while the LLM classifier runs in the background, then update to the inferred value once classification completes. Visually confusing — looks like the system is wrong, then "fixes itself". Replace initial pill state with an explicit in-flight indicator ("Classifying..." or a subtle loading state). Show one of the three terminal labels only once the publicationState is final.
