@@ -48,6 +48,17 @@ function resolveOutputType(body) {
   return "";
 }
 
+/** B29: Review toggles from request body root or options; default true when absent. */
+function resolveReviewOptions(body) {
+  const opts = body?.options && typeof body.options === "object" ? body.options : {};
+  const flag = (rootKey, optKey) => !(body?.[rootKey] === false || opts[optKey] === false);
+  return {
+    evidenceEnabled: flag("evidenceEnabled", "evidenceEnabled"),
+    editorialEnabled: flag("editorialEnabled", "editorialEnabled"),
+    complianceEnabled: flag("complianceEnabled", "complianceEnabled"),
+  };
+}
+
 function escapeRegex(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -199,10 +210,14 @@ export default async function handler(req, res) {
         body?.requiredVersion
     );
     const outputType = resolveOutputType(body);
+    const reviewOptions = resolveReviewOptions(body);
     const pipelineOptions = {
       ...(body?.options || {}),
       traceId,
       requiredVersion,
+      evidenceEnabled: reviewOptions.evidenceEnabled,
+      editorialEnabled: reviewOptions.editorialEnabled,
+      complianceEnabled: reviewOptions.complianceEnabled,
     };
     if (outputType) {
       pipelineOptions.outputType = outputType;
@@ -242,8 +257,9 @@ export default async function handler(req, res) {
     const pipelineResult = useV4
       ? await runPipelineV4(draftText, v3Sources, pipelineOptions)
       : await runPipelineV3(draftText, v3Sources, pipelineOptions);
+    const nothingReviewed = pipelineResult?.nothingReviewed === true;
     const qcCards = Array.isArray(pipelineResult?.qcCards) ? pipelineResult.qcCards : [];
-    if (qcCards.length === 0) {
+    if (qcCards.length === 0 && !nothingReviewed) {
       throw new Error("QC pipeline returned empty qcCards");
     }
 
@@ -279,6 +295,9 @@ export default async function handler(req, res) {
         pipelineVersion: useV4 ? "v4" : "v3",
         stagesComplete: pipelineResult?._stagesComplete ?? null,
         traceId,
+        reviewOptions: pipelineResult?.reviewOptions ?? reviewOptions,
+        ...(pipelineResult?.evidenceReviewSkipped === true ? { evidenceReviewSkipped: true } : {}),
+        ...(nothingReviewed ? { nothingReviewed: true } : {}),
       },
       bannedWordHits,
     });
