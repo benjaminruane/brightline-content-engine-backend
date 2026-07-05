@@ -202,6 +202,14 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **Backend:** deleted `api/detect-output-type.js`; removed `"detect-output-type"` stage entry from `lib/qc/model-config.mjs` (dead code).
 - **Scope:** Assess module only. No change to Drafting (`useDraftState.jsx`, `FocusLeftRail`, `OutputTypesPanel`), generate/rewrite/analyse/export, or QC.
 
+### B25 — Verdict-label consistency across surfaces (closed 2026-07-05)
+
+**B25 — Verdict-label consistency across surfaces** (shipped 2026-07-05). Tags: backend `b25-verdict-label-consistency`, frontend `v8.63.0-b25-verdict-label-consistency`. Commit: `feat(B25): verdict-label consistency across surfaces`.
+
+- **Export:** `api/export.js` `normalizeVerdict` verdict strings aligned to card vocabulary — Confirmed / Partially confirmed / Conflicting / No support — with `supported_partial` split from `supported_full` (was collapsed to "Supported"). "not reviewed" → null and "Unverifiable" default unchanged.
+- **Frontend:** conflict long-line in `displayVerdictLabels.js` (`evidenceVerdictLineFromCard` + `evidenceVerdictLineFromSupportState`) corrected "Conflicting sources" → "Conflicts with sources" (short badge "Conflicting" unchanged).
+- **Scope:** display strings only; no verdict enum or logic change.
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -640,6 +648,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B26.2.4 — Output-type-aware craft pass | `b26.2.4-craft-output-type` (backend), `v8.59.0-b26.2.4-craft-output-type` (frontend) |
 | SRC1 — Source status pill alignment + override guard | `v8.60.0-src1-source-status-override` (frontend) |
 | B34 — Remove Assess Review Settings auto-detect | `b34-assess-auto-detect-removal` (backend), `v8.61.0-b34-assess-auto-detect-removal` (frontend) |
+| B25 — Verdict-label consistency across surfaces | `b25-verdict-label-consistency` (backend), `v8.63.0-b25-verdict-label-consistency` (frontend) |
 | R6.12 — Editorial output-type voice/register calibration | `r6.12-editorial-output-type` (backend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
