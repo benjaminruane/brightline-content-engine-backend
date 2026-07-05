@@ -9,7 +9,7 @@
   },
   "main": "api/generate.js",
   "scripts": {
-    "test": "echo \"no tests\"",
+    "test": "vitest run",
     "qc:test": "node scripts/run_qc_regression.mjs",
     "r1_2:build-eval-inputs": "node tests/r1_2_mini_eval/build_inputs.mjs",
     "r1_2:mini-eval": "node tests/r1_2_mini_eval/run_eval.mjs",
@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "acorn": "^8.15.0",
-    "csv-parse": "^6.2.1"
+    "csv-parse": "^6.2.1",
+    "vitest": "^3.2.4"
   }
 }
