@@ -174,6 +174,15 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **Unchanged:** card pass, selection, bundling, ordering, reviewed-draft snapshot, output contract `{ ok, feedbackText, isReady }`.
 - **Resolves BACKLOG B35** (output-type-blind craft pass). **Separate / still open:** editorial-layer **R6.12** document-type-aware voice/register — craft-layer calibration does not touch editorial rules.
 
+### SRC1 — Source status pill alignment + override guard (closed 2026-07-05)
+
+**SRC1 — Source publication-state pill alignment + override guard** (shipped 2026-07-05). Tag: frontend `v8.60.0-src1-source-status-override`. Commit: `feat(SRC1): source publication-state pill alignment and override guard`.
+
+- **Pill alignment:** publication-state pill right-aligned in source rows (name left → spacer → pill → remove) in **Assess** (`AssessModule.jsx`) and **Drafting** (`SourcesPanel.jsx`); shared `SourcePublicationStatePill.jsx`.
+- **Override guard:** `publicationStateSource: "auto" | "manual"` on source state. New uploads → `"auto"`. Dropdown override → `"manual"`. Shared `applySourceSummaryPatch.mjs` used by `useDraftState` and `useAssessState` — skips `publicationState` write when `"manual"`, still applies `description`. Covered by `tests/source-publication-state-patch.mjs`.
+- **Scope:** frontend only — no backend, payload, or Compliance-calibration change. `publicationState` already consumed by Compliance (R6.4a).
+- **Partially resolves ROADMAP Active Backlog #18(b)** — pill column alignment; **#18(a)** in-flight "Classifying…" indicator remains deferred.
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -478,6 +487,7 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 | **B26.2 — CONSTRUCTIVE FEEDBACK CRAFT PASS** | **SHIPPED 2026-06-30** — See **Recently shipped → B26.2**. Document-level craft pass + reviewed-draft snapshot; B26.2.1 assembly (single opening, continuous numbering, dimension-6 figure scan). Tags: `b26.2.1-craft-assembly` (backend), `v8.57.0-b26.2-craft-pass` (frontend). | Shipped |
 | **B26.2.2 — CONSTRUCTIVE FEEDBACK READABILITY** | **SHIPPED 2026-06-30** — See **Recently shipped → B26.2.2**. Quote-length discipline + figure-overlap dedupe (backend); assess summary bordered collapse + author-feedback button/modal labels (frontend). Tags: `b26.2.2-feedback-readability`, `v8.58.0-b26.2.2-feedback-readability`. | Shipped |
 | **B26.2.4 — OUTPUT-TYPE-AWARE CRAFT PASS** | **SHIPPED 2026-07-05** — See **Recently shipped → B26.2.4**. Frontend sends `outputType` on author-feedback request; backend normalizes and threads into craft call only (null → generic). Six craft dimensions calibrate per format (LinkedIn, press release, investor letter, reporting commentary default). Card pass, selection, bundling, ordering, snapshot, output contract unchanged. Resolves **BACKLOG B35**. Editorial **R6.12** remains open. Tags: `b26.2.4-craft-output-type`, `v8.59.0-b26.2.4-craft-output-type`. | Shipped |
+| **SRC1 — SOURCE STATUS PILL ALIGNMENT + OVERRIDE GUARD** | **SHIPPED 2026-07-05** — See **Recently shipped → SRC1**. Pill right-aligned in Assess + Drafting source rows; `publicationStateSource` auto/manual guard via shared `applySourceSummaryPatch.mjs`; test `tests/source-publication-state-patch.mjs`. Frontend-only — no backend/payload/Compliance change. Tag: `v8.60.0-src1-source-status-override`. Resolves **Active Backlog #18(b)** (pill alignment); **#18(a)** in-flight indicator deferred. | Shipped |
 | **R6.6 — SOURCE-PUBLIC-STATE AWARENESS** | **SHIPPED 2026-06-25** — See Recently shipped → **R6.6**. Figure leg (R6.6.1 harness); rename leg out of scope; named-individual leg (R6.6.3 content-bound suppression, F21 both directions). Residual watch: **BACKLOG B27**. | Shipped |
 
 ### B26 — Scoping inputs (superseded)
@@ -608,6 +618,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B26.2 — Constructive Feedback craft pass | `b26.2.1-craft-assembly` (backend), `v8.57.0-b26.2-craft-pass` (frontend) |
 | B26.2.2 — Constructive Feedback readability + UI polish | `b26.2.2-feedback-readability` (backend), `v8.58.0-b26.2.2-feedback-readability` (frontend) |
 | B26.2.4 — Output-type-aware craft pass | `b26.2.4-craft-output-type` (backend), `v8.59.0-b26.2.4-craft-output-type` (frontend) |
+| SRC1 — Source status pill alignment + override guard | `v8.60.0-src1-source-status-override` (frontend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
@@ -710,9 +721,9 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 
 18. **R6.4b UI polish (deferred).** Two cosmetic items from R6.4b live testing (2026-05-30):
   (a) Pills initially show "Unclassified" for several seconds while the LLM classifier runs in the background, then update to the inferred value once classification completes. Visually confusing — looks like the system is wrong, then "fixes itself". Replace initial pill state with an explicit in-flight indicator ("Classifying..." or a subtle loading state). Show one of the three terminal labels only once the publicationState is final.
-  (b) Pill positions are inconsistent across source rows because the filename column has variable width. Right-align pills (adjacent to the X remove button) so they line up in a column for cleaner scanning.
+  (b) ~~Pill positions are inconsistent across source rows because the filename column has variable width. Right-align pills (adjacent to the X remove button) so they line up in a column for cleaner scanning.~~ **SHIPPED 2026-07-05 — SRC1** (`v8.60.0-src1-source-status-override`). See **Recently shipped → SRC1**.
 
-Both items are cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival) or fold into a small polish pass when the broader source-row UI is touched.
+Item (a) remains cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival) or fold into a small polish pass when the broader source-row UI is touched. Item (b) closed by **SRC1**.
 
 ### Web Search Functionality Sprint
 - Scope and reliability of public search integration
