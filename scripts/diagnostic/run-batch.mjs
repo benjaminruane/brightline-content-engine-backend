@@ -6,8 +6,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import readline from "node:readline";
-import { createTraceId, flushObservability, startTrace, updateTraceMetadata } from "../../lib/observability.js";
-import { runPipelineV4 } from "../../lib/qc/pipeline-v4/index.mjs";
 import { loadLocalEnvFiles } from "./lib/env.mjs";
 import {
   batchFixturesInFives,
@@ -22,6 +20,12 @@ import { copySourcesToRunDir, loadPipelineSources } from "./lib/sources.mjs";
 import { countVerdictMix, formatVerdictMix, statementCount } from "./lib/verdict-mix.mjs";
 
 const PLACEHOLDER_DRAFT = "PLACEHOLDER";
+
+let createTraceId;
+let flushObservability;
+let startTrace;
+let updateTraceMetadata;
+let runPipelineV4;
 
 function parseArgs(argv) {
   const opts = { only: null, range: null, noConfirm: false };
@@ -260,6 +264,15 @@ async function writeIndex(runRoot, runMeta, entries) {
 async function main() {
   loadLocalEnvFiles();
   process.env.QC_PIPELINE_V4 = process.env.QC_PIPELINE_V4 || "1";
+  process.env.BRIGHTLINE_EDITORIAL_REVIEW = process.env.BRIGHTLINE_EDITORIAL_REVIEW || "1";
+
+  ({
+    createTraceId,
+    flushObservability,
+    startTrace,
+    updateTraceMetadata,
+  } = await import("../../lib/observability.js"));
+  ({ runPipelineV4 } = await import("../../lib/qc/pipeline-v4/index.mjs"));
 
   const opts = parseArgs(process.argv);
   const isTty = Boolean(process.stdin.isTTY);
