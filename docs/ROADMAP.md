@@ -183,6 +183,14 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **Scope:** frontend only — no backend, payload, or Compliance-calibration change. `publicationState` already consumed by Compliance (R6.4a).
 - **Partially resolves ROADMAP Active Backlog #18(b)** — pill column alignment; **#18(a)** in-flight "Classifying…" indicator remains deferred.
 
+### B34 — Remove Assess Review Settings auto-detect (closed 2026-07-05)
+
+**B34 — Remove Assess Review Settings auto-detect** (shipped 2026-07-05). Tags: backend `b34-assess-auto-detect-removal`, frontend `v8.61.0-b34-assess-auto-detect-removal`. Commit: `feat(B34): remove Assess Review Settings auto-detect`.
+
+- **Frontend:** removed `trySessionAutoDetect`, `setDraftTextTracked`, `defaultVisibilityForOutputType`, `lockReviewSettingsManual`, `isAutoDetectedType`, and override lock refs (`sessionAutoDetectDoneRef`, `reviewSettingsLockedRef`, `detectRequestSeqRef`) from `useAssessState.jsx`; removed "Auto-detected" badge and lock calls from `AssessModule.jsx`; dropped `apiDetectOutputType` from `api.js`. Restored plain `setDraftText`. Review Settings are manual-only; session default **Reporting commentary** / **Complete** unchanged.
+- **Backend:** deleted `api/detect-output-type.js`; removed `"detect-output-type"` stage entry from `lib/qc/model-config.mjs` (dead code).
+- **Scope:** Assess module only. No change to Drafting (`useDraftState.jsx`, `FocusLeftRail`, `OutputTypesPanel`), generate/rewrite/analyse/export, or QC.
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -488,6 +496,7 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 | **B26.2.2 — CONSTRUCTIVE FEEDBACK READABILITY** | **SHIPPED 2026-06-30** — See **Recently shipped → B26.2.2**. Quote-length discipline + figure-overlap dedupe (backend); assess summary bordered collapse + author-feedback button/modal labels (frontend). Tags: `b26.2.2-feedback-readability`, `v8.58.0-b26.2.2-feedback-readability`. | Shipped |
 | **B26.2.4 — OUTPUT-TYPE-AWARE CRAFT PASS** | **SHIPPED 2026-07-05** — See **Recently shipped → B26.2.4**. Frontend sends `outputType` on author-feedback request; backend normalizes and threads into craft call only (null → generic). Six craft dimensions calibrate per format (LinkedIn, press release, investor letter, reporting commentary default). Card pass, selection, bundling, ordering, snapshot, output contract unchanged. Resolves **BACKLOG B35**. Editorial **R6.12** remains open. Tags: `b26.2.4-craft-output-type`, `v8.59.0-b26.2.4-craft-output-type`. | Shipped |
 | **SRC1 — SOURCE STATUS PILL ALIGNMENT + OVERRIDE GUARD** | **SHIPPED 2026-07-05** — See **Recently shipped → SRC1**. Pill right-aligned in Assess + Drafting source rows; `publicationStateSource` auto/manual guard via shared `applySourceSummaryPatch.mjs`; test `tests/source-publication-state-patch.mjs`. Frontend-only — no backend/payload/Compliance change. Tag: `v8.60.0-src1-source-status-override`. Resolves **Active Backlog #18(b)** (pill alignment); **#18(a)** in-flight indicator deferred. | Shipped |
+| **B34 — REMOVE ASSESS REVIEW SETTINGS AUTO-DETECT** | **SHIPPED 2026-07-05** — See **Recently shipped → B34**. Removed `trySessionAutoDetect`, badge, lock refs, and `apiDetectOutputType`; Review Settings manual-only (default **Reporting commentary** / **Complete**). Backend `detect-output-type` endpoint + model-config stage deleted. No change to Drafting, generate/rewrite/analyse/export, or QC. Tags: `b34-assess-auto-detect-removal` (backend), `v8.61.0-b34-assess-auto-detect-removal` (frontend). | Shipped |
 | **R6.6 — SOURCE-PUBLIC-STATE AWARENESS** | **SHIPPED 2026-06-25** — See Recently shipped → **R6.6**. Figure leg (R6.6.1 harness); rename leg out of scope; named-individual leg (R6.6.3 content-bound suppression, F21 both directions). Residual watch: **BACKLOG B27**. | Shipped |
 
 ### B26 — Scoping inputs (superseded)
@@ -619,6 +628,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B26.2.2 — Constructive Feedback readability + UI polish | `b26.2.2-feedback-readability` (backend), `v8.58.0-b26.2.2-feedback-readability` (frontend) |
 | B26.2.4 — Output-type-aware craft pass | `b26.2.4-craft-output-type` (backend), `v8.59.0-b26.2.4-craft-output-type` (frontend) |
 | SRC1 — Source status pill alignment + override guard | `v8.60.0-src1-source-status-override` (frontend) |
+| B34 — Remove Assess Review Settings auto-detect | `b34-assess-auto-detect-removal` (backend), `v8.61.0-b34-assess-auto-detect-removal` (frontend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
