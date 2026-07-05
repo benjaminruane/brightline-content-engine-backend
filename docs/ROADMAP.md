@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-07-05 (R6.12 shipped: editorial output-type voice/register calibration)
+Last updated: 2026-07-05 (WSC1 Writing scaffold + **Pr9** interim suggest-revised-draft logged)
 
 ---
 
@@ -543,6 +543,29 @@ Pre-spec inputs from Straits Times / Ren analysis informed B26 but are **superse
 
 ---
 
+## Near-term — Writing scaffold (demo-facing)
+
+**Status:** **LOGGED** (pre-spec). **Priority:** H (Tuesday PG demo).
+
+**Objective:** Beef up the existing Writing (Generate/Rewrite) feature to PG-grade output for the Tuesday PG demo via a **scaffolded** (not re-architected) approach.
+
+**Mechanism:**
+- Embed Ben's real PG writing prompts as a structured prompt library keyed by **`eventType` × `requiredVersion`** (Complete / Public).
+- Consumed by `buildBasePrompt` in the existing generation path (`api/generate.js`, `api/rewrite.js`, `lib/prompt-library/`).
+- **Backend-owned;** no QC or deterministic pipeline change.
+
+**Demo scope (end-to-end):** two event types — **new fund commitment** and **new direct investment** — each with Complete / Public split. Extends to other event types later (feeds **R6.14** / **BACKLOG B32** long-term).
+
+**Frontend:** small Writing input modal to select event type and supply prompt input fields. Field sourcing to be triaged from the prompts: modal field vs auto-fill from existing deal-info session state vs drop.
+
+**Wiring note:** `eventType` still lives in Generate/Rewrite only (**B28** removed it from the QC path); no QC re-wiring needed for Writing.
+
+**Blocked on:** Ben supplying the prompts + input-field list (expected next session).
+
+**Cross-refs:** **R6.14** (long-term event-type matrix); **BACKLOG B32**; **Pr9** (interim suggest-revised-draft — separate, post-demo).
+
+---
+
 ## R7 — Sources Drawer Revival [MVP]
 
 **Status:** **LOGGED** (pre-spec discussion pending)
@@ -601,18 +624,19 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
 
-1. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
-2. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
-3. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
-4. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
-5. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
-6. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
-7. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
-8. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
-9. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
-10. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
-11. ~~**Document-type voice/register — editorial (R6.12)**~~ — **SHIPPED 2026-07-05** (see **Recently shipped → R6.12**). ~~**Source-public-state awareness (R6.6)**~~ — **SHIPPED 2026-06-25** (see Recently shipped → R6.6). **Forward-looking statement review (R6.7)** — Medium. **Cross-source display semantics (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — shipped; residual functional-element noise confirmed 2026-06-01. **Source quality audit (R6.10)** — Low.
-12. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
+1. **WSC1 — Writing scaffold (demo-facing)** — PG-grade Generate/Rewrite for Tuesday PG demo; structured prompt library (`eventType` × `requiredVersion`) via `buildBasePrompt`; Writing input modal for event type + prompt fields. Demo: new fund commitment + new direct investment (Complete/Public each). **Blocked:** Ben's prompts + input-field list (expected next session). See **Near-term — Writing scaffold (demo-facing)**. No QC change (**B28**).
+2. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
+3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
+4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
+5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
+6. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
+7. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
+8. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
+9. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
+10. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
+11. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
+12. ~~**Document-type voice/register — editorial (R6.12)**~~ — **SHIPPED 2026-07-05** (see **Recently shipped → R6.12**). ~~**Source-public-state awareness (R6.6)**~~ — **SHIPPED 2026-06-25** (see Recently shipped → R6.6). **Forward-looking statement review (R6.7)** — Medium. **Cross-source display semantics (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — shipped; residual functional-element noise confirmed 2026-06-01. **Source quality audit (R6.10)** — Low.
+13. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
 
     **Scope when picked up:**
     - Inventory all tool-output text surfaces (~7 known: editorial concerns, compliance concerns, evidence summary, Stage 5 commentary, Quality Review Summary, Reviewer Assessment, sign-off labels).
@@ -624,19 +648,20 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
     **Connection to existing work:** `AI_OPERATING_MANUAL.md` already includes a "QC Output Language Standard" that articulates principles for tool prose but is not rigorously enforced via prompts or filters. This item is partly about strengthening that standard's enforcement, partly about extending it to cover house-style rules the standard doesn't currently mention.
 
     **Priority:** High-leverage (touches every Review output) but not urgent — symptoms are addressable piecemeal as observed. Scope as R6.2b when ready. Logged 2026-05-30 from a one-off observation.
-13. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
+14. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
 
-### Long-horizon ideas (below top 13)
+### Long-horizon ideas (below top 14)
 
 - **Per-house / per-reviewer language profile** — capture preferred phrasings, tone, capitalisation, and term substitutions per reviewer or per house, included as prompt context for the language layer only (Stage 5 commentary, B26 register, future reviewer-facing prose). HARD BOUNDARY: this never touches Stage 2 classification, Stage 3/4/7 aggregation, or any verdict-layer logic. The deterministic LLM-last architecture is preserved. Origin: 'centurion vs learning' framing from Ren Education (Straits Times, June 2026).
 
-14. **E2 deterministic reimplementation** — open.
-15. **Implement-changes sprint** (`suggestedRewrite` → UI) — see Active Backlog → Implement-Changes Sprint.
-16. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
-17. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
-18. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
-19. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
-20. **Short-draft visual balance.** On very short drafts (e.g. a single 13-word sentence), Review output volume is disproportionate to input — Reviewer Assessment prose, Quality Review Summary, and fixed-format QC cards combine to a >15:1 output-to-input ratio. Reviewer Assessment is the largest fixed-size contributor and its length does not scale with draft length.
+15. **E2 deterministic reimplementation** — open.
+16. **Pr9 — Interim: Suggest revised draft** — lighter prequel to Implement-changes sprint; deferred until after PG demo (**WSC1**). See **BACKLOG Pr9** and Active Backlog → Implement-Changes Sprint.
+17. **Implement-changes sprint** (`suggestedRewrite` → UI, accept/reject/refine) — see Active Backlog → Implement-Changes Sprint; full workflow remains separate from **Pr9**.
+18. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
+19. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
+20. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+21. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
+22. **Short-draft visual balance.** On very short drafts (e.g. a single 13-word sentence), Review output volume is disproportionate to input — Reviewer Assessment prose, Quality Review Summary, and fixed-format QC cards combine to a >15:1 output-to-input ratio. Reviewer Assessment is the largest fixed-size contributor and its length does not scale with draft length.
 
     Possible directions when picked up:
     - Length-scaled Reviewer Assessment: synthesise-review generates prose proportional to draft length (~30 words for short drafts scaling to ~150 words for long ones).
@@ -644,9 +669,9 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
     - More structural — examine whether the assessment is doing real work beyond the Quality Review Summary bullets and card list, and either repurpose it (see next backlog item) or remove.
 
     UX-shaped, not calibration-shaped. Worth a small scoping pass when next addressing UI. Logged 2026-05-30.
-19. ~~**Reviewer Assessment purpose reframe.**~~ **RESOLVED (B26, 2026-06-30)** — closed by **not** reframing Reviewer Assessment. **Constructive Feedback (B26 / B26.1)** is the separate on-demand author-facing surface (per-statement consolidated rationale, no revised text). Reviewer Assessment stays the short reviewer-facing overview (`api/synthesize-review.js` unchanged). See **Recently shipped → B26 / B26.1**. **Same work-stream:** **BACKLOG B26** (closed), **BACKLOG Pr8** (resolved).
+23. ~~**Reviewer Assessment purpose reframe.**~~ **RESOLVED (B26, 2026-06-30)** — closed by **not** reframing Reviewer Assessment. **Constructive Feedback (B26 / B26.1)** is the separate on-demand author-facing surface (per-statement consolidated rationale, no revised text). Reviewer Assessment stays the short reviewer-facing overview (`api/synthesize-review.js` unchanged). See **Recently shipped → B26 / B26.1**. **Same work-stream:** **BACKLOG B26** (closed), **BACKLOG Pr8** (resolved).
 
-**Also tracked (below top 19):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
+**Also tracked (below top 23):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
 **Closed (removed from open list):**
 
@@ -786,8 +811,9 @@ Item (a) remains cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival)
 - Blending rules: draft first, sources second, web last
 
 ### Implement-Changes Sprint
+- **Pr9 — Interim: Suggest revised draft** (lighter prequel; deferred until after PG demo **WSC1**) — one-click holistic rewrite from all Review/Assess card concerns; mirrors **B26** gather → single temp-0 LLM call; uses **B26.2** reviewed-draft snapshot; modal with revised draft + track-changes diff (collapsed) + Copy; separate opt-in action (Review Correctness Principle #7 boundary). See **BACKLOG Pr9**.
 - Surface `suggestedRewrite` from QC cards to UI
-- Accept / reject / refine workflow for suggested rewrites
+- Accept / reject / refine workflow for suggested rewrites (full sprint — separate from **Pr9**)
 - Rewrite notes redesign — deferred from earlier sprint, belongs here
 
 ### Spring Clean / Refactor Sprint
