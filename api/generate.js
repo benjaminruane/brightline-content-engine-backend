@@ -28,7 +28,7 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
-import { buildBasePrompt } from "../lib/prompt-library/index.js";
+import { buildBasePrompt, enforcePgCommentaryWordLimit } from "../lib/prompt-library/index.js";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
@@ -631,8 +631,18 @@ export default async function handler(req, res) {
 
     const safeTitle = typeof title === "string" ? title : "";
     const safeNotes = typeof notes === "string" ? notes : "";
-    const rawEventType = typeof scenario === "string" ? scenario : "";
+    const rawEventType =
+      typeof body.eventType === "string" && body.eventType.trim()
+        ? body.eventType
+        : typeof scenario === "string"
+          ? scenario
+          : "";
     const eventType = normalizeEventType(rawEventType);
+    const safeTransactionDate =
+      typeof body.transactionDate === "string" ? body.transactionDate.trim() : "";
+    const safeInvestment = typeof body.investment === "string" ? body.investment.trim() : "";
+    const safeSpecialInstructions =
+      typeof body.specialInstructions === "string" ? body.specialInstructions.trim() : "";
     const eventTypeLabel = getEventTypeLabel(eventType);
     const safeScenario = rawEventType;
     const safeSelectedTypes = Array.isArray(selectedTypes) ? selectedTypes : [];
@@ -684,7 +694,15 @@ export default async function handler(req, res) {
       ? "Write in second-person voice (use 'you', 'your')."
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
-    const { basePromptText } = buildBasePrompt({ outputType, visibility, eventType });
+    const { basePromptText } = buildBasePrompt({
+      outputType,
+      visibility,
+      eventType,
+      transactionDate: safeTransactionDate,
+      investment: safeInvestment,
+      specialInstructions: safeSpecialInstructions,
+      sources: safeSources,
+    });
     const systemContent = [STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
     const userPrompt = `
@@ -795,6 +813,14 @@ Return ONLY JSON:
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
     let currentDraftText = stripSourcesUsedBlock(rawDraftText);
+
+    const pgWordLimit = enforcePgCommentaryWordLimit(currentDraftText, {
+      eventType,
+      visibility,
+      requestId: req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null,
+    });
+    currentDraftText = pgWordLimit.draftText;
+
     await populateSourceUsageSummaries(req, sourcesUsedRows, currentDraftText);
 
     if (!currentDraftText.trim()) {
