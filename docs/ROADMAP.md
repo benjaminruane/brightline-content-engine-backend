@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-07-05 (WSC1 Writing scaffold + **Pr9** interim suggest-revised-draft logged)
+Last updated: 2026-07-06 (**WR1** Writing scaffold shipped — PG demo writing path live)
 
 ---
 
@@ -228,6 +228,18 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **Unchanged:** compliance user payloads (already excluded `eventType`); rule filtering and verdict aggregation; Generate/Rewrite event-type framing (`api/generate.js`, `api/rewrite.js`, `lib/event-type.js`).
 - **Re-add to QC** if **R6.14** event-type-aware review ships (**BACKLOG B32**).
 - **Resolves ROADMAP Active Backlog #3** and **BACKLOG B28**.
+
+### WR1 — Writing scaffold (closed 2026-07-06)
+
+**WR1 — Writing scaffold** (shipped 2026-07-06). Tags: backend `wr1-writing-scaffold`, frontend `v8.66.0-wr1-writing-scaffold`. PG demo writing path for **new direct investment** and **new fund commitment** (Complete / Public each).
+
+- **PG prompt library:** `lib/prompt-library/pg-writing-prompts.mjs` keyed `eventType` × `visibility` for `NEW_DIRECT_INVESTMENT` and `NEW_FUND_COMMITMENT`; consumed by `buildBasePrompt` on the generate path. Binding-precedence constraints (last instruction the model reads): transaction date from modal input (not source dates); investment name exact; Partners Group naming; two-paragraph structure (Complete) / one paragraph (Public); US English; USD not `$`; month spelled out in prose; strict commentary word limits (150 Complete / 80 Public).
+- **Methodology Note:** generation half + mandatory Methodology Note delimited by `---METHODOLOGY---`; word limit applies to commentary only. SELF-CHECK apparatus excluded — Review owns QC.
+- **Deterministic backstops:** PG commentary cleanup (`pg-commentary-cleanup.mjs` — artifact/smart-quote/dash strip); investment-name punctuation trim (`normalizePgInvestmentName`); fund-commitment exclusion filter (`applyPgFundCommitmentPostFilter` — lead-commitment → committed to; GP → manager; strip prior-fund figures/exit returns/fund mechanics); sentence-boundary word-limit enforcement for fund commitment (no mid-sentence cuts). Canaries: `pg_fund_exclusion_filtered`, `pg_word_limit_exceeded`.
+- **Frontend:** `WritingInputModal` (transaction type, investment name, month+year picker emitting MMM YYYY, Complete/Public, special instructions); wired into Assess generate path (`useAssessState`); one version per Generate. Drafting panel: **Configure text inputs** secondary button opens modal (modal retains **Generate draft**). Methodology Note in collapsible block below draft (`MethodologyNotePanel`, default collapsed), excluded from word count.
+- **Demo sources:** `Shopify (text).txt` (direct investment); `CVC VIII.txt` (fund commitment). **Learning:** source shape drives output — track-record-dense sources fight the exclusions; close-memo/strategy-led sources generate clean from the prompt. Armitage IC memo retained as fund-filter stress-test fixture.
+- **Scope:** generation path only; no QC or deterministic verdict change (**B28** retained).
+- **Follow-on (post-demo):** true both-version output (**WR2**); blank-transaction-date guard on modal (**WR2.1**); broader event types (**B32** / **R6.14**). Unblocks **Pr9** scheduling.
 
 ---
 
@@ -535,6 +547,8 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 | **B26.2.4 — OUTPUT-TYPE-AWARE CRAFT PASS** | **SHIPPED 2026-07-05** — See **Recently shipped → B26.2.4**. Frontend sends `outputType` on author-feedback request; backend normalizes and threads into craft call only (null → generic). Six craft dimensions calibrate per format (LinkedIn, press release, investor letter, reporting commentary default). Card pass, selection, bundling, ordering, snapshot, output contract unchanged. Resolves **BACKLOG B35**. Editorial voice/register: **R6.12** (shipped 2026-07-05). Tags: `b26.2.4-craft-output-type`, `v8.59.0-b26.2.4-craft-output-type`. | Shipped |
 | **SRC1 — SOURCE STATUS PILL ALIGNMENT + OVERRIDE GUARD** | **SHIPPED 2026-07-05** — See **Recently shipped → SRC1**. Pill right-aligned in Assess + Drafting source rows; `publicationStateSource` auto/manual guard via shared `applySourceSummaryPatch.mjs`; test `tests/source-publication-state-patch.mjs`. Frontend-only — no backend/payload/Compliance change. Tag: `v8.60.0-src1-source-status-override`. Resolves **Active Backlog #18(b)** (pill alignment); **#18(a)** in-flight indicator deferred. | Shipped |
 | **B34 — REMOVE ASSESS REVIEW SETTINGS AUTO-DETECT** | **SHIPPED 2026-07-05** — See **Recently shipped → B34**. Removed `trySessionAutoDetect`, badge, lock refs, and `apiDetectOutputType`; Review Settings manual-only (default **Reporting commentary** / **Complete**). Backend `detect-output-type` endpoint + model-config stage deleted. No change to Drafting, generate/rewrite/analyse/export, or QC. Tags: `b34-assess-auto-detect-removal` (backend), `v8.61.0-b34-assess-auto-detect-removal` (frontend). | Shipped |
+| **B28 — REMOVE UNUSED EVENTTYPE FROM QC PATH** | **SHIPPED 2026-07-05** — See **Recently shipped → B28**. Removed editorial DOCUMENT CONTEXT `eventType` line and related QC reads; Generate/Rewrite framing retained. Tag: `b28-remove-eventtype`. | Shipped |
+| **WR1 — WRITING SCAFFOLD (PG DEMO)** | **SHIPPED 2026-07-06** — See **Recently shipped → WR1**. PG prompt library (`eventType` × visibility); Writing input modal; Methodology Note; deterministic backstops + canaries; Assess generate wiring. Tags: `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend). Resolves **WSC1** / **Near-term — Writing scaffold**. | Shipped |
 | **R6.6 — SOURCE-PUBLIC-STATE AWARENESS** | **SHIPPED 2026-06-25** — See Recently shipped → **R6.6**. Figure leg (R6.6.1 harness); rename leg out of scope; named-individual leg (R6.6.3 content-bound suppression, F21 both directions). Residual watch: **BACKLOG B27**. | Shipped |
 
 ### B26 — Scoping inputs (superseded)
@@ -545,24 +559,13 @@ Pre-spec inputs from Straits Times / Ren analysis informed B26 but are **superse
 
 ## Near-term — Writing scaffold (demo-facing)
 
-**Status:** **LOGGED** (pre-spec). **Priority:** H (Tuesday PG demo).
+**Status:** **SHIPPED 2026-07-06 — WR1**. See **Recently shipped → WR1**.
 
-**Objective:** Beef up the existing Writing (Generate/Rewrite) feature to PG-grade output for the Tuesday PG demo via a **scaffolded** (not re-architected) approach.
+PG-grade Generate for the Tuesday PG demo via scaffolded prompt library + Writing input modal. Two event types — **new fund commitment** and **new direct investment** — each with Complete / Public blocks. Generation path only; no QC change (**B28**).
 
-**Mechanism:**
-- Embed Ben's real PG writing prompts as a structured prompt library keyed by **`eventType` × `requiredVersion`** (Complete / Public).
-- Consumed by `buildBasePrompt` in the existing generation path (`api/generate.js`, `api/rewrite.js`, `lib/prompt-library/`).
-- **Backend-owned;** no QC or deterministic pipeline change.
+**Follow-on (post-demo):** true both-version output (**WR2**); blank-transaction-date guard on modal (**WR2.1**); broader event types (**B32** / **R6.14**).
 
-**Demo scope (end-to-end):** two event types — **new fund commitment** and **new direct investment** — each with Complete / Public split. Extends to other event types later (feeds **R6.14** / **BACKLOG B32** long-term).
-
-**Frontend:** small Writing input modal to select event type and supply prompt input fields. Field sourcing to be triaged from the prompts: modal field vs auto-fill from existing deal-info session state vs drop.
-
-**Wiring note:** `eventType` still lives in Generate/Rewrite only (**B28** removed it from the QC path); no QC re-wiring needed for Writing.
-
-**Blocked on:** Ben supplying the prompts + input-field list (expected next session).
-
-**Cross-refs:** **R6.14** (long-term event-type matrix); **BACKLOG B32**; **Pr9** (interim suggest-revised-draft — separate, post-demo).
+**Cross-refs:** **BACKLOG WR1** (closed); **Pr9** (interim suggest-revised-draft — now unblocked post-demo).
 
 ---
 
@@ -624,7 +627,7 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
 
-1. **WSC1 — Writing scaffold (demo-facing)** — PG-grade Generate/Rewrite for Tuesday PG demo; structured prompt library (`eventType` × `requiredVersion`) via `buildBasePrompt`; Writing input modal for event type + prompt fields. Demo: new fund commitment + new direct investment (Complete/Public each). **Blocked:** Ben's prompts + input-field list (expected next session). See **Near-term — Writing scaffold (demo-facing)**. No QC change (**B28**).
+1. ~~**WSC1 / WR1 — Writing scaffold (demo-facing)**~~ — **SHIPPED 2026-07-06** — see **Recently shipped → WR1**. PG prompt library, Writing input modal, Methodology Note, deterministic backstops, Assess generate wiring. Tags: `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend).
 2. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
@@ -655,7 +658,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 - **Per-house / per-reviewer language profile** — capture preferred phrasings, tone, capitalisation, and term substitutions per reviewer or per house, included as prompt context for the language layer only (Stage 5 commentary, B26 register, future reviewer-facing prose). HARD BOUNDARY: this never touches Stage 2 classification, Stage 3/4/7 aggregation, or any verdict-layer logic. The deterministic LLM-last architecture is preserved. Origin: 'centurion vs learning' framing from Ren Education (Straits Times, June 2026).
 
 15. **E2 deterministic reimplementation** — open.
-16. **Pr9 — Interim: Suggest revised draft** — lighter prequel to Implement-changes sprint; deferred until after PG demo (**WSC1**). See **BACKLOG Pr9** and Active Backlog → Implement-Changes Sprint.
+16. **Pr9 — Interim: Suggest revised draft** — lighter prequel to Implement-changes sprint; deferred until post-demo (**WR1** shipped 2026-07-06). See **BACKLOG Pr9** and Active Backlog → Implement-Changes Sprint.
 17. **Implement-changes sprint** (`suggestedRewrite` → UI, accept/reject/refine) — see Active Backlog → Implement-Changes Sprint; full workflow remains separate from **Pr9**.
 18. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
 19. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
@@ -694,6 +697,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B34 — Remove Assess Review Settings auto-detect | `b34-assess-auto-detect-removal` (backend), `v8.61.0-b34-assess-auto-detect-removal` (frontend) |
 | B25 — Verdict-label consistency across surfaces | `b25-verdict-label-consistency` (backend), `v8.63.0-b25-verdict-label-consistency` (frontend) |
 | B29 / B29.1 — v4 review toggles + skipped-signal card rows | `b29-v4-review-toggles` (backend), `v8.65.0-b29.1-not-reviewed-rows` (frontend) |
+| WR1 — Writing scaffold (PG demo) | `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend) |
 | R6.12 — Editorial output-type voice/register calibration | `r6.12-editorial-output-type` (backend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
@@ -811,7 +815,7 @@ Item (a) remains cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival)
 - Blending rules: draft first, sources second, web last
 
 ### Implement-Changes Sprint
-- **Pr9 — Interim: Suggest revised draft** (lighter prequel; deferred until after PG demo **WSC1**) — one-click holistic rewrite from all Review/Assess card concerns; mirrors **B26** gather → single temp-0 LLM call; uses **B26.2** reviewed-draft snapshot; modal with revised draft + track-changes diff (collapsed) + Copy; separate opt-in action (Review Correctness Principle #7 boundary). See **BACKLOG Pr9**.
+- **Pr9 — Interim: Suggest revised draft** (lighter prequel; post-demo — **WR1** shipped 2026-07-06) — one-click holistic rewrite from all Review/Assess card concerns; mirrors **B26** gather → single temp-0 LLM call; uses **B26.2** reviewed-draft snapshot; modal with revised draft + track-changes diff (collapsed) + Copy; separate opt-in action (Review Correctness Principle #7 boundary). See **BACKLOG Pr9**.
 - Surface `suggestedRewrite` from QC cards to UI
 - Accept / reject / refine workflow for suggested rewrites (full sprint — separate from **Pr9**)
 - Rewrite notes redesign — deferred from earlier sprint, belongs here
