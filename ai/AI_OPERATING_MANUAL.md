@@ -103,6 +103,8 @@ Discipline: when a feature shows no observable effect after a code change, **fir
 
 ## Testing Expectations
 - Usually max 3 runs per batch
+- **Interactive Review production cost (baseline):** ~$2/run at ~4 statements / 1 source (~16 LLM calls). This is per live Review run, not per diagnostic fixture.
+- **Full diagnostic batch cost:** ~20 fixtures ≈ **$25–30** total (~$1.25–1.50 per fixture). **Flag before full-batch runs**; prefer targeted `--only` subsets in `scripts/diagnostic/run-batch.mjs` when scoping a change.
 - Reuse existing source files unless new ones are strictly necessary
 - Evidence should include Cursor summary, JSON responses, screenshots, and Vercel logs when relevant
 

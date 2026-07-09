@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-07-06 (**WR1** Writing scaffold shipped — PG demo writing path live)
+Last updated: 2026-07-09 (**A10** Adapt-into-Assess sprint shipped — frontend `v8.51.0-rA10-adapt-into-assess`)
 
 ---
 
@@ -16,7 +16,7 @@ Last updated: 2026-07-06 (**WR1** Writing scaffold shipped — PG demo writing p
 ### Production baseline (post-R5)
 
 - **Pipeline:** v4 in production.
-- **Cost / call volume (baseline 2026-06-28):** ~16 LLM calls per run at 4 statements / 1 source; production cost ~$2/run.
+- **Cost / call volume (baseline 2026-06-28):** ~16 LLM calls per run at 4 statements / 1 source; interactive Review production cost ~**$2/run**. **Diagnostic batch (separate):** full ~20-fixture batch ~**$25–30** total (~$1.25–1.50 per fixture) — flag before full-batch runs; prefer targeted `--only` subsets first.
 - **Production baseline (deployment-verified 2026-06-28 via Vercel):** live deploy `b23-docsync` (commit `9ab91c1`, main). All editorial-cluster code shipped and live — B21, B22 / B22.1 / B22.2 (latest code ship `b22.2-editorial-excerpt-removal`); subsequent commits (B22-docsync, b23-docsync, docs-hygiene) are documentation-only. Frontend `v8.54.1-r6.13.1-writing-intent-wiring`.
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
 - **Next arc:** Review output quality (R6), not further UI structure work.
@@ -46,7 +46,8 @@ Last updated: 2026-07-06 (**WR1** Writing scaffold shipped — PG demo writing p
 - Four output types: Reporting commentary, Investor letter, Press release, LinkedIn post
 - Two required versions: Complete, Public
 - Adapt flow: format-aware prompt per target type, direction-aware guidance
-- Tabbed presentation of master + adaptations in Draft Output panel
+- **Assess (A10):** Adapt live — modal + `handleAdapt` in `useAssessState`; labelled version-timeline entries; Review on adapted drafts with full QC cards (no master-only banner). `/api/adapt` unchanged.
+- Writing route: tabbed presentation of master + adaptations in Draft Output panel (route off/dead; consolidation deferred — **A11.3**)
 - Version History unified across output types with grouped collapsible sections
 - Output type prompt scaffolding: LP salutation, narrative arc, press release structure, LinkedIn first-person voice
 - PDF source text extraction in adapt pipeline (`prepareUploadedSourcesForPipeline`)
@@ -82,8 +83,6 @@ Last updated: 2026-07-06 (**WR1** Writing scaffold shipped — PG demo writing p
 - Source text extraction pipeline (`lib/extract-text-from-source.mjs`)
 - Assess module: paste/upload draft, run QC, reviewer synthesis in senior editor voice
 - Reviewer Assessment in Quality Review panel (Writing view), Assess export, config panel aligned with Document Setup
-- A10.3 polish - state persistence, layout, scroll, export order, refresh behaviour
-- A10.4 - Assess final polish
 
 ### Backend Architecture
 - LLM-last architecture: verdict, classification, and concern level deterministic; LLM commentary runs after
@@ -241,6 +240,16 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **Scope:** generation path only; no QC or deterministic verdict change (**B28** retained).
 - **Follow-on (post-demo):** true both-version output (**WR2**); blank-transaction-date guard on modal (**WR2.1**); broader event types (**B32** / **R6.14**). Unblocks **Pr9** scheduling.
 
+### A10 — Adapt into Assess (closed 2026-07-09)
+
+**A10 sprint — Adapt into Assess** (shipped 2026-07-09). Frontend tag: `v8.51.0-rA10-adapt-into-assess`. Backend `/api/adapt` unchanged.
+
+- **A10 — Adapt ported into Assess:** draft transform via Assess Adapt modal + `handleAdapt` in `useAssessState`; adapted drafts captured as labelled version-timeline entries with `meta.derivation`. Review runs on adapted drafts with full QC cards; Assess keeps adaptation-review enabled (`isActiveOutputAdaptation: false` — no master-only banner).
+- **A10.1 — Adapt UI polish:** Adapt button right-most with neutral outline (matches Clear/Export); pale-yellow Beta pills on button + modal; LinkedIn link field relabel + helper; press-release quote field labels.
+- **A10.2 / A10.2.1 / A10.2.2 — Adapt draft-panel polish:** `meta.derivation` persisted on adapt timeline entries and carried forward through Review/Save (`findCarriedDerivation`); **↳ Adapted from {type}** chip with case-normalised display label; draft textarea fills panel height; post-layout scroll-to-top (`requestAnimationFrame`); non-functional resize grip removed (`resize-none`).
+
+**Follow-on (deferred):** **A10.3** — state persistence, layout, scroll, export order, refresh behaviour. **A10.4** — Assess final polish. **A11.1–A11.3** — per-version QC, tabbed base↔adaptation view, single-view consolidation (see **Parked → Assess horizon**).
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -353,7 +362,7 @@ Status of rebuild optimisation and cost items from the v4 planning track:
 | **(A)** | LLM call consolidation | **R3.1 shipped** — Style+Editorial merged on v4 (`runEditorialStyleReview`). **Compliance deliberately kept separate** (different cognitive frame, reviewer trust; ~$0.02/run saving not worth signal dilution). **R3.2** (Stage 5 into Stage 2) **DEFERRED** — needs Stage 2 restructure; loses parallelisation. |
 | **(B)** | Visibility wiring (Complete vs Public) | **CLOSED** via R4.3 (`r4.3-visibility-wiring`). |
 | **(C)** | Stage 2 chunking cost ceiling for long sources | **Open** — not an immediate concern (F15 ran clean at ~4,800 words in diagnostic). Scope during **R6 Review Quality** when long-source warnings recur (see Parked → (C) below). |
-| **(D)** | $2/run production cost target | **Tracking** — diagnostic pass scheduled inside **R6 scoping**; baseline call count and cost before prompt changes. |
+| **(D)** | $2/run production cost target | **Tracking** — interactive Review ~$2/run (baseline). Full diagnostic batch ~$25–30 separate — see **D1.8**, **Working rules → Cost**. |
 
 ---
 
@@ -406,7 +415,7 @@ Items in scope (order indicative, not locked):
 | **R6.6** | **Source-public-state awareness** — harness wiring, residual-leg verification, content-bound named-individual suppression | **SHIPPED 2026-06-25** | R6.4a base; R6.6.1–R6.6.4; F21 fixture. See Recently shipped → R6.6 |
 | **R6.7** | **Forward-looking statement review** — distinguish forward-looking claims; hedging, plausibility, visibility-calibration, alignment with stated risks | Medium | Diagnostic (F02, F03, F05, F08, F09) |
 | **R6.8 [MVP]** | **Cross-source display semantics** — cross-source detection now **works** (F18 resolved — 0→3 conflicting, correctly). Open question is **display semantics only:** statements supported-by-source-A but contradicted-by-source-B currently read 'supported + conflict flag' (F18 S3/4/5/7). Decision needed: keep supported-with-flag, or escalate to partial/conflicting. Risk: a reviewer skimming green verdicts may miss the flag on a material discrepancy. Ben's lean: escalate — but **decide only after** reviewing how prominently the conflict flag surfaces in the UI. Reframed from 'fix aggregation' to 'decide display'. | Medium | Diagnostic (F18); re-run 2026-06-01 |
-| **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20). **Residual watch (not R6.9 scope):** functional-element statements that survive Stage 1 (recommendations, sentiment lines) still return `not_supported` — see **Watch items → R6.9 residual functional-element noise**. |
+| **R6.9** | **Non-claim statement handling** — Stage 1 classifies each statement as claim/non-claim and drops pure non-claims (salutations, closings, bare transitions) after span mapping, so they never become QC cards or reach evidence/editorial/compliance review. Classification is statement-level: a statement is dropped only if entirely structural with no verifiable content; mixed structural+factual sentences are kept. Bias toward keeping when uncertain. All-non-claim safeguard prevents empty results. | **SHIPPED 2026-05-28** — `r6.9-non-claim-handling` | Diagnostic (F04, F11, F12, F14, F18, F20). **Follow-up elevated:** **R6.9.1** rhetorical/opinion statements still evidence-assessed (LinkedIn adapt, 2026-07-09) — see **Parked → R6.9.1**, **BACKLOG B37**. **Residual watch:** functional-element statements that survive Stage 1 — see **Watch items → R6.9 residual functional-element noise**. |
 | **R6.10** | **Source quality audit** — independent of draft, audit each source for internal inconsistencies | Low | Diagnostic (F13 — caught 2/3 deliberate inconsistencies) |
 | **R6.12** | **Document-type voice/register (editorial)** — output-type calibration block + LinkedIn `reviewerNoteByOutput` on voice/register/structural rules; closes editorial half of document-type-awareness gap (craft: **B26.2.4**). Broader salutation/business-description norms deferred to Layer 2 backlog. | **SHIPPED 2026-07-05** — `r6.12-editorial-output-type` | Diagnostic F12/F09; comments review 2026-06-01. Residual watch: F12 S6/S8 — see **Watch items → R6.12 residual LinkedIn editorial noise** |
 | **R6.13** | **Review-intent wiring** — silent-default audit (R6.13-audit); Writing-path QC payload + stale log fix (R6.13.1, closes B20); regression calibration guards (R6.13.2); v4 review toggles (**B29**, 2026-07-05); QC `eventType` removal (**B28**, 2026-07-05) | **SUBSTANTIALLY SHIPPED 2026-06-25** (review toggles **B29**, `eventType` **B28** 2026-07-05) | Tier B open: BACKLOG B30–B31. See Recently shipped → R6.13, **B29 / B29.1**, **B28** |
@@ -489,7 +498,7 @@ Rules to add:
 
 - **R2.7.1** — **Watch OPEN** (see **Watch items → R2.7.1**). Shipped 2026-05-28; ongoing trace review for conflict/partial edge cases. **Not modified by R2.7.2** — period work did not touch conflict/partial routing for relative or absent-fact statements.
 - **Rebuild backlog (C)** — Stage 2 chunking ceiling. Not immediate (F15 clean at ~4,800 words). Scope when long-source warnings recur.
-- **Rebuild backlog (D)** — Production cost tracking. Diagnostic pass complete; baseline ~16 calls / 4 statements / 1 source; ~$2/run.
+- **Rebuild backlog (D)** — Production cost tracking. Diagnostic pass complete; baseline ~16 calls / 4 statements / 1 source; interactive Review ~$2/run. Full diagnostic batch ~$25–30 (see **Working rules → Cost**).
 
 ---
 
@@ -549,6 +558,7 @@ Four prompt-mechanism attempts (two prose, two structured-field) all failed: the
 | **B34 — REMOVE ASSESS REVIEW SETTINGS AUTO-DETECT** | **SHIPPED 2026-07-05** — See **Recently shipped → B34**. Removed `trySessionAutoDetect`, badge, lock refs, and `apiDetectOutputType`; Review Settings manual-only (default **Reporting commentary** / **Complete**). Backend `detect-output-type` endpoint + model-config stage deleted. No change to Drafting, generate/rewrite/analyse/export, or QC. Tags: `b34-assess-auto-detect-removal` (backend), `v8.61.0-b34-assess-auto-detect-removal` (frontend). | Shipped |
 | **B28 — REMOVE UNUSED EVENTTYPE FROM QC PATH** | **SHIPPED 2026-07-05** — See **Recently shipped → B28**. Removed editorial DOCUMENT CONTEXT `eventType` line and related QC reads; Generate/Rewrite framing retained. Tag: `b28-remove-eventtype`. | Shipped |
 | **WR1 — WRITING SCAFFOLD (PG DEMO)** | **SHIPPED 2026-07-06** — See **Recently shipped → WR1**. PG prompt library (`eventType` × visibility); Writing input modal; Methodology Note; deterministic backstops + canaries; Assess generate wiring. Tags: `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend). Resolves **WSC1** / **Near-term — Writing scaffold**. | Shipped |
+| **A10 — ADAPT INTO ASSESS** | **SHIPPED 2026-07-09** — See **Recently shipped → A10**. Adapt modal + `handleAdapt` in Assess; derivation on timeline entries; full QC on adapted drafts. Sub-ships: **A10.1** (button/Beta/labels), **A10.2** / **A10.2.1** / **A10.2.2** (lineage carry-forward, chip label, panel fill, scroll-to-top, resize-none). Tag: `v8.51.0-rA10-adapt-into-assess` (frontend). | Shipped |
 | **R6.6 — SOURCE-PUBLIC-STATE AWARENESS** | **SHIPPED 2026-06-25** — See Recently shipped → **R6.6**. Figure leg (R6.6.1 harness); rename leg out of scope; named-individual leg (R6.6.3 content-bound suppression, F21 both directions). Residual watch: **BACKLOG B27**. | Shipped |
 
 ### B26 — Scoping inputs (superseded)
@@ -619,6 +629,7 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 | **D1.4** | Incremental `INDEX.md` write per fixture — currently written only at end of batch run; deviates from D1.1 spec | Low |
 | **D1.5** | Pipeline log analysis — CLOSED 2026-05-27 without completion. Investigation found the diagnostic harness did not capture stdout to disk, so the historical `[FIDELITY_DROP]`, `[EDITORIAL_STYLE_REVIEW]`, and `[stage2]` log entries from runs `2026-05-26-205208` and `2026-05-26-212900` are not recoverable. Decision: skip the data-collection. The three qualitative **R6.2d** candidate patterns captured in R6.5 testing (fidelity-drop-on-corrected-phrase, contradictory-concern-fields, source-style-conflation) carry forward as primary evidence for **R6.2d** scoping. | Closed |
 | **D1.6** | Diagnostic harness stdout capture — modify `scripts/diagnostic/run-batch.mjs` to capture per-fixture stdout to a `pipeline.log` file alongside `result.json`. Surfaced during D1.5 attempt: the bracketed pipeline log entries (`[FIDELITY_DROP]` et al.) print to stdout but are not persisted to disk, making post-hoc analysis impossible. Small change; do before next diagnostic batch. | Low |
+| **D1.8** | **Diagnostic batch cost discipline.** Full ~20-fixture batch ~$25–30 total (~$1.25–1.50 per fixture). **Flag before full-batch runs**; prefer targeted `--only` subsets first. Distinct from interactive Review production cost (~$2/run). Logged 2026-07-09 (post-A10 doc sync). | Low |
 | **D1.7** | Re-audit fixtures with unexpected verdict deltas (F06, F08, F09, F11, F17, F19) — per-statement walk to determine whether pipeline or expected outcome is correct | Low |
 
 ---
@@ -628,6 +639,7 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
 
 1. ~~**WSC1 / WR1 — Writing scaffold (demo-facing)**~~ — **SHIPPED 2026-07-06** — see **Recently shipped → WR1**. PG prompt library, Writing input modal, Methodology Note, deterministic backstops, Assess generate wiring. Tags: `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend).
+1b. ~~**A10 — Adapt into Assess**~~ — **SHIPPED 2026-07-09** — see **Recently shipped → A10**. Frontend `v8.51.0-rA10-adapt-into-assess`; backend `/api/adapt` unchanged.
 2. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
@@ -638,7 +650,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 9. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
 10. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
 11. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
-12. ~~**Document-type voice/register — editorial (R6.12)**~~ — **SHIPPED 2026-07-05** (see **Recently shipped → R6.12**). ~~**Source-public-state awareness (R6.6)**~~ — **SHIPPED 2026-06-25** (see Recently shipped → R6.6). **Forward-looking statement review (R6.7)** — Medium. **Cross-source display semantics (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — shipped; residual functional-element noise confirmed 2026-06-01. **Source quality audit (R6.10)** — Low.
+12. ~~**Document-type voice/register — editorial (R6.12)**~~ — **SHIPPED 2026-07-05** (see **Recently shipped → R6.12**). ~~**Source-public-state awareness (R6.6)**~~ — **SHIPPED 2026-06-25** (see Recently shipped → R6.6). **Forward-looking statement review (R6.7)** — Medium. **Cross-source display semantics (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — shipped 2026-05-28; **R6.9.1** rhetorical/opinion follow-up **elevated H** (LinkedIn adapt surfaced category error — see **Parked → R6.9.1**). Residual functional-element noise: **Watch items → R6.9 residual**. **Source quality audit (R6.10)** — Low.
 13. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
 
     **Scope when picked up:**
@@ -698,6 +710,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B25 — Verdict-label consistency across surfaces | `b25-verdict-label-consistency` (backend), `v8.63.0-b25-verdict-label-consistency` (frontend) |
 | B29 / B29.1 — v4 review toggles + skipped-signal card rows | `b29-v4-review-toggles` (backend), `v8.65.0-b29.1-not-reviewed-rows` (frontend) |
 | WR1 — Writing scaffold (PG demo) | `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend) |
+| A10 — Adapt into Assess (A10.1, A10.2, A10.2.1, A10.2.2) | `v8.51.0-rA10-adapt-into-assess` (frontend) |
 | R6.12 — Editorial output-type voice/register calibration | `r6.12-editorial-output-type` (backend) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
@@ -757,6 +770,10 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 ### B26 — Signoff logic duplication (watch)
 
 **Logged 2026-06-30** (B26). Readiness/signoff logic now exists in two places — `lib/qc/signoff-verdict.mjs` (backend, feeds Constructive Feedback) and the frontend hooks `useDraftState.jsx` / `useAssessState.jsx` (Reviewer Assessment). They are intentionally kept in lockstep so the two surfaces never disagree on whether a draft is ready. **Action:** any change to frontend signoff thresholds must be mirrored in `signoff-verdict.mjs` (and vice versa). Alignment is verified live by the B26 Step 4 test (same run → same readiness on both surfaces). See **BACKLOG B26**.
+
+### D1 — Conflict-with-confirmation card surfacing (review candidate)
+
+**Logged 2026-07-09** (post-A10). When one source confirms and another conflicts on the same statement, aggregated verdict is confirmed (`supported_full` / `concernLevel` none) while `hasConflict` stays true and a separate `conflictExcerpt` is selected. `deriveTintClass` does not read `hasConflict`, so such a statement can render green if editorial/compliance are clean. Defensible ("any confirming source is sufficient; disagreement flagged separately in data") but in mild tension with "conflicts always surface" on the card surface. **Post-demo review candidate — no change now.** See **BACKLOG B39**.
 
 **Parked from EDITORIAL RULE BUG-FIX PASS (do not spec):**
 
@@ -842,9 +859,34 @@ Item (a) remains cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival)
 
 These items are intentionally not in the active rebuild backlog. They stay visible so design intent is not lost, but work does not resume until the stated evidence triggers.
 
-### Adapt (parked R4.1)
+### Adapt (live in Assess — A10)
 
-Adapt is parked. The `api/adapt.js` endpoint and supporting code remain in the codebase but are not linked from any UI. Reactivation trigger: pilot user feedback indicating multi-output workflows are needed, OR an explicit product decision to launch multi-output capability.
+**Status: LIVE in Assess (A10, 2026-07-09).** `/api/adapt` is wired via the Assess Adapt modal + `handleAdapt` in `useAssessState.jsx`. Adapted drafts appear as labelled version-timeline entries with `meta.derivation`; Review runs on adapted drafts with full QC cards. Backend endpoint unchanged.
+
+**History:** Parked as R4.1 before A10 — endpoint and code retained; Writing-route Adapt UI remains off/dead. Tabbed master↔adaptation presentation deferred (**A11.2**); single-view consolidation deferred (**A11.3**).
+
+### Assess horizon (post-A10, deferred)
+
+- **A11.1 — Per-version QC storage in Assess** — Assess stores a single flat `analysisResult`; loading an earlier version shows the "re-run Review" banner even when that version was already reviewed. Prerequisite for **A11.2**. Post-Monday. See **BACKLOG Pr10**.
+- **A11.2 — Tabbed base↔adaptation view** — deferred; depends on **A11.1** + real multi-version model in Assess. Current presentation: labelled timeline entries. See **BACKLOG Pr11**.
+- **A11.3 — Single-view consolidation** — collapse Assess/Writing naming into one unified **Content Engine** view. Deferred until Adapt-into-Assess settles (A10 was step one). Writing route remains off/dead. See **BACKLOG Pr12**.
+- **A10.3 / A10.4** — remaining Assess polish (state persistence, export order, final polish) — not scheduled.
+
+### R6.9.1 — Rhetorical / opinion non-claim handling (elevated, pre-Monday)
+
+**Elevated H (2026-07-09).** LinkedIn adaptation surfaced a category error: rhetorical/opinion statements (e.g. "quietly proved them wrong", "poised to run away with it") receive `not_supported` / high-concern evidence verdicts. Claim/non-claim machinery partially works (bare URL line correctly not evidence-assessed). **Target:** distinguish verifiable claims from rhetorical/opinion statements in the evidence layer (Stage 2); leave "is this framing appropriate" to editorial/compliance. **Do not touch pre-Monday.** See **BACKLOG B37**.
+
+### Grok 4.5 output-quality eval (parked)
+
+**P8 — Grok 4.5 eval.** Test **language layers only** (Stage 5 commentary, editorial, compliance, B26); hold Stage 2 on gpt-4o (locked). For clean comparison, hold Stage 2 output constant across gpt-4o baseline and Grok arm. Full diagnostic batch ~$25–30; prefer `--only` subset first. Revisit only when measured cost/quality problem points at the model. See **BACKLOG P8**.
+
+### API batching / caching (parked)
+
+**B38 — API batching / caching.** (a) Batch API (50% off, up to 24h latency) for **offline** diagnostic/regression sweeps only. (b) Prompt caching (50% off cached input) for the **live** QC path. Do not apply batch latency to interactive Review. See **BACKLOG B38**.
+
+### Adapt (parked R4.1) — superseded
+
+*Superseded by **Adapt (live in Assess — A10)** above.*
 
 ### (C) Stage 2 chunking — cost ceiling for long sources
 
@@ -852,7 +894,7 @@ Adapt is parked. The `api/adapt.js` endpoint and supporting code remain in the c
 
 ### (D) $2/run production cost target
 
-**Tracking in QC rebuild backlog (D).** Diagnostic pass scheduled inside **R6 scoping** to baseline call count and cost before prompt changes. Current baseline: ~16 LLM calls per run at 4 statements / 1 source; ~$2/run in production. Depends on Stage 2 chunking (C), model choices, and cost-model baseline from R1.x.
+**Tracking in QC rebuild backlog (D).** Diagnostic pass scheduled inside **R6 scoping** to baseline call count and cost before prompt changes. Current baseline: ~16 LLM calls per run at 4 statements / 1 source; ~**$2/run** for interactive Review in production. **Diagnostic batch cost is separate:** full ~20-fixture batch ~$25–30 (~$1.25–1.50 per fixture) — see **Working rules → Cost** and **Diagnostic harness backlog → D1.8**. Depends on Stage 2 chunking (C), model choices, and cost-model baseline from R1.x.
 
 ### Collapsible left rail post-Review
 
