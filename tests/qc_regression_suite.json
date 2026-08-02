@@ -170,17 +170,15 @@
         "CRF_IC_memo.txt",
         "CRF_diligence_update.txt"
       ],
-      "draft": "We are pleased to provide an update on the fund's renewable-energy investment.\n\nCascade Renewables Fund III holds a majority stake in a renewable-energy generation platform.\n\nThe platform benefits from long-term contracted cash flows and meaningful geographic diversification.\n\nThe platform operates 1.2 GW of installed capacity.\n\nThe fund targets attractive risk-adjusted returns underpinned by contracted revenue.\n\nAldous Renewables is the fund's largest limited partner.",
+      "draft": "We are pleased to provide an update on the fund's renewable-energy investment.\n\nThe fund holds a majority stake in a renewable-energy generation platform.\n\nThe platform benefits from long-term contracted cash flows and meaningful geographic diversification.\n\nThe platform operates 1.2 GW of installed capacity.\n\nThe fund targets attractive risk-adjusted returns underpinned by contracted revenue.\n\nAldous Renewables is the fund's largest limited partner.",
       "expect": {
         "displayVerdict": [
           "supported_full",
-          "supported_partial",
-          "not_supported"
+          "supported_partial"
         ],
         "concernLevel": [
           "none",
-          "moderate",
-          "high"
+          "moderate"
         ]
       }
     }

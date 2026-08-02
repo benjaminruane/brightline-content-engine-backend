@@ -7,7 +7,7 @@
   "statements": [
     {
       "ref": "S1",
-      "text": "Cascade Renewables Fund III holds a majority stake in a renewable-energy generation platform.",
+      "text": "The fund holds a majority stake in a renewable-energy generation platform.",
       "case": "clean_single_passage",
       "expectedSupport": [
         {
