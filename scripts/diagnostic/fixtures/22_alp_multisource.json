@@ -1,0 +1,15 @@
+{
+  "id": "22",
+  "label": "alp_multisource",
+  "sources": [
+    "ALP_IC_memo.txt",
+    "ALP_update_memo.txt"
+  ],
+  "draft": "We are pleased to report on the fund's investment in Adriatic Logistics Partners.\n\nAdriatic Logistics Partners operates six distribution centres across the Adriatic region.\n\nThe business has combined strong revenue growth with meaningful margin expansion over the past two years.\n\nThe Company employs 210 staff across its network.\n\nVeneto Freight is one of the fund's existing portfolio companies.\n\nManagement described the commercial pipeline as robust and well-diversified.",
+  "config": {
+    "outputType": "investor_letter",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "R7 Stage-2 diagnostic: multi-source ALP pair (confirm+conflict, noise trap, curly-quote offset stress)."
+}

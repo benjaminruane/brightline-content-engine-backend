@@ -1,0 +1,98 @@
+{
+  "fixture": "crf_multisource",
+  "sources": {
+    "0": "CRF_IC_memo.txt",
+    "1": "CRF_diligence_update.txt"
+  },
+  "statements": [
+    {
+      "ref": "S1",
+      "text": "Cascade Renewables Fund III holds a majority stake in a renewable-energy generation platform.",
+      "case": "clean_single_passage",
+      "expectedSupport": [
+        {
+          "sourceIndex": 0,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "We recommend an investment of EUR 200 million for a 70% stake in the holding company of a renewable-energy generation platform (the Platform)."
+        }
+      ],
+      "expectedNoSupport": []
+    },
+    {
+      "ref": "S2",
+      "text": "The platform benefits from long-term contracted cash flows and meaningful geographic diversification.",
+      "case": "multi_passage_single_source",
+      "expectedSupport": [
+        {
+          "sourceIndex": 1,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "Diligence confirmed that the power purchase agreement counterparties are predominantly investment-grade utilities, supporting the durability of contracted cash flows."
+        },
+        {
+          "sourceIndex": 1,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "The Platform's assets are distributed across four grid jurisdictions, providing meaningful diversification of merchant and regulatory exposure."
+        }
+      ],
+      "expectedNoSupport": []
+    },
+    {
+      "ref": "S3",
+      "text": "The platform operates 1.2 GW of installed capacity.",
+      "case": "confirm_plus_conflict",
+      "expectedSupport": [
+        {
+          "sourceIndex": 0,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "The Platform comprises operational wind and solar assets totalling 1.2 GW of installed capacity across three countries."
+        },
+        {
+          "sourceIndex": 1,
+          "classification": "conflicting",
+          "offsetStress": false,
+          "passage": "Independent technical diligence confirmed installed capacity of 1.4 GW as of April 2025, not 1.2 GW as recorded in the initial memo, following completion of a solar phase during the diligence period."
+        }
+      ],
+      "expectedNoSupport": []
+    },
+    {
+      "ref": "S4",
+      "text": "The fund targets attractive risk-adjusted returns underpinned by contracted revenue.",
+      "case": "cross_source_multi_passage",
+      "expectedSupport": [
+        {
+          "sourceIndex": 0,
+          "classification": "confirmed",
+          "offsetStress": true,
+          "stressType": "en_dash",
+          "note": "source uses U+2013 en-dash in '20–24%'; a matcher passage returned with a hyphen will fail an exact substring match",
+          "passage": "Our base case generates a 2.6x MOIC and a gross IRR in the 20–24% range."
+        },
+        {
+          "sourceIndex": 1,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "Diligence confirmed that the power purchase agreement counterparties are predominantly investment-grade utilities, supporting the durability of contracted cash flows."
+        }
+      ],
+      "expectedNoSupport": []
+    },
+    {
+      "ref": "S5",
+      "text": "Aldous Renewables is the fund's largest limited partner.",
+      "case": "noise_trap",
+      "expectedSupport": [],
+      "expectedNoSupport": [
+        {
+          "sourceIndex": 0,
+          "reason": "lexical hook on 'Aldous Renewables' (named as co-investment partner, not an LP); does not support largest-limited-partner claim",
+          "temptingPassage": "The opportunity was sourced through the fund's relationship with Aldous Renewables, a long-standing co-investment partner."
+        }
+      ]
+    }
+  ]
+}

@@ -14,8 +14,13 @@
         "hasUsableExcerpt": true,
         "supportRefIdsLength": 2,
         "supportRefIdsUnique": true,
-        "reasoningParagraphIncludes": ["source"],
-        "reasoningParagraphExcludes": ["potential", "scenario-based figure"]
+        "reasoningParagraphIncludes": [
+          "source"
+        ],
+        "reasoningParagraphExcludes": [
+          "potential",
+          "scenario-based figure"
+        ]
       }
     },
     {
@@ -139,6 +144,44 @@
           "expected_disclosure_language_absent_on_public"
         ],
         "assertAuthority": false
+      }
+    },
+    {
+      "name": "alp_multisource",
+      "sourceFiles": [
+        "ALP_IC_memo.txt",
+        "ALP_update_memo.txt"
+      ],
+      "draft": "We are pleased to report on the fund's investment in Adriatic Logistics Partners.\n\nAdriatic Logistics Partners operates six distribution centres across the Adriatic region.\n\nThe business has combined strong revenue growth with meaningful margin expansion over the past two years.\n\nThe Company employs 210 staff across its network.\n\nVeneto Freight is one of the fund's existing portfolio companies.\n\nManagement described the commercial pipeline as robust and well-diversified.",
+      "expect": {
+        "displayVerdict": [
+          "supported_full",
+          "supported_partial"
+        ],
+        "concernLevel": [
+          "none",
+          "moderate"
+        ]
+      }
+    },
+    {
+      "name": "crf_multisource",
+      "sourceFiles": [
+        "CRF_IC_memo.txt",
+        "CRF_diligence_update.txt"
+      ],
+      "draft": "We are pleased to provide an update on the fund's renewable-energy investment.\n\nCascade Renewables Fund III holds a majority stake in a renewable-energy generation platform.\n\nThe platform benefits from long-term contracted cash flows and meaningful geographic diversification.\n\nThe platform operates 1.2 GW of installed capacity.\n\nThe fund targets attractive risk-adjusted returns underpinned by contracted revenue.\n\nAldous Renewables is the fund's largest limited partner.",
+      "expect": {
+        "displayVerdict": [
+          "supported_full",
+          "supported_partial",
+          "not_supported"
+        ],
+        "concernLevel": [
+          "none",
+          "moderate",
+          "high"
+        ]
       }
     }
   ]

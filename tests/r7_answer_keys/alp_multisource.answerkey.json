@@ -1,0 +1,92 @@
+{
+  "fixture": "alp_multisource",
+  "sources": {
+    "0": "ALP_IC_memo.txt",
+    "1": "ALP_update_memo.txt"
+  },
+  "statements": [
+    {
+      "ref": "S1",
+      "text": "Adriatic Logistics Partners operates six distribution centres across the Adriatic region.",
+      "case": "clean_single_passage",
+      "expectedSupport": [
+        {
+          "sourceIndex": 0,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "The Company operates six distribution centres located in Croatia, Slovenia, and northern Italy."
+        }
+      ],
+      "expectedNoSupport": []
+    },
+    {
+      "ref": "S2",
+      "text": "The business has combined strong revenue growth with meaningful margin expansion over the past two years.",
+      "case": "multi_passage_single_source",
+      "expectedSupport": [
+        {
+          "sourceIndex": 0,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "The Company generated revenue of EUR 92 million in FY2024, up from EUR 71 million in FY2023, representing sustained double-digit growth over the period."
+        },
+        {
+          "sourceIndex": 0,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "Reported EBITDA margin expanded to 24% in FY2024, from 19% two years prior, driven by network densification and improved asset utilisation."
+        }
+      ],
+      "expectedNoSupport": []
+    },
+    {
+      "ref": "S3",
+      "text": "The Company employs 210 staff across its network.",
+      "case": "confirm_plus_conflict",
+      "expectedSupport": [
+        {
+          "sourceIndex": 0,
+          "classification": "confirmed",
+          "offsetStress": false,
+          "passage": "The Company employs 210 staff across its six distribution centres, with the majority based at the Zagreb headquarters."
+        },
+        {
+          "sourceIndex": 1,
+          "classification": "conflicting",
+          "offsetStress": false,
+          "passage": "The Company employs 240 staff as of March 2025, not 210 as stated in our initial memo, reflecting two distribution-centre openings completed during the diligence period."
+        }
+      ],
+      "expectedNoSupport": []
+    },
+    {
+      "ref": "S4",
+      "text": "Veneto Freight is one of the fund's existing portfolio companies.",
+      "case": "noise_trap",
+      "expectedSupport": [],
+      "expectedNoSupport": [
+        {
+          "sourceIndex": 0,
+          "reason": "lexical hook on 'Veneto Freight' (named only as a former employer); does not support portfolio-company claim",
+          "temptingPassage": "The transaction was advised by Elena Foscari, former operations director at Veneto Freight, who supported the commercial diligence workstream."
+        }
+      ]
+    },
+    {
+      "ref": "S5",
+      "text": "Management described the commercial pipeline as robust and well-diversified.",
+      "case": "offset_stress_curly_quotes",
+      "expectedSupport": [
+        {
+          "sourceIndex": 1,
+          "classification": "confirmed",
+          "offsetStress": true,
+          "stressType": "curly_quotes",
+          "note": "source uses U+201C/U+201D; a matcher passage returned with straight quotes will fail an exact substring match against the source",
+          "passage": "Management described the forward pipeline as “robust and well-diversified”, supported by a weighted-average contract tenor of just over four years."
+        }
+      ],
+      "expectedNoSupport": []
+    }
+  ]
+}
