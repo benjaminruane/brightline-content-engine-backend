@@ -24,3 +24,6 @@ node_modules/
 
 # R7 extractor survey — throwaway benchmark scaffolding (findings doc is kept in docs/)
 scripts/diagnostic/extractor-survey/
+
+# diagnostic run logs (regenerable)
+tests/output/*.log
