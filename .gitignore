@@ -21,3 +21,6 @@ tests/r1_2_5_eval/results_v2_relabelled.md
 scripts/diagnostic/runs/
 scripts/diagnostic/sources-extracted/
 node_modules/
+
+# R7 extractor survey — throwaway benchmark scaffolding (findings doc is kept in docs/)
+scripts/diagnostic/extractor-survey/
