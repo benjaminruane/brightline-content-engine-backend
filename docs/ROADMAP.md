@@ -250,6 +250,16 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 
 **Follow-on (deferred):** **A10.3** — state persistence, layout, scroll, export order, refresh behaviour. **A10.4** — Assess final polish. **A11.1–A11.3** — per-version QC, tabbed base↔adaptation view, single-view consolidation (see **Parked → Assess horizon**).
 
+### R7 Build A — Additive multi-span emit (closed 2026-08)
+
+**R7 Build A — Stage-2 widened multi-span emit** (shipped; tag `r7-build-a`). Additive `qcCard.supportSpans` from a widened Stage-2 pass. **Verdict-safe via separation:** single-pick Stage-2 feeds Stages 3–4 / evidence verdict; widened pass feeds `supportSpans` only (does not change aggregation). Classification gate: emit `confirmed` / `partially_confirmed` / `conflicting`; drop `no_support` and empty passages. Offsets on spans are **null** pending Build B. See **R7 — Sources Drawer Revival** (updated premise below) and **BACKLOG B40** (Build B).
+
+### Extractor swap — officeparser (closed 2026-08)
+
+**Extractor swap → officeparser@7.5.1** (shipped; tag `extractor-officeparser-swap`). Foundational ingestion change: replaced live `pdf-parse` / `mammoth` / `jszip` (+ pptx XML) path with **officeparser** for pdf/docx/pptx/xlsx. **OCR disabled** (`parseConfig.ocr: false`); scanned/near-empty sources flagged `unsupported_scanned` (no OCR). Faithful typography (fixes apostrophe→`n` / C1 mangling on born-digital PDFs); recovers bad-XRef PDFs the prior stack failed; additive `extraction.structure` page/slide/sheet identity; primary return shape unchanged (`{ text, extraction }`). **Verdict-adjacent revalidation:** CHECK1 `.txt` regression suite 9/9 evidence-pass identical to baseline; CHECK2 binary-source attribution **IMPROVEMENT=9 / NEUTRAL=41 / REGRESSION=0** (`docs/R7_EXTRACTOR_CHECK2_ATTRIBUTION.md`). Enables Build B offset work and drawer navigation on structure metadata.
+
+**Also shipped:** Node `engines` **20.x → 24.x** (Vercel Node 20 hard deadline 2026-10-01). Bundle-size excludeFiles/trim and `VERCEL_SUPPORT_LARGE_FUNCTIONS` stopgap — see **BACKLOG B42** / **B43**.
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -581,32 +591,34 @@ PG-grade Generate for the Tuesday PG demo via scaffolded prompt library + Writin
 
 ## R7 — Sources Drawer Revival [MVP]
 
-**Status:** **LOGGED** (pre-spec discussion pending)
+**Status:** **IN PROGRESS** — Build A shipped (`r7-build-a`); extractor swap shipped (`extractor-officeparser-swap`); Build B + drawer UI deferred (**BACKLOG B40**, **F12**).
 
-**Objective:** Restore the Sources drawer to the UI and wire card→source navigation, completing the draft↔card↔source triangle.
+**Objective:** Restore the Sources drawer and wire card→source navigation, completing the draft↔card↔source triangle.
 
-**Intended behaviour** (subject to pre-spec discussion):
+**Premise correction (2026-08 — prior assumption falsified):** The old claim that “existing `evidenceTrace` already carries a source id + locatable span” is **false**. On live v4, Stage 7 emits `evidenceTrace: []` (empty); the card contract has **no** reliable offset field there; the frontend **never reads** `evidenceTrace`. Do not design the drawer around it.
 
-- Sources drawer reopens as a panel in the UI.
-- Drawer shows uploaded source files with their content browsable.
-- Clicking an Evidence comment / excerpt on a QC card opens the drawer and scrolls to the relevant source passage.
-- Excerpt span back to source is expected to come from existing `evidenceTrace`; no new backend extraction work anticipated.
+**Actual data surface (after Build A + extractor swap):**
 
-Frontend-heavy, modest backend work. Can run after R6 or in parallel since the surfaces do not overlap.
+- **Multi-span evidence data** lives on **`qcCard.supportSpans`** (Build A): per-span `sourceRefId`, classification, statement id, passage text; **offsets null** until Build B.
+- **Verdict path unchanged:** single-pick Stage-2 still feeds aggregation / primary excerpt; widened emit is additive only.
+- **Navigation** will rest on **`supportSpans` + extractor `extraction.structure` metadata** (page / slide / sheet from officeparser) — **not** on `evidenceTrace`.
+- **Highlight surface (target):** extracted-text view with **tiered** behaviour — highlight where the extract is clean and offsets resolve; page/slide/sheet structure-navigation where not. **Rendered-document** fidelity view is a later sub-item (after extracted-text drawer).
 
-**Updated 2026-05-30 (R6.4a context):** R6.4a added structured `publicationState` per source (published_external / restricted / unknown) inferred at upload, with no UI surface at ship time. The Sources Drawer is the natural home for displaying source metadata to reviewers (description, publicationState, possibly manual override of classification). R7 scope now plausibly includes:
+**Shipped this chapter:**
 
-  (a) source list display with metadata (description, publicationState as a read-only field)
-  (b) card→source navigation (original R7 intent)
-  (c) eventual user override of publicationState (separate spec)
+- **Build A** — see **Recently shipped → R7 Build A**. Tag: `r7-build-a`.
+- **Extractor → officeparser@7.5.1** — see **Recently shipped → Extractor swap**. Tag: `extractor-officeparser-swap`. Foundational for faithful locate + structure IDs.
 
-A small interim spec (R6.4b candidate) may surface publicationState in the existing Sources panel before the full R7 drawer is built — preserving R7's scope for the navigation work while addressing the immediate transparency gap from R6.4a.
+**Remaining (dependency order):**
 
-**Further update 2026-05-30:** R6.4b shipped per-source publicationState display + override in the existing Sources panel — partial fulfilment of the metadata-display intent originally noted for R7. R7 scope is now more focused:
-  - Card→source navigation (original R7 intent) — still pending
-  - Full source description display (not in R6.4b due to row-height concerns) — natural for R7
-  - File preview / browsable source content — natural for R7
-  - publicationState badge can be reused; override control may need redesign for the drawer context
+1. **Build B** — populate char offsets on `supportSpans` (repair-normalised deterministic locate; authoritative-span-or-drop). **BLOCKS** drawer highlight. **BACKLOG B40**.
+2. **Sources Drawer UI** — extracted-text panel, tiered highlight, confirm/partial/conflict colour, per-span hover (statement back-ref). **DEPENDS ON** Build B. **BACKLOG F12**.
+3. **Optional parallel:** Stage-2 multi-passage depth-of-support (matcher emits multiple passages per statement×source) — verdict-adjacent; needs own neutrality diagnostic. **BACKLOG B41**.
+
+**Earlier context (still valid, unchanged intent):**
+
+- **2026-05-30 (R6.4a/b):** publicationState pill + override shipped in Assess Sources panel; full description display and drawer redesign remained R7. publicationState badge can be reused in the drawer; override may need redesign for drawer context.
+- Card→source navigation and browsable source content remain the product goal; the **backend path** to spans is now `supportSpans` + structure metadata, not `evidenceTrace`.
 
 ---
 
@@ -644,7 +656,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
-6. **R7 — Sources Drawer Revival** (logged, pre-spec) — see **R7 — Sources Drawer Revival** above.
+6. **R7 — Sources Drawer Revival** (**IN PROGRESS** — Build A + extractor shipped; Build B + drawer UI open) — see **R7 — Sources Drawer Revival** above; **BACKLOG B40**, **F12**, **B41**.
 7. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
 8. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
 9. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
