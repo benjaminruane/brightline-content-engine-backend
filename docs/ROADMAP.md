@@ -657,13 +657,14 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
 6. **R7 — Sources Drawer Revival** (**IN PROGRESS** — Build A + extractor shipped; Build B + drawer UI open) — see **R7 — Sources Drawer Revival** above; **BACKLOG B40**, **F12**, **B41**.
-7. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
-8. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
-9. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
-10. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
-11. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
-12. ~~**Document-type voice/register — editorial (R6.12)**~~ — **SHIPPED 2026-07-05** (see **Recently shipped → R6.12**). ~~**Source-public-state awareness (R6.6)**~~ — **SHIPPED 2026-06-25** (see Recently shipped → R6.6). **Forward-looking statement review (R6.7)** — Medium. **Cross-source display semantics (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — shipped 2026-05-28; **R6.9.1** rhetorical/opinion follow-up **elevated H** (LinkedIn adapt surfaced category error — see **Parked → R6.9.1**). Residual functional-element noise: **Watch items → R6.9 residual**. **Source quality audit (R6.10)** — Low.
-13. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
+7. **B45 — URL provenance scan.** Deterministic pre-QC scan of draft text for URLs containing AI-tool tracking parameters (`utm_source=chatgpt.com`, `utm_source=claude.ai`, `utm_source=perplexity.ai`, and similar). Flag as a provenance concern in QC output. Regex-based, no LLM, runs before Stage 1. Does not modify verdict-layer logic. **Rationale:** directly catches the PwC Middle East failure mode reported by FT/GPTZero (Aug 2026) — draft URLs with visible ChatGPT tracking tags left in after copy-paste. Cheap, deterministic, high-signal on the specific artefact, independent of R5/R6/R7. Strong demo asset given the current Big Four news cycle. **Boundary:** does **not** verify source authority. CE's scope is draft-vs-supplied-sources; source curation remains a reviewer responsibility. See **BACKLOG B45**. (Working ref was B27; **B27** remains the named-individual suppression watch.)
+8. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
+9. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
+10. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
+11. ~~**Public version compliance (R6.4)**~~ — **SHIPPED — chapter closed** 2026-05-31. See Recently shipped → R6.4.
+12. **House style framework (R6.5)** — **SHIPPED** 2026-05-27. See Recently shipped → R6.5.
+13. ~~**Document-type voice/register — editorial (R6.12)**~~ — **SHIPPED 2026-07-05** (see **Recently shipped → R6.12**). ~~**Source-public-state awareness (R6.6)**~~ — **SHIPPED 2026-06-25** (see Recently shipped → R6.6). **Forward-looking statement review (R6.7)** — Medium. **Cross-source display semantics (R6.8)** — Medium. **Non-claim statement handling (R6.9)** — shipped 2026-05-28; **R6.9.1** rhetorical/opinion follow-up **elevated H** (LinkedIn adapt surfaced category error — see **Parked → R6.9.1**). Residual functional-element noise: **Watch items → R6.9 residual**. **Source quality audit (R6.10)** — Low.
+14. **Tool output style compliance (R6.2b candidate).** The Content Engine reviews drafts against house style but the tool's own user-facing prose — concern text, suggested directions, suggested rewrites, evidence summaries, Stage 5 commentary, Quality Review Summary bullets, Reviewer Assessment synthesis, sign-off verdict labels — is not held to the same standard. Symptoms already surfaced and patched piecemeal: schoolroom framing ("not permissible") removed in R6.2a.1; absolute compliance prose ("restricted under fund marketing regulations") softened in R6.2a.1. Broader gap remains — house style rules like em-dash replacement, smart quotes, English variant, and hyperbole avoidance probably apply to tool output prose too, but no codified standard exists for the tool's own voice register.
 
     **Scope when picked up:**
     - Inventory all tool-output text surfaces (~7 known: editorial concerns, compliance concerns, evidence summary, Stage 5 commentary, Quality Review Summary, Reviewer Assessment, sign-off labels).
@@ -675,20 +676,20 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
     **Connection to existing work:** `AI_OPERATING_MANUAL.md` already includes a "QC Output Language Standard" that articulates principles for tool prose but is not rigorously enforced via prompts or filters. This item is partly about strengthening that standard's enforcement, partly about extending it to cover house-style rules the standard doesn't currently mention.
 
     **Priority:** High-leverage (touches every Review output) but not urgent — symptoms are addressable piecemeal as observed. Scope as R6.2b when ready. Logged 2026-05-30 from a one-off observation.
-14. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
+15. **Fidelity log traceability** — folded into **R6.2d** and **D1.5** pipeline log analysis.
 
-### Long-horizon ideas (below top 14)
+### Long-horizon ideas (below top 15)
 
 - **Per-house / per-reviewer language profile** — capture preferred phrasings, tone, capitalisation, and term substitutions per reviewer or per house, included as prompt context for the language layer only (Stage 5 commentary, B26 register, future reviewer-facing prose). HARD BOUNDARY: this never touches Stage 2 classification, Stage 3/4/7 aggregation, or any verdict-layer logic. The deterministic LLM-last architecture is preserved. Origin: 'centurion vs learning' framing from Ren Education (Straits Times, June 2026).
 
-15. **E2 deterministic reimplementation** — open.
-16. **Pr9 — Interim: Suggest revised draft** — lighter prequel to Implement-changes sprint; deferred until post-demo (**WR1** shipped 2026-07-06). See **BACKLOG Pr9** and Active Backlog → Implement-Changes Sprint.
-17. **Implement-changes sprint** (`suggestedRewrite` → UI, accept/reject/refine) — see Active Backlog → Implement-Changes Sprint; full workflow remains separate from **Pr9**.
-18. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
-19. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
-20. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
-21. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
-22. **Short-draft visual balance.** On very short drafts (e.g. a single 13-word sentence), Review output volume is disproportionate to input — Reviewer Assessment prose, Quality Review Summary, and fixed-format QC cards combine to a >15:1 output-to-input ratio. Reviewer Assessment is the largest fixed-size contributor and its length does not scale with draft length.
+16. **E2 deterministic reimplementation** — open.
+17. **Pr9 — Interim: Suggest revised draft** — lighter prequel to Implement-changes sprint; deferred until post-demo (**WR1** shipped 2026-07-06). See **BACKLOG Pr9** and Active Backlog → Implement-Changes Sprint.
+18. **Implement-changes sprint** (`suggestedRewrite` → UI, accept/reject/refine) — see Active Backlog → Implement-Changes Sprint; full workflow remains separate from **Pr9**.
+19. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
+20. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
+21. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
+22. **Diagnostic harness follow-ups (D1.4, D1.5, D1.7)** — see **Diagnostic harness backlog** above.
+23. **Short-draft visual balance.** On very short drafts (e.g. a single 13-word sentence), Review output volume is disproportionate to input — Reviewer Assessment prose, Quality Review Summary, and fixed-format QC cards combine to a >15:1 output-to-input ratio. Reviewer Assessment is the largest fixed-size contributor and its length does not scale with draft length.
 
     Possible directions when picked up:
     - Length-scaled Reviewer Assessment: synthesise-review generates prose proportional to draft length (~30 words for short drafts scaling to ~150 words for long ones).
@@ -696,9 +697,9 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
     - More structural — examine whether the assessment is doing real work beyond the Quality Review Summary bullets and card list, and either repurpose it (see next backlog item) or remove.
 
     UX-shaped, not calibration-shaped. Worth a small scoping pass when next addressing UI. Logged 2026-05-30.
-23. ~~**Reviewer Assessment purpose reframe.**~~ **RESOLVED (B26, 2026-06-30)** — closed by **not** reframing Reviewer Assessment. **Constructive Feedback (B26 / B26.1)** is the separate on-demand author-facing surface (per-statement consolidated rationale, no revised text). Reviewer Assessment stays the short reviewer-facing overview (`api/synthesize-review.js` unchanged). See **Recently shipped → B26 / B26.1**. **Same work-stream:** **BACKLOG B26** (closed), **BACKLOG Pr8** (resolved).
+24. ~~**Reviewer Assessment purpose reframe.**~~ **RESOLVED (B26, 2026-06-30)** — closed by **not** reframing Reviewer Assessment. **Constructive Feedback (B26 / B26.1)** is the separate on-demand author-facing surface (per-statement consolidated rationale, no revised text). Reviewer Assessment stays the short reviewer-facing overview (`api/synthesize-review.js` unchanged). See **Recently shipped → B26 / B26.1**. **Same work-stream:** **BACKLOG B26** (closed), **BACKLOG Pr8** (resolved).
 
-**Also tracked (below top 23):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
+**Also tracked (below top 24):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
 
 **Closed (removed from open list):**
 
