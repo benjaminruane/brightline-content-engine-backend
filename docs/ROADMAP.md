@@ -664,6 +664,24 @@ Infrastructure follow-ups from the 26 May 2026 diagnostic session (not R6 produc
 
 ---
 
+## Sequencing — Attention-Router throughline
+
+PG feedback (review-aware drafting + direct the reviewer to what needs a human) resolves into a single **human-attention router**: **prevent** (drafting) → **triage** (Review) → **clear the mechanical** (Pr9). The product reframes from “flags everything” to “routes scarce reviewer attention.”
+
+**Proposed sprint sequence** (each delivers standalone value and advances the router):
+
+1. **Foundation & quick wins** — confirm/fix **F1** / **F2** / **F7** (Assess surface), excluded-sources display (**F13**), **B45** URL provenance.
+2. **Close the loop** — **Pr9** Suggest revised draft (interim shape, not full **B9**) = the router’s auto-apply bridge.
+3. **Sharpen the signal** — **B13** + conflict-vs-partial calibration (**B48**) (+ optional **B37**); verdict-adjacent; each needs its own diagnostic + neutrality check. These are the materiality/confidence inputs triage needs.
+4. **Triage derivation** — deterministic “Human check required” shortlist over Review output (the PG ask); trustworthy once step 3 lands.
+5. **Review-aware drafting** — apply the shared **R6.5** rulebook at generation to shrink the mechanical lane at source (**WR2** substrate).
+
+**Parallel tracks:** Adapt maturity (**Pr10**→**Pr11**, gate on usage); **B42** bundle debt; **P6** business.
+
+Triage/router items stay **concept/backlog** until their calibration prerequisites land — not “in progress” yet. Sequence lives here; backlog rows keep their priorities until scheduled.
+
+---
+
 ## Open product backlog (prioritised)
 
 Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`. Top = highest priority.
