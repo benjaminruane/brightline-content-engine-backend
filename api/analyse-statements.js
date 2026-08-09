@@ -11,6 +11,7 @@ import { createTraceId, flushObservability, startTrace, updateTraceMetadata } fr
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { normalizePublicationState } from "../lib/source-publication-state.mjs";
+import { buildExcludedSources, buildResponseSources, splitSourcesForResponse } from "../lib/response-sources.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -108,21 +109,6 @@ function mimeTypeForDropLog(original) {
   return m || "(none)";
 }
 
-/**
- * R3.3: classify why a source was dropped post-extraction (empty text after prepareUploadedSourcesForPipeline).
- * @param {object|null|undefined} original - raw request source
- * @param {object|undefined} preparedRow - entry from prep.sources at same index, if present
- */
-function dropReasonAfterExtraction(original, preparedRow) {
-  if (!preparedRow) return "extraction_failed";
-  const text = typeof preparedRow.text === "string" ? preparedRow.text : "";
-  if (text.trim()) return null;
-  const hasB64 = typeof original?.contentBase64 === "string" && original.contentBase64.length > 0;
-  const hasTextString = typeof original?.text === "string";
-  if (!hasTextString && !hasB64) return "no_text_field";
-  return "empty_after_extraction";
-}
-
 export default async function handler(req, res) {
   const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   req._brightlineRid = rid;
@@ -162,36 +148,26 @@ export default async function handler(req, res) {
       };
     });
 
-    const v3Sources = preparedSources
-      .map((source, index) => {
-        const text = typeof source?.text === "string" ? source.text : "";
-        const original = candidateSources[index];
-        if (!text.trim()) {
-          const label =
-            (typeof source?.label === "string" && source.label.trim()) ||
-            (typeof source?.name === "string" && source.name.trim()) ||
-            (typeof source?.title === "string" && source.title.trim()) ||
-            `Source ${index + 1}`;
-          const reason = dropReasonAfterExtraction(original, prep.sources?.[index]);
-          console.warn(
-            `[analyse-statements] source dropped after extraction: label=${label}, mimeType=${mimeTypeForDropLog(
-              original
-            )}, reason=${reason}`
-          );
-          return null;
-        }
-        const label =
-          (typeof source?.label === "string" && source.label.trim()) ||
-          (typeof source?.name === "string" && source.name.trim()) ||
-          (typeof source?.title === "string" && source.title.trim()) ||
-          `Source ${index + 1}`;
-        return {
-          text,
-          label,
-          publicationState: normalizePublicationState(source?.publicationState ?? original?.publicationState),
-        };
-      })
-      .filter(Boolean);
+    // R7.B46: split empty-text sources out so they never enter the aligned
+    // `sources` array (index === sourceIndex === supportSpans.sourceRefId).
+    const { kept: v3Sources, dropped: droppedForExclude } = splitSourcesForResponse(
+      preparedSources,
+      candidateSources
+    );
+    {
+      let dropIdx = 0;
+      for (let i = 0; i < preparedSources.length; i++) {
+        const text = typeof preparedSources[i]?.text === "string" ? preparedSources[i].text : "";
+        if (text.trim()) continue;
+        const entry = droppedForExclude[dropIdx++];
+        if (!entry) continue;
+        console.warn(
+          `[analyse-statements] source dropped after extraction: label=${entry.label}, mimeType=${mimeTypeForDropLog(
+            candidateSources[i]
+          )}, reason=${entry.reason}`
+        );
+      }
+    }
 
     for (const source of v3Sources) {
       if (source.text.length > LONG_SOURCE_SOFT_CHAR_WARN) {
@@ -287,10 +263,20 @@ export default async function handler(req, res) {
     const bannedWords = normalizeBannedWords(body?.bannedWords);
     const bannedWordHits = bannedWords.length > 0 ? getBannedWordHits(draftText, bannedWords) : [];
 
+    // R7.B46: Exact-string contract — sources[i].text === v3Sources[i].text (B40 string).
+    // Alignment: sources index === sourceIndex === supportSpans.sourceRefId.
+    // Inline full text ~20KB/longform PDF; large/many-source cases may later warrant
+    // truncation or fetch-on-open — not built here.
+    const sources = buildResponseSources(v3Sources);
+    const excludedSources = buildExcludedSources(droppedForExclude);
+
     return res.status(200).json({
       ok: true,
       statements,
       references: [],
+      // R7.B46: aligned reviewed sources + separately listed excluded (empty-text) sources
+      sources,
+      excludedSources,
       meta: {
         pipelineVersion: useV4 ? "v4" : "v3",
         stagesComplete: pipelineResult?._stagesComplete ?? null,
