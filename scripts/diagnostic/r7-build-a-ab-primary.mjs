@@ -202,7 +202,10 @@ async function main() {
         const rawWidened = widenedPassages.filter(
           (p) => Number(p.statementIndex) === statementIndex
         );
-        const supportSpans = buildSupportSpans(rawWidened, { statementIndex });
+        const supportSpans = buildSupportSpans(rawWidened, {
+          statementIndex,
+          sources: safeSources,
+        });
         const cardOn = await assembleCard(
           {
             ...baseEntry,

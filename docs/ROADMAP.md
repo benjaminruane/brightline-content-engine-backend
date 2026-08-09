@@ -252,13 +252,17 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 
 ### R7 Build A — Additive multi-span emit (closed 2026-08)
 
-**R7 Build A — Stage-2 widened multi-span emit** (shipped; tag `r7-build-a`). Additive `qcCard.supportSpans` from a widened Stage-2 pass. **Verdict-safe via separation:** single-pick Stage-2 feeds Stages 3–4 / evidence verdict; widened pass feeds `supportSpans` only (does not change aggregation). Classification gate: emit `confirmed` / `partially_confirmed` / `conflicting`; drop `no_support` and empty passages. Offsets on spans are **null** pending Build B. See **R7 — Sources Drawer Revival** (updated premise below) and **BACKLOG B40** (Build B).
+**R7 Build A — Stage-2 widened multi-span emit** (shipped; tag `r7-build-a`). Additive `qcCard.supportSpans` from a widened Stage-2 pass. **Verdict-safe via separation:** single-pick Stage-2 feeds Stages 3–4 / evidence verdict; widened pass feeds `supportSpans` only (does not change aggregation). Classification gate: emit `confirmed` / `partially_confirmed` / `conflicting`; drop `no_support` and empty passages. Offsets on spans were **null** until Build B (now shipped — see **R7 Build B** below). See **R7 — Sources Drawer Revival**.
 
 ### Extractor swap — officeparser (closed 2026-08)
 
-**Extractor swap → officeparser@7.5.1** (shipped; tag `extractor-officeparser-swap`). Foundational ingestion change: replaced live `pdf-parse` / `mammoth` / `jszip` (+ pptx XML) path with **officeparser** for pdf/docx/pptx/xlsx. **OCR disabled** (`parseConfig.ocr: false`); scanned/near-empty sources flagged `unsupported_scanned` (no OCR). Faithful typography (fixes apostrophe→`n` / C1 mangling on born-digital PDFs); recovers bad-XRef PDFs the prior stack failed; additive `extraction.structure` page/slide/sheet identity; primary return shape unchanged (`{ text, extraction }`). **Verdict-adjacent revalidation:** CHECK1 `.txt` regression suite 9/9 evidence-pass identical to baseline; CHECK2 binary-source attribution **IMPROVEMENT=9 / NEUTRAL=41 / REGRESSION=0** (`docs/R7_EXTRACTOR_CHECK2_ATTRIBUTION.md`). Enables Build B offset work and drawer navigation on structure metadata.
+**Extractor swap → officeparser@7.5.1** (shipped; tag `extractor-officeparser-swap`). Foundational ingestion change: replaced live `pdf-parse` / `mammoth` / `jszip` (+ pptx XML) path with **officeparser** for pdf/docx/pptx/xlsx. **OCR disabled** (`parseConfig.ocr: false`); scanned/near-empty sources flagged `unsupported_scanned` (no OCR). Faithful typography (fixes apostrophe→`n` / C1 mangling on born-digital PDFs); recovers bad-XRef PDFs the prior stack failed; additive `extraction.structure` page/slide/sheet identity; primary return shape unchanged (`{ text, extraction }`). **Verdict-adjacent revalidation:** CHECK1 `.txt` regression suite 9/9 evidence-pass identical to baseline; CHECK2 binary-source attribution **IMPROVEMENT=9 / NEUTRAL=41 / REGRESSION=0** (`docs/R7_EXTRACTOR_CHECK2_ATTRIBUTION.md`). Enabled Build B offset work and drawer navigation on structure metadata.
 
 **Also shipped:** Node `engines` **20.x → 24.x** (Vercel Node 20 hard deadline 2026-10-01). Bundle-size excludeFiles/trim and `VERCEL_SUPPORT_LARGE_FUNCTIONS` stopgap — see **BACKLOG B42** / **B43**.
+
+### R7 Build B — supportSpans offsets (closed 2026-08-09)
+
+**R7 Build B — offset population on `qcCard.supportSpans`** (shipped; tag `r7-build-b`). Deterministic locate of each Build A passage in the stored extracted source text (`source.text`): exact `indexOf` first, then repair-normalised locate (whitespace collapse; curly quotes → straight; en/em dash → hyphen) with a parallel original-index map; first match only. **Authoritative-span-or-drop:** miss leaves `start`/`end` null and keeps the span (passage still displays); never guesses a position. Offsets are relative to the stored source text F12 must highlight against. **Verdict path untouched:** `supportSpans` still attach only at assemble; `aggregateVerdictV4` / `selectExcerptsV4` take single-pick matches only. **Tests:** 15/15 in `tests/r7-b40-support-spans-offsets.test.mjs` — exact match (slice equals passage); repair-normalised (curly quotes, em-dash, en-dash, whitespace collapse, newline-vs-space); miss (null offsets, span kept); first-occurrence. **Live run:** real Review over 2 DOCX sources; matcher passages resolved with correct offsets; slice-back verified against source text. Unblocks drawer highlight (**BACKLOG F12**). See **R7 — Sources Drawer Revival**.
 
 ---
 
@@ -591,15 +595,15 @@ PG-grade Generate for the Tuesday PG demo via scaffolded prompt library + Writin
 
 ## R7 — Sources Drawer Revival [MVP]
 
-**Status:** **IN PROGRESS** — Build A shipped (`r7-build-a`); extractor swap shipped (`extractor-officeparser-swap`); Build B + drawer UI deferred (**BACKLOG B40**, **F12**).
+**Status:** **IN PROGRESS** — Build A shipped (`r7-build-a`); extractor swap shipped (`extractor-officeparser-swap`); Build B shipped (`r7-build-b`). Remaining: drawer UI (**BACKLOG F12**) + optional depth-of-support (**BACKLOG B41**).
 
 **Objective:** Restore the Sources drawer and wire card→source navigation, completing the draft↔card↔source triangle.
 
 **Premise correction (2026-08 — prior assumption falsified):** The old claim that “existing `evidenceTrace` already carries a source id + locatable span” is **false**. On live v4, Stage 7 emits `evidenceTrace: []` (empty); the card contract has **no** reliable offset field there; the frontend **never reads** `evidenceTrace`. Do not design the drawer around it.
 
-**Actual data surface (after Build A + extractor swap):**
+**Actual data surface (after Build A + extractor swap + Build B):**
 
-- **Multi-span evidence data** lives on **`qcCard.supportSpans`** (Build A): per-span `sourceRefId`, classification, statement id, passage text; **offsets null** until Build B.
+- **Multi-span evidence data** lives on **`qcCard.supportSpans`** (Build A + B): per-span `sourceRefId`, classification, statement id, passage text; **offsets populated** where the passage locates in stored source text (null on miss).
 - **Verdict path unchanged:** single-pick Stage-2 still feeds aggregation / primary excerpt; widened emit is additive only.
 - **Navigation** will rest on **`supportSpans` + extractor `extraction.structure` metadata** (page / slide / sheet from officeparser) — **not** on `evidenceTrace`.
 - **Highlight surface (target):** extracted-text view with **tiered** behaviour — highlight where the extract is clean and offsets resolve; page/slide/sheet structure-navigation where not. **Rendered-document** fidelity view is a later sub-item (after extracted-text drawer).
@@ -608,12 +612,14 @@ PG-grade Generate for the Tuesday PG demo via scaffolded prompt library + Writin
 
 - **Build A** — see **Recently shipped → R7 Build A**. Tag: `r7-build-a`.
 - **Extractor → officeparser@7.5.1** — see **Recently shipped → Extractor swap**. Tag: `extractor-officeparser-swap`. Foundational for faithful locate + structure IDs.
+- **Build B** — see **Recently shipped → R7 Build B**. Tag: `r7-build-b`. Offsets on `supportSpans`; unblocks drawer highlight.
 
 **Remaining (dependency order):**
 
-1. **Build B** — populate char offsets on `supportSpans` (repair-normalised deterministic locate; authoritative-span-or-drop). **BLOCKS** drawer highlight. **BACKLOG B40**.
-2. **Sources Drawer UI** — extracted-text panel, tiered highlight, confirm/partial/conflict colour, per-span hover (statement back-ref). **DEPENDS ON** Build B. **BACKLOG F12**.
-3. **Optional parallel:** Stage-2 multi-passage depth-of-support (matcher emits multiple passages per statement×source) — verdict-adjacent; needs own neutrality diagnostic. **BACKLOG B41**.
+1. **Sources Drawer UI** — extracted-text panel, tiered highlight, confirm/partial/conflict colour, per-span hover (statement back-ref). Build B offsets shipped — unblocked. **BACKLOG F12**.
+2. **Optional parallel:** Stage-2 multi-passage depth-of-support (matcher emits multiple passages per statement×source) — verdict-adjacent; needs own neutrality diagnostic. **BACKLOG B41**.
+
+**Watch (F12):** widened-matcher classification can mislabel a confirming passage as `conflicting` on `supportSpans` (seen in Build B live run). Affects drawer span colour only — `supportSpans` never feed the verdict. Revisit when building drawer confirm/partial/conflict colouring.
 
 **Earlier context (still valid, unchanged intent):**
 
@@ -656,7 +662,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
-6. **R7 — Sources Drawer Revival** (**IN PROGRESS** — Build A + extractor shipped; Build B + drawer UI open) — see **R7 — Sources Drawer Revival** above; **BACKLOG B40**, **F12**, **B41**.
+6. **R7 — Sources Drawer Revival** (**IN PROGRESS** — Build A + extractor + Build B shipped; drawer UI open) — see **R7 — Sources Drawer Revival** above; **BACKLOG F12**, **B41**.
 7. **B45 — URL provenance scan.** Deterministic pre-QC scan of draft text for URLs containing AI-tool tracking parameters (`utm_source=chatgpt.com`, `utm_source=claude.ai`, `utm_source=perplexity.ai`, and similar). Flag as a provenance concern in QC output. Regex-based, no LLM, runs before Stage 1. Does not modify verdict-layer logic. **Rationale:** directly catches the PwC Middle East failure mode reported by FT/GPTZero (Aug 2026) — draft URLs with visible ChatGPT tracking tags left in after copy-paste. Cheap, deterministic, high-signal on the specific artefact, independent of R5/R6/R7. Strong demo asset given the current Big Four news cycle. **Boundary:** does **not** verify source authority. CE's scope is draft-vs-supplied-sources; source curation remains a reviewer responsibility. See **BACKLOG B45**. (Working ref was B27; **B27** remains the named-individual suppression watch.)
 8. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
 9. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
