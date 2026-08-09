@@ -268,6 +268,10 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 
 **R7 Build C — aligned source text + excludedSources in analyse-statements response** (shipped; tag `r7-build-c`). Additive `sources` array built from post-filter `v3Sources` in sourceIndex order: each entry has `index` / `id` / `label` / `text` / `publicationState`; **exact-string contract** `sources[i].text === v3Sources[i].text` (the B40 offset string); **alignment** `sources` index === `sourceIndex` === `supportSpans.sourceRefId`. Separate `excludedSources` for empty-text drops (reason CODE only; never in aligned `sources`). Pure helpers in `lib/response-sources.mjs` (`splitSourcesForResponse`, `buildResponseSources`, `buildExcludedSources`). **Verdict path untouched.** **Tests:** 58/58 including drop/re-index alignment (middle empty source does not misalign later `sourceRefId`). F12 data prerequisite (source text + aligned ids). See **R7 — Sources Drawer Revival**.
 
+### R7 F12 — Sources Drawer v1 (closed 2026-08-09)
+
+**R7 F12 — Sources Drawer v1** (shipped; tag `v8.68.0-f12-sources-drawer`). Frontend-only reader on Assess: left reviewed-source list + right highlighted extracted-text pane; three openers (Results **Sources** button / per-row magnifier / card Evidence finding icon); verdict-coloured passage highlights (confirmed→green / partially_confirmed→amber / conflicting→red via existing tone fills); per-span hover naming the statement and relation. Consumes Build A/B/C data (`qcCard.supportSpans` + response `sources[]`); no verdict/pipeline change. **Alongside:** **B47** Office-source ingestion fix — FE base64-encodes pdf/docx/pptx/xlsx uploads so officeparser runs; BE rejects inline office-zip text (`OFFICE_INLINE_TEXT_NOT_ALLOWED`). Tags: `b47-office-inline-guard` (backend), `v8.67.0-b47-office-upload-fix` (frontend). Deferred from v1: excluded-sources display (**BACKLOG F13**). See **R7 — Sources Drawer Revival**.
+
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
@@ -599,37 +603,39 @@ PG-grade Generate for the Tuesday PG demo via scaffolded prompt library + Writin
 
 ## R7 — Sources Drawer Revival [MVP]
 
-**Status:** **IN PROGRESS** — Build A shipped (`r7-build-a`); extractor swap shipped (`extractor-officeparser-swap`); Build B shipped (`r7-build-b`); Build C shipped (`r7-build-c`). Remaining: drawer UI (**BACKLOG F12**; now has offsets + source text + mapping) + optional depth-of-support (**BACKLOG B41**).
+**Status:** **CORE COMPLETE** — Build A (`r7-build-a`); extractor swap (`extractor-officeparser-swap`); Build B (`r7-build-b`); Build C (`r7-build-c`); drawer UI v1 (**BACKLOG F12** / `v8.68.0-f12-sources-drawer`); Office ingestion fix (**BACKLOG B47**). Remaining: excluded-sources display (**BACKLOG F13**, deferred from F12 v1) + optional depth-of-support (**BACKLOG B41**).
 
 **Objective:** Restore the Sources drawer and wire card→source navigation, completing the draft↔card↔source triangle.
 
 **Premise correction (2026-08 — prior assumption falsified):** The old claim that “existing `evidenceTrace` already carries a source id + locatable span” is **false**. On live v4, Stage 7 emits `evidenceTrace: []` (empty); the card contract has **no** reliable offset field there; the frontend **never reads** `evidenceTrace`. Do not design the drawer around it.
 
-**Actual data surface (after Build A + extractor swap + Build B + Build C):**
+**Actual data surface (after Build A + extractor swap + Build B + Build C + F12):**
 
 - **Multi-span evidence data** lives on **`qcCard.supportSpans`** (Build A + B): per-span `sourceRefId`, classification, statement id, passage text; **offsets populated** where the passage locates in stored source text (null on miss).
-- **Source text for the drawer** — analyse-statements response emits an aligned **`sources`** array (index === `sourceRefId`; each entry has extracted `text`, `id`, `label`, `publicationState`) plus a separate **`excludedSources`** list (reason code), for all source kinds including PDF (**BACKLOG B46** / Build C).
+- **Source text for the drawer** — analyse-statements response emits an aligned **`sources`** array (index === `sourceRefId`; each entry has extracted `text`, `id`, `label`, `publicationState`) plus a separate **`excludedSources`** list (reason code), for all source kinds including PDF (**BACKLOG B46** / Build C). **B47** ensures Office uploads reach officeparser as binary (not inline zip text).
 - **Verdict path unchanged:** single-pick Stage-2 still feeds aggregation / primary excerpt; widened emit is additive only.
-- **Navigation** will rest on **`supportSpans` + extractor `extraction.structure` metadata** (page / slide / sheet from officeparser) — **not** on `evidenceTrace`.
-- **Highlight surface (target):** extracted-text view with **tiered** behaviour — highlight where the extract is clean and offsets resolve; page/slide/sheet structure-navigation where not. **Rendered-document** fidelity view is a later sub-item (after extracted-text drawer).
+- **Navigation** rests on **`supportSpans` + response `sources[]`** (and later extractor `extraction.structure` metadata for page/slide/sheet) — **not** on `evidenceTrace`.
+- **Highlight surface (v1 shipped):** extracted-text drawer with verdict-coloured highlights where offsets resolve; rendered-document fidelity view remains a later sub-item.
 
 **Shipped this chapter:**
 
 - **Build A** — see **Recently shipped → R7 Build A**. Tag: `r7-build-a`.
 - **Extractor → officeparser@7.5.1** — see **Recently shipped → Extractor swap**. Tag: `extractor-officeparser-swap`. Foundational for faithful locate + structure IDs.
 - **Build B** — see **Recently shipped → R7 Build B**. Tag: `r7-build-b`. Offsets on `supportSpans`; unblocks drawer highlight.
-- **Build C** — see **Recently shipped → R7 Build C**. Tag: `r7-build-c`. Aligned `sources` + `excludedSources` in analyse-statements response; F12 data prerequisite.
+- **Build C** — see **Recently shipped → R7 Build C**. Tag: `r7-build-c`. Aligned `sources` + `excludedSources` in analyse-statements response.
+- **F12 Sources Drawer v1** — see **Recently shipped → R7 F12**. Tag: `v8.68.0-f12-sources-drawer`. Reader + three openers + verdict colours + hover.
+- **B47 Office ingestion** — shipped alongside F12. Tags: `b47-office-inline-guard`, `v8.67.0-b47-office-upload-fix`.
 
-**Remaining (dependency order):**
+**Remaining:**
 
-1. **Sources Drawer UI** — extracted-text panel, tiered highlight, confirm/partial/conflict colour, per-span hover (statement back-ref). Offsets + source text + mapping shipped (Build B + C) — unblocked. **BACKLOG F12**.
+1. **Excluded-sources display** — surface `excludedSources` in the drawer UI (deferred from F12 v1). **BACKLOG F13**.
 2. **Optional parallel:** Stage-2 multi-passage depth-of-support (matcher emits multiple passages per statement×source) — verdict-adjacent; needs own neutrality diagnostic. **BACKLOG B41**.
 
-**Watch (F12):** widened-matcher classification can mislabel a confirming passage as `conflicting` on `supportSpans` (seen in Build B live run). Affects drawer span colour only — `supportSpans` never feed the verdict. Revisit when building drawer confirm/partial/conflict colouring.
+**Watch (F12 / conflict-vs-partial):** widened-matcher classification can mislabel a non-confirmation (or confirming-looking passage) as `conflicting` on `supportSpans` (seen in Build B live run and F12 drawer red highlights). Affects drawer span colour; `supportSpans` never feed the evidence verdict aggregation, but Stage-2 classification is still verdict-adjacent if ever unified. Tracked as **BACKLOG B48** (conflict-vs-partial calibration — read-only diagnostic + neutrality/shadow check before change).
 
 **Earlier context (still valid, unchanged intent):**
 
-- **2026-05-30 (R6.4a/b):** publicationState pill + override shipped in Assess Sources panel; full description display and drawer redesign remained R7. publicationState badge can be reused in the drawer; override may need redesign for drawer context.
+- **2026-05-30 (R6.4a/b):** publicationState pill + override shipped in Assess Sources panel; full description display and drawer redesign remained R7. publicationState badge reused in the drawer.
 - Card→source navigation and browsable source content remain the product goal; the **backend path** to spans is now `supportSpans` + structure metadata, not `evidenceTrace`.
 
 ---
@@ -668,7 +674,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
-6. **R7 — Sources Drawer Revival** (**IN PROGRESS** — Build A + extractor + Build B + Build C shipped; drawer UI open) — see **R7 — Sources Drawer Revival** above; **BACKLOG F12**, **B41**.
+6. ~~**R7 — Sources Drawer Revival**~~ — **CORE COMPLETE** (drawer UI v1 shipped) — see **R7 — Sources Drawer Revival** / **Recently shipped → R7 F12**. Remaining: **BACKLOG F13** (excluded-sources display), **B41** (optional depth), **B48** (conflict-vs-partial watch).
 7. **B45 — URL provenance scan.** Deterministic pre-QC scan of draft text for URLs containing AI-tool tracking parameters (`utm_source=chatgpt.com`, `utm_source=claude.ai`, `utm_source=perplexity.ai`, and similar). Flag as a provenance concern in QC output. Regex-based, no LLM, runs before Stage 1. Does not modify verdict-layer logic. **Rationale:** directly catches the PwC Middle East failure mode reported by FT/GPTZero (Aug 2026) — draft URLs with visible ChatGPT tracking tags left in after copy-paste. Cheap, deterministic, high-signal on the specific artefact, independent of R5/R6/R7. Strong demo asset given the current Big Four news cycle. **Boundary:** does **not** verify source authority. CE's scope is draft-vs-supplied-sources; source curation remains a reviewer responsibility. See **BACKLOG B45**. (Working ref was B27; **B27** remains the named-individual suppression watch.)
 8. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
 9. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
