@@ -670,7 +670,7 @@ PG feedback (review-aware drafting + direct the reviewer to what needs a human) 
 
 **Proposed sprint sequence** (each delivers standalone value and advances the router):
 
-1. **Foundation & quick wins** — confirm/fix **F1** / **F2** / **F7** (Assess surface), excluded-sources display (**F13**), **B45** URL provenance.
+1. **Foundation & quick wins** — excluded-sources display (**F13**), **B45** URL provenance. (**F1** / **F2** / **F7** Assess surface verified resolved 2026-08-09 — DraftOverlay path.)
 2. **Close the loop** — **Pr9** Suggest revised draft (interim shape, not full **B9**) = the router’s auto-apply bridge.
 3. **Sharpen the signal** — **B13** + conflict-vs-partial calibration (**B48**) (+ optional **B37**); verdict-adjacent; each needs its own diagnostic + neutrality check. These are the materiality/confidence inputs triage needs.
 4. **Triage derivation** — deterministic “Human check required” shortlist over Review output (the PG ask); trustworthy once step 3 lands.
