@@ -11,7 +11,13 @@ import { createTraceId, flushObservability, startTrace, updateTraceMetadata } fr
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { normalizePublicationState } from "../lib/source-publication-state.mjs";
-import { buildExcludedSources, buildResponseSources, splitSourcesForResponse } from "../lib/response-sources.mjs";
+import {
+  buildExcludedSources,
+  buildResponseSources,
+  shouldExcludePreparedSource,
+  splitSourcesForResponse,
+} from "../lib/response-sources.mjs";
+import { scanDraftForAiProvenance } from "../lib/provenance-scan.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -148,8 +154,8 @@ export default async function handler(req, res) {
       };
     });
 
-    // R7.B46: split empty-text sources out so they never enter the aligned
-    // `sources` array (index === sourceIndex === supportSpans.sourceRefId).
+    // R7.B46 / F13: split empty-text + unsupported_scanned sources out so they
+    // never enter the aligned `sources` array (index === sourceIndex === supportSpans.sourceRefId).
     const { kept: v3Sources, dropped: droppedForExclude } = splitSourcesForResponse(
       preparedSources,
       candidateSources
@@ -157,8 +163,7 @@ export default async function handler(req, res) {
     {
       let dropIdx = 0;
       for (let i = 0; i < preparedSources.length; i++) {
-        const text = typeof preparedSources[i]?.text === "string" ? preparedSources[i].text : "";
-        if (text.trim()) continue;
+        if (!shouldExcludePreparedSource(preparedSources[i])) continue;
         const entry = droppedForExclude[dropIdx++];
         if (!entry) continue;
         console.warn(
@@ -262,6 +267,8 @@ export default async function handler(req, res) {
 
     const bannedWords = normalizeBannedWords(body?.bannedWords);
     const bannedWordHits = bannedWords.length > 0 ? getBannedWordHits(draftText, bannedWords) : [];
+    // B45: deterministic AI-tool tracking URL scan (additive; no verdict/pipeline change)
+    const provenanceFlags = scanDraftForAiProvenance(draftText);
 
     // R7.B46: Exact-string contract — sources[i].text === v3Sources[i].text (B40 string).
     // Alignment: sources index === sourceIndex === supportSpans.sourceRefId.
@@ -286,6 +293,7 @@ export default async function handler(req, res) {
         ...(nothingReviewed ? { nothingReviewed: true } : {}),
       },
       bannedWordHits,
+      provenanceFlags,
     });
   } catch (err) {
     console.error("[QC_V3_HANDLER_ERROR]", err?.message || String(err));

@@ -194,4 +194,63 @@ describe("splitSourcesForResponse", () => {
       { id: "id-B", label: "B", reason: "empty_after_extraction" },
     ]);
   });
+
+  test("unsupported_scanned with non-empty placeholder text is dropped, not kept", () => {
+    const placeholder = "[Image: scan-page-1.bmp]\n[Image: scan-page-2.bmp]";
+    const candidateSources = [
+      { id: "id-ok", name: "real.pdf", text: "Revenue grew 12%.", publicationState: "unknown" },
+      {
+        id: "id-scan",
+        name: "scanned.pdf",
+        contentBase64: "AAAA",
+        mimeType: "application/pdf",
+        publicationState: "unknown",
+      },
+    ];
+    const preparedSources = [
+      {
+        text: "Revenue grew 12%.",
+        label: "real.pdf",
+        name: "real.pdf",
+        publicationState: "unknown",
+        meta: { extraction: { status: "ok", warnings: [] } },
+      },
+      {
+        text: placeholder,
+        label: "scanned.pdf",
+        name: "scanned.pdf",
+        publicationState: "unknown",
+        meta: {
+          extraction: {
+            status: "unsupported_scanned",
+            warnings: ["unsupported_scanned"],
+            meaningfulTextLength: 0,
+          },
+        },
+      },
+    ];
+
+    const { kept, dropped } = splitSourcesForResponse(preparedSources, candidateSources);
+
+    assert.equal(kept.length, 1);
+    assert.equal(kept[0].id, "id-ok");
+    assert.equal(kept[0].text, "Revenue grew 12%.");
+    assert.ok(!kept.some((s) => s.id === "id-scan"));
+
+    assert.equal(dropped.length, 1);
+    assert.equal(dropped[0].id, "id-scan");
+    assert.equal(dropped[0].label, "scanned.pdf");
+    assert.equal(dropped[0].reason, "unsupported_scanned");
+
+    const sources = buildResponseSources(kept);
+    assert.equal(sources.length, 1);
+    assert.equal(sources[0].index, 0);
+    assert.equal(sources[0].id, "id-ok");
+    assert.ok(!sources.some((s) => s.id === "id-scan"));
+
+    const excluded = buildExcludedSources(dropped);
+    assert.deepEqual(excluded, [
+      { id: "id-scan", label: "scanned.pdf", reason: "unsupported_scanned" },
+    ]);
+  });
 });
