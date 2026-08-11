@@ -270,7 +270,7 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 
 ### R7 F12 — Sources Drawer v1 (closed 2026-08-09)
 
-**R7 F12 — Sources Drawer v1** (shipped; tag `v8.68.0-f12-sources-drawer`). Frontend-only reader on Assess: left reviewed-source list + right highlighted extracted-text pane; three openers (Results **Sources** button / per-row magnifier / card Evidence finding icon); verdict-coloured passage highlights (confirmed→green / partially_confirmed→amber / conflicting→red via existing tone fills); per-span hover naming the statement and relation. Consumes Build A/B/C data (`qcCard.supportSpans` + response `sources[]`); no verdict/pipeline change. **Alongside:** **B47** Office-source ingestion fix — FE base64-encodes pdf/docx/pptx/xlsx uploads so officeparser runs; BE rejects inline office-zip text (`OFFICE_INLINE_TEXT_NOT_ALLOWED`). Tags: `b47-office-inline-guard` (backend), `v8.67.0-b47-office-upload-fix` (frontend). Deferred from v1: excluded-sources display (**BACKLOG F13**). See **R7 — Sources Drawer Revival**.
+**R7 F12 — Sources Drawer v1** (shipped; tag `v8.68.0-f12-sources-drawer`). Frontend-only reader on Assess: left reviewed-source list + right highlighted extracted-text pane; three openers (Results **Sources** button / per-row magnifier / card Evidence finding icon); verdict-coloured passage highlights (confirmed→green / partially_confirmed→amber / conflicting→red via existing tone fills); per-span hover naming the statement and relation. Consumes Build A/B/C data (`qcCard.supportSpans` + response `sources[]`); no verdict/pipeline change. **Alongside:** **B47** Office-source ingestion fix — FE base64-encodes pdf/docx/pptx/xlsx uploads so officeparser runs; BE rejects inline office-zip text (`OFFICE_INLINE_TEXT_NOT_ALLOWED`). Tags: `b47-office-inline-guard` (backend), `v8.67.0-b47-office-upload-fix` (frontend). ~~Deferred from v1: excluded-sources display (**BACKLOG F13**)~~ — **shipped 2026-08-11** (Sprint 1). See **R7 — Sources Drawer Revival**.
 
 ---
 
@@ -603,7 +603,7 @@ PG-grade Generate for the Tuesday PG demo via scaffolded prompt library + Writin
 
 ## R7 — Sources Drawer Revival [MVP]
 
-**Status:** **CORE COMPLETE** — Build A (`r7-build-a`); extractor swap (`extractor-officeparser-swap`); Build B (`r7-build-b`); Build C (`r7-build-c`); drawer UI v1 (**BACKLOG F12** / `v8.68.0-f12-sources-drawer`); Office ingestion fix (**BACKLOG B47**). Remaining: excluded-sources display (**BACKLOG F13**, deferred from F12 v1) + optional depth-of-support (**BACKLOG B41**).
+**Status:** **CORE COMPLETE** — Build A (`r7-build-a`); extractor swap (`extractor-officeparser-swap`); Build B (`r7-build-b`); Build C (`r7-build-c`); drawer UI v1 (**BACKLOG F12** / `v8.68.0-f12-sources-drawer`); Office ingestion fix (**BACKLOG B47**); excluded-sources display (**BACKLOG F13** / Sprint 1). Remaining optional: depth-of-support (**BACKLOG B41**).
 
 **Objective:** Restore the Sources drawer and wire card→source navigation, completing the draft↔card↔source triangle.
 
@@ -628,7 +628,7 @@ PG-grade Generate for the Tuesday PG demo via scaffolded prompt library + Writin
 
 **Remaining:**
 
-1. **Excluded-sources display** — surface `excludedSources` in the drawer UI (deferred from F12 v1). **BACKLOG F13**.
+1. ~~**Excluded-sources display**~~ — **SHIPPED 2026-08-11** (**BACKLOG F13** / Sprint 1). Drawer “Excluded · Not reviewed”; exclusion includes `unsupported_scanned`.
 2. **Optional parallel:** Stage-2 multi-passage depth-of-support (matcher emits multiple passages per statement×source) — verdict-adjacent; needs own neutrality diagnostic. **BACKLOG B41**.
 
 **Watch (F12 / conflict-vs-partial):** widened-matcher classification can mislabel a non-confirmation (or confirming-looking passage) as `conflicting` on `supportSpans` (seen in Build B live run and F12 drawer red highlights). Affects drawer span colour; `supportSpans` never feed the evidence verdict aggregation, but Stage-2 classification is still verdict-adjacent if ever unified. Tracked as **BACKLOG B48** (conflict-vs-partial calibration — read-only diagnostic + neutrality/shadow check before change).
@@ -670,9 +670,9 @@ PG feedback (review-aware drafting + direct the reviewer to what needs a human) 
 
 **Proposed sprint sequence** (each delivers standalone value and advances the router):
 
-1. **Foundation & quick wins** — excluded-sources display (**F13**), **B45** URL provenance. (**F1** / **F2** / **F7** Assess surface verified resolved 2026-08-09 — DraftOverlay path.)
-2. **Close the loop** — **Pr9** Suggest revised draft (interim shape, not full **B9**) = the router’s auto-apply bridge.
-3. **Sharpen the signal** — **B13** + conflict-vs-partial calibration (**B48**) (+ optional **B37**); verdict-adjacent; each needs its own diagnostic + neutrality check. These are the materiality/confidence inputs triage needs.
+1. ~~**Foundation & quick wins (Sprint 1)**~~ — **SHIPPED 2026-08-11** — excluded-sources display (**F13**) + **B45** URL provenance. (**F1** / **F2** / **F7** Assess surface verified resolved 2026-08-09 — DraftOverlay path.) Tags: `b45-url-provenance-scan` / `v8.69.0-b45-provenance-display`; `f13-scanned-source-exclusion` / `v8.70.0-f13-excluded-sources`.
+2. **Close the loop (Sprint 2 — next up)** — **Pr9** Suggest revised draft (interim shape, not full **B9**) = the router’s auto-apply bridge.
+3. **Sharpen the signal (Sprint 3 — deliberate, verdict-adjacent stretch)** — **B13** + conflict-vs-partial calibration (**B48**) (+ optional **B37**); each needs its own diagnostic + neutrality check. These are the materiality/confidence inputs triage needs. Do not rush; review-quality chapter.
 4. **Triage derivation** — deterministic “Human check required” shortlist over Review output (the PG ask); trustworthy once step 3 lands.
 5. **Review-aware drafting** — apply the shared **R6.5** rulebook at generation to shrink the mechanical lane at source (**WR2** substrate).
 
@@ -692,8 +692,8 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
-6. ~~**R7 — Sources Drawer Revival**~~ — **CORE COMPLETE** (drawer UI v1 shipped) — see **R7 — Sources Drawer Revival** / **Recently shipped → R7 F12**. Remaining: **BACKLOG F13** (excluded-sources display), **B41** (optional depth), **B48** (conflict-vs-partial watch).
-7. **B45 — URL provenance scan.** Deterministic pre-QC scan of draft text for URLs containing AI-tool tracking parameters (`utm_source=chatgpt.com`, `utm_source=claude.ai`, `utm_source=perplexity.ai`, and similar). Flag as a provenance concern in QC output. Regex-based, no LLM, runs before Stage 1. Does not modify verdict-layer logic. **Rationale:** directly catches the PwC Middle East failure mode reported by FT/GPTZero (Aug 2026) — draft URLs with visible ChatGPT tracking tags left in after copy-paste. Cheap, deterministic, high-signal on the specific artefact, independent of R5/R6/R7. Strong demo asset given the current Big Four news cycle. **Boundary:** does **not** verify source authority. CE's scope is draft-vs-supplied-sources; source curation remains a reviewer responsibility. See **BACKLOG B45**. (Working ref was B27; **B27** remains the named-individual suppression watch.)
+6. ~~**R7 — Sources Drawer Revival**~~ — **CORE COMPLETE** (drawer UI v1 + **F13** excluded-sources shipped) — see **R7 — Sources Drawer Revival** / **Recently shipped → R7 F12**. Remaining optional: **B41** (depth), **B48** (conflict-vs-partial watch).
+7. ~~**B45 — URL provenance scan.**~~ — **SHIPPED 2026-08-11** (Sprint 1). Tags: `b45-url-provenance-scan` (backend), `v8.69.0-b45-provenance-display` (frontend). See **BACKLOG B45** (Closed).
 8. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
 9. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
 10. ~~**Hide Editorial on conflict (R6.3)**~~ — **SHIPPED** 2026-05-31. See Recently shipped → R6.3.
