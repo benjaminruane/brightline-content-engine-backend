@@ -18,6 +18,7 @@ const { callLLM, flushObservability, hasProviderApiKey } = await import("../../l
 const { STAGE_MODELS } = await import("../../lib/qc/model-config.mjs");
 const {
   gatherConcerns,
+  buildPublicationMap,
   buildRevisionPrompt,
   finalizeSuggestRevisionText,
 } = await import("../../lib/build-revision-prompt.mjs");
@@ -94,7 +95,7 @@ const FIXTURE_1 = {
 };
 
 const FIXTURE_2 = {
-  label: "FIXTURE 2 — BVP / Shopify conflict + house-style",
+  label: "FIXTURE 2 — BVP named-entity evidence keep + house-style",
   draftText:
     "BVP is evaluating an investment of up to $7,000,000 in Shopify. Shopify's 24 employees are located in Ottawa, Canada.",
   statements: [
@@ -148,6 +149,145 @@ const FIXTURE_2 = {
   requiredVersion: "complete",
 };
 
+const FIXTURE_3 = {
+  label: "FIXTURE 3 — compliance_strip public downgrade vs strip",
+  draftText:
+    "Jane Smith led the diligence on the transaction. Fund IV returned 22% net IRR last year.",
+  statements: [
+    {
+      text: "Jane Smith led the diligence on the transaction.",
+      qcCard: {
+        index: 0,
+        statement: "Jane Smith led the diligence on the transaction.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        supportRefIds: [0],
+        editorialVerdict: "clean",
+        complianceVerdict: "hard_concern",
+        complianceConcerns: [
+          {
+            concernCode: "named_individual_attribution_in_public_content",
+            note: "Named individual in external-facing content.",
+            suggestedDirection: "Remove 'Jane Smith' or replace with a role title pending consent.",
+          },
+        ],
+      },
+    },
+    {
+      text: "Fund IV returned 22% net IRR last year.",
+      qcCard: {
+        index: 1,
+        statement: "Fund IV returned 22% net IRR last year.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        supportRefIds: [1],
+        editorialVerdict: "clean",
+        complianceVerdict: "hard_concern",
+        complianceConcerns: [
+          {
+            concernCode: "precise_confidential_detail_in_public_version",
+            note: "Exact fund-level IRR in a public version.",
+            suggestedDirection: "Strip the precise 22% net IRR or replace with a stated range.",
+          },
+        ],
+      },
+    },
+  ],
+  sources: [
+    { index: 0, publicationState: "published_external" },
+    { index: 1, publicationState: "restricted" },
+  ],
+  outputType: "PRESS_RELEASE",
+  requiredVersion: "public",
+};
+
+const FIXTURE_4 = {
+  label: "FIXTURE 4 — compliance_add forward-looking return target",
+  draftText: "The Fund will deliver 18% net IRR in 2027.",
+  statements: [
+    {
+      text: "The Fund will deliver 18% net IRR in 2027.",
+      qcCard: {
+        index: 0,
+        statement: "The Fund will deliver 18% net IRR in 2027.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        editorialVerdict: "clean",
+        complianceVerdict: "hard_concern",
+        complianceConcerns: [
+          {
+            concernCode: "forward_looking_statement_without_qualifier",
+            note: "Forward-looking IRR without an uncertainty qualifier.",
+            suggestedDirection: "Add an uncertainty qualifier such as 'is expected to'.",
+          },
+        ],
+      },
+    },
+  ],
+  outputType: "INVESTOR_LETTER",
+  requiredVersion: "public",
+};
+
+const FIXTURE_5 = {
+  label: "FIXTURE 5 — deletion direction Cut …",
+  draftText: "Revenue grew 12% year on year. The office also has a red kettle.",
+  statements: [
+    {
+      text: "Revenue grew 12% year on year.",
+      qcCard: {
+        index: 0,
+        statement: "Revenue grew 12% year on year.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+      },
+    },
+    {
+      text: "The office also has a red kettle.",
+      qcCard: {
+        index: 1,
+        statement: "The office also has a red kettle.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        editorialVerdict: "soft_concern",
+        editorialConcerns: [
+          {
+            ruleId: "narrative_coherence",
+            note: "Incidental aside that does not advance the argument.",
+            suggestedDirection: "Cut the kettle detail.",
+          },
+        ],
+        complianceVerdict: "clean",
+      },
+    },
+  ],
+  outputType: "REPORTING_COMMENTARY",
+  requiredVersion: "complete",
+};
+
+const FIXTURE_6 = {
+  label: "FIXTURE 6 — partial evidence (confirmed scale, unsupported threshold)",
+  draftText: "AUM exceeded $2bn.",
+  statements: [
+    {
+      text: "AUM exceeded $2bn.",
+      qcCard: {
+        index: 0,
+        statement: "AUM exceeded $2bn.",
+        supportState: "partial",
+        displayVerdict: "supported_partial",
+        primaryExcerptText: "AUM was reported near $1.9bn.",
+        evidenceSummary: "Sources confirm AUM at about USD 1.9 billion, not that it exceeded USD 2 billion.",
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+      },
+    },
+  ],
+  outputType: "REPORTING_COMMENTARY",
+  requiredVersion: "complete",
+};
+
 function stripCodeFence(text) {
   if (typeof text !== "string") return "";
   const trimmed = text.trim();
@@ -157,7 +297,8 @@ function stripCodeFence(text) {
 }
 
 async function runFixture(fixture) {
-  const concerns = gatherConcerns(fixture.statements);
+  const publicationMap = buildPublicationMap(fixture.sources);
+  const concerns = gatherConcerns(fixture.statements, publicationMap);
   const prompt = buildRevisionPrompt(fixture.draftText, concerns, {
     outputType: fixture.outputType,
     requiredVersion: fixture.requiredVersion,
@@ -196,13 +337,19 @@ async function runFixture(fixture) {
   console.log("\n——— revisedDraft (clean) ———\n");
   console.log(revisedDraft);
   console.log("\n——— markers ———\n");
-  console.log(JSON.stringify(markers, null, 2));
+  if (markers.length === 0) {
+    console.log("(none)");
+  } else {
+    for (const m of markers) {
+      console.log(`[${m.start},${m.end}] ${m.note}`);
+    }
+  }
   console.log("\n——— end fixture ———\n");
 
   return { ok: true, raw, revisedDraft, markers };
 }
 
-const fixtures = [FIXTURE_1, FIXTURE_2];
+const fixtures = [FIXTURE_1, FIXTURE_2, FIXTURE_3, FIXTURE_4, FIXTURE_5, FIXTURE_6];
 let failed = 0;
 
 try {

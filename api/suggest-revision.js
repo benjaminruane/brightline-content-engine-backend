@@ -1,6 +1,7 @@
 /**
  * Pr9 — Suggest revised draft (generation-side).
- * POST { draftText, statements, outputType?, requiredVersion? }
+ * POST { draftText, statements, outputType?, requiredVersion?, sources? }
+ * sources?: [{ index, publicationState }] — optional; absent → no public-source downgrade.
  * → { ok: true, revisedDraft, markers } | { ok: false, error }
  *
  * Does NOT import or touch the QC pipeline, verdict, or aggregation.
@@ -9,6 +10,7 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
+  buildPublicationMap,
   buildRevisionPrompt,
   finalizeSuggestRevisionText,
   gatherConcerns,
@@ -68,8 +70,9 @@ export default async function handler(req, res) {
     const outputType = typeof body.outputType === "string" ? body.outputType : undefined;
     const requiredVersion =
       typeof body.requiredVersion === "string" ? body.requiredVersion : undefined;
+    const publicationMap = buildPublicationMap(body.sources);
 
-    const concerns = gatherConcerns(statements);
+    const concerns = gatherConcerns(statements, publicationMap);
     const prompt = buildRevisionPrompt(draftText, concerns, { outputType, requiredVersion });
 
     const completion = await callLLM({
