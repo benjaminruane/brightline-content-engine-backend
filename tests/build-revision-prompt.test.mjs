@@ -184,7 +184,7 @@ describe("gatherConcerns", () => {
     assert.equal(editorial.evidence, null);
     assert.deepEqual(editorial.editorial, [
       {
-        kind: "craft",
+        kind: "soften",
         rule: "marketing_language_excess",
         note: "Promotional register.",
         suggestedDirection: "Replace 'incredible' with a concrete metric.",
@@ -255,7 +255,7 @@ describe("gatherConcerns", () => {
     assert.match(removeDir.editorial[0].suggestedDirection, /^Remove /);
 
     const editorialOther = concerns.find((c) => c.statementIndex === 4);
-    assert.equal(editorialOther.editorial[0].kind, "craft");
+    assert.equal(editorialOther.editorial[0].kind, "soften");
 
     const compliance = concerns.find((c) => c.statementIndex === 5);
     assert.equal(compliance.compliance[0].kind, "compliance_add");
@@ -411,7 +411,7 @@ describe("gatherConcerns", () => {
     };
     const [keptCraft] = gatherConcerns([mixedUnderreach]);
     assert.equal(keptCraft.editorial.length, 1);
-    assert.equal(keptCraft.editorial[0].kind, "craft");
+    assert.equal(keptCraft.editorial[0].kind, "soften");
     assert.equal(keptCraft.editorial[0].rule, "marketing_language_excess");
 
     const [cutItem] = gatherConcerns([cutDirection]);
@@ -454,6 +454,96 @@ describe("gatherConcerns", () => {
 
     const promptStrip = buildRevisionPrompt("Fund IV returned 22% net IRR last year.", [stripped], {});
     assert.match(promptStrip, /kind=compliance_strip; ACTION=STRIP-AND-FLAG/);
+  });
+
+  test("marketing_language_excess is flagged soften; other craft stays silent", () => {
+    const passive = {
+      qcCard: {
+        index: 31,
+        statement: "It was decided to reduce headcount.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        editorialVerdict: "soft_concern",
+        editorialConcerns: [
+          {
+            ruleId: "passive_voice_overuse",
+            note: "Passive obscures the actor.",
+            suggestedDirection: "Recast as 'The board reduced headcount'.",
+          },
+        ],
+        complianceVerdict: "clean",
+      },
+    };
+    const fillerSilent = {
+      qcCard: {
+        index: 32,
+        statement: "Needless to say, returns were solid.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        editorialVerdict: "soft_concern",
+        editorialConcerns: [
+          {
+            ruleId: "cliche_and_filler",
+            note: "Filler phrase.",
+            suggestedDirection: "Replace 'Needless to say' with nothing extra.",
+          },
+        ],
+        complianceVerdict: "clean",
+      },
+    };
+    const marketingConcerns = gatherConcerns([editorialCard]);
+    assert.equal(marketingConcerns[0].editorial[0].kind, "soften");
+    const [fillerItem] = gatherConcerns([fillerSilent]);
+    assert.equal(fillerItem.editorial[0].kind, "craft");
+    const [passiveItem] = gatherConcerns([passive]);
+    assert.equal(passiveItem.editorial[0].kind, "craft");
+
+    const prompt = buildRevisionPrompt("We are excited to announce incredible growth.", marketingConcerns, {});
+    assert.match(prompt, /kind=soften/);
+    assert.match(prompt, /kind "soften"/);
+    assert.match(prompt, /it read as promotional/);
+    assert.doesNotMatch(prompt, /kind=craft/);
+  });
+
+  test("keep-and-flag prompt examples do not claim an edit", () => {
+    const prompt = buildRevisionPrompt("BVP is evaluating an investment.", gatherConcerns([conflictCard]), {});
+    const keepExamples = [];
+    const named = prompt.match(/Example \(evidence named entity \/ keep-and-flag\): \{\{[^|]+\|\|([^}]+)\}\}/);
+    const deletion = prompt.match(/Example \(deletion \/ keep-and-flag\): \{\{[^|]+\|\|([^}]+)\}\}/);
+    const downgrade = prompt.match(/Example \(compliance_strip, KEEP-AND-FLAG\): \{\{[^|]+\|\|([^}]+)\}\}/);
+    if (named) keepExamples.push(named[1]);
+    if (deletion) keepExamples.push(deletion[1]);
+    if (downgrade) keepExamples.push(downgrade[1]);
+    assert.equal(keepExamples.length, 3);
+    for (const note of keepExamples) {
+      assert.match(note, /^Kept /i);
+      assert.doesNotMatch(note, /\b(changed|removed|replaced)\b/i);
+      assert.doesNotMatch(note, /\bmarker\b/i);
+    }
+    assert.match(prompt, /Kept 'BVP' — the source says 'the firm', not BVP/);
+    assert.match(prompt, /Never claim a change that was not made/);
+    assert.match(prompt, /Never mention the marker, underline, or highlight/);
+  });
+
+  test("keep-and-flag notes omit silent house-style; figure-correction notes still describe the finding", () => {
+    const prompt = buildRevisionPrompt("BVP is evaluating an investment of up to $7,000,000 in Shopify.", gatherConcerns([conflictCard]), {});
+    const named = prompt.match(/Example \(evidence named entity \/ keep-and-flag\): \{\{[^|]+\|\|([^}]+)\}\}/);
+    assert.ok(named);
+    const keepNote = named[1];
+    assert.match(keepNote, /^Kept 'BVP'/);
+    assert.doesNotMatch(keepNote, /house style/i);
+    assert.doesNotMatch(keepNote, /\$[^.]{0,40}to[^.]{0,40}USD/i);
+    assert.doesNotMatch(keepNote, /USD 7 million/);
+    assert.doesNotMatch(keepNote, /thousand/i);
+    assert.match(prompt, /mechanical house-style reformatting/i);
+    assert.match(prompt, /appear only in the diff/i);
+
+    const conflictEx = prompt.match(/Example \(conflict \/ stated source value\): \{\{[^|]+\|\|([^}]+)\}\}/);
+    const partialEx = prompt.match(/Example \(partial \/ stated source value\): \{\{[^|]+\|\|([^}]+)\}\}/);
+    const stripEx = prompt.match(/Example \(compliance_strip, no downgrade\): \{\{[^|]+\|\|([^}]+)\}\}/);
+    assert.match(conflictEx[1], /Changed from 40%/);
+    assert.match(partialEx[1], /Changed from over USD 2 billion to around USD 1\.9 billion/);
+    assert.match(stripEx[1], /Removed Jane Smith/);
   });
 
   test("falls back to displayVerdict when supportState is absent", () => {
@@ -557,18 +647,23 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /kind "craft"/);
     assert.match(prompt, /APPLY SILENTLY/i);
     assert.match(prompt, /NEVER emit a \{\{text\|\|note\}\} marker for a craft edit/);
-    assert.match(prompt, /Only conflict \/ unsupported \/ partial \/ deletion \/ compliance_add \/ compliance_claim \/ compliance_strip may emit markers/);
+    assert.match(prompt, /kind "soften"/);
+    assert.match(prompt, /marketing_language_excess/);
+    assert.match(prompt, /Markers are allowed ONLY for: conflict, unsupported, partial, deletion, soften, compliance_add, compliance_claim, compliance_strip/);
     assert.match(prompt, /kind "compliance_add"/);
     assert.match(prompt, /kind "compliance_claim"/);
     assert.match(prompt, /kind "compliance_strip"/);
     assert.match(prompt, /ACTION=STRIP-AND-FLAG/);
     assert.match(prompt, /publicSourceDowngrade=keep-and-flag/);
     assert.match(prompt, /ACTION=KEEP-AND-FLAG/);
-    assert.match(prompt, /supporting source is public/i);
+    assert.match(prompt, /supporting source is already public/i);
     assert.match(prompt, /NAMED ENTITIES on an EVIDENCE finding/i);
     assert.match(prompt, /NEVER anonymise evidence-driven names/i);
     assert.match(prompt, /LESS HEDGING/i);
-    assert.match(prompt, /complete, plain-English sentence/i);
+    assert.match(prompt, /NOTE TEMPLATE/);
+    assert.match(prompt, /Confirm before publishing\./);
+    assert.match(prompt, /guaranteed-return language isn't permitted/);
+    assert.match(prompt, /Do NOT use review\/compliance jargon/);
     assert.match(prompt, /\{\{softened text\|\|short reviewer note\}\}/);
     assert.match(prompt, /Sentence-ending punctuation/);
     assert.match(prompt, /stays OUTSIDE the delimiter/);
@@ -675,7 +770,11 @@ describe("house-style char normalize + marker offsets", () => {
       '"softened growth" claim'
     );
     assert.match(finalized.markers[0].note, /Draft said - 40%/);
-    assert.match(finalized.markers[0].note, /\.$/);
+    assert.match(finalized.markers[0].note, /Confirm before publishing\.$/);
+    assert.equal(
+      (finalized.markers[0].note.match(/Confirm before publishing\./g) || []).length,
+      1
+    );
 
     const viaFinalize = finalizeSuggestRevisionText(raw);
     assert.deepEqual(viaFinalize, finalized);
@@ -683,11 +782,13 @@ describe("house-style char normalize + marker offsets", () => {
 });
 
 describe("normalizeMarkerNoteText", () => {
-  test("capitalises, adds terminal punctuation, and leaves offsets untouched", () => {
-    assert.equal(normalizeMarkerNoteText("confirm the figure"), "Confirm the figure.");
-    assert.equal(normalizeMarkerNoteText("Already a sentence."), "Already a sentence.");
-    assert.equal(normalizeMarkerNoteText("  what about this?  "), "What about this?");
-    assert.equal(normalizeMarkerNoteText("Wait!"), "Wait!");
+  const closer = "Confirm before publishing.";
+
+  test("capitalises, adds terminal punctuation, canonical closer, and leaves offsets untouched", () => {
+    assert.equal(normalizeMarkerNoteText("confirm the figure"), `Confirm the figure. ${closer}`);
+    assert.equal(normalizeMarkerNoteText("Already a sentence."), `Already a sentence. ${closer}`);
+    assert.equal(normalizeMarkerNoteText("  what about this?  "), `What about this? ${closer}`);
+    assert.equal(normalizeMarkerNoteText("Wait!"), `Wait! ${closer}`);
     assert.equal(normalizeMarkerNoteText(""), "");
 
     const raw = "{{softened growth||draft said 40% — confirm}} trailing.";
@@ -708,7 +809,35 @@ describe("normalizeMarkerNoteText", () => {
       notesNormalized.revisedDraft.slice(notesNormalized.markers[0].start, notesNormalized.markers[0].end),
       parsed.revisedDraft.slice(parsed.markers[0].start, parsed.markers[0].end)
     );
-    assert.equal(notesNormalized.markers[0].note, "Draft said 40% — confirm.");
+    assert.equal(notesNormalized.markers[0].note, `Draft said 40%. ${closer}`);
+  });
+
+  test("strips confirm-variants and appends canonical closer without doubling", () => {
+    assert.equal(
+      normalizeMarkerNoteText("Changed from 40% to match the IC memo - confirm"),
+      `Changed from 40% to match the IC memo. ${closer}`
+    );
+    assert.equal(
+      normalizeMarkerNoteText("Hedged the returns claim. confirm this softer formulation."),
+      `Hedged the returns claim. ${closer}`
+    );
+    assert.equal(
+      normalizeMarkerNoteText("Changed from USD 50 to USD 45 to match Shopify (text).txt. Confirm before publishing."),
+      `Changed from USD 50 to USD 45 to match Shopify (text).txt. ${closer}`
+    );
+    assert.equal(
+      normalizeMarkerNoteText("Dropped the 40% figure — the sources don't back it"),
+      `Dropped the 40% figure — the sources don't back it. ${closer}`
+    );
+    assert.equal(normalizeMarkerNoteText("confirm."), closer);
+    assert.equal(normalizeMarkerNoteText("Confirm before publishing."), closer);
+  });
+
+  test("is idempotent", () => {
+    const once = normalizeMarkerNoteText("Changed the figure - confirm");
+    assert.equal(normalizeMarkerNoteText(once), once);
+    const already = normalizeMarkerNoteText("Already a sentence. Confirm before publishing.");
+    assert.equal(normalizeMarkerNoteText(already), already);
   });
 });
 
@@ -728,8 +857,9 @@ describe("ensureMarkerSentenceTerminalPunctuation", () => {
       "Acme Capital delivered materially higher revenue year on year"
     );
     assert.equal(revisedDraft[markers[0].end], ".");
-    assert.match(markers[0].note, /Draft stated 40% - confirm/);
-    assert.match(markers[0].note, /\.$/);
+    assert.match(markers[0].note, /Draft stated 40%/);
+    assert.match(markers[0].note, /Confirm before publishing\.$/);
+    assert.equal((markers[0].note.match(/Confirm before publishing\./g) || []).length, 1);
   });
 
   test("leaves span unchanged when period already sits outside delimiter", () => {
@@ -747,7 +877,7 @@ describe("ensureMarkerSentenceTerminalPunctuation", () => {
       "A venture firm is evaluating an investment of up to USD 7 million in Shopify"
     );
     assert.equal(revisedDraft[markers[0].end], ".");
-    assert.equal(markers[0].note, "Confirm attribution.");
+    assert.equal(markers[0].note, "Confirm attribution. Confirm before publishing.");
   });
 
   test("end-of-text span without period gets one", () => {
