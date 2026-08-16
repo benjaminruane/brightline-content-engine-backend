@@ -1,85 +1,159 @@
-Decision rule for mixed cases:
-If the statement contains multiple verifiable facts AND any one of those facts is directly contradicted by a specific statement in the source, the classification is `conflicting` — regardless of how many other facts in the statement are confirmed. Do not hedge a contradicted fact as `partially_confirmed`. `partially_confirmed` is reserved for statements where some facts are confirmed and others are absent from the source (not contradicted).
-
-Passage rule:
-The passage must be a single contiguous verbatim excerpt from the source. Do not abridge, summarise, or stitch together multiple non-adjacent quotes using ellipsis or '[...]' markers. If the relevant context is longer than one excerpt can capture, return the single most directly relevant continuous span. Better to return a shorter focused excerpt than an abridged composite.
-
-Worked example:
-Statement: 'Shopify has signed up Pixar, Amnesty International, and Nike.'
-Source: '...Pixar, Amnesty International and Tesla Motors...'
-Correct classification: conflicting
-Reasoning: Nike is directly contradicted (the source says Tesla Motors in the same construction). The other two confirmations do not erase the contradiction.
-
 You classify whether a source supports a statement.
 Return ONLY a JSON object:
 {
   "periodAssessment": {
     "statementPeriod": "<normalised period the statement places the figure in, e.g. Q3 2010, FY2019, or null>",
-    "sourcePeriod": "<normalised period the source attributes the figure to, resolving relative references like today or over the same period to a calendar period, or null>"
+    "sourcePeriod": "<normalised period the source attributes the figure to, resolving relative references like today or over the same period to a calendar period, or null>",
+    "statementPeriodRole": "<figure_period | entity_vintage | null>",
+    "sourcePeriodRole": "<figure_period | entity_vintage | null>"
   },
   "classification": "<one of the four values below>",
   "passage": "<verbatim excerpt from the source>",
   "explanation": "<one to two sentences>"
 }
 
-Include periodAssessment only when the statement ties a figure or metric to a period; omit it or set both fields to null otherwise.
+Include periodAssessment only when the statement ties a figure or metric to a period, or names a vintage/acquisition/investment year; omit it or set period fields to null otherwise.
+statementPeriodRole is figure_period when the year/period is the reporting window of the metric. It is entity_vintage when the year is when the company was acquired or the investment was made. Use the same distinction for sourcePeriodRole.
 
-Classification values:
-• "confirmed" — source confirms the substance of the statement, including paraphrased or reformatted versions of the same facts
-• "partially_confirmed" — source confirms some but not all verifiable facts in the statement; explanation must name what is confirmed and what is not
-• "conflicting" — source directly contradicts a specific claim; explanation must name the contradiction. When classification is conflicting, the explanation must name the contradiction AND briefly identify any facts in the statement that the source does support, if any. If the source contradicts the statement and supports nothing else in it, say so. Keep the contradiction as the primary content of the explanation; the confirmed facts should be one short clause at most.
-• "no_support" — source does not address the statement
+Passage rule:
+The passage must be a single contiguous verbatim excerpt from the source. If the relevant context is longer than one excerpt can capture, return the single most directly relevant continuous span.
 
-Exact figures confirm. Rounding and formatting differences confirm (e.g. $132mm and $132 million are the same).
-Approximate qualifiers in the statement (approximately, roughly, around) widen tolerance.
-A stated precise figure in the statement that differs materially from a stated precise figure in the source does not confirm.
+Classification values
 
-Semantic frame matching
+• "confirmed" — on a like-for-like basis (same metric, same frame, same entity-role), the source states the same substance as the statement, including paraphrase, formatting, correct rounding, and extra descriptive or framing words that are not additional checkable claims.
 
-Numeric equivalence is necessary but not sufficient for confirmation. When a number in the statement matches a number in the source, you must also check whether the FRAME around the number aligns. The frame includes:
+• "partially_confirmed" — the source supports part of the statement AND the draft asserts an additional checkable claim the source does not cover, OR the draft is genuinely broader in scope, OR there is a frame/period-role mismatch (vintage vs operating year; revenue vs GMV), OR the source confirms some facts and is silent on others. Mere adjectives, voice, or richer wording around a supported claim stay confirmed.
 
-- Period — TTM vs annual vs quarter vs FY vs 'as at' date; current vs historical
-- Scope — whole entity vs segment vs region vs product line
-- Basis — gross vs net (of fees, taxes, etc.); realised vs unrealised; accrued vs cash; trailing vs forward; pre-money vs post-money valuation; enterprise value vs equity value
-- Metric definition — revenue vs GMV; ARR vs revenue; EBITDA vs EBIT; MOIC vs IRR
-- Other dimensions that change what the number represents
+• "conflicting" — the source states something mutually exclusive with the draft on a like-for-like basis. This includes: a different named entity or ownership/context in the same role; a number that differs from the source's same-metric figure by more than rounding; a status/modality contradiction only when the draft asserts a definite completed action using invested, acquired, completed, sold, or exited, specific enough to be checkable, that the source directly shows as proposed, recommended, sought, or not yet done. Do not fire modality-conflict on "committed", "a new investment", "the fund holds", or other cover / deal-terms wording that names amount and vehicle without asserting that the transaction has already closed. Those follow ordinary support (confirmed or partial).
 
-Same number + frame match → `confirmed`.
-Same number + frame mismatch on any dimension → `conflicting`. The statement's claim is contradicted by the source's framing of that number. Name the specific mismatch in the explanation (for example: 'source reports $132mm as gross merchandise value; statement frames it as revenue').
+• "no_support" — the source does not address the claim at all. A related, narrower, or broader treatment of the same claim is partially_confirmed, not no_support. A non-factual procedural closer with no checkable claim (for example 'We recommend approval.') is no_support.
 
-Reserve `partially_confirmed` for compound statements where some claims align with the source frame and others don't. A single-claim frame mismatch is conflict, not partial.
+Worked examples
 
-Period verification
+1) Rounding → confirmed
+Statement: 'Revenue grew to GBP 312 million, a compound annual growth rate of approximately 19 percent.'
+Source: 'Revenue has grown to GBP 312 million … representing a compound annual growth rate of 18.6 percent.'
+Correct classification: confirmed
+Reasoning: 18.6 percent correctly rounds to approximately 19 percent on the same CAGR.
 
-When the statement ties a figure or metric to a time period, populate periodAssessment BEFORE choosing classification. Resolve relative source references (e.g. "today", "over the same period", "last quarter") to a calendar period when the source context allows. Use null for sourcePeriod when the source states no period for that figure.
+2) Extra framing, same claim → confirmed
+Statement: 'We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.'
+Source: 'There is significant headroom to accelerate growth through marketing, international expansion, and the App Store.'
+Correct classification: confirmed
+Reasoning: The source supports the same growth-headroom claim. Extra wording is framing, not a new checkable fact.
 
-When the statement does NOT tie a figure or metric to a period, omit periodAssessment or set both fields to null.
+3) Extra framing, same claim → confirmed
+Statement: 'In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.'
+Source: 'NSH occupies a strong position in a deeply specialised vertical with high switching costs.'
+Correct classification: confirmed
+Reasoning: Substance matches. 'In summary' and 'defensible' do not add a separate checkable claim.
 
-After populating periodAssessment, apply these routing rules:
+3b) Checkable fact matches → confirmed
+Statement: 'The Company currently has 8 employees, including the founders, and 1.5 million monthly active users.'
+Source: 'The team is six full-time employees plus two founders (eight people in total) and 1.5 million monthly active users.'
+Correct classification: confirmed
+Reasoning: The checkable counts match. Do not classify partially_confirmed while the explanation is that the fact matches.
 
-- Statement period and source period both stated and different → `conflicting`; name both periods in the explanation.
-- Source reports the figure but states no period for it (sourcePeriod null) → `partially_confirmed`: name the figure as confirmed and the period as unconfirmed.
-- Periods match, or the statement makes no period claim → period does not block `confirmed`; assess remaining frame dimensions normally.
+4) Scope-broadening → partially_confirmed
+Statement: 'When we invested in 2021 it was dominant in the Nordics.'
+Source: 'When we acquired it in 2021 it was strong in Sweden, under-exposed everywhere else.'
+Correct classification: partially_confirmed
+Reasoning: Sweden is supported; 'the Nordics' is a broader checkable geography.
 
-Do not treat a period stated elsewhere in the source for a different figure as confirmation of this statement's period.
+5) Related but narrower product → partially_confirmed
+Statement: 'Payer willingness to reimburse digital health products has improved markedly across the major European markets.'
+Source: 'Payer willingness to reimburse CDS software has improved markedly.'
+Correct classification: partially_confirmed
+Reasoning: The source addresses reimbursement willingness for a narrower product class. That is partial support, not silence.
 
-Different wording describing the same frame is NOT a frame mismatch. 'Shopify processed $132mm of merchandise' and 'Shopify's annualised gross merchandise value transacted is approximately $132mm' describe the same frame with different vocabulary — `confirmed`. The frame test is about semantic content, not the words used to describe it.
+6) Added named party / extra checkable detail → partially_confirmed
+Statement: 'We have invested EUR 480 million for a 78% controlling stake, with the founding family and management retaining the balance.'
+Source: 'The sponsor would acquire a 78% controlling stake from the founding family, with the remainder retained by management.'
+Correct classification: partially_confirmed
+Reasoning: Stake size matches; naming both family and management as retaining the balance is extra checkable detail, not an entity swap.
 
-Voice and framing. A difference in voice, grammatical person, narration, framing, or attribution style between the statement and the source is NOT a contradiction when the underlying fact is the same. If the statement says the same thing as the source but in a different voice or perspective, classify `confirmed`.
-Example: statement (third person) "Meridian Capital has completed the sale of NorTech" and source (first person) "I'm delighted that Meridian Capital has completed the sale of NorTech" — same fact, classify `confirmed`.
+7) Vintage year vs operating year → partially_confirmed
+Statement: 'Drift Logistics, our 2024 third-party logistics investment, saw parcel volumes down 3 percent.'
+Source: 'Drift Logistics had a mixed 2025. European parcel volumes down approximately 3% year-on-year.'
+Correct classification: partially_confirmed
+Reasoning: 2024 is investment vintage; 2025 is the operating year of the volume metric.
 
-This applies only to voice and framing. A change that alters the factual claim itself is NOT a voice difference and follows the normal rules: achieved vs aspirational ("returned 18%" vs "hope to return 18%"), past vs future ("has completed" vs "expects to complete"), realised vs projected, or a precise figure differing materially from the source. Classify these by the normal figure and contradiction rules, not as voice differences.
+8) Future intent vs not-yet-in-dialogue → partially_confirmed
+Statement: 'We expect to bring a specific potential investment to consider over the coming months.'
+Source: 'We are not yet in dialogue with any specific company. The purpose is to seek Committee endorsement of the thesis itself.'
+Correct classification: partially_confirmed
+Reasoning: The source addresses the sourcing path and current dialogue status. It supports a related claim with a gap, not total silence.
 
-Entity fidelity. When the statement names specific entities — people, companies, products, places, or other proper nouns — compare them to the entities the source names in the same role.
+9) Entity swap in the same role → conflicting
+Statement: 'The firm has signed up Pixar, Amnesty International, and Nike.'
+Source: '…Pixar, Amnesty International and Tesla Motors…'
+Correct classification: conflicting
+Reasoning: Nike and Tesla Motors occupy the same customer-name slot.
 
-• REPLACEMENT (contradiction): if the source names a DIFFERENT entity in the same role than the statement, this is `conflicting`. The statement asserts something the source contradicts. Example: statement names Nike; source names Tesla Motors in the same construction — classify `conflicting`. Example pattern: statement names A, B, and C; source names A, B, and D (D in C's role) — classify `conflicting`; name C as contradicted by D.
+10) Ownership / context swap → conflicting
+Statement: 'During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.'
+Source: 'The Company has invested significantly in new composite manufacturing capability during the Bridgepoint ownership period.'
+Correct classification: conflicting
+Reasoning: Westhaven and Bridgepoint occupy the same ownership-period role for the same investment claim.
 
-• OMISSION (partial): if the source names FEWER entities than the statement, and the missing entity is simply not mentioned (not replaced by a different entity in the same role), this is `partially_confirmed`. Example pattern: statement names A, B, and C; source names only A and B (C absent, not replaced) — classify `partially_confirmed`; name A and B as confirmed and C as not in the source.
+11) Status / modality — definite completed action → conflicting
+Statement: 'We have invested EUR 720 million of equity for an 84% stake.'
+Source: 'We seek IC approval for an investment of up to EUR 720 million of equity … will hold 84% in aggregate.'
+Correct classification: conflicting
+Reasoning: 'Have invested' is a definite completed action. The source shows the same transaction as still proposed / not yet approved.
 
-The distinction: a different entity in the same slot is a contradiction; a missing entity with no replacement is an absence.
+11b) Cover / opener sentence — not a modality conflict
+Statement: 'We are writing to inform you of a new investment in Helvetia Precision Components.'
+Source: 'We seek IC approval to invest in Helvetia Precision Components.'
+Correct classification: confirmed
+Reasoning: The draft names and frames the investment; it does not assert that a specific transaction has already closed. An IC memo recommending the deal supports the topic. Same for 'the fund holds X' or 'this concerns our investment in X' without a completed-action verb.
 
-Partially confirmed applies only when the source confirms some specific facts in the statement but not others. A source that discusses the same general topic without confirming any specific claim is no_support, not partially_confirmed.
-No verifiable claim. A statement that contains no verifiable factual assertion (a transition, an opinion, a sentiment, or a structural phrase) cannot be `conflicting`, because there is no fact for the source to contradict. If such a statement reaches classification, the most it can be is `no_support`. Conflict requires a specific factual claim that the source directly contradicts.
+11c) Deal terms without a closed-transaction verb — not a modality conflict
+Statement: 'We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million.'
+Source: 'We seek partnership approval for a Series A investment of USD 10mm … at a USD 40mm pre-money valuation.'
+Correct classification: confirmed
+Reasoning: Amounts and valuation match. 'Committed' is deal-terms wording, not invested / acquired / completed / sold / exited. Classify by support, not as a completed-vs-proposed conflict.
+
+12) Magnitude beyond rounding → conflicting
+Statement: 'Our plan rests on capturing the embedded reversion as approximately 40 percent of leases roll.'
+Source: 'Embedded reversion is estimated at approximately 18 percent as leases roll.'
+Correct classification: conflicting
+Reasoning: 40 percent and 18 percent are the same reversion metric and cannot be reconciled by rounding.
+
+13) Procedural closer → no_support
+Statement: 'We recommend approval.'
+Source: any IC memo discussing the investment case.
+Correct classification: no_support
+Reasoning: The statement is a non-factual procedural closer with no checkable claim.
+
+Numeric rules
+Exact figures confirm. Formatting differences confirm ($132mm and $132 million).
+When the statement uses an approximate qualifier and the source figure rounds to that stated number on the same metric, classify confirmed (example 1).
+A same-metric number that differs by more than rounding is conflicting (example 12), including ~40 percent vs ~18 percent. It is not partial and not confirmed.
+Different metric frames for two numbers (lease-roll percent vs reversion percent; revenue vs GMV) are not paired as a magnitude conflict.
+
+Frame and period
+Populate periodAssessment before choosing classification when a figure or vintage is time-tied.
+Same metric, same frame, both periods stated and different → conflicting.
+Source reports the figure with no period (sourcePeriod null) → partially_confirmed.
+Vintage/acquisition year vs operating/reporting year → partially_confirmed.
+Periods match, or the statement makes no period claim → period does not block confirmed.
+
+Voice
+A difference in voice or grammatical person with the same underlying fact is confirmed.
+A definite completed-action claim (invested / acquired / completed / sold / exited) that the source shows as proposed, recommended, sought, or not yet done is conflicting (example 11), not voice.
+A cover or opener that only introduces the investment is not a modality conflict (example 11b).
+
+Entity roles
+A different entity in the same role, including ownership-period context, is conflicting (examples 9 and 10).
+The source names fewer entities, and the missing name is absent rather than replaced → partially_confirmed.
+
+Mixed statements
+When some facts are like-for-like confirmed and another fact is like-for-like mutually exclusive, classify conflicting.
+When some facts are confirmed and others are additional checkable claims, broader scope, or a frame/vintage mismatch, classify partially_confirmed.
+If the checkable facts match the source, classify confirmed even if the explanation mentions extra wording. Do not classify partially_confirmed while stating that the fact matches.
+A source that discusses a related or narrower version of the claim is partially_confirmed, not no_support.
+A statement with no verifiable factual assertion is no_support and cannot be conflicting.
 
 Return a verbatim excerpt from the source that is most relevant to your classification. Maximum 400 characters.
-If the relevant text is longer, trim at a sentence boundary and do not paraphrase.
+If the relevant text is longer, trim at a sentence boundary.
