@@ -100,4 +100,26 @@ describe("B13 materiality refinements", () => {
     });
     assert.equal(card.level, "material");
   });
+
+  test("framing_fidelity is material", () => {
+    const scored = scoreFinding({
+      statement: "The company has a defensible position.",
+      findingKind: "framing_fidelity",
+      concernCode: "framing_fidelity",
+      concernCategory: "framing_fidelity",
+    });
+    assert.equal(scored.level, "material");
+    assert.equal(scored.findingType, "framing_fidelity");
+    const card = computeCardMateriality({
+      statement: "The company has a defensible position.",
+      evidenceVerdict: "confirmed",
+      editorialConcerns: [],
+      complianceConcerns: [],
+      sourceRecencyConcerns: [],
+      framingFidelityConcerns: [
+        { concernCode: "framing_fidelity", category: "framing_fidelity", note: "stated too strongly" },
+      ],
+    });
+    assert.equal(card.level, "material");
+  });
 });
