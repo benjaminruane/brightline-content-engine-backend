@@ -79,4 +79,25 @@ describe("B13 materiality refinements", () => {
     assert.equal(style.level, "mechanical");
     assert.equal(both.level, "material");
   });
+
+  test("source_recency is material (time-sensitive claim presented as current)", () => {
+    const scored = scoreFinding({
+      statement: "The company has 24 employees.",
+      findingKind: "source_recency",
+      concernCode: "source_recency",
+      concernCategory: "source_recency",
+    });
+    assert.equal(scored.level, "material");
+    assert.equal(scored.findingType, "source_recency");
+    const card = computeCardMateriality({
+      statement: "The company has 24 employees.",
+      evidenceVerdict: "confirmed",
+      editorialConcerns: [],
+      complianceConcerns: [],
+      sourceRecencyConcerns: [
+        { concernCode: "source_recency", category: "source_recency", note: "stale" },
+      ],
+    });
+    assert.equal(card.level, "material");
+  });
 });

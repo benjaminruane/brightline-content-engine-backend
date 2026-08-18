@@ -1,0 +1,14 @@
+ADVERSARIAL / SYNTHETIC FIXTURE — trimmed 2010 Shopify memo
+Facts drawn from the public Bessemer Shopify Series A memo. Recast as a completed-investment note so the temporal-gap test is not confounded by completed-vs-proposed modality.
+
+Shopify
+To: BVP Group
+From: Alex Ferrara, Trevor Oelschig
+Date: October 12, 2010
+Re: Shopify
+
+We have invested $7 million in the Series A financing of Shopify, a provider of e-commerce software to SMBs. Shopify sells a simple SaaS solution that enables a business to quickly set up and run an online retail store.
+
+Shopify has grown at an impressive rate. With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today. The business is profitable and largely bootstrapped, having raised just $1 million to date.
+
+Shopify was founded in 2007 in Ottawa by two Ruby on Rails core developers. Tobi Lütke stayed on and is serving as CEO. Shopify's 24 employees are located in Ottawa, Canada.

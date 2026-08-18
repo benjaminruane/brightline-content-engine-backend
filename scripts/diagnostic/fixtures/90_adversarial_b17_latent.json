@@ -1,0 +1,12 @@
+{
+  "id": "90",
+  "label": "adversarial_b17_latent",
+  "sources": ["90_adversarial_b17_latent.txt"],
+  "draft": "The firm invested in Helios Grid Controls in 2024.\n\nHelios Grid Controls is a Munich-headquartered supplier of grid-stabilisation software.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "ADVERSARIAL / SYNTHETIC. B17 latent mode: source Date 15 March 2023 says 'we invested last year' (calendar 2022). Draft asserts investment year 2024. Watch whether Stage 2 silently CONFIRMS by resolving last year→2024, or flags a period mismatch. S1 is a non-temporal control (Munich HQ) expected confirmed."
+}

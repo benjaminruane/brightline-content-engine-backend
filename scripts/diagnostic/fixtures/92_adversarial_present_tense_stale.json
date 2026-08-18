@@ -1,0 +1,12 @@
+{
+  "id": "92",
+  "label": "adversarial_present_tense_stale",
+  "sources": ["91_adversarial_shopify_2010_trimmed.txt"],
+  "draft": "Shopify is a small startup serving approximately 10,000 customers.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "ADVERSARIAL / SYNTHETIC. Present-tense-stale: draft states 2010 customer count and 'is a small startup' as current fact against a source dated October 12, 2010. Watch whether anything flags presenting 2010 data as current."
+}

@@ -1,0 +1,12 @@
+{
+  "id": "91",
+  "label": "adversarial_temporal_gap",
+  "sources": ["91_adversarial_shopify_2010_trimmed.txt"],
+  "draft": "The firm has invested in Shopify.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "ADVERSARIAL / SYNTHETIC. Temporal gap (Shopify case): 2010 source describes a completed Series A investment; draft is undated present-perfect. Evidence expected confirmed. Watch whether ANY editorial / compliance / materiality flag notes the undated claim or stale source. Source is a trimmed completed-investment recast of the Bessemer memo so B48 modality (seek vs invested) does not confound."
+}
