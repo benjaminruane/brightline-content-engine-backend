@@ -19,6 +19,10 @@ In-process batch runner for R6 Review Quality evidence gathering. **Not producti
 - API keys in repo-root `.env.local` (loaded automatically): `OPENAI_API_KEY`, optional Langfuse vars
 - `QC_PIPELINE_V4=1` is set by the harness
 
+## Shadow gates
+
+Verdict-adjacent shadows share **Stage 1 + whole-sentence Stage 2** across flag-OFF and flag-ON arms, then apply the patched logic only on the ON arm. Do not run two independent full pipelines: temperature-0 Stage 2 is not byte-stable (see BACKLOG **B61**). Precedent: `scripts/diagnostic/claim-spans/run-shadow.mjs`.
+
 ## Commands
 
 ```bash

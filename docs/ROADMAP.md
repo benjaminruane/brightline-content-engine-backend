@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-19 (cheap-fixes arc: B54 / F14 / extractPercents + B53 split)
+Last updated: 2026-08-19 (B53a claim spans shipped; B61 Stage 2 non-determinism opened)
 
 ---
 
@@ -300,7 +300,11 @@ Sprint 2 review-quality fixes, shipped through diagnose-first + read-only shadow
 
 - **B54 — `percentage_notation` on "per cent"** (shipped 2026-08-19). Rule text names the two-word British "per cent"; drop-filter uses `\bper\s?cent\b`. Tag: `review-percent-number-style`.
 - **F14 — `number_spelling` on spelled-out 0–12** (shipped 2026-08-19). Deterministic filter drops cited "twelve" / "twelve months"; durations are prose counts, not physical units. Tag: `review-percent-number-style`.
-- **B59 — `extractPercents` "per cent" + same-metric percent guard** (shipped 2026-08-19). Extractor matches `per\s?cent`; magnitude backstop requires a non-empty metric-key intersection before forcing a percent conflict. **VERDICT-ADJACENT** — diagnose + read-only shadow gate. Tag: `review-percent-extract`. Residual: money/count still pair by kind only — **BACKLOG B60**. Compound-statement follow-on split: **B53a** / **B53b** / **B53c**.
+- **B59 — `extractPercents` "per cent" + same-metric percent guard** (shipped 2026-08-19). Extractor matches `per\s?cent`; magnitude backstop requires a non-empty metric-key intersection before forcing a percent conflict. **VERDICT-ADJACENT** — diagnose + read-only shadow gate. Tag: `review-percent-extract`. Residual: money/count still pair by kind only — **BACKLOG B60**. Compound-statement follow-on: **B53a** (shipped) / **B53b** / **B53c**.
+
+### B53a — internal claim spans (closed 2026-08-19)
+
+**B53a — Internal claim spans with upgrade-only rollup** (shipped 2026-08-19). Flag `QC_CLAIM_SPANS` default OFF. Whole-sentence assessment stays authoritative; per-claim matching may only upgrade `partially_confirmed` → `confirmed`. Shadow: shared Stage 1 + whole-sentence Stage 2 across flag arms (now the standing shadow pattern). One corpus verdict change: F06 S5 (signed off). Tag: `review-claim-spans`. Residuals: **B61** (Stage 2 temp-0 non-determinism, H, above B53b/B53c), **B62** (claim-validity anchors too strict), **B53b**, **B53c**.
 
 ---
 
@@ -804,6 +808,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B54 — percentage_notation on "per cent" | `review-percent-number-style` |
 | F14 — number_spelling spelled-out 0–12 | `review-percent-number-style` |
 | B59 — extractPercents "per cent" + same-metric percent guard | `review-percent-extract` |
+| B53a — internal claim spans, upgrade-only rollup | `review-claim-spans` |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
