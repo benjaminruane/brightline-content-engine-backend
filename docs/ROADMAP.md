@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-19 (QC_CLAIM_SPANS default ON; tag `review-claim-spans-on`)
+Last updated: 2026-08-19 (docs-sync: B53a closed + default ON; B61 downgraded; B63 Stage 2 cache is next build)
 
 ---
 
@@ -304,7 +304,13 @@ Sprint 2 review-quality fixes, shipped through diagnose-first + read-only shadow
 
 ### B53a — internal claim spans (closed 2026-08-19)
 
-**B53a — Internal claim spans with upgrade-only rollup** (shipped 2026-08-19; default ON 2026-08-19, tag `review-claim-spans-on`). Flag `QC_CLAIM_SPANS` default ON (set `0`/`false`/`off` to disable). Whole-sentence assessment stays authoritative; per-claim matching may only upgrade `partially_confirmed` → `confirmed`. Shadow: shared Stage 1 + whole-sentence Stage 2 across flag arms (now the standing shadow pattern). One corpus verdict change: F06 S5 (signed off). Tag: `review-claim-spans`. Residuals: **B61** (Stage 2 temp-0 non-determinism, H, above B53b/B53c), **B62** (claim-validity anchors too strict), **B53b**, **B53c**.
+**B53a — Internal claim spans with upgrade-only rollup** (shipped 2026-08-19). One QC card per sentence; whole-sentence Stage 2/3 stays authoritative; per-claim matching may only upgrade `partially_confirmed` → `confirmed`. Full-corpus shadow: one verdict change (F06 S5, signed off), zero regressions. Determinism harness: verdict instability 1/38 OFF → 0/38 ON. Flag `QC_CLAIM_SPANS` default ON (`review-claim-spans-on`, `e6e59a6`); set `0`/`false`/`off` to disable without a deploy.
+
+Resolving tags: `review-claim-spans` (`c290cee`, implementation), `review-claim-spans-on` (`e6e59a6`, default ON + concurrency 24). Untagged in the same arc: `48d8483` (determinism harness, sizing counts, shadow baseline cache), `b81929b` (Stage 2 `seed=1`, `systemFingerprint` logging, concurrency cap, two-arm harness, word-boundary connective matching). Seed does not pin the OpenAI backend (three `system_fingerprint` values in one diagnostic).
+
+Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches shared Stage 1 + whole-sentence Stage 2 to gitignored `.baseline.json`.
+
+**Next build:** Stage 2 result caching (**BACKLOG B63**). No release is cut until this review-quality arc completes. Residuals: **B61** (hasConflict only, M), **B62**, **B53b**, **B53c**.
 
 ---
 
@@ -722,7 +728,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
 1. ~~**WSC1 / WR1 — Writing scaffold (demo-facing)**~~ — **SHIPPED 2026-07-06** — see **Recently shipped → WR1**. PG prompt library, Writing input modal, Methodology Note, deterministic backstops, Assess generate wiring. Tags: `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend).
 1b. ~~**A10 — Adapt into Assess**~~ — **SHIPPED 2026-07-09** — see **Recently shipped → A10**. Frontend `v8.51.0-rA10-adapt-into-assess`; backend `/api/adapt` unchanged.
-2. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
+2. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. **B53a** claim spans shipped 2026-08-19 (default ON). **Next build: Stage 2 result caching (BACKLOG B63). No release is cut until this review-quality arc completes.** Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
@@ -808,8 +814,8 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B54 — percentage_notation on "per cent" | `review-percent-number-style` |
 | F14 — number_spelling spelled-out 0–12 | `review-percent-number-style` |
 | B59 — extractPercents "per cent" + same-metric percent guard | `review-percent-extract` |
-| B53a — internal claim spans, upgrade-only rollup | `review-claim-spans` |
-| B53a default ON | `review-claim-spans-on` |
+| B53a — internal claim spans, upgrade-only rollup | `review-claim-spans` (`c290cee`) |
+| B53a default ON + Stage 2 concurrency 24 | `review-claim-spans-on` (`e6e59a6`) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
