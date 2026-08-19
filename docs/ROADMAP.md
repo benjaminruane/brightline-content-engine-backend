@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-07-09 (**A10** Adapt-into-Assess sprint shipped — frontend `v8.51.0-rA10-adapt-into-assess`)
+Last updated: 2026-08-19 (review-quality cluster + supersession + recency/first-person fixes + Pr9 shipped)
 
 ---
 
@@ -271,6 +271,30 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 ### R7 F12 — Sources Drawer v1 (closed 2026-08-09)
 
 **R7 F12 — Sources Drawer v1** (shipped; tag `v8.68.0-f12-sources-drawer`). Frontend-only reader on Assess: left reviewed-source list + right highlighted extracted-text pane; three openers (Results **Sources** button / per-row magnifier / card Evidence finding icon); verdict-coloured passage highlights (confirmed→green / partially_confirmed→amber / conflicting→red via existing tone fills); per-span hover naming the statement and relation. Consumes Build A/B/C data (`qcCard.supportSpans` + response `sources[]`); no verdict/pipeline change. **Alongside:** **B47** Office-source ingestion fix — FE base64-encodes pdf/docx/pptx/xlsx uploads so officeparser runs; BE rejects inline office-zip text (`OFFICE_INLINE_TEXT_NOT_ALLOWED`). Tags: `b47-office-inline-guard` (backend), `v8.67.0-b47-office-upload-fix` (frontend). ~~Deferred from v1: excluded-sources display (**BACKLOG F13**)~~ — **shipped 2026-08-11** (Sprint 1). See **R7 — Sources Drawer Revival**.
+
+### Pr9 — Suggest revised draft (closed 2026-08-14)
+
+**Pr9 — Suggest revised draft** (shipped 2026-08-11–14). Lighter prequel to Implement-changes sprint (**B9**). One-click revised draft from gathered Review/Assess card concerns → single temp-0 LLM call → whole-draft holistic rewrite; finding-handling rulebook + note-wording pass. Tags: `Pr9-BE`, `Pr9-handling-BE`, `Pr9-notes-BE` (backend); `Pr9-FE`, `Pr9-handling-FE` (frontend). See **BACKLOG Pr9** (closed).
+
+### Review-quality cluster (closed 2026-08-18)
+
+Sprint 2 review-quality fixes, shipped through diagnose-first + read-only shadow gate methodology on all verdict-adjacent changes.
+
+- **B48 — Evidence conflict-vs-partial calibration** (shipped 2026-08-16). Non-confirmation (e.g. source says 'the firm', draft says 'BVP') labelled `conflicting` rather than `partially_confirmed`; recalibrated. Tag: `review-B48`.
+- **B13 — Stage 5 material-vs-pedantic partial distinction** (shipped 2026-08-16). Stage 5 commentary now distinguishes pedantic-gap partials from material-gap partials with materiality signal. Tag: `review-B13`.
+- **F8 — number_spelling quarter-notation backstop** (shipped 2026-08-18). Deterministic backstop `isQuarterNotationSpan` exempts quarter labels (Q3 2010, 1st quarter 2024) from `number_spelling` firing. Tag: `review-F8`.
+- **F9 — Duplicated suggestion-text de-noiser** (shipped 2026-08-18). Frontend de-duplicates identical suggestion text within a single editorial concern bullet. Tag: `review-F9`.
+- **B37 — Framing-goes-beyond-source flag** (shipped 2026-08-18). Framing-escalation flag collapsed; material-only. Tags: `review-framing-BE` (backend), `review-framing-FE` (frontend).
+- **Source-recency flag** (shipped 2026-08-18). Structural source as-of-date extraction (`extractSourceAsOfDate`) + 18-month, claim-aware present-tense recency signal; additive, verdict-safe. `lib/qc/source-recency.mjs`. Tags: `review-recency-BE` (backend), `review-recency-FE` (frontend).
+- **Card density UX** (shipped 2026-08-18). Option A compact clean-line: clean dimensions collapse to one quiet line. Tag: `review-card-density` (frontend).
+
+### Source supersession (closed 2026-08-18)
+
+**Source supersession (verdict-layer)** (shipped 2026-08-18). Period-aware; newer dated source's figure supersedes an older different-period source; draft-matches-current → supported + historical note (`qcCard.supersededSourceNotes`); same-period restatement and draft-behind stay conflict; confident-dates-only; reconciled with B48 magnitude backstop. New pure module `lib/qc/supersession.mjs`. Fixture `scripts/diagnostic/supersession/`. **VERDICT-ADJACENT** — shipped through diagnose-first + read-only shadow gate. Tag: `review-supersession`.
+
+### Recency anchoring + first-person FP fixes (closed 2026-08-19)
+
+**Recency anchoring + first-person-plural false positive + no-op suggestion fixes** (shipped 2026-08-19). `recencySourceIndices()` in `stage7-assemble-card.mjs` anchors to supporting source (confirmed/partially_confirmed); `STYLE_RULE_DETERMINISTIC_FILTERS.first_person_plural` requires a real first-person pronoun in the cited span; `suppressNoOpSuggestions()` drops any house-style concern whose `suggestedRewrite` equals the statement text (general guard). Shadow-gated: Nordholt clean+dirty drafts verified four targeted transitions + zero verdict/hasConflict movement. Tag: `review-recency-anchor-firstperson`.
 
 ---
 
@@ -692,7 +716,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
-6. ~~**R7 — Sources Drawer Revival**~~ — **CORE COMPLETE** (drawer UI v1 + **F13** excluded-sources shipped) — see **R7 — Sources Drawer Revival** / **Recently shipped → R7 F12**. Remaining optional: **B41** (depth), **B48** (conflict-vs-partial watch).
+6. ~~**R7 — Sources Drawer Revival**~~ — **CORE COMPLETE** (drawer UI v1 + **F13** excluded-sources shipped) — see **R7 — Sources Drawer Revival** / **Recently shipped → R7 F12**. **B48** conflict-vs-partial closed (`review-B48`). Remaining optional: **B41** (depth).
 7. ~~**B45 — URL provenance scan.**~~ — **SHIPPED 2026-08-11** (Sprint 1). Tags: `b45-url-provenance-scan` (backend), `v8.69.0-b45-provenance-display` (frontend). See **BACKLOG B45** (Closed).
 8. **Align Direction intensity (R6.1)** — surface how strong a concern is, not just that one exists. Folded into R6.
 9. **Reviewer comments house style (R6.2)** — tighten commentary tone; sub-items R6.2a–R6.2d from diagnostic.
@@ -719,7 +743,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 - **Per-house / per-reviewer language profile** — capture preferred phrasings, tone, capitalisation, and term substitutions per reviewer or per house, included as prompt context for the language layer only (Stage 5 commentary, B26 register, future reviewer-facing prose). HARD BOUNDARY: this never touches Stage 2 classification, Stage 3/4/7 aggregation, or any verdict-layer logic. The deterministic LLM-last architecture is preserved. Origin: 'centurion vs learning' framing from Ren Education (Straits Times, June 2026).
 
 16. **E2 deterministic reimplementation** — open.
-17. **Pr9 — Interim: Suggest revised draft** — lighter prequel to Implement-changes sprint; deferred until post-demo (**WR1** shipped 2026-07-06). See **BACKLOG Pr9** and Active Backlog → Implement-Changes Sprint.
+17. ~~**Pr9 — Interim: Suggest revised draft**~~ — **SHIPPED 2026-08-14** — see **Recently shipped → Pr9**. Tags: `Pr9-BE`, `Pr9-handling-BE`, `Pr9-notes-BE` (backend); `Pr9-FE`, `Pr9-handling-FE` (frontend).
 18. **Implement-changes sprint** (`suggestedRewrite` → UI, accept/reject/refine) — see Active Backlog → Implement-Changes Sprint; full workflow remains separate from **Pr9**.
 19. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
 20. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
@@ -761,6 +785,16 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | WR1 — Writing scaffold (PG demo) | `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend) |
 | A10 — Adapt into Assess (A10.1, A10.2, A10.2.1, A10.2.2) | `v8.51.0-rA10-adapt-into-assess` (frontend) |
 | R6.12 — Editorial output-type voice/register calibration | `r6.12-editorial-output-type` (backend) |
+| Pr9 — Suggest revised draft | `Pr9-BE`, `Pr9-handling-BE`, `Pr9-notes-BE` (backend); `Pr9-FE`, `Pr9-handling-FE` (frontend) |
+| B48 — Evidence conflict-vs-partial calibration | `review-B48` |
+| B13 — Stage 5 material-vs-pedantic partial distinction | `review-B13` |
+| F8 — number_spelling quarter-notation backstop | `review-F8` |
+| F9 — Duplicated suggestion-text de-noiser | `review-F9` |
+| B37 — Framing-goes-beyond-source flag | `review-framing-BE`, `review-framing-FE` |
+| Source-recency flag | `review-recency-BE`, `review-recency-FE` |
+| Card density UX | `review-card-density` |
+| Source supersession (verdict-layer) | `review-supersession` |
+| Recency anchoring + first-person FP fixes | `review-recency-anchor-firstperson` |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
