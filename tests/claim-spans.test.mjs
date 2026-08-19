@@ -5,6 +5,7 @@ import {
   RELATIONAL_CONNECTIVES,
   attachDraftOffsets,
   extractVerifiableAnchors,
+  isClaimSpansEnabled,
   isCompoundCandidate,
   locateClaimSpan,
   residualHasUnclaimedAnchor,
@@ -303,6 +304,27 @@ describe("rollupClaimVerdicts truth table", () => {
       });
       assert.ok(out.verdict === vToday || out.verdict === "confirmed");
       if (vToday !== "partially_confirmed") assert.equal(out.verdict, vToday);
+    }
+  });
+});
+
+describe("isClaimSpansEnabled default ON", () => {
+  test("unset env is on; 0/false/off/no is off; option overrides", () => {
+    const prev = process.env.QC_CLAIM_SPANS;
+    try {
+      delete process.env.QC_CLAIM_SPANS;
+      assert.equal(isClaimSpansEnabled(), true);
+      process.env.QC_CLAIM_SPANS = "0";
+      assert.equal(isClaimSpansEnabled(), false);
+      process.env.QC_CLAIM_SPANS = "off";
+      assert.equal(isClaimSpansEnabled(), false);
+      process.env.QC_CLAIM_SPANS = "1";
+      assert.equal(isClaimSpansEnabled(), true);
+      assert.equal(isClaimSpansEnabled({ claimSpansEnabled: false }), false);
+      assert.equal(isClaimSpansEnabled({ claimSpansEnabled: true }), true);
+    } finally {
+      if (prev === undefined) delete process.env.QC_CLAIM_SPANS;
+      else process.env.QC_CLAIM_SPANS = prev;
     }
   });
 });

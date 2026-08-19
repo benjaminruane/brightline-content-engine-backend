@@ -260,7 +260,7 @@ async function main() {
     `baseline fingerprint=${baselineStore.fingerprint.slice(0, 12)} refresh=${refreshBaseline ? "1" : "0"} loaded=${baselineStore.loaded ? "1" : "0"}`
   );
   console.log(
-    "Stage 2 concurrency: cap 8 (STAGE2_CONCURRENCY). Fixed seed on every Stage 2 request."
+    "Stage 2 concurrency: cap 24 (STAGE2_CONCURRENCY). Fixed seed on every Stage 2 request."
   );
   console.log("");
 

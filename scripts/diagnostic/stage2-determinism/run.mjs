@@ -371,6 +371,35 @@ async function main() {
     origDebug.apply(console, args);
   };
 
+  if (process.argv.includes("--timing-once")) {
+    console.log(`# Stage 2 timing (concurrency=${STAGE2_CONCURRENCY} seed=${STAGE2_SEED})`);
+    const subset = await loadSubset();
+    const rows = [];
+    for (const c of subset) {
+      const t0 = Date.now();
+      const stage1 = await extractStatements({ draftText: c.draft });
+      const statements = Array.isArray(stage1?.statements) ? stage1.statements : [];
+      const t1 = Date.now();
+      const { matches } = await matchAllSources({ statements, sources: c.sources });
+      const t2 = Date.now();
+      const row = {
+        label: c.label,
+        statements: statements.length,
+        pairs: (matches || []).length,
+        stage1Ms: t1 - t0,
+        stage2Ms: t2 - t1,
+      };
+      rows.push(row);
+      console.log(
+        `  ${row.label} statements=${row.statements} pairs=${row.pairs} stage1Ms=${row.stage1Ms} stage2Ms=${row.stage2Ms}`
+      );
+    }
+    const mean = rows.length ? Math.round(rows.reduce((n, r) => n + r.stage2Ms, 0) / rows.length) : 0;
+    console.log(`  mean whole-sentence Stage 2 per case=${mean}ms (cap ${STAGE2_CONCURRENCY})`);
+    console.log("  prior: unlimited ~4800ms/case (estimated); cap 8 = 5655ms/case");
+    return;
+  }
+
   console.log("# Stage 2 temperature-0 determinism");
   console.log(`N=${N_RUNS}  Stages 1-3 only  OFF + ON (shared Stage 1 + whole-sentence Stage 2 per run)`);
   console.log("");

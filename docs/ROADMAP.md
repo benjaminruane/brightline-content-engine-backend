@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-19 (B53a claim spans shipped; B61 Stage 2 non-determinism opened)
+Last updated: 2026-08-19 (QC_CLAIM_SPANS default ON; tag `review-claim-spans-on`)
 
 ---
 
@@ -304,7 +304,7 @@ Sprint 2 review-quality fixes, shipped through diagnose-first + read-only shadow
 
 ### B53a — internal claim spans (closed 2026-08-19)
 
-**B53a — Internal claim spans with upgrade-only rollup** (shipped 2026-08-19). Flag `QC_CLAIM_SPANS` default OFF. Whole-sentence assessment stays authoritative; per-claim matching may only upgrade `partially_confirmed` → `confirmed`. Shadow: shared Stage 1 + whole-sentence Stage 2 across flag arms (now the standing shadow pattern). One corpus verdict change: F06 S5 (signed off). Tag: `review-claim-spans`. Residuals: **B61** (Stage 2 temp-0 non-determinism, H, above B53b/B53c), **B62** (claim-validity anchors too strict), **B53b**, **B53c**.
+**B53a — Internal claim spans with upgrade-only rollup** (shipped 2026-08-19; default ON 2026-08-19, tag `review-claim-spans-on`). Flag `QC_CLAIM_SPANS` default ON (set `0`/`false`/`off` to disable). Whole-sentence assessment stays authoritative; per-claim matching may only upgrade `partially_confirmed` → `confirmed`. Shadow: shared Stage 1 + whole-sentence Stage 2 across flag arms (now the standing shadow pattern). One corpus verdict change: F06 S5 (signed off). Tag: `review-claim-spans`. Residuals: **B61** (Stage 2 temp-0 non-determinism, H, above B53b/B53c), **B62** (claim-validity anchors too strict), **B53b**, **B53c**.
 
 ---
 
@@ -809,6 +809,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | F14 — number_spelling spelled-out 0–12 | `review-percent-number-style` |
 | B59 — extractPercents "per cent" + same-metric percent guard | `review-percent-extract` |
 | B53a — internal claim spans, upgrade-only rollup | `review-claim-spans` |
+| B53a default ON | `review-claim-spans-on` |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |
