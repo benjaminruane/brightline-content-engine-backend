@@ -11,7 +11,7 @@ Loads `.env.local` via the diagnostic env helper. Needs `OPENAI_API_KEY`.
 
 Shared Stage 1 and whole-sentence Stage 2 results are cached to gitignored `scripts/diagnostic/claim-spans/.baseline.json`. Subsequent runs reuse them unless `--refresh-baseline` is passed or the Stage 1 / Stage 2 / `stage2_v4.md` / model-config fingerprint changes. Stage 1b and per-claim Stage 2 still run every time.
 
-Stage 2 has **no concurrency cap**: `matchAllSources` `Promise.all`s every statement×source pair (parallel across both statements and sources).
+Stage 2 concurrency is capped at **8** (`STAGE2_CONCURRENCY`). Each Stage 2 request sends a fixed `seed`. Matches store `systemFingerprint`.
 
 ## What it runs
 

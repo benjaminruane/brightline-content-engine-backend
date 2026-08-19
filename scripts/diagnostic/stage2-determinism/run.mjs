@@ -25,14 +25,21 @@ const SUPERSESSION_DIR = path.join(DIAG_ROOT, "supersession");
 const OUT_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "out");
 
 const { extractStatements } = await import("../../../lib/qc/pipeline-v4/stage1-extract-statements.mjs");
-const { matchAllSources } = await import("../../../lib/qc/pipeline-v4/stage2-match-sources.mjs");
+const { matchAllSources, matchClaimSourcePairs, STAGE2_SEED, STAGE2_CONCURRENCY } = await import(
+  "../../../lib/qc/pipeline-v4/stage2-match-sources.mjs"
+);
 const { aggregateVerdict } = await import("../../../lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs");
 const { extractClaimSpans } = await import("../../../lib/qc/pipeline-v4/stage1b-extract-claim-spans.mjs");
 const { resolveSupersession, buildAsOfBySourceIndex } = await import("../../../lib/qc/supersession.mjs");
-const { RELATIONAL_CONNECTIVES } = await import("../../../lib/qc/claim-spans.mjs");
+const { relationalConnectivesIn, residualHasUnclaimedAnchor, rollupClaimVerdicts } = await import(
+  "../../../lib/qc/claim-spans.mjs"
+);
 const { callLLM } = await import("../../../lib/observability.js");
 const { STAGE_MODELS } = await import("../../../lib/qc/model-config.mjs");
 const { readFile: readPrompt } = await import("node:fs/promises");
+
+/** Prior unlimited-concurrency diagnostic (2026-08-19): 5 OFF-only subset passes. */
+const PREV_UNLIMITED_MS_PER_PASS = 24000;
 
 function trunc(s, n = 140) {
   const t = String(s || "").replace(/\s+/g, " ").trim();
@@ -113,33 +120,38 @@ function stmtKey(label, statementText) {
 }
 
 function connectiveHits(text) {
-  const t = String(text || "");
-  const lower = t.toLowerCase();
-  return RELATIONAL_CONNECTIVES.filter((c) => lower.includes(c.toLowerCase()));
+  return relationalConnectivesIn(text);
 }
 
-function arithmeticKinds(text) {
+const FIGURE = String.raw`(?:EUR|GBP|USD|SEK|CHF|\$|€|£)?\s*[\d,.']+\s*(?:million|billion|thousand|percent|per\s?cent|%|m|bn)?`;
+
+function checkableArithmetic(text) {
   const t = String(text || "");
-  const kinds = [];
-  if (/\d[\d,.']*\s*(?:%|per\s?cent)\s+of\b/i.test(t)) kinds.push("percentage_of_base");
-  const endpointCue =
-    /\b(?:up from|down from|grew from|increased from|rose from|fell from|declined from)\b/i.test(t) ||
-    /\bfrom\s+(?:EUR|GBP|USD|SEK|CHF|\$|€|£)?\s*[\d,.']+.+\bto\s+(?:EUR|GBP|USD|SEK|CHF|\$|€|£)?\s*[\d,.']+/i.test(t);
-  if (endpointCue) kinds.push("change_between_endpoints");
-  if (
-    /\bof which\b/i.test(t) ||
-    (/\b(?:comprising|composed of|broken down into)\b/i.test(t) && (t.match(/\d/g) || []).length >= 2)
-  ) {
-    kinds.push("total_and_parts");
-  }
-  if (
-    /\b(?:share|fraction|portion)\s+of\b/i.test(t) ||
-    /\b(?:one|two|three)[- ]thirds?\b/i.test(t) ||
-    /\bhalf of\b/i.test(t)
-  ) {
-    kinds.push("share_and_fraction");
-  }
-  return [...new Set(kinds)];
+  const fromTo = new RegExp(`\\bfrom\\s+${FIGURE}\\s+to\\s+${FIGURE}`, "i").test(t);
+  const upFromPair = new RegExp(`${FIGURE}\\s*,?\\s*(?:up from|down from)\\s+${FIGURE}`, "i").test(t);
+  const grewToUpFrom = new RegExp(
+    `\\b(?:grew to|reached|rose to|increased to|stands at)\\s+${FIGURE}[\\s\\S]{0,120}?\\b(?:up from|down from)\\s+${FIGURE}`,
+    "i"
+  ).test(t);
+  const baseAndResult = fromTo || upFromPair || grewToUpFrom;
+  const changeAndResult = new RegExp(
+    `\\b(?:grew|increased|rose|fell|declined)\\s+by\\s+${FIGURE}\\s+to\\s+${FIGURE}`,
+    "i"
+  ).test(t);
+  const baseAndChange = new RegExp(
+    `\\b(?:grew|increased|rose|fell|declined)\\s+(?:by\\s+)?${FIGURE}\\s+from\\s+${FIGURE}`,
+    "i"
+  ).test(t);
+  let why = "";
+  if (baseAndResult) why = "base+result";
+  else if (changeAndResult) why = "change+result";
+  else if (baseAndChange) why = "base+change";
+  return { ok: Boolean(why), why };
+}
+
+function isNordholtIrrTarget(text) {
+  const t = String(text || "");
+  return /in line with underwriting/i.test(t) && /14 per cent/i.test(t);
 }
 
 function majorityCount(values) {
@@ -163,10 +175,38 @@ function looksQualitativeClaim(text) {
 }
 
 async function runEvidence(caseRow) {
+  const t0 = Date.now();
   const stage1 = await extractStatements({ draftText: caseRow.draft });
   const statements = Array.isArray(stage1?.statements) ? stage1.statements : [];
+  const tStage1 = Date.now();
   const { matches } = await matchAllSources({ statements, sources: caseRow.sources });
+  const tStage2 = Date.now();
   const asOf = buildAsOfBySourceIndex(caseRow.sources);
+
+  const stage1b = await extractClaimSpans({
+    statements,
+    draftText: caseRow.draft,
+    options: { claimSpansEnabled: true },
+  });
+  const claimJobs = [];
+  for (const [statementIndex, claims] of stage1b.byStatementIndex.entries()) {
+    const parent = statements.find((s, ord) => (Number.isFinite(s?.index) ? Number(s.index) : ord) === statementIndex);
+    const parentSentence = typeof parent?.text === "string" ? parent.text : "";
+    for (const claim of claims) {
+      claimJobs.push({
+        statementIndex,
+        claimIndex: claim.index,
+        text: claim.text,
+        parentSentence,
+      });
+    }
+  }
+  const t1b = Date.now();
+  const claimMatchResult =
+    claimJobs.length > 0 ? await matchClaimSourcePairs({ claims: claimJobs, sources: caseRow.sources }) : { matches: [] };
+  const claimPairMatches = Array.isArray(claimMatchResult.matches) ? claimMatchResult.matches : [];
+  const tClaim2 = Date.now();
+
   const rows = statements.map((s, ord) => {
     const statementIndex = Number.isFinite(s?.index) ? Number(s.index) : ord;
     const text = typeof s?.text === "string" ? s.text : "";
@@ -174,20 +214,83 @@ async function runEvidence(caseRow) {
       .filter((m) => Number(m.statementIndex) === statementIndex)
       .slice()
       .sort((a, b) => a.sourceIndex - b.sourceIndex);
-    const out = withSupersession(text, sourceMatches, asOf);
+    const off = withSupersession(text, sourceMatches, asOf);
+    const wholeSentenceHasConflict = sourceMatches.some(
+      (m) => String(m?.classification || "").trim() === "conflicting"
+    );
+    const claims = stage1b.byStatementIndex.get(statementIndex) || [];
+    let onVerdict = off.agg.verdict;
+    let claimUpgrade = false;
+    let blockedBy = [];
+    const claimBreakdown = [];
+    const claimClassifications = [];
+    if (claims.length >= 2) {
+      for (const claim of claims) {
+        const claimMatches = claimPairMatches.filter(
+          (m) => Number(m.statementIndex) === statementIndex && Number(m.claimIndex) === Number(claim.index)
+        );
+        const claimResolved = withSupersession(claim.text, claimMatches, asOf);
+        claimBreakdown.push({
+          index: claim.index,
+          text: claim.text,
+          verdict: claimResolved.agg.verdict,
+          hasConflict: claimResolved.agg.hasConflict === true,
+        });
+        for (const m of claimMatches) {
+          claimClassifications.push({
+            claimText: claim.text,
+            sourceIndex: m.sourceIndex,
+            sourceLabel: m.sourceLabel,
+            classification: m.classification,
+          });
+        }
+      }
+      const residual = residualHasUnclaimedAnchor(text, claims);
+      const rolled = rollupClaimVerdicts({
+        vToday: off.agg.verdict,
+        claimVerdicts: claimBreakdown.map((c) => c.verdict),
+        residualBlocked: residual.blocked,
+        wholeSentenceHasConflict,
+      });
+      onVerdict = rolled.verdict;
+      claimUpgrade = rolled.claimUpgrade === true;
+      blockedBy = rolled.blockedBy;
+    }
     return {
       statementIndex,
       text,
-      verdict: out.agg.verdict,
-      hasConflict: out.agg.hasConflict === true,
+      offVerdict: off.agg.verdict,
+      onVerdict,
+      offHasConflict: off.agg.hasConflict === true,
+      onHasConflict: off.agg.hasConflict === true,
+      claimUpgrade,
+      blockedBy,
+      decomposed: claims.length >= 2,
       classifications: sourceMatches.map((m) => ({
         sourceIndex: m.sourceIndex,
         sourceLabel: m.sourceLabel,
         classification: m.classification,
+        systemFingerprint: m.systemFingerprint || null,
       })),
+      claimBreakdown,
+      claimClassifications,
     };
   });
-  return { statements, matches, rows };
+
+  return {
+    statements,
+    matches,
+    rows,
+    timings: {
+      stage1Ms: tStage1 - t0,
+      stage2Ms: tStage2 - tStage1,
+      stage1bMs: t1b - tStage2,
+      claimStage2Ms: tClaim2 - t1b,
+      totalMs: tClaim2 - t0,
+      wholeSentencePairs: (matches || []).length,
+      claimPairs: claimPairMatches.length,
+    },
+  };
 }
 
 async function probeFingerprint() {
@@ -201,6 +304,7 @@ async function probeFingerprint() {
     provider: stageModel.provider,
     model: stageModel.model,
     temperature: 0,
+    seed: STAGE2_SEED,
     responseFormat: "json",
     messages: [
       { role: "system", content: systemPrompt },
@@ -215,7 +319,8 @@ async function probeFingerprint() {
   });
   const raw = completion?.raw && typeof completion.raw === "object" ? completion.raw : {};
   return {
-    seedInRequest: false,
+    seedInRequest: true,
+    seedValue: STAGE2_SEED,
     systemFingerprintPresent: Object.prototype.hasOwnProperty.call(raw, "system_fingerprint"),
     systemFingerprintValue:
       raw.system_fingerprint === undefined || raw.system_fingerprint === null
@@ -260,24 +365,28 @@ async function loadCorpusCases() {
 async function main() {
   const origDebug = console.debug;
   console.debug = (...args) => {
-    if (String(args[0] || "").startsWith("[stage3]")) return;
+    const first = String(args[0] || "");
+    if (first.startsWith("[stage3]")) return;
+    if (first.startsWith("[stage2] fingerprint=")) return;
     origDebug.apply(console, args);
   };
 
   console.log("# Stage 2 temperature-0 determinism");
-  console.log(`N=${N_RUNS}  Stages 1-3 only`);
+  console.log(`N=${N_RUNS}  Stages 1-3 only  OFF + ON (shared Stage 1 + whole-sentence Stage 2 per run)`);
   console.log("");
 
-  const seedInSource = false;
   const probe = await probeFingerprint();
-  console.log("## f. seed / system_fingerprint (probe call, no pipeline change)");
-  console.log(`  Stage 2 request passes seed parameter: ${seedInSource ? "yes" : "no"}`);
+  console.log("## seed / system_fingerprint / concurrency");
+  console.log(`  Stage 2 request passes seed parameter: yes (seed=${STAGE2_SEED})`);
   console.log(
     `  API response carries system_fingerprint field: ${probe.systemFingerprintPresent ? "yes" : "no"}` +
       (probe.systemFingerprintValue ? ` (value=${probe.systemFingerprintValue})` : " (field present but null/empty)")
   );
   console.log(
-    "  Stage 2 concurrency: no cap. matchAllSources Promise.all over every statement x source pair (parallel across both statements and sources)."
+    `  Stage 2 concurrency cap: ${STAGE2_CONCURRENCY} (named STAGE2_CONCURRENCY; parallel across statement×source and claim×source pools)`
+  );
+  console.log(
+    `  Prior unlimited wall (2026-08-19, 5 OFF-only subset passes): ~${PREV_UNLIMITED_MS_PER_PASS}ms per pass`
   );
   console.log("");
 
@@ -288,6 +397,9 @@ async function main() {
   }
 
   const runs = [];
+  const timingAcc = { stage2Ms: 0, claimStage2Ms: 0, passes: 0, wholeSentencePairs: 0, claimPairs: 0 };
+  const fingerprints = new Set();
+  const tAll = Date.now();
   for (let i = 0; i < N_RUNS; i += 1) {
     console.log("");
     console.log(`## Run ${i + 1}/${N_RUNS}`);
@@ -295,13 +407,39 @@ async function main() {
     for (const c of subset) {
       const ev = await runEvidence(c);
       byLabel[c.label] = ev;
-      console.log(`  ${c.label} statements=${ev.rows.length}`);
+      timingAcc.stage2Ms += ev.timings.stage2Ms;
+      timingAcc.claimStage2Ms += ev.timings.claimStage2Ms;
+      timingAcc.wholeSentencePairs += ev.timings.wholeSentencePairs;
+      timingAcc.claimPairs += ev.timings.claimPairs;
+      timingAcc.passes += 1;
+      for (const m of ev.matches || []) {
+        if (m.systemFingerprint) fingerprints.add(String(m.systemFingerprint));
+      }
+      console.log(
+        `  ${c.label} statements=${ev.rows.length} decomposed=${ev.rows.filter((r) => r.decomposed).length} stage2Ms=${ev.timings.stage2Ms} claimStage2Ms=${ev.timings.claimStage2Ms} pairs=${ev.timings.wholeSentencePairs}/${ev.timings.claimPairs}`
+      );
     }
     runs.push(byLabel);
   }
+  const subsetWallMs = Date.now() - tAll;
+  const avgStage2Ms = timingAcc.passes ? Math.round(timingAcc.stage2Ms / timingAcc.passes) : 0;
+  console.log("");
+  console.log("## Wall clock (cap 8 vs prior unlimited)");
+  console.log(`  subset 5× OFF+ON wall=${subsetWallMs}ms`);
+  console.log(
+    `  mean whole-sentence Stage 2 per case=${avgStage2Ms}ms (prior unlimited ~${PREV_UNLIMITED_MS_PER_PASS}ms per full 5-case pass / 5 ≈ ${Math.round(PREV_UNLIMITED_MS_PER_PASS / 5)}ms per case if evenly split)`
+  );
+  console.log(
+    `  sum whole-sentence Stage 2=${timingAcc.stage2Ms}ms  sum claim Stage 2=${timingAcc.claimStage2Ms}ms  pairs whole=${timingAcc.wholeSentencePairs} claim=${timingAcc.claimPairs}`
+  );
+  console.log(
+    `  unique system_fingerprint values observed on whole-sentence matches: ${fingerprints.size ? [...fingerprints].join(", ") : "(none)"}`
+  );
 
   const pairMap = new Map();
   const stmtMap = new Map();
+  const claimPairMap = new Map();
+  const nordholtS0 = [];
   for (let r = 0; r < runs.length; r += 1) {
     for (const c of subset) {
       const ev = runs[r][c.label];
@@ -311,12 +449,34 @@ async function main() {
           stmtMap.set(sk, {
             label: c.label,
             text: row.text,
-            verdicts: [],
-            conflicts: [],
+            offVerdicts: [],
+            onVerdicts: [],
+            offConflicts: [],
+            onConflicts: [],
+            upgrades: [],
+            decomposed: [],
           });
         }
-        stmtMap.get(sk).verdicts.push(row.verdict);
-        stmtMap.get(sk).conflicts.push(row.hasConflict);
+        const rec = stmtMap.get(sk);
+        rec.offVerdicts.push(row.offVerdict);
+        rec.onVerdicts.push(row.onVerdict);
+        rec.offConflicts.push(row.offHasConflict);
+        rec.onConflicts.push(row.onHasConflict);
+        rec.upgrades.push(row.claimUpgrade);
+        rec.decomposed.push(row.decomposed);
+        if (c.label === "nordholt-clean" && isNordholtIrrTarget(row.text)) {
+          nordholtS0.push({
+            run: r + 1,
+            offVerdict: row.offVerdict,
+            onVerdict: row.onVerdict,
+            offHasConflict: row.offHasConflict,
+            claimUpgrade: row.claimUpgrade,
+            decomposed: row.decomposed,
+            blockedBy: row.blockedBy,
+            claims: row.claimBreakdown,
+            classifications: row.classifications,
+          });
+        }
         for (const m of row.classifications) {
           const pk = pairKey(c.label, row.text, m.sourceIndex);
           if (!pairMap.has(pk)) {
@@ -329,6 +489,20 @@ async function main() {
             });
           }
           pairMap.get(pk).classifications.push(m.classification);
+        }
+        for (const m of row.claimClassifications || []) {
+          const ck = `${c.label}||${String(row.text || "").replace(/\s+/g, " ").trim()}||${String(m.claimText || "").replace(/\s+/g, " ").trim()}||src${m.sourceIndex}`;
+          if (!claimPairMap.has(ck)) {
+            claimPairMap.set(ck, {
+              label: c.label,
+              parent: row.text,
+              claimText: m.claimText,
+              sourceIndex: m.sourceIndex,
+              sourceLabel: m.sourceLabel,
+              classifications: [],
+            });
+          }
+          claimPairMap.get(ck).classifications.push(m.classification);
         }
       }
     }
@@ -361,15 +535,49 @@ async function main() {
   }
 
   const flippedPairs = pairRows.filter((p) => p.flipped);
-  const stmtFlips = [];
+  const offStmtFlips = [];
+  const onStmtFlips = [];
+  const offConflictFlips = [];
+  const onConflictFlips = [];
   for (const row of stmtMap.values()) {
-    const uniqueV = [...new Set(row.verdicts)];
-    if (uniqueV.length > 1) {
-      stmtFlips.push({
+    const uniqueOffV = [...new Set(row.offVerdicts)];
+    const uniqueOnV = [...new Set(row.onVerdicts)];
+    if (uniqueOffV.length > 1) {
+      offStmtFlips.push({
         label: row.label,
         text: row.text,
-        verdicts: row.verdicts,
-        pair: uniqueV.slice().sort().join(" <-> "),
+        verdicts: row.offVerdicts,
+        pair: uniqueOffV.slice().sort().join(" <-> "),
+      });
+    }
+    if (uniqueOnV.length > 1) {
+      onStmtFlips.push({
+        label: row.label,
+        text: row.text,
+        verdicts: row.onVerdicts,
+        pair: uniqueOnV.slice().sort().join(" <-> "),
+      });
+    }
+    const uniqueOffC = [...new Set(row.offConflicts.map(Boolean))];
+    const uniqueOnC = [...new Set(row.onConflicts.map(Boolean))];
+    const trueN = row.offConflicts.filter(Boolean).length;
+    const falseN = row.offConflicts.length - trueN;
+    if (uniqueOffC.length > 1) {
+      offConflictFlips.push({
+        label: row.label,
+        text: row.text,
+        trueN,
+        falseN,
+        runs: row.offConflicts,
+      });
+    }
+    if (uniqueOnC.length > 1) {
+      onConflictFlips.push({
+        label: row.label,
+        text: row.text,
+        trueN: row.onConflicts.filter(Boolean).length,
+        falseN: row.onConflicts.length - row.onConflicts.filter(Boolean).length,
+        runs: row.onConflicts,
       });
     }
   }
@@ -382,12 +590,32 @@ async function main() {
     const src = p.sourceLabel || `src${p.sourceIndex}`;
     sourceFlipCounts[`${p.label}/${src}`] = (sourceFlipCounts[`${p.label}/${src}`] || 0) + 1;
   }
-  for (const s of stmtFlips) {
+  for (const s of offStmtFlips) {
     fixtureStmtFlipCounts[s.label] = (fixtureStmtFlipCounts[s.label] || 0) + 1;
   }
 
+  const claimFlipPairs = {};
+  let claimFlipCount = 0;
+  let claimConflictingTouch = 0;
+  const claimFlipped = [];
+  const claimAgreementHistogram = {};
+  for (const row of claimPairMap.values()) {
+    const unique = [...new Set(row.classifications)];
+    const maj = majorityCount(row.classifications);
+    const flipped = unique.length > 1;
+    const agreeLabel = `${maj.top}/${maj.n}`;
+    claimAgreementHistogram[agreeLabel] = (claimAgreementHistogram[agreeLabel] || 0) + 1;
+    if (flipped) {
+      claimFlipCount += 1;
+      const pairName = unique.slice().sort().join(" <-> ");
+      claimFlipPairs[pairName] = (claimFlipPairs[pairName] || 0) + 1;
+      if (unique.includes("conflicting")) claimConflictingTouch += 1;
+      claimFlipped.push({ ...row, unique, agreement: maj.top, observed: maj.n });
+    }
+  }
+
   console.log("");
-  console.log("## 1a. Per statement-source pair");
+  console.log("## 1a. Per statement-source pair (whole sentence, flag OFF)");
   console.log("  agreement histogram (majority/observed):");
   for (const [k, v] of Object.entries(agreementHistogram).sort((a, b) => b[0].localeCompare(a[0]))) {
     console.log(`    ${k}: ${v} pairs`);
@@ -401,7 +629,7 @@ async function main() {
   }
 
   console.log("");
-  console.log("## 1b. Classification flip rate");
+  console.log("## 1b. Classification flip rate (whole sentence)");
   const pairTotal = pairMap.size;
   const pairPct = pairTotal ? ((100 * pairFlipCount) / pairTotal).toFixed(2) : "0.00";
   console.log(`  pairs=${pairTotal} flipped=${pairFlipCount} rate=${pairPct}%`);
@@ -412,17 +640,41 @@ async function main() {
   if (Object.keys(pairFlipPairs).length === 0) console.log("    (none)");
 
   console.log("");
-  console.log("## 1c. Statement-level VERDICT changes (the number that matters)");
+  console.log("## 1c. Statement-level VERDICT stability OFF vs ON");
   const stmtTotal = stmtMap.size;
-  const stmtPct = stmtTotal ? ((100 * stmtFlips.length) / stmtTotal).toFixed(2) : "0.00";
-  console.log(`  statements=${stmtTotal} verdict-changed=${stmtFlips.length} rate=${stmtPct}%`);
-  if (stmtFlips.length === 0) console.log("  (none)");
-  for (const s of stmtFlips) {
-    console.log(`  ${s.label} ${s.pair} runs=[${s.verdicts.join(", ")}] | ${trunc(s.text, 110)}`);
+  const offStmtPct = stmtTotal ? ((100 * offStmtFlips.length) / stmtTotal).toFixed(2) : "0.00";
+  const onStmtPct = stmtTotal ? ((100 * onStmtFlips.length) / stmtTotal).toFixed(2) : "0.00";
+  console.log(`  statements=${stmtTotal}`);
+  console.log(`  OFF verdict-changed=${offStmtFlips.length} rate=${offStmtPct}%`);
+  console.log(`  ON  verdict-changed=${onStmtFlips.length} rate=${onStmtPct}%`);
+  console.log("  OFF flips:");
+  if (offStmtFlips.length === 0) console.log("    (none)");
+  for (const s of offStmtFlips) {
+    console.log(`    ${s.label} ${s.pair} runs=[${s.verdicts.join(", ")}] | ${trunc(s.text, 110)}`);
+  }
+  console.log("  ON flips:");
+  if (onStmtFlips.length === 0) console.log("    (none)");
+  for (const s of onStmtFlips) {
+    console.log(`    ${s.label} ${s.pair} runs=[${s.verdicts.join(", ")}] | ${trunc(s.text, 110)}`);
   }
 
   console.log("");
-  console.log("## 1d. CONFLICTING involvement (prominent)");
+  console.log("## 1c2. hasConflict stability OFF vs ON");
+  const offConfPct = stmtTotal ? ((100 * offConflictFlips.length) / stmtTotal).toFixed(2) : "0.00";
+  const onConfPct = stmtTotal ? ((100 * onConflictFlips.length) / stmtTotal).toFixed(2) : "0.00";
+  console.log(`  OFF hasConflict-unstable=${offConflictFlips.length} rate=${offConfPct}%`);
+  console.log(`  ON  hasConflict-unstable=${onConflictFlips.length} rate=${onConfPct}%`);
+  console.log("  (ON cannot change hasConflict by design; rates should match.)");
+  console.log("  per statement (unstable only; trueN/falseN of 5):");
+  if (offConflictFlips.length === 0) console.log("    (none)");
+  for (const s of offConflictFlips) {
+    console.log(
+      `    ${s.label} true=${s.trueN} false=${s.falseN} runs=[${s.runs.map((v) => (v ? "1" : "0")).join("")}] | ${trunc(s.text, 110)}`
+    );
+  }
+
+  console.log("");
+  console.log("## 1d. CONFLICTING involvement on whole-sentence pairs (prominent)");
   if (conflictingTouchPairs === 0) {
     console.log("  NONE. No statement-source pair flipped to or from conflicting across the 5 runs.");
   } else {
@@ -446,11 +698,69 @@ async function main() {
     console.log(`    ${k}: ${v}`);
   }
   if (!Object.keys(sourceFlipCounts).length) console.log("    (none)");
-  console.log("  verdict flips by fixture:");
+  console.log("  OFF verdict flips by fixture:");
   for (const [k, v] of Object.entries(fixtureStmtFlipCounts).sort((a, b) => b[1] - a[1])) {
     console.log(`    ${k}: ${v}`);
   }
   if (!Object.keys(fixtureStmtFlipCounts).length) console.log("    (none)");
+
+  console.log("");
+  console.log("## 1f. Per-claim classification stability (flag ON)");
+  const claimTotal = claimPairMap.size;
+  const claimPct = claimTotal ? ((100 * claimFlipCount) / claimTotal).toFixed(2) : "0.00";
+  console.log(`  claim-source pairs=${claimTotal} flipped=${claimFlipCount} rate=${claimPct}%`);
+  console.log("  agreement histogram:");
+  for (const [k, v] of Object.entries(claimAgreementHistogram).sort((a, b) => b[0].localeCompare(a[0]))) {
+    console.log(`    ${k}: ${v} pairs`);
+  }
+  if (!Object.keys(claimAgreementHistogram).length) console.log("    (none)");
+  console.log("  flip pairs observed:");
+  for (const [k, v] of Object.entries(claimFlipPairs).sort((a, b) => b[1] - a[1])) {
+    console.log(`    ${k}: ${v}`);
+  }
+  if (!Object.keys(claimFlipPairs).length) console.log("    (none)");
+  console.log(`  claim pairs touching conflicting: ${claimConflictingTouch}`);
+  console.log("  flips:");
+  if (claimFlipped.length === 0) console.log("    (none)");
+  for (const p of claimFlipped) {
+    console.log(
+      `    ${p.label} src[${p.sourceIndex}] ${p.sourceLabel} agree=${p.agreement}/${p.observed} runs=[${p.classifications.join(", ")}] | ${trunc(p.claimText, 90)}`
+    );
+  }
+
+  console.log("");
+  console.log("## 1g. Nordholt CLEAN S0 hypothesis");
+  console.log(
+    "  Hypothesis: when whole-sentence is partial, upgrade fires to confirmed; when confirmed, stays confirmed; card stops moving."
+  );
+  if (nordholtS0.length === 0) {
+    console.log("  MISSING target sentence");
+  } else {
+    const onStable = new Set(nordholtS0.map((r) => r.onVerdict)).size === 1;
+    const offStable = new Set(nordholtS0.map((r) => r.offVerdict)).size === 1;
+    const allOnConfirmed = nordholtS0.every((r) => r.onVerdict === "confirmed");
+    const upgradesWhenPartial = nordholtS0.filter((r) => r.offVerdict === "partially_confirmed");
+    const upgradeOk = upgradesWhenPartial.every((r) => r.claimUpgrade && r.onVerdict === "confirmed");
+    const staysWhenConfirmed = nordholtS0
+      .filter((r) => r.offVerdict === "confirmed")
+      .every((r) => r.onVerdict === "confirmed" && r.claimUpgrade === false);
+    console.log(`  OFF stable=${offStable ? "yes" : "no"}  ON stable=${onStable ? "yes" : "no"}  all ON confirmed=${allOnConfirmed ? "yes" : "no"}`);
+    console.log(
+      `  upgrade fires on every OFF-partial run=${upgradeOk ? "yes" : "no"}  stays confirmed on every OFF-confirmed run=${staysWhenConfirmed ? "yes" : "no"}`
+    );
+    console.log(`  HYPOTHESIS: ${onStable && allOnConfirmed && upgradeOk && staysWhenConfirmed ? "CONFIRMED" : "REFUTED"}`);
+    for (const r of nordholtS0) {
+      console.log(
+        `  run ${r.run} off=${r.offVerdict} on=${r.onVerdict} upgrade=${r.claimUpgrade} decomposed=${r.decomposed} blockedBy=${(r.blockedBy || []).join(",") || "-"}`
+      );
+      for (const src of r.classifications) {
+        console.log(`    whole src[${src.sourceIndex}] ${src.sourceLabel}=${src.classification}`);
+      }
+      for (const claim of r.claims || []) {
+        console.log(`    claim[${claim.index}] ${claim.verdict} | ${trunc(claim.text, 88)}`);
+      }
+    }
+  }
 
   console.log("");
   console.log("## 2. Backlog sizing (full loadable corpus, Stage 1 + Stage 1b)");
@@ -458,7 +768,7 @@ async function main() {
   const connectiveByToken = {};
   const connectiveExamples = [];
   let connectiveSentenceCount = 0;
-  const arithByKind = {};
+  const arithByWhy = {};
   const arithExamples = [];
   let arithSentenceCount = 0;
   const allReverts = [];
@@ -476,12 +786,12 @@ async function main() {
           connectiveExamples.push({ tokens: hits, label: c.label, text });
         }
       }
-      const kinds = arithmeticKinds(text);
-      if (kinds.length) {
+      const arith = checkableArithmetic(text);
+      if (arith.ok) {
         arithSentenceCount += 1;
-        for (const k of kinds) arithByKind[k] = (arithByKind[k] || 0) + 1;
+        arithByWhy[arith.why] = (arithByWhy[arith.why] || 0) + 1;
         if (arithExamples.length < 15) {
-          arithExamples.push({ kinds, label: c.label, text });
+          arithExamples.push({ why: arith.why, label: c.label, text });
         }
       }
     }
@@ -515,15 +825,15 @@ async function main() {
   if (!connectiveExamples.length) console.log("    (none)");
 
   console.log("");
-  console.log("### 2B. Arithmetic-checkable structures (count only, not correctness)");
-  console.log(`  unique sentences=${arithSentenceCount}`);
-  for (const [k, n] of Object.entries(arithByKind).sort((a, b) => b[1] - a[1])) {
+  console.log("### 2B. Arithmetic-checkable (stricter: at least two of base/change/result)");
+  console.log(`  unique sentences=${arithSentenceCount} (prior loose count was 34)`);
+  for (const [k, n] of Object.entries(arithByWhy).sort((a, b) => b[1] - a[1])) {
     console.log(`    ${k}: ${n}`);
   }
-  if (!Object.keys(arithByKind).length) console.log("    (none)");
+  if (!Object.keys(arithByWhy).length) console.log("    (none)");
   console.log("  examples (up to 15):");
   for (const ex of arithExamples) {
-    console.log(`    [${ex.label}] ${ex.kinds.join(",")} | ${ex.text}`);
+    console.log(`    [${ex.label}] ${ex.why} | ${ex.text}`);
   }
   if (!arithExamples.length) console.log("    (none)");
 
@@ -562,15 +872,32 @@ async function main() {
       {
         nRuns: N_RUNS,
         probe,
+        subsetWallMs,
+        avgStage2Ms,
+        timingAcc,
+        fingerprints: [...fingerprints],
         pairTotal,
         pairFlipCount,
         pairPct,
         pairFlipPairs,
         conflictingTouchPairs,
         stmtTotal,
-        stmtFlipCount: stmtFlips.length,
-        stmtPct,
-        stmtFlips,
+        offStmtFlipCount: offStmtFlips.length,
+        onStmtFlipCount: onStmtFlips.length,
+        offStmtPct,
+        onStmtPct,
+        offStmtFlips,
+        onStmtFlips,
+        offConflictFlips,
+        onConflictFlips,
+        offConfPct,
+        onConfPct,
+        claimTotal,
+        claimFlipCount,
+        claimPct,
+        claimFlipPairs,
+        claimFlipped,
+        nordholtS0,
         flippedPairs,
         fixtureFlipCounts,
         fixtureStmtFlipCounts,
@@ -580,7 +907,7 @@ async function main() {
         sourceFlipCounts,
         connectiveByToken,
         connectiveExamples,
-        arithByKind,
+        arithByWhy,
         arithExamples,
         reverts: allReverts,
       },

@@ -74,6 +74,15 @@ describe("relational connective blocklist", () => {
       false
     );
   });
+
+  test("does not match hyphenated prefix (step-up from is not up from)", () => {
+    assert.equal(
+      isCompoundCandidate(
+        "Revenue was EUR 10 million, and EBITDA was EUR 2 million after a step-up from Fund IV."
+      ),
+      true
+    );
+  });
 });
 
 describe("validateClaimSpans", () => {
