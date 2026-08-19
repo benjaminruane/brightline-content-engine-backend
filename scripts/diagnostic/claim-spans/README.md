@@ -4,9 +4,14 @@ Read-only. Does not commit. Compares flag-OFF (`V_today`) to flag-ON (upgrade-on
 
 ```
 node scripts/diagnostic/claim-spans/run-shadow.mjs
+node scripts/diagnostic/claim-spans/run-shadow.mjs --refresh-baseline
 ```
 
 Loads `.env.local` via the diagnostic env helper. Needs `OPENAI_API_KEY`.
+
+Shared Stage 1 and whole-sentence Stage 2 results are cached to gitignored `scripts/diagnostic/claim-spans/.baseline.json`. Subsequent runs reuse them unless `--refresh-baseline` is passed or the Stage 1 / Stage 2 / `stage2_v4.md` / model-config fingerprint changes. Stage 1b and per-claim Stage 2 still run every time.
+
+Stage 2 has **no concurrency cap**: `matchAllSources` `Promise.all`s every statement×source pair (parallel across both statements and sources).
 
 ## What it runs
 
@@ -21,5 +26,5 @@ Editorial, commentary, and the widened multi-passage pass are not part of this g
 
 - The only allowed verdict transition is `partially_confirmed -> confirmed`
 - Zero `hasConflict` changes
-- The Nordholt CLEAN underwriting + 14 per cent IRR sentence is among the upgrades
+- On a run where Nordholt CLEAN S0's baseline is `partially_confirmed`, the upgrade fires
 - Supersession S0/S1 stay supported plus note; S2/S3 stay conflict

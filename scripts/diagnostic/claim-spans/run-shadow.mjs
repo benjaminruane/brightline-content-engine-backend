@@ -15,6 +15,7 @@ import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { loadAllFixtures } from "../lib/fixtures.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
 import { DIAG_ROOT } from "../lib/paths.mjs";
+import { createBaselineStore } from "./baseline-cache.mjs";
 
 loadLocalEnvFiles();
 
@@ -78,10 +79,24 @@ function isNordholtIrrTarget(text) {
   return /in line with underwriting/i.test(t) && /14 per cent/i.test(t);
 }
 
-async function evaluateDraft(label, draft, sources) {
-  const stage1 = await extractStatements({ draftText: draft });
-  const statements = Array.isArray(stage1?.statements) ? stage1.statements : [];
-  const { matches } = await matchAllSources({ statements, sources });
+async function evaluateDraft(label, draft, sources, baselineStore) {
+  let statements;
+  let matches;
+  const cached = baselineStore ? baselineStore.get(label, draft, sources) : null;
+  if (cached) {
+    statements = cached.statements;
+    matches = cached.matches;
+    console.log(`  ${label} baseline=hit statements=${statements.length} matches=${matches.length}`);
+  } else {
+    const stage1 = await extractStatements({ draftText: draft });
+    statements = Array.isArray(stage1?.statements) ? stage1.statements : [];
+    const matched = await matchAllSources({ statements, sources });
+    matches = Array.isArray(matched?.matches) ? matched.matches : [];
+    if (baselineStore) {
+      await baselineStore.set(label, draft, sources, statements, matches);
+      console.log(`  ${label} baseline=store statements=${statements.length} matches=${matches.length}`);
+    }
+  }
   const asOfBySourceIndex = buildAsOfBySourceIndex(sources);
 
   const stage1b = await extractClaimSpans({
@@ -235,15 +250,23 @@ async function main() {
   }
 
   const onlyNordholt = process.argv.includes("--nordholt-only");
+  const refreshBaseline = process.argv.includes("--refresh-baseline");
+  const baselineStore = await createBaselineStore({ refresh: refreshBaseline });
 
   console.log("# B53a claim-span SHADOW");
   console.log(`Today=${TODAY.toISOString().slice(0, 10)}`);
   if (onlyNordholt) console.log("mode=nordholt-only");
+  console.log(
+    `baseline fingerprint=${baselineStore.fingerprint.slice(0, 12)} refresh=${refreshBaseline ? "1" : "0"} loaded=${baselineStore.loaded ? "1" : "0"}`
+  );
+  console.log(
+    "Stage 2 concurrency: no cap. matchAllSources Promise.all over every statement x source pair (parallel across both)."
+  );
   console.log("");
 
   console.log("## Nordholt CLEAN");
   const nordholtClean = await loadNordholt("clean");
-  const cleanEval = await evaluateDraft("nordholt-clean", nordholtClean.draft, nordholtClean.sources);
+  const cleanEval = await evaluateDraft("nordholt-clean", nordholtClean.draft, nordholtClean.sources, baselineStore);
   absorbStats(cleanEval.stats, "nordholt-clean");
   allRows.push(...cleanEval.rows);
   console.log(
@@ -254,7 +277,7 @@ async function main() {
   console.log("");
   console.log("## Nordholt DIRTY");
   const nordholtDirty = await loadNordholt("dirty");
-  const dirtyEval = await evaluateDraft("nordholt-dirty", nordholtDirty.draft, nordholtDirty.sources);
+  const dirtyEval = await evaluateDraft("nordholt-dirty", nordholtDirty.draft, nordholtDirty.sources, baselineStore);
   absorbStats(dirtyEval.stats, "nordholt-dirty");
   allRows.push(...dirtyEval.rows);
   console.log(
@@ -264,7 +287,7 @@ async function main() {
   console.log("");
   console.log("## Supersession fixture");
   const fx = await loadSupersessionFixture();
-  const fxEval = await evaluateDraft("supersession", fx.draft, fx.sources);
+  const fxEval = await evaluateDraft("supersession", fx.draft, fx.sources, baselineStore);
   absorbStats(fxEval.stats, "supersession");
   allRows.push(...fxEval.rows);
   for (const row of fxEval.rows) {
@@ -324,7 +347,7 @@ async function main() {
       console.log(`  F${fid} skipped: no sources`);
       continue;
     }
-    const ev = await evaluateDraft(`F${fid}`, draft, sources);
+    const ev = await evaluateDraft(`F${fid}`, draft, sources, baselineStore);
     absorbStats(ev.stats, `F${fid}`);
     allRows.push(...ev.rows.map((r) => ({ ...r, label: `F${fid}` })));
     console.log(

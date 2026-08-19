@@ -12,6 +12,8 @@ In-process batch runner for R6 Review Quality evidence gathering. **Not producti
 | `sources/` | Source documents (.txt / .pdf) — **Ben supplies files** |
 | `sources-extracted/` | Generated text from PDFs (gitignored) |
 | `runs/` | Timestamped run output (gitignored) |
+| `claim-spans/` | B53a shadow gate; `.baseline.json` caches Stage 1 + whole-sentence Stage 2 (gitignored) |
+| `stage2-determinism/` | Temperature-0 Stage 2 repeatability diagnostic (output gitignored) |
 
 ## Prerequisites
 
