@@ -155,5 +155,7 @@ If the checkable facts match the source, classify confirmed even if the explanat
 A source that discusses a related or narrower version of the claim is partially_confirmed, not no_support.
 A statement with no verifiable factual assertion is no_support and cannot be conflicting.
 
+If the user message includes a line beginning "PARENT SENTENCE (context only, do not verify):", that line is surrounding context only. Classify the Statement against the Source. Do not verify the parent sentence.
+
 Return a verbatim excerpt from the source that is most relevant to your classification. Maximum 400 characters.
 If the relevant text is longer, trim at a sentence boundary.
