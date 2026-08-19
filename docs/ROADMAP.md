@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-19 (review-quality cluster + supersession + recency/first-person fixes + Pr9 shipped)
+Last updated: 2026-08-19 (cheap-fixes arc: B54 / F14 / extractPercents + B53 split)
 
 ---
 
@@ -295,6 +295,12 @@ Sprint 2 review-quality fixes, shipped through diagnose-first + read-only shadow
 ### Recency anchoring + first-person FP fixes (closed 2026-08-19)
 
 **Recency anchoring + first-person-plural false positive + no-op suggestion fixes** (shipped 2026-08-19). `recencySourceIndices()` in `stage7-assemble-card.mjs` anchors to supporting source (confirmed/partially_confirmed); `STYLE_RULE_DETERMINISTIC_FILTERS.first_person_plural` requires a real first-person pronoun in the cited span; `suppressNoOpSuggestions()` drops any house-style concern whose `suggestedRewrite` equals the statement text (general guard). Shadow-gated: Nordholt clean+dirty drafts verified four targeted transitions + zero verdict/hasConflict movement. Tag: `review-recency-anchor-firstperson`.
+
+### Cheap-fixes arc — per cent / number_spelling / extractPercents (closed 2026-08-19)
+
+- **B54 — `percentage_notation` on "per cent"** (shipped 2026-08-19). Rule text names the two-word British "per cent"; drop-filter uses `\bper\s?cent\b`. Tag: `review-percent-number-style`.
+- **F14 — `number_spelling` on spelled-out 0–12** (shipped 2026-08-19). Deterministic filter drops cited "twelve" / "twelve months"; durations are prose counts, not physical units. Tag: `review-percent-number-style`.
+- **B59 — `extractPercents` "per cent" + same-metric percent guard** (shipped 2026-08-19). Extractor matches `per\s?cent`; magnitude backstop requires a non-empty metric-key intersection before forcing a percent conflict. **VERDICT-ADJACENT** — diagnose + read-only shadow gate. Tag: `review-percent-extract`. Residual: money/count still pair by kind only — **BACKLOG B60**. Compound-statement follow-on split: **B53a** / **B53b** / **B53c**.
 
 ---
 
@@ -795,6 +801,9 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | Card density UX | `review-card-density` |
 | Source supersession (verdict-layer) | `review-supersession` |
 | Recency anchoring + first-person FP fixes | `review-recency-anchor-firstperson` |
+| B54 — percentage_notation on "per cent" | `review-percent-number-style` |
+| F14 — number_spelling spelled-out 0–12 | `review-percent-number-style` |
+| B59 — extractPercents "per cent" + same-metric percent guard | `review-percent-extract` |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
 | Stage 2 semantic frame matching (R2.7.2) | `r2.7.2-frame-matching` |
 | qcCard.pipelineVersion label | `fix-pipelineversion-label` |

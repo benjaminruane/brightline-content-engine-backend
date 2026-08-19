@@ -54,7 +54,7 @@ Same draft + same sources → same aggregated evidence verdict on repeated runs.
 
 ### No subclaim atomisation
 
-**One sentence = one QC card.** The legacy pipeline split sentences into subclaims and produced multiple cards per sentence. v4 does not. Stage 2 assesses each fact within the sentence against each source; Stage 3 returns the **weakest** classification across sources (with the precedence rules above). A long sentence with one weak link can still yield `partially_confirmed` or `not_supported` for the whole card.
+**One sentence = one QC card.** The legacy pipeline split sentences into subclaims and produced multiple cards per sentence. v4 does not. Stage 2 classifies the **whole sentence** against each source. Stage 3 is **any-confirmed-wins** (existence reduction over those per-source classifications): any `confirmed` → confirmed; else any `conflicting` → conflicting; else any `partially_confirmed` → partial; else `not_supported`. `hasConflict` is independent — true if any source returned `conflicting`. A compound sentence that no single source fully confirms can still yield `partially_confirmed` for the whole card even when different sources cover different halves (see BACKLOG **B53a**).
 
 ### Backend authority
 
