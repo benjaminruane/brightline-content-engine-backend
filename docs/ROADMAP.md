@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-19 (docs-sync: B53a closed + default ON; B61 downgraded; B63 Stage 2 cache is next build)
+Last updated: 2026-08-19 (B67 closed on probe; B60 after B63 with b67-probe fixture)
 
 ---
 
@@ -310,7 +310,7 @@ Resolving tags: `review-claim-spans` (`c290cee`, implementation), `review-claim-
 
 Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches shared Stage 1 + whole-sentence Stage 2 to gitignored `.baseline.json`.
 
-**Next build:** Stage 2 result caching (**BACKLOG B63**). No release is cut until this review-quality arc completes. Residuals: **B61** (hasConflict only, M), **B62**, **B53b**, **B53c**.
+**Next build:** Stage 2 result caching (**BACKLOG B63**). After that: **B60** money-figure pairing (fixture `scripts/diagnostic/b67-probe/`; IC memo achieved-versus-projected `conflicting` is preserve-not-change). No release is cut until this review-quality arc completes. Residuals: **B61** (hasConflict only, M), **B62**, **B53b**, **B53c**. **B67** closed 2026-08-19 on the probe.
 
 ---
 

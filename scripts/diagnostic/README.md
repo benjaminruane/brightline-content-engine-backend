@@ -13,7 +13,8 @@ In-process batch runner for R6 Review Quality evidence gathering. **Not producti
 | `sources-extracted/` | Generated text from PDFs (gitignored) |
 | `runs/` | Timestamped run output (gitignored) |
 | `claim-spans/` | B53a shadow gate; `.baseline.json` caches Stage 1 + whole-sentence Stage 2 (gitignored) |
-| `stage2-determinism/` | Temperature-0 Stage 2 repeatability diagnostic (output gitignored) |
+| `supersession/` | Period-supersession gate fixture (draft + three dated sources) |
+| `b67-probe/` | Planted Nordholt-dirty ARR probe: IC memo `conflicting` is correct (B67, preserve); press/fact-sheet `conflicting` on EUR 155m revenue is B60 |
 
 ## Prerequisites
 
