@@ -7,6 +7,7 @@ import {
   applyPeriodGateBackstop,
   applyRoundingToleranceBackstop,
   classifyNumericRelationship,
+  collectBackstopFigures,
   hasEgregiousMagnitudeGap,
   inferPeriodRole,
   isProceduralCloserStatement,
@@ -74,6 +75,36 @@ describe("B48 rounding and magnitude backstop", () => {
     const statement = "Revenue grew at approximately 20 percent.";
     const passage = "Revenue grew at 18.6 percent.";
     assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+  });
+
+  test("extracts two-word British 'per cent' as percent figures", () => {
+    const figs = collectBackstopFigures(
+      "Utilisation is 88 per cent and net IRR stands at 14 per cent."
+    );
+    const percents = figs.filter((f) => f.kind === "percent").map((f) => f.value);
+    assert.deepEqual(percents, [88, 14]);
+  });
+
+  test("magnitude 40 per cent vs 18 per cent forces conflicting", () => {
+    const statement = "Embedded reversion is approximately 40 per cent as leases roll.";
+    const passage = "Embedded reversion is estimated at approximately 18 per cent as leases roll.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "partially_confirmed", passage, explanation: "Lease roll mentioned." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "conflicting");
+  });
+
+  test("does not force conflict when percent figures have no overlapping metric keys", () => {
+    const statement = "The EBITDA margin is approximately 19 per cent.";
+    const passage = "Contracted revenue represents approximately 70 per cent of total revenue.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "partially_confirmed", passage, explanation: "Partial." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "partially_confirmed");
   });
 });
 
