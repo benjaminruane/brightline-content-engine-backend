@@ -4,6 +4,7 @@
  *
  * Usage:
  *   node scripts/diagnostic/llm-cache/run-gate.mjs
+ *   node scripts/diagnostic/llm-cache/run-gate.mjs --test1
  */
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -400,6 +401,8 @@ async function main() {
     process.exit(1);
   }
 
+  const test1Only = process.argv.includes("--test1");
+
   await mkdir(OUT_DIR, { recursive: true });
   const store = createMemoryStore();
   setLlmCacheStore(store);
@@ -436,11 +439,15 @@ async function main() {
   logCacheRunSummary(warmStats, "test1-warm");
 
   const identityDiffs = diffSnapshots(cold.snapshots, warm.snapshots);
+  const test1Evictions = typeof store.evictionCount === "function" ? store.evictionCount() : null;
+  const test1StoreSize = store.size();
   const test1Pass = identityDiffs.length === 0;
   report.tests.test1 = {
     pass: test1Pass,
     diffCount: identityDiffs.length,
     diffs: identityDiffs,
+    evictionCount: test1Evictions,
+    storeSize: test1StoreSize,
     cold: formatStatsRow("cold", coldStats, cold.usage, cold.costUsd),
     warm: formatStatsRow("warm", warmStats, warm.usage, warm.costUsd),
   };
@@ -448,9 +455,24 @@ async function main() {
     {
       check: "byte-identical cards",
       diffCount: identityDiffs.length,
+      evictionCount: test1Evictions,
+      storeSize: test1StoreSize,
       result: test1Pass ? "PASS" : "FAIL",
     },
   ]);
+  console.log(
+    `TEST 1 LRU: storeSize=${test1StoreSize} evictionCount=${test1Evictions} capEntries=${store.maxEntries} capBytes=${store.maxBytes}`
+  );
+
+  if (test1Only) {
+    resetLlmCacheStore();
+    setCacheVersionOverride(null);
+    report.pass = test1Pass;
+    await writeFile(path.join(OUT_DIR, "last-run.json"), JSON.stringify(report, null, 2), "utf8");
+    console.log("");
+    console.log(test1Pass ? "GATE PASS (TEST 1 only)" : "GATE FAIL (TEST 1 only)");
+    process.exit(test1Pass ? 0 : 1);
+  }
 
   // ---- TEST 2 invalidation ----
   const invalidationRows = [];
@@ -613,7 +635,7 @@ async function main() {
   report.tests.test3 = { rows: costRows };
 
   // ---- TEST 4 flag OFF ----
-  delete process.env.QC_LLM_CACHE;
+  process.env.QC_LLM_CACHE = "0";
   let reads = 0;
   let writes = 0;
   const spyStore = {
@@ -654,7 +676,7 @@ async function main() {
     stats4.writeCount === 0;
   const test4Rows = [
     {
-      check: "QC_LLM_CACHE unset",
+      check: "QC_LLM_CACHE=0",
       enabled: String(isLlmCacheEnabled()),
       reads,
       writes,

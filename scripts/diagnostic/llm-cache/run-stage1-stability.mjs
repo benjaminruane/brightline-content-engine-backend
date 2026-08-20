@@ -11,7 +11,7 @@ import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { loadAllFixtures } from "../lib/fixtures.mjs";
 
 loadLocalEnvFiles();
-delete process.env.QC_LLM_CACHE;
+process.env.QC_LLM_CACHE = "0";
 
 const { extractStatements } = await import("../../../lib/qc/pipeline-v4/stage1-extract-statements.mjs");
 const { isLlmCacheEnabled } = await import("../../../lib/qc/llm-cache.mjs");

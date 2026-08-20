@@ -137,7 +137,7 @@ describe("buildCacheKey", () => {
   });
 });
 
-describe("QC_LLM_CACHE flag default OFF", () => {
+describe("QC_LLM_CACHE flag default ON", () => {
   const prev = process.env.QC_LLM_CACHE;
 
   afterEach(() => {
@@ -145,9 +145,9 @@ describe("QC_LLM_CACHE flag default OFF", () => {
     else process.env.QC_LLM_CACHE = prev;
   });
 
-  test("unset is off", () => {
+  test("unset is on", () => {
     delete process.env.QC_LLM_CACHE;
-    assert.equal(isLlmCacheEnabled(), false);
+    assert.equal(isLlmCacheEnabled(), true);
   });
 
   test("explicit off values are off", () => {
@@ -156,6 +156,8 @@ describe("QC_LLM_CACHE flag default OFF", () => {
     process.env.QC_LLM_CACHE = "off";
     assert.equal(isLlmCacheEnabled(), false);
     process.env.QC_LLM_CACHE = "false";
+    assert.equal(isLlmCacheEnabled(), false);
+    process.env.QC_LLM_CACHE = "no";
     assert.equal(isLlmCacheEnabled(), false);
   });
 
@@ -190,7 +192,7 @@ describe("withLlmCache behaviour", () => {
   });
 
   test("flag OFF does not read or write", async () => {
-    delete process.env.QC_LLM_CACHE;
+    process.env.QC_LLM_CACHE = "0";
     let reads = 0;
     let writes = 0;
     setLlmCacheStore({
@@ -349,6 +351,7 @@ describe("LRU bounds", () => {
     await store.put("b", { payload: { id: "b" } });
     await store.put("c", { payload: { id: "c" } });
     assert.equal(store.size(), 2);
+    assert.equal(store.evictionCount(), 1);
     assert.equal(await store.get("a"), null);
     assert.equal((await store.get("b")).payload.id, "b");
     assert.equal((await store.get("c")).payload.id, "c");
