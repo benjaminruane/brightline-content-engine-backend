@@ -22,6 +22,7 @@ scripts/diagnostic/runs/
 scripts/diagnostic/sources-extracted/
 scripts/diagnostic/claim-spans/.baseline.json
 scripts/diagnostic/stage2-determinism/out/
+scripts/diagnostic/llm-cache/out/
 node_modules/
 
 # R7 extractor survey — throwaway benchmark scaffolding (findings doc is kept in docs/)
