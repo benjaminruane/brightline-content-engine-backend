@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * B70 + B60 shadow. Shared Stage 1 + whole-sentence Stage 2 from the disk
- * cache. ON arm replays the current money scale + metric-id backstop against
- * the model's pre-backstop classification (Langfuse diagnose trace).
+ * B60.1 shadow against current main (B60 character window). Shared Stage 1 +
+ * whole-sentence Stage 2 from the disk cache. ON arm replays sentence-scoped
+ * metric resolution against the model's pre-backstop classification (Langfuse
+ * diagnose trace).
  *
  * Usage:
  *   node scripts/diagnostic/b60-money/run-shadow.mjs
@@ -265,13 +266,35 @@ async function loadLlmClassMap(traceId) {
 }
 
 const PREDICTED = new Set([
-  "nordholt-dirty|S2|press release",
-  "nordholt-dirty|S2|fact sheet",
-  "b67-probe|S2|press release",
-  "b67-probe|S2|fact sheet",
   "b67-probe|S6|press release",
-  "b67-probe|S6|fact sheet",
+  "F18|S7|18b_synth_cross_source_pair_update",
 ]);
+
+/** Current main (B60 character window) ON-arm class where it already differs from diagnose. */
+const CURRENT_MAIN_PAIRS = {
+  "nordholt-dirty|S2|press release": "partially_confirmed",
+  "nordholt-dirty|S2|fact sheet": "partially_confirmed",
+  "b67-probe|S2|press release": "partially_confirmed",
+  "b67-probe|S2|fact sheet": "partially_confirmed",
+  "b67-probe|S6|fact sheet": "no_support",
+  "b67-probe|S6|press release": "conflicting",
+  "F18|S7|18b_synth_cross_source_pair_update": "no_support",
+};
+
+const EXPECTED_ON_VS_MAIN = {
+  "b67-probe|S6|press release": "no_support",
+  "F18|S7|18b_synth_cross_source_pair_update": "conflicting",
+};
+
+const CURRENT_MAIN_STMTS = {
+  "nordholt-dirty|2": { verdict: "partially_confirmed", hasConflict: false },
+  "b67-probe|2": { verdict: "partially_confirmed", hasConflict: false },
+  "F18|7": { verdict: "confirmed", hasConflict: false },
+};
+
+const EXPECTED_STMT_VS_MAIN = {
+  "F18|7": { verdict: "confirmed", hasConflict: true },
+};
 
 const MUST_STILL_FIRE = [
   ["nordholt-clean", 1, "IC memo"],
@@ -297,7 +320,7 @@ async function main() {
   };
 
   const store = getLlmCacheStore();
-  console.log("# B70+B60 money SHADOW");
+  console.log("# B60.1 sentence-scoped money metric SHADOW");
   console.log(`store.kind=${store?.kind} path=${store?.filePath || ""} entries=${store?.size?.() ?? "?"}`);
   console.log(`diagnoseTrace=${DIAGNOSE_TRACE_ID}`);
 
@@ -311,7 +334,7 @@ async function main() {
   const traceId = createTraceId();
   startTrace({
     traceId,
-    traceName: "b60-b70-shadow",
+    traceName: "b60.1-shadow",
     metadata: { pipelineRoute: "v4", runStartedAt: new Date().toISOString() },
   });
   console.log(`langfuse shadowTrace=${traceId}`);
@@ -416,28 +439,67 @@ async function main() {
 
   console.log = origLog;
   const cacheSummary = endCacheRun();
-  logCacheRunSummary(cacheSummary, "b60-b70-shadow");
+  logCacheRunSummary(cacheSummary, "b60.1-shadow");
   await flushObservability();
 
-  const pairChanges = pairRows.filter((r) => r.offClass !== r.onClass);
-  const stmtChanges = stmtRows.filter(
+  function mainPairClass(row) {
+    return CURRENT_MAIN_PAIRS[row.key] ?? row.offClass;
+  }
+
+  function stmtKey(row) {
+    return `${row.label}|${row.statementIndex}`;
+  }
+
+  function mainStmt(row) {
+    return CURRENT_MAIN_STMTS[stmtKey(row)] || {
+      verdict: row.offVerdict,
+      hasConflict: row.offHasConflict,
+    };
+  }
+
+  const pairChangesVsDiagnose = pairRows.filter((r) => r.offClass !== r.onClass);
+  const pairChangesVsMain = pairRows.filter((r) => mainPairClass(r) !== r.onClass);
+  const stmtChangesVsDiagnose = stmtRows.filter(
     (r) => r.offVerdict !== r.onVerdict || r.offHasConflict !== r.onHasConflict
   );
+  const stmtChangesVsMain = stmtRows.filter((r) => {
+    const main = mainStmt(r);
+    return main.verdict !== r.onVerdict || main.hasConflict !== r.onHasConflict;
+  });
 
   console.log("");
-  console.log("## Pair classification changes");
-  if (pairChanges.length === 0) console.log("  (none)");
-  for (const r of pairChanges) {
+  console.log("## Pair classification vs current main (B60 window)");
+  if (pairChangesVsMain.length === 0) console.log("  (none)");
+  for (const r of pairChangesVsMain) {
     const predicted = PREDICTED.has(r.key) ? "predicted" : "UNEXPECTED";
     console.log(
-      `  ${r.key} ${r.offClass} -> ${r.onClass} llm=${r.llmClass} langfuse=${r.llmFromLangfuse ? "1" : "0"} gapOn=${r.gapOn ? "1" : "0"} [${predicted}] | ${trunc(r.statement, 80)}`
+      `  ${r.key} ${mainPairClass(r)} -> ${r.onClass} llm=${r.llmClass} langfuse=${r.llmFromLangfuse ? "1" : "0"} gapOn=${r.gapOn ? "1" : "0"} [${predicted}] | ${trunc(r.statement, 80)}`
     );
   }
 
   console.log("");
-  console.log("## Statement verdict / hasConflict changes");
-  if (stmtChanges.length === 0) console.log("  (none)");
-  for (const r of stmtChanges) {
+  console.log("## Statement verdict / hasConflict vs current main");
+  if (stmtChangesVsMain.length === 0) console.log("  (none)");
+  for (const r of stmtChangesVsMain) {
+    const main = mainStmt(r);
+    console.log(
+      `  ${r.label} S${r.statementIndex} ${evidenceKey({ verdict: main.verdict, hasConflict: main.hasConflict })} -> ${evidenceKey({ verdict: r.onVerdict, hasConflict: r.onHasConflict })} | ${trunc(r.text, 80)}`
+    );
+  }
+
+  console.log("");
+  console.log("## Pair classification vs diagnose cache (context)");
+  if (pairChangesVsDiagnose.length === 0) console.log("  (none)");
+  for (const r of pairChangesVsDiagnose) {
+    console.log(
+      `  ${r.key} ${r.offClass} -> ${r.onClass} llm=${r.llmClass} gapOn=${r.gapOn ? "1" : "0"} | ${trunc(r.statement, 80)}`
+    );
+  }
+
+  console.log("");
+  console.log("## Statement vs diagnose cache (context)");
+  if (stmtChangesVsDiagnose.length === 0) console.log("  (none)");
+  for (const r of stmtChangesVsDiagnose) {
     console.log(
       `  ${r.label} S${r.statementIndex} ${evidenceKey({ verdict: r.offVerdict, hasConflict: r.offHasConflict })} -> ${evidenceKey({ verdict: r.onVerdict, hasConflict: r.onHasConflict })} | ${trunc(r.text, 80)}`
     );
@@ -456,13 +518,48 @@ async function main() {
   console.log("## Suppressions logged");
   console.log(`count=${suppressions.length}`);
   for (const line of suppressions) console.log(`  ${line}`);
+  for (const line of suppressions) {
+    if (!/metric=\S+/.test(line) || !/stmt="/.test(line) || !/src="/.test(line)) {
+      failures.push(`suppression missing phrases or ids: ${line}`);
+    }
+  }
 
-  const changedKeys = new Set(pairChanges.map((r) => r.key));
+  const changedKeys = new Set(pairChangesVsMain.map((r) => r.key));
   for (const key of PREDICTED) {
-    if (!changedKeys.has(key)) failures.push(`predicted pair did not change: ${key}`);
+    const row = pairRows.find((r) => r.key === key);
+    if (!row) {
+      failures.push(`predicted pair missing: ${key}`);
+      continue;
+    }
+    const expected = EXPECTED_ON_VS_MAIN[key];
+    if (row.onClass !== expected) {
+      failures.push(`predicted pair ${key} onClass=${row.onClass} expected ${expected}`);
+    }
+    if (mainPairClass(row) === row.onClass) {
+      failures.push(`predicted pair did not change vs current main: ${key}`);
+    }
   }
   for (const key of changedKeys) {
-    if (!PREDICTED.has(key)) failures.push(`unexpected pair change: ${key}`);
+    if (!PREDICTED.has(key)) failures.push(`unexpected pair change vs current main: ${key}`);
+  }
+
+  for (const key of [
+    "nordholt-dirty|S2|press release",
+    "nordholt-dirty|S2|fact sheet",
+    "b67-probe|S2|press release",
+    "b67-probe|S2|fact sheet",
+  ]) {
+    const row = pairRows.find((r) => r.key === key);
+    if (!row) failures.push(`scale pair missing: ${key}`);
+    else if (row.onClass !== "partially_confirmed") {
+      failures.push(`scale pair ${key} onClass=${row.onClass} expected partially_confirmed`);
+    }
+  }
+
+  const factS6 = pairRows.find((r) => r.key === "b67-probe|S6|fact sheet");
+  if (!factS6) failures.push("b67-probe S6 x fact sheet missing");
+  else if (factS6.onClass !== "no_support") {
+    failures.push(`b67-probe S6 x fact sheet onClass=${factS6.onClass} expected no_support`);
   }
 
   for (const [label, idx, sourceLabel] of MUST_STILL_FIRE) {
@@ -491,11 +588,25 @@ async function main() {
   if (!f18) failures.push("F18 S7 missing");
   else {
     console.log(
-      `F18 S7 off=${f18.offClass} on=${f18.onClass} llm=${f18.llmClass} gapOn=${f18.gapOn ? "1" : "0"} (known limitation if gapOn=0)`
+      `F18 S7 main=${mainPairClass(f18)} on=${f18.onClass} llm=${f18.llmClass} gapOn=${f18.gapOn ? "1" : "0"}`
     );
-    if (f18.offClass !== f18.onClass) {
-      failures.push(`F18 S7 changed ${f18.offClass} -> ${f18.onClass} (expected unchanged)`);
+  }
+
+  const stmtChangedKeys = new Set(stmtChangesVsMain.map((r) => stmtKey(r)));
+  for (const [key, expected] of Object.entries(EXPECTED_STMT_VS_MAIN)) {
+    const row = stmtRows.find((r) => stmtKey(r) === key);
+    if (!row) {
+      failures.push(`expected statement change missing: ${key}`);
+      continue;
     }
+    if (row.onVerdict !== expected.verdict || row.onHasConflict !== expected.hasConflict) {
+      failures.push(
+        `statement ${key} ${evidenceKey({ verdict: row.onVerdict, hasConflict: row.onHasConflict })} expected ${evidenceKey(expected)}`
+      );
+    }
+  }
+  for (const key of stmtChangedKeys) {
+    if (!EXPECTED_STMT_VS_MAIN[key]) failures.push(`unexpected statement change vs current main: ${key}`);
   }
 
   let langfuseCost = null;

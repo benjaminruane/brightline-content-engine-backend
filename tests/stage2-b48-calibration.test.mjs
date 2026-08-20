@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
+import { splitDraftIntoCandidatesV2 } from "../lib/extract-statements.mjs";
 import {
   applyPeriodGateBackstop,
   applyRoundingToleranceBackstop,
@@ -224,13 +225,13 @@ describe("B60 money metric ids (longest-first, fail-closed guard)", () => {
     assert.equal(moneyMetric("Debt was EUR 20 million."), "debt");
   });
 
-  test("window includes 48 characters after the match END, not the start", () => {
+  test("metric phrase after the figure in the same sentence still resolves", () => {
     const after = "x".repeat(36);
     const text = `Booked EUR 95 million${after} arr trailing.`;
     assert.equal(moneyMetric(text), "arr");
   });
 
-  test("ARR 95 vs combined annual revenue 155 does not force when the phrase is inside the window", () => {
+  test("ARR 95 vs combined annual revenue 155 does not force when the phrase is inside the sentence", () => {
     const statement = "ARR reached EUR 95 million.";
     const passage = "Combined annual revenue: EUR 155 million.";
     assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
@@ -239,15 +240,6 @@ describe("B60 money metric ids (longest-first, fail-closed guard)", () => {
       { statementText: statement }
     );
     assert.equal(out.classification, "no_support");
-  });
-
-  test("fail closed: combined annual revenue 71 characters before the figure is unrecognised", () => {
-    const statement = "ARR reached EUR 95 million.";
-    const passage =
-      "Combined annual revenue for the enlarged group stands at approximately EUR 155 million.";
-    const src = collectBackstopFigures(passage).find((f) => f.kind === "money");
-    assert.equal(src?.metric, undefined);
-    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
   });
 
   test("fail closed: unrecognised money metric still forces against revenue", () => {
@@ -268,16 +260,6 @@ describe("B60 money metric ids (longest-first, fail-closed guard)", () => {
     const statement = "The exit closed at SEK 18.4 billion and generated a 3.56x gross MOIC.";
     const passage = "The exit generated gross proceeds of SEK 12.8 billion to Fund IV.";
     assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
-  });
-
-  test("F18 nearest 95 vs 38: 38 tags as revenue because annual recurring falls out of the window", () => {
-    const statement =
-      "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold.";
-    const passage =
-      "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.";
-    const src38 = collectBackstopFigures(passage).find((f) => f.value === 38e6);
-    assert.equal(src38?.metric, "revenue");
-    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
   });
 
   test("count 720 vs 640 still forces; count carries no metric", () => {
@@ -340,6 +322,73 @@ describe("B70 money scale (plain m as million)", () => {
     assert.deepEqual(moneyValues(statement), [155e6]);
     assert.deepEqual(moneyValues(passage), [155e6]);
     assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+  });
+});
+
+describe("B60.1 sentence-scoped money metric", () => {
+  function moneyFigs(text) {
+    return collectBackstopFigures(text).filter((f) => f.kind === "money");
+  }
+
+  test("combined annual revenue 71 characters before the figure resolves to revenue", () => {
+    const statement = "ARR reached EUR 95 million.";
+    const passage =
+      "Combined annual revenue for the enlarged group stands at approximately EUR 155 million";
+    const src = moneyFigs(passage)[0];
+    assert.equal(src?.metric, "revenue");
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "no_support", passage, explanation: "Does not address ARR." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "no_support");
+  });
+
+  test("both ARR figures in one sentence resolve to arr, not revenue", () => {
+    const statement =
+      "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold.";
+    const passage =
+      "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.";
+    const src35 = moneyFigs(passage).find((f) => f.value === 35e6);
+    const src38 = moneyFigs(passage).find((f) => f.value === 38e6);
+    assert.equal(src35?.metric, "arr");
+    assert.equal(src38?.metric, "arr");
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "no_support", passage, explanation: "Does not address the base case." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "conflicting");
+  });
+
+  test("two-metric sentence assigns each figure the nearest phrase", () => {
+    const text = "Revenue was EUR 200 million and EBITDA was EUR 45 million.";
+    const figs = moneyFigs(text);
+    assert.equal(figs.find((f) => f.value === 200e6)?.metric, "revenue");
+    assert.equal(figs.find((f) => f.value === 45e6)?.metric, "ebitda");
+  });
+
+  test("EUR 1.3 million does not split at the decimal point", () => {
+    const { candidates } = splitDraftIntoCandidatesV2("The ticket was EUR 1.3 million.");
+    assert.equal(candidates.length, 1);
+    assert.match(candidates[0], /EUR 1\.3 million/);
+    assert.deepEqual(
+      moneyFigs("The ticket was EUR 1.3 million.").map((f) => f.value),
+      [1.3e6]
+    );
+  });
+
+  test("no metric phrase in the sentence is unknown and the force is held", () => {
+    const statement = "The widget price was EUR 95 million.";
+    const passage = "The comparable ticket was EUR 155 million.";
+    assert.equal(moneyFigs(statement)[0]?.metric, undefined);
+    assert.equal(moneyFigs(passage)[0]?.metric, undefined);
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "no_support", passage, explanation: "No overlap." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "conflicting");
   });
 });
 

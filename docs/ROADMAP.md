@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-20 (B60 money metric keys + B70 plain m as million)
+Last updated: 2026-08-20 (B60.1 sentence-scoped money metrics)
 
 ---
 
@@ -330,7 +330,11 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B60 — Money metric ids and same-metric guard** (shipped 2026-08-20). Money figures get one canonical `metric` from a longest-first word-boundary phrase list (ARR vs revenue does not share an id). The magnitude backstop suppresses a forced money conflict only when both sides resolved and those ids differ; unrecognised metrics fail closed. Count and percent are untouched. Shadow: `scripts/diagnostic/b60-money/run-shadow.mjs`. Tag: `review-money-metric-keys`.
 
-**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**, **B53c**. **B67** closed 2026-08-19 on the probe.
+### B60.1 — sentence-scoped money metric (closed 2026-08-20)
+
+**B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent is untouched. Tag: `review-money-metric-scope`. Residual: **B71** (currency not recorded; `$155m` vs `EUR 155 million` stay `partially_confirmed`).
+
+**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**, **B53c**, **B71**. **B67** closed 2026-08-19 on the probe.
 
 ---
 
@@ -748,7 +752,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
 1. ~~**WSC1 / WR1 — Writing scaffold (demo-facing)**~~ — **SHIPPED 2026-07-06** — see **Recently shipped → WR1**. PG prompt library, Writing input modal, Methodology Note, deterministic backstops, Assess generate wiring. Tags: `wr1-writing-scaffold` (backend), `v8.66.0-wr1-writing-scaffold` (frontend).
 1b. ~~**A10 — Adapt into Assess**~~ — **SHIPPED 2026-07-09** — see **Recently shipped → A10**. Frontend `v8.51.0-rA10-adapt-into-assess`; backend `/api/adapt` unchanged.
-2. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. **B53a** claim spans shipped 2026-08-19 (default ON). **B63** LLM result cache shipped 2026-08-20 as a cost optimisation only (flag default ON; does not close B61). **B70** plain `m` as million and **B60** money metric keys shipped 2026-08-20. **Next: B61** (hasConflict residual; durable storage). Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
+2. **R6 — Review Quality** (active scoping) — umbrella for R6.1–R6.10, R6.12. **R6.5** house style framework shipped 2026-05-27. **R6.4** chapter closed 2026-05-31 (R6.4a/b/c shipped; R6.4d closed as non-issue). **R6.3** shipped 2026-05-31. **R6.6** source-public-state awareness shipped 2026-06-25. **B53a** claim spans shipped 2026-08-19 (default ON). **B63** LLM result cache shipped 2026-08-20 as a cost optimisation only (flag default ON; does not close B61). **B70** plain `m` as million, **B60** money metric keys, and **B60.1** sentence-scoped money metrics shipped 2026-08-20. **Next: B61** (hasConflict residual; durable storage). Near-term work-streams from 2026-06-01 diagnostic + comments review — see **Near-term — Review output** above.
 3. ~~**R6.11 — EDITORIAL SCHEMA-FALLBACK**~~ — **SHIPPED / chapter closed 2026-06-25** (R6.11a + R6.11b + **B21**). See **Near-term — Review output** and **Recently shipped → R6.11**.
 4. ~~**COMMENTARY CALIBRATION (B22 chapter)**~~ — **SHIPPED / closed** (B22 + B22.1 + B22.2). ~~**EDITORIAL RULE BUG-FIX PASS (B23)**~~ — **SHIPPED** (R6.2e + R6.2f). ~~**R6.6 (source-public-state)**~~ — **SHIPPED 2026-06-25**. ~~**B26 / B26.1 (constructive feedback output)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26 / B26.1**. ~~**B26.2 (constructive feedback craft pass)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2**. ~~**B26.2.2 (constructive feedback readability)**~~ — **SHIPPED 2026-06-30** — see **Recently shipped → B26.2.2**. ~~**B26.2.4 (output-type-aware craft pass)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → B26.2.4**. ~~**R6.12 (editorial output-type voice/register)**~~ — **SHIPPED 2026-07-05** — see **Recently shipped → R6.12**. Next: **R7**.
 5. **Relative-source-period resolution (R2.7.2.1)** — **parked** (2026-06-01 scoping); see **R2.7.2.1** above and backlog **B17**.
@@ -836,6 +840,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B59 — extractPercents "per cent" + same-metric percent guard | `review-percent-extract` |
 | B70 — parse plain m as million | `review-money-scale` |
 | B60 — money metric ids and same-metric guard | `review-money-metric-keys` |
+| B60.1 — sentence-scoped money metric resolution | `review-money-metric-scope` |
 | B53a — internal claim spans, upgrade-only rollup | `review-claim-spans` (`c290cee`) |
 | B53a default ON + Stage 2 concurrency 24 | `review-claim-spans-on` (`e6e59a6`) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |
