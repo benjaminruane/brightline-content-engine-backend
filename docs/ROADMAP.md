@@ -310,6 +310,10 @@ Resolving tags: `review-claim-spans` (`c290cee`, implementation), `review-claim-
 
 Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches shared Stage 1 + whole-sentence Stage 2 to gitignored `.baseline.json`.
 
+### B64 — claim-span anchors (closed 2026-08-20)
+
+**B64 — Spelled-out numbers, acronyms, and mid-sentence proper nouns** (shipped 2026-08-20). Widens the claim-spans validity and coverage-guard anchor test only; the Stage 1b pre-filter, `collectBackstopFigures`, and materiality are unchanged. Shadow (one process, shared LLM cache): `anchorless_claim` 14 → 8; decomposed 20 → 26; zero verdict changes; zero `hasConflict` changes. Tag: `review-claim-anchors`.
+
 ### B63 — LLM result cache (cost optimisation only, closed 2026-08-20)
 
 **B63 — LLM result cache for the verdict path** (shipped 2026-08-20, flag `QC_LLM_CACHE` default ON). Stages 1, 1b, and 2. Process-local in-memory LRU, logical collection `qc_llm_cache`, caps 1024 entries / 16 MiB. Gate identity with LRU in place: 479 entries, eviction count 0, diff count 0; warm hit rate 100% inside one process. **Limitation:** the cache does not survive a cold start or an instance change, so cross-session repeatability is not delivered. **Does not close B61.** Tags: `review-llm-cache` (`e6fd99c`), `review-llm-cache-on`.

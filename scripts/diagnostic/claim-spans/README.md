@@ -5,6 +5,7 @@ Read-only. Does not commit. Compares flag-OFF (`V_today`) to flag-ON (upgrade-on
 ```
 node scripts/diagnostic/claim-spans/run-shadow.mjs
 node scripts/diagnostic/claim-spans/run-shadow.mjs --refresh-baseline
+node scripts/diagnostic/claim-spans/run-b64-shadow.mjs
 ```
 
 Loads `.env.local` via the diagnostic env helper. Needs `OPENAI_API_KEY`.
@@ -28,3 +29,7 @@ Editorial, commentary, and the widened multi-passage pass are not part of this g
 - Zero `hasConflict` changes
 - On a run where Nordholt CLEAN S0's baseline is `partially_confirmed`, the upgrade fires
 - Supersession S0/S1 stay supported plus note; S2/S3 stay conflict
+
+## B64 anchor-test shadow
+
+`run-b64-shadow.mjs` compares the old digit / two-word Title-Case anchor test to the widened test (spelled-out numbers, acronyms, mid-sentence proper nouns) in **one process**. `.baseline.json` is reused when fingerprint-valid; otherwise Stage 1 and whole-sentence Stage 2 are populated once. The in-process LLM cache is the shared baseline for both arms. The second arm should be near-free except for genuinely new claims.

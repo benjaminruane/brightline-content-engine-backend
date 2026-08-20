@@ -5,6 +5,7 @@ import {
   RELATIONAL_CONNECTIVES,
   attachDraftOffsets,
   extractVerifiableAnchors,
+  extractClaimSpanAnchors,
   isClaimSpansEnabled,
   isCompoundCandidate,
   locateClaimSpan,
@@ -305,6 +306,111 @@ describe("rollupClaimVerdicts truth table", () => {
       assert.ok(out.verdict === vToday || out.verdict === "confirmed");
       if (vToday !== "partially_confirmed") assert.equal(out.verdict, vToday);
     }
+  });
+});
+
+describe("B64 widened claim-span anchors", () => {
+  test("spelled-out cardinal is an anchor", () => {
+    const parent =
+      "Alpha Holdings grew 12 percent, and the clinic runs six times per week.";
+    const out = validateClaimSpans(parent, [
+      "Alpha Holdings grew 12 percent",
+      "the clinic runs six times per week",
+    ]);
+    assert.equal(out.ok, true);
+    const anchors = extractClaimSpanAnchors("the clinic runs six times per week", {
+      parentSentence: parent,
+      localStart: parent.indexOf("the clinic runs six times per week"),
+    });
+    assert.ok(anchors.some((a) => a.kind === "spelled_number" && /six/i.test(a.text)));
+  });
+
+  test("all-caps acronym of two or more letters is an anchor", () => {
+    const parent = "ARR continued to compound, and occupancy is 90 percent.";
+    const out = validateClaimSpans(parent, [
+      "ARR continued to compound",
+      "occupancy is 90 percent",
+    ]);
+    assert.equal(out.ok, true);
+    const anchors = extractClaimSpanAnchors("ARR continued to compound", {
+      parentSentence: parent,
+      localStart: 0,
+    });
+    assert.ok(anchors.some((a) => a.kind === "acronym" && a.text === "ARR"));
+  });
+
+  test("single-word proper noun mid-sentence is an anchor", () => {
+    const parent = "The firm has offices in London, and revenue reached EUR 10 million.";
+    const out = validateClaimSpans(parent, [
+      "The firm has offices in London",
+      "revenue reached EUR 10 million",
+    ]);
+    assert.equal(out.ok, true);
+    const claim = "The firm has offices in London";
+    const anchors = extractClaimSpanAnchors(claim, {
+      parentSentence: parent,
+      localStart: parent.indexOf(claim),
+    });
+    assert.ok(anchors.some((a) => a.kind === "proper_noun" && a.text === "London"));
+  });
+
+  test("a sentence-initial capital is not an anchor", () => {
+    const parent = "Growth continued through the year, and revenue reached EUR 10 million.";
+    const out = validateClaimSpans(parent, [
+      "Growth continued through the year",
+      "revenue reached EUR 10 million",
+    ]);
+    assert.equal(out.ok, false);
+    assert.equal(out.reason, "anchorless_claim");
+    const anchors = extractClaimSpanAnchors("Growth continued through the year", {
+      parentSentence: parent,
+      localStart: 0,
+    });
+    assert.equal(
+      anchors.filter((a) => a.kind === "proper_noun" && a.text === "Growth").length,
+      0
+    );
+  });
+
+  test("a lone letter is not an acronym", () => {
+    const parent = "Grade A stock is tight, and occupancy is 90 percent.";
+    const out = validateClaimSpans(parent, [
+      "Grade A stock is tight",
+      "occupancy is 90 percent",
+    ]);
+    assert.equal(out.ok, false);
+    assert.equal(out.reason, "anchorless_claim");
+    const anchors = extractClaimSpanAnchors("Grade A stock is tight", {
+      parentSentence: parent,
+      localStart: 0,
+    });
+    assert.equal(
+      anchors.filter((a) => a.kind === "acronym" && a.text === "A").length,
+      0
+    );
+  });
+
+  test("coverage guard blocks an upgrade when the residual holds only a spelled-out number", () => {
+    const parent =
+      "Alpha Holdings grew 12 percent, and Beta Ltd grew 8 percent, with six additional hires.";
+    const validated = validateClaimSpans(parent, [
+      "Alpha Holdings grew 12 percent",
+      "Beta Ltd grew 8 percent",
+    ]);
+    assert.equal(validated.ok, true);
+    const guard = residualHasUnclaimedAnchor(parent, validated.claims);
+    assert.equal(guard.blocked, true);
+    assert.ok(guard.anchors.some((a) => /six/i.test(a.text)));
+    assert.equal(extractVerifiableAnchors(guard.residual).length, 0);
+    const rolled = rollupClaimVerdicts({
+      vToday: "partially_confirmed",
+      claimVerdicts: ["confirmed", "confirmed"],
+      residualBlocked: guard.blocked,
+      wholeSentenceHasConflict: false,
+    });
+    assert.equal(rolled.claimUpgrade, false);
+    assert.equal(rolled.verdict, "partially_confirmed");
+    assert.ok(rolled.blockedBy.includes("c"));
   });
 });
 
