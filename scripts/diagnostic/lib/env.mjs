@@ -1,11 +1,15 @@
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { REPO_ROOT } from "./paths.mjs";
+import { applyDiagnosticDiskCache, forceLiveMeasurementCacheOff } from "./llm-cache-disk.mjs";
 
 /**
  * Load KEY=VALUE lines from .env.local / .env (no dependency). Does not override existing env.
+ * Diagnostic scripts then pick up the disk LLM cache unless liveMeasurement is set.
+ *
+ * @param {{ liveMeasurement?: boolean }} [options]
  */
-export function loadLocalEnvFiles() {
+export function loadLocalEnvFiles(options = {}) {
   for (const name of [".env.local", ".env"]) {
     const filePath = path.join(REPO_ROOT, name);
     if (!existsSync(filePath)) continue;
@@ -28,4 +32,11 @@ export function loadLocalEnvFiles() {
       }
     }
   }
+  if (options.liveMeasurement === true) {
+    forceLiveMeasurementCacheOff();
+    return;
+  }
+  applyDiagnosticDiskCache(process.argv);
 }
+
+export { applyDiagnosticDiskCache, forceLiveMeasurementCacheOff };

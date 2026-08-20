@@ -21,6 +21,8 @@ There is no backend document store. Draft version history lives in frontend Reac
 
 The Map is LRU-bounded: `LLM_CACHE_MAX_ENTRIES = 1024` and `LLM_CACHE_MAX_BYTES = 16 MiB`. Eviction is a miss, never a wrong answer. TEST 1 against this LRU: 479 entries, eviction count 0, identity diff count 0.
 
+Local diagnostics may set `QC_LLM_CACHE_DISK` to a gitignored file (`scripts/diagnostic/.llm-cache.json` by default). That path is unset in production. `--no-disk-cache` and `--refresh-cache` apply to diagnostic scripts. The cache-identity gate, Stage 1 stability script, and Stage 2 determinism script force the cache off. See `scripts/diagnostic/README.md`.
+
 ## Known limitation
 
 This makes results repeatable inside one process, not correct. The first answer is still whatever the model gave that time, including on a borderline sentence where it might reasonably have said something else. Caching locks in an answer; it does not improve it. The improvement path for borderline compound sentences is B53a, which is already live and shipped.

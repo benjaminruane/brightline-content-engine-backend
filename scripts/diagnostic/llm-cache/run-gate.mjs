@@ -16,7 +16,7 @@ import { loadAllFixtures } from "../lib/fixtures.mjs";
 import { DIAG_ROOT } from "../lib/paths.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
 
-loadLocalEnvFiles();
+loadLocalEnvFiles({ liveMeasurement: true });
 
 const TODAY = new Date("2026-08-18T00:00:00Z");
 const NORDHOLT_DIR = path.join(process.env.HOME || "", "Downloads");

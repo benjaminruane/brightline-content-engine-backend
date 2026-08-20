@@ -15,6 +15,23 @@ In-process batch runner for R6 Review Quality evidence gathering. **Not producti
 | `claim-spans/` | B53a shadow gate; `.baseline.json` caches Stage 1 + whole-sentence Stage 2 (gitignored) |
 | `supersession/` | Period-supersession gate fixture (draft + three dated sources) |
 | `b67-probe/` | Planted Nordholt-dirty ARR probe: IC memo `conflicting` is correct (B67, preserve); press/fact-sheet `conflicting` on EUR 155m revenue is B60 |
+| `.llm-cache.json` | B69 disk-backed LLM cache for Stages 1, 1b, and 2 (gitignored). Default ON for diagnostic scripts. |
+
+## LLM cache (local diagnostics)
+
+A cached answer is CORRECT when the model's judgement is an INPUT you want held constant. It is WRONG when the model's judgement is the THING BEING MEASURED.
+
+Scripts under this folder set `QC_LLM_CACHE_DISK` to `scripts/diagnostic/.llm-cache.json` unless it is already set. Opt out with `--no-disk-cache`. Wipe and repopulate with `--refresh-cache`. Production is unchanged: the env var is unset, so the process uses memory only.
+
+These three scripts measure the model itself and force the cache OFF, unconditionally, regardless of env or flags:
+
+- `scripts/diagnostic/llm-cache/run-gate.mjs`
+- `scripts/diagnostic/llm-cache/run-stage1-stability.mjs`
+- `scripts/diagnostic/stage2-determinism/run.mjs`
+
+When writing a new diagnostic, classify it with that rule. If the model is the thing being measured, call `loadLocalEnvFiles({ liveMeasurement: true })`. Otherwise leave the default disk cache on.
+
+Do not stretch `claim-spans/.baseline.json` into a general cache. It remains a frozen A/B snapshot of Stage 1 plus whole-sentence Stage 2 for the claim-span shadows only.
 
 ## Prerequisites
 

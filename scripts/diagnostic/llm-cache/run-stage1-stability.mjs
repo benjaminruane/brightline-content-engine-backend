@@ -10,8 +10,7 @@
 import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { loadAllFixtures } from "../lib/fixtures.mjs";
 
-loadLocalEnvFiles();
-process.env.QC_LLM_CACHE = "0";
+loadLocalEnvFiles({ liveMeasurement: true });
 
 const { extractStatements } = await import("../../../lib/qc/pipeline-v4/stage1-extract-statements.mjs");
 const { isLlmCacheEnabled } = await import("../../../lib/qc/llm-cache.mjs");

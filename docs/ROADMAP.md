@@ -310,6 +310,10 @@ Resolving tags: `review-claim-spans` (`c290cee`, implementation), `review-claim-
 
 Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches shared Stage 1 + whole-sentence Stage 2 to gitignored `.baseline.json`.
 
+### B69 — disk-backed LLM cache for local diagnostics (closed 2026-08-20)
+
+**B69 — Disk-backed LLM cache for local diagnostics** (shipped 2026-08-20). File-backed store behind `QC_LLM_CACHE_DISK`. Unset = memory only (production unchanged). Diagnostic scripts default to gitignored `scripts/diagnostic/.llm-cache.json`; `--no-disk-cache` / `--refresh-cache`. Three live-measurement scripts force the cache off. Does not close B61. Tag: `review-cache-disk`.
+
 ### B64 — claim-span anchors (closed 2026-08-20)
 
 **B64 — Spelled-out numbers, acronyms, and mid-sentence proper nouns** (shipped 2026-08-20). Widens the claim-spans validity and coverage-guard anchor test only; the Stage 1b pre-filter, `collectBackstopFigures`, and materiality are unchanged. Shadow (one process, shared LLM cache): `anchorless_claim` 14 → 8; decomposed 20 → 26; zero verdict changes; zero `hasConflict` changes. Tag: `review-claim-anchors`.

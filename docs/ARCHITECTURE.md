@@ -55,7 +55,7 @@ If any source returns `conflicting` for a statement, `hasConflict` is true and c
 
 ### Deterministic verdicts
 
-Same draft + same sources → same aggregated evidence verdict on repeated runs. Temperature **0** on all QC LLM stages. (Run-to-run variance on Editorial concerns at temp 0 is a known LLM API property; evidence aggregation itself is deterministic given fixed Stage 2 outputs.) Flag `QC_LLM_CACHE` (default ON; set `0`/`false`/`off` to disable) can replay Stages 1, 1b, and 2 from a process-local LRU; it does not survive a cold start and does not close residual `hasConflict` drift (**B61**).
+Same draft + same sources → same aggregated evidence verdict on repeated runs. Temperature **0** on all QC LLM stages. (Run-to-run variance on Editorial concerns at temp 0 is a known LLM API property; evidence aggregation itself is deterministic given fixed Stage 2 outputs.) Flag `QC_LLM_CACHE` (default ON; set `0`/`false`/`off` to disable) can replay Stages 1, 1b, and 2 from a process-local LRU. Production does not set `QC_LLM_CACHE_DISK`, so the store is memory only and does not survive a cold start. Local diagnostics may point that env var at a gitignored file. Neither mode closes residual `hasConflict` drift (**B61**).
 
 ### No extra cards from decomposition
 
