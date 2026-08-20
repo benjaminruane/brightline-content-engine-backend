@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * B60.1 shadow against current main (B60 character window). Shared Stage 1 +
- * whole-sentence Stage 2 from the disk cache. ON arm replays sentence-scoped
- * metric resolution against the model's pre-backstop classification (Langfuse
- * diagnose trace).
+ * B72 shadow against current main (B60.1). Shared Stage 1 + whole-sentence
+ * Stage 2 from the disk cache. ON arm replays sentence-scoped percent ids
+ * against the model's pre-backstop classification (Langfuse diagnose trace).
+ * The b72 probe is checked deterministically (no live Stage 2) so a cache
+ * miss cannot bill a new pair.
  *
  * Usage:
  *   node scripts/diagnostic/b60-money/run-shadow.mjs
@@ -23,6 +24,7 @@ const TODAY = new Date("2026-08-18T00:00:00Z");
 const NORDHOLT_DIR = path.join(process.env.HOME || "", "Downloads");
 const SUPERSESSION_DIR = path.join(DIAG_ROOT, "supersession");
 const B67_DIR = path.join(DIAG_ROOT, "b67-probe");
+const B72_DIR = path.join(DIAG_ROOT, "b72-probe");
 const DIAGNOSE_TRACE_ID = "b4659844-9b2e-444a-ad50-73dc73b12074";
 const MAX_LIVE_COST_USD = 0.5;
 
@@ -265,36 +267,28 @@ async function loadLlmClassMap(traceId) {
   return { map, fetched };
 }
 
-const PREDICTED = new Set([
-  "b67-probe|S6|press release",
-  "F18|S7|18b_synth_cross_source_pair_update",
-]);
+const PREDICTED = new Set();
 
-/** Current main (B60 character window) ON-arm class where it already differs from diagnose. */
+/** Current main after B60.1. B72 must not move any of these. */
 const CURRENT_MAIN_PAIRS = {
   "nordholt-dirty|S2|press release": "partially_confirmed",
   "nordholt-dirty|S2|fact sheet": "partially_confirmed",
   "b67-probe|S2|press release": "partially_confirmed",
   "b67-probe|S2|fact sheet": "partially_confirmed",
   "b67-probe|S6|fact sheet": "no_support",
-  "b67-probe|S6|press release": "conflicting",
-  "F18|S7|18b_synth_cross_source_pair_update": "no_support",
-};
-
-const EXPECTED_ON_VS_MAIN = {
   "b67-probe|S6|press release": "no_support",
   "F18|S7|18b_synth_cross_source_pair_update": "conflicting",
 };
 
+const EXPECTED_ON_VS_MAIN = {};
+
 const CURRENT_MAIN_STMTS = {
   "nordholt-dirty|2": { verdict: "partially_confirmed", hasConflict: false },
   "b67-probe|2": { verdict: "partially_confirmed", hasConflict: false },
-  "F18|7": { verdict: "confirmed", hasConflict: false },
-};
-
-const EXPECTED_STMT_VS_MAIN = {
   "F18|7": { verdict: "confirmed", hasConflict: true },
 };
+
+const EXPECTED_STMT_VS_MAIN = {};
 
 const MUST_STILL_FIRE = [
   ["nordholt-clean", 1, "IC memo"],
@@ -320,7 +314,7 @@ async function main() {
   };
 
   const store = getLlmCacheStore();
-  console.log("# B60.1 sentence-scoped money metric SHADOW");
+  console.log("# B72 percent metric scope SHADOW");
   console.log(`store.kind=${store?.kind} path=${store?.filePath || ""} entries=${store?.size?.() ?? "?"}`);
   console.log(`diagnoseTrace=${DIAGNOSE_TRACE_ID}`);
 
@@ -334,7 +328,7 @@ async function main() {
   const traceId = createTraceId();
   startTrace({
     traceId,
-    traceName: "b60.1-shadow",
+    traceName: "b72-shadow",
     metadata: { pipelineRoute: "v4", runStartedAt: new Date().toISOString() },
   });
   console.log(`langfuse shadowTrace=${traceId}`);
@@ -350,7 +344,7 @@ async function main() {
   const origLog = console.log;
   console.log = (...args) => {
     const line = String(args[0] || "");
-    if (line.startsWith("[magnitude-backstop] suppressed money force")) {
+    if (line.startsWith("[magnitude-backstop] suppressed ")) {
       suppressions.push(line);
     }
     origLog.apply(console, args);
@@ -439,7 +433,7 @@ async function main() {
 
   console.log = origLog;
   const cacheSummary = endCacheRun();
-  logCacheRunSummary(cacheSummary, "b60.1-shadow");
+  logCacheRunSummary(cacheSummary, "b72-shadow");
   await flushObservability();
 
   function mainPairClass(row) {
@@ -468,7 +462,7 @@ async function main() {
   });
 
   console.log("");
-  console.log("## Pair classification vs current main (B60 window)");
+  console.log("## Pair classification vs current main (B60.1)");
   if (pairChangesVsMain.length === 0) console.log("  (none)");
   for (const r of pairChangesVsMain) {
     const predicted = PREDICTED.has(r.key) ? "predicted" : "UNEXPECTED";
@@ -592,6 +586,55 @@ async function main() {
     );
   }
 
+  const pressS6 = pairRows.find((r) => r.key === "b67-probe|S6|press release");
+  if (!pressS6) failures.push("b67-probe S6 x press release missing");
+  else if (pressS6.onClass !== "no_support") {
+    failures.push(`b67-probe S6 x press release onClass=${pressS6.onClass} expected no_support`);
+  }
+
+  const probeDraft = (await readFile(path.join(B72_DIR, "draft.txt"), "utf8")).trim();
+  const probeSrc = await readFile(path.join(B72_DIR, "source_ebitda_margin.txt"), "utf8");
+  const probeStmtFig = collectBackstopFigures(probeDraft).find((f) => f.kind === "percent");
+  const probeSrcFig = collectBackstopFigures(probeSrc).find((f) => f.kind === "percent");
+  const probeGap = hasEgregiousMagnitudeGap(probeDraft, probeSrc);
+  console.log(
+    `b72 probe gapOn=${probeGap ? "1" : "0"} stmt=${probeStmtFig?.metric} src=${probeSrcFig?.metric}`
+  );
+  if (probeStmtFig?.metric !== "gross_margin" || probeSrcFig?.metric !== "ebitda_margin") {
+    failures.push(`b72 probe metrics stmt=${probeStmtFig?.metric} src=${probeSrcFig?.metric}`);
+  }
+  if (probeGap) failures.push("b72 probe still forces a conflict");
+
+  function percentForce(statement, passage) {
+    const stmt = collectBackstopFigures(statement).filter((f) => f.kind === "percent");
+    const src = collectBackstopFigures(passage).filter((f) => f.kind === "percent");
+    if (!stmt.length || !src.length) return false;
+    for (const s of stmt) {
+      let best = src[0];
+      let bestDiff = Math.abs(s.value - best.value);
+      for (const p of src) {
+        const d = Math.abs(s.value - p.value);
+        if (d < bestDiff) {
+          best = p;
+          bestDiff = d;
+        }
+      }
+      if (best.value === s.value) continue;
+      const hi = Math.max(Math.abs(s.value), Math.abs(best.value));
+      const lo = Math.min(Math.abs(s.value), Math.abs(best.value));
+      const ratio = hi / Math.max(lo, 1e-9);
+      const diff = Math.abs(s.value - best.value);
+      if (!(ratio >= 1.8 || diff >= 15)) continue;
+      if (s.metric && best.metric && s.metric === best.metric) return true;
+    }
+    return false;
+  }
+
+  const percentForces = pairRows.filter((r) => percentForce(r.statement, r.passage));
+  console.log(`percent forces=${percentForces.length}`);
+  for (const r of percentForces) console.log(`  PERCENT FORCE ${r.key}`);
+  if (percentForces.length) failures.push(`percent forces ${percentForces.length} (expected 0)`);
+
   const stmtChangedKeys = new Set(stmtChangesVsMain.map((r) => stmtKey(r)));
   for (const [key, expected] of Object.entries(EXPECTED_STMT_VS_MAIN)) {
     const row = stmtRows.find((r) => stmtKey(r) === key);
@@ -627,6 +670,9 @@ async function main() {
   console.log(
     `cache hitRate=${((cacheSummary.hitRate || 0) * 100).toFixed(1)}% hits=${cacheSummary.hits} misses=${cacheSummary.misses}`
   );
+  if ((cacheSummary.misses || 0) > 0) {
+    failures.push(`cache misses=${cacheSummary.misses} (corpus must stay warm; abort rather than bill)`);
+  }
 
   if (failures.length) {
     console.log("");

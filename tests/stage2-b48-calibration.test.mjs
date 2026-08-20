@@ -392,6 +392,113 @@ describe("B60.1 sentence-scoped money metric", () => {
   });
 });
 
+describe("B72 percent canonical ids (sentence scope, prefix collisions)", () => {
+  function percentMetric(text) {
+    const f = collectBackstopFigures(text).find((x) => x.kind === "percent");
+    return f ? f.metric : undefined;
+  }
+
+  function percentFigs(text) {
+    return collectBackstopFigures(text).filter((f) => f.kind === "percent");
+  }
+
+  test("prefix: gross margin vs margin", () => {
+    assert.equal(percentMetric("gross margin of 45 per cent"), "gross_margin");
+    assert.equal(percentMetric("margin of 45 per cent"), "margin_unspecified");
+  });
+
+  test("prefix: ebitda margin vs margin", () => {
+    assert.equal(percentMetric("EBITDA margin of 19 per cent"), "ebitda_margin");
+    assert.equal(percentMetric("margin of 19 per cent"), "margin_unspecified");
+  });
+
+  test("prefix: operating margin vs margin", () => {
+    assert.equal(percentMetric("operating margin of 22 per cent"), "operating_margin");
+  });
+
+  test("prefix: net margin vs margin", () => {
+    assert.equal(percentMetric("net margin of 12 per cent"), "net_margin");
+  });
+
+  test("prefix: revenue growth vs growth", () => {
+    assert.equal(percentMetric("revenue growth of 30 per cent"), "revenue_growth");
+    assert.equal(percentMetric("growth of 30 per cent"), "growth_unspecified");
+  });
+
+  test("prefix: arr growth vs growth", () => {
+    assert.equal(percentMetric("ARR growth of 40 per cent"), "arr_growth");
+  });
+
+  test("prefix: ebitda growth vs growth", () => {
+    assert.equal(percentMetric("EBITDA growth of 15 per cent"), "ebitda_growth");
+  });
+
+  test("prefix: net irr vs irr (same canonical id)", () => {
+    assert.equal(percentMetric("net IRR of 18 per cent"), "irr");
+    assert.equal(percentMetric("IRR of 18 per cent"), "irr");
+  });
+
+  test("leases and lease share lease; stake and ownership share ownership", () => {
+    assert.equal(percentMetric("leases roll at 40 per cent"), "lease");
+    assert.equal(percentMetric("lease roll at 40 per cent"), "lease");
+    assert.equal(percentMetric("ownership of 60 per cent"), "ownership");
+    assert.equal(percentMetric("stake of 60 per cent"), "ownership");
+  });
+
+  test("remaining singleton phrases resolve", () => {
+    assert.equal(percentMetric("CAGR of 19 per cent"), "cagr");
+    assert.equal(percentMetric("MOIC of 3.5 per cent"), "moic");
+    assert.equal(percentMetric("embedded reversion of 40 per cent"), "reversion");
+    assert.equal(percentMetric("proceeds of 12 per cent"), "proceeds");
+    assert.equal(percentMetric("headcount of 8 per cent"), "headcount");
+    assert.equal(percentMetric("composite of 11 per cent"), "composite");
+  });
+
+  test("unspecified margin does not match a specific margin; force is suppressed", () => {
+    const statement = "The margin of 45 per cent underpins the case.";
+    const passage = "EBITDA margin of 19 per cent.";
+    assert.equal(percentMetric(statement), "margin_unspecified");
+    assert.equal(percentMetric(passage), "ebitda_margin");
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+  });
+
+  test("b72 probe: gross margin 45 vs EBITDA margin 19 does not force", () => {
+    const statement = "The company's gross margin of 45 per cent underpins the investment case.";
+    const passage = "Reported EBITDA margin of 19 per cent. The business is otherwise in line with plan.";
+    assert.equal(percentMetric(statement), "gross_margin");
+    assert.equal(percentMetric(passage), "ebitda_margin");
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "no_support", passage, explanation: "Different margin." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "no_support");
+  });
+
+  test("same unspecified margin 45 vs 19 still forces", () => {
+    const statement = "The margin of 45 per cent underpins the case.";
+    const passage = "The margin of 19 per cent is reported.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+
+  test("two-metric percent sentence assigns each figure the nearest phrase", () => {
+    const text = "Gross margin was 45 per cent and EBITDA margin was 19 per cent.";
+    const figs = percentFigs(text);
+    assert.equal(figs.find((f) => f.value === 45)?.metric, "gross_margin");
+    assert.equal(figs.find((f) => f.value === 19)?.metric, "ebitda_margin");
+  });
+
+  test("model conflicting on a mismatched-margin pair is left standing", () => {
+    const statement = "The company's gross margin of 45 per cent underpins the investment case.";
+    const passage = "Reported EBITDA margin of 19 per cent.";
+    const out = applyRoundingToleranceBackstop(
+      { classification: "conflicting", passage, explanation: "Model found a contradiction." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "conflicting");
+  });
+});
+
 describe("B48 prompt anchors", () => {
   test("stage2_v4.md contains modality, magnitude, framing, CDS, and procedural examples", async () => {
     const prompt = await readFile(
