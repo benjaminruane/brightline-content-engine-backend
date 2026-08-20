@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-20 (B63 shipped as cost optimisation only; B61 stays open)
+Last updated: 2026-08-20 (B70 parse plain m as million; B60 next)
 
 ---
 
@@ -321,6 +321,10 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 ### B63 — LLM result cache (cost optimisation only, closed 2026-08-20)
 
 **B63 — LLM result cache for the verdict path** (shipped 2026-08-20, flag `QC_LLM_CACHE` default ON). Stages 1, 1b, and 2. Process-local in-memory LRU, logical collection `qc_llm_cache`, caps 1024 entries / 16 MiB. Gate identity with LRU in place: 479 entries, eviction count 0, diff count 0; warm hit rate 100% inside one process. **Limitation:** the cache does not survive a cold start or an instance change, so cross-session repeatability is not delivered. **Does not close B61.** Tags: `review-llm-cache` (`e6fd99c`), `review-llm-cache-on`.
+
+### B70 — plain "m" as million (closed 2026-08-20)
+
+**B70 — Parse plain `m` as million** (shipped 2026-08-20). `extractMoney` already scaled `million|billion|thousand|mm|bn|k`; `$155m` was read as 155 and the magnitude backstop forced a conflict against `EUR 155 million`. Plain `m` is now million, case-insensitive, word-bounded, and only in the currency-prefix alternative so `155 m` with no currency is not money. Tag: `review-money-scale`. Residual: money/count still pair by kind only, **B60**.
 
 **Next build:** **B60** money-figure pairing (fixture `scripts/diagnostic/b67-probe/`; IC memo achieved-versus-projected `conflicting` is preserve-not-change). No release is cut until this review-quality arc completes. Residuals: **B61** (hasConflict only, M; durable storage required), **B62**, **B53b**, **B53c**. **B67** closed 2026-08-19 on the probe.
 
@@ -826,6 +830,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | B54 — percentage_notation on "per cent" | `review-percent-number-style` |
 | F14 — number_spelling spelled-out 0–12 | `review-percent-number-style` |
 | B59 — extractPercents "per cent" + same-metric percent guard | `review-percent-extract` |
+| B70 — parse plain m as million | `review-money-scale` |
 | B53a — internal claim spans, upgrade-only rollup | `review-claim-spans` (`c290cee`) |
 | B53a default ON + Stage 2 concurrency 24 | `review-claim-spans-on` (`e6e59a6`) |
 | Stage 2 conflict vs partial (R2.7.1) | `r2.7.1-conflict-partial-calibration` |

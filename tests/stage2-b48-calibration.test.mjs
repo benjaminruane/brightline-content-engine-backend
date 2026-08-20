@@ -164,6 +164,60 @@ describe("B48 procedural closer", () => {
   });
 });
 
+describe("B70 money scale (plain m as million)", () => {
+  function moneyValues(text) {
+    return collectBackstopFigures(text)
+      .filter((f) => f.kind === "money")
+      .map((f) => f.value);
+  }
+
+  test("$155m parses as 155 million", () => {
+    assert.deepEqual(moneyValues("combined revenue has surged to $155m"), [155e6]);
+  });
+
+  test("$155M parses as 155 million (case-insensitive)", () => {
+    assert.deepEqual(moneyValues("combined revenue has surged to $155M"), [155e6]);
+  });
+
+  test("EUR 155m parses as 155 million", () => {
+    assert.deepEqual(moneyValues("ARR reached EUR 155m."), [155e6]);
+  });
+
+  test("155m with no currency does not parse as money", () => {
+    assert.deepEqual(moneyValues("headcount reached 155m this year."), []);
+  });
+
+  test("155 m with no currency does not parse as money", () => {
+    assert.deepEqual(moneyValues("the reading was 155 m on the gauge."), []);
+  });
+
+  test("existing currency units still parse at the right scale", () => {
+    assert.deepEqual(moneyValues("USD 2 million"), [2e6]);
+    assert.deepEqual(moneyValues("EUR 3mm"), [3e6]);
+    assert.deepEqual(moneyValues("GBP 4 billion"), [4e9]);
+    assert.deepEqual(moneyValues("AUD 5bn"), [5e9]);
+    assert.deepEqual(moneyValues("CAD 6 thousand"), [6e3]);
+    assert.deepEqual(moneyValues("$7k"), [7e3]);
+  });
+
+  test("bare million/billion without currency still parse", () => {
+    assert.deepEqual(moneyValues("closed at 18.4 billion"), [18.4e9]);
+    assert.deepEqual(moneyValues("gross proceeds of 12.8 billion"), [12.8e9]);
+    assert.deepEqual(moneyValues("ticket of 50 million"), [50e6]);
+    assert.deepEqual(moneyValues("check of 2 mm against the tape"), [2e6]);
+    assert.deepEqual(moneyValues("raise of 1.2 bn"), [1.2e9]);
+  });
+
+  test("$155m versus EUR 155 million is not an egregious money gap", () => {
+    const statement =
+      "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.";
+    const passage = "Combined annual revenue for the enlarged group stands at approximately EUR 155 million.";
+    assert.deepEqual(moneyValues(statement), [155e6]);
+    assert.deepEqual(moneyValues(passage), [155e6]);
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+  });
+});
+
 describe("B48 prompt anchors", () => {
   test("stage2_v4.md contains modality, magnitude, framing, CDS, and procedural examples", async () => {
     const prompt = await readFile(
