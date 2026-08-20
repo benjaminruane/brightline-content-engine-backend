@@ -341,3 +341,57 @@ describe("withLlmCache behaviour", () => {
     assert.equal(again.explanation, "why");
   });
 });
+
+describe("LRU bounds", () => {
+  test("entry cap evicts least recently used and that is a miss", async () => {
+    const store = createMemoryStore({ maxEntries: 2, maxBytes: 1024 * 1024 });
+    await store.put("a", { payload: { id: "a" } });
+    await store.put("b", { payload: { id: "b" } });
+    await store.put("c", { payload: { id: "c" } });
+    assert.equal(store.size(), 2);
+    assert.equal(await store.get("a"), null);
+    assert.equal((await store.get("b")).payload.id, "b");
+    assert.equal((await store.get("c")).payload.id, "c");
+  });
+
+  test("get refreshes recency so a later insert evicts the untouched key", async () => {
+    const store = createMemoryStore({ maxEntries: 2, maxBytes: 1024 * 1024 });
+    await store.put("a", { payload: { id: "a" } });
+    await store.put("b", { payload: { id: "b" } });
+    assert.equal((await store.get("a")).payload.id, "a");
+    await store.put("c", { payload: { id: "c" } });
+    assert.equal(await store.get("b"), null);
+    assert.equal((await store.get("a")).payload.id, "a");
+    assert.equal((await store.get("c")).payload.id, "c");
+  });
+
+  test("byte cap evicts until under the budget", async () => {
+    const store = createMemoryStore({ maxEntries: 50, maxBytes: 250 });
+    await store.put("small-a", { payload: { text: "x".repeat(80) } });
+    await store.put("small-b", { payload: { text: "y".repeat(80) } });
+    await store.put("small-c", { payload: { text: "z".repeat(80) } });
+    assert.ok(store.byteSize() <= 250);
+    assert.equal(await store.get("small-a"), null);
+    const last = await store.get("small-c");
+    assert.equal(last.payload.text, "z".repeat(80));
+  });
+
+  test("an oversized entry is not stored, so the next lookup is a miss", async () => {
+    const store = createMemoryStore({ maxEntries: 10, maxBytes: 80 });
+    await store.put("huge", { payload: { text: "n".repeat(500) } });
+    assert.equal(store.size(), 0);
+    assert.equal(await store.get("huge"), null);
+  });
+
+  test("eviction never returns a different payload for a surviving key", async () => {
+    const store = createMemoryStore({ maxEntries: 2, maxBytes: 1024 * 1024 });
+    await store.put("keep", { payload: { classification: "confirmed", passage: "keep-passage" } });
+    await store.put("drop", { payload: { classification: "conflicting", passage: "drop-passage" } });
+    await store.put("new", { payload: { classification: "no_support", passage: "new-passage" } });
+    const keep = await store.get("keep");
+    assert.equal(keep, null);
+    const surviving = await store.get("new");
+    assert.equal(surviving.payload.classification, "no_support");
+    assert.equal(surviving.payload.passage, "new-passage");
+  });
+});

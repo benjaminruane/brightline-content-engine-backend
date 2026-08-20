@@ -10,7 +10,23 @@ Loads `.env.local` via the diagnostic env helper. Needs `OPENAI_API_KEY`. Turns 
 
 ## Persistence
 
-There is no backend document store. Draft version history lives in frontend React state (`versions` in `useDraftState`). Cached rows therefore sit in a process-global in-memory Map, logical collection `qc_llm_cache`, in `lib/qc/llm-cache.mjs`. Same trust boundary as draft content. No new datastore, dependency, or table. Durable only for the life of the Node process (enough for a warm re-review on a warm Vercel instance, and for this gate).
+There is no backend document store. Draft version history lives in frontend React state (`versions` in `useDraftState`). Cached rows therefore sit in a process-global in-memory Map, logical collection `qc_llm_cache`, in `lib/qc/llm-cache.mjs`. Same trust boundary as draft content. No new datastore, dependency, or table. Durable only for the life of the Node process. The cache does not survive a cold start or an instance change, so cross-session repeatability is not delivered.
+
+The Map is LRU-bounded: `LLM_CACHE_MAX_ENTRIES = 1024` and `LLM_CACHE_MAX_BYTES = 16 MiB`. Eviction is a miss, never a wrong answer. Required before `QC_LLM_CACHE` can go on.
+
+## Known limitation
+
+This makes results repeatable, not correct. The first answer is still whatever the model gave that time, including on a borderline sentence where it might reasonably have said something else. Caching locks in an answer; it does not improve it. The improvement path for borderline compound sentences is B53a, which is already live and shipped.
+
+B63 is a cost optimisation only. It does not close B61.
+
+## Stage 1 boundary stability
+
+```
+node scripts/diagnostic/llm-cache/run-stage1-stability.mjs
+```
+
+Repeats the Test 2a one-sentence edit on F15 five times with the cache off, and reports how often unedited statements come back byte-identical.
 
 ## Known limitation
 
