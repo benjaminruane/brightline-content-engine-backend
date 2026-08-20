@@ -164,6 +164,131 @@ describe("B48 procedural closer", () => {
   });
 });
 
+describe("B60 money metric ids (longest-first, fail-closed guard)", () => {
+  function moneyMetric(text) {
+    const f = collectBackstopFigures(text).find((x) => x.kind === "money");
+    return f ? f.metric : undefined;
+  }
+
+  test("longest-first: annual recurring revenue resolves to arr, not revenue", () => {
+    assert.equal(moneyMetric("Annual recurring revenue was EUR 95 million."), "arr");
+  });
+
+  test("collision: recurring revenue vs revenue are different ids", () => {
+    assert.equal(moneyMetric("Recurring revenue was EUR 95 million."), "arr");
+    assert.equal(moneyMetric("Revenue was EUR 155 million."), "revenue");
+  });
+
+  test("collision: ARR vs combined annual revenue are different ids", () => {
+    assert.equal(moneyMetric("ARR reached EUR 95 million."), "arr");
+    assert.equal(moneyMetric("Combined annual revenue stands at EUR 155 million."), "revenue");
+  });
+
+  test("collision: ARR vs combined revenue are different ids", () => {
+    assert.equal(moneyMetric("ARR reached EUR 95 million."), "arr");
+    assert.equal(moneyMetric("Combined revenue has surged to $155m."), "revenue");
+  });
+
+  test("collision: annual recurring revenue vs revenue are different ids", () => {
+    assert.equal(moneyMetric("Annual recurring revenue reached EUR 95 million."), "arr");
+    assert.equal(moneyMetric("Revenue reached EUR 155 million."), "revenue");
+  });
+
+  test("combined annual revenue and sales canonicalize to revenue", () => {
+    assert.equal(moneyMetric("Combined annual revenue: EUR 155 million."), "revenue");
+    assert.equal(moneyMetric("Combined revenue stands at EUR 155 million."), "revenue");
+    assert.equal(moneyMetric("Sales were EUR 155 million."), "revenue");
+  });
+
+  test("collision under naive tokens: gross proceeds and proceeds share an id per the pinned list", () => {
+    assert.equal(moneyMetric("Gross proceeds were SEK 12.8 billion."), "proceeds");
+    assert.equal(moneyMetric("Proceeds were SEK 12.8 billion."), "proceeds");
+  });
+
+  test("collision: enterprise value vs equity are different ids", () => {
+    assert.equal(moneyMetric("Enterprise value was EUR 400 million."), "enterprise_value");
+    assert.equal(moneyMetric("Equity was EUR 180 million."), "equity");
+  });
+
+  test("word boundary: ebitda does not match ebit, and ebit is unrecognised", () => {
+    assert.equal(moneyMetric("EBITDA was EUR 45 million."), "ebitda");
+    assert.equal(moneyMetric("EBIT was EUR 45 million."), undefined);
+  });
+
+  test("aum / gmv / net debt canonicalize", () => {
+    assert.equal(moneyMetric("Assets under management were USD 2 billion."), "aum");
+    assert.equal(moneyMetric("AUM was USD 2 billion."), "aum");
+    assert.equal(moneyMetric("Gross merchandise value was USD 80 million."), "gmv");
+    assert.equal(moneyMetric("GMV was USD 80 million."), "gmv");
+    assert.equal(moneyMetric("Net debt was EUR 20 million."), "debt");
+    assert.equal(moneyMetric("Debt was EUR 20 million."), "debt");
+  });
+
+  test("window includes 48 characters after the match END, not the start", () => {
+    const after = "x".repeat(36);
+    const text = `Booked EUR 95 million${after} arr trailing.`;
+    assert.equal(moneyMetric(text), "arr");
+  });
+
+  test("ARR 95 vs combined annual revenue 155 does not force when the phrase is inside the window", () => {
+    const statement = "ARR reached EUR 95 million.";
+    const passage = "Combined annual revenue: EUR 155 million.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "no_support", passage, explanation: "Does not address ARR." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "no_support");
+  });
+
+  test("fail closed: combined annual revenue 71 characters before the figure is unrecognised", () => {
+    const statement = "ARR reached EUR 95 million.";
+    const passage =
+      "Combined annual revenue for the enlarged group stands at approximately EUR 155 million.";
+    const src = collectBackstopFigures(passage).find((f) => f.kind === "money");
+    assert.equal(src?.metric, undefined);
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+
+  test("fail closed: unrecognised money metric still forces against revenue", () => {
+    const statement = "The widget price was EUR 95 million.";
+    const passage = "Combined annual revenue: EUR 155 million.";
+    assert.equal(moneyMetric(statement), undefined);
+    assert.equal(moneyMetric(passage), "revenue");
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+
+  test("same-metric revenue 200 vs 100 still forces", () => {
+    const statement = "Revenue for the twelve months to 31 December 2025 was EUR 200 million.";
+    const passage = "Revenue for FY2019 was EUR 100 million.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+
+  test("18.4bn close vs 12.8bn gross proceeds still forces (fail closed on the close figure)", () => {
+    const statement = "The exit closed at SEK 18.4 billion and generated a 3.56x gross MOIC.";
+    const passage = "The exit generated gross proceeds of SEK 12.8 billion to Fund IV.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+
+  test("F18 nearest 95 vs 38: 38 tags as revenue because annual recurring falls out of the window", () => {
+    const statement =
+      "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold.";
+    const passage =
+      "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.";
+    const src38 = collectBackstopFigures(passage).find((f) => f.value === 38e6);
+    assert.equal(src38?.metric, "revenue");
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+  });
+
+  test("count 720 vs 640 still forces; count carries no metric", () => {
+    const statement = "The company employs 720 people.";
+    const passage = "The underlying businesses employed 640 people in aggregate.";
+    const figs = collectBackstopFigures(statement).filter((f) => f.kind === "count");
+    assert.equal(figs[0]?.metric, undefined);
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+});
+
 describe("B70 money scale (plain m as million)", () => {
   function moneyValues(text) {
     return collectBackstopFigures(text)

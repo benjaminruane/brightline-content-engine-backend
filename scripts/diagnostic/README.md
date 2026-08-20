@@ -15,6 +15,7 @@ In-process batch runner for R6 Review Quality evidence gathering. **Not producti
 | `claim-spans/` | B53a shadow gate; `.baseline.json` caches Stage 1 + whole-sentence Stage 2 (gitignored) |
 | `supersession/` | Period-supersession gate fixture (draft + three dated sources) |
 | `b67-probe/` | Planted Nordholt-dirty ARR probe: IC memo `conflicting` is correct (B67, preserve); press/fact-sheet `conflicting` on EUR 155m revenue is B60 |
+| `b60-money/` | B70+B60 shadow: plain `m` scale + money metric ids. Replays Stage 2 backstop against the disk cache. |
 | `.llm-cache.json` | B69 disk-backed LLM cache for Stages 1, 1b, and 2 (gitignored). Default ON for diagnostic scripts. |
 
 ## LLM cache (local diagnostics)
