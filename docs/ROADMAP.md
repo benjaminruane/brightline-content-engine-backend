@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (review-state persistence shipped)
+Last updated: 2026-08-21 (review-state tidy: no-blobs, cleanup, accepted restore limitation)
 
 ---
 
@@ -20,7 +20,7 @@ Last updated: 2026-08-21 (review-state persistence shipped)
 - **Production baseline (deployment-verified 2026-06-28 via Vercel):** live deploy `b23-docsync` (commit `9ab91c1`, main). All editorial-cluster code shipped and live — B21, B22 / B22.1 / B22.2 (latest code ship `b22.2-editorial-excerpt-removal`); subsequent commits (B22-docsync, b23-docsync, docs-hygiene) are documentation-only. Frontend `v8.54.1-r6.13.1-writing-intent-wiring`.
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
 - **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
-- **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`. Unblocked-but-not-built: **B9**, **B61**, **Pr13** (approved-text library).
+- **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`, `v8.72.0-review-state-cleanup`, `v8.73.0-review-state-no-blobs`, `v8.74.0-review-state-tidy`. **Accepted limitation (F16):** restored PDF/Office sources need re-upload before Review can run again. Open: **B78** (Vercel 4.5 MB request-body cap, unproven). Unblocked-but-not-built: **B9**, **B61**, **Pr13**.
 
 ---
 
@@ -109,6 +109,13 @@ Durable Neon store plus frontend autosave/restore of the in-progress review. One
 - **Backend store** — `GET` / `POST` / `DELETE` `/api/review-state`. Autosave buffer (overwrite is correct), not an audit record. Tag: `persist-review-state` (`8af163d`; store commit `efccb11`).
 - **Localhost CORS** on that route only. Tag: `review-state-cors-local` (`c5ff204`).
 - **Frontend restore** — debounce 2s autosave, silent hydrate on refresh. Tag: `v8.71.0-review-state-restore`.
+- **Abandoned-row delete** on New output. Tag: `v8.72.0-review-state-cleanup`.
+- **No raw file bytes in the snapshot.** `contentBase64` dropped; a post-Review session with one large PDF serialised to 47,182B (limit 4,194,304B). Tag: `v8.73.0-review-state-no-blobs`.
+- **Tidy** — pill "Re-upload to run again"; snapshot log removed; API base debug is Vite DEV only. Tag: `v8.74.0-review-state-tidy`.
+
+**Accepted limitation (BACKLOG F16):** a restored PDF or Office source must be re-uploaded before Review can run again. The backend deliberately refuses inline text for PDFs (`PDF_INLINE_TEXT_NOT_ALLOWED`), so extraction always happens server-side from the original bytes. Autosave still restores draft, extracted text, version history, and cards.
+
+**Open, unproven (BACKLOG B78):** Vercel caps function request bodies at 4.5 MB. Base64 inflation puts the practical Review ceiling at roughly 3.4 MB of source documents across all sources. May be below a normal LP report. Next step: one 5+ MB PDF upload to see how it fails.
 
 **Unblocked-but-not-built** now that a store exists: **B9** (needs append-only finding-decision events, not an overwrite buffer), **B61** (needs a durable LLM-result cache, not the frontend snapshot), **Pr13** approved-text library (needs a library of past texts; restore explicitly shipped without list/picker/history UI). See BACKLOG.
 
@@ -269,7 +276,7 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **A10.1 — Adapt UI polish:** Adapt button right-most with neutral outline (matches Clear/Export); pale-yellow Beta pills on button + modal; LinkedIn link field relabel + helper; press-release quote field labels.
 - **A10.2 / A10.2.1 / A10.2.2 — Adapt draft-panel polish:** `meta.derivation` persisted on adapt timeline entries and carried forward through Review/Save (`findCarriedDerivation`); **↳ Adapted from {type}** chip with case-normalised display label; draft textarea fills panel height; post-layout scroll-to-top (`requestAnimationFrame`); non-functional resize grip removed (`resize-none`).
 
-**Follow-on (deferred):** **A10.3** — remaining Assess polish (layout, scroll, export order). Refresh/autosave shipped 2026-08-21 (`v8.71.0-review-state-restore`; backend `persist-review-state`, `review-state-cors-local`). **A10.4** — Assess final polish. **A11.1–A11.3** — per-version QC, tabbed base↔adaptation view, single-view consolidation (see **Parked → Assess horizon**).
+**Follow-on (deferred):** **A10.3** — remaining Assess polish (layout, scroll, export order). Refresh/autosave shipped 2026-08-21 (`v8.71.0-review-state-restore` through `v8.74.0-review-state-tidy`; backend `persist-review-state`, `review-state-cors-local`). **Accepted limitation F16:** restored PDF/Office need re-upload before Review. **A10.4** — Assess final polish. **A11.1–A11.3** — per-version QC, tabbed base↔adaptation view, single-view consolidation (see **Parked → Assess horizon**).
 
 ### R7 Build A — Additive multi-span emit (closed 2026-08)
 
@@ -1047,7 +1054,7 @@ These items are intentionally not in the active rebuild backlog. They stay visib
 - **A11.1 — Per-version QC storage in Assess** — Assess stores a single flat `analysisResult`; loading an earlier version shows the "re-run Review" banner even when that version was already reviewed. Prerequisite for **A11.2**. Post-Monday. See **BACKLOG Pr10**.
 - **A11.2 — Tabbed base↔adaptation view** — deferred; depends on **A11.1** + real multi-version model in Assess. Current presentation: labelled timeline entries. See **BACKLOG Pr11**.
 - **A11.3 — Single-view consolidation** — collapse Assess/Writing naming into one unified **Content Engine** view. Deferred until Adapt-into-Assess settles (A10 was step one). Writing route remains off/dead. See **BACKLOG Pr12**.
-- **A10.3 / A10.4** — remaining Assess polish. Refresh/autosave shipped (`v8.71.0-review-state-restore`); layout, scroll, export order, and **A10.4** final polish not scheduled.
+- **A10.3 / A10.4** — remaining Assess polish. Refresh/autosave shipped (`v8.71.0-review-state-restore` through `v8.74.0-review-state-tidy`); restored PDF/Office re-upload is an accepted limitation (**F16**). Layout, scroll, export order, and **A10.4** final polish not scheduled.
 
 ### R6.9.1 — Rhetorical / opinion non-claim handling (elevated, pre-Monday)
 
