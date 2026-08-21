@@ -8,8 +8,21 @@ import {
   validateReviewId,
 } from "../lib/db/review-state.mjs";
 
+export const REVIEW_STATE_PRODUCTION_ORIGIN =
+  "https://brightline-content-engine-frontend.vercel.app";
+
+// Localhost CORS is a deliberate loosening for local development. Revisit when user accounts arrive.
+const LOCAL_DEV_ORIGIN_RE = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/;
+
+export function resolveReviewStateCorsOrigin(requestOrigin) {
+  const origin = Array.isArray(requestOrigin) ? requestOrigin[0] : requestOrigin;
+  if (origin === REVIEW_STATE_PRODUCTION_ORIGIN) return origin;
+  if (typeof origin === "string" && LOCAL_DEV_ORIGIN_RE.test(origin)) return origin;
+  return REVIEW_STATE_PRODUCTION_ORIGIN;
+}
+
 function setCorsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
+  res.setHeader("Access-Control-Allow-Origin", resolveReviewStateCorsOrigin(req.headers?.origin));
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-brightline-diag, x-owner-key");
   res.setHeader("Access-Control-Max-Age", "86400");

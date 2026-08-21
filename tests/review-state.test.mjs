@@ -9,6 +9,10 @@ import {
   validateOwnerKey,
   validateReviewId,
 } from "../lib/db/review-state.mjs";
+import {
+  REVIEW_STATE_PRODUCTION_ORIGIN,
+  resolveReviewStateCorsOrigin,
+} from "../api/review-state.js";
 
 function createFakeSql(store) {
   const calls = [];
@@ -218,6 +222,27 @@ describe("sql.query contract", () => {
     }
     await assert.rejects(() =>
       loadReviewState(sql, { reviewId: VALID_ID, ownerKey: OWNER_A })
+    );
+  });
+});
+
+describe("review-state CORS origin", () => {
+  test("echoes a localhost origin and does not echo an unrelated origin", () => {
+    assert.equal(
+      resolveReviewStateCorsOrigin("http://localhost:5173"),
+      "http://localhost:5173"
+    );
+    assert.equal(
+      resolveReviewStateCorsOrigin("http://127.0.0.1:3000"),
+      "http://127.0.0.1:3000"
+    );
+    assert.equal(
+      resolveReviewStateCorsOrigin("https://evil.example"),
+      REVIEW_STATE_PRODUCTION_ORIGIN
+    );
+    assert.notEqual(
+      resolveReviewStateCorsOrigin("https://evil.example"),
+      "https://evil.example"
     );
   });
 });
