@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-20 (B72 percent metric scope)
+Last updated: 2026-08-21 (period overlap rule)
 
 ---
 
@@ -334,17 +334,21 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent later migrated in **B72**. Tag: `review-money-metric-scope`. Residual: **B71** (currency not recorded; `$155m` vs `EUR 155 million` stay `partially_confirmed`).
 
+### Period overlap (closed 2026-08-21)
+
+**Period overlap.** Two figures whose parseable periods do not overlap cannot contradict. The magnitude backstop no longer forces a conflict on such a pair; the period gate rewrites `confirmed` and `conflicting` to `no_support` (Stage 2; aggregates as `not_supported`) and names both periods in the explanation. Unparseable periods fail closed (unchanged). Range claims are not parsed. Tag: `review-period-overlap`.
+
 ### B72 percent metric scope (closed 2026-08-20)
 
 **B72.** Percent figures use the same sentence-scoped nearest-phrase resolver as money (`lib/qc/pipeline-v4/metric-scope.mjs`), with a separate longest-first vocabulary. One canonical id per figure. `margin_unspecified` does not match `gross_margin` or `ebitda_margin`, so a 45 vs 19 false force is suppressed. Percent still only forces when both ids resolved and equal (unknown does not fail closed, unlike money). Tag: `review-percent-metric-scope`. Probe: `scripts/diagnostic/b72-probe/`.
 
-**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**, **B53c**, **B71**. **B67** closed 2026-08-19 on the probe.
+**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**, **B53c**, **B71**. **B67** closed 2026-08-19 on the probe. Period overlap shipped 2026-08-21 (`review-period-overlap`).
 
 ---
 
 ### R2.7.2 — Stage 2 semantic frame matching (closed 2026-06-01)
 
-**R2.7.2 — Stage 2 semantic frame matching.** Shipped (`r2.7.2-frame-matching`; production sign-off **2026-06-01** after explicit-vs-explicit gating re-test). Distinguishes numeric equivalence from semantic frame equivalence across metric, basis/scope, and period dimensions. Metric and basis land reliably. **PERIOD is scoped to EXPLICIT-vs-EXPLICIT only:** a deterministic backstop (`applyPeriodGateBackstop`) downgrades `confirmed`→`conflicting` when both statement and source periods normalise to recognised tokens (Q[1-4] YYYY or bare YYYY) and differ. **LIMITATION:** when the source states the period as a **RELATIVE** reference ('over the same period', 'today'), gpt-4o resolves it unreliably at temp 0 — it resolves to whichever period confirms the match — across both prose and structured-field prompt mechanisms. Relative-source-period resolution descoped to **R2.7.2.1**. Mechanism retained: Stage-2-internal structured `periodAssessment` field + deterministic backstop. Verified: explicit mismatch (draft 2018 vs source 2019) → conflicting; explicit match (2019) → supported; metric mismatch (revenue vs GMV) → conflicting; paraphrase regression → confirmed.
+**R2.7.2 — Stage 2 semantic frame matching.** Shipped (`r2.7.2-frame-matching`; production sign-off **2026-06-01** after explicit-vs-explicit gating re-test). Distinguishes numeric equivalence from semantic frame equivalence across metric, basis/scope, and period dimensions. Metric and basis land reliably. **PERIOD is scoped to EXPLICIT-vs-EXPLICIT only:** a deterministic backstop (`applyPeriodGateBackstop`) compares normalised tokens (Q[1-4] YYYY or bare YYYY). Non-overlapping periods cannot contradict: `confirmed` and `conflicting` become `no_support`. Overlapping but unequal tokens (quarter vs containing year) still downgrade `confirmed` to `conflicting` when roles match. **LIMITATION:** when the source states the period as a **RELATIVE** reference ('over the same period', 'today'), gpt-4o resolves it unreliably at temp 0 — it resolves to whichever period confirms the match — across both prose and structured-field prompt mechanisms. Relative-source-period resolution descoped to **R2.7.2.1**. Mechanism retained: Stage-2-internal structured `periodAssessment` field + deterministic backstop. Verified: explicit mismatch (draft 2018 vs source 2019) → conflicting; explicit match (2019) → supported; metric mismatch (revenue vs GMV) → conflicting; paraphrase regression → confirmed.
 
 **fix-pipelineversion-label** (same session): `qcCard.pipelineVersion` in shared `stage7-assemble-card.mjs` now stamps from `assemblyContext.pipelineRoute` instead of hardcoding `"v3"`, aligning per-card label with handler `meta.pipelineVersion` on v4 runs.
 

@@ -12,6 +12,7 @@ import {
   hasEgregiousMagnitudeGap,
   inferPeriodRole,
   isProceduralCloserStatement,
+  periodsDoNotOverlap,
 } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -109,8 +110,64 @@ describe("B48 rounding and magnitude backstop", () => {
   });
 });
 
+describe("period overlap", () => {
+  test("FY2019 vs FY2025 do not overlap", () => {
+    assert.equal(
+      periodsDoNotOverlap({ statementPeriod: "FY2025", sourcePeriod: "FY2019" }),
+      true
+    );
+  });
+
+  test("Q1 vs Q2 in the same year do not overlap", () => {
+    assert.equal(
+      periodsDoNotOverlap({ statementPeriod: "Q1 2025", sourcePeriod: "Q2 2025" }),
+      true
+    );
+  });
+
+  test("Q1 2025 overlaps the year 2025", () => {
+    assert.equal(
+      periodsDoNotOverlap({ statementPeriod: "Q1 2025", sourcePeriod: "FY2025" }),
+      false
+    );
+  });
+
+  test("unparseable periods fail closed (treat as overlapping)", () => {
+    assert.equal(
+      periodsDoNotOverlap({ statementPeriod: "January 2026", sourcePeriod: "FY2019" }),
+      false
+    );
+    assert.equal(periodsDoNotOverlap(null), false);
+  });
+
+  test("magnitude backstop does not force when periods do not overlap", () => {
+    const statement = "Revenue for the twelve months to 31 December 2025 was EUR 200 million.";
+    const passage = "Revenue for FY2019 was EUR 100 million, up from EUR 82 million the prior year.";
+    const periodAssessment = {
+      statementPeriod: "FY2025",
+      sourcePeriod: "FY2019",
+      statementPeriodRole: "figure_period",
+      sourcePeriodRole: "figure_period",
+    };
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage, { periodAssessment }), false);
+    const out = applyRoundingToleranceBackstop(
+      {
+        classification: "no_support",
+        passage,
+        explanation: "Different years.",
+        periodAssessment,
+      },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "no_support");
+    assert.match(out.explanation, /FY2019/);
+    assert.match(out.explanation, /FY2025/);
+  });
+});
+
 describe("B48 period-frame gate", () => {
-  test("same-metric period clash on confirmed is forced conflicting", () => {
+  test("non-overlapping same-metric periods rewrite confirmed to no_support", () => {
     const out = applyPeriodGateBackstop(
       {
         classification: "confirmed",
@@ -125,10 +182,48 @@ describe("B48 period-frame gate", () => {
       },
       { statementText: "Revenue for FY2024 was GBP 312 million." }
     );
+    assert.equal(out.classification, "no_support");
+    assert.match(out.explanation, /FY2025/);
+    assert.match(out.explanation, /FY2024/);
+  });
+
+  test("non-overlapping periods rewrite model conflicting to no_support", () => {
+    const out = applyPeriodGateBackstop(
+      {
+        classification: "conflicting",
+        passage: "Revenue for FY2019 was EUR 100 million.",
+        explanation: "200 vs 100.",
+        periodAssessment: {
+          statementPeriod: "FY2025",
+          sourcePeriod: "FY2019",
+          statementPeriodRole: "figure_period",
+          sourcePeriodRole: "figure_period",
+        },
+      },
+      { statementText: "Revenue for FY2025 was EUR 200 million." }
+    );
+    assert.equal(out.classification, "no_support");
+  });
+
+  test("overlapping quarter vs year still downgrades confirmed to conflicting", () => {
+    const out = applyPeriodGateBackstop(
+      {
+        classification: "confirmed",
+        passage: "Revenue for 2025 was GBP 312 million.",
+        explanation: "Revenue matches.",
+        periodAssessment: {
+          statementPeriod: "Q1 2025",
+          sourcePeriod: "FY2025",
+          statementPeriodRole: "figure_period",
+          sourcePeriodRole: "figure_period",
+        },
+      },
+      { statementText: "Revenue for Q1 2025 was GBP 312 million." }
+    );
     assert.equal(out.classification, "conflicting");
   });
 
-  test("vintage vs operating year does not force conflicting; remaps conflicting to partial", () => {
+  test("vintage vs operating year with non-overlapping years becomes no_support", () => {
     const statement =
       "Drift Logistics, our 2024 third-party logistics investment, faces a softer parcel volume environment.";
     const passage = "Drift Logistics had a mixed 2025. European parcel volumes down approximately 3%.";
@@ -146,7 +241,7 @@ describe("B48 period-frame gate", () => {
       },
       { statementText: statement }
     );
-    assert.equal(out.classification, "partially_confirmed");
+    assert.equal(out.classification, "no_support");
   });
 });
 
