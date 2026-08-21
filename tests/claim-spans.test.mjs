@@ -449,5 +449,7 @@ describe("B65 Stage 1b prompt fidelity", () => {
     assert.match(prompt, /Gestcompost has expanded its workforce/);
     assert.match(prompt, /taking two seats on the Company's board/);
     assert.match(prompt, /bare verb phrase/);
+    assert.match(prompt, /Lumen Specialty Chemicals is a leading European producer/);
+    assert.match(prompt, /Do not return a claim that contains no number, date, or proper noun/);
   });
 });
