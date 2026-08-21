@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 import {
   ADDITIVE_BOUNDARIES,
@@ -432,5 +435,19 @@ describe("isClaimSpansEnabled default ON", () => {
       if (prev === undefined) delete process.env.QC_CLAIM_SPANS;
       else process.env.QC_CLAIM_SPANS = prev;
     }
+  });
+});
+
+describe("B65 Stage 1b prompt fidelity", () => {
+  test("prompt forbids completing a claim with an earlier entity name", async () => {
+    const promptPath = path.join(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "../lib/qc/pipeline-v4/prompts/stage1b_v1.md"
+    );
+    const prompt = await readFile(promptPath, "utf8");
+    assert.match(prompt, /character for character/);
+    assert.match(prompt, /Gestcompost has expanded its workforce/);
+    assert.match(prompt, /taking two seats on the Company's board/);
+    assert.match(prompt, /bare verb phrase/);
   });
 });

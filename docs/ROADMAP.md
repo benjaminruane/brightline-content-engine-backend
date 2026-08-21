@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (B71 money currency)
+Last updated: 2026-08-21 (B65 Stage 1b fidelity)
 
 ---
 
@@ -333,6 +333,10 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 ### B60.1 — sentence-scoped money metric (closed 2026-08-20)
 
 **B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent later migrated in **B72**. Tag: `review-money-metric-scope`. Currency recorded in **B71**.
+
+### B65 Stage 1b claim fidelity (closed 2026-08-21)
+
+**B65.** Stage 1b prompt requires each claim to be copied character for character from the parent. The model must not insert entity names from earlier in the sentence. A claim that starts with a pronoun or bare verb phrase is correct. Tag: `review-claim-fidelity`.
 
 ### B71 money currency (closed 2026-08-21)
 
