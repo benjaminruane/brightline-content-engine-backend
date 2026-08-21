@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (B53c superlative framing)
+Last updated: 2026-08-21 (B73 splitter dash)
 
 ---
 
@@ -333,6 +333,10 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 ### B60.1 — sentence-scoped money metric (closed 2026-08-20)
 
 **B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent later migrated in **B72**. Tag: `review-money-metric-scope`. Currency recorded in **B71**.
+
+### B73 splitter dash (closed 2026-08-21)
+
+**B73.** `splitDraftIntoCandidatesV2` does not treat a dash as a sentence boundary. Full stops, question marks, exclamation marks, colons, and semicolons are unchanged. Tag: `review-splitter-dash`.
 
 ### B53c superlative absorption (closed 2026-08-21)
 
