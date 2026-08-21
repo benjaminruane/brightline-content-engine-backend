@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (period overlap rule)
+Last updated: 2026-08-21 (B71 money currency)
 
 ---
 
@@ -332,7 +332,11 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 ### B60.1 — sentence-scoped money metric (closed 2026-08-20)
 
-**B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent later migrated in **B72**. Tag: `review-money-metric-scope`. Residual: **B71** (currency not recorded; `$155m` vs `EUR 155 million` stay `partially_confirmed`).
+**B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent later migrated in **B72**. Tag: `review-money-metric-scope`. Currency recorded in **B71**.
+
+### B71 money currency (closed 2026-08-21)
+
+**B71.** Money figures carry a recognised currency (USD/EUR/GBP/AUD/CAD from `$`/`€`/`£` or ISO code). The magnitude backstop does not force a conflict when both sides have a currency and they differ. Unknown currency fails closed. Tag: `review-money-currency`.
 
 ### Period overlap (closed 2026-08-21)
 
@@ -342,7 +346,7 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B72.** Percent figures use the same sentence-scoped nearest-phrase resolver as money (`lib/qc/pipeline-v4/metric-scope.mjs`), with a separate longest-first vocabulary. One canonical id per figure. `margin_unspecified` does not match `gross_margin` or `ebitda_margin`, so a 45 vs 19 false force is suppressed. Percent still only forces when both ids resolved and equal (unknown does not fail closed, unlike money). Tag: `review-percent-metric-scope`. Probe: `scripts/diagnostic/b72-probe/`.
 
-**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**, **B53c**, **B71**. **B67** closed 2026-08-19 on the probe. Period overlap shipped 2026-08-21 (`review-period-overlap`).
+**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**, **B53c**. **B67** closed 2026-08-19 on the probe. Period overlap shipped 2026-08-21 (`review-period-overlap`). **B71** closed 2026-08-21.
 
 ---
 

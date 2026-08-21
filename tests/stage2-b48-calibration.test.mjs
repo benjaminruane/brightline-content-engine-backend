@@ -617,3 +617,44 @@ describe("B48 prompt anchors", () => {
     assert.match(prompt, /We have invested EUR 720 million/);
   });
 });
+
+describe("B71 money currency", () => {
+  function moneyFigs(text) {
+    return collectBackstopFigures(text).filter((f) => f.kind === "money");
+  }
+
+  test("records ISO currency from symbol and code", () => {
+    assert.equal(moneyFigs("combined revenue has surged to $155m")[0]?.currency, "USD");
+    assert.equal(moneyFigs("Combined annual revenue: EUR 155 million")[0]?.currency, "EUR");
+    assert.equal(moneyFigs("Revenue was GBP 312 million")[0]?.currency, "GBP");
+  });
+
+  test("bare million with no currency marker has no currency field", () => {
+    const fig = moneyFigs("The ticket was 155 million.")[0];
+    assert.equal(fig?.value, 155e6);
+    assert.equal(fig?.currency, undefined);
+  });
+
+  test("does not force a magnitude conflict when recognised currencies differ", () => {
+    const statement = "Revenue reached USD 200 million.";
+    const passage = "Revenue reached EUR 100 million.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), false);
+    const out = applyRoundingToleranceBackstop(
+      { classification: "partially_confirmed", passage, explanation: "Partial." },
+      { statementText: statement }
+    );
+    assert.equal(out.classification, "partially_confirmed");
+  });
+
+  test("unknown currency on either side still forces (fail closed)", () => {
+    const statement = "The exit closed at 18.4 billion.";
+    const passage = "The exit generated proceeds of EUR 12.8 billion.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+
+  test("same currency still forces on an egregious gap", () => {
+    const statement = "Revenue was EUR 200 million.";
+    const passage = "Revenue was EUR 100 million.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+});
