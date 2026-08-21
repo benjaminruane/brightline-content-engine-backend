@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (B73 splitter dash)
+Last updated: 2026-08-21 (review-quality arc CLOSED)
 
 ---
 
@@ -19,7 +19,7 @@ Last updated: 2026-08-21 (B73 splitter dash)
 - **Cost / call volume (baseline 2026-06-28):** ~16 LLM calls per run at 4 statements / 1 source; interactive Review production cost ~**$2/run**. **Diagnostic batch (separate):** full ~20-fixture batch ~**$25–30** total (~$1.25–1.50 per fixture) — flag before full-batch runs; prefer targeted `--only` subsets first.
 - **Production baseline (deployment-verified 2026-06-28 via Vercel):** live deploy `b23-docsync` (commit `9ab91c1`, main). All editorial-cluster code shipped and live — B21, B22 / B22.1 / B22.2 (latest code ship `b22.2-editorial-excerpt-removal`); subsequent commits (B22-docsync, b23-docsync, docs-hygiene) are documentation-only. Frontend `v8.54.1-r6.13.1-writing-intent-wiring`.
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
-- **Next arc:** Review output quality (R6), not further UI structure work.
+- **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61**, **B53b**, **B74**. **B62** / **B66** / **B68** parked.
 
 ---
 
@@ -92,6 +92,14 @@ Last updated: 2026-08-21 (B73 splitter dash)
 ---
 
 ## Recently shipped (closed specs)
+
+### Review-quality arc (CLOSED 2026-08-21)
+
+The review-quality arc is **CLOSED**. It ran 19-21 August 2026, backend-only: no frontend commit after `review-card-density` (18 August). The work was to stop Review from contradicting itself on figures that are not the same thing, and to let compound sentences confirm when every piece of the sentence is actually supported.
+
+What landed: claim spans with an upgrade-only rollup so one card can go from partial to confirmed without inventing extra cards; spelled-out numbers and mid-sentence names as claim anchors; money and percent figures scoped to a metric (and money also to currency and scale), so `$155m` revenue is not forced against EUR 155 million ARR, and a gross margin is not forced against an EBITDA margin; periods that do not overlap cannot conflict; Stage 1b copies claims verbatim instead of rewriting them; unevidenced superlatives ("record", "highest") surface as editorial only. An in-process LLM cache cuts repeat-run cost inside one serverless instance; a disk cache exists for local diagnostics only. A dash-splitter change is insurance for the fallback path, not a live Stage 1 fix (**B75**).
+
+Parked rather than built: **B62** and **B66** (widening the claim-span funnel produced no additional upgrades); **B68** (logged, not building). Still open: **B61** (residual `hasConflict` drift), **B53b** (compound supersession), **B74** (Stage 1 bullet-marker text variance). Per-item tags remain in the sections below and in BACKLOG Closed. Proposed arc-close tag (not created): `review-quality-arc`.
 
 ### Diagnostic harness (closed 26 May 2026)
 
@@ -300,7 +308,7 @@ Sprint 2 review-quality fixes, shipped through diagnose-first + read-only shadow
 
 - **B54 — `percentage_notation` on "per cent"** (shipped 2026-08-19). Rule text names the two-word British "per cent"; drop-filter uses `\bper\s?cent\b`. Tag: `review-percent-number-style`.
 - **F14 — `number_spelling` on spelled-out 0–12** (shipped 2026-08-19). Deterministic filter drops cited "twelve" / "twelve months"; durations are prose counts, not physical units. Tag: `review-percent-number-style`.
-- **B59 — `extractPercents` "per cent" + same-metric percent guard** (shipped 2026-08-19). Extractor matches `per\s?cent`; magnitude backstop requires a non-empty metric-key intersection before forcing a percent conflict. **VERDICT-ADJACENT** — diagnose + read-only shadow gate. Tag: `review-percent-extract`. Residual: money/count still pair by kind only — **BACKLOG B60**. Compound-statement follow-on: **B53a** (shipped) / **B53b** / **B53c**.
+- **B59 — `extractPercents` "per cent" + same-metric percent guard** (shipped 2026-08-19). Extractor matches `per\s?cent`; magnitude backstop requires a non-empty metric-key intersection before forcing a percent conflict. **VERDICT-ADJACENT** — diagnose + read-only shadow gate. Tag: `review-percent-extract`. Money/count later guarded by **B60** / **B60.1** (shipped). Compound follow-on: **B53a** / **B53c** shipped; **B53b** still open.
 
 ### B53a — internal claim spans (closed 2026-08-19)
 
@@ -334,9 +342,9 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent later migrated in **B72**. Tag: `review-money-metric-scope`. Currency recorded in **B71**.
 
-### B73 splitter dash (closed 2026-08-21)
+### B73 splitter dash (closed 2026-08-21, insurance)
 
-**B73.** `splitDraftIntoCandidatesV2` does not treat a dash as a sentence boundary. Full stops, question marks, exclamation marks, colons, and semicolons are unchanged. Tag: `review-splitter-dash`.
+**B73.** `splitDraftIntoCandidatesV2` does not treat a dash as a sentence boundary. Full stops, question marks, exclamation marks, colons, and semicolons are unchanged. **Insurance, not a live-path fix:** production Stage 1 uses the LLM extractor and already kept the long dashed sentence whole; fallback is reached only when that output is rejected. See **BACKLOG B75**. Tag: `review-splitter-dash`.
 
 ### B53c superlative absorption (closed 2026-08-21)
 
@@ -358,7 +366,7 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B72.** Percent figures use the same sentence-scoped nearest-phrase resolver as money (`lib/qc/pipeline-v4/metric-scope.mjs`), with a separate longest-first vocabulary. One canonical id per figure. `margin_unspecified` does not match `gross_margin` or `ebitda_margin`, so a 45 vs 19 false force is suppressed. Percent still only forces when both ids resolved and equal (unknown does not fail closed, unlike money). Tag: `review-percent-metric-scope`. Probe: `scripts/diagnostic/b72-probe/`.
 
-**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**. **B67** closed 2026-08-19 on the probe. Period overlap shipped 2026-08-21 (`review-period-overlap`). **B71** closed 2026-08-21. **B65** and **B53c** closed 2026-08-21.
+**Review-quality arc CLOSED 2026-08-21.** Next scheduled build is not this arc. Still open: **B61** (hasConflict only, M; durable storage required), **B53b**, **B74**. Parked: **B62**, **B66**, **B68**.
 
 ---
 
