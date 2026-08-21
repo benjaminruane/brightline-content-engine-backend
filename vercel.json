@@ -1,1 +1,1 @@
-{"version":2,"installCommand":"npm ci","functions":{"api/*.js":{"maxDuration":60,"includeFiles":"{node_modules/**,lib/**,tests/**}","excludeFiles":"node_modules/{tesseract.js,tesseract.js-core}/**"}}}
+{"version":2,"installCommand":"npm ci","functions":{"api/*.js":{"maxDuration":60,"includeFiles":"{node_modules/**,lib/**,tests/**}","excludeFiles":"node_modules/{tesseract.js,tesseract.js-core}/**"}},"regions":["fra1"]}
