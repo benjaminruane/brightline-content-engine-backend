@@ -20,11 +20,13 @@
     "qc:diag:prep": "node scripts/diagnostic/prep-extract.mjs",
     "qc:diag:run": "node scripts/diagnostic/run-batch.mjs",
     "diagnostic:style-guide": "node scripts/diagnostic/run-style-guide.mjs",
-    "mvp:summary": "node scripts/regen-mvp-summary.mjs"
+    "mvp:summary": "node scripts/regen-mvp-summary.mjs",
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/db/migrate.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.93.0",
     "@mozilla/readability": "^0.5.0",
+    "@neondatabase/serverless": "^1.1.0",
     "docx": "^9.6.1",
     "jsdom": "^24.0.0",
     "langfuse": "^3.38.20",

@@ -44,6 +44,22 @@ BRIGHTLINE_EDITORIAL_REVIEW=1
 
 `BRIGHTLINE_EDITORIAL_REVIEW=1` must be set permanently in all environments to enable the editorial review signal. It is already set in the Vercel dashboard — do not remove it.
 
+### Database
+
+Neon Postgres 18 (Frankfurt). Two connection strings, both set in the Vercel backend project. Never log either value.
+
+- `DATABASE_URL`: pooled (`-pooler` hostname). Used by `api/review-state.js`.
+- `DATABASE_URL_UNPOOLED`: direct connection. Used only by `npm run db:migrate`.
+
+```bash
+npx vercel env pull .env.local
+npm run db:migrate
+```
+
+`npm run db:migrate` is `node --env-file-if-exists=.env.local scripts/db/migrate.mjs`, so `DATABASE_URL_UNPOOLED` can come from `.env.local` or the ambient shell. `.env.local` is gitignored. The script reads every `db/migrations/*.sql` file in filename order and executes each against `DATABASE_URL_UNPOOLED`. Migrations are idempotent (`IF NOT EXISTS`); re-running is safe. No dotenv package: local Node must be 20.18+ or 22+.
+
+**Rehearsal rule:** migration `001` ran against the empty production database. From migration `002` onward, create a Neon branch first, run the migration there, then run it on production. Neon's free plan retains only 6 hours of restore history; a branch is the safety net, not that window.
+
 ### Run Locally
 
 ```bash
@@ -65,8 +81,10 @@ api/                        Vercel serverless function handlers
   export.js                 PDF and DOCX export
   summarize-source.js       LLM source description on upload
   query.js                  Ask AI
+  review-state.js           Durable review autosave buffer (GET/POST/DELETE)
 
 lib/                        Shared backend logic
+  db/                       Neon client and review_state access helpers
   analyse-statements-impl.mjs   Core QC pipeline implementation
   extract-text-from-source.mjs  PDF and file text extraction
   output-intent.js              Output type normalisation and prompt guidance

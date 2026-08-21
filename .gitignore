@@ -33,3 +33,4 @@ scripts/diagnostic/extractor-survey/
 
 # diagnostic run logs (regenerable)
 tests/output/*.log
+.env*

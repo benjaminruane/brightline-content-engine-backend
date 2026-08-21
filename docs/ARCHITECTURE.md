@@ -193,6 +193,18 @@ Evidence quality now flows: Stage 2 LLM rubric → Stage 3 aggregation → Stage
 
 ---
 
+## 9. Persistence
+
+Durable server-side storage exists. The database is **Neon Postgres 18** in AWS Europe Central 1 (Frankfurt), matching the Vercel function region `fra1`.
+
+`review_state` is an **autosave buffer**, not an audit record. One row per `review_id` holds an opaque JSON `state` blob plus an `owner_key`. Overwriting the row is correct. The table does not store finding decisions, accept or reject markers, or any other reviewer decision. Those arrive later with B9 as append-only event rows in their own table, because the history is the point.
+
+`owner_key` (`x-owner-key` header) is an opaque browser-generated key that stops one browser accidentally reading another browser's row. It is not authentication. Real identity arrives with user accounts.
+
+API: `GET` / `POST` / `DELETE` `/api/review-state`. Route module `api/review-state.js`; access helpers in `lib/db/review-state.mjs`. Pooled `DATABASE_URL` for the route; unpooled `DATABASE_URL_UNPOOLED` for migrations only (`npm run db:migrate`).
+
+---
+
 ## Related documents
 
 | Document | Role |
