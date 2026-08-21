@@ -23,6 +23,7 @@ scripts/diagnostic/sources-extracted/
 scripts/diagnostic/claim-spans/.baseline.json
 scripts/diagnostic/stage2-determinism/out/
 scripts/diagnostic/llm-cache/out/
+scripts/diagnostic/backstop-needed/out/
 scripts/diagnostic/.llm-cache.json
 scripts/diagnostic/.llm-cache.json.tmp
 node_modules/
