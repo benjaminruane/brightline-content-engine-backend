@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (review-quality arc CLOSED)
+Last updated: 2026-08-21 (review-state persistence shipped)
 
 ---
 
@@ -19,7 +19,8 @@ Last updated: 2026-08-21 (review-quality arc CLOSED)
 - **Cost / call volume (baseline 2026-06-28):** ~16 LLM calls per run at 4 statements / 1 source; interactive Review production cost ~**$2/run**. **Diagnostic batch (separate):** full ~20-fixture batch ~**$25–30** total (~$1.25–1.50 per fixture) — flag before full-batch runs; prefer targeted `--only` subsets first.
 - **Production baseline (deployment-verified 2026-06-28 via Vercel):** live deploy `b23-docsync` (commit `9ab91c1`, main). All editorial-cluster code shipped and live — B21, B22 / B22.1 / B22.2 (latest code ship `b22.2-editorial-excerpt-removal`); subsequent commits (B22-docsync, b23-docsync, docs-hygiene) are documentation-only. Frontend `v8.54.1-r6.13.1-writing-intent-wiring`.
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
-- **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61**, **B53b**, **B74**. **B62** / **B66** / **B68** parked.
+- **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
+- **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`. Unblocked-but-not-built: **B9**, **B61**, **Pr13** (approved-text library).
 
 ---
 
@@ -99,7 +100,19 @@ The review-quality arc is **CLOSED**. It ran 19-21 August 2026, backend-only: no
 
 What landed: claim spans with an upgrade-only rollup so one card can go from partial to confirmed without inventing extra cards; spelled-out numbers and mid-sentence names as claim anchors; money and percent figures scoped to a metric (and money also to currency and scale), so `$155m` revenue is not forced against EUR 155 million ARR, and a gross margin is not forced against an EBITDA margin; periods that do not overlap cannot conflict; Stage 1b copies claims verbatim instead of rewriting them; unevidenced superlatives ("record", "highest") surface as editorial only. An in-process LLM cache cuts repeat-run cost inside one serverless instance; a disk cache exists for local diagnostics only. A dash-splitter change is insurance for the fallback path, not a live Stage 1 fix (**B75**).
 
-Parked rather than built: **B62** and **B66** (widening the claim-span funnel produced no additional upgrades); **B68** (logged, not building). Still open: **B61** (residual `hasConflict` drift), **B53b** (compound supersession), **B74** (Stage 1 bullet-marker text variance). Per-item tags remain in the sections below and in BACKLOG Closed. Proposed arc-close tag (not created): `review-quality-arc`.
+Parked rather than built: **B62** and **B66** (widening the claim-span funnel produced no additional upgrades); **B68** (logged, not building). Still open: **B61** (residual `hasConflict` drift; store now exists but is the wrong shape), **B53b** (compound supersession), **B74** (Stage 1 bullet-marker text variance). Per-item tags remain in the sections below and in BACKLOG Closed. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
+
+### Review-state persistence (closed 2026-08-21)
+
+Durable Neon store plus frontend autosave/restore of the in-progress review. One active review per browser. Not a library of past reviews.
+
+- **Backend store** — `GET` / `POST` / `DELETE` `/api/review-state`. Autosave buffer (overwrite is correct), not an audit record. Tag: `persist-review-state` (`8af163d`; store commit `efccb11`).
+- **Localhost CORS** on that route only. Tag: `review-state-cors-local` (`c5ff204`).
+- **Frontend restore** — debounce 2s autosave, silent hydrate on refresh. Tag: `v8.71.0-review-state-restore`.
+
+**Unblocked-but-not-built** now that a store exists: **B9** (needs append-only finding-decision events, not an overwrite buffer), **B61** (needs a durable LLM-result cache, not the frontend snapshot), **Pr13** approved-text library (needs a library of past texts; restore explicitly shipped without list/picker/history UI). See BACKLOG.
+
+**Platform pins (same day, untagged commits):** Node `engines` **22.x** (`86ada5d`; frontend `888f6a8`). Vercel functions `regions: ["fra1"]` Frankfurt (`060d1ce`). Backend `installCommand` is `npm ci` (`vercel.json` since `9b5bd90`, 2026-01-25): any commit that changes dependencies must include the lockfile. See BACKLOG **P11** / **P12** / **P13**.
 
 ### Diagnostic harness (closed 26 May 2026)
 
@@ -256,7 +269,7 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 - **A10.1 — Adapt UI polish:** Adapt button right-most with neutral outline (matches Clear/Export); pale-yellow Beta pills on button + modal; LinkedIn link field relabel + helper; press-release quote field labels.
 - **A10.2 / A10.2.1 / A10.2.2 — Adapt draft-panel polish:** `meta.derivation` persisted on adapt timeline entries and carried forward through Review/Save (`findCarriedDerivation`); **↳ Adapted from {type}** chip with case-normalised display label; draft textarea fills panel height; post-layout scroll-to-top (`requestAnimationFrame`); non-functional resize grip removed (`resize-none`).
 
-**Follow-on (deferred):** **A10.3** — state persistence, layout, scroll, export order, refresh behaviour. **A10.4** — Assess final polish. **A11.1–A11.3** — per-version QC, tabbed base↔adaptation view, single-view consolidation (see **Parked → Assess horizon**).
+**Follow-on (deferred):** **A10.3** — remaining Assess polish (layout, scroll, export order). Refresh/autosave shipped 2026-08-21 (`v8.71.0-review-state-restore`; backend `persist-review-state`, `review-state-cors-local`). **A10.4** — Assess final polish. **A11.1–A11.3** — per-version QC, tabbed base↔adaptation view, single-view consolidation (see **Parked → Assess horizon**).
 
 ### R7 Build A — Additive multi-span emit (closed 2026-08)
 
@@ -266,7 +279,7 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 
 **Extractor swap → officeparser@7.5.1** (shipped; tag `extractor-officeparser-swap`). Foundational ingestion change: replaced live `pdf-parse` / `mammoth` / `jszip` (+ pptx XML) path with **officeparser** for pdf/docx/pptx/xlsx. **OCR disabled** (`parseConfig.ocr: false`); scanned/near-empty sources flagged `unsupported_scanned` (no OCR). Faithful typography (fixes apostrophe→`n` / C1 mangling on born-digital PDFs); recovers bad-XRef PDFs the prior stack failed; additive `extraction.structure` page/slide/sheet identity; primary return shape unchanged (`{ text, extraction }`). **Verdict-adjacent revalidation:** CHECK1 `.txt` regression suite 9/9 evidence-pass identical to baseline; CHECK2 binary-source attribution **IMPROVEMENT=9 / NEUTRAL=41 / REGRESSION=0** (`docs/R7_EXTRACTOR_CHECK2_ATTRIBUTION.md`). Enabled Build B offset work and drawer navigation on structure metadata.
 
-**Also shipped:** Node `engines` **20.x → 24.x** (Vercel Node 20 hard deadline 2026-10-01). Bundle-size excludeFiles/trim and `VERCEL_SUPPORT_LARGE_FUNCTIONS` stopgap — see **BACKLOG B42** / **B43**.
+**Also shipped (later superseded):** Node `engines` **20.x → 24.x** (`ad8a634`, Vercel Node 20 hard deadline 2026-10-01). **Current pin is 22.x** (`86ada5d`, 2026-08-21). Bundle-size excludeFiles/trim and `VERCEL_SUPPORT_LARGE_FUNCTIONS` stopgap — see **BACKLOG B42** / **B43**.
 
 ### R7 Build B — supportSpans offsets (closed 2026-08-09)
 
@@ -366,7 +379,7 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B72.** Percent figures use the same sentence-scoped nearest-phrase resolver as money (`lib/qc/pipeline-v4/metric-scope.mjs`), with a separate longest-first vocabulary. One canonical id per figure. `margin_unspecified` does not match `gross_margin` or `ebitda_margin`, so a 45 vs 19 false force is suppressed. Percent still only forces when both ids resolved and equal (unknown does not fail closed, unlike money). Tag: `review-percent-metric-scope`. Probe: `scripts/diagnostic/b72-probe/`.
 
-**Review-quality arc CLOSED 2026-08-21.** Next scheduled build is not this arc. Still open: **B61** (hasConflict only, M; durable storage required), **B53b**, **B74**. Parked: **B62**, **B66**, **B68**.
+**Review-quality arc CLOSED 2026-08-21.** Next scheduled build is not this arc. Still open: **B61** (hasConflict only, M; store exists, wrong shape, unblocked-but-not-built), **B53b**, **B74**. Parked: **B62**, **B66**, **B68**.
 
 ---
 
@@ -996,9 +1009,9 @@ Item (a) remains cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival)
 - Blending rules: draft first, sources second, web last
 
 ### Implement-Changes Sprint
-- **Pr9 — Interim: Suggest revised draft** (lighter prequel; post-demo — **WR1** shipped 2026-07-06) — one-click holistic rewrite from all Review/Assess card concerns; mirrors **B26** gather → single temp-0 LLM call; uses **B26.2** reviewed-draft snapshot; modal with revised draft + track-changes diff (collapsed) + Copy; separate opt-in action (Review Correctness Principle #7 boundary). See **BACKLOG Pr9**.
+- **Pr9 — Interim: Suggest revised draft** (lighter prequel; shipped) — one-click holistic rewrite from all Review/Assess card concerns. See **BACKLOG Pr9** (closed).
+- **B9 — full accept / reject / refine** — **unblocked-but-not-built (2026-08-21).** A store exists (`persist-review-state`) but `review_state` overwrites; B9 needs append-only finding-decision event rows in a separate table.
 - Surface `suggestedRewrite` from QC cards to UI
-- Accept / reject / refine workflow for suggested rewrites (full sprint — separate from **Pr9**)
 - Rewrite notes redesign — deferred from earlier sprint, belongs here
 
 ### Spring Clean / Refactor Sprint
@@ -1034,7 +1047,7 @@ These items are intentionally not in the active rebuild backlog. They stay visib
 - **A11.1 — Per-version QC storage in Assess** — Assess stores a single flat `analysisResult`; loading an earlier version shows the "re-run Review" banner even when that version was already reviewed. Prerequisite for **A11.2**. Post-Monday. See **BACKLOG Pr10**.
 - **A11.2 — Tabbed base↔adaptation view** — deferred; depends on **A11.1** + real multi-version model in Assess. Current presentation: labelled timeline entries. See **BACKLOG Pr11**.
 - **A11.3 — Single-view consolidation** — collapse Assess/Writing naming into one unified **Content Engine** view. Deferred until Adapt-into-Assess settles (A10 was step one). Writing route remains off/dead. See **BACKLOG Pr12**.
-- **A10.3 / A10.4** — remaining Assess polish (state persistence, export order, final polish) — not scheduled.
+- **A10.3 / A10.4** — remaining Assess polish. Refresh/autosave shipped (`v8.71.0-review-state-restore`); layout, scroll, export order, and **A10.4** final polish not scheduled.
 
 ### R6.9.1 — Rhetorical / opinion non-claim handling (elevated, pre-Monday)
 
@@ -1145,11 +1158,12 @@ R3.3 wired `prepareUploadedSourcesForPipeline` into `api/analyse-statements.js`,
 ### Knowledge & Memory
 - Org document embeddings: private corpus grounding for long-term projects
 - Knowledge memory retrieval: persistent source library across sessions
+- **Pr13 — Approved-text library** — **unblocked-but-not-built (2026-08-21).** A store exists, but it holds one in-progress review (`review_state`), not a library of past approved texts. Restore shipped without list, picker, or history UI.
 
 ### Analytics & Dashboards (Pre-Enterprise)
 - Writer-facing dashboard: personal QC history, recurring flags, common evidence gaps, quality trends over time
 - Management-facing dashboard: team output volume, QC pass/fail rates, common compliance and editorial issues across the team, coverage by output type
-- Both views require a persistent session/document store — currently all state is in-memory
+- Both views still need a session/document store beyond the current one-row autosave buffer. The in-progress review snapshot is persisted (`persist-review-state` / `v8.71.0-review-state-restore`); dashboards and libraries are not.
 
 ### Quality Score Visualisation (Pre-Enterprise)
 - Radar/web chart displaying quality score across defined axes (e.g. evidence strength, editorial clarity, compliance risk, structural integrity)
