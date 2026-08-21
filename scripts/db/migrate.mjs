@@ -38,7 +38,11 @@ async function main() {
     const text = await readFile(path.join(MIGRATIONS_DIR, name), "utf8");
     const statements = splitStatements(text);
     for (const statement of statements) {
-      await sql(statement);
+      if (typeof sql.query === "function") {
+        await sql.query(statement);
+      } else {
+        await sql(statement);
+      }
       statementsRun += 1;
     }
   }
