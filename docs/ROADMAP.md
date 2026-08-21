@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (B65 Stage 1b fidelity)
+Last updated: 2026-08-21 (B53c superlative framing)
 
 ---
 
@@ -334,6 +334,10 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B60.1 — Sentence-scoped metric resolution** (shipped 2026-08-20). Replaces the 48-character window. A money figure takes its metric from the sentence that contains it (Stage 1 fallback splitter `splitDraftIntoCandidatesV2`; whole passage if no boundary). Within that sentence the nearest longest-first phrase wins, so two metrics in one sentence do not share an id. Truncation cannot assign a wrong id. Percent later migrated in **B72**. Tag: `review-money-metric-scope`. Currency recorded in **B71**.
 
+### B53c superlative absorption (closed 2026-08-21)
+
+**B53c.** Framing fidelity flags unevidenced superlatives (record, highest, lowest, best, strongest, unprecedented, first ever, all-time, never before) when the matched source does not use the same phrase. Deterministic; editorial only. Tag: `review-superlative`.
+
 ### B65 Stage 1b claim fidelity (closed 2026-08-21)
 
 **B65.** Stage 1b prompt requires each claim to be copied character for character from the parent. The model must not insert entity names from earlier in the sentence. A claim that starts with a pronoun or bare verb phrase is correct. Tag: `review-claim-fidelity`.
@@ -350,7 +354,7 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **B72.** Percent figures use the same sentence-scoped nearest-phrase resolver as money (`lib/qc/pipeline-v4/metric-scope.mjs`), with a separate longest-first vocabulary. One canonical id per figure. `margin_unspecified` does not match `gross_margin` or `ebitda_margin`, so a 45 vs 19 false force is suppressed. Percent still only forces when both ids resolved and equal (unknown does not fail closed, unlike money). Tag: `review-percent-metric-scope`. Probe: `scripts/diagnostic/b72-probe/`.
 
-**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**, **B53c**. **B67** closed 2026-08-19 on the probe. Period overlap shipped 2026-08-21 (`review-period-overlap`). **B71** closed 2026-08-21.
+**Next build:** **B61** (hasConflict only, M; durable storage required). Residuals: **B62**, **B53b**. **B67** closed 2026-08-19 on the probe. Period overlap shipped 2026-08-21 (`review-period-overlap`). **B71** closed 2026-08-21. **B65** and **B53c** closed 2026-08-21.
 
 ---
 

@@ -77,6 +77,31 @@ describe("framing-fidelity detector", () => {
   test("detects candidate evaluative language conservatively", () => {
     assert.equal(hasPotentialFramingJudgment("The company has a defensible position."), true);
     assert.equal(hasPotentialFramingJudgment("The company generated EUR 92 million of revenue."), false);
+    assert.equal(hasPotentialFramingJudgment("Utilisation has reached a record 88 per cent."), true);
+  });
+
+  test("fires on unevidenced record without calling the judge", async () => {
+    const det = await detectFramingFidelity({
+      statement: "Utilisation has reached a record 88 per cent.",
+      passages: ["Utilisation has reached 88 per cent."],
+      runJudge: async () => {
+        throw new Error("judge should not run for unevidenced superlatives");
+      },
+    });
+    assert.equal(det.fire, true);
+    assert.equal(det.evaluativePhrase, "record");
+    assert.match(det.note, /record/);
+  });
+
+  test("is quiet when the source itself uses record", async () => {
+    const det = await detectFramingFidelity({
+      statement: "Utilisation has reached a record 88 per cent.",
+      passages: ["Utilisation has reached a record 88 per cent."],
+      runJudge: async () => {
+        throw new Error("judge should not run when the superlative is evidenced");
+      },
+    });
+    assert.equal(det.fire, false);
   });
 });
 
@@ -137,5 +162,41 @@ describe("stage7 framing-fidelity emit", () => {
       })
     );
     assert.equal(card.materiality.level, "material");
+  });
+
+  test("unevidenced record is editorial only and does not change the evidence verdict", async () => {
+    const statement = "Utilisation has reached a record 88 per cent.";
+    const card = await assembleCard(
+      {
+        statementText: statement,
+        startChar: 0,
+        endChar: statement.length,
+        supportSpans: [{ passage: "Utilisation has reached 88 per cent." }],
+        sourceMatches: [{ sourceIndex: 0, classification: "confirmed", sourceLabel: "source" }],
+        verdictResult: {
+          verdict: "confirmed",
+          hasConflict: false,
+          confirmingMatches: [{ sourceIndex: 0, sourceLabel: "source" }],
+          contributingSourceIndices: [0],
+        },
+        excerptResult: {
+          primaryExcerpt: {
+            passage: "Utilisation has reached 88 per cent.",
+            sourceLabel: "source",
+          },
+        },
+        commentaryResult: { commentary: "The source confirms 88 per cent utilisation." },
+        editorialResult: {
+          editorialVerdict: "clean",
+          editorialConcerns: [],
+        },
+      },
+      { pipelineRoute: "v4" }
+    );
+    assert.equal(card.supportState, "supported");
+    assert.equal(card.hasConflict, false);
+    assert.equal(card.editorialVerdict, "clean");
+    assert.equal(card.framingFidelityConcerns.length, 1);
+    assert.match(card.framingFidelityConcerns[0].note, /record/);
   });
 });
