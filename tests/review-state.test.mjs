@@ -12,7 +12,10 @@ import {
 
 function createFakeSql(store) {
   const calls = [];
-  async function sql(text, params = []) {
+  async function query(text, params) {
+    if (arguments.length !== 2 || typeof text !== "string" || !Array.isArray(params)) {
+      throw new Error("sql.query must be called as query(text, params)");
+    }
     calls.push({ text, params });
     const normalised = String(text).toLowerCase().replace(/\s+/g, " ").trim();
     const reviewId = params[0];
@@ -39,8 +42,7 @@ function createFakeSql(store) {
     }
     throw new Error(`unexpected query: ${text}`);
   }
-  sql.calls = calls;
-  return sql;
+  return { query, calls };
 }
 
 const VALID_ID = "review_ab12";
@@ -200,5 +202,22 @@ describe("deleteReviewState", () => {
     assert.equal(store.has(VALID_ID), true);
     assert.equal(sql.calls.length, 1);
     assert.equal(String(sql.calls[0].text).toLowerCase().startsWith("select"), true);
+  });
+});
+
+describe("sql.query contract", () => {
+  test("fails when sql.query is absent rather than treating sql as a function", async () => {
+    const row = {
+      review_id: VALID_ID,
+      owner_key: OWNER_A,
+      state: { draft: "should-not-load" },
+      updated_at: new Date("2026-08-20T00:00:00.000Z"),
+    };
+    async function sql(text, params) {
+      return [row];
+    }
+    await assert.rejects(() =>
+      loadReviewState(sql, { reviewId: VALID_ID, ownerKey: OWNER_A })
+    );
   });
 });

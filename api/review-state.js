@@ -46,6 +46,7 @@ function headerOwnerKey(req) {
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
+  res.setHeader("Cache-Control", "private, no-store");
   console.log(
     `[review-state] ${req.method} db=${process.env.DATABASE_URL ? "configured" : "UNSET"}`
   );
