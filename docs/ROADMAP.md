@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-21 (review-state tidy: no-blobs, cleanup, accepted restore limitation)
+Last updated: 2026-08-22 (size-limit chapter: guard shipped, ceiling guarded, blob deferred)
 
 ---
 
@@ -20,7 +20,7 @@ Last updated: 2026-08-21 (review-state tidy: no-blobs, cleanup, accepted restore
 - **Production baseline (deployment-verified 2026-06-28 via Vercel):** live deploy `b23-docsync` (commit `9ab91c1`, main). All editorial-cluster code shipped and live — B21, B22 / B22.1 / B22.2 (latest code ship `b22.2-editorial-excerpt-removal`); subsequent commits (B22-docsync, b23-docsync, docs-hygiene) are documentation-only. Frontend `v8.54.1-r6.13.1-writing-intent-wiring`.
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
 - **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
-- **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`, `v8.72.0-review-state-cleanup`, `v8.73.0-review-state-no-blobs`, `v8.74.0-review-state-tidy`. **Accepted limitation (F16):** restored PDF/Office sources need re-upload before Review can run again. Open: **B78** (Vercel 4.5 MB request-body cap, unproven). Unblocked-but-not-built: **B9**, **B61**, **Pr13**.
+- **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`, `v8.72.0-review-state-cleanup`, `v8.73.0-review-state-no-blobs`, `v8.74.0-review-state-tidy`. **Accepted limitation (F16):** restored PDF/Office sources need re-upload before Review can run again. **Size-limit chapter 2026-08-22:** guard shipped (**F20** `v8.75.0-source-size-guard` + `3fce4fb`; **F21** `v8.76.0-size-message-wording`). Ceiling remains **B79** (OPEN, GUARDED). Blob storage **Pr14** deferred. Unblocked-but-not-built: **B9**, **B61**, **Pr13**. Persistence questions (storage location/jurisdiction, user accounts, retention) remain OPEN.
 
 ---
 
@@ -115,11 +115,18 @@ Durable Neon store plus frontend autosave/restore of the in-progress review. One
 
 **Accepted limitation (BACKLOG F16):** a restored PDF or Office source must be re-uploaded before Review can run again. The backend deliberately refuses inline text for PDFs (`PDF_INLINE_TEXT_NOT_ALLOWED`), so extraction always happens server-side from the original bytes. Autosave still restores draft, extracted text, version history, and cards.
 
-**Open, unproven (BACKLOG B78):** Vercel caps function request bodies at 4.5 MB. Base64 inflation puts the practical Review ceiling at roughly 3.4 MB of source documents across all sources. May be below a normal LP report. Next step: one 5+ MB PDF upload to see how it fails.
+**Persistence questions remain OPEN.** Shipping the autosave buffer did not answer: (1) where client draft content may be stored and under which jurisdiction, (2) whether user accounts are needed, (3) retention. Frankfurt (`fra1`, **P12**) is the Vercel function region, not a jurisdiction decision for client files. A retention rule was agreed for blob storage, but blob storage was deferred (**Pr14**), so no client source files are stored and that rule governs nothing. Do not record it as active policy.
 
 **Unblocked-but-not-built** now that a store exists: **B9** (needs append-only finding-decision events, not an overwrite buffer), **B61** (needs a durable LLM-result cache, not the frontend snapshot), **Pr13** approved-text library (needs a library of past texts; restore explicitly shipped without list/picker/history UI). See BACKLOG.
 
 **Platform pins (same day, untagged commits):** Node `engines` **22.x** (`86ada5d`; frontend `888f6a8`). Vercel functions `regions: ["fra1"]` Frankfurt (`060d1ce`). Backend `installCommand` is `npm ci` (`vercel.json` since `9b5bd90`, 2026-01-25): any commit that changes dependencies must include the lockfile. See BACKLOG **P11** / **P12** / **P13**.
+
+### Source size ceiling (guard shipped 2026-08-22; ceiling remains)
+
+Vercel rejects any function request body over 4.5 MB at the edge. After base64 inflation the practical ceiling is about 3 MB of source documents in total across all sources, not per file. Confirmed in production 2026-08-21 with an 11.3 MB PDF: the function never runs, CORS headers are never set, and the browser reports `TypeError: Load failed`. Pre-existing since first deployment. Unrelated to persistence.
+
+- **Guard shipped.** Client-side refusal before the request is sent. Tags: `v8.75.0-source-size-guard` (`d0bbcc5`), untagged `3fce4fb` (draft upload on the same budget; stale 10 MB PDF cap removed), `v8.76.0-size-message-wording` (`16a8cd1`). See BACKLOG **F20** / **F21**.
+- **Ceiling remains OPEN and GUARDED (B79).** The failure is now honest. The tool still cannot review a document over about 3 MB. Real fix is blob storage (**Pr14**), deferred. Local verification is invalid (**P14**).
 
 ### Diagnostic harness (closed 26 May 2026)
 
@@ -762,7 +769,7 @@ Parked pending dogfooding evidence. Bundle:
 
 - **Cosmetic:** `[EDITORIAL_REVIEW] starting` log prints `visibility: null` before `normalize*` — stale pre-normalisation values (`lib/qc/editorial-compliance-reviewer.mjs`).
 - **v3 retirement:** decommission v3 route and dual-path editorial/compliance code once dogfooding evidence accumulates (target: 15–25 production traces, no canary fires; see Architectural debt → R3.1).
-- **Legacy timestamp formatting (frontend):** `DraftOutputPanel.jsx`, `WritingBadge.jsx`, and `DraftContextPanel.jsx` still use `toLocaleString` for timestamp display (legacy Writing/Quality surfaces). Intentionally not touched in R5.5 — surfaces may be unreachable post-R4.1 and could be removed with dead code. **R4.2 scoping:** confirm reachability; either migrate to `formatRelativeTime` / `formatAbsoluteTime` (see frontend `docs/FRONTEND_CONVENTIONS.md`) or delete with the unreachable panels.
+- **Legacy timestamp formatting (frontend):** `DraftOutputPanel.jsx`, `WritingBadge.jsx`, and `DraftContextPanel.jsx` still use `toLocaleString` for timestamp display (legacy Writing/Quality surfaces). Intentionally not touched in R5.5. **Reachability check 2026-08-22 supports deletion rather than repair** (same evidence as **BACKLOG Pr12**): `addUrlSource` is unreachable from any rendered control; its only caller is the URL field in `SourcesPanel.jsx`, which nothing imports; `/writing`, `/quality` and `/quality-review` all redirect to `/assess`; `FocusWorkspace` and `QualityPageLayout` remain in `App.jsx` but are on no live route. A miswiring in `addUrlSource` (it calls the URL-building helper rather than a client for `/api/fetch-url`) is not user-visible and was deliberately not fixed.
 
 ---
 
@@ -1053,8 +1060,8 @@ These items are intentionally not in the active rebuild backlog. They stay visib
 
 - **A11.1 — Per-version QC storage in Assess** — Assess stores a single flat `analysisResult`; loading an earlier version shows the "re-run Review" banner even when that version was already reviewed. Prerequisite for **A11.2**. Post-Monday. See **BACKLOG Pr10**.
 - **A11.2 — Tabbed base↔adaptation view** — deferred; depends on **A11.1** + real multi-version model in Assess. Current presentation: labelled timeline entries. See **BACKLOG Pr11**.
-- **A11.3 — Single-view consolidation** — collapse Assess/Writing naming into one unified **Content Engine** view. Deferred until Adapt-into-Assess settles (A10 was step one). Writing route remains off/dead. See **BACKLOG Pr12**.
-- **A10.3 / A10.4** — remaining Assess polish. Refresh/autosave shipped (`v8.71.0-review-state-restore` through `v8.74.0-review-state-tidy`); restored PDF/Office re-upload is an accepted limitation (**F16**). Layout, scroll, export order, and **A10.4** final polish not scheduled.
+- **A11.3 — Single-view consolidation** — collapse Assess/Writing naming into one unified **Content Engine** view. Deferred until Adapt-into-Assess settles (A10 was step one). Writing route remains off/dead. **2026-08-22:** reachability evidence favours deleting the legacy Writing surfaces rather than repairing them. See **BACKLOG Pr12**.
+- **A10.3 / A10.4** — remaining Assess polish. Refresh/autosave shipped (`v8.71.0-review-state-restore` through `v8.74.0-review-state-tidy`); size guard shipped (`v8.75.0-source-size-guard`, `v8.76.0-size-message-wording`). Restored PDF/Office re-upload is an accepted limitation (**F16**). Upload ceiling remains **B79** (about 3 MB, GUARDED). Layout, scroll, export order, and **A10.4** final polish not scheduled.
 
 ### R6.9.1 — Rhetorical / opinion non-claim handling (elevated, pre-Monday)
 
