@@ -763,6 +763,43 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /natural paragraph structure/i);
   });
 
+  test("unsupported silent source: one test, no author-figure approximation, three kinds of removal", () => {
+    const concerns = gatherConcerns([evidenceGapCard]);
+    const prompt = buildRevisionPrompt(draft, concerns, {});
+
+    assert.match(
+      prompt,
+      /after removing the unsupported figure, does the remaining phrase tell a reader anything they did not already know/
+    );
+    assert.match(prompt, /YES, the claim stands without the number: SOFTEN/);
+    assert.match(prompt, /delivered 22% revenue growth last year/);
+    assert.match(prompt, /delivered revenue growth last year/);
+    assert.match(prompt, /NO, the figure WAS the claim: CUT THE CLAUSE/);
+    assert.match(prompt, /with equity checks of EUR 80-100 million apiece/);
+    assert.match(prompt, /The company serves customers across Europe/);
+    assert.match(prompt, /cutting would remove the whole sentence: do NOT cut/);
+    assert.match(
+      prompt,
+      /occupy the space where a number used to be is worse than either alternative/
+    );
+    assert.match(prompt, /Approximating a SOURCE figure is fine/);
+    assert.match(prompt, /Approximating the AUTHOR'S unsupported figure is forbidden/);
+    assert.match(prompt, /WORSE than leaving the original figure alone/);
+    assert.match(prompt, /appearance of diligence with none of the substance/);
+    assert.match(prompt, /same ONE TEST as \(b\) to that element only/);
+    assert.match(prompt, /Removing the author's POINT/);
+    assert.match(prompt, /Removing unsupported PRECISION/);
+    assert.match(prompt, /Removing an ELEMENT for compliance/);
+    assert.match(prompt, /removed FOR COMPLIANCE REASONS/);
+    assert.match(prompt, /not the only case where content is removed/);
+    assert.doesNotMatch(
+      prompt,
+      /the ONE case where the rewrite removes author content by default/
+    );
+    assert.match(prompt, /delivered revenue growth last year\|\|Removed the unsupported 22% figure/);
+    assert.doesNotMatch(prompt, /delivered material growth/);
+  });
+
   test("gates first_person_plural off for investor_letter but still includes hyperbole and currency", () => {
     const promptIl = buildRevisionPrompt(draft, [], { outputType: "INVESTOR_LETTER" });
     assert.doesNotMatch(promptIl, /first_person_plural:/);
