@@ -52,6 +52,7 @@ const LIVE_SCRIPTS = [
   "scripts/diagnostic/llm-cache/run-gate.mjs",
   "scripts/diagnostic/llm-cache/run-stage1-stability.mjs",
   "scripts/diagnostic/stage2-determinism/run.mjs",
+  "scripts/diagnostic/pr9-marker-consistency.mjs",
 ];
 
 describe("disk-backed LLM cache", () => {
@@ -322,7 +323,7 @@ describe("diagnostic disk-cache policy", () => {
     rmSync(dir, { recursive: true, force: true });
   });
 
-  test("the three live-only scripts hard-code liveMeasurement and cannot opt into disk", async () => {
+  test("live-measurement scripts hard-code liveMeasurement and cannot opt into disk", async () => {
     for (const rel of LIVE_SCRIPTS) {
       const src = await readFile(path.join(process.cwd(), rel), "utf8");
       assert.ok(
