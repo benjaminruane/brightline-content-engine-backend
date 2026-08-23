@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-22 (size-limit chapter: guard shipped, ceiling guarded, blob deferred)
+Last updated: 2026-08-23 (Pr9 rewrite-correctness: claim spans, soften-or-cut, marker intent, cut punctuation)
 
 ---
 
@@ -21,6 +21,7 @@ Last updated: 2026-08-22 (size-limit chapter: guard shipped, ceiling guarded, bl
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
 - **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
 - **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`, `v8.72.0-review-state-cleanup`, `v8.73.0-review-state-no-blobs`, `v8.74.0-review-state-tidy`. **Accepted limitation (F16):** restored PDF/Office sources need re-upload before Review can run again. **Size-limit chapter 2026-08-22:** guard shipped (**F20** `v8.75.0-source-size-guard` + `3fce4fb`; **F21** `v8.76.0-size-message-wording`). Ceiling remains **B79** (OPEN, GUARDED). Blob storage **Pr14** deferred. Unblocked-but-not-built: **B9**, **B61**, **Pr13**. Persistence questions (storage location/jurisdiction, user accounts, retention) remain OPEN.
+- **Pr9 rewrite-correctness SHIPPED 2026-08-23.** Tags: `pr9-claim-spans` (`d8ab2df`), `pr9-soften-or-cut` (`0cd76a5`), `pr9-marker-intent` (`00cce35`), `pr9-cut-punctuation` (`71500c4`). Together they fixed a revision that could attach a note claiming a removal to text it left untouched, reproduced 3/3 on the production sentence. Residuals: **B80**, **B81**, **Pr15**. Harness caveat: **P15**. Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`.
 
 ---
 
@@ -94,6 +95,21 @@ Last updated: 2026-08-22 (size-limit chapter: guard shipped, ceiling guarded, bl
 
 ## Recently shipped (closed specs)
 
+### Pr9 rewrite-correctness (closed 2026-08-23)
+
+Follow-on to the original Pr9 ship (2026-08-14). Backend-only. Together these four tags fixed a revision that could attach a note claiming a removal to text it left untouched, reproduced 3/3 on the production sentence.
+
+- **`pr9-claim-spans` (`d8ab2df`)** — `gatherConcerns` emits per-claim evidence spans when a card is decomposed, so mixed sentences are unambiguous.
+- **`pr9-soften-or-cut` (`0cd76a5`)** — one test on an unsupported figure: SOFTEN, CUT THE CLAUSE, or keep-and-flag the whole sentence. Never approximate the author's unsupported figure.
+- **`pr9-marker-intent` (`00cce35`)** — markers declare CHANGED / KEPT / CUT. Deterministic honesty check. Missing or unrecognised intent is malformed.
+- **`pr9-cut-punctuation` (`71500c4`)** — deletions-only punctuation tidy after a clause cut, with marker offsets remapped.
+
+**Process (BACKLOG P15):** the Pr9 marker harness measures honesty, not correctness. Three separate faults passed it clean with perfectly consistent notes: an invented figure, meaningless filler, and a malformed sentence. Any future Pr9 change must be judged by inspecting quoted output rather than the cross-tabulation.
+
+**Still open:** **B80** (a clause-cut can be labelled CHANGED rather than CUT), **B81** (punctuation pass does not repair stranded prepositions, articles, verbs, or connectives), **Pr15** (narrative-flow question: original complaint, still untested because the test draft was too short and too clean). **B9** reframe: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first; the chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card.
+
+Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`. See **BACKLOG Pr9-correctness** (closed), **B80**, **B81**, **P15**, **Pr15**, **B9**.
+
 ### Review-quality arc (CLOSED 2026-08-21)
 
 The review-quality arc is **CLOSED**. It ran 19-21 August 2026, backend-only: no frontend commit after `review-card-density` (18 August). The work was to stop Review from contradicting itself on figures that are not the same thing, and to let compound sentences confirm when every piece of the sentence is actually supported.
@@ -117,7 +133,7 @@ Durable Neon store plus frontend autosave/restore of the in-progress review. One
 
 **Persistence questions remain OPEN.** Shipping the autosave buffer did not answer: (1) where client draft content may be stored and under which jurisdiction, (2) whether user accounts are needed, (3) retention. Frankfurt (`fra1`, **P12**) is the Vercel function region, not a jurisdiction decision for client files. A retention rule was agreed for blob storage, but blob storage was deferred (**Pr14**), so no client source files are stored and that rule governs nothing. Do not record it as active policy.
 
-**Unblocked-but-not-built** now that a store exists: **B9** (needs append-only finding-decision events, not an overwrite buffer), **B61** (needs a durable LLM-result cache, not the frontend snapshot), **Pr13** approved-text library (needs a library of past texts; restore explicitly shipped without list/picker/history UI). See BACKLOG.
+**Unblocked-but-not-built** now that a store exists: **B9** (needs append-only finding-decision events, not an overwrite buffer; acting on a finding and acting on an edit are two different workflows, and B9 as scoped covers only the first), **B61** (needs a durable LLM-result cache, not the frontend snapshot), **Pr13** approved-text library (needs a library of past texts; restore explicitly shipped without list/picker/history UI). See BACKLOG.
 
 **Platform pins (same day, untagged commits):** Node `engines` **22.x** (`86ada5d`; frontend `888f6a8`). Vercel functions `regions: ["fra1"]` Frankfurt (`060d1ce`). Backend `installCommand` is `npm ci` (`vercel.json` since `9b5bd90`, 2026-01-25): any commit that changes dependencies must include the lockfile. See BACKLOG **P11** / **P12** / **P13**.
 
@@ -309,7 +325,7 @@ R6.4 chapter closed across four sub-items addressing the diagnostic finding on C
 
 ### Pr9 — Suggest revised draft (closed 2026-08-14)
 
-**Pr9 — Suggest revised draft** (shipped 2026-08-11–14). Lighter prequel to Implement-changes sprint (**B9**). One-click revised draft from gathered Review/Assess card concerns → single temp-0 LLM call → whole-draft holistic rewrite; finding-handling rulebook + note-wording pass. Tags: `Pr9-BE`, `Pr9-handling-BE`, `Pr9-notes-BE` (backend); `Pr9-FE`, `Pr9-handling-FE` (frontend). See **BACKLOG Pr9** (closed).
+**Pr9 — Suggest revised draft** (shipped 2026-08-11–14). Lighter prequel to Implement-changes sprint (**B9**). One-click revised draft from gathered Review/Assess card concerns → single temp-0 LLM call → whole-draft holistic rewrite; finding-handling rulebook + note-wording pass. Tags: `Pr9-BE`, `Pr9-handling-BE`, `Pr9-notes-BE` (backend); `Pr9-FE`, `Pr9-handling-FE` (frontend). See **BACKLOG Pr9** (closed). **Rewrite-correctness follow-on shipped 2026-08-23** — see **Recently shipped → Pr9 rewrite-correctness**.
 
 ### Review-quality cluster (closed 2026-08-18)
 
@@ -843,7 +859,7 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 
 16. **E2 deterministic reimplementation** — open.
 17. ~~**Pr9 — Interim: Suggest revised draft**~~ — **SHIPPED 2026-08-14** — see **Recently shipped → Pr9**. Tags: `Pr9-BE`, `Pr9-handling-BE`, `Pr9-notes-BE` (backend); `Pr9-FE`, `Pr9-handling-FE` (frontend).
-18. **Implement-changes sprint** (`suggestedRewrite` → UI, accept/reject/refine) — see Active Backlog → Implement-Changes Sprint; full workflow remains separate from **Pr9**.
+18. **Implement-changes sprint** (`suggestedRewrite` → UI, accept/reject/refine) — see Active Backlog → Implement-Changes Sprint. Acting on a finding and acting on an edit are two different workflows; **B9** as scoped covers only the first. The chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card. Full workflow remains separate from **Pr9**.
 19. **`visibility:null` stale log (R4.2)** — parked in **R4.2**; `[EDITORIAL_REVIEW] starting` log before normalisation.
 20. **Unlabelled return-multiple watch (R5.1.2)** — expand confidential-detail rule for MOIC-style figures.
 21. **Web Search relook** — **DEFERRED** behind R6 and R7. Pre-spec: UI placement, verdict contract for web-sourced confirmation, cost/latency on ~16 calls/run.
@@ -885,6 +901,10 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
 | A10 — Adapt into Assess (A10.1, A10.2, A10.2.1, A10.2.2) | `v8.51.0-rA10-adapt-into-assess` (frontend) |
 | R6.12 — Editorial output-type voice/register calibration | `r6.12-editorial-output-type` (backend) |
 | Pr9 — Suggest revised draft | `Pr9-BE`, `Pr9-handling-BE`, `Pr9-notes-BE` (backend); `Pr9-FE`, `Pr9-handling-FE` (frontend) |
+| Pr9 rewrite-correctness — claim spans | `pr9-claim-spans` (`d8ab2df`) |
+| Pr9 rewrite-correctness — soften or cut | `pr9-soften-or-cut` (`0cd76a5`) |
+| Pr9 rewrite-correctness — marker intent | `pr9-marker-intent` (`00cce35`) |
+| Pr9 rewrite-correctness — cut punctuation | `pr9-cut-punctuation` (`71500c4`) |
 | B48 — Evidence conflict-vs-partial calibration | `review-B48` |
 | B13 — Stage 5 material-vs-pedantic partial distinction | `review-B13` |
 | F8 — number_spelling quarter-notation backstop | `review-F8` |
@@ -1023,8 +1043,8 @@ Item (a) remains cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival)
 - Blending rules: draft first, sources second, web last
 
 ### Implement-Changes Sprint
-- **Pr9 — Interim: Suggest revised draft** (lighter prequel; shipped) — one-click holistic rewrite from all Review/Assess card concerns. See **BACKLOG Pr9** (closed).
-- **B9 — full accept / reject / refine** — **unblocked-but-not-built (2026-08-21).** A store exists (`persist-review-state`) but `review_state` overwrites; B9 needs append-only finding-decision event rows in a separate table.
+- **Pr9 — Interim: Suggest revised draft** (lighter prequel; shipped) — one-click holistic rewrite from all Review/Assess card concerns. See **BACKLOG Pr9** (closed). Rewrite-correctness follow-on shipped 2026-08-23 (`pr9-claim-spans`, `pr9-soften-or-cut`, `pr9-marker-intent`, `pr9-cut-punctuation`). Residuals **B80**, **B81**, **Pr15**. Harness caveat **P15**.
+- **B9 — full accept / reject / refine** — **unblocked-but-not-built (2026-08-21).** A store exists (`persist-review-state`) but `review_state` overwrites; B9 needs append-only finding-decision event rows in a separate table. **Reframe (2026-08-23):** acting on a finding and acting on an edit are two different workflows. B9 as scoped covers only the first. The chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card. Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`.
 - Surface `suggestedRewrite` from QC cards to UI
 - Rewrite notes redesign — deferred from earlier sprint, belongs here
 
