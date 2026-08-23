@@ -18,6 +18,7 @@ import {
   classifyMarker,
   emptyTally,
   addToTally,
+  targetFigureDisposition,
   OUTCOME_CORRECT_CHANGE,
   OUTCOME_CORRECT_KEEP,
   OUTCOME_DEFECT,
@@ -76,7 +77,19 @@ function clusterKey(row) {
   return `${kinds} | ${silent}`;
 }
 
-async function runFixture(fixture) {
+function expandJobs(fixtures) {
+  const jobs = [];
+  for (const fixture of fixtures) {
+    const repeats =
+      Number.isFinite(fixture.repeats) && fixture.repeats > 0 ? Math.floor(fixture.repeats) : 1;
+    for (let runIndex = 1; runIndex <= repeats; runIndex++) {
+      jobs.push({ fixture, runIndex, repeats });
+    }
+  }
+  return jobs;
+}
+
+async function runFixture(fixture, runIndex = 1) {
   const publicationMap = buildPublicationMap(fixture.sources);
   const concerns = gatherConcerns(fixture.statements, publicationMap);
   const prompt = buildRevisionPrompt(fixture.draftText, concerns, {
@@ -94,6 +107,7 @@ async function runFixture(fixture) {
     metadata: {
       route: "pr9-marker-consistency",
       fixture: fixture.id,
+      runIndex,
       concernCount: concerns.length,
     },
   });
@@ -107,6 +121,8 @@ async function runFixture(fixture) {
       ok: false,
       fixtureId: fixture.id,
       label: fixture.label,
+      cohort: fixture.cohort || "baseline",
+      runIndex,
       error: "empty completion",
       promptChars: prompt.length,
       usage,
@@ -114,6 +130,9 @@ async function runFixture(fixture) {
       concerns,
       markers: [],
       classified: [],
+      figureDisposition: targetFigureDisposition("", fixture.targetFigure),
+      revisedDraft: "",
+      draftText: fixture.draftText,
     };
   }
 
@@ -126,6 +145,8 @@ async function runFixture(fixture) {
     ok: true,
     fixtureId: fixture.id,
     label: fixture.label,
+    cohort: fixture.cohort || "baseline",
+    runIndex,
     draftText: fixture.draftText,
     revisedDraft,
     raw,
@@ -135,12 +156,15 @@ async function runFixture(fixture) {
     concerns,
     markers,
     classified,
+    figureLabel: fixture.targetFigure?.label || null,
+    figureDisposition: targetFigureDisposition(revisedDraft, fixture.targetFigure),
   };
 }
 
-function printEstimate(fixtures) {
+function printEstimate(jobs) {
   let promptChars = 0;
-  for (const fixture of fixtures) {
+  for (const job of jobs) {
+    const fixture = job.fixture;
     const publicationMap = buildPublicationMap(fixture.sources);
     const concerns = gatherConcerns(fixture.statements, publicationMap);
     const prompt = buildRevisionPrompt(fixture.draftText, concerns, {
@@ -150,24 +174,118 @@ function printEstimate(fixtures) {
     promptChars += prompt.length;
   }
   const inputTok = estimateTokensFromChars(promptChars);
-  const outputTokLow = fixtures.length * 400;
-  const outputTokHigh = fixtures.length * 8000;
+  // Last live run (6 calls) used ~78 output tokens each. High band 500/call.
+  const outputTokLow = jobs.length * 80;
+  const outputTokHigh = jobs.length * 500;
   const inRate = 1.25 / 1_000_000;
   const outRate = 10.0 / 1_000_000;
   const low = inputTok * inRate + outputTokLow * outRate;
   const high = inputTok * inRate + outputTokHigh * outRate;
   console.log("[pr9-marker-consistency] COST ESTIMATE (before live calls)");
-  console.log(`  fixtures: ${fixtures.length}`);
+  console.log(`  jobs: ${jobs.length} (fixture-runs, including repeats)`);
   console.log(`  model: ${modelConfig.provider}/${modelConfig.model} temp=0 (rewrites not cached)`);
-  console.log(`  prompt chars (all): ${promptChars} (~${inputTok} input tokens at chars/4)`);
-  console.log(`  expected output: ~${outputTokLow}-${outputTokHigh} tokens (gpt-5.1 reasoning band)`);
+  console.log(`  prompt chars (all jobs): ${promptChars} (~${inputTok} input tokens at chars/4)`);
+  console.log(`  expected output: ~${outputTokLow}-${outputTokHigh} tokens`);
   console.log(`  expected cost: $${low.toFixed(2)}-$${high.toFixed(2)} using gpt-5 list rates`);
-  console.log("  expected wall clock: 2-6 minutes sequential");
+  console.log("  expected wall clock: 1-4 minutes sequential");
+  if (high > 1) {
+    console.log("  STOP: high estimate exceeds $1.00");
+    return { low, high, proceed: false };
+  }
   console.log("  cap: proceed because high estimate is under $1.00");
-  return { low, high };
+  return { low, high, proceed: true };
+}
+
+function printNewFixtureRuns(results) {
+  const newRuns = results.filter((r) => r.cohort === "silent_unsupported");
+  console.log("\n========== NEW FIXTURES: PER-RUN MARKERS ==========\n");
+  if (newRuns.length === 0) {
+    console.log("(none)");
+    return;
+  }
+
+  const byId = Object.create(null);
+  for (const result of newRuns) {
+    byId[result.fixtureId] = byId[result.fixtureId] || [];
+    byId[result.fixtureId].push(result);
+  }
+
+  for (const fixtureId of Object.keys(byId).sort()) {
+    const runs = byId[fixtureId].sort((a, b) => a.runIndex - b.runIndex);
+    const dispositions = runs.map((r) => r.figureDisposition).filter(Boolean);
+    const uniqueDisp = [...new Set(dispositions)];
+    const vary = uniqueDisp.length > 1 ? "varies" : uniqueDisp[0] || "n/a";
+    const label = runs[0]?.label || fixtureId;
+    const figureLabel = runs[0]?.figureLabel || "(no target figure)";
+    console.log(`### ${fixtureId} ${label}`);
+    console.log(`target figure: ${figureLabel}`);
+    console.log(`keep/drop across runs: ${dispositions.join(", ")} => ${vary}`);
+    console.log("");
+    for (const result of runs) {
+      console.log(`-- run ${result.runIndex}/${runs.length} ok=${result.ok} figure=${result.figureDisposition} --`);
+      if (!result.ok) {
+        console.log(`error: ${result.error}`);
+        console.log("");
+        continue;
+      }
+      console.log("ORIGINAL:");
+      console.log(result.draftText);
+      console.log("REVISED DRAFT:");
+      console.log(result.revisedDraft);
+      if (!result.classified.length) {
+        console.log("MARKERS: (none)");
+        console.log("");
+        continue;
+      }
+      for (let i = 0; i < result.classified.length; i++) {
+        const row = result.classified[i];
+        console.log(`MARKER ${i + 1} outcome=${row.outcome} spanStatus=${row.spanStatus} noteClaim=${row.noteClaim}`);
+        console.log("ORIGINAL STATEMENT:");
+        console.log(row.statementText || result.draftText);
+        console.log("REVISED SPAN:");
+        console.log(row.span);
+        console.log("NOTE:");
+        console.log(row.note);
+      }
+      console.log("");
+    }
+  }
+}
+
+function printSilentUnsupportedRate(results) {
+  const newRuns = results.filter((r) => r.cohort === "silent_unsupported" && r.ok);
+  if (newRuns.length === 0) return;
+  let runsWithDefect = 0;
+  const perFixture = Object.create(null);
+  for (const result of newRuns) {
+    const hasDefect = result.classified.some((row) => row.outcome === OUTCOME_DEFECT);
+    if (hasDefect) runsWithDefect += 1;
+    const slot = (perFixture[result.fixtureId] = perFixture[result.fixtureId] || {
+      runs: 0,
+      defectRuns: 0,
+      dispositions: [],
+    });
+    slot.runs += 1;
+    if (hasDefect) slot.defectRuns += 1;
+    if (result.figureDisposition) slot.dispositions.push(result.figureDisposition);
+  }
+  console.log("========== SILENT-UNSUPPORTED DEFECT RATE ==========\n");
+  console.log(`new-fixture runs with at least one defect: ${frac(runsWithDefect, newRuns.length)}`);
+  for (const id of Object.keys(perFixture).sort()) {
+    const slot = perFixture[id];
+    const unique = [...new Set(slot.dispositions)];
+    const vary = unique.length > 1 ? "varies" : unique[0] || "n/a";
+    console.log(
+      `${id}: defect runs ${frac(slot.defectRuns, slot.runs)}; figure ${slot.dispositions.join("/")} (${vary})`
+    );
+  }
+  console.log("");
 }
 
 function printReport(results) {
+  printNewFixtureRuns(results);
+  printSilentUnsupportedRate(results);
+
   const tally = emptyTally();
   const defects = [];
   const wrongKeeps = [];
@@ -199,7 +317,13 @@ function printReport(results) {
       };
       cluster[key].total += 1;
       cluster[key][row.outcome] += 1;
-      const packed = { fixtureId: result.fixtureId, label: result.label, ...row };
+      const packed = {
+        fixtureId: result.fixtureId,
+        label: result.label,
+        runIndex: result.runIndex,
+        figureDisposition: result.figureDisposition,
+        ...row,
+      };
       if (row.outcome === OUTCOME_DEFECT) {
         defects.push(packed);
         fixtureHadDefect = true;
@@ -243,7 +367,7 @@ function printReport(results) {
     console.log("(none)");
   } else {
     for (const d of defects) {
-      console.log(`--- ${d.fixtureId} ${d.label} statement[${d.statementIndex}] ---`);
+      console.log(`--- ${d.fixtureId} run ${d.runIndex} ${d.label} statement[${d.statementIndex}] ---`);
       console.log(`findingKinds: ${d.findingKinds.join(", ") || "(none)"}`);
       console.log(`evidenceKind: ${d.evidenceKind || "(none)"}  sourceSilent: ${d.sourceSilent}`);
       console.log(`spanExactInOriginal: ${d.spanExactInOriginal}`);
@@ -314,19 +438,26 @@ function printReport(results) {
 }
 
 const fixtures = PR9_FIXTURES;
-printEstimate(fixtures);
+const jobs = expandJobs(fixtures);
+const estimate = printEstimate(jobs);
+if (!estimate.proceed) {
+  process.exit(2);
+}
 
 const results = [];
 try {
-  for (const fixture of fixtures) {
-    console.log(`\n[pr9-marker-consistency] running ${fixture.id} ${fixture.label}`);
-    const result = await runFixture(fixture);
+  for (const job of jobs) {
+    const { fixture, runIndex, repeats } = job;
+    console.log(
+      `\n[pr9-marker-consistency] running ${fixture.id} run ${runIndex}/${repeats} ${fixture.label}`
+    );
+    const result = await runFixture(fixture, runIndex);
     results.push(result);
     if (!result.ok) {
-      console.error(`[pr9-marker-consistency] FAIL ${fixture.id}: ${result.error}`);
+      console.error(`[pr9-marker-consistency] FAIL ${fixture.id} run ${runIndex}: ${result.error}`);
     } else {
       console.log(
-        `[pr9-marker-consistency] ${fixture.id} markers=${result.classified.length} cost~$${Number(result.costUsd).toFixed(4)}`
+        `[pr9-marker-consistency] ${fixture.id}#${runIndex} markers=${result.classified.length} figure=${result.figureDisposition} cost~$${Number(result.costUsd).toFixed(4)}`
       );
     }
   }
@@ -347,9 +478,13 @@ const payload = {
     ok: r.ok,
     fixtureId: r.fixtureId,
     label: r.label,
+    cohort: r.cohort,
+    runIndex: r.runIndex,
     error: r.error || null,
     draftText: r.draftText,
     revisedDraft: r.revisedDraft,
+    figureLabel: r.figureLabel || null,
+    figureDisposition: r.figureDisposition,
     usage: r.usage,
     costUsd: r.costUsd,
     classified: r.classified,

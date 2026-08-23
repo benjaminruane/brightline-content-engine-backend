@@ -349,3 +349,23 @@ export function addToTally(tally, outcome) {
   if (Object.prototype.hasOwnProperty.call(tally, outcome)) tally[outcome] += 1;
   else tally[OUTCOME_AMBIGUOUS] += 1;
 }
+
+/**
+ * Whether a target unsupported figure is still present in revised text.
+ * keepPatterns are JS regex source strings (or RegExp). Any hit => kept.
+ *
+ * @param {string} text
+ * @param {{ keepPatterns?: Array<string|RegExp> }|null|undefined} targetFigure
+ * @returns {"kept"|"dropped"|null}
+ */
+export function targetFigureDisposition(text, targetFigure) {
+  if (!targetFigure || !Array.isArray(targetFigure.keepPatterns) || targetFigure.keepPatterns.length === 0) {
+    return null;
+  }
+  const source = typeof text === "string" ? text : "";
+  for (const raw of targetFigure.keepPatterns) {
+    const re = raw instanceof RegExp ? raw : new RegExp(raw, "i");
+    if (re.test(source)) return "kept";
+  }
+  return "dropped";
+}

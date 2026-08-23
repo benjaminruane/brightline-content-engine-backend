@@ -263,4 +263,138 @@ export const PR9_FIXTURES = [
     outputType: "REPORTING_COMMENTARY",
     requiredVersion: "complete",
   },
+  {
+    id: "F7",
+    cohort: "silent_unsupported",
+    repeats: 3,
+    label: "FIXTURE 7 - production: silent unsupported equity-check size",
+    draftText:
+      "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+    targetFigure: {
+      label: "EUR 80-100 million",
+      keepPatterns: ["80-100", "80 million", "100 million", "80 to 100", "80- 100"],
+    },
+    statements: [
+      {
+        text: "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+        qcCard: {
+          index: 0,
+          statement:
+            "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          supportState: "partial",
+          displayVerdict: "supported_partial",
+          primaryExcerpt: {
+            sourceLabel: "IC memo",
+            passage:
+              "The fund intends to build a portfolio of 10-14 control-oriented platform investments.",
+          },
+          evidenceSummary:
+            "Sources confirm the 10-14 platform investments. They do not mention equity check size at all.",
+          editorialVerdict: "clean",
+          complianceVerdict: "clean",
+        },
+      },
+    ],
+    outputType: "REPORTING_COMMENTARY",
+    requiredVersion: "complete",
+  },
+  {
+    id: "F8",
+    cohort: "silent_unsupported",
+    repeats: 3,
+    label: "FIXTURE 8 - silent unsupported percentage",
+    draftText:
+      "The platform delivered 22% revenue growth last year and expanded into two new markets.",
+    targetFigure: {
+      label: "22%",
+      keepPatterns: ["22%", "22 percent", "twenty-two percent"],
+    },
+    statements: [
+      {
+        text: "The platform delivered 22% revenue growth last year and expanded into two new markets.",
+        qcCard: {
+          index: 0,
+          statement:
+            "The platform delivered 22% revenue growth last year and expanded into two new markets.",
+          supportState: "partial",
+          displayVerdict: "supported_partial",
+          primaryExcerpt: {
+            sourceLabel: "Annual review",
+            passage: "The platform expanded into two new markets last year.",
+          },
+          evidenceSummary:
+            "Sources confirm expansion into two new markets. They do not state a 22% growth figure.",
+          editorialVerdict: "clean",
+          complianceVerdict: "clean",
+        },
+      },
+    ],
+    outputType: "REPORTING_COMMENTARY",
+    requiredVersion: "complete",
+  },
+  {
+    id: "F9",
+    cohort: "silent_unsupported",
+    repeats: 3,
+    label: "FIXTURE 9 - silent unsupported multiple",
+    draftText: "The company trades at 14x EV/EBITDA and serves customers across Europe.",
+    targetFigure: {
+      label: "14x EV/EBITDA",
+      keepPatterns: ["14x", "14 x", "14 times", "14-times"],
+    },
+    statements: [
+      {
+        text: "The company trades at 14x EV/EBITDA and serves customers across Europe.",
+        qcCard: {
+          index: 0,
+          statement: "The company trades at 14x EV/EBITDA and serves customers across Europe.",
+          supportState: "partial",
+          displayVerdict: "supported_partial",
+          primaryExcerpt: {
+            sourceLabel: "Sector note",
+            passage: "The company serves customers across Europe.",
+          },
+          evidenceSummary:
+            "Sources confirm the European customer footprint. They do not state an EV/EBITDA multiple.",
+          editorialVerdict: "clean",
+          complianceVerdict: "clean",
+        },
+      },
+    ],
+    outputType: "REPORTING_COMMENTARY",
+    requiredVersion: "complete",
+  },
+  {
+    id: "F10",
+    cohort: "silent_unsupported",
+    repeats: 3,
+    label: "FIXTURE 10 - silent unsupported headcount",
+    draftText: "The team now numbers 240 people and operates from London and New York.",
+    targetFigure: {
+      label: "240 people",
+      keepPatterns: ["\\b240\\b", "two hundred and forty", "two hundred forty"],
+    },
+    statements: [
+      {
+        text: "The team now numbers 240 people and operates from London and New York.",
+        qcCard: {
+          index: 0,
+          statement: "The team now numbers 240 people and operates from London and New York.",
+          supportState: "partial",
+          displayVerdict: "supported_partial",
+          primaryExcerpt: {
+            sourceLabel: "Firm update",
+            passage: "The team operates from London and New York.",
+          },
+          evidenceSummary:
+            "Sources confirm the London and New York offices. They do not state a headcount of 240.",
+          editorialVerdict: "clean",
+          complianceVerdict: "clean",
+        },
+      },
+    ],
+    outputType: "REPORTING_COMMENTARY",
+    requiredVersion: "complete",
+  },
 ];
+

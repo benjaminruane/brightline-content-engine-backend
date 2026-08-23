@@ -9,6 +9,7 @@ import {
   sourceIsSilent,
   matchConcernForMarker,
   classifyMarker,
+  targetFigureDisposition,
   SPAN_CHANGED,
   SPAN_UNCHANGED,
   NOTE_CLAIMS_CHANGE,
@@ -20,6 +21,7 @@ import {
   OUTCOME_WRONG_KEEP_ON_CHANGE,
   OUTCOME_AMBIGUOUS,
 } from "../scripts/diagnostic/lib/pr9-marker-consistency.mjs";
+import { PR9_FIXTURES } from "../scripts/diagnostic/pr9-fixtures.mjs";
 
 describe("tokenizeWords", () => {
   test("records character offsets", () => {
@@ -240,3 +242,46 @@ describe("matchConcernForMarker / classifyMarker", () => {
     assert.equal(row.spanExactInOriginal, true);
   });
 });
+
+describe("targetFigureDisposition", () => {
+  test("keeps when a pattern hits, drops otherwise", () => {
+    const spec = { keepPatterns: ["80-100", "80 million", "100 million"] };
+    assert.equal(
+      targetFigureDisposition(
+        "with equity checks of EUR 80-100 million apiece",
+        spec
+      ),
+      "kept"
+    );
+    assert.equal(
+      targetFigureDisposition("a portfolio of control-oriented investments", spec),
+      "dropped"
+    );
+    assert.equal(targetFigureDisposition("no spec", null), null);
+  });
+
+  test("headcount word-boundary does not match 2400", () => {
+    const spec = { keepPatterns: ["\\b240\\b"] };
+    assert.equal(targetFigureDisposition("The team now numbers 240 people", spec), "kept");
+    assert.equal(targetFigureDisposition("The team now numbers 2400 people", spec), "dropped");
+  });
+});
+
+describe("silent-unsupported fixtures", () => {
+  test("F7-F10 exist, repeat three times, and F7 uses the production sentence", () => {
+    const silent = PR9_FIXTURES.filter((f) => f.cohort === "silent_unsupported");
+    assert.deepEqual(
+      silent.map((f) => f.id),
+      ["F7", "F8", "F9", "F10"]
+    );
+    for (const f of silent) {
+      assert.equal(f.repeats, 3);
+      assert.ok(f.targetFigure?.keepPatterns?.length > 0);
+    }
+    assert.match(
+      silent[0].draftText,
+      /equity checks of EUR 80-100 million apiece/
+    );
+  });
+});
+
