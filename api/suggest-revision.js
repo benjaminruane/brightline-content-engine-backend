@@ -15,6 +15,11 @@ import {
   finalizeSuggestRevisionText,
   gatherConcerns,
 } from "../lib/build-revision-prompt.mjs";
+import {
+  findReviewVocabularyHits,
+  logReviewVocabularyAttempt,
+  REVIEW_VOCABULARY_WARNING,
+} from "../lib/pr9-marker-honesty.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -75,34 +80,77 @@ export default async function handler(req, res) {
     const concerns = gatherConcerns(statements, publicationMap);
     const prompt = buildRevisionPrompt(draftText, concerns, { outputType, requiredVersion });
 
-    const completion = await callLLM({
-      provider: modelConfig.provider,
-      model: modelConfig.model,
-      temperature: 0,
-      messages: [{ role: "user", content: prompt }],
-      traceName: "suggest-revision",
-      spanName: "suggest-revision",
-      metadata: {
-        route: "suggest-revision",
-        concernCount: concerns.length,
-        ...(outputType ? { outputType } : {}),
-        ...(requiredVersion ? { requiredVersion } : {}),
-      },
-    });
+    const llmMeta = {
+      route: "suggest-revision",
+      concernCount: concerns.length,
+      ...(outputType ? { outputType } : {}),
+      ...(requiredVersion ? { requiredVersion } : {}),
+    };
 
-    const raw = stripCodeFence(typeof completion?.text === "string" ? completion.text : "");
+    async function rewriteOnce(traceName) {
+      const completion = await callLLM({
+        provider: modelConfig.provider,
+        model: modelConfig.model,
+        temperature: 0,
+        messages: [{ role: "user", content: prompt }],
+        traceName,
+        spanName: traceName,
+        metadata: llmMeta,
+      });
+      return stripCodeFence(typeof completion?.text === "string" ? completion.text : "");
+    }
+
+    const raw = await rewriteOnce("suggest-revision");
     if (!raw) {
       return res.status(500).json({ ok: false, error: "Suggest-revision produced empty revisedDraft" });
     }
 
-    // Parse {{span||note}} markers, strip delimiters, then ASCII house-style char normalize
-    // with offset remapping (normalizePgHouseStyleCharacters only — no PG fund/methodology filters).
-    const { revisedDraft, markers } = finalizeSuggestRevisionText(raw);
-    if (!revisedDraft.trim()) {
+    let finalized = finalizeSuggestRevisionText(raw, {
+      originalDraft: draftText,
+      traceId: "suggest-revision",
+    });
+    let vocabHits = findReviewVocabularyHits(finalized.revisedDraft);
+    let revisionWarning = null;
+    if (vocabHits.length > 0) {
+      logReviewVocabularyAttempt({
+        traceId: "suggest-revision",
+        attempt: 1,
+        hits: vocabHits,
+        draft: finalized.revisedDraft,
+      });
+      const rawRetry = await rewriteOnce("suggest-revision-retry");
+      if (rawRetry) {
+        const retry = finalizeSuggestRevisionText(rawRetry, {
+          originalDraft: draftText,
+          traceId: "suggest-revision-retry",
+        });
+        const retryHits = findReviewVocabularyHits(retry.revisedDraft);
+        logReviewVocabularyAttempt({
+          traceId: "suggest-revision",
+          attempt: 2,
+          hits: retryHits,
+          draft: retry.revisedDraft,
+        });
+        finalized = retry;
+        vocabHits = retryHits;
+        if (retryHits.length > 0) revisionWarning = REVIEW_VOCABULARY_WARNING;
+      } else {
+        revisionWarning = REVIEW_VOCABULARY_WARNING;
+      }
+    }
+
+    if (!finalized.revisedDraft.trim()) {
       return res.status(500).json({ ok: false, error: "Suggest-revision produced empty revisedDraft" });
     }
 
-    return res.status(200).json({ ok: true, revisedDraft, markers });
+    const payload = {
+      ok: true,
+      revisedDraft: finalized.revisedDraft,
+      markers: finalized.markers,
+    };
+    if (revisionWarning) payload.revisionWarning = revisionWarning;
+    if (finalized.honestyEvents?.length) payload.honestyEvents = finalized.honestyEvents;
+    return res.status(200).json(payload);
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Suggest-revision failed" });
   } finally {

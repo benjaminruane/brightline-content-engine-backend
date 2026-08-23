@@ -516,7 +516,7 @@ describe("gatherConcerns", () => {
     if (downgrade) keepExamples.push(downgrade[1]);
     assert.equal(keepExamples.length, 3);
     for (const note of keepExamples) {
-      assert.match(note, /^Kept /i);
+      assert.match(note, /^(?:KEPT:\s*)?Kept /i);
       assert.doesNotMatch(note, /\b(changed|removed|replaced)\b/i);
       assert.doesNotMatch(note, /\bmarker\b/i);
     }
@@ -530,7 +530,7 @@ describe("gatherConcerns", () => {
     const named = prompt.match(/Example \(evidence named entity \/ keep-and-flag\): \{\{[^|]+\|\|([^}]+)\}\}/);
     assert.ok(named);
     const keepNote = named[1];
-    assert.match(keepNote, /^Kept 'BVP'/);
+    assert.match(keepNote, /^(?:KEPT:\s*)?Kept 'BVP'/);
     assert.doesNotMatch(keepNote, /house style/i);
     assert.doesNotMatch(keepNote, /\$[^.]{0,40}to[^.]{0,40}USD/i);
     assert.doesNotMatch(keepNote, /USD 7 million/);
@@ -756,7 +756,10 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /Confirm before publishing\./);
     assert.match(prompt, /guaranteed-return language isn't permitted/);
     assert.match(prompt, /Do NOT use review\/compliance jargon/);
-    assert.match(prompt, /\{\{softened text\|\|short reviewer note\}\}/);
+    assert.match(prompt, /\{\{span\|\|INTENT: short reviewer note\}\}/);
+    assert.match(prompt, /INTENT is exactly one of CHANGED, KEPT, CUT/);
+    assert.match(prompt, /INTENT describes what you already did/);
+    assert.match(prompt, /not a punctuation mark alone/);
     assert.match(prompt, /Sentence-ending punctuation/);
     assert.match(prompt, /stays OUTSIDE the delimiter/);
     assert.match(prompt, /ENTIRE revised draft must comply/i);
@@ -796,7 +799,7 @@ describe("buildRevisionPrompt", () => {
       prompt,
       /the ONE case where the rewrite removes author content by default/
     );
-    assert.match(prompt, /delivered revenue growth last year\|\|Removed the unsupported 22% figure/);
+    assert.match(prompt, /delivered revenue growth last year\|\|CHANGED: Removed the unsupported 22% figure/);
     assert.doesNotMatch(prompt, /delivered material growth/);
   });
 
@@ -839,26 +842,29 @@ describe("buildRevisionPrompt", () => {
 describe("parseSoftenedMarkers", () => {
   test("delimiters become clean text with correct offsets and notes", () => {
     const raw =
-      "Lead-in. {{revenue grew materially||draft stated 40% / $120m; sources support ~$95m — confirm}} Trailing.";
+      "Lead-in. {{revenue grew materially||CHANGED: draft stated 40% / $120m; sources support ~$95m — confirm}} Trailing.";
     const { revisedDraft, markers } = parseSoftenedMarkers(raw);
 
     assert.equal(revisedDraft, "Lead-in. revenue grew materially Trailing.");
     assert.equal(markers.length, 1);
     assert.equal(markers[0].note, "draft stated 40% / $120m; sources support ~$95m — confirm");
+    assert.equal(markers[0].intent, "CHANGED");
     assert.equal(revisedDraft.slice(markers[0].start, markers[0].end), "revenue grew materially");
     assert.equal(markers[0].start, "Lead-in. ".length);
     assert.equal(markers[0].end, "Lead-in. revenue grew materially".length);
   });
 
   test("parses multiple markers non-greedily", () => {
-    const raw = "A {{one||n1}} B {{two||n2}} C";
+    const raw = "A {{one||CHANGED: n1}} B {{two||KEPT: n2}} C";
     const { revisedDraft, markers } = parseSoftenedMarkers(raw);
     assert.equal(revisedDraft, "A one B two C");
     assert.equal(markers.length, 2);
     assert.equal(revisedDraft.slice(markers[0].start, markers[0].end), "one");
     assert.equal(revisedDraft.slice(markers[1].start, markers[1].end), "two");
     assert.equal(markers[0].note, "n1");
+    assert.equal(markers[0].intent, "CHANGED");
     assert.equal(markers[1].note, "n2");
+    assert.equal(markers[1].intent, "KEPT");
   });
 
   test("no delimiters yields empty markers", () => {
@@ -866,12 +872,19 @@ describe("parseSoftenedMarkers", () => {
     assert.equal(revisedDraft, "Plain draft with no markers.");
     assert.deepEqual(markers, []);
   });
+
+  test("missing or unrecognised intent is malformed and left in the draft", () => {
+    const raw = "Hello {{span||no intent here}} and {{other||MAYBE: nope}} world.";
+    const { revisedDraft, markers } = parseSoftenedMarkers(raw);
+    assert.equal(revisedDraft, raw);
+    assert.deepEqual(markers, []);
+  });
 });
 
 describe("house-style char normalize + marker offsets", () => {
   test("offset accuracy survives the char-normalise pass", () => {
     const raw =
-      "Intro {{“softened growth” claim||draft said — 40%; confirm}} end.";
+      "Intro {{“softened growth” claim||CHANGED: draft said — 40%; confirm}} end.";
     const parsed = parseSoftenedMarkers(raw);
     assert.equal(
       parsed.revisedDraft.slice(parsed.markers[0].start, parsed.markers[0].end),
@@ -884,6 +897,7 @@ describe("house-style char normalize + marker offsets", () => {
         start: m.start,
         end: m.end,
         note: normalizeMarkerNoteText(m.note),
+        ...(m.intent ? { intent: m.intent } : {}),
       })),
     };
     const withPunct = ensureMarkerSentenceTerminalPunctuation(notesNormalized);
@@ -906,7 +920,10 @@ describe("house-style char normalize + marker offsets", () => {
     );
 
     const viaFinalize = finalizeSuggestRevisionText(raw);
-    assert.deepEqual(viaFinalize, finalized);
+    assert.deepEqual(
+      { revisedDraft: viaFinalize.revisedDraft, markers: viaFinalize.markers },
+      finalized
+    );
   });
 });
 
@@ -920,7 +937,7 @@ describe("normalizeMarkerNoteText", () => {
     assert.equal(normalizeMarkerNoteText("Wait!"), `Wait! ${closer}`);
     assert.equal(normalizeMarkerNoteText(""), "");
 
-    const raw = "{{softened growth||draft said 40% — confirm}} trailing.";
+    const raw = "{{softened growth||CHANGED: draft said 40% — confirm}} trailing.";
     const parsed = parseSoftenedMarkers(raw);
     const notesNormalized = {
       revisedDraft: parsed.revisedDraft,
@@ -973,7 +990,7 @@ describe("normalizeMarkerNoteText", () => {
 describe("ensureMarkerSentenceTerminalPunctuation", () => {
   test("inserts period when marked span lacks terminal punct and next sentence is capitalized", () => {
     const raw =
-      "{{Acme Capital delivered materially higher revenue year on year||draft stated 40% — confirm}}\nAcme Capital reports solid growth.";
+      "{{Acme Capital delivered materially higher revenue year on year||CHANGED: draft stated 40% — confirm}}\nAcme Capital reports solid growth.";
     const { revisedDraft, markers } = finalizeSuggestRevisionText(raw);
 
     assert.equal(
@@ -986,6 +1003,7 @@ describe("ensureMarkerSentenceTerminalPunctuation", () => {
       "Acme Capital delivered materially higher revenue year on year"
     );
     assert.equal(revisedDraft[markers[0].end], ".");
+    assert.equal(markers[0].intent, "CHANGED");
     assert.match(markers[0].note, /Draft stated 40%/);
     assert.match(markers[0].note, /Confirm before publishing\.$/);
     assert.equal((markers[0].note.match(/Confirm before publishing\./g) || []).length, 1);
@@ -993,7 +1011,7 @@ describe("ensureMarkerSentenceTerminalPunctuation", () => {
 
   test("leaves span unchanged when period already sits outside delimiter", () => {
     const raw =
-      "{{A venture firm is evaluating an investment of up to USD 7 million in Shopify||confirm attribution}}. Shopify's 24 employees are located in Ottawa, Canada.";
+      "{{A venture firm is evaluating an investment of up to USD 7 million in Shopify||KEPT: confirm attribution}}. Shopify's 24 employees are located in Ottawa, Canada.";
     const { revisedDraft, markers } = finalizeSuggestRevisionText(raw);
 
     assert.equal(
@@ -1011,7 +1029,7 @@ describe("ensureMarkerSentenceTerminalPunctuation", () => {
 
   test("end-of-text span without period gets one", () => {
     const raw =
-      "Lead-in. {{Investors may benefit from improved returns as the platform scales||draft promised strong returns — confirm}}";
+      "Lead-in. {{Investors may benefit from improved returns as the platform scales||CHANGED: draft promised strong returns — confirm}}";
     const { revisedDraft, markers } = finalizeSuggestRevisionText(raw);
 
     assert.equal(

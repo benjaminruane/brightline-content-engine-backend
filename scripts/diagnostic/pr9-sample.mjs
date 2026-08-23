@@ -72,7 +72,10 @@ async function runFixture(fixture) {
     return { ok: false };
   }
 
-  const { revisedDraft, markers } = finalizeSuggestRevisionText(raw);
+  const { revisedDraft, markers } = finalizeSuggestRevisionText(raw, {
+    originalDraft: fixture.draftText,
+    traceId: fixture.id || fixture.label,
+  });
 
   console.log("\n——— RAW (pre-parse, delimiters intact) ———\n");
   console.log(raw);

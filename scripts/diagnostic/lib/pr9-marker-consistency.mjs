@@ -10,11 +10,13 @@
 import {
   tokenizeWords,
   markerSpanStatus,
+  markerSpanAlignment,
   SPAN_CHANGED,
   SPAN_UNCHANGED,
 } from "../../../lib/pr9-marker-span-status.mjs";
+import { isHouseStyleOnlyDifference } from "../../../lib/pr9-marker-honesty.mjs";
 
-export { tokenizeWords, markerSpanStatus, SPAN_CHANGED, SPAN_UNCHANGED };
+export { tokenizeWords, markerSpanStatus, markerSpanAlignment, SPAN_CHANGED, SPAN_UNCHANGED };
 
 export const CHANGE_VERBS = [
   "removed",
@@ -184,8 +186,20 @@ export function classifyMarker(originalDraft, revisedDraft, marker, concerns = [
   const end = Number.isFinite(marker?.end) ? marker.end : start;
   const span = typeof revisedDraft === "string" ? revisedDraft.slice(start, end) : "";
   const note = typeof marker?.note === "string" ? marker.note : "";
-  const spanStatus = markerSpanStatus(originalDraft, revisedDraft, start, end);
-  const noteClaim = classifyNoteClaim(note);
+  const intent = marker?.intent || null;
+  const align = markerSpanAlignment(originalDraft, revisedDraft, start, end);
+  let spanStatus = align.spanStatus;
+  let houseStyleOnly = false;
+  if (intent === "KEPT" && spanStatus === SPAN_CHANGED) {
+    houseStyleOnly = isHouseStyleOnlyDifference(align.origRegionText, align.revSpanText);
+    if (houseStyleOnly) spanStatus = SPAN_UNCHANGED;
+  }
+
+  let noteClaim;
+  if (intent === "KEPT") noteClaim = NOTE_CLAIMS_NO_CHANGE;
+  else if (intent === "CHANGED" || intent === "CUT") noteClaim = NOTE_CLAIMS_CHANGE;
+  else noteClaim = classifyNoteClaim(note);
+
   const outcome = outcomeBucket(spanStatus, noteClaim);
   const matched = matchConcernForMarker(span, originalDraft, concerns);
   const kinds = findingKindsFromConcern(matched);
@@ -195,9 +209,11 @@ export function classifyMarker(originalDraft, revisedDraft, marker, concerns = [
     end,
     span,
     note,
+    intent,
     spanStatus,
     noteClaim,
     outcome,
+    houseStyleOnly,
     spanExactInOriginal:
       Boolean(span) && typeof originalDraft === "string" && originalDraft.includes(span),
     statementIndex: matched?.statementIndex ?? null,

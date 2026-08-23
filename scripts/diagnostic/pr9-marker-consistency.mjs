@@ -39,6 +39,11 @@ const {
   buildRevisionPrompt,
   finalizeSuggestRevisionText,
 } = await import("../../lib/build-revision-prompt.mjs");
+const {
+  findReviewVocabularyHits,
+  logReviewVocabularyAttempt,
+  REVIEW_VOCABULARY_WARNING,
+} = await import("../../lib/pr9-marker-honesty.mjs");
 
 const modelConfig = STAGE_MODELS["writing-rewrite"];
 if (!hasProviderApiKey(modelConfig.provider)) {
@@ -114,8 +119,9 @@ async function runFixture(fixture, runIndex = 1) {
   });
 
   const raw = stripCodeFence(typeof completion?.text === "string" ? completion.text : "");
-  const usage = completion?.usage || { inputTokens: 0, outputTokens: 0 };
-  const costUsd = costUsdFromUsage(modelConfig.model, usage);
+  let usage = completion?.usage || { inputTokens: 0, outputTokens: 0 };
+  let costUsd = costUsdFromUsage(modelConfig.model, usage);
+  const traceId = `${fixture.id}#${runIndex}`;
 
   if (!raw.trim()) {
     return {
@@ -135,10 +141,84 @@ async function runFixture(fixture, runIndex = 1) {
       preserveDisposition: preserveSpanDisposition("", fixture.targetFigure),
       revisedDraft: "",
       draftText: fixture.draftText,
+      honestyEvents: [],
+      vocabRetry: null,
     };
   }
 
-  const { revisedDraft, markers } = finalizeSuggestRevisionText(raw);
+  let finalized = finalizeSuggestRevisionText(raw, {
+    originalDraft: fixture.draftText,
+    traceId,
+  });
+  let vocabHits = findReviewVocabularyHits(finalized.revisedDraft);
+  let vocabRetry = null;
+  let revisionWarning = null;
+  if (vocabHits.length > 0) {
+    logReviewVocabularyAttempt({
+      traceId,
+      attempt: 1,
+      hits: vocabHits,
+      draft: finalized.revisedDraft,
+    });
+    const retryCompletion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
+      temperature: 0,
+      messages: [{ role: "user", content: prompt }],
+      traceName: "pr9-marker-consistency-retry",
+      spanName: "pr9-marker-consistency-retry",
+      metadata: {
+        route: "pr9-marker-consistency",
+        fixture: fixture.id,
+        runIndex,
+        attempt: 2,
+        concernCount: concerns.length,
+      },
+    });
+    const rawRetry = stripCodeFence(
+      typeof retryCompletion?.text === "string" ? retryCompletion.text : ""
+    );
+    const retryUsage = retryCompletion?.usage || { inputTokens: 0, outputTokens: 0 };
+    usage = {
+      inputTokens: (Number(usage.inputTokens) || 0) + (Number(retryUsage.inputTokens) || 0),
+      outputTokens: (Number(usage.outputTokens) || 0) + (Number(retryUsage.outputTokens) || 0),
+    };
+    costUsd += costUsdFromUsage(modelConfig.model, retryUsage);
+    if (rawRetry.trim()) {
+      const retry = finalizeSuggestRevisionText(rawRetry, {
+        originalDraft: fixture.draftText,
+        traceId: `${traceId}-retry`,
+      });
+      const retryHits = findReviewVocabularyHits(retry.revisedDraft);
+      logReviewVocabularyAttempt({
+        traceId,
+        attempt: 2,
+        hits: retryHits,
+        draft: retry.revisedDraft,
+      });
+      vocabRetry = {
+        firstHits: vocabHits,
+        firstDraft: finalized.revisedDraft,
+        retryHits,
+        retryDraft: retry.revisedDraft,
+        cleaned: retryHits.length === 0,
+      };
+      finalized = retry;
+      vocabHits = retryHits;
+      if (retryHits.length > 0) revisionWarning = REVIEW_VOCABULARY_WARNING;
+    } else {
+      revisionWarning = REVIEW_VOCABULARY_WARNING;
+      vocabRetry = {
+        firstHits: vocabHits,
+        firstDraft: finalized.revisedDraft,
+        retryHits: vocabHits,
+        retryDraft: "",
+        cleaned: false,
+      };
+    }
+  }
+
+  const { revisedDraft, markers, honestyEvents } = finalized;
   const classified = markers.map((m) =>
     classifyMarker(fixture.draftText, revisedDraft, m, concerns)
   );
@@ -158,6 +238,10 @@ async function runFixture(fixture, runIndex = 1) {
     concerns,
     markers,
     classified,
+    honestyEvents: honestyEvents || [],
+    vocabHits,
+    vocabRetry,
+    revisionWarning,
     figureLabel: fixture.targetFigure?.label || null,
     figureDisposition: targetFigureDisposition(revisedDraft, fixture.targetFigure),
     preserveDisposition: preserveSpanDisposition(revisedDraft, fixture.targetFigure),
@@ -177,19 +261,19 @@ function printEstimate(jobs) {
     promptChars += prompt.length;
   }
   const inputTok = estimateTokensFromChars(promptChars);
-  // Last live run (6 calls) used ~78 output tokens each. High band 500/call.
   const outputTokLow = jobs.length * 80;
-  const outputTokHigh = jobs.length * 500;
+  const outputTokHigh = jobs.length * 2 * 500;
   const inRate = 1.25 / 1_000_000;
   const outRate = 10.0 / 1_000_000;
   const low = inputTok * inRate + outputTokLow * outRate;
-  const high = inputTok * inRate + outputTokHigh * outRate;
+  const high = inputTok * 2 * inRate + outputTokHigh * outRate;
   console.log("[pr9-marker-consistency] COST ESTIMATE (before live calls)");
   console.log(`  jobs: ${jobs.length} (fixture-runs, including repeats)`);
   console.log(`  model: ${modelConfig.provider}/${modelConfig.model} temp=0 (rewrites not cached)`);
   console.log(`  prompt chars (all jobs): ${promptChars} (~${inputTok} input tokens at chars/4)`);
+  console.log("  retries: at most one extra call per job if review vocabulary leaks into the draft");
   console.log(`  expected output: ~${outputTokLow}-${outputTokHigh} tokens`);
-  console.log(`  expected cost: $${low.toFixed(2)}-$${high.toFixed(2)} using gpt-5 list rates`);
+  console.log(`  expected cost: $${low.toFixed(2)}-$${high.toFixed(2)} using gpt-5 list rates (high assumes every job retries)`);
   console.log("  expected wall clock: 1-4 minutes sequential");
   if (high > 1) {
     console.log("  STOP: high estimate exceeds $1.00");
@@ -248,7 +332,7 @@ function printNewFixtureRuns(results) {
       }
       for (let i = 0; i < result.classified.length; i++) {
         const row = result.classified[i];
-        console.log(`MARKER ${i + 1} outcome=${row.outcome} spanStatus=${row.spanStatus} noteClaim=${row.noteClaim}`);
+        console.log(`MARKER ${i + 1} intent=${row.intent || "(none)"} outcome=${row.outcome} spanStatus=${row.spanStatus} noteClaim=${row.noteClaim}`);
         console.log("ORIGINAL STATEMENT:");
         console.log(row.statementText || result.draftText);
         console.log("REVISED SPAN:");
@@ -291,9 +375,78 @@ function printSilentUnsupportedRate(results) {
   console.log("");
 }
 
+function printHonestyAndVocab(results) {
+  const intents = { CHANGED: 0, KEPT: 0, CUT: 0, none: 0 };
+  const events = [];
+  const vocab = [];
+  for (const result of results) {
+    for (const m of result.markers || []) {
+      if (m.intent && Object.prototype.hasOwnProperty.call(intents, m.intent)) intents[m.intent] += 1;
+      else intents.none += 1;
+    }
+    for (const ev of result.honestyEvents || []) {
+      events.push({ fixtureId: result.fixtureId, runIndex: result.runIndex, ...ev });
+    }
+    if (result.vocabRetry) {
+      vocab.push({
+        fixtureId: result.fixtureId,
+        runIndex: result.runIndex,
+        cleaned: result.vocabRetry.cleaned,
+        warning: result.revisionWarning || null,
+        firstHits: result.vocabRetry.firstHits,
+        retryHits: result.vocabRetry.retryHits,
+        firstDraft: result.vocabRetry.firstDraft,
+        retryDraft: result.vocabRetry.retryDraft,
+      });
+    }
+  }
+
+  console.log("\n========== INTENT DISTRIBUTION ==========\n");
+  console.log(`CHANGED: ${intents.CHANGED}`);
+  console.log(`KEPT: ${intents.KEPT}`);
+  console.log(`CUT: ${intents.CUT}`);
+  console.log(`missing: ${intents.none}`);
+
+  console.log("\n========== HONESTY CONTRADICTIONS ==========\n");
+  if (events.length === 0) {
+    console.log("(none)");
+  } else {
+    for (const ev of events) {
+      console.log(`--- ${ev.fixtureId}#${ev.runIndex} intent=${ev.intent} ${ev.contradiction} ---`);
+      console.log("SPAN:");
+      console.log(ev.span);
+      console.log("NOTE BEFORE:");
+      console.log(ev.noteBefore);
+      console.log("NOTE AFTER:");
+      console.log(ev.noteAfter);
+      console.log("");
+    }
+  }
+
+  console.log("========== REVIEW VOCABULARY RETRIES ==========\n");
+  if (vocab.length === 0) {
+    console.log("(none)");
+  } else {
+    for (const v of vocab) {
+      console.log(`--- ${v.fixtureId}#${v.runIndex} cleaned=${v.cleaned} ---`);
+      console.log(`first hits: ${JSON.stringify(v.firstHits)}`);
+      console.log("FIRST DRAFT:");
+      console.log(v.firstDraft);
+      console.log(`retry hits: ${JSON.stringify(v.retryHits)}`);
+      console.log("RETRY DRAFT:");
+      console.log(v.retryDraft);
+      if (v.warning) console.log(`warning: ${v.warning}`);
+      console.log("");
+    }
+  }
+
+  return { intents, events, vocab };
+}
+
 function printReport(results) {
   printNewFixtureRuns(results);
   printSilentUnsupportedRate(results);
+  const honesty = printHonestyAndVocab(results);
 
   const tally = emptyTally();
   const defects = [];
@@ -443,6 +596,9 @@ function printReport(results) {
     totalCost,
     inputTokens,
     outputTokens,
+    intents: honesty.intents,
+    honestyEvents: honesty.events,
+    vocabRetries: honesty.vocab,
   };
 }
 
@@ -498,6 +654,10 @@ const payload = {
     usage: r.usage,
     costUsd: r.costUsd,
     classified: r.classified,
+    honestyEvents: r.honestyEvents || [],
+    vocabHits: r.vocabHits || [],
+    vocabRetry: r.vocabRetry || null,
+    revisionWarning: r.revisionWarning || null,
   })),
 };
 await writeFile(path.join(outDir, "report.json"), `${JSON.stringify(payload, null, 2)}\n`, "utf8");

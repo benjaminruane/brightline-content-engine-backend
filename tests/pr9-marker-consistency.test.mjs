@@ -232,6 +232,7 @@ describe("matchConcernForMarker / classifyMarker", () => {
       {
         start,
         end,
+        intent: "CHANGED",
         note: "Removed the specific equity check size because it is not supported by the sources. Confirm before publishing.",
       },
       [
@@ -249,6 +250,21 @@ describe("matchConcernForMarker / classifyMarker", () => {
     assert.equal(row.outcome, OUTCOME_DEFECT);
     assert.equal(row.sourceSilent, true);
     assert.equal(row.spanExactInOriginal, true);
+  });
+
+  test("KEPT plus house-style amount is correct keep, not ambiguous", () => {
+    const original = "BVP is evaluating an investment of up to $7,000,000 in Shopify.";
+    const revised = "BVP is evaluating an investment of up to USD 7 million in Shopify.";
+    const row = classifyMarker(original, revised, {
+      start: 0,
+      end: revised.length - 1,
+      intent: "KEPT",
+      note: "Kept 'BVP' and changed '$7,000,000' to 'USD 7 million'. Confirm before publishing.",
+    });
+    assert.equal(row.houseStyleOnly, true);
+    assert.equal(row.spanStatus, SPAN_UNCHANGED);
+    assert.equal(row.noteClaim, NOTE_CLAIMS_NO_CHANGE);
+    assert.equal(row.outcome, OUTCOME_CORRECT_KEEP);
   });
 });
 
