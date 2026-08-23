@@ -595,6 +595,98 @@ describe("gatherConcerns", () => {
       "statementText",
     ]);
   });
+
+  test("emits per-claim spans when decomposed with claims, including confirmed-preserve", () => {
+    const mixed = {
+      qcCard: {
+        index: 30,
+        statement:
+          "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+        supportState: "partial",
+        displayVerdict: "supported_partial",
+        primaryExcerpt: {
+          sourceLabel: "IC memo",
+          passage: "The fund intends to build a portfolio of 10-14 control-oriented platform investments.",
+        },
+        evidenceSummary: "Sources confirm 10-14. They do not mention equity check size.",
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+        decomposed: true,
+        claims: [
+          {
+            index: 0,
+            text: "10-14 control-oriented investments",
+            draftStart: 41,
+            draftEnd: 75,
+            verdict: "confirmed",
+          },
+          {
+            index: 1,
+            text: "equity checks of EUR 80-100 million apiece",
+            draftStart: 82,
+            draftEnd: 124,
+            verdict: "not_supported",
+          },
+          {
+            index: 2,
+            text: "a leftover partial clause",
+            verdict: "partially_confirmed",
+          },
+        ],
+      },
+    };
+    const [item] = gatherConcerns([mixed]);
+    assert.equal(item.evidence.verdict, "partially_confirmed");
+    assert.equal(item.claims.length, 3);
+    assert.equal(item.claims[0].role, "confirmed_preserve");
+    assert.equal(item.claims[1].role, "unsupported");
+    assert.equal(item.claims[2].role, "partial");
+    const prompt = buildRevisionPrompt(mixed.qcCard.statement, [item], {});
+    assert.match(prompt, /CONFIRMED AND TO BE PRESERVED: "10-14 control-oriented investments"/);
+    assert.match(
+      prompt,
+      /Unsupported element \(the softening rule applies to this span\): "equity checks of EUR 80-100 million apiece"/
+    );
+    assert.match(prompt, /Partial \(same treatment as a statement-level partial/);
+    assert.doesNotMatch(prompt, /Evidence gap \(partially_confirmed\) \[kind=partial\]:/);
+  });
+
+  test("ignores claims unless decomposed is true, so undecomposed prompts stay statement-level", () => {
+    const base = {
+      qcCard: {
+        index: 1,
+        statement: "Returns reached 15%.",
+        supportState: "not_supported",
+        displayVerdict: "not_supported",
+        primaryExcerpt: { sourceLabel: "Memo", passage: "Returns were approximately 12%." },
+        evidenceSummary: "Sources do not support the 15% figure.",
+        reasoningParagraph: "Sources do not support the 15% figure.",
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+      },
+    };
+    const withIgnoredClaims = {
+      qcCard: {
+        ...base.qcCard,
+        decomposed: false,
+        claims: [{ text: "Returns reached 15%.", verdict: "not_supported", draftStart: 0, draftEnd: 20 }],
+      },
+    };
+    const a = gatherConcerns([base]);
+    const b = gatherConcerns([withIgnoredClaims]);
+    assert.equal("claims" in a[0], false);
+    assert.equal("claims" in b[0], false);
+    const draft = "Returns reached 15%.";
+    assert.equal(buildRevisionPrompt(draft, a, {}), buildRevisionPrompt(draft, b, {}));
+    assert.match(buildRevisionPrompt(draft, a, {}), /Evidence gap \(no_support\) \[kind=unsupported\]:/);
+
+    const emptyClaims = {
+      qcCard: { ...base.qcCard, decomposed: true, claims: [] },
+    };
+    const c = gatherConcerns([emptyClaims]);
+    assert.equal("claims" in c[0], false);
+    assert.equal(buildRevisionPrompt(draft, a, {}), buildRevisionPrompt(draft, c, {}));
+  });
 });
 
 describe("buildRevisionPrompt", () => {

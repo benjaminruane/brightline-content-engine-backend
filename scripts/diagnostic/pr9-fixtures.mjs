@@ -273,6 +273,7 @@ export const PR9_FIXTURES = [
     targetFigure: {
       label: "EUR 80-100 million",
       keepPatterns: ["80-100", "80 million", "100 million", "80 to 100", "80- 100"],
+      preservePatterns: ["10-14"],
     },
     statements: [
       {
@@ -292,6 +293,28 @@ export const PR9_FIXTURES = [
             "Sources confirm the 10-14 platform investments. They do not mention equity check size at all.",
           editorialVerdict: "clean",
           complianceVerdict: "clean",
+          decomposed: true,
+          claimUpgrade: false,
+          claims: [
+            {
+              index: 0,
+              text: "10-14 control-oriented investments",
+              draftStart: 41,
+              draftEnd: 75,
+              verdict: "confirmed",
+              hasConflict: false,
+              matches: [],
+            },
+            {
+              index: 1,
+              text: "equity checks of EUR 80-100 million apiece",
+              draftStart: 82,
+              draftEnd: 124,
+              verdict: "not_supported",
+              hasConflict: false,
+              matches: [],
+            },
+          ],
         },
       },
     ],

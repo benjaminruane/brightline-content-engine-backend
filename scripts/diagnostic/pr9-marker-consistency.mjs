@@ -19,6 +19,7 @@ import {
   emptyTally,
   addToTally,
   targetFigureDisposition,
+  preserveSpanDisposition,
   OUTCOME_CORRECT_CHANGE,
   OUTCOME_CORRECT_KEEP,
   OUTCOME_DEFECT,
@@ -131,6 +132,7 @@ async function runFixture(fixture, runIndex = 1) {
       markers: [],
       classified: [],
       figureDisposition: targetFigureDisposition("", fixture.targetFigure),
+      preserveDisposition: preserveSpanDisposition("", fixture.targetFigure),
       revisedDraft: "",
       draftText: fixture.draftText,
     };
@@ -158,6 +160,7 @@ async function runFixture(fixture, runIndex = 1) {
     classified,
     figureLabel: fixture.targetFigure?.label || null,
     figureDisposition: targetFigureDisposition(revisedDraft, fixture.targetFigure),
+    preserveDisposition: preserveSpanDisposition(revisedDraft, fixture.targetFigure),
   };
 }
 
@@ -220,9 +223,15 @@ function printNewFixtureRuns(results) {
     console.log(`### ${fixtureId} ${label}`);
     console.log(`target figure: ${figureLabel}`);
     console.log(`keep/drop across runs: ${dispositions.join(", ")} => ${vary}`);
+    const preserves = runs.map((r) => r.preserveDisposition).filter((v) => v != null);
+    if (preserves.length > 0) {
+      const uniqueP = [...new Set(preserves)];
+      const varyP = uniqueP.length > 1 ? "varies" : uniqueP[0];
+      console.log(`confirmed preserve span: ${preserves.join(", ")} => ${varyP}`);
+    }
     console.log("");
     for (const result of runs) {
-      console.log(`-- run ${result.runIndex}/${runs.length} ok=${result.ok} figure=${result.figureDisposition} --`);
+      console.log(`-- run ${result.runIndex}/${runs.length} ok=${result.ok} figure=${result.figureDisposition} preserve=${result.preserveDisposition} --`);
       if (!result.ok) {
         console.log(`error: ${result.error}`);
         console.log("");
@@ -457,7 +466,7 @@ try {
       console.error(`[pr9-marker-consistency] FAIL ${fixture.id} run ${runIndex}: ${result.error}`);
     } else {
       console.log(
-        `[pr9-marker-consistency] ${fixture.id}#${runIndex} markers=${result.classified.length} figure=${result.figureDisposition} cost~$${Number(result.costUsd).toFixed(4)}`
+        `[pr9-marker-consistency] ${fixture.id}#${runIndex} markers=${result.classified.length} figure=${result.figureDisposition} preserve=${result.preserveDisposition} cost~$${Number(result.costUsd).toFixed(4)}`
       );
     }
   }
@@ -485,6 +494,7 @@ const payload = {
     revisedDraft: r.revisedDraft,
     figureLabel: r.figureLabel || null,
     figureDisposition: r.figureDisposition,
+    preserveDisposition: r.preserveDisposition,
     usage: r.usage,
     costUsd: r.costUsd,
     classified: r.classified,

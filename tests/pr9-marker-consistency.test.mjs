@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { describe, test } from "vitest";
 import {
   tokenizeWords,
-  wordDiffChangedRanges,
   markerSpanStatus,
   classifyNoteClaim,
   outcomeBucket,
@@ -10,6 +9,7 @@ import {
   matchConcernForMarker,
   classifyMarker,
   targetFigureDisposition,
+  preserveSpanDisposition,
   SPAN_CHANGED,
   SPAN_UNCHANGED,
   NOTE_CLAIMS_CHANGE,
@@ -36,10 +36,9 @@ describe("tokenizeWords", () => {
   });
 });
 
-describe("wordDiffChangedRanges / markerSpanStatus", () => {
-  test("identical texts yield no changed ranges and UNCHANGED span", () => {
+describe("markerSpanStatus", () => {
+  test("identical texts yield UNCHANGED span", () => {
     const t = "with equity checks of EUR 80-100 million apiece";
-    assert.deepEqual(wordDiffChangedRanges(t, t), []);
     assert.equal(markerSpanStatus(t, t, 0, t.length), SPAN_UNCHANGED);
   });
 
@@ -99,6 +98,16 @@ describe("wordDiffChangedRanges / markerSpanStatus", () => {
     const revised = "up to USD 7 million in Shopify";
     const start = revised.indexOf("USD");
     const end = revised.indexOf(" in");
+    assert.equal(markerSpanStatus(original, revised, start, end), SPAN_CHANGED);
+  });
+
+  test("F8 deletion of 22% is CHANGED even when leftover words are aligned", () => {
+    const original =
+      "The platform delivered 22% revenue growth last year and expanded into two new markets.";
+    const revised =
+      "The platform delivered revenue growth last year and expanded into two new markets.";
+    const start = revised.indexOf("delivered revenue growth last year");
+    const end = start + "delivered revenue growth last year".length;
     assert.equal(markerSpanStatus(original, revised, start, end), SPAN_CHANGED);
   });
 });
@@ -267,6 +276,24 @@ describe("targetFigureDisposition", () => {
   });
 });
 
+describe("preserveSpanDisposition", () => {
+  test("survived only when every preserve pattern hits", () => {
+    const spec = { preservePatterns: ["10-14"] };
+    assert.equal(
+      preserveSpanDisposition(
+        "The fund intends to build a portfolio of 10-14 control-oriented investments.",
+        spec
+      ),
+      "survived"
+    );
+    assert.equal(
+      preserveSpanDisposition("The fund intends to build a portfolio of control-oriented investments.", spec),
+      "disturbed"
+    );
+    assert.equal(preserveSpanDisposition("x", null), null);
+  });
+});
+
 describe("silent-unsupported fixtures", () => {
   test("F7-F10 exist, repeat three times, and F7 uses the production sentence", () => {
     const silent = PR9_FIXTURES.filter((f) => f.cohort === "silent_unsupported");
@@ -282,6 +309,11 @@ describe("silent-unsupported fixtures", () => {
       silent[0].draftText,
       /equity checks of EUR 80-100 million apiece/
     );
+    const f7card = silent[0].statements[0].qcCard;
+    assert.equal(f7card.decomposed, true);
+    assert.equal(f7card.claims.length, 2);
+    assert.equal(f7card.claims[0].verdict, "confirmed");
+    assert.equal(f7card.claims[1].verdict, "not_supported");
   });
 });
 
