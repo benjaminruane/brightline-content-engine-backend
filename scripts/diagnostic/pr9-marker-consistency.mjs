@@ -38,12 +38,20 @@ const {
   buildPublicationMap,
   buildRevisionPrompt,
   finalizeSuggestRevisionText,
+  parseSoftenedMarkers,
+  applyHouseStyleCharNormalizeToRevision,
+  ensureMarkerSentenceTerminalPunctuation,
+  normalizeMarkerNoteText,
 } = await import("../../lib/build-revision-prompt.mjs");
 const {
   findReviewVocabularyHits,
   logReviewVocabularyAttempt,
   REVIEW_VOCABULARY_WARNING,
 } = await import("../../lib/pr9-marker-honesty.mjs");
+const {
+  applyCutPunctuationNormalizeToRevision,
+  KNOWN_INCONSISTENCY_CUT_WRAPPED_AS_CHANGED,
+} = await import("../../lib/pr9-cut-punctuation.mjs");
 
 const modelConfig = STAGE_MODELS["writing-rewrite"];
 if (!hasProviderApiKey(modelConfig.provider)) {
@@ -57,6 +65,43 @@ function stripCodeFence(text) {
   const fence = /^```(?:\w+)?\s*\n?([\s\S]*?)\n?```\s*$/;
   const match = trimmed.match(fence);
   return match ? match[1].trim() : trimmed;
+}
+
+function revisionBeforeCutPunctuation(raw) {
+  const parsed = parseSoftenedMarkers(raw);
+  const notesNormalized = {
+    revisedDraft: parsed.revisedDraft,
+    markers: parsed.markers.map((m) => ({
+      start: m.start,
+      end: m.end,
+      note: normalizeMarkerNoteText(m.note),
+      ...(m.intent ? { intent: m.intent } : {}),
+    })),
+  };
+  const withPunct = ensureMarkerSentenceTerminalPunctuation(notesNormalized);
+  return applyHouseStyleCharNormalizeToRevision(withPunct);
+}
+
+function cutPunctuationDelta(raw) {
+  const before = revisionBeforeCutPunctuation(raw);
+  const after = applyCutPunctuationNormalizeToRevision(before);
+  return {
+    beforeDraft: before.revisedDraft,
+    afterDraft: after.revisedDraft,
+    changed: before.revisedDraft !== after.revisedDraft,
+    beforeMarkers: before.markers.map((m) => ({
+      intent: m.intent || null,
+      span: before.revisedDraft.slice(m.start, m.end),
+      start: m.start,
+      end: m.end,
+    })),
+    afterMarkers: after.markers.map((m) => ({
+      intent: m.intent || null,
+      span: after.revisedDraft.slice(m.start, m.end),
+      start: m.start,
+      end: m.end,
+    })),
+  };
 }
 
 function estimateTokensFromChars(charCount) {
@@ -146,6 +191,7 @@ async function runFixture(fixture, runIndex = 1) {
     };
   }
 
+  let rawUsed = raw;
   let finalized = finalizeSuggestRevisionText(raw, {
     originalDraft: fixture.draftText,
     traceId,
@@ -205,6 +251,7 @@ async function runFixture(fixture, runIndex = 1) {
       };
       finalized = retry;
       vocabHits = retryHits;
+      rawUsed = rawRetry;
       if (retryHits.length > 0) revisionWarning = REVIEW_VOCABULARY_WARNING;
     } else {
       revisionWarning = REVIEW_VOCABULARY_WARNING;
@@ -222,6 +269,7 @@ async function runFixture(fixture, runIndex = 1) {
   const classified = markers.map((m) =>
     classifyMarker(fixture.draftText, revisedDraft, m, concerns)
   );
+  const punctDelta = cutPunctuationDelta(rawUsed);
 
   return {
     ok: true,
@@ -245,6 +293,7 @@ async function runFixture(fixture, runIndex = 1) {
     figureLabel: fixture.targetFigure?.label || null,
     figureDisposition: targetFigureDisposition(revisedDraft, fixture.targetFigure),
     preserveDisposition: preserveSpanDisposition(revisedDraft, fixture.targetFigure),
+    punctDelta,
   };
 }
 
@@ -281,6 +330,51 @@ function printEstimate(jobs) {
   }
   console.log("  cap: proceed because high estimate is under $1.00");
   return { low, high, proceed: true };
+}
+
+function printCutPunctuationPass(results) {
+  console.log("\n========== CUT-PUNCTUATION PASS ==========\n");
+  console.log("KNOWN INCONSISTENCY (logged, not repaired):");
+  console.log(KNOWN_INCONSISTENCY_CUT_WRAPPED_AS_CHANGED);
+  console.log("");
+
+  const ordered = results.slice().sort((a, b) => {
+    const id = String(a.fixtureId).localeCompare(String(b.fixtureId));
+    if (id !== 0) return id;
+    return (a.runIndex || 0) - (b.runIndex || 0);
+  });
+  for (const result of ordered) {
+    if (!result.ok) {
+      console.log(`${result.fixtureId}#${result.runIndex}: FAIL ${result.error}`);
+      continue;
+    }
+    const markers = (result.markers || []).map((m) =>
+      JSON.stringify(result.revisedDraft.slice(m.start, m.end))
+    );
+    if (result.fixtureId === "F7") {
+      const endsInvestments = /\binvestments\.\s*$/.test(result.revisedDraft);
+      console.log(`F7#${result.runIndex} endsAtInvestmentsPeriod=${endsInvestments}`);
+      console.log(`  REVISED: ${result.revisedDraft}`);
+      console.log(`  MARKER SPANS: ${markers.join(" | ") || "(none)"}`);
+      if (result.punctDelta) {
+        console.log(`  punctChanged=${result.punctDelta.changed}`);
+        if (result.punctDelta.changed) {
+          console.log(`  BEFORE PUNCT: ${result.punctDelta.beforeDraft}`);
+          console.log(
+            `  BEFORE SPANS: ${result.punctDelta.beforeMarkers.map((m) => JSON.stringify(m.span)).join(" | ") || "(none)"}`
+          );
+        }
+      }
+      continue;
+    }
+    const changed = Boolean(result.punctDelta?.changed);
+    console.log(`${result.fixtureId}#${result.runIndex} punctChanged=${changed}`);
+    if (changed) {
+      console.log(`  BEFORE PUNCT: ${result.punctDelta.beforeDraft}`);
+      console.log(`  AFTER PUNCT:  ${result.punctDelta.afterDraft}`);
+    }
+  }
+  console.log("");
 }
 
 function printNewFixtureRuns(results) {
@@ -446,6 +540,7 @@ function printHonestyAndVocab(results) {
 function printReport(results) {
   printNewFixtureRuns(results);
   printSilentUnsupportedRate(results);
+  printCutPunctuationPass(results);
   const honesty = printHonestyAndVocab(results);
 
   const tally = emptyTally();
@@ -658,6 +753,7 @@ const payload = {
     vocabHits: r.vocabHits || [],
     vocabRetry: r.vocabRetry || null,
     revisionWarning: r.revisionWarning || null,
+    punctDelta: r.punctDelta || null,
   })),
 };
 await writeFile(path.join(outDir, "report.json"), `${JSON.stringify(payload, null, 2)}\n`, "utf8");

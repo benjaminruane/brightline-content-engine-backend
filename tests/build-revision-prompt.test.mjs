@@ -10,6 +10,7 @@ import {
   finalizeSuggestRevisionText,
   normalizeMarkerNoteText,
 } from "../lib/build-revision-prompt.mjs";
+import { applyCutPunctuationNormalizeToRevision } from "../lib/pr9-cut-punctuation.mjs";
 
 const cleanCard = {
   qcCard: {
@@ -919,10 +920,11 @@ describe("house-style char normalize + marker offsets", () => {
       1
     );
 
+    const punctClean = applyCutPunctuationNormalizeToRevision(finalized);
     const viaFinalize = finalizeSuggestRevisionText(raw);
     assert.deepEqual(
       { revisedDraft: viaFinalize.revisedDraft, markers: viaFinalize.markers },
-      finalized
+      punctClean
     );
   });
 });
