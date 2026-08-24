@@ -67,7 +67,7 @@ The total team of 285 people is split approximately as follows: engineering 110,
 
 7. TRANSACTION STRUCTURE AND RETURNS
 
-We will invest EUR 285 million for 64% of the equity. The founders and management will retain 28% in aggregate (Tom Fairfield 14%, James O'Brien 7%, other management 7%) and existing growth equity investor Index Ventures will retain 8%. There is no third-party debt at close. We have negotiated standard governance with majority Partners Group board control (3 of 5 seats).
+We will invest EUR 285 million for 64% of the equity. The founders and management will retain 28% in aggregate (Tom Fairfield 14%, James O'Brien 7%, other management 7%) and existing growth equity investor Index Ventures will retain 8%. There is no third-party debt at close. We have negotiated standard governance with majority Halden Group board control (3 of 5 seats).
 
 Returns: our base case generates a 2.6x MOIC and 21% IRR. The upside case — assuming faster international expansion and modest multiple expansion at exit — generates 3.4x MOIC and 28% IRR. The downside case generates 1.5x MOIC and 9% IRR.
 

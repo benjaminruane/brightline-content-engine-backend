@@ -17,8 +17,8 @@ describe("pg-commentary-cleanup", () => {
   });
 
   test("cleanPgCommentary strips delimiter debris and edge orphan quotes", () => {
-    const raw = `"In June 2025, Partners Group invested in Acme.\n---METHODOLOGY---\n`;
-    assert.equal(cleanPgCommentary(raw), "In June 2025, Partners Group invested in Acme.");
+    const raw = `"In June 2025, Halden Group invested in Acme.\n---METHODOLOGY---\n`;
+    assert.equal(cleanPgCommentary(raw), "In June 2025, Halden Group invested in Acme.");
   });
 
   test("cleanPgCommentary removes partial methodology fragments", () => {
@@ -44,10 +44,10 @@ describe("pg-commentary-cleanup", () => {
 
     try {
       const input =
-        "In June 2025, Partners Group made a lead commitment to Meridian Capital Partners V. " +
+        "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V. " +
         "The GP's team has a strong thesis.\n\n" +
         "Prior Fund IV delivered 1.9x MOIC. " +
-        "Partners Group was attracted to the sector focus.";
+        "Halden Group was attracted to the sector focus.";
 
       const result = applyPgFundCommitmentPostFilter(input, { requestId: "test" });
       assert.match(result.text, /committed to Meridian Capital Partners V/);
@@ -64,7 +64,7 @@ describe("pg-commentary-cleanup", () => {
 
   test("applyPgFundCommitmentPostFilter collapses empty paragraph to one block", () => {
     const input =
-      "Partners Group committed to Fund X. The manager targets growth equity.\n\n" +
+      "Halden Group committed to Fund X. The manager targets growth equity.\n\n" +
       "The fund has a ten-year term and a 2% management fee.";
     const result = applyPgFundCommitmentPostFilter(input);
     assert.doesNotMatch(result.text, /management fee/i);
@@ -73,7 +73,7 @@ describe("pg-commentary-cleanup", () => {
   });
 
   test("enforcePgCommentaryWordLimit applies fund filter only for NEW_FUND_COMMITMENT", () => {
-    const raw = "Partners Group made a lead commitment to Fund A. Fund IV returned 1.9x MOIC.";
+    const raw = "Halden Group made a lead commitment to Fund A. Fund IV returned 1.9x MOIC.";
     const fund = enforcePgCommentaryWordLimit(raw, {
       eventType: PG_WRITING_EVENT.NEW_FUND_COMMITMENT,
       visibility: VISIBILITY.COMPLETE,

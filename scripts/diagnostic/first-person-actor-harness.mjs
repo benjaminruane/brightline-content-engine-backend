@@ -6,6 +6,11 @@
  * set of first-person sentences, three live runs each. Cache is forced off:
  * the model's suggestion is the thing being measured.
  *
+ * Sets AUTHORING_ORGANISATION to the fictional house name BEFORE importing
+ * reviewer modules, so identification, instruction examples, and style-guide
+ * worked examples all use that name for this process only. Production default
+ * is untouched.
+ *
  * Expected cost (stated before any billed call):
  *   5 sentences x 3 runs = 15 gpt-4o combined editorial+style calls.
  *   Estimate ~$0.40 at ~8k input / 400 output tokens per call
@@ -17,6 +22,10 @@ import { loadLocalEnvFiles } from "./lib/env.mjs";
 
 loadLocalEnvFiles({ liveMeasurement: true });
 process.env.BRIGHTLINE_EDITORIAL_REVIEW = process.env.BRIGHTLINE_EDITORIAL_REVIEW || "1";
+
+/** Fictional house for this harness. Not the production default. */
+const HARNESS_HOUSE = "Halden Group";
+process.env.AUTHORING_ORGANISATION = HARNESS_HOUSE;
 
 const { default: editorialRules } = await import("../../lib/rulebook/editorialRules.js");
 const {
@@ -33,6 +42,7 @@ const {
   isAgentlessFirstPersonRecast,
   isFirstPersonActorRule,
   isLeaveFirstPersonInPlaceDirection,
+  resolveAuthoringOrganisationName,
 } = await import("../../lib/qc/first-person-actor.mjs");
 
 const RUNS_PER_CASE = 3;
@@ -40,9 +50,10 @@ const CALLS = 5 * RUNS_PER_CASE;
 const EXPECTED_COST_USD = 0.4;
 const COST_CEILING_USD = 0.8;
 const HARD_STOP_USD = 2.0;
+const HOUSE = resolveAuthoringOrganisationName();
 
 const NAMED_PREFIX =
-  "In June 2025, Partners Group made a commitment to Meridian Capital Partners V.";
+  `In June 2025, ${HOUSE} made a commitment to Meridian Capital Partners V.`;
 
 const CASES = [
   {
@@ -146,12 +157,18 @@ function stillHasFirstPerson(text) {
   return /\b(?:we|our|ours|us|we're|we've|we'll|we'd|ourselves)\b/i.test(String(text || ""));
 }
 
-function namesPartnersGroup(text) {
-  return /\bPartners Group\b/i.test(String(text || ""));
+function namesHouse(text) {
+  const escaped = HOUSE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`\\b${escaped}\\b`, "i").test(String(text || ""));
 }
 
 function genericActor(text) {
   return /\bthe (?:firm|company|group|fund)\b/i.test(String(text || ""));
+}
+
+function availableToHouseRe() {
+  const escaped = HOUSE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`available to ${escaped}`, "i");
 }
 
 function scoreRun(testCase, result) {
@@ -171,13 +188,13 @@ function scoreRun(testCase, result) {
   }
 
   if (testCase.expectObjectCase) {
-    const resolved = texts.some((t) => /available to Partners Group/i.test(t));
-    if (!resolved) flags.push("object case did not resolve to Partners Group");
+    const resolved = texts.some((t) => availableToHouseRe().test(t));
+    if (!resolved) flags.push(`object case did not resolve to ${HOUSE}`);
   }
 
   if (testCase.namedOrg && !testCase.expectUnnamedLeaveInPlace && fp.length > 0) {
-    const named = texts.some((t) => namesPartnersGroup(t));
-    if (!named) flags.push("suggestion did not name Partners Group");
+    const named = texts.some((t) => namesHouse(t));
+    if (!named) flags.push(`suggestion did not name ${HOUSE}`);
   }
 
   if (testCase.expectUnnamedLeaveInPlace) {
@@ -189,7 +206,7 @@ function scoreRun(testCase, result) {
     const invented = texts.some(
       (t) =>
         !isLeaveFirstPersonInPlaceDirection(t) &&
-        (namesPartnersGroup(t) || genericActor(t))
+        (namesHouse(t) || genericActor(t))
     );
     if (recastAway) flags.push("recast instead of leaving first person in place");
     if (invented) flags.push("invented or generic actor on unnamed draft");
@@ -230,6 +247,7 @@ async function reviewStatement(statement, draft) {
 async function main() {
   console.log("FIRST-PERSON ACTOR HARNESS");
   console.log("Live measurement: LLM cache forced off.");
+  console.log(`AUTHORING_ORGANISATION override: ${HOUSE}`);
   console.log(
     `Expected cost: ${CALLS} gpt-4o combined editorial+style calls, ~$${EXPECTED_COST_USD.toFixed(2)} ` +
       `(ceiling ~$${COST_CEILING_USD.toFixed(2)} with retries).`
@@ -244,8 +262,11 @@ async function main() {
     console.error("OPENAI_API_KEY is not set. Refusing to run.");
     process.exit(1);
   }
+  if (HOUSE !== HARNESS_HOUSE) {
+    console.error(`HARD STOP: expected harness house "${HARNESS_HOUSE}", resolved "${HOUSE}".`);
+    process.exit(1);
+  }
 
-  const outputType = normalizeOutputType("reporting_commentary");
   const rows = [];
 
   for (const testCase of CASES) {

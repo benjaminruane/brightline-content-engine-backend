@@ -69,12 +69,12 @@ describe("pg-writing-prompts", () => {
       visibility: "public",
       eventType: PG_WRITING_EVENT.NEW_FUND_COMMITMENT,
       transactionDate: "Jun 2025",
-      investment: "Partners Group Next Generation Infrastructure",
+      investment: "Aurora Next Generation Infrastructure",
       specialInstructions: "",
       sources: [],
     });
     assert.match(basePromptText, /committed to/);
-    assert.match(basePromptText, /Partners Group Next Generation Infrastructure/);
+    assert.match(basePromptText, /Aurora Next Generation Infrastructure/);
     assert.match(basePromptText, /publicly available information/);
     assert.match(basePromptText, /exactly ONE paragraph/);
   });

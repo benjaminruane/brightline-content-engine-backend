@@ -103,7 +103,7 @@ const MOCK = {
         ruleId: "first_person_plural",
         note: "The statement uses 'We expect' which is first-person plural voice.",
         suggestedDirection:
-          "Replace 'We expect' with 'Partners Group expects' or third-person framing.",
+          "Replace 'We expect' with 'Halden Group expects' or third-person framing.",
       },
       {
         category: "editorial",

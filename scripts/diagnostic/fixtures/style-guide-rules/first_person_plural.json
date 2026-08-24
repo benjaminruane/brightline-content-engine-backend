@@ -3,7 +3,7 @@
   "label": "first_person_plural",
   "ruleId": "first_person_plural",
   "sources": ["style_guide_stub.txt"],
-  "draft": "We completed the investment in Q2.\n\nPartners Group completed the investment in Q2.",
+  "draft": "We completed the investment in Q2.\n\nHalden Group completed the investment in Q2.",
   "config": {
     "outputType": "reporting_commentary",
     "requiredVersion": "complete",
@@ -11,6 +11,6 @@
   },
   "cases": {
     "violationContains": "We completed",
-    "compliantContains": "Partners Group completed"
+    "compliantContains": "Halden Group completed"
   }
 }

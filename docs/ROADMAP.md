@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-24 (first-person actor substitution)
+Last updated: 2026-08-24 (authoring organisation configuration)
 
 ---
 
@@ -94,6 +94,10 @@ Last updated: 2026-08-24 (first-person actor substitution)
 ---
 
 ## Recently shipped (closed specs)
+
+### Authoring organisation as configuration (closed 2026-08-24)
+
+**Authoring organisation is configuration; fixtures use a fictional house** (shipped 2026-08-24). `AUTHORING_ORGANISATION` env var, default `Partners Group` (production unchanged). The first-person harness and diagnostic fixtures identify as **Halden Group** by setting that env in-process before importing reviewer modules, plus an optional `houseName` argument on `identifyAuthoringOrganisation`. Tag: `review-actor-config`.
 
 ### First-person actor substitution (closed 2026-08-24)
 
