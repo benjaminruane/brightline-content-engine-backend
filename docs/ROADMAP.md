@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-24 (review-layer chapter)
+Last updated: 2026-08-24 (fixture 04 partner names)
 
 ---
 
@@ -111,9 +111,9 @@ Backend-only. Six tagged ships, all verified against git (`git rev-parse`). `rev
 
 **Evaluative-deletion directions state the resulting phrase** (shipped 2026-08-24). Literal application must not leave stranded scaffolding. Tag: `review-hype-repair` (`02a0212`).
 
-**Not shipped (no SHA):** the rename of real individuals in `04_synth_vc_pinterest_style_memo`. Instruction was to find the commit and close it. `git log -S 'Nathan Calder'` is empty; HEAD on that file is still `a8e9594` (Jeremy Levine, James Cham). A working-tree edit exists and is uncommitted. Recorded as open under **BACKLOG P17**, not Closed.
+**Invented fixture 04 no longer names real partners** (shipped 2026-08-24). `04_synth_vc_pinterest_style_memo` From-line is Nathan Calder / Helen Rusk. Same principle as the house-name rule, applied to individuals. Commit: `acdfcb8`. Closes **BACKLOG P17**.
 
-**Still open from this chapter:** **B84** (false greens: next substantive, verdict-adjacent, full gate), **B83** (editorial-layer instability; refines **B61**), **B82** (revision routing keys off a model-authored verb; latent, do not fix now), **B85** (fixture 01 is a temporal hybrid; B48's exhibit sits on it; B48 itself already shipped `review-B48`), **Pr15** (cause identified and fixed; Meridian end-to-end re-run pending), **P16** / **P17** / **P18** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
+**Still open from this chapter:** **B84** (false greens: next substantive, verdict-adjacent, full gate), **B83** (editorial-layer instability; refines **B61**), **B82** (revision routing keys off a model-authored verb; latent, do not fix now), **B85** (fixture 01 is a temporal hybrid; B48's exhibit sits on it; B48 itself already shipped `review-B48`), **Pr15** (cause identified and fixed; Meridian end-to-end re-run pending), **P16** / **P18** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
 
 ### Pr9 rewrite-correctness (closed 2026-08-23)
 
