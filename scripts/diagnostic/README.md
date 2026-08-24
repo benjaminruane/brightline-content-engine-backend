@@ -66,7 +66,21 @@ npm run qc:diag:run -- --no-confirm
 
 ## Fixture pairing
 
-Fixtures with `draft: "PLACEHOLDER"` are **skipped** with `skipped: draft not yet supplied`. Update only the JSON `draft` field when drafts are ready — no harness code change.
+Fixtures with `draft: "PLACEHOLDER"` are **skipped** with `skipped: draft not yet supplied`. Update only the JSON `draft` field when drafts are ready. No harness code change.
+
+## Real vs invented sources
+
+Three sources are real published documents. Keep them verbatim. Do not edit them to plant a test case. A real document with an invented fault in it is no longer either thing.
+
+| Fixture | Source | What it is |
+|---------|--------|------------|
+| 01 | `01_bvp_shopify_memo.txt` | Bessemer Venture Partners Shopify Series A memo (published) |
+| 02 | `02_pg_atnorth_exit.txt` | Partners Group atNorth exit press release (published) |
+| 03 | `03_pg_gestcompost_investment.txt` | Partners Group Gestcompost investment press release (published) |
+
+Planted faults belong only in invented fixtures (`synth_` prefix, the adversarial set 90-92, style-guide stubs, satellite probes).
+
+The fictional house name is **Halden Group**. The real name (Partners Group) appears only in real published documents and in production configuration (`AUTHORING_ORGANISATION`, defaulting to that name).
 
 ## PDF sources (5)
 
