@@ -27,6 +27,11 @@ const {
 } = await import("../../lib/output-intent.js");
 const { runEditorialStyleReview } = await import("../../lib/qc/editorial-compliance-reviewer.mjs");
 const { flushObservability, hasProviderApiKey } = await import("../../lib/observability.js");
+const {
+  applyEvaluativeDeletionDirection,
+  hasStrandedEvaluativeScaffolding,
+  parseEvaluativeDeletionDirection,
+} = await import("../../lib/qc/evaluative-language.mjs");
 
 const RUNS_PER_CASE = 3;
 const CALLS = 4 * RUNS_PER_CASE;
@@ -162,6 +167,23 @@ function scoreRun(testCase, result) {
         testCase.expectDeleteQuotes.some((q) => quotedPhraseRe(q).test(t))
     );
     if (!deleted) flags.push(`did not Delete '${testCase.expectDeleteQuotes.join("' / '")}'`);
+    const deleteTexts = texts.filter((t) => beginsWith(t, "Delete"));
+    if (deleteTexts.length > 0) {
+      const parsed = deleteTexts.map((t) => parseEvaluativeDeletionDirection(t));
+      const complete = parsed.filter((p) => p && (p.kind === "delete_becomes" || p.kind === "rewrite_needed"));
+      if (complete.length === 0) {
+        flags.push("Delete direction did not state a resulting phrase or a rewrite-needed caveat");
+      }
+      for (const t of deleteTexts) {
+        const applied = applyEvaluativeDeletionDirection(testCase.statement, t);
+        if (!applied.ok) flags.push(`could not apply Delete direction literally (${applied.reason})`);
+        else if (applied.reason.startsWith("remainder cannot")) {
+          // rewrite-needed: original stands; not a grammar failure
+        } else if (hasStrandedEvaluativeScaffolding(applied.applied)) {
+          flags.push("literal apply left stranded scaffolding");
+        }
+      }
+    }
   }
 
   if (testCase.expectKeepQuotes) {
@@ -179,6 +201,9 @@ function scoreRun(testCase, result) {
       )
     ) {
       flags.push("deleted the evaluation that should be kept and flagged");
+    }
+    if (texts.some((t) => /The phrase becomes/i.test(t))) {
+      flags.push("Keep direction stated a resulting phrase");
     }
   }
 
@@ -265,6 +290,12 @@ async function main() {
         console.log(`suggestedDirection: ${quote(concern.suggestedDirection)}`);
         console.log(`suggestedRewrite: ${quote(concern.suggestedRewrite)}`);
         console.log(`note: ${quote(concern.note)}`);
+        const dir = typeof concern.suggestedDirection === "string" ? concern.suggestedDirection : "";
+        if (beginsWith(dir, "Delete")) {
+          const applied = applyEvaluativeDeletionDirection(testCase.statement, dir);
+          console.log(`literalApply: ${applied.applied}`);
+          console.log(`literalApplyReason: ${applied.reason}`);
+        }
       }
       const other = concerns.filter((c) => !HYPE_RULE_IDS.has(String(c?.concernCode || c?.rule || "").trim()));
       for (const concern of other) {
