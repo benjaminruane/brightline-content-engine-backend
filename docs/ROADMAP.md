@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-24 (authoring organisation configuration)
+Last updated: 2026-08-24 (review-layer chapter)
 
 ---
 
@@ -19,7 +19,7 @@ Last updated: 2026-08-24 (authoring organisation configuration)
 - **Cost / call volume (baseline 2026-06-28):** ~16 LLM calls per run at 4 statements / 1 source; interactive Review production cost ~**$2/run**. **Diagnostic batch (separate):** full ~20-fixture batch ~**$25–30** total (~$1.25–1.50 per fixture) — flag before full-batch runs; prefer targeted `--only` subsets first.
 - **Production baseline (deployment-verified 2026-06-28 via Vercel):** live deploy `b23-docsync` (commit `9ab91c1`, main). All editorial-cluster code shipped and live — B21, B22 / B22.1 / B22.2 (latest code ship `b22.2-editorial-excerpt-removal`); subsequent commits (B22-docsync, b23-docsync, docs-hygiene) are documentation-only. Frontend `v8.54.1-r6.13.1-writing-intent-wiring`.
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
-- **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
+- **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape; do not treat as a blanket prerequisite, see **B83**), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
 - **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`, `v8.72.0-review-state-cleanup`, `v8.73.0-review-state-no-blobs`, `v8.74.0-review-state-tidy`. **Accepted limitation (F16):** restored PDF/Office sources need re-upload before Review can run again. **Size-limit chapter 2026-08-22:** guard shipped (**F20** `v8.75.0-source-size-guard` + `3fce4fb`; **F21** `v8.76.0-size-message-wording`). Ceiling remains **B79** (OPEN, GUARDED). Blob storage **Pr14** deferred. Unblocked-but-not-built: **B9**, **B61**, **Pr13**. Persistence questions (storage location/jurisdiction, user accounts, retention) remain OPEN.
 - **Pr9 rewrite-correctness SHIPPED 2026-08-23.** Tags: `pr9-claim-spans` (`d8ab2df`), `pr9-soften-or-cut` (`0cd76a5`), `pr9-marker-intent` (`00cce35`), `pr9-cut-punctuation` (`71500c4`). Together they fixed a revision that could attach a note claiming a removal to text it left untouched, reproduced 3/3 on the production sentence. Residuals: **B80**, **B81**, **Pr15**. Harness caveat: **P15**. Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`.
 
@@ -95,13 +95,25 @@ Last updated: 2026-08-24 (authoring organisation configuration)
 
 ## Recently shipped (closed specs)
 
-### Authoring organisation as configuration (closed 2026-08-24)
+### Review-layer chapter (closed 2026-08-24)
 
-**Authoring organisation is configuration; fixtures use a fictional house** (shipped 2026-08-24). `AUTHORING_ORGANISATION` env var, default `Partners Group` (production unchanged). The first-person harness and diagnostic fixtures identify as **Halden Group** by setting that env in-process before importing reviewer modules, plus an optional `houseName` argument on `identifyAuthoringOrganisation`. Tag: `review-actor-config`.
+Backend-only. Six tagged ships, all verified against git (`git rev-parse`). `review-hype-repair` had shipped by the time of this reconcile (`02a0212`); it is closed, not left open.
 
-### First-person actor substitution (closed 2026-08-24)
+**First-person removal names the actor** (shipped 2026-08-24). `first_person_plural` (style_guide) and `voice_consistency` (editorial) share one substitution contract: replace we/our/us with the named authoring organisation as the grammatical subject; never recast into an agentless or passive construction; preserve every hedge. Fixes a live defect where a style rule could strip the owner from a forward-looking return statement, turning a hedged opinion into an unattributed institutional prediction. Observed identically across two production runs on the same draft. The actor is identified only when a known house name already appears in the draft; otherwise the concern is raised and the first person is left in place. Targeted harness: `scripts/diagnostic/first-person-actor-harness.mjs`. Tag: `review-first-person-actor` (`63de82f`).
 
-**First-person removal names the actor** (shipped 2026-08-24). `first_person_plural` (style_guide) and `voice_consistency` (editorial) now share one substitution contract: replace we/our/us with the named authoring organisation as subject or object; never recast into an agentless or passive construction; preserve every hedge. The actor is identified only when a known house name (currently Partners Group) already appears in the draft; otherwise the concern is raised and the first person is left in place. Targeted harness: `scripts/diagnostic/first-person-actor-harness.mjs`. Tag: `review-first-person-actor`.
+**Authoring organisation is configuration** (shipped 2026-08-24). `AUTHORING_ORGANISATION` env var rather than a hardcoded one-entry list. Production default unchanged (`Partners Group`). Synthetic fixtures and the first-person harness identify as **Halden Group**. Tag: `review-actor-config` (`cc69abc`).
+
+**Real published press releases keep the real house name** (shipped 2026-08-24). Follow-on to actor-config: fixtures 02 and 03 restored to the real house. Real-versus-invented principle recorded in `scripts/diagnostic/README.md`. Tag: `fixtures-real-vs-invented` (`2f5f403`).
+
+**View-marker delete vs convert** (shipped 2026-08-24). A parenthetical view-marker is deleted when the sentence subject is already the named actor, and converted when it is not. Tag: `review-view-marker` (`bd45d08`).
+
+**Unsupported evaluative language is deleted** (shipped 2026-08-24). `marketing_language_excess` and `hyperbole_vs_qualitative` no longer substitute a milder word. Same laundering shape as approximating an unsupported figure. Tag: `review-hype-delete` (`63c359f`).
+
+**Evaluative-deletion directions state the resulting phrase** (shipped 2026-08-24). Literal application must not leave stranded scaffolding. Tag: `review-hype-repair` (`02a0212`).
+
+**Not shipped (no SHA):** the rename of real individuals in `04_synth_vc_pinterest_style_memo`. Instruction was to find the commit and close it. `git log -S 'Nathan Calder'` is empty; HEAD on that file is still `a8e9594` (Jeremy Levine, James Cham). A working-tree edit exists and is uncommitted. Recorded as open under **BACKLOG P17**, not Closed.
+
+**Still open from this chapter:** **B84** (false greens: next substantive, verdict-adjacent, full gate), **B83** (editorial-layer instability; refines **B61**), **B82** (revision routing keys off a model-authored verb; latent, do not fix now), **B85** (fixture 01 is a temporal hybrid; B48's exhibit sits on it; B48 itself already shipped `review-B48`), **Pr15** (cause identified and fixed; Meridian end-to-end re-run pending), **P16** / **P17** / **P18** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
 
 ### Pr9 rewrite-correctness (closed 2026-08-23)
 
@@ -114,7 +126,7 @@ Follow-on to the original Pr9 ship (2026-08-14). Backend-only. Together these fo
 
 **Process (BACKLOG P15):** the Pr9 marker harness measures honesty, not correctness. Three separate faults passed it clean with perfectly consistent notes: an invented figure, meaningless filler, and a malformed sentence. Any future Pr9 change must be judged by inspecting quoted output rather than the cross-tabulation.
 
-**Still open:** **B80** (a clause-cut can be labelled CHANGED rather than CUT), **B81** (punctuation pass does not repair stranded prepositions, articles, verbs, or connectives), **Pr15** (narrative-flow question: original complaint, still untested because the test draft was too short and too clean). **B9** reframe: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first; the chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card.
+**Still open:** **B80** (a clause-cut can be labelled CHANGED rather than CUT), **B81** (punctuation pass does not repair stranded prepositions, articles, verbs, or connectives), **Pr15** (narrative-flow question: cause identified and fixed; do not close until the Meridian draft has been re-run end to end and read). **B9** reframe: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first; the chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card.
 
 Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`. See **BACKLOG Pr9-correctness** (closed), **B80**, **B81**, **P15**, **Pr15**, **B9**.
 
@@ -124,7 +136,7 @@ The review-quality arc is **CLOSED**. It ran 19-21 August 2026, backend-only: no
 
 What landed: claim spans with an upgrade-only rollup so one card can go from partial to confirmed without inventing extra cards; spelled-out numbers and mid-sentence names as claim anchors; money and percent figures scoped to a metric (and money also to currency and scale), so `$155m` revenue is not forced against EUR 155 million ARR, and a gross margin is not forced against an EBITDA margin; periods that do not overlap cannot conflict; Stage 1b copies claims verbatim instead of rewriting them; unevidenced superlatives ("record", "highest") surface as editorial only. An in-process LLM cache cuts repeat-run cost inside one serverless instance; a disk cache exists for local diagnostics only. A dash-splitter change is insurance for the fallback path, not a live Stage 1 fix (**B75**).
 
-Parked rather than built: **B62** and **B66** (widening the claim-span funnel produced no additional upgrades); **B68** (logged, not building). Still open: **B61** (residual `hasConflict` drift; store now exists but is the wrong shape), **B53b** (compound supersession), **B74** (Stage 1 bullet-marker text variance). Per-item tags remain in the sections below and in BACKLOG Closed. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
+Parked rather than built: **B62** and **B66** (widening the claim-span funnel produced no additional upgrades); **B68** (logged, not building). Still open: **B61** (residual `hasConflict` drift; store now exists but is the wrong shape; do not treat as a blanket prerequisite, see **B83**), **B53b** (compound supersession), **B74** (Stage 1 bullet-marker text variance). Per-item tags remain in the sections below and in BACKLOG Closed. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
 
 ### Review-state persistence (closed 2026-08-21)
 
