@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-23 (Pr9 rewrite-correctness: claim spans, soften-or-cut, marker intent, cut punctuation)
+Last updated: 2026-08-24 (first-person actor substitution)
 
 ---
 
@@ -94,6 +94,10 @@ Last updated: 2026-08-23 (Pr9 rewrite-correctness: claim spans, soften-or-cut, m
 ---
 
 ## Recently shipped (closed specs)
+
+### First-person actor substitution (closed 2026-08-24)
+
+**First-person removal names the actor** (shipped 2026-08-24). `first_person_plural` (style_guide) and `voice_consistency` (editorial) now share one substitution contract: replace we/our/us with the named authoring organisation as subject or object; never recast into an agentless or passive construction; preserve every hedge. The actor is identified only when a known house name (currently Partners Group) already appears in the draft; otherwise the concern is raised and the first person is left in place. Targeted harness: `scripts/diagnostic/first-person-actor-harness.mjs`. Tag: `review-first-person-actor`.
 
 ### Pr9 rewrite-correctness (closed 2026-08-23)
 

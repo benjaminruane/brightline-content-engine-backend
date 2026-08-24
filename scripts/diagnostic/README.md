@@ -29,6 +29,7 @@ These three scripts measure the model itself and force the cache OFF, unconditio
 - `scripts/diagnostic/llm-cache/run-gate.mjs`
 - `scripts/diagnostic/llm-cache/run-stage1-stability.mjs`
 - `scripts/diagnostic/stage2-determinism/run.mjs`
+- `scripts/diagnostic/first-person-actor-harness.mjs`
 
 When writing a new diagnostic, classify it with that rule. If the model is the thing being measured, call `loadLocalEnvFiles({ liveMeasurement: true })`. Otherwise leave the default disk cache on.
 
