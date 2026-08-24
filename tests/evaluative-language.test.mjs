@@ -3,9 +3,13 @@ import { describe, test } from "vitest";
 import editorialRules from "../lib/rulebook/editorialRules.js";
 import { STYLE_GUIDE_LAYER_1 } from "../lib/qc/style-guide.mjs";
 import {
+  EVALUATIVE_DELETION_REWRITE_NEEDED_TAIL,
   EVALUATIVE_LANGUAGE_FIX_DIRECTION,
   EVALUATIVE_LANGUAGE_INSTRUCTION,
+  applyEvaluativeDeletionBounds,
   applyEvaluativeDeletionDirection,
+  boundEvaluativeDeletionDirection,
+  evaluativeDeletionRefusalDirection,
   hasStrandedEvaluativeScaffolding,
   parseEvaluativeDeletionDirection,
 } from "../lib/qc/evaluative-language.mjs";
@@ -120,5 +124,80 @@ describe("evaluative language contract", () => {
     );
     assert.equal(appliedC.ok, true);
     assert.equal(appliedC.applied, "The manager's origination is proprietary.");
+  });
+});
+
+const EUR_CLAUSE =
+  "The manager has a track record that is genuinely exceptional: EUR 2.8 billion deployed across Funds I to IV across 41 platform investments and has realised a gross MOIC of 2.4x and a gross IRR of 23% on the seventeen deals it has exited to date.";
+
+const BROKEN_EUR_RESTATEMENT =
+  "Delete 'genuinely exceptional'. The phrase becomes 'a track record of 2.8 billion across 41 platform investments and has realised a gross MOIC of 2.4x and a gross IRR of 23% on the seventeen deals it has exited to date...'";
+
+describe("evaluative deletion restatement bound", () => {
+  test("short correct restatement passes through unchanged", () => {
+    const statement = "The manager's origination is genuinely proprietary.";
+    const direction = "Delete 'genuinely'. The phrase becomes 'origination is proprietary'.";
+    assert.equal(boundEvaluativeDeletionDirection(statement, direction), direction);
+  });
+
+  test("restatement that repairs a stranded colon passes", () => {
+    const statement =
+      "Meridian has a track record that is genuinely exceptional: 2.4x gross MOIC and 21% gross IRR.";
+    const direction =
+      "Delete 'genuinely exceptional'. The phrase becomes 'a track record that is 2.4x gross MOIC and 21% gross IRR'.";
+    assert.equal(boundEvaluativeDeletionDirection(statement, direction), direction);
+  });
+
+  test("restatement materially longer than clause-minus-span is discarded and replaced by the refusal form", () => {
+    const statement = "The manager's origination is genuinely proprietary.";
+    const direction =
+      "Delete 'genuinely'. The phrase becomes 'The manager's origination is proprietary and the team is widely regarded as among the most disciplined operators in the market with a track record spanning two decades'.";
+    const bounded = boundEvaluativeDeletionDirection(statement, direction);
+    assert.equal(bounded, evaluativeDeletionRefusalDirection("genuinely"));
+    assert.equal(bounded, "Delete 'genuinely'. The remainder cannot be repaired without rewriting the sentence.");
+  });
+
+  test("restatement that drops a currency unit is discarded", () => {
+    const bounded = boundEvaluativeDeletionDirection(EUR_CLAUSE, BROKEN_EUR_RESTATEMENT);
+    assert.equal(bounded, evaluativeDeletionRefusalDirection("genuinely exceptional"));
+    assert.doesNotMatch(bounded, /The phrase becomes/);
+    assert.match(EUR_CLAUSE, /EUR 2\.8 billion/);
+    assert.doesNotMatch(BROKEN_EUR_RESTATEMENT, /EUR 2\.8 billion/);
+  });
+
+  test("restatement that drops a scope qualifier is discarded", () => {
+    const bounded = boundEvaluativeDeletionDirection(EUR_CLAUSE, BROKEN_EUR_RESTATEMENT);
+    assert.equal(bounded, evaluativeDeletionRefusalDirection("genuinely exceptional"));
+    assert.match(EUR_CLAUSE, /across Funds I to IV/);
+    assert.doesNotMatch(BROKEN_EUR_RESTATEMENT, /across Funds I to IV/);
+  });
+
+  test("the refusal form is emitted verbatim and is stable", () => {
+    const form = evaluativeDeletionRefusalDirection("genuinely exceptional");
+    assert.equal(
+      form,
+      "Delete 'genuinely exceptional'. The remainder cannot be repaired without rewriting the sentence."
+    );
+    assert.equal(form, `Delete 'genuinely exceptional'. ${EVALUATIVE_DELETION_REWRITE_NEEDED_TAIL}`);
+    assert.equal(
+      parseEvaluativeDeletionDirection(form)?.kind,
+      "rewrite_needed"
+    );
+  });
+
+  test("attach-time bound rewrites the concern direction and drops a rewrite that applied the discarded restatement", () => {
+    const concerns = applyEvaluativeDeletionBounds(
+      [
+        {
+          concernCode: "marketing_language_excess",
+          note: "Unsupported evaluative language.",
+          suggestedDirection: BROKEN_EUR_RESTATEMENT,
+          suggestedRewrite: "a track record of 2.8 billion across 41 platform investments",
+        },
+      ],
+      EUR_CLAUSE
+    );
+    assert.equal(concerns[0].suggestedDirection, evaluativeDeletionRefusalDirection("genuinely exceptional"));
+    assert.equal("suggestedRewrite" in concerns[0], false);
   });
 });

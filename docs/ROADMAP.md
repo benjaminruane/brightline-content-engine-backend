@@ -111,13 +111,15 @@ Backend-only. Six tagged ships, all verified against git (`git rev-parse`). `rev
 
 **Unsupported evaluative language is deleted** (shipped 2026-08-24). `marketing_language_excess` and `hyperbole_vs_qualitative` no longer substitute a milder word. Same laundering shape as approximating an unsupported figure. Tag: `review-hype-delete` (`63c359f`).
 
-**Evaluative-deletion directions state the resulting phrase** (shipped 2026-08-24). Literal application must not leave stranded scaffolding. Tag: `review-hype-repair` (`02a0212`).
+**Evaluative-deletion directions state the resulting phrase** (shipped 2026-08-24). Literal application must not leave stranded scaffolding. Tag: `review-hype-repair` (`02a0212`). Follow-on: **B87** / `review-direction-bound` discards a restatement that re-authors the sentence.
+
+**A Delete restatement that re-authors the sentence is discarded** (shipped 2026-08-24). After the model writes the resulting phrase, code compares it to the clause minus the deleted span. Whitespace collapse, orphan punctuation, and a Levenshtein budget of 2. Anything further is replaced by the existing refusal form. Tag: `review-direction-bound`. Closes **BACKLOG B87**.
 
 **Invented fixture 04 no longer names real partners** (shipped 2026-08-24). `04_synth_vc_pinterest_style_memo` From-line is Nathan Calder / Helen Rusk. Same principle as the house-name rule, applied to individuals. Commit: `acdfcb8`. Closes **BACKLOG P17**.
 
-**Pr15 narrative flow CLOSED 2026-08-24.** The Meridian draft was taken through Review, Suggest revision, then Review again. The revised draft was read. The flow holds. Contributing rules were `first_person_plural` and `marketing_language_excess`, both addressed in this chapter. Mechanical residual: **B87**.
+**Pr15 narrative flow CLOSED 2026-08-24.** The Meridian draft was taken through Review, Suggest revision, then Review again. The revised draft was read. The flow holds. Contributing rules were `first_person_plural` and `marketing_language_excess`, both addressed in this chapter. Mechanical residual **B87** is closed by `review-direction-bound`.
 
-**Still open from this chapter and the Meridian re-run:** **B84** (false greens: next substantive, verdict-adjacent, full gate; check **B88** before scoping), **B87** (restated resulting phrase is model-authored and unchecked), **B88** (hypothesis: whole-card `not_supported` may produce no edit), **B83** (editorial-layer instability; refines **B61**; 10 of 10 is bounded), **B82** (revision routing keys off a model-authored verb; latent; second instance **B87**), **B85** (fixture 01 is a temporal hybrid), **B89** / **B90** (small), **P16** / **P18** / **P19** / **P20** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
+**Still open from this chapter and the Meridian re-run:** **B84** (false greens: next substantive, verdict-adjacent, full gate; check **B88** before scoping), **B88** (hypothesis: whole-card `not_supported` may produce no edit), **B83** (editorial-layer instability; refines **B61**; 10 of 10 is bounded), **B82** (revision routing keys off a model-authored verb; latent; second instance was **B87**), **B85** (fixture 01 is a temporal hybrid), **B89** / **B90** (small), **P16** / **P18** / **P19** / **P20** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
 
 ### Pr9 rewrite-correctness (closed 2026-08-23)
 
