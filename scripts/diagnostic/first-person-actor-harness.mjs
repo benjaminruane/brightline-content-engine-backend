@@ -12,9 +12,9 @@
  * is untouched.
  *
  * Expected cost (stated before any billed call):
- *   5 sentences x 3 runs = 15 gpt-4o combined editorial+style calls.
- *   Estimate ~$0.40 at ~8k input / 400 output tokens per call
- *   (gpt-4o $2.50 / $10.00 per 1M). Ceiling with one schema retry each: ~$0.80.
+ *   6 sentences x 3 runs = 18 gpt-4o combined editorial+style calls.
+ *   Estimate ~$0.48 at ~8k input / 400 output tokens per call
+ *   (gpt-4o $2.50 / $10.00 per 1M). Ceiling with one schema retry each: ~$0.96.
  *   Hard stop if that ceiling would exceed $2.00.
  */
 
@@ -46,9 +46,9 @@ const {
 } = await import("../../lib/qc/first-person-actor.mjs");
 
 const RUNS_PER_CASE = 3;
-const CALLS = 5 * RUNS_PER_CASE;
-const EXPECTED_COST_USD = 0.4;
-const COST_CEILING_USD = 0.8;
+const CALLS = 6 * RUNS_PER_CASE;
+const EXPECTED_COST_USD = 0.48;
+const COST_CEILING_USD = 0.96;
 const HARD_STOP_USD = 2.0;
 const HOUSE = resolveAuthoringOrganisationName();
 
@@ -64,6 +64,8 @@ const CASES = [
     namedOrg: true,
     expectObjectCase: false,
     expectUnnamedLeaveInPlace: false,
+    expectViewMarkerDelete: true,
+    expectViewMarkerConvert: false,
   },
   {
     id: "b",
@@ -73,6 +75,8 @@ const CASES = [
     namedOrg: true,
     expectObjectCase: false,
     expectUnnamedLeaveInPlace: false,
+    expectViewMarkerDelete: false,
+    expectViewMarkerConvert: false,
   },
   {
     id: "c",
@@ -82,6 +86,8 @@ const CASES = [
     namedOrg: true,
     expectObjectCase: true,
     expectUnnamedLeaveInPlace: false,
+    expectViewMarkerDelete: false,
+    expectViewMarkerConvert: false,
   },
   {
     id: "d",
@@ -90,6 +96,8 @@ const CASES = [
     namedOrg: true,
     expectObjectCase: false,
     expectUnnamedLeaveInPlace: false,
+    expectViewMarkerDelete: false,
+    expectViewMarkerConvert: false,
   },
   {
     id: "e",
@@ -99,6 +107,18 @@ const CASES = [
     namedOrg: false,
     expectObjectCase: false,
     expectUnnamedLeaveInPlace: true,
+    expectViewMarkerDelete: false,
+    expectViewMarkerConvert: false,
+  },
+  {
+    id: "f",
+    label: "view-marker whose sentence subject is not the actor",
+    statement: "The pipeline is, in our view, thin.",
+    namedOrg: true,
+    expectObjectCase: false,
+    expectUnnamedLeaveInPlace: false,
+    expectViewMarkerDelete: false,
+    expectViewMarkerConvert: true,
   },
 ];
 
@@ -171,6 +191,20 @@ function availableToHouseRe() {
   return new RegExp(`available to ${escaped}`, "i");
 }
 
+function convertedViewMarkerRe() {
+  const escaped = HOUSE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`in ${escaped}'s view`, "i");
+}
+
+function houseAsAttractedSubjectRe() {
+  const escaped = HOUSE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`${escaped} was attracted`, "i");
+}
+
+function hasOurView(text) {
+  return /\bin our view\b/i.test(String(text || ""));
+}
+
 function scoreRun(testCase, result) {
   const concerns = result?.editorialConcerns ?? [];
   const fp = firstPersonConcerns(concerns);
@@ -190,6 +224,29 @@ function scoreRun(testCase, result) {
   if (testCase.expectObjectCase) {
     const resolved = texts.some((t) => availableToHouseRe().test(t));
     if (!resolved) flags.push(`object case did not resolve to ${HOUSE}`);
+  }
+
+  if (testCase.expectViewMarkerDelete) {
+    const keepsHouseSubject = texts.some((t) => houseAsAttractedSubjectRe().test(t));
+    if (!keepsHouseSubject) flags.push(`${HOUSE} is not the sentence subject`);
+    if (texts.some((t) => convertedViewMarkerRe().test(t))) {
+      flags.push("view-marker converted instead of deleted");
+    }
+  }
+
+  if (testCase.expectViewMarkerConvert) {
+    const converted = texts.some((t) => convertedViewMarkerRe().test(t));
+    if (!converted) {
+      const deletedOnly = texts.some((t) => {
+        if (isLeaveFirstPersonInPlaceDirection(t)) return false;
+        return /\bpipeline is\b/i.test(t) && !hasOurView(t);
+      });
+      flags.push(
+        deletedOnly
+          ? "view-marker deleted rather than converted"
+          : `view-marker was not converted to in ${HOUSE}'s view`
+      );
+    }
   }
 
   if (testCase.namedOrg && !testCase.expectUnnamedLeaveInPlace && fp.length > 0) {

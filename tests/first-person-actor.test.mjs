@@ -28,6 +28,8 @@ const REQUIRED_PHRASES = [
   "is expected to",
   "it is noted that",
   "should deliver",
+  "Every judgement keeps an owner",
+  "redundant rather than protective",
   "A first-person fix which makes a claim more confident is a failure of the rule, not a bonus",
   "leave the first-person wording in place",
   "illustrative only",
@@ -145,7 +147,11 @@ describe("first_person_plural and voice_consistency share the actor contract", (
     assert.match(fictional, /Halden Group was attracted to X/);
     assert.match(fictional, /Halden Group believes the fund should Y/);
     assert.match(fictional, /available to Halden Group/);
-    assert.match(fictional, /in Halden Group's view/);
+    assert.match(
+      fictional,
+      /Halden Group was attracted to X on the strength of a track record that is exceptional/
+    );
+    assert.match(fictional, /The pipeline is, in Halden Group's view, thin/);
     assert.doesNotMatch(fictional, /Partners Group/);
   });
 
