@@ -502,8 +502,47 @@ describe("gatherConcerns", () => {
     const prompt = buildRevisionPrompt("We are excited to announce incredible growth.", marketingConcerns, {});
     assert.match(prompt, /kind=soften/);
     assert.match(prompt, /kind "soften"/);
-    assert.match(prompt, /it read as promotional/);
+    assert.match(prompt, /Never substitute a milder evaluative word/);
     assert.doesNotMatch(prompt, /kind=craft/);
+  });
+
+  test("marketing_language_excess stays soften even when the direction begins with Remove", () => {
+    const removeMarketing = {
+      qcCard: {
+        index: 40,
+        statement: "It is a genuine differentiator.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        editorialVerdict: "soft_concern",
+        editorialConcerns: [
+          {
+            ruleId: "marketing_language_excess",
+            note: "Hyperbole.",
+            suggestedDirection: "Remove 'genuine differentiator'.",
+          },
+        ],
+        complianceVerdict: "clean",
+      },
+    };
+    const removeOther = {
+      qcCard: {
+        index: 41,
+        statement: "It was decided to reduce headcount.",
+        supportState: "supported",
+        displayVerdict: "supported_full",
+        editorialVerdict: "soft_concern",
+        editorialConcerns: [
+          {
+            ruleId: "passive_voice_overuse",
+            note: "Passive.",
+            suggestedDirection: "Remove 'It was decided'.",
+          },
+        ],
+        complianceVerdict: "clean",
+      },
+    };
+    assert.equal(gatherConcerns([removeMarketing])[0].editorial[0].kind, "soften");
+    assert.equal(gatherConcerns([removeOther])[0].editorial[0].kind, "deletion");
   });
 
   test("keep-and-flag prompt examples do not claim an edit", () => {
