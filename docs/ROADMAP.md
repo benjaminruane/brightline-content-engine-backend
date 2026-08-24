@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-24 (fixture 04 partner names)
+Last updated: 2026-08-24 (Meridian re-run)
 
 ---
 
@@ -21,7 +21,7 @@ Last updated: 2026-08-24 (fixture 04 partner names)
 - **Diagnostic re-run 2026-06-01** (batch `2026-06-01-122541`) confirmed in production that R6.3, R6.4 (incl. R6.4c jurisdiction-scope fix), and R6.5 landed: evidence layer strong (F18 cross-source aggregation resolved; no evidence regressions), editorial noise down, compliance jurisdiction miscalibration fixed. See `docs/diagnostic_rerun_findings_2026-06-01.md`.
 - **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape; do not treat as a blanket prerequisite, see **B83**), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
 - **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`, `v8.72.0-review-state-cleanup`, `v8.73.0-review-state-no-blobs`, `v8.74.0-review-state-tidy`. **Accepted limitation (F16):** restored PDF/Office sources need re-upload before Review can run again. **Size-limit chapter 2026-08-22:** guard shipped (**F20** `v8.75.0-source-size-guard` + `3fce4fb`; **F21** `v8.76.0-size-message-wording`). Ceiling remains **B79** (OPEN, GUARDED). Blob storage **Pr14** deferred. Unblocked-but-not-built: **B9**, **B61**, **Pr13**. Persistence questions (storage location/jurisdiction, user accounts, retention) remain OPEN.
-- **Pr9 rewrite-correctness SHIPPED 2026-08-23.** Tags: `pr9-claim-spans` (`d8ab2df`), `pr9-soften-or-cut` (`0cd76a5`), `pr9-marker-intent` (`00cce35`), `pr9-cut-punctuation` (`71500c4`). Together they fixed a revision that could attach a note claiming a removal to text it left untouched, reproduced 3/3 on the production sentence. Residuals: **B80**, **B81**, **Pr15**. Harness caveat: **P15**. Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`.
+- **Pr9 rewrite-correctness SHIPPED 2026-08-23.** Tags: `pr9-claim-spans` (`d8ab2df`), `pr9-soften-or-cut` (`0cd76a5`), `pr9-marker-intent` (`00cce35`), `pr9-cut-punctuation` (`71500c4`). Together they fixed a revision that could attach a note claiming a removal to text it left untouched, reproduced 3/3 on the production sentence. Residuals: **B80**, **B81**. **Pr15** closed 2026-08-24 (Meridian re-run; flow holds). Harness caveat: **P15**. Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`.
 
 ---
 
@@ -99,9 +99,9 @@ Last updated: 2026-08-24 (fixture 04 partner names)
 
 Backend-only. Six tagged ships, all verified against git (`git rev-parse`). `review-hype-repair` had shipped by the time of this reconcile (`02a0212`); it is closed, not left open.
 
-**First-person removal names the actor** (shipped 2026-08-24). `first_person_plural` (style_guide) and `voice_consistency` (editorial) share one substitution contract: replace we/our/us with the named authoring organisation as the grammatical subject; never recast into an agentless or passive construction; preserve every hedge. Fixes a live defect where a style rule could strip the owner from a forward-looking return statement, turning a hedged opinion into an unattributed institutional prediction. Observed identically across two production runs on the same draft. The actor is identified only when a known house name already appears in the draft; otherwise the concern is raised and the first person is left in place. Targeted harness: `scripts/diagnostic/first-person-actor-harness.mjs`. Tag: `review-first-person-actor` (`63de82f`).
+**First-person removal names the actor** (shipped 2026-08-24). `first_person_plural` (style_guide) and `voice_consistency` (editorial) share one substitution contract: replace we/our/us with the named authoring organisation as the grammatical subject; never recast into an agentless or passive construction; preserve every hedge. Fixes a live defect where a style rule could strip the owner from a forward-looking return statement, turning a hedged opinion into an unattributed institutional prediction. Observed identically across two production runs on the same draft. The actor is identified only when a known house name already appears in the draft; otherwise the concern is raised and the first person is left in place. Targeted harness: `scripts/diagnostic/first-person-actor-harness.mjs`. Tag: `review-first-person-actor` (`63de82f`). **UNVERIFIED IN PRODUCTION** (Meridian re-run 2026-08-24): live cards took the fallback path. See **BACKLOG B86**.
 
-**Authoring organisation is configuration** (shipped 2026-08-24). `AUTHORING_ORGANISATION` env var rather than a hardcoded one-entry list. Production default unchanged (`Partners Group`). Synthetic fixtures and the first-person harness identify as **Halden Group**. Tag: `review-actor-config` (`cc69abc`).
+**Authoring organisation is configuration** (shipped 2026-08-24). `AUTHORING_ORGANISATION` env var rather than a hardcoded one-entry list. Production default unchanged (`Partners Group`). Synthetic fixtures and the first-person harness identify as **Halden Group**. Tag: `review-actor-config` (`cc69abc`). **UNVERIFIED IN PRODUCTION** (Meridian re-run 2026-08-24): see **BACKLOG B86**.
 
 **Real published press releases keep the real house name** (shipped 2026-08-24). Follow-on to actor-config: fixtures 02 and 03 restored to the real house. Real-versus-invented principle recorded in `scripts/diagnostic/README.md`. Tag: `fixtures-real-vs-invented` (`2f5f403`).
 
@@ -113,7 +113,9 @@ Backend-only. Six tagged ships, all verified against git (`git rev-parse`). `rev
 
 **Invented fixture 04 no longer names real partners** (shipped 2026-08-24). `04_synth_vc_pinterest_style_memo` From-line is Nathan Calder / Helen Rusk. Same principle as the house-name rule, applied to individuals. Commit: `acdfcb8`. Closes **BACKLOG P17**.
 
-**Still open from this chapter:** **B84** (false greens: next substantive, verdict-adjacent, full gate), **B83** (editorial-layer instability; refines **B61**), **B82** (revision routing keys off a model-authored verb; latent, do not fix now), **B85** (fixture 01 is a temporal hybrid; B48's exhibit sits on it; B48 itself already shipped `review-B48`), **Pr15** (cause identified and fixed; Meridian end-to-end re-run pending), **P16** / **P18** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
+**Pr15 narrative flow CLOSED 2026-08-24.** The Meridian draft was taken through Review, Suggest revision, then Review again. The revised draft was read. The flow holds. Contributing rules were `first_person_plural` and `marketing_language_excess`, both addressed in this chapter. Mechanical residual: **B87**.
+
+**Still open from this chapter and the Meridian re-run:** **B86** (authoring organisation does not resolve in production; do this first), **B84** (false greens: next substantive, verdict-adjacent, full gate; check **B88** before scoping), **B87** (restated resulting phrase is model-authored and unchecked), **B88** (hypothesis: whole-card `not_supported` may produce no edit), **B83** (editorial-layer instability; refines **B61**; 10 of 10 is bounded), **B82** (revision routing keys off a model-authored verb; latent; second instance **B87**), **B85** (fixture 01 is a temporal hybrid), **B89** / **B90** (small), **P16** / **P18** / **P19** / **P20** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
 
 ### Pr9 rewrite-correctness (closed 2026-08-23)
 
@@ -126,9 +128,9 @@ Follow-on to the original Pr9 ship (2026-08-14). Backend-only. Together these fo
 
 **Process (BACKLOG P15):** the Pr9 marker harness measures honesty, not correctness. Three separate faults passed it clean with perfectly consistent notes: an invented figure, meaningless filler, and a malformed sentence. Any future Pr9 change must be judged by inspecting quoted output rather than the cross-tabulation.
 
-**Still open:** **B80** (a clause-cut can be labelled CHANGED rather than CUT), **B81** (punctuation pass does not repair stranded prepositions, articles, verbs, or connectives), **Pr15** (narrative-flow question: cause identified and fixed; do not close until the Meridian draft has been re-run end to end and read). **B9** reframe: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first; the chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card.
+**Still open:** **B80** (a clause-cut can be labelled CHANGED rather than CUT), **B81** (punctuation pass does not repair stranded prepositions, articles, verbs, or connectives). **Pr15** closed 2026-08-24 (Meridian re-run; flow holds). **B9** reframe: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first; the chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card.
 
-Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`. See **BACKLOG Pr9-correctness** (closed), **B80**, **B81**, **P15**, **Pr15**, **B9**.
+Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`. See **BACKLOG Pr9-correctness** (closed), **B80**, **B81**, **P15**, **Pr15** (closed), **B9**.
 
 ### Review-quality arc (CLOSED 2026-08-21)
 
@@ -1063,7 +1065,7 @@ Item (a) remains cosmetic, not behavioural. Defer to R7 (Sources Drawer Revival)
 - Blending rules: draft first, sources second, web last
 
 ### Implement-Changes Sprint
-- **Pr9 — Interim: Suggest revised draft** (lighter prequel; shipped) — one-click holistic rewrite from all Review/Assess card concerns. See **BACKLOG Pr9** (closed). Rewrite-correctness follow-on shipped 2026-08-23 (`pr9-claim-spans`, `pr9-soften-or-cut`, `pr9-marker-intent`, `pr9-cut-punctuation`). Residuals **B80**, **B81**, **Pr15**. Harness caveat **P15**.
+- **Pr9 — Interim: Suggest revised draft** (lighter prequel; shipped) — one-click holistic rewrite from all Review/Assess card concerns. See **BACKLOG Pr9** (closed). Rewrite-correctness follow-on shipped 2026-08-23 (`pr9-claim-spans`, `pr9-soften-or-cut`, `pr9-marker-intent`, `pr9-cut-punctuation`). Residuals **B80**, **B81**. **Pr15** closed 2026-08-24. Harness caveat **P15**.
 - **B9 — full accept / reject / refine** — **unblocked-but-not-built (2026-08-21).** A store exists (`persist-review-state`) but `review_state` overwrites; B9 needs append-only finding-decision event rows in a separate table. **Reframe (2026-08-23):** acting on a finding and acting on an edit are two different workflows. B9 as scoped covers only the first. The chapter's first question is where in the flow the human makes each decision, not how accept and reject work on a card. Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`.
 - Surface `suggestedRewrite` from QC cards to UI
 - Rewrite notes redesign — deferred from earlier sprint, belongs here
