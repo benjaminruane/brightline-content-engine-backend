@@ -80,7 +80,7 @@ Three sources are real published documents. Keep them verbatim. Do not edit them
 
 Planted faults belong only in invented fixtures (`synth_` prefix, the adversarial set 90-92, style-guide stubs, satellite probes).
 
-The fictional house name is **Halden Group**. The real name (Partners Group) appears only in real published documents and in production configuration (`AUTHORING_ORGANISATION`, defaulting to that name).
+The fictional house name is **Halden Group**. The real name (Partners Group) appears only in real published documents. Production must supply the authoring organisation via `AUTHORING_ORGANISATION` or the review request; there is no default house name.
 
 ## PDF sources (5)
 

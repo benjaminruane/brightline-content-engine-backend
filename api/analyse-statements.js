@@ -55,6 +55,15 @@ function resolveOutputType(body) {
   return "";
 }
 
+/** Optional house name from request body. Absent or blank is null (env may still apply downstream). */
+function resolveAuthoringOrganisation(body) {
+  const fromOptions =
+    typeof body?.options?.authoringOrganisation === "string" ? body.options.authoringOrganisation.trim() : "";
+  if (fromOptions) return fromOptions;
+  const fromRoot = typeof body?.authoringOrganisation === "string" ? body.authoringOrganisation.trim() : "";
+  return fromRoot || null;
+}
+
 /** B29: Review toggles from request body root or options; default true when absent. */
 function resolveReviewOptions(body) {
   const opts = body?.options && typeof body.options === "object" ? body.options : {};
@@ -199,6 +208,7 @@ export default async function handler(req, res) {
       evidenceEnabled: reviewOptions.evidenceEnabled,
       editorialEnabled: reviewOptions.editorialEnabled,
       complianceEnabled: reviewOptions.complianceEnabled,
+      authoringOrganisation: resolveAuthoringOrganisation(body),
     };
     if (outputType) {
       pipelineOptions.outputType = outputType;

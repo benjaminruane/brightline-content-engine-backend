@@ -4,9 +4,11 @@ import editorialRules from "../lib/rulebook/editorialRules.js";
 import {
   STYLE_GUIDE_LAYER_2_CLIENT,
   formatStyleGuideRulesForPrompt,
+  resolveStyleGuide,
 } from "../lib/qc/style-guide.mjs";
 import {
   AUTHORING_ORGANISATION_ENV,
+  AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER,
   DEFAULT_AUTHORING_ORGANISATION,
   FIRST_PERSON_ACTOR_INSTRUCTION,
   buildFirstPersonActorInstruction,
@@ -32,7 +34,8 @@ const REQUIRED_PHRASES = [
   "redundant rather than protective",
   "A first-person fix which makes a claim more confident is a failure of the rule, not a bonus",
   "leave the first-person wording in place",
-  "illustrative only",
+  "Never infer one",
+  "already been confirmed to appear in the draft",
 ];
 
 function ruleById(rules, id) {
@@ -50,12 +53,27 @@ function withHouseEnv(name, fn) {
   }
 }
 
+function withUnsetHouseEnv(fn) {
+  return withHouseEnv("", () => {
+    delete process.env[AUTHORING_ORGANISATION_ENV];
+    return fn();
+  });
+}
+
 describe("authoring organisation configuration", () => {
-  test("defaults to the production house name when env is unset", () => {
-    withHouseEnv("", () => {
-      delete process.env[AUTHORING_ORGANISATION_ENV];
-      assert.equal(resolveAuthoringOrganisationName(), DEFAULT_AUTHORING_ORGANISATION);
-      assert.equal(DEFAULT_AUTHORING_ORGANISATION, "Partners Group");
+  test("unset env and no argument resolves to null, and the prompt block is the not-identified fallback", () => {
+    withUnsetHouseEnv(() => {
+      assert.equal(DEFAULT_AUTHORING_ORGANISATION, null);
+      assert.equal(resolveAuthoringOrganisationName(), null);
+      assert.equal(resolveAuthoringOrganisationName(""), null);
+      assert.equal(resolveAuthoringOrganisationName("   "), null);
+      const block = formatAuthoringOrganisationPromptBlock(
+        "We believe the fund should deliver returns broadly in line with its predecessor."
+      );
+      assert.match(block, /not identified in this draft/);
+      assert.match(block, /leave the first-person wording unchanged/);
+      assert.doesNotMatch(block, /Partners Group/);
+      assert.doesNotMatch(block, new RegExp(FICTIONAL_HOUSE));
     });
   });
 
@@ -83,25 +101,69 @@ describe("authoring organisation configuration", () => {
       null
     );
   });
+
+  test("request-supplied name beats env; explicit argument beats request", () => {
+    withHouseEnv("Env House", () => {
+      assert.equal(resolveAuthoringOrganisationName("Request House"), "Request House");
+      assert.equal(resolveAuthoringOrganisationName(), "Env House");
+      const draft = "Env House, Request House, and Explicit House all appear in this draft.";
+      assert.equal(identifyAuthoringOrganisation(draft), "Env House");
+      assert.equal(
+        identifyAuthoringOrganisation(draft, resolveAuthoringOrganisationName("Request House")),
+        "Request House"
+      );
+      assert.equal(identifyAuthoringOrganisation(draft, "Explicit House"), "Explicit House");
+      const requestBlock = formatAuthoringOrganisationPromptBlock(
+        draft,
+        resolveAuthoringOrganisationName("Request House")
+      );
+      assert.match(requestBlock, /AUTHORING ORGANISATION: Request House/);
+      const explicitBlock = formatAuthoringOrganisationPromptBlock(draft, "Explicit House");
+      assert.match(explicitBlock, /AUTHORING ORGANISATION: Explicit House/);
+      assert.doesNotMatch(explicitBlock, /Request House/);
+      assert.doesNotMatch(explicitBlock, /Env House/);
+    });
+  });
 });
 
 describe("first-person actor identification", () => {
-  test("names the default house only when that exact name is already in the draft", () => {
-    const named =
-      "In June 2025, Partners Group made a commitment to Meridian Capital Partners V.";
-    assert.equal(identifyAuthoringOrganisation(named), "Partners Group");
-    assert.equal(
-      identifyAuthoringOrganisation("partners group committed to Meridian."),
-      "Partners Group"
-    );
+  test("a supplied name present in the draft identifies and produces the substitution block naming it", () => {
+    const draft = `In June 2025, ${FICTIONAL_HOUSE} made a commitment to Meridian Capital Partners V.`;
+    assert.equal(identifyAuthoringOrganisation(draft, FICTIONAL_HOUSE), FICTIONAL_HOUSE);
+    const named = formatAuthoringOrganisationPromptBlock(draft, FICTIONAL_HOUSE);
+    assert.match(named, new RegExp(`AUTHORING ORGANISATION: ${FICTIONAL_HOUSE}`));
+    assert.match(named, new RegExp(`substitute "${FICTIONAL_HOUSE}"`));
+  });
+
+  test("invariant: a supplied name absent from the draft returns null and takes the fallback", () => {
+    const draft =
+      "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.";
+    assert.equal(identifyAuthoringOrganisation(draft, FICTIONAL_HOUSE), null);
+    const unnamed = formatAuthoringOrganisationPromptBlock(draft, FICTIONAL_HOUSE);
+    assert.match(unnamed, /not identified in this draft/);
+    assert.match(unnamed, /leave the first-person wording unchanged/);
+    assert.doesNotMatch(unnamed, new RegExp(FICTIONAL_HOUSE));
+    assert.doesNotMatch(unnamed, /Partners Group/);
+  });
+
+  test("a draft that mentions a firm which was not supplied does not identify it", () => {
+    withUnsetHouseEnv(() => {
+      const named =
+        "In June 2025, Partners Group made a commitment to Meridian Capital Partners V.";
+      assert.equal(identifyAuthoringOrganisation(named), null);
+      assert.equal(identifyAuthoringOrganisation("partners group committed to Meridian."), null);
+      const block = formatAuthoringOrganisationPromptBlock(named);
+      assert.match(block, /not identified in this draft/);
+      assert.doesNotMatch(block, /Partners Group/);
+    });
   });
 
   test("does not treat the investment name as the authoring organisation", () => {
     const meridianOnly =
       "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.";
-    assert.equal(identifyAuthoringOrganisation(meridianOnly), null);
+    assert.equal(identifyAuthoringOrganisation(meridianOnly, FICTIONAL_HOUSE), null);
     assert.equal(
-      identifyAuthoringOrganisation("Meridian Capital Partners V has a thin pipeline."),
+      identifyAuthoringOrganisation("Meridian Capital Partners V has a thin pipeline.", FICTIONAL_HOUSE),
       null
     );
   });
@@ -153,21 +215,48 @@ describe("first_person_plural and voice_consistency share the actor contract", (
     );
     assert.match(fictional, /The pipeline is, in Halden Group's view, thin/);
     assert.doesNotMatch(fictional, /Partners Group/);
+
+    const unset = withUnsetHouseEnv(() => buildFirstPersonActorInstruction());
+    assert.match(
+      unset,
+      new RegExp(`${AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER} was attracted to X`)
+    );
+    assert.doesNotMatch(unset, /Partners Group/);
+    assert.doesNotMatch(unset, new RegExp(FICTIONAL_HOUSE));
   });
 
-  test("style prompt formatting includes worked subject and object examples under the production default", () => {
+  test("style prompt formatting uses the placeholder when no house name is resolved", () => {
     const formatted = formatStyleGuideRulesForPrompt(
       STYLE_GUIDE_LAYER_2_CLIENT.filter((r) => r.id === "first_person_plural")
     );
-    assert.match(formatted, /Partners Group was attracted to Meridian/);
-    assert.match(formatted, /available to Partners Group/);
+    assert.match(
+      formatted,
+      new RegExp(`${AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER} was attracted to Meridian`)
+    );
+    assert.match(formatted, new RegExp(`available to ${AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER}`));
     assert.match(formatted, /available to us/);
     assert.match(formatted, /fixDirection:/);
+    assert.doesNotMatch(formatted, /Partners Group was attracted/);
+  });
+
+  test("resolveStyleGuide interpolates a supplied house into first_person_plural examples", () => {
+    const rules = resolveStyleGuide({
+      outputType: "reporting_commentary",
+      authoringOrganisation: FICTIONAL_HOUSE,
+    });
+    const styleRule = ruleById(rules, "first_person_plural");
+    assert.ok(styleRule);
+    assert.match(styleRule.correct_example, /Halden Group was attracted to Meridian/);
+    assert.match(styleRule.correct_example, /Halden Group believes the fund should deliver/);
+    assert.match(styleRule.description, /Halden Group was attracted to X/);
   });
 
   test("correct examples name the actor; incorrect examples keep first person", () => {
     const styleRule = ruleById(STYLE_GUIDE_LAYER_2_CLIENT, "first_person_plural");
-    assert.match(styleRule.correct_example, /Partners Group believes the fund should deliver/);
+    assert.match(
+      styleRule.correct_example,
+      new RegExp(`${AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER} believes the fund should deliver`)
+    );
     assert.match(styleRule.incorrect_example, /We believe the fund should deliver/);
     assert.match(styleRule.incorrect_example, /available to us/);
   });
