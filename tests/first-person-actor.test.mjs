@@ -11,6 +11,8 @@ import {
   AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER,
   DEFAULT_AUTHORING_ORGANISATION,
   FIRST_PERSON_ACTOR_INSTRUCTION,
+  applyViewMarkerSubjectBounds,
+  boundViewMarkerSubjectDirection,
   buildFirstPersonActorInstruction,
   droppedModalityHedges,
   formatAuthoringOrganisationPromptBlock,
@@ -320,5 +322,38 @@ describe("agentless recast and modality guards", () => {
       ),
       false
     );
+  });
+});
+
+describe("view-marker subject after first-person substitution", () => {
+  test("combined first-person subject plus view marker deletes the marker", () => {
+    const statement =
+      "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.";
+    const converted =
+      `Replace 'We were attracted' with '${FICTIONAL_HOUSE} was attracted' and 'in our view' with 'in ${FICTIONAL_HOUSE}'s view'.`;
+    const bounded = boundViewMarkerSubjectDirection(statement, converted, FICTIONAL_HOUSE);
+    assert.match(bounded, /Halden Group was attracted/);
+    assert.match(bounded, /delete 'in our view'/i);
+    assert.doesNotMatch(bounded, /in Halden Group's view/);
+
+    const concerns = applyViewMarkerSubjectBounds(
+      [
+        {
+          concernCode: "voice_consistency",
+          note: "First-person plural in reporting commentary.",
+          suggestedDirection: converted,
+        },
+      ],
+      statement,
+      FICTIONAL_HOUSE
+    );
+    assert.match(concerns[0].suggestedDirection, /delete 'in our view'/i);
+    assert.doesNotMatch(concerns[0].suggestedDirection, /in Halden Group's view/);
+  });
+
+  test("a view marker whose sentence subject is not the actor stays converted", () => {
+    const statement = "The pipeline is, in our view, thin.";
+    const direction = `Change 'in our view' to 'in ${FICTIONAL_HOUSE}'s view'.`;
+    assert.equal(boundViewMarkerSubjectDirection(statement, direction, FICTIONAL_HOUSE), direction);
   });
 });

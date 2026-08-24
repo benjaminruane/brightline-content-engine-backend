@@ -107,7 +107,9 @@ Backend-only. Six tagged ships, all verified against git (`git rev-parse`). `rev
 
 **Real published press releases keep the real house name** (shipped 2026-08-24). Follow-on to actor-config: fixtures 02 and 03 restored to the real house. Real-versus-invented principle recorded in `scripts/diagnostic/README.md`. Tag: `fixtures-real-vs-invented` (`2f5f403`).
 
-**View-marker delete vs convert** (shipped 2026-08-24). A parenthetical view-marker is deleted when the sentence subject is already the named actor, and converted when it is not. Tag: `review-view-marker` (`bd45d08`).
+**View-marker delete vs convert** (shipped 2026-08-24). A parenthetical view-marker is deleted when the sentence subject is already the named actor, and converted when it is not. Tag: `review-view-marker` (`bd45d08`). Follow-on: `review-view-marker-subject`.
+
+**View-marker subject is tested after first-person substitution** (shipped 2026-08-24). If substituting We/we will make the authoring organisation the grammatical subject, a parenthetical view-marker for that organisation is deleted, not converted. Deterministic bound on the emitted direction. Tag: `review-view-marker-subject`.
 
 **Unsupported evaluative language is deleted** (shipped 2026-08-24). `marketing_language_excess` and `hyperbole_vs_qualitative` no longer substitute a milder word. Same laundering shape as approximating an unsupported figure. Tag: `review-hype-delete` (`63c359f`).
 
@@ -119,7 +121,7 @@ Backend-only. Six tagged ships, all verified against git (`git rev-parse`). `rev
 
 **Pr15 narrative flow CLOSED 2026-08-24.** The Meridian draft was taken through Review, Suggest revision, then Review again. The revised draft was read. The flow holds. Contributing rules were `first_person_plural` and `marketing_language_excess`, both addressed in this chapter. Mechanical residual **B87** is closed by `review-direction-bound`.
 
-**Still open from this chapter and the Meridian re-run:** **B84** (false greens: next substantive, verdict-adjacent, full gate; check **B88** before scoping), **B88** (hypothesis: whole-card `not_supported` may produce no edit), **B83** (editorial-layer instability; refines **B61**; 10 of 10 is bounded), **B82** (revision routing keys off a model-authored verb; latent; second instance was **B87**), **B85** (fixture 01 is a temporal hybrid), **B89** / **B90** (small), **P16** / **P18** / **P19** / **P20** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
+**Still open from this chapter and the Meridian re-run:** **B84** (false greens: next substantive, verdict-adjacent, full gate; check **B88** before scoping), **B88** (hypothesis: whole-card `not_supported` may produce no edit), **B83** (editorial-layer instability; refines **B61**; 10 of 10 is bounded), **B82** (revision routing keys off a model-authored verb; latent; second instance was **B87**), **B85** (fixture 01 is a temporal hybrid), **B89** / **B90** / **B91** (small), **P16** / **P18** / **P19** / **P20** (standing process rules). **B9** unchanged: acting on a finding and acting on an edit are two different workflows; B9 as scoped covers only the first.
 
 ### Pr9 rewrite-correctness (closed 2026-08-23)
 
