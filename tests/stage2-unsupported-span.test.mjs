@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, test } from "vitest";
 import {
   applyUnsupportedSpanValidation,
+  buildUnsupportedSpans,
   getStage2SpanElicitPromptForTest,
   getStage2SystemPromptForTest,
   getStage2UnsupportedSpanMultiOccurrenceCount,
@@ -17,6 +18,8 @@ import {
   validateUnsupportedSpan,
 } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import { hashPromptContent } from "../lib/qc/llm-cache.mjs";
+import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { validateQcResponse } from "../lib/qc/qc-api-schema.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -172,5 +175,200 @@ describe("validation counters", () => {
     applyUnsupportedSpanValidation(statement, statement);
     assert.equal(getStage2UnsupportedSpanWholeCount(), 1);
     assert.equal(getStage2UnsupportedSpanRejectionCount(), 2);
+  });
+});
+
+describe("buildUnsupportedSpans", () => {
+  test("emits validated eligible spans and drops the rest", () => {
+    const matches = [
+      {
+        sourceIndex: 0,
+        classification: "partially_confirmed",
+        unsupportedSpan: "unusually collegiate",
+        unsupportedSpanStart: 10,
+        unsupportedSpanEnd: 30,
+      },
+      {
+        sourceIndex: 1,
+        classification: "confirmed",
+        unsupportedSpan: "should not appear",
+        unsupportedSpanStart: 0,
+        unsupportedSpanEnd: 5,
+      },
+      {
+        sourceIndex: 2,
+        classification: "no_support",
+        unsupportedSpan: "also not",
+        unsupportedSpanStart: 0,
+        unsupportedSpanEnd: 4,
+      },
+      {
+        sourceIndex: 3,
+        classification: "conflicting",
+        unsupportedSpan: "and",
+        unsupportedSpanStart: null,
+        unsupportedSpanEnd: null,
+      },
+      {
+        sourceIndex: 4,
+        classification: "partially_confirmed",
+        unsupportedSpan: null,
+      },
+    ];
+    assert.deepEqual(buildUnsupportedSpans(matches, { statementIndex: 7 }), [
+      {
+        sourceRefId: 0,
+        statementId: "7",
+        classification: "partially_confirmed",
+        text: "unusually collegiate",
+        start: 10,
+        end: 30,
+      },
+      {
+        sourceRefId: 3,
+        statementId: "7",
+        classification: "conflicting",
+        text: "and",
+        start: null,
+        end: null,
+      },
+    ]);
+  });
+});
+
+describe("unsupportedSpans on the QC card", () => {
+  const spans = [
+    {
+      sourceRefId: 1,
+      statementId: "0",
+      classification: "partially_confirmed",
+      text: "is unusually collegiate",
+      start: 40,
+      end: 63,
+    },
+  ];
+
+  test("assembleCard passthrough does not change the evidence verdict", async () => {
+    const statement = "The fund generated 2.4x gross MOIC and is unusually collegiate.";
+    const card = await assembleCard(
+      {
+        statementText: statement,
+        startChar: 0,
+        endChar: statement.length,
+        sourceMatches: [{ sourceIndex: 1, classification: "partially_confirmed", sourceLabel: "memo" }],
+        verdictResult: {
+          verdict: "partially_confirmed",
+          hasConflict: false,
+          confirmingMatches: [],
+          contributingSourceIndices: [1],
+        },
+        excerptResult: { primaryExcerpt: { passage: "gross MOIC of 2.4x", sourceLabel: "memo" } },
+        unsupportedSpans: spans,
+        editorialResult: {
+          editorialVerdict: "clean",
+          editorialConcerns: [],
+          complianceVerdict: "clean",
+          complianceConcerns: [],
+        },
+      },
+      0,
+      { pipelineRoute: "v4" }
+    );
+    assert.equal(card.supportState, "partial");
+    assert.equal(card.displayVerdict, "supported_partial");
+    assert.deepEqual(card.unsupportedSpans, spans);
+  });
+
+  test("assembleCard defaults to an empty array when the field is absent", async () => {
+    const card = await assembleCard(
+      {
+        statementText: "Hello.",
+        startChar: 0,
+        endChar: 6,
+        sourceMatches: [],
+        verdictResult: { verdict: "not_supported", hasConflict: false, confirmingMatches: [] },
+        excerptResult: { primaryExcerpt: null },
+        editorialResult: {
+          editorialVerdict: "clean",
+          editorialConcerns: [],
+          complianceVerdict: "clean",
+          complianceConcerns: [],
+        },
+      },
+      0,
+      { pipelineRoute: "v4" }
+    );
+    assert.deepEqual(card.unsupportedSpans, []);
+  });
+});
+
+describe("qc-api-schema unsupportedSpans", () => {
+  function cardWith(unsupportedSpans) {
+    return {
+      statements: [
+        {
+          qcCard: {
+            statement: "x",
+            supportState: "partially_supported",
+            supportRefIds: [],
+            supportRefTitles: [],
+            primaryRefId: null,
+            primaryExcerpt: null,
+            supportingReferenceIds: [],
+            supportingReferenceTitles: [],
+            unsupportedSpans,
+          },
+        },
+      ],
+    };
+  }
+
+  test("accepts a valid additive span", () => {
+    validateQcResponse(
+      cardWith([
+        {
+          sourceRefId: 0,
+          statementId: "0",
+          classification: "partially_confirmed",
+          text: "gap phrase",
+          start: 0,
+          end: 10,
+        },
+      ])
+    );
+  });
+
+  test("accepts null offsets for multi-occurrence", () => {
+    validateQcResponse(
+      cardWith([
+        {
+          sourceRefId: 2,
+          statementId: "4",
+          classification: "conflicting",
+          text: "and",
+          start: null,
+          end: null,
+        },
+      ])
+    );
+  });
+
+  test("rejects confirmed on unsupportedSpans", () => {
+    assert.throws(
+      () =>
+        validateQcResponse(
+          cardWith([
+            {
+              sourceRefId: 0,
+              statementId: "0",
+              classification: "confirmed",
+              text: "x",
+              start: 0,
+              end: 1,
+            },
+          ])
+        ),
+      /partially_confirmed\|conflicting/
+    );
   });
 });
