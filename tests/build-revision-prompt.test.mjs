@@ -146,6 +146,122 @@ const displayVerdictFallbackCard = {
   },
 };
 
+describe("unsupportedSpans in the statement-level evidence gap block", () => {
+  const statement = "The fund generated 2.4x gross MOIC and is unusually collegiate.";
+
+  test("names a shorter validated span with its source and leaves the rest of the block intact", () => {
+    const card = {
+      qcCard: {
+        index: 0,
+        statement,
+        supportState: "partial",
+        displayVerdict: "supported_partial",
+        primaryExcerpt: { sourceLabel: "memo", passage: "gross MOIC of 2.4x" },
+        evidenceSummary: "Partial match; collegiate tone unsupported.",
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+        unsupportedSpans: [
+          {
+            sourceRefId: 1,
+            statementId: "0",
+            classification: "partially_confirmed",
+            text: "is unusually collegiate",
+            start: 40,
+            end: 63,
+            sourceLabel: "memo",
+          },
+        ],
+      },
+    };
+    const without = {
+      qcCard: {
+        ...card.qcCard,
+        unsupportedSpans: undefined,
+      },
+    };
+    const prompt = buildRevisionPrompt(statement, gatherConcerns([card]), {});
+    const baseline = buildRevisionPrompt(statement, gatherConcerns([without]), {});
+    assert.match(prompt, /Unsupported phrase \(memo\): "is unusually collegiate"/);
+    assert.match(prompt, /Evidence gap \(partially_confirmed\) \[kind=partial\]:/);
+    assert.match(prompt, /Reason: Partial match; collegiate tone unsupported\./);
+    assert.doesNotMatch(baseline, /Unsupported phrase/);
+    assert.match(baseline, /Evidence gap \(partially_confirmed\) \[kind=partial\]:/);
+  });
+
+  test("suppresses a whole-statement span so the block matches a card with no spans", () => {
+    const withWhole = {
+      qcCard: {
+        index: 0,
+        statement,
+        supportState: "not_supported",
+        displayVerdict: "not_supported",
+        primaryExcerpt: { sourceLabel: "memo", passage: "other text" },
+        evidenceSummary: "No support.",
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+        unsupportedSpans: [
+          {
+            sourceRefId: 0,
+            statementId: "0",
+            classification: "partially_confirmed",
+            text: statement,
+            start: 0,
+            end: statement.length,
+          },
+        ],
+      },
+    };
+    const bare = {
+      qcCard: {
+        ...withWhole.qcCard,
+        unsupportedSpans: undefined,
+      },
+    };
+    const a = buildRevisionPrompt(statement, gatherConcerns([withWhole]), {});
+    const b = buildRevisionPrompt(statement, gatherConcerns([bare]), {});
+    assert.equal(a, b);
+    assert.doesNotMatch(a, /Unsupported phrase/);
+  });
+
+  test("includes a null-offset span and deduplicates identical text", () => {
+    const card = {
+      qcCard: {
+        index: 0,
+        statement,
+        supportState: "partial",
+        displayVerdict: "supported_partial",
+        evidenceSummary: "Gap on collegiate.",
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+        unsupportedSpans: [
+          {
+            sourceRefId: 0,
+            statementId: "0",
+            classification: "partially_confirmed",
+            text: "unusually collegiate",
+            start: null,
+            end: null,
+            sourceLabel: "memo A",
+          },
+          {
+            sourceRefId: 1,
+            statementId: "0",
+            classification: "partially_confirmed",
+            text: "unusually collegiate",
+            start: null,
+            end: null,
+            sourceLabel: "memo B",
+          },
+        ],
+      },
+    };
+    const prompt = buildRevisionPrompt(statement, gatherConcerns([card]), {});
+    const matches = prompt.match(/Unsupported phrase \([^)]+\): "unusually collegiate"/g) || [];
+    assert.equal(matches.length, 1);
+    assert.match(prompt, /Unsupported phrase \(memo A\): "unusually collegiate"/);
+  });
+});
+
 describe("gatherConcerns", () => {
   test("collects evidence gaps, editorial, and compliance; skips confirmed-clean", () => {
     const concerns = gatherConcerns([
@@ -844,6 +960,10 @@ describe("buildRevisionPrompt", () => {
     );
     assert.match(prompt, /delivered revenue growth last year\|\|CHANGED: Removed the unsupported 22% figure/);
     assert.doesNotMatch(prompt, /delivered material growth/);
+    assert.match(
+      prompt,
+      /Where a specific unsupported phrase is named under an Evidence gap, the edit belongs to that phrase and the rest of the sentence should be left alone/
+    );
   });
 
   test("gates first_person_plural off for investor_letter but still includes hyperbole and currency", () => {
