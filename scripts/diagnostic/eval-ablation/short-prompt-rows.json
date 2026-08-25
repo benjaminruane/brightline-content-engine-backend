@@ -1,0 +1,1099 @@
+{
+  "meta": {
+    "probe": "stage2-short-prompt",
+    "model": "openai/gpt-4o",
+    "cache": "off",
+    "repeats": 3,
+    "temperature": 0,
+    "seed": 1,
+    "note3c": "No committed 3c text found in prior specs; constructed ranking-boundary example for G.",
+    "promptPath": "lib/qc/pipeline-v4/prompts/stage2_v4.md",
+    "meridianSource": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+    "totalCalls": 54,
+    "totalCostUsd": 0.4283124999999999,
+    "totalInputTokens": 147069,
+    "totalOutputTokens": 6064,
+    "ranAt": "2026-08-25T12:56:21.751Z",
+    "promptMeta": {
+      "A2": {
+        "length": 12452,
+        "sha256": "088d003b47ac177d3a8f8d05aa0461616e0b14aadc7dc8b4d7dd12c21ada493f"
+      },
+      "G": {
+        "length": 4195,
+        "sha256": "08e793df1977f120acdd3a3cf5aefc921fbac34ecfd0fe6aba707393f127a15f"
+      },
+      "H": {
+        "length": 13032,
+        "sha256": "c1dcfe89328895c810f3fe3eac6ea1eeb139818d52c061fe7fc39cb5faa1a351"
+      }
+    }
+  },
+  "matrix": {
+    "E1": {
+      "A2": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "G": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "H": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ]
+    },
+    "E2": {
+      "A2": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "G": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "H": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ]
+    },
+    "E3": {
+      "A2": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "G": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "H": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ]
+    },
+    "C1": {
+      "A2": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "G": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "H": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ]
+    },
+    "C2": {
+      "A2": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "G": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "H": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ]
+    },
+    "C3": {
+      "A2": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "G": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "H": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ]
+    }
+  },
+  "baselineConfirmedCounts": {
+    "E1": 0,
+    "E2": 3,
+    "E3": 3
+  },
+  "gMovesE2orE3KeepingControls": true,
+  "hMovesE2orE3KeepingControls": false,
+  "e2e3Explanations": {
+    "E2": {
+      "A2": [
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about team stability and limited key-person risk.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk."
+      ],
+      "G": [
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not explicitly address the key-person risk aspect.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not explicitly state that this stability limits key-person risk, which is an additional checkable claim.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not explicitly address the key-person risk aspect."
+      ],
+      "H": [
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk."
+      ]
+    },
+    "E3": {
+      "A2": [
+        "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly.",
+        "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly.",
+        "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly."
+      ],
+      "G": [
+        "The source confirms that Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly.",
+        "The source confirms that Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly.",
+        "The source confirms that Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly."
+      ],
+      "H": [
+        "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR.",
+        "The source confirms that Fund IV is marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly.",
+        "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR."
+      ]
+    }
+  },
+  "rows": [
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 3361,
+        "outputTokens": 131
+      },
+      "costUsd": 0.0097125,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 3361,
+        "outputTokens": 139
+      },
+      "costUsd": 0.0097925,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 3361,
+        "outputTokens": 139
+      },
+      "costUsd": 0.0097925,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits but does not mention the fund's placement in the top quartile of European lower-mid-market managers.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 1734,
+        "outputTokens": 132
+      },
+      "costUsd": 0.005655,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits but does not mention the fund's placement in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 1734,
+        "outputTokens": 140
+      },
+      "costUsd": 0.0057350000000000005,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits but does not mention the fund's placement in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 1734,
+        "outputTokens": 140
+      },
+      "costUsd": 0.0057350000000000005,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 3484,
+        "outputTokens": 139
+      },
+      "costUsd": 0.010100000000000001,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 3484,
+        "outputTokens": 108
+      },
+      "costUsd": 0.00979,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E1",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "usage": {
+        "inputTokens": 3484,
+        "outputTokens": 139
+      },
+      "costUsd": 0.010100000000000001,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 112
+      },
+      "costUsd": 0.009497499999999999,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 112
+      },
+      "costUsd": 0.009497499999999999,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 112
+      },
+      "costUsd": 0.009497499999999999,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not explicitly address the key-person risk aspect.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 1724,
+        "outputTokens": 126
+      },
+      "costUsd": 0.00557,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not explicitly state that this stability limits key-person risk, which is an additional checkable claim.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 1724,
+        "outputTokens": 134
+      },
+      "costUsd": 0.0056500000000000005,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not explicitly address the key-person risk aspect.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 1724,
+        "outputTokens": 126
+      },
+      "costUsd": 0.00557,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 3474,
+        "outputTokens": 114
+      },
+      "costUsd": 0.009825,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 3474,
+        "outputTokens": 112
+      },
+      "costUsd": 0.009805,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E2",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "usage": {
+        "inputTokens": 3474,
+        "outputTokens": 114
+      },
+      "costUsd": 0.009825,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 132
+      },
+      "costUsd": 0.0096975,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 132
+      },
+      "costUsd": 0.0096975,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "A2",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 132
+      },
+      "costUsd": 0.0096975,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 1724,
+        "outputTokens": 137
+      },
+      "costUsd": 0.00568,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 1724,
+        "outputTokens": 137
+      },
+      "costUsd": 0.00568,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "G",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 1724,
+        "outputTokens": 137
+      },
+      "costUsd": 0.00568,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 3474,
+        "outputTokens": 124
+      },
+      "costUsd": 0.009925,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Fund IV is marked at 1.9x gross MOIC and 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 3474,
+        "outputTokens": 132
+      },
+      "costUsd": 0.010005,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "E3",
+      "kind": "exhibit",
+      "expected": "partially_confirmed",
+      "variantId": "H",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "usage": {
+        "inputTokens": 3474,
+        "outputTokens": 124
+      },
+      "costUsd": 0.009925,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms the fund size and strategy, matching the statement's description of Meridian Capital Partners V as a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 3357,
+        "outputTokens": 98
+      },
+      "costUsd": 0.0093725,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms the statement by specifying the fund's strategy and target size, matching the EUR 1.2 billion figure and the focus on lower-mid-market buyouts in European industrial technology and business services.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 3357,
+        "outputTokens": 97
+      },
+      "costUsd": 0.009362500000000001,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Meridian Capital Partners V targets lower-mid-market buyouts in European industrial technology and business services with a target fund size of EUR 1.2 billion.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 3357,
+        "outputTokens": 90
+      },
+      "costUsd": 0.0092925,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Meridian Capital Partners V is targeting lower-mid-market buyouts in European industrial technology and business services with a target fund size of EUR 1.2 billion.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 1730,
+        "outputTokens": 129
+      },
+      "costUsd": 0.005615,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Meridian Capital Partners V is targeting lower-mid-market buyouts in European industrial technology and business services with a target fund size of EUR 1.2 billion.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 1730,
+        "outputTokens": 129
+      },
+      "costUsd": 0.005615,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms that Meridian Capital Partners V is targeting lower-mid-market buyouts in European industrial technology and business services with a target fund size of EUR 1.2 billion.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 1730,
+        "outputTokens": 129
+      },
+      "costUsd": 0.005615,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms the fund size and strategy, matching the statement's description of Meridian Capital Partners V as a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 3480,
+        "outputTokens": 105
+      },
+      "costUsd": 0.00975,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms the statement by specifying that Meridian Capital Partners V targets lower-mid-market buyouts in European industrial technology and business services with a target fund size of EUR 1.2 billion.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 3480,
+        "outputTokens": 101
+      },
+      "costUsd": 0.00971,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C1",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms the fund size and strategy, matching the statement's description of Meridian Capital Partners V as a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+      "usage": {
+        "inputTokens": 3480,
+        "outputTokens": 105
+      },
+      "costUsd": 0.00975,
+      "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "Substance matches. 'In summary' and 'defensible' do not add a separate checkable claim.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 2574,
+        "outputTokens": 59
+      },
+      "costUsd": 0.007025,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "Substance matches. 'In summary' and 'defensible' do not add a separate checkable claim.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 2574,
+        "outputTokens": 59
+      },
+      "costUsd": 0.007025,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "Substance matches. 'In summary' and 'defensible' do not add a separate checkable claim.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 2574,
+        "outputTokens": 59
+      },
+      "costUsd": 0.007025,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source and the statement convey the same substance regarding the company's competitive position and switching costs. The terms 'defensible' and 'in summary' in the statement do not introduce additional checkable claims.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 947,
+        "outputTokens": 115
+      },
+      "costUsd": 0.0035175000000000002,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The substance of the statement matches the source. 'In summary' and 'defensible' do not add a separate checkable claim, as they are framing rather than additional factual assertions.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 947,
+        "outputTokens": 112
+      },
+      "costUsd": 0.0034875,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source and the statement convey the same substance regarding the company's competitive position and switching costs. The terms 'defensible' and 'in summary' are framing and do not introduce additional checkable claims.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 947,
+        "outputTokens": 115
+      },
+      "costUsd": 0.0035175000000000002,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source supports the same substance as the statement. 'In summary' and 'defensible' do not add a separate checkable claim, making them framing.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 2697,
+        "outputTokens": 69
+      },
+      "costUsd": 0.0074325,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "Substance matches. 'In summary' and 'defensible' do not add a separate checkable claim.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 2697,
+        "outputTokens": 59
+      },
+      "costUsd": 0.0073325000000000005,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C2",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "Substance matches. 'In summary' and 'defensible' do not add a separate checkable claim.",
+      "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs.",
+      "usage": {
+        "inputTokens": 2697,
+        "outputTokens": 59
+      },
+      "costUsd": 0.0073325000000000005,
+      "statement": "In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.",
+      "sourceNote": "prompt_worked_example_3"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms both the typical hold period of 4–6 years and the limit of not deploying more than 30% of commitments outside the EU.",
+      "passage": "Typical hold period is 4–6 years. The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions. ... No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 3355,
+        "outputTokens": 96
+      },
+      "costUsd": 0.0093475,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms both the typical hold period of 4-6 years and the limit of not deploying more than 30% of commitments outside the EU.",
+      "passage": "Typical hold period is 4–6 years. The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions. ... No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 3355,
+        "outputTokens": 96
+      },
+      "costUsd": 0.0093475,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "A2",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms both the typical hold period of 4-6 years and the limit of not deploying more than 30% of commitments outside the EU.",
+      "passage": "Typical hold period is 4–6 years. The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions. [...] No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 3355,
+        "outputTokens": 96
+      },
+      "costUsd": 0.0093475,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms the typical hold period of 4-6 years and the diversification limit of not deploying more than 30% of commitments outside the EU, matching the statement.",
+      "passage": "Typical hold period is 4–6 years. No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 1728,
+        "outputTokens": 117
+      },
+      "costUsd": 0.00549,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms the typical hold period of 4-6 years and the diversification limit of no more than 30% of commitments deployed outside the EU, matching the statement.",
+      "passage": "Typical hold period is 4–6 years. No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 1728,
+        "outputTokens": 117
+      },
+      "costUsd": 0.00549,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "G",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms the typical hold period of 4-6 years and the diversification limit of not deploying more than 30% of commitments outside the EU, matching the statement.",
+      "passage": "Typical hold period is 4–6 years. No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 1728,
+        "outputTokens": 117
+      },
+      "costUsd": 0.00549,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 1,
+      "classification": "confirmed",
+      "explanation": "The source confirms both the typical hold period of 4–6 years and the limit of deploying no more than 30% of commitments outside the EU, matching the statement.",
+      "passage": "Typical hold period is 4–6 years. The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions. [...] No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 3478,
+        "outputTokens": 100
+      },
+      "costUsd": 0.009695000000000002,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 2,
+      "classification": "confirmed",
+      "explanation": "The source confirms both the typical hold period of 4–6 years and the limit of deploying no more than 30% of commitments outside the EU, matching the statement.",
+      "passage": "Typical hold period is 4–6 years. ... No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 3478,
+        "outputTokens": 80
+      },
+      "costUsd": 0.009495000000000002,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    },
+    {
+      "statementId": "C3",
+      "kind": "control",
+      "expected": "confirmed",
+      "variantId": "H",
+      "run": 3,
+      "classification": "confirmed",
+      "explanation": "The source confirms both the typical hold period of 4–6 years and the limit of deploying no more than 30% of commitments outside the EU, matching the statement.",
+      "passage": "Typical hold period is 4–6 years. The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions. [...] No more than 30% of commitments deployed outside the EU.",
+      "usage": {
+        "inputTokens": 3478,
+        "outputTokens": 100
+      },
+      "costUsd": 0.009695000000000002,
+      "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+      "sourceNote": "meridian_source_v2"
+    }
+  ]
+}
