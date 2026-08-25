@@ -10,6 +10,7 @@ import {
   applyEvaluativeDeletionDirection,
   boundEvaluativeDeletionDirection,
   evaluativeDeletionRefusalDirection,
+  getEvaluativeRestatementDiscardCount,
   hasStrandedEvaluativeScaffolding,
   parseEvaluativeDeletionDirection,
 } from "../lib/qc/evaluative-language.mjs";
@@ -21,7 +22,8 @@ const REQUIRED = [
   "The franchise is exceptionally strong.",
   "must not become \"strong\"",
   "The phrase becomes",
-  "cannot be repaired without rewriting the sentence",
+  "rewrite the sentence so that it reads naturally without it",
+  "Do not substitute a milder word for the deleted text",
 ];
 
 describe("evaluative language contract", () => {
@@ -54,6 +56,12 @@ describe("evaluative language contract", () => {
     assert.equal(
       parseEvaluativeDeletionDirection("Delete 'genuinely exceptional'.")?.kind,
       "delete_incomplete"
+    );
+    assert.equal(
+      parseEvaluativeDeletionDirection(
+        "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+      )?.kind,
+      "rewrite_needed"
     );
     assert.equal(
       parseEvaluativeDeletionDirection(
@@ -154,7 +162,10 @@ describe("evaluative deletion restatement bound", () => {
       "Delete 'genuinely'. The phrase becomes 'The manager's origination is proprietary and the team is widely regarded as among the most disciplined operators in the market with a track record spanning two decades'.";
     const bounded = boundEvaluativeDeletionDirection(statement, direction);
     assert.equal(bounded, evaluativeDeletionRefusalDirection("genuinely"));
-    assert.equal(bounded, "Delete 'genuinely'. The remainder cannot be repaired without rewriting the sentence.");
+    assert.equal(
+      bounded,
+      "Delete 'genuinely' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+    );
   });
 
   test("restatement that drops a currency unit is discarded", () => {
@@ -176,13 +187,14 @@ describe("evaluative deletion restatement bound", () => {
     const form = evaluativeDeletionRefusalDirection("genuinely exceptional");
     assert.equal(
       form,
-      "Delete 'genuinely exceptional'. The remainder cannot be repaired without rewriting the sentence."
+      "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
     );
-    assert.equal(form, `Delete 'genuinely exceptional'. ${EVALUATIVE_DELETION_REWRITE_NEEDED_TAIL}`);
+    assert.equal(form, `Delete 'genuinely exceptional' ${EVALUATIVE_DELETION_REWRITE_NEEDED_TAIL}`);
     assert.equal(
       parseEvaluativeDeletionDirection(form)?.kind,
       "rewrite_needed"
     );
+    assert.equal(evaluativeDeletionRefusalDirection("genuinely exceptional"), form);
   });
 
   test("attach-time bound rewrites the concern direction and drops a rewrite that applied the discarded restatement", () => {
@@ -199,5 +211,65 @@ describe("evaluative deletion restatement bound", () => {
     );
     assert.equal(concerns[0].suggestedDirection, evaluativeDeletionRefusalDirection("genuinely exceptional"));
     assert.equal("suggestedRewrite" in concerns[0], false);
+  });
+
+  test("discard path emits the actionable form and leaves no discarded restatement anywhere in the concern", () => {
+    const discardedResult =
+      "a track record of 2.8 billion across 41 platform investments and has realised a gross MOIC of 2.4x and a gross IRR of 23% on the seventeen deals it has exited to date...";
+    const before = getEvaluativeRestatementDiscardCount();
+    const input = {
+      concernCode: "marketing_language_excess",
+      note:
+        "'genuinely exceptional' is hyperbolic language without substantiation. " +
+        BROKEN_EUR_RESTATEMENT,
+      suggestedDirection: BROKEN_EUR_RESTATEMENT,
+      suggestedRewrite: discardedResult,
+    };
+    const concerns = applyEvaluativeDeletionBounds([{ ...input }], EUR_CLAUSE);
+    const form = evaluativeDeletionRefusalDirection("genuinely exceptional");
+    assert.equal(concerns[0].suggestedDirection, form);
+    assert.match(concerns[0].note, /hyperbolic language without substantiation/);
+    assert.match(concerns[0].note, /and rewrite the sentence so that it reads naturally without it/);
+    assert.doesNotMatch(JSON.stringify(concerns[0]), /The phrase becomes/);
+    assert.doesNotMatch(JSON.stringify(concerns[0]), /a track record of 2\.8 billion/);
+    assert.equal("suggestedRewrite" in concerns[0], false);
+    assert.equal(getEvaluativeRestatementDiscardCount(), before + 1);
+  });
+
+  test("pass-through restatement survives in both note and direction", () => {
+    const statement = "The manager's origination is genuinely proprietary.";
+    const direction = "Delete 'genuinely'. The phrase becomes 'origination is proprietary'.";
+    const note =
+      "Intensifier on a substantive word. Delete 'genuinely'. The phrase becomes 'origination is proprietary'.";
+    const input = {
+      concernCode: "hyperbole_vs_qualitative",
+      note,
+      suggestedDirection: direction,
+    };
+    const before = getEvaluativeRestatementDiscardCount();
+    const concerns = applyEvaluativeDeletionBounds([{ ...input }], statement);
+    assert.deepEqual(concerns[0], input);
+    assert.equal(getEvaluativeRestatementDiscardCount(), before);
+  });
+
+  test("the discard counter still fires when only note carries the restatement", () => {
+    const before = getEvaluativeRestatementDiscardCount();
+    const form = evaluativeDeletionRefusalDirection("genuinely exceptional");
+    const concerns = applyEvaluativeDeletionBounds(
+      [
+        {
+          concernCode: "marketing_language_excess",
+          note: `'genuinely exceptional' is hyperbolic language without substantiation. ${BROKEN_EUR_RESTATEMENT}`,
+          suggestedDirection: form,
+        },
+      ],
+      EUR_CLAUSE
+    );
+    assert.equal(concerns[0].suggestedDirection, form);
+    assert.doesNotMatch(JSON.stringify(concerns[0]), /The phrase becomes/);
+    assert.doesNotMatch(JSON.stringify(concerns[0]), /a track record of 2\.8 billion/);
+    assert.match(concerns[0].note, /hyperbolic language without substantiation/);
+    assert.match(concerns[0].note, /and rewrite the sentence so that it reads naturally without it/);
+    assert.equal(getEvaluativeRestatementDiscardCount(), before + 1);
   });
 });

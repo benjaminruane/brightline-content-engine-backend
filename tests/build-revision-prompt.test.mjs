@@ -503,6 +503,9 @@ describe("gatherConcerns", () => {
     assert.match(prompt, /kind=soften/);
     assert.match(prompt, /kind "soften"/);
     assert.match(prompt, /Never substitute a milder evaluative word/);
+    assert.match(prompt, /rewrite the sentence so it reads naturally/);
+    assert.match(prompt, /do not substitute a milder word for the deleted text/);
+    assert.doesNotMatch(prompt, /cannot be repaired without rewriting/);
     assert.doesNotMatch(prompt, /kind=craft/);
   });
 
