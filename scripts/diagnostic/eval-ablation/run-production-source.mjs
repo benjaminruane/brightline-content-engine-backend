@@ -189,9 +189,10 @@ async function main() {
   // Binary-safe read: no normalisation of dashes or trailing quote.
   const meridianBuf = await readFile(MERIDIAN_PATH);
   const meridian = meridianBuf.toString("utf8");
-  const baseline = await readFile(STAGE2_PROMPT_PATH, "utf8");
-  const gPrompt = buildG();
-  const gmPrompt = buildGM(gPrompt);
+  // Match production getStage2SystemPrompt(): file contents are .trim()'d.
+  const baseline = (await readFile(STAGE2_PROMPT_PATH, "utf8")).trim();
+  const gPrompt = buildG().trim();
+  const gmPrompt = buildGM(gPrompt).trim();
 
   if (gPrompt.length !== EXPECTED_G_LEN || sha256(gPrompt) !== EXPECTED_G_SHA) {
     throw new Error(

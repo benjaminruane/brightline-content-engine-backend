@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "probe": "stage2-trim-test",
+    "model": "openai/gpt-4o",
+    "cache": "off",
+    "promptMeta": {
+      "A2-untrimmed": {
+        "length": 12452,
+        "sha256": "088d003b47ac177d3a8f8d05aa0461616e0b14aadc7dc8b4d7dd12c21ada493f"
+      },
+      "A2-trimmed": {
+        "length": 12451,
+        "sha256": "c718c190315ec131946cfa73452d12f417a01117fc04e2b63daca8e1455d57fe"
+      }
+    },
+    "totalCostUsd": 0.05419,
+    "ranAt": "2026-08-25T13:46:04.678Z"
+  },
+  "rows": [
+    {
+      "variantId": "A2-untrimmed",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers.",
+      "costUsd": 0.00916,
+      "usage": {
+        "inputTokens": 3140,
+        "outputTokens": 131
+      }
+    },
+    {
+      "variantId": "A2-untrimmed",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers.",
+      "costUsd": 0.00916,
+      "usage": {
+        "inputTokens": 3140,
+        "outputTokens": 131
+      }
+    },
+    {
+      "variantId": "A2-untrimmed",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers.",
+      "costUsd": 0.00885,
+      "usage": {
+        "inputTokens": 3140,
+        "outputTokens": 100
+      }
+    },
+    {
+      "variantId": "A2-trimmed",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers.",
+      "costUsd": 0.00916,
+      "usage": {
+        "inputTokens": 3140,
+        "outputTokens": 131
+      }
+    },
+    {
+      "variantId": "A2-trimmed",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "costUsd": 0.008929999999999999,
+      "usage": {
+        "inputTokens": 3140,
+        "outputTokens": 108
+      }
+    },
+    {
+      "variantId": "A2-trimmed",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "costUsd": 0.008929999999999999,
+      "usage": {
+        "inputTokens": 3140,
+        "outputTokens": 108
+      }
+    }
+  ]
+}

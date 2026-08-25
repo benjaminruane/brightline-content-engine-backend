@@ -170,7 +170,8 @@ async function main() {
     throw new Error(`Missing API key for ${stageModel.provider}`);
   }
 
-  const baseline = await readFile(STAGE2_PROMPT_PATH, "utf8");
+  // Match production getStage2SystemPrompt(): file contents are .trim()'d.
+  const baseline = (await readFile(STAGE2_PROMPT_PATH, "utf8")).trim();
   const meridian = await readFile(MERIDIAN_PATH, "utf8");
   const variants = buildVariants(baseline);
 
