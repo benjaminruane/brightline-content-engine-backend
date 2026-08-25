@@ -64,6 +64,15 @@ function resolveAuthoringOrganisation(body) {
   return fromRoot || null;
 }
 
+function resolveAuthoringOrganisationSource(body) {
+  const fromOptions =
+    typeof body?.options?.authoringOrganisation === "string" ? body.options.authoringOrganisation.trim() : "";
+  if (fromOptions) return "argument";
+  const fromRoot = typeof body?.authoringOrganisation === "string" ? body.authoringOrganisation.trim() : "";
+  if (fromRoot) return "request";
+  return null;
+}
+
 /** B29: Review toggles from request body root or options; default true when absent. */
 function resolveReviewOptions(body) {
   const opts = body?.options && typeof body.options === "object" ? body.options : {};
@@ -209,6 +218,7 @@ export default async function handler(req, res) {
       editorialEnabled: reviewOptions.editorialEnabled,
       complianceEnabled: reviewOptions.complianceEnabled,
       authoringOrganisation: resolveAuthoringOrganisation(body),
+      authoringOrganisationSource: resolveAuthoringOrganisationSource(body),
     };
     if (outputType) {
       pipelineOptions.outputType = outputType;

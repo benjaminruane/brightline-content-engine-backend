@@ -21,6 +21,7 @@ import {
   isFirstPersonActorRule,
   isLeaveFirstPersonInPlaceDirection,
   resolveAuthoringOrganisationName,
+  resolveAuthoringOrganisationResolution,
 } from "../lib/qc/first-person-actor.mjs";
 
 const FICTIONAL_HOUSE = "Halden Group";
@@ -69,6 +70,11 @@ describe("authoring organisation configuration", () => {
       assert.equal(resolveAuthoringOrganisationName(), null);
       assert.equal(resolveAuthoringOrganisationName(""), null);
       assert.equal(resolveAuthoringOrganisationName("   "), null);
+      assert.deepEqual(resolveAuthoringOrganisationResolution(), { name: null, source: "default" });
+      assert.deepEqual(resolveAuthoringOrganisationResolution({ argument: "" }), {
+        name: null,
+        source: "default",
+      });
       const block = formatAuthoringOrganisationPromptBlock(
         "We believe the fund should deliver returns broadly in line with its predecessor."
       );
@@ -108,6 +114,15 @@ describe("authoring organisation configuration", () => {
     withHouseEnv("Env House", () => {
       assert.equal(resolveAuthoringOrganisationName("Request House"), "Request House");
       assert.equal(resolveAuthoringOrganisationName(), "Env House");
+      assert.deepEqual(resolveAuthoringOrganisationResolution({ argument: "Arg House", request: "Req House" }), {
+        name: "Arg House",
+        source: "argument",
+      });
+      assert.deepEqual(resolveAuthoringOrganisationResolution({ request: "Req House" }), {
+        name: "Req House",
+        source: "request",
+      });
+      assert.deepEqual(resolveAuthoringOrganisationResolution(), { name: "Env House", source: "env" });
       const draft = "Env House, Request House, and Explicit House all appear in this draft.";
       assert.equal(identifyAuthoringOrganisation(draft), "Env House");
       assert.equal(
