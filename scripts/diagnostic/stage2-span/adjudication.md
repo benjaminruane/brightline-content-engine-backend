@@ -1477,7 +1477,7 @@ ON passage:
 ```
 
 ```
-
+ON cache payload.passage is an empty string. Surrounding sentence: not added.
 ## 24. F23 statement 0
 
 Change class: supported_full to non-full
