@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { DIAG_ROOT, REPO_ROOT } from "../lib/paths.mjs";
+import { fingerprintFromCompletion } from "./fingerprint.mjs";
 
 loadLocalEnvFiles({ liveMeasurement: true });
 
@@ -177,6 +178,7 @@ ${sourceText}`.trim();
     classification: classificationOf(parsed),
     explanation: explanationOf(parsed),
     passage: typeof parsed?.passage === "string" ? parsed.passage : null,
+    systemFingerprint: fingerprintFromCompletion(completion),
     raw,
     usage: {
       inputTokens: Number(completion?.usage?.inputTokens) || 0,
@@ -318,12 +320,15 @@ async function main() {
           classification: result.classification,
           explanation: result.explanation,
           passage: result.passage,
+          systemFingerprint: result.systemFingerprint ?? null,
           usage: result.usage,
           costUsd: result.costUsd,
           statement: st.statement,
           sourceNote: st.id === "C2" ? "prompt_worked_example_3" : "meridian_source_v2",
         });
-        console.log(`${result.classification ?? "PARSE_FAIL"} ($${result.costUsd.toFixed(4)})`);
+        console.log(
+          `${result.classification ?? "PARSE_FAIL"} fp=${result.systemFingerprint || "null"} ($${result.costUsd.toFixed(4)})`
+        );
       }
     }
   }

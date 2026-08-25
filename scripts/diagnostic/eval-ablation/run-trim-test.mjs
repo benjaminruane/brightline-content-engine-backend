@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { DIAG_ROOT, REPO_ROOT } from "../lib/paths.mjs";
+import { fingerprintFromCompletion } from "./fingerprint.mjs";
 
 loadLocalEnvFiles({ liveMeasurement: true });
 
@@ -75,6 +76,7 @@ ${meridian}`.trim();
   return {
     classification: typeof parsed?.classification === "string" ? parsed.classification.trim() : null,
     explanation: typeof parsed?.explanation === "string" ? parsed.explanation : null,
+    systemFingerprint: fingerprintFromCompletion(completion),
     costUsd: Number(calculateLlmCostUsd(stageModel.provider, stageModel.model, completion?.usage)) || 0,
     usage: {
       inputTokens: Number(completion?.usage?.inputTokens) || 0,
@@ -111,7 +113,7 @@ async function main() {
       const r = await matchOnce(variants[vid], run, vid);
       totalCost += r.costUsd;
       rows.push({ variantId: vid, run, ...r });
-      console.log(r.classification);
+      console.log(`${r.classification} fp=${r.systemFingerprint || "null"}`);
     }
   }
 
