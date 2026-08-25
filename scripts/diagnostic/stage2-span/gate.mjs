@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 /**
- * B88 commit 1 shadow gate: Stage 2 unsupportedSpan behind QC_STAGE2_SPAN.
- *
- * Both arms in one process. Main-corpus OFF is a cached replay of the
- * unchanged prompt. ON is live (promptHash changes). F90 to F92 run live
- * in both arms and are reported separately.
- *
- * Does not gate automatically on deltas or rates.
+ * SUPERSEDED. Historical measurement of the appended-prompt Stage 2 span
+ * (tag review-stage2-span). Product path removed. Use
+ * scripts/diagnostic/span-two-step/gate.mjs.
  *
  * Usage:
  *   node scripts/diagnostic/stage2-span/gate.mjs
