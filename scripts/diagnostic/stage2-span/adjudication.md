@@ -1946,3 +1946,325 @@ Of cards that were already non-full in the OFF arm:
 - only WHOLE: 11
 - only shorter: 19
 - no validated span: 8
+
+## Part 3. OFF-arm Stage 2 reasoning on the 25 supported_full to non-full flips
+
+rows.json has no explanation field. The reasoning quoted below is the Stage 2 `explanation` on the OFF-promptHash payload in `scripts/diagnostic/.llm-cache.json`.
+
+All pairs for the statement are quoted. A card is counted as yes only if a pair that returned classification `confirmed` already names a specific phrase as implied, missing, or not fully covered, or otherwise expresses a reservation about a statement claim. Pairs that did not return `confirmed` are quoted but do not count. Not mentioning a clause is not counted as naming a phrase.
+
+### 1. nordholt-clean statement 0
+
+Confirmed pair: fact sheet.
+
+```
+The source confirms the net IRR to date of 14 percent for the fund, matching the statement.
+```
+
+Other pairs:
+
+IC memo (`no_support`):
+```
+The source does not address the fund's net IRR or confirm that Nordholt Logistics is performing in line with underwriting. It discusses projected returns but does not provide specific IRR figures or performance assessments.
+```
+
+press release (`no_support`):
+```
+The source does not address the performance of Nordholt Logistics in line with underwriting or the fund's net IRR of 14 percent. It focuses on the acquisition of Baltic ColdCo and operational details.
+```
+
+LP update (`partially_confirmed`):
+```
+The source confirms that Nordholt Logistics is performing in line with underwriting but does not address the net IRR of 14 percent, making the support partial.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 2. nordholt-clean statement 2
+
+Confirmed pair: fact sheet.
+
+```
+The source confirms the combined annual revenue of EUR 155 million and that 70 percent of it is contracted, matching the statement's figures and contracted revenue percentage.
+```
+
+Other pairs:
+
+IC memo (`no_support`):
+```
+The source does not address the acquisition of Baltic ColdCo, the combined annual revenue figure, or the percentage of revenue that is contracted. It only mentions that revenue is underpinned by multi-year contracts without specific figures.
+```
+
+press release (`partially_confirmed`):
+```
+The source confirms the combined annual revenue of approximately EUR 155 million. However, it does not address the claim that around 70 percent of this revenue is contracted, which is an additional checkable claim.
+```
+
+LP update (`partially_confirmed`):
+```
+The source confirms that approximately 70% of revenue is contracted, providing recurring income. However, it does not mention the combined annual revenue figure of EUR 155 million.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 3. supersession statement 1
+
+Confirmed pair: source_C_fund_update_2026.
+
+```
+The source confirms that the underlying businesses employ 720 people in aggregate, matching the statement.
+```
+
+Other pairs:
+
+source_A_annual_report_2019 (`conflicting`):
+```
+The source states that the underlying businesses employed 640 people, which conflicts with the statement that the company employs 720 people.
+```
+
+source_B_fy2024_results (`no_support`):
+```
+The source does not address the number of employees at the company. It discusses financial results, specifically EBITDA, without mentioning employment figures.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 4. F04 statement 7
+
+Confirmed pair: 04_synth_vc_pinterest_style_memo.
+
+```
+The source confirms that Pinterest's user base is unusual, specifically highlighting its demographic characteristics, which aligns with the statement's claim of the user base being unusual.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 5. F04 statement 10
+
+Confirmed pair: 04_synth_vc_pinterest_style_memo.
+
+```
+The source confirms the statement's claim about the demographic being female-skewed and older, and describes it as a desirable advertising audience, supporting the monetization potential through native advertising in relevant categories.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 6. F04 statement 12
+
+Confirmed pair: 04_synth_vc_pinterest_style_memo.
+
+```
+The source confirms that Mr. Silbermann is described as exceptionally product-focused, aligning with the statement about his reputation for being unusually focused on users and product.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 7. F04 statement 19
+
+Confirmed pair: 04_synth_vc_pinterest_style_memo.
+
+```
+The source confirms that they have stress-tested for total loss and consider the risk acceptable due to their conviction in the engagement signal, aligning with the statement.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 8. F04 statement 20
+
+Confirmed pair: 04_synth_vc_pinterest_style_memo.
+
+```
+The source confirms the statement's claim of exceptional engagement and high conviction in the founder team. The defensible consumer position is implied through the discussion of engagement and potential competitive moats.
+```
+
+Named a phrase or hedged on a confirmed pair: yes. The confirmed explanation names "the defensible consumer position" and says it is implied.
+
+### 9. F06 statement 5
+
+Confirmed pair: 06_synth_listed_pe_report_excerpt.
+
+```
+The source confirms the revenue and EBITDA margin figures for Moreno Iberica for FY2025, matching the statement's figures and description of stability.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 10. F09 statement 4
+
+Confirmed pair: 09_synth_portfolio_update_letter.
+
+```
+The source confirms that Petra Köhler assumed the CEO role in June and has made decisive progress on procurement, footprint, and commercial priorities, aligning with the statement.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 11. F12 statement 0
+
+Confirmed pair: 12_synth_linkedin_post.
+
+```
+The source confirms that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week, matching the statement.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 12. F12 statement 2
+
+Confirmed pair: 12_synth_linkedin_post.
+
+```
+The source describes NorTech's transformation from being strong only in Sweden to becoming a genuinely international business, supporting the statement that the transformation has been substantial.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 13. F13 statement 8
+
+Confirmed pair: 13_synth_internal_inconsistency_memo.
+
+```
+The source confirms that CloudPivot has a defensible competitive position, which aligns with the statement's claim of a clear competitive lead against legacy software competitors in the European mid-market.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 14. F14 statement 3
+
+Confirmed pair: 14_synth_thesis_only_memo.
+
+```
+The source confirms that incumbents with serious clinical software have built up regulatory clearances, creating barriers to entry, aligning with the statement's claim.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 15. F14 statement 7
+
+Confirmed pair: 14_synth_thesis_only_memo.
+
+```
+The source confirms the statement by highlighting that generative AI is creating pressure on incumbents lacking credible AI strategies, aligning with the statement's claim of renewed competitive risk.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 16. F14 statement 8
+
+Confirmed pair: 14_synth_thesis_only_memo.
+
+```
+The source confirms that the European market is structurally distinct from the US market, aligning with the statement's claim about the European market's distinctiveness favoring a thoughtful financial sponsor.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 17. F15 statement 9
+
+Confirmed pair: 15_synth_very_long_memo.
+
+```
+The source confirms the growth of own-brand share from 38% in 2020 to 54% in 2025 and supports the potential to reach 70%, aligning with the statement's figures and timeline.
+```
+
+Named a phrase or hedged on a confirmed pair: yes. The confirmed explanation names the 70% figure and frames it as potential.
+
+### 18. F15 statement 11
+
+Confirmed pair: 15_synth_very_long_memo.
+
+```
+The source confirms that the Atelier 73 format operates 18 stores, matching the statement's claim about the number of stores.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 19. F15 statement 25
+
+Confirmed pair: 15_synth_very_long_memo.
+
+```
+The source confirms that the model has been stress-tested for lease renegotiation, aligning with the statement's claim of stress-testing for modest lease renegotiation.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 20. F15 statement 27
+
+Confirmed pair: 15_synth_very_long_memo.
+
+```
+The source confirms that the relationships are stable and acknowledges the dependency, directly supporting the statement.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 21. F16 statement 2
+
+Confirmed pair: 16_synth_healthcare_consumer.
+
+```
+The source explicitly states that the EBITDA margin is exceptional for a brand at this growth stage, confirming the statement about exceptional unit economics.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 22. F16 statement 10
+
+Confirmed pair: 16_synth_healthcare_consumer.
+
+```
+The source confirms the statement's claim about the growth rate of the premium women's health category and Bloom's position within it. The international expansion runway in France, Italy, Spain, and the US is also supported by the source.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 23. F19 statement 4
+
+Confirmed pair: 19_synth_annual_report.
+
+```
+The source confirms the performance metrics for Eltex Power Systems, including revenue and EBITDA growth, as well as the increase in order backlog, matching the statement.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 24. F23 statement 0
+
+Confirmed pair: CRF_IC_memo.
+
+```
+The source supports the claim that the fund holds a majority stake, as a 70% stake is indeed a majority.
+```
+
+Other pairs:
+
+CRF_diligence_update (`no_support`):
+```
+The source does not address the ownership stake of the fund in the renewable-energy generation platform. It discusses technical diligence, capacity, geographic profile, contract quality, and returns, but not ownership.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### 25. F23 statement 1
+
+Confirmed pairs: CRF_IC_memo and CRF_diligence_update.
+
+CRF_IC_memo (`confirmed`):
+```
+The source confirms the platform benefits from long-term contracted cash flows through power purchase agreements with a long remaining tenor. It also supports geographic diversification with assets across three countries.
+```
+
+CRF_diligence_update (`confirmed`):
+```
+The source confirms both the geographic diversification and the durability of contracted cash flows, supporting the statement's claims.
+```
+
+Named a phrase or hedged on a confirmed pair: no
+
+### Count
+
+Of the 25, OFF-arm reasoning on a `confirmed` pair already named a phrase or hedged: 2.
+
+The two: F04 statement 20, F15 statement 9.
+The other 23: no.
