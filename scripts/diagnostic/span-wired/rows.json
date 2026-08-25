@@ -1,0 +1,2874 @@
+{
+  "selection": {
+    "fixtures": [
+      "nordholt-clean",
+      "F18",
+      "nordholt-dirty"
+    ],
+    "why": "Most statements with a strictly shorter validated span in the review-span-two-step corpus (4, 4, 3).",
+    "perFixture": [
+      {
+        "fixtureId": "nordholt-clean",
+        "statementsWithShorterSpan": 4,
+        "reviewInputsIdentical": true,
+        "reviewFingerprint": "1914efa8e674c5b88b7711e8ffb7d373ac66070d97adc88afce1b0591363203d"
+      },
+      {
+        "fixtureId": "F18",
+        "statementsWithShorterSpan": 4,
+        "reviewInputsIdentical": true,
+        "reviewFingerprint": "ae4abe0526bbcf7240f833fe6d9f70dd3e799c312f4740eb8b3460ca0ab0ef86"
+      },
+      {
+        "fixtureId": "nordholt-dirty",
+        "statementsWithShorterSpan": 3,
+        "reviewInputsIdentical": true,
+        "reviewFingerprint": "24b2ecf393c4525fa465bbd2ce84ac12d9357efd68d676a640a30ad91c7f5e29"
+      }
+    ]
+  },
+  "cache": {
+    "stage2Hits": 97,
+    "stage2Misses": 0,
+    "storeKind": "disk"
+  },
+  "cost": {
+    "revisionCalls": 18,
+    "model": "openai/gpt-5.1",
+    "inputTokens": 124779,
+    "outputTokens": 5469,
+    "costUsd": 0.21066374999999996
+  },
+  "totals": {
+    "OFF": {
+      "edits": 35,
+      "touch": 11,
+      "outside": 6,
+      "deletions": 12,
+      "perRepeat": [
+        {
+          "fixtureId": "nordholt-clean",
+          "repeat": 1,
+          "edits": 4,
+          "touch": 1,
+          "outside": 1,
+          "deletions": 0
+        },
+        {
+          "fixtureId": "nordholt-clean",
+          "repeat": 2,
+          "edits": 5,
+          "touch": 2,
+          "outside": 1,
+          "deletions": 0
+        },
+        {
+          "fixtureId": "nordholt-clean",
+          "repeat": 3,
+          "edits": 5,
+          "touch": 2,
+          "outside": 1,
+          "deletions": 0
+        },
+        {
+          "fixtureId": "F18",
+          "repeat": 1,
+          "edits": 1,
+          "touch": 0,
+          "outside": 0,
+          "deletions": 1
+        },
+        {
+          "fixtureId": "F18",
+          "repeat": 2,
+          "edits": 1,
+          "touch": 0,
+          "outside": 0,
+          "deletions": 1
+        },
+        {
+          "fixtureId": "F18",
+          "repeat": 3,
+          "edits": 1,
+          "touch": 0,
+          "outside": 0,
+          "deletions": 1
+        },
+        {
+          "fixtureId": "nordholt-dirty",
+          "repeat": 1,
+          "edits": 6,
+          "touch": 2,
+          "outside": 1,
+          "deletions": 3
+        },
+        {
+          "fixtureId": "nordholt-dirty",
+          "repeat": 2,
+          "edits": 6,
+          "touch": 2,
+          "outside": 1,
+          "deletions": 3
+        },
+        {
+          "fixtureId": "nordholt-dirty",
+          "repeat": 3,
+          "edits": 6,
+          "touch": 2,
+          "outside": 1,
+          "deletions": 3
+        }
+      ]
+    },
+    "ON": {
+      "edits": 35,
+      "touch": 14,
+      "outside": 3,
+      "deletions": 12,
+      "perRepeat": [
+        {
+          "fixtureId": "nordholt-clean",
+          "repeat": 1,
+          "edits": 4,
+          "touch": 1,
+          "outside": 1,
+          "deletions": 0
+        },
+        {
+          "fixtureId": "nordholt-clean",
+          "repeat": 2,
+          "edits": 5,
+          "touch": 2,
+          "outside": 1,
+          "deletions": 0
+        },
+        {
+          "fixtureId": "nordholt-clean",
+          "repeat": 3,
+          "edits": 4,
+          "touch": 1,
+          "outside": 1,
+          "deletions": 0
+        },
+        {
+          "fixtureId": "F18",
+          "repeat": 1,
+          "edits": 1,
+          "touch": 0,
+          "outside": 0,
+          "deletions": 1
+        },
+        {
+          "fixtureId": "F18",
+          "repeat": 2,
+          "edits": 2,
+          "touch": 1,
+          "outside": 0,
+          "deletions": 1
+        },
+        {
+          "fixtureId": "F18",
+          "repeat": 3,
+          "edits": 1,
+          "touch": 0,
+          "outside": 0,
+          "deletions": 1
+        },
+        {
+          "fixtureId": "nordholt-dirty",
+          "repeat": 1,
+          "edits": 6,
+          "touch": 3,
+          "outside": 0,
+          "deletions": 3
+        },
+        {
+          "fixtureId": "nordholt-dirty",
+          "repeat": 2,
+          "edits": 6,
+          "touch": 3,
+          "outside": 0,
+          "deletions": 3
+        },
+        {
+          "fixtureId": "nordholt-dirty",
+          "repeat": 3,
+          "edits": 6,
+          "touch": 3,
+          "outside": 0,
+          "deletions": 3
+        }
+      ]
+    }
+  },
+  "variance": {
+    "off": [
+      {
+        "fixtureId": "nordholt-clean",
+        "touchPerRepeat": [
+          1,
+          2,
+          2
+        ],
+        "editsPerRepeat": [
+          4,
+          5,
+          5
+        ],
+        "deletionsPerRepeat": [
+          0,
+          0,
+          0
+        ],
+        "touchRange": 1,
+        "editRange": 1
+      },
+      {
+        "fixtureId": "F18",
+        "touchPerRepeat": [
+          0,
+          0,
+          0
+        ],
+        "editsPerRepeat": [
+          1,
+          1,
+          1
+        ],
+        "deletionsPerRepeat": [
+          1,
+          1,
+          1
+        ],
+        "touchRange": 0,
+        "editRange": 0
+      },
+      {
+        "fixtureId": "nordholt-dirty",
+        "touchPerRepeat": [
+          2,
+          2,
+          2
+        ],
+        "editsPerRepeat": [
+          6,
+          6,
+          6
+        ],
+        "deletionsPerRepeat": [
+          3,
+          3,
+          3
+        ],
+        "touchRange": 0,
+        "editRange": 0
+      }
+    ],
+    "on": [
+      {
+        "fixtureId": "nordholt-clean",
+        "touchPerRepeat": [
+          1,
+          2,
+          1
+        ],
+        "editsPerRepeat": [
+          4,
+          5,
+          4
+        ],
+        "deletionsPerRepeat": [
+          0,
+          0,
+          0
+        ],
+        "touchRange": 1,
+        "editRange": 1
+      },
+      {
+        "fixtureId": "F18",
+        "touchPerRepeat": [
+          0,
+          1,
+          0
+        ],
+        "editsPerRepeat": [
+          1,
+          2,
+          1
+        ],
+        "deletionsPerRepeat": [
+          1,
+          1,
+          1
+        ],
+        "touchRange": 1,
+        "editRange": 1
+      },
+      {
+        "fixtureId": "nordholt-dirty",
+        "touchPerRepeat": [
+          3,
+          3,
+          3
+        ],
+        "editsPerRepeat": [
+          6,
+          6,
+          6
+        ],
+        "deletionsPerRepeat": [
+          3,
+          3,
+          3
+        ],
+        "touchRange": 0,
+        "editRange": 0
+      }
+    ],
+    "betweenTouchDiff": 3,
+    "maxWithinTouchRange": 1,
+    "note": "Between-arm touch difference exceeds the largest within-arm touch range on this sample."
+  },
+  "edits": [
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+      "namedSpans": [
+        {
+          "text": "the fund has generated a net IRR to date of 14 per cent.",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 71,
+          "end": 127
+        }
+      ],
+      "revisedText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 2,
+      "statement": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70 per cent is contracted, providing a solid base of recurring income.",
+      "namedSpans": [
+        {
+          "text": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 130
+        }
+      ],
+      "revisedText": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70% is contracted, providing a solid base of recurring income.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 3,
+      "statement": "Facility utilisation is 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Facility utilisation is 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 4,
+      "statement": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+      "namedSpans": [],
+      "revisedText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+      "namedSpans": [
+        {
+          "text": "the fund has generated a net IRR to date of 14 per cent.",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 71,
+          "end": 127
+        }
+      ],
+      "revisedText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 2,
+      "statement": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70 per cent is contracted, providing a solid base of recurring income.",
+      "namedSpans": [
+        {
+          "text": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 130
+        }
+      ],
+      "revisedText": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70% is contracted, providing a solid base of recurring income.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 3,
+      "statement": "Facility utilisation is 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Facility utilization is 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 4,
+      "statement": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+      "namedSpans": [],
+      "revisedText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 5,
+      "statement": "The company expects to complete two further bolt-on acquisitions over the coming twelve months and does not anticipate a realisation before 2028.",
+      "namedSpans": [
+        {
+          "text": "and does not anticipate a realisation before 2028.",
+          "sourceRefId": 0,
+          "sourceLabel": "IC memo",
+          "start": 95,
+          "end": 145
+        }
+      ],
+      "revisedText": "The company expects to complete two further bolt-on acquisitions over the coming twelve months and does not anticipate a realization before 2028.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+      "namedSpans": [
+        {
+          "text": "the fund has generated a net IRR to date of 14 per cent.",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 71,
+          "end": 127
+        }
+      ],
+      "revisedText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 2,
+      "statement": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70 per cent is contracted, providing a solid base of recurring income.",
+      "namedSpans": [
+        {
+          "text": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 130
+        }
+      ],
+      "revisedText": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70% is contracted, providing a solid base of recurring income.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 3,
+      "statement": "Facility utilisation is 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Facility utilization is 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 4,
+      "statement": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+      "namedSpans": [],
+      "revisedText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 5,
+      "statement": "The company expects to complete two further bolt-on acquisitions over the coming twelve months and does not anticipate a realisation before 2028.",
+      "namedSpans": [
+        {
+          "text": "and does not anticipate a realisation before 2028.",
+          "sourceRefId": 0,
+          "sourceLabel": "IC memo",
+          "start": 95,
+          "end": 145
+        }
+      ],
+      "revisedText": "The company expects to complete two further bolt-on acquisitions over the coming twelve months and does not anticipate a realization before 2028.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+      "namedSpans": [
+        {
+          "text": "the fund has generated a net IRR to date of 14 per cent.",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 71,
+          "end": 127
+        }
+      ],
+      "revisedText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 2,
+      "statement": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70 per cent is contracted, providing a solid base of recurring income.",
+      "namedSpans": [
+        {
+          "text": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 130
+        }
+      ],
+      "revisedText": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70% is contracted, providing a solid base of recurring income.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 3,
+      "statement": "Facility utilisation is 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Facility utilisation is 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 4,
+      "statement": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+      "namedSpans": [],
+      "revisedText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+      "namedSpans": [
+        {
+          "text": "the fund has generated a net IRR to date of 14 per cent.",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 71,
+          "end": 127
+        }
+      ],
+      "revisedText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 2,
+      "statement": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70 per cent is contracted, providing a solid base of recurring income.",
+      "namedSpans": [
+        {
+          "text": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 130
+        }
+      ],
+      "revisedText": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70% is contracted, providing a solid base of recurring income.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 3,
+      "statement": "Facility utilisation is 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Facility utilization is 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 4,
+      "statement": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+      "namedSpans": [],
+      "revisedText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 5,
+      "statement": "The company expects to complete two further bolt-on acquisitions over the coming twelve months and does not anticipate a realisation before 2028.",
+      "namedSpans": [
+        {
+          "text": "and does not anticipate a realisation before 2028.",
+          "sourceRefId": 0,
+          "sourceLabel": "IC memo",
+          "start": 95,
+          "end": 145
+        }
+      ],
+      "revisedText": "The company expects to complete two further bolt-on acquisitions over the coming twelve months and does not anticipate a realization before 2028.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+      "namedSpans": [
+        {
+          "text": "the fund has generated a net IRR to date of 14 per cent.",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 71,
+          "end": 127
+        }
+      ],
+      "revisedText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 2,
+      "statement": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70 per cent is contracted, providing a solid base of recurring income.",
+      "namedSpans": [
+        {
+          "text": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 130
+        }
+      ],
+      "revisedText": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70% is contracted, providing a solid base of recurring income.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 3,
+      "statement": "Facility utilisation is 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Facility utilisation is 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "nordholt-clean",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 4,
+      "statement": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+      "namedSpans": [],
+      "revisedText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": []
+    },
+    {
+      "fixtureId": "F18",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 1,
+      "statement": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 24,
+          "end": 228,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 468,
+          "end": 528,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F18",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 1,
+      "statement": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 24,
+          "end": 228,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 468,
+          "end": 528,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F18",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 1,
+      "statement": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 24,
+          "end": 228,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 468,
+          "end": 528,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F18",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 1,
+      "statement": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 24,
+          "end": 79,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 468,
+          "end": 528,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F18",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 1,
+      "statement": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 24,
+          "end": 79,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 468,
+          "end": 541,
+          "note": "Changed from 'We have invested EUR 158 million for a 60% controlling stake' to align with the source language that the investment is being recommended, not yet made. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F18",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 2,
+      "statement": "We have invested EUR 158 million for a 60% controlling stake.",
+      "namedSpans": [
+        {
+          "text": "We have invested",
+          "sourceRefId": 0,
+          "sourceLabel": "18a_synth_cross_source_pair_initial",
+          "start": 0,
+          "end": 16
+        }
+      ],
+      "revisedText": "We recommend an investment of EUR 158 million for a 60% controlling stake.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 24,
+          "end": 79,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 468,
+          "end": 541,
+          "note": "Changed from 'We have invested EUR 158 million for a 60% controlling stake' to align with the source language that the investment is being recommended, not yet made. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F18",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 1,
+      "statement": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 24,
+          "end": 228,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 468,
+          "end": 528,
+          "note": "Left this wording as written. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "namedSpans": [],
+      "revisedText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 380,
+          "end": 494,
+          "note": "Changed contract tenor from at least six years to an average of approximately four years and EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 496,
+          "end": 634,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no exit before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 1,
+      "statement": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+      "namedSpans": [
+        {
+          "text": "run 15 cold-chain facilities across four Nordic markets and employ over 800 people",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 7,
+          "end": 89
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 380,
+          "end": 494,
+          "note": "Changed contract tenor from at least six years to an average of approximately four years and EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 496,
+          "end": 634,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no exit before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 2,
+      "statement": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+      "namedSpans": [
+        {
+          "text": "of which virtually all is locked in under long-term contracts",
+          "sourceRefId": 1,
+          "sourceLabel": "press release",
+          "start": 82,
+          "end": 143
+        },
+        {
+          "text": "virtually all is locked in under long-term contracts",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 91,
+          "end": 143
+        }
+      ],
+      "revisedText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to approximately EUR 155 million, of which virtually all is locked in under long-term contracts.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 380,
+          "end": 494,
+          "note": "Changed contract tenor from at least six years to an average of approximately four years and EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 496,
+          "end": 634,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no exit before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 3,
+      "statement": "Utilisation has reached a record 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Utilisation has reached a record 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 380,
+          "end": 494,
+          "note": "Changed contract tenor from at least six years to an average of approximately four years and EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 496,
+          "end": 634,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no exit before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 4,
+      "statement": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 380,
+          "end": 494,
+          "note": "Changed contract tenor from at least six years to an average of approximately four years and EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 496,
+          "end": 634,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no exit before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 1,
+      "statementIndex": 5,
+      "statement": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027, which will deliver strong double-digit returns.",
+      "namedSpans": [
+        {
+          "text": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 109
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 380,
+          "end": 494,
+          "note": "Changed contract tenor from at least six years to an average of approximately four years and EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 496,
+          "end": 634,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no exit before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "namedSpans": [],
+      "revisedText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 634,
+          "note": "Changed from at least five acquisitions this year and a full exit by 2027 with strong double-digit returns to two acquisitions over the coming twelve months and no exit before 2028 to match the LP update and remove the specific return claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 1,
+      "statement": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+      "namedSpans": [
+        {
+          "text": "run 15 cold-chain facilities across four Nordic markets and employ over 800 people",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 7,
+          "end": 89
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 634,
+          "note": "Changed from at least five acquisitions this year and a full exit by 2027 with strong double-digit returns to two acquisitions over the coming twelve months and no exit before 2028 to match the LP update and remove the specific return claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 2,
+      "statement": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+      "namedSpans": [
+        {
+          "text": "of which virtually all is locked in under long-term contracts",
+          "sourceRefId": 1,
+          "sourceLabel": "press release",
+          "start": 82,
+          "end": 143
+        },
+        {
+          "text": "virtually all is locked in under long-term contracts",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 91,
+          "end": 143
+        }
+      ],
+      "revisedText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to approximately EUR 155 million, of which virtually all is locked in under long-term contracts.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 634,
+          "note": "Changed from at least five acquisitions this year and a full exit by 2027 with strong double-digit returns to two acquisitions over the coming twelve months and no exit before 2028 to match the LP update and remove the specific return claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 3,
+      "statement": "Utilisation has reached a record 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Utilisation has reached a record 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 634,
+          "note": "Changed from at least five acquisitions this year and a full exit by 2027 with strong double-digit returns to two acquisitions over the coming twelve months and no exit before 2028 to match the LP update and remove the specific return claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 4,
+      "statement": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 634,
+          "note": "Changed from at least five acquisitions this year and a full exit by 2027 with strong double-digit returns to two acquisitions over the coming twelve months and no exit before 2028 to match the LP update and remove the specific return claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 2,
+      "statementIndex": 5,
+      "statement": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027, which will deliver strong double-digit returns.",
+      "namedSpans": [
+        {
+          "text": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 109
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 634,
+          "note": "Changed from at least five acquisitions this year and a full exit by 2027 with strong double-digit returns to two acquisitions over the coming twelve months and no exit before 2028 to match the LP update and remove the specific return claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "namedSpans": [],
+      "revisedText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 632,
+          "note": "Changed from at least five bolt-ons this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no realisation before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 1,
+      "statement": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+      "namedSpans": [
+        {
+          "text": "run 15 cold-chain facilities across four Nordic markets and employ over 800 people",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 7,
+          "end": 89
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 632,
+          "note": "Changed from at least five bolt-ons this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no realisation before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 2,
+      "statement": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+      "namedSpans": [
+        {
+          "text": "of which virtually all is locked in under long-term contracts",
+          "sourceRefId": 1,
+          "sourceLabel": "press release",
+          "start": 82,
+          "end": 143
+        },
+        {
+          "text": "virtually all is locked in under long-term contracts",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 91,
+          "end": 143
+        }
+      ],
+      "revisedText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to approximately EUR 155 million, of which virtually all is locked in under long-term contracts.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": true,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 632,
+          "note": "Changed from at least five bolt-ons this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no realisation before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 3,
+      "statement": "Utilisation has reached a record 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Utilisation has reached a record 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 632,
+          "note": "Changed from at least five bolt-ons this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no realisation before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 4,
+      "statement": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 632,
+          "note": "Changed from at least five bolt-ons this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no realisation before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "OFF",
+      "repeat": 3,
+      "statementIndex": 5,
+      "statement": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027, which will deliver strong double-digit returns.",
+      "namedSpans": [
+        {
+          "text": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 109
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo; removed the unsupported market-count detail. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 399,
+          "end": 449,
+          "note": "Changed from 'run to at least six years' to 'have an average length of approximately four years' to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 489,
+          "end": 494,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 518,
+          "end": 632,
+          "note": "Changed from at least five bolt-ons this year and a full exit by 2027 with strong double-digit returns to two bolt-ons over twelve months and no realisation before 2028 to match the LP update and removed the unsubstantiated returns claim. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "namedSpans": [],
+      "revisedText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported claim that virtually all revenue is locked in under long-term contracts to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 336,
+          "end": 427,
+          "note": "Changed from contracts running to at least six years and a 25% EBITDA margin to an average four-year contract length and an 18.6% margin to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 429,
+          "end": 557,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 1,
+      "statement": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+      "namedSpans": [
+        {
+          "text": "run 15 cold-chain facilities across four Nordic markets and employ over 800 people",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 7,
+          "end": 89
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported claim that virtually all revenue is locked in under long-term contracts to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 336,
+          "end": 427,
+          "note": "Changed from contracts running to at least six years and a 25% EBITDA margin to an average four-year contract length and an 18.6% margin to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 429,
+          "end": 557,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 2,
+      "statement": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+      "namedSpans": [
+        {
+          "text": "of which virtually all is locked in under long-term contracts",
+          "sourceRefId": 1,
+          "sourceLabel": "press release",
+          "start": 82,
+          "end": 143
+        },
+        {
+          "text": "virtually all is locked in under long-term contracts",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 91,
+          "end": 143
+        }
+      ],
+      "revisedText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to approximately EUR 155 million.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported claim that virtually all revenue is locked in under long-term contracts to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 336,
+          "end": 427,
+          "note": "Changed from contracts running to at least six years and a 25% EBITDA margin to an average four-year contract length and an 18.6% margin to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 429,
+          "end": 557,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 3,
+      "statement": "Utilisation has reached a record 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Utilisation has reached a record 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported claim that virtually all revenue is locked in under long-term contracts to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 336,
+          "end": 427,
+          "note": "Changed from contracts running to at least six years and a 25% EBITDA margin to an average four-year contract length and an 18.6% margin to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 429,
+          "end": 557,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 4,
+      "statement": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported claim that virtually all revenue is locked in under long-term contracts to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 336,
+          "end": 427,
+          "note": "Changed from contracts running to at least six years and a 25% EBITDA margin to an average four-year contract length and an 18.6% margin to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 429,
+          "end": 557,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 1,
+      "statementIndex": 5,
+      "statement": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027, which will deliver strong double-digit returns.",
+      "namedSpans": [
+        {
+          "text": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 109
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported claim that virtually all revenue is locked in under long-term contracts to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 336,
+          "end": 427,
+          "note": "Changed from contracts running to at least six years and a 25% EBITDA margin to an average four-year contract length and an 18.6% margin to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 429,
+          "end": 557,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "namedSpans": [],
+      "revisedText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported long-term contract lock-in language to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 317,
+          "end": 443,
+          "note": "Changed from minimum six-year contracts and a 25% margin to the four-year average and 18.6% margin stated in the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 445,
+          "end": 581,
+          "note": "Changed from at least five bolt-ons this year and a 2027 exit to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 1,
+      "statement": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+      "namedSpans": [
+        {
+          "text": "run 15 cold-chain facilities across four Nordic markets and employ over 800 people",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 7,
+          "end": 89
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported long-term contract lock-in language to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 317,
+          "end": 443,
+          "note": "Changed from minimum six-year contracts and a 25% margin to the four-year average and 18.6% margin stated in the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 445,
+          "end": 581,
+          "note": "Changed from at least five bolt-ons this year and a 2027 exit to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 2,
+      "statement": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+      "namedSpans": [
+        {
+          "text": "of which virtually all is locked in under long-term contracts",
+          "sourceRefId": 1,
+          "sourceLabel": "press release",
+          "start": 82,
+          "end": 143
+        },
+        {
+          "text": "virtually all is locked in under long-term contracts",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 91,
+          "end": 143
+        }
+      ],
+      "revisedText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to approximately EUR 155 million.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported long-term contract lock-in language to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 317,
+          "end": 443,
+          "note": "Changed from minimum six-year contracts and a 25% margin to the four-year average and 18.6% margin stated in the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 445,
+          "end": 581,
+          "note": "Changed from at least five bolt-ons this year and a 2027 exit to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 3,
+      "statement": "Utilisation has reached a record 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Utilisation has reached a record 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported long-term contract lock-in language to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 317,
+          "end": 443,
+          "note": "Changed from minimum six-year contracts and a 25% margin to the four-year average and 18.6% margin stated in the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 445,
+          "end": 581,
+          "note": "Changed from at least five bolt-ons this year and a 2027 exit to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 4,
+      "statement": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported long-term contract lock-in language to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 317,
+          "end": 443,
+          "note": "Changed from minimum six-year contracts and a 25% margin to the four-year average and 18.6% margin stated in the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 445,
+          "end": 581,
+          "note": "Changed from at least five bolt-ons this year and a 2027 exit to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 2,
+      "statementIndex": 5,
+      "statement": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027, which will deliver strong double-digit returns.",
+      "namedSpans": [
+        {
+          "text": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 109
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million and removed the unsupported long-term contract lock-in language to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 317,
+          "end": 443,
+          "note": "Changed from minimum six-year contracts and a 25% margin to the four-year average and 18.6% margin stated in the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 445,
+          "end": 581,
+          "note": "Changed from at least five bolt-ons this year and a 2027 exit to two bolt-ons over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 0,
+      "statement": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "namedSpans": [],
+      "revisedText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 14%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 409,
+          "end": 433,
+          "note": "Changed from at least six years to approximately four years to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 473,
+          "end": 478,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 502,
+          "end": 616,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two acquisitions over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 1,
+      "statement": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+      "namedSpans": [
+        {
+          "text": "run 15 cold-chain facilities across four Nordic markets and employ over 800 people",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 7,
+          "end": 89
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 409,
+          "end": 433,
+          "note": "Changed from at least six years to approximately four years to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 473,
+          "end": 478,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 502,
+          "end": 616,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two acquisitions over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 2,
+      "statement": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+      "namedSpans": [
+        {
+          "text": "of which virtually all is locked in under long-term contracts",
+          "sourceRefId": 1,
+          "sourceLabel": "press release",
+          "start": 82,
+          "end": 143
+        },
+        {
+          "text": "virtually all is locked in under long-term contracts",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 91,
+          "end": 143
+        }
+      ],
+      "revisedText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to approximately EUR 155 million.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 409,
+          "end": 433,
+          "note": "Changed from at least six years to approximately four years to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 473,
+          "end": 478,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 502,
+          "end": 616,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two acquisitions over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 3,
+      "statement": "Utilisation has reached a record 88 per cent.",
+      "namedSpans": [],
+      "revisedText": "Utilisation has reached a record 88%.",
+      "wholeSentenceDeletion": false,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 409,
+          "end": 433,
+          "note": "Changed from at least six years to approximately four years to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 473,
+          "end": 478,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 502,
+          "end": 616,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two acquisitions over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 4,
+      "statement": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+      "namedSpans": [],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": false,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 409,
+          "end": 433,
+          "note": "Changed from at least six years to approximately four years to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 473,
+          "end": 478,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 502,
+          "end": 616,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two acquisitions over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "nordholt-dirty",
+      "arm": "ON",
+      "repeat": 3,
+      "statementIndex": 5,
+      "statement": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027, which will deliver strong double-digit returns.",
+      "namedSpans": [
+        {
+          "text": "We expect to complete at least five further bolt-on acquisitions this year and anticipate a full exit by 2027",
+          "sourceRefId": 3,
+          "sourceLabel": "LP update",
+          "start": 0,
+          "end": 109
+        }
+      ],
+      "revisedText": "",
+      "wholeSentenceDeletion": true,
+      "touchedSpan": true,
+      "outsideSpan": false,
+      "markers": [
+        {
+          "start": 109,
+          "end": 112,
+          "note": "Changed net IRR from 18% to 14% to match the fact sheet. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 125,
+          "end": 171,
+          "note": "Changed from 15 facilities across four Nordic markets and over 800 people to 12 facilities and 640 people to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 248,
+          "end": 277,
+          "note": "Changed from USD 155 million to approximately EUR 155 million to match the press release. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 409,
+          "end": 433,
+          "note": "Changed from at least six years to approximately four years to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 473,
+          "end": 478,
+          "note": "Changed EBITDA margin from 25% to 18.6% to match the IC memo. Confirm before publishing.",
+          "intent": "CHANGED"
+        },
+        {
+          "start": 502,
+          "end": 616,
+          "note": "Changed from at least five bolt-on acquisitions this year and a full exit by 2027 to two acquisitions over twelve months and no realisation before 2028 to match the LP update. Confirm before publishing.",
+          "intent": "CHANGED"
+        }
+      ]
+    }
+  ]
+}
