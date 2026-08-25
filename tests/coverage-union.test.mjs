@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import { afterEach, describe, test } from "vitest";
 import {
   computeCoverageUnion,
+  coverageUnionPromotionRecord,
   coverageWindow,
+  isMultisourceCoverageEnabled,
   shouldPromoteCoverageUnion,
   supportedIntervalsFromUnsupportedSpan,
   unionCoversWindow,
   unionIntervals,
 } from "../lib/qc/coverage-union.mjs";
+import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { validateQcResponse } from "../lib/qc/qc-api-schema.mjs";
 
 afterEach(() => {
   delete process.env.QC_MULTISOURCE_COVERAGE;
@@ -194,5 +198,136 @@ describe("computeCoverageUnion", () => {
     const coverage = computeCoverageUnion({ statementText: statement, matches });
     assert.equal(coverage.contributingSourceCount, 1);
     assert.equal(shouldPromoteCoverageUnion({ verdict: "partially_confirmed", coverage }), false);
+  });
+});
+
+describe("isMultisourceCoverageEnabled default OFF", () => {
+  test("unset env is off; requires span ON; option overrides", () => {
+    delete process.env.QC_MULTISOURCE_COVERAGE;
+    delete process.env.QC_STAGE2_SPAN;
+    assert.equal(isMultisourceCoverageEnabled(), false);
+    process.env.QC_MULTISOURCE_COVERAGE = "1";
+    assert.equal(isMultisourceCoverageEnabled(), false);
+    process.env.QC_STAGE2_SPAN = "1";
+    assert.equal(isMultisourceCoverageEnabled(), true);
+    process.env.QC_MULTISOURCE_COVERAGE = "0";
+    assert.equal(isMultisourceCoverageEnabled(), false);
+    process.env.QC_MULTISOURCE_COVERAGE = "true";
+    assert.equal(isMultisourceCoverageEnabled(), true);
+    assert.equal(isMultisourceCoverageEnabled({ multisourceCoverageEnabled: false }), false);
+    assert.equal(
+      isMultisourceCoverageEnabled({ stage2SpanEnabled: false, multisourceCoverageEnabled: true }),
+      false
+    );
+    delete process.env.QC_STAGE2_SPAN;
+    assert.equal(
+      isMultisourceCoverageEnabled({ stage2SpanEnabled: true, multisourceCoverageEnabled: true }),
+      true
+    );
+  });
+});
+
+describe("coverageUnion on the QC card", () => {
+  const statement = "Alpha supported and beta unsupported.";
+  const coverageUnion = coverageUnionPromotionRecord({
+    contributingSourceIndices: [0, 1],
+    union: [
+      [0, 15],
+      [15, statement.length],
+    ],
+  });
+
+  test("assembleCard passthrough does not change a confirmed verdict", async () => {
+    const card = await assembleCard(
+      {
+        statementText: statement,
+        startChar: 0,
+        endChar: statement.length,
+        sourceMatches: [
+          { sourceIndex: 0, classification: "partially_confirmed", sourceLabel: "A" },
+          { sourceIndex: 1, classification: "partially_confirmed", sourceLabel: "B" },
+        ],
+        verdictResult: {
+          verdict: "confirmed",
+          hasConflict: false,
+          confirmingMatches: [],
+          contributingSourceIndices: [0, 1],
+        },
+        excerptResult: { primaryExcerpt: { passage: "Alpha supported", sourceLabel: "A" } },
+        coverageUnion,
+        editorialResult: {
+          editorialVerdict: "clean",
+          editorialConcerns: [],
+          complianceVerdict: "clean",
+          complianceConcerns: [],
+        },
+      },
+      0,
+      { pipelineRoute: "v4" }
+    );
+    assert.equal(card.displayVerdict, "supported_full");
+    assert.deepEqual(card.coverageUnion, coverageUnion);
+    assert.equal(card.coverageUnion.promoted, true);
+  });
+
+  test("assembleCard omits coverageUnion when the field is absent", async () => {
+    const card = await assembleCard(
+      {
+        statementText: "Hello.",
+        startChar: 0,
+        endChar: 6,
+        sourceMatches: [],
+        verdictResult: { verdict: "not_supported", hasConflict: false, confirmingMatches: [] },
+        excerptResult: { primaryExcerpt: null },
+        editorialResult: {
+          editorialVerdict: "clean",
+          editorialConcerns: [],
+          complianceVerdict: "clean",
+          complianceConcerns: [],
+        },
+      },
+      0,
+      { pipelineRoute: "v4" }
+    );
+    assert.equal(card.coverageUnion, undefined);
+  });
+});
+
+describe("qc-api-schema coverageUnion", () => {
+  function cardWith(coverageUnion) {
+    return {
+      statements: [
+        {
+          qcCard: {
+            statement: "x",
+            supportState: "supported",
+            supportRefIds: [],
+            supportRefTitles: [],
+            primaryRefId: null,
+            primaryExcerpt: null,
+            supportingReferenceIds: [],
+            supportingReferenceTitles: [],
+            coverageUnion,
+          },
+        },
+      ],
+    };
+  }
+
+  test("accepts a valid promotion record", () => {
+    validateQcResponse(
+      cardWith({
+        promoted: true,
+        contributingSourceIndices: [0, 2],
+        union: [
+          [0, 10],
+          [10, 40],
+        ],
+      })
+    );
+  });
+
+  test("rejects a non-object coverageUnion", () => {
+    assert.throws(() => validateQcResponse(cardWith([])), /coverageUnion must be an object/);
   });
 });
