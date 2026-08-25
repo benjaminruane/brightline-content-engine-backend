@@ -23,6 +23,8 @@ loadLocalEnvFiles();
 const TODAY = new Date("2026-08-18T00:00:00Z");
 const NORDHOLT_DIR = path.join(process.env.HOME || "", "Downloads");
 const SUPERSESSION_DIR = path.join(DIAG_ROOT, "supersession");
+const ACCIDENT_DIR = path.join(DIAG_ROOT, "claim-spans", "evaluative-accident");
+const ACCIDENT_LABELS = new Set(["E1", "E2", "E3"]);
 
 const { extractStatements } = await import("../../../lib/qc/pipeline-v4/stage1-extract-statements.mjs");
 const { matchAllSources, matchClaimSourcePairs } = await import(
@@ -32,7 +34,6 @@ const { aggregateVerdict } = await import("../../../lib/qc/pipeline-v4/stage3-ag
 const { extractClaimSpans } = await import("../../../lib/qc/pipeline-v4/stage1b-extract-claim-spans.mjs");
 const { resolveSupersession, buildAsOfBySourceIndex } = await import("../../../lib/qc/supersession.mjs");
 const { residualHasUnclaimedAnchor, rollupClaimVerdicts } = await import("../../../lib/qc/claim-spans.mjs");
-const { extractEvaluativeAssertionSpans } = await import("../../../lib/qc/evaluative-language.mjs");
 const {
   beginCacheRun,
   endCacheRun,
@@ -168,6 +169,17 @@ async function loadNordholt(kind) {
   return { draft, sources };
 }
 
+async function loadAccidentFixtures() {
+  const source = await readFile(path.join(ACCIDENT_DIR, "source_ic_memo.txt"), "utf8");
+  const sources = [{ text: source, label: "ic_memo" }];
+  const out = [];
+  for (const id of ["E1", "E2", "E3"]) {
+    const draft = await readFile(path.join(ACCIDENT_DIR, `draft_${id.toLowerCase()}.txt`), "utf8");
+    out.push({ label: id, draft, sources });
+  }
+  return out;
+}
+
 async function loadSupersessionFixture() {
   const draft = await readFile(path.join(SUPERSESSION_DIR, "draft_supersession.txt"), "utf8");
   const files = [
@@ -195,6 +207,11 @@ async function loadCorpus() {
   }
   try {
     out.push({ label: "supersession", ...(await loadSupersessionFixture()) });
+  } catch {
+    /* skip */
+  }
+  try {
+    out.push(...(await loadAccidentFixtures()));
   } catch {
     /* skip */
   }
@@ -389,7 +406,7 @@ async function main() {
   const evaluativeResidualUpgradedOff = rows.filter((r) => {
     if (!r.before.decomposed) return false;
     if (!r.before.claims.length || !r.before.claims.every((c) => c.verdict === "confirmed")) return false;
-    const hasEval = extractEvaluativeAssertionSpans(r.after.residual || "").length > 0;
+    const hasEval = false;
     return hasEval && r.before.claimUpgrade === true;
   });
   const evaluativeStillUpgrading = evaluativeResidualUpgradedOff.filter((r) => r.after.claimUpgrade === true);
@@ -398,6 +415,35 @@ async function main() {
   console.log("## 1. Cache / cost");
   console.log(`  claim jobs=${claimJobs} Stage 2 hits=${claimHits} misses=${claimMisses} pairCostUsd=$${liveCostUsd.toFixed(4)}`);
   console.log(`  store entries after=${store?.size?.() ?? "?"}`);
+
+  console.log("");
+  console.log("## 1b. Accident fixtures (evaluative wording not on the phrase list)");
+  const accidentRows = rows.filter((r) => ACCIDENT_LABELS.has(r.label));
+  if (accidentRows.length === 0) console.log("  (none loaded)");
+  for (const row of accidentRows) {
+    const tradOff = (row.before.residualAnchors || []).filter((a) => a.kind !== "evaluative");
+    console.log(`  ${row.label} S${row.statementIndex} decomposed=${row.before.decomposed} vToday=${row.vToday}`);
+    console.log(`    parent=${JSON.stringify(row.text)}`);
+    if (!row.before.decomposed) {
+      console.log("    NOT DECOMPOSED: this fixture did not reach residual rollup.");
+      continue;
+    }
+    console.log(`    residual=${JSON.stringify(row.after.residual)}`);
+    console.log(`    traditionalAnchorsOff=${JSON.stringify(tradOff)}`);
+    console.log(`    anchorsOff=${JSON.stringify(row.before.residualAnchors)}`);
+    console.log(`    anchorsOn=${JSON.stringify(row.after.residualAnchors)}`);
+    console.log(
+      `    claimUpgrade off=${row.before.claimUpgrade} on=${row.after.claimUpgrade} verdict off=${row.before.verdict} on=${row.after.verdict}`
+    );
+    for (const claim of row.after.claims) {
+      console.log(
+        `    claim[${claim.index}] verdict=${claim.verdict} conflict=${claim.hasConflict ? "1" : "0"} text=${JSON.stringify(claim.text)}`
+      );
+    }
+    if (tradOff.length > 0) {
+      console.log("    INVALID FOR THIS TEST: residual has a traditional anchor.");
+    }
+  }
 
   console.log("");
   console.log("## 2. Newly blocked upgrades (over-firing measure)");
@@ -417,6 +463,48 @@ async function main() {
   for (const row of moreConfident) {
     console.log(
       `  ${row.label} S${row.statementIndex} ${row.before.verdict} -> ${row.after.verdict} | ${trunc(row.text)}`
+    );
+  }
+
+  const productionRows = rows.filter((r) => !ACCIDENT_LABELS.has(r.label));
+  function oldUpgradeEligible(r) {
+    const arm = r.after;
+    if (!arm.decomposed) return false;
+    if (r.vToday !== "partially_confirmed") return false;
+    if (!arm.claims.length || !arm.claims.every((c) => c.verdict === "confirmed")) return false;
+    if ((arm.residualAnchors || []).length > 0) return false;
+    if (r.wholeSentenceHasConflict) return false;
+    return true;
+  }
+  const prodVerdictMoved = productionRows.filter((r) => r.after.verdict !== r.vToday);
+  const prodEligible = productionRows.filter(oldUpgradeEligible);
+  const e1Rows = accidentRows.filter((r) => r.label === "E1");
+
+  console.log("");
+  console.log("## Confirm (review-upgrade-off)");
+  console.log(
+    `  production cards=${productionRows.length} verdictMovedVsVToday=${prodVerdictMoved.length} oldUpgradeEligible=${prodEligible.length}`
+  );
+  if (prodVerdictMoved.length === 0) {
+    console.log("  Nordholt / supersession / F01-F23: zero verdict changes vs vToday");
+  } else {
+    for (const row of prodVerdictMoved) {
+      console.log(
+        `  MOVED ${row.label} S${row.statementIndex} vToday=${row.vToday} rolled=${row.after.verdict} | ${trunc(row.text)}`
+      );
+    }
+  }
+  for (const row of prodEligible) {
+    console.log(
+      `  ELIGIBLE ${row.label} S${row.statementIndex} vToday=${row.vToday} rolled=${row.after.verdict} upgrade=${row.after.claimUpgrade}`
+    );
+  }
+  if (e1Rows.length === 0) {
+    console.log("  E1: (not loaded)");
+  }
+  for (const row of e1Rows) {
+    console.log(
+      `  E1 S${row.statementIndex} decomposed=${row.after.decomposed} vToday=${row.vToday} rolled=${row.after.verdict} claimUpgrade=${row.after.claimUpgrade}`
     );
   }
 
@@ -443,8 +531,21 @@ async function main() {
 
   const pass = condMoreConfident && condEvaluativeWithholds && condLeverage && condRegarded;
   console.log("");
-  console.log(`GATE ${pass ? "PASS" : "FAIL"}`);
-  if (!pass) {
+  console.log(`GATE ${pass ? "PASS" : "FAIL"} (legacy evaluative-anchor conditions; ignored)`);
+
+  const e1StaysPartial =
+    e1Rows.length > 0 &&
+    e1Rows.every(
+      (r) =>
+        r.vToday === "partially_confirmed" &&
+        r.after.verdict === "partially_confirmed" &&
+        r.after.claimUpgrade === false
+    );
+  const confirmPass = prodVerdictMoved.length === 0 && prodEligible.length === 0 && e1StaysPartial;
+  console.log(
+    `CONFIRM ${confirmPass ? "PASS" : "FAIL"} productionMoved=${prodVerdictMoved.length} productionEligible=${prodEligible.length} e1StaysPartial=${e1StaysPartial}`
+  );
+  if (!confirmPass) {
     process.exitCode = 1;
   }
 }

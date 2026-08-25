@@ -209,10 +209,11 @@ describe("rollupClaimVerdicts truth table", () => {
     wholeSentenceHasConflict: false,
   };
 
-  test("upgrades partial to confirmed when all four conditions hold", () => {
+  test("does not upgrade even when all four conditions hold", () => {
     const out = rollupClaimVerdicts(upgradeArgs);
-    assert.equal(out.verdict, "confirmed");
-    assert.equal(out.claimUpgrade, true);
+    assert.equal(out.verdict, "partially_confirmed");
+    assert.equal(out.claimUpgrade, false);
+    assert.deepEqual(out.conditions, { a: true, b: true, c: true, d: true });
     assert.deepEqual(out.blockedBy, []);
   });
 
@@ -297,17 +298,36 @@ describe("rollupClaimVerdicts truth table", () => {
     assert.deepEqual(out.blockedBy, ["b", "c", "d"]);
   });
 
-  test("never returns a verdict other than V_today or confirmed", () => {
+  test("a covering-claims sentence that used to upgrade stays at vToday", () => {
+    const parent = "Revenue was EUR 10 million, and EBITDA was EUR 2 million.";
+    const validated = validateClaimSpans(parent, [
+      "Revenue was EUR 10 million",
+      "EBITDA was EUR 2 million",
+    ]);
+    assert.equal(validated.ok, true);
+    const guard = residualHasUnclaimedAnchor(parent, validated.claims);
+    assert.equal(guard.blocked, false);
+    const rolled = rollupClaimVerdicts({
+      vToday: "partially_confirmed",
+      claimVerdicts: ["confirmed", "confirmed"],
+      residualBlocked: guard.blocked,
+      wholeSentenceHasConflict: false,
+    });
+    assert.equal(rolled.claimUpgrade, false);
+    assert.equal(rolled.verdict, "partially_confirmed");
+  });
+
+  test("never returns a verdict other than V_today", () => {
     const verdicts = ["confirmed", "partially_confirmed", "conflicting", "not_supported"];
     for (const vToday of verdicts) {
       const out = rollupClaimVerdicts({
         vToday,
-        claimVerdicts: ["not_supported"],
-        residualBlocked: true,
-        wholeSentenceHasConflict: true,
+        claimVerdicts: ["confirmed", "confirmed"],
+        residualBlocked: false,
+        wholeSentenceHasConflict: false,
       });
-      assert.ok(out.verdict === vToday || out.verdict === "confirmed");
-      if (vToday !== "partially_confirmed") assert.equal(out.verdict, vToday);
+      assert.equal(out.verdict, vToday);
+      assert.equal(out.claimUpgrade, false);
     }
   });
 });
@@ -414,130 +434,6 @@ describe("B64 widened claim-span anchors", () => {
     assert.equal(rolled.claimUpgrade, false);
     assert.equal(rolled.verdict, "partially_confirmed");
     assert.ok(rolled.blockedBy.includes("c"));
-  });
-});
-
-function claimAt(parent, text) {
-  const idx = parent.indexOf(text);
-  if (idx < 0) throw new Error(`claim not in parent: ${JSON.stringify(text)}`);
-  return { text, localStart: idx, localEnd: idx + text.length };
-}
-
-function confidenceRank(verdict) {
-  const v = String(verdict || "");
-  if (v === "confirmed") return 3;
-  if (v === "partially_confirmed") return 2;
-  return 1;
-}
-
-describe("evaluative residual anchors withhold an upgrade only", () => {
-  test("residual with an evaluative assertion and no other anchors blocks", () => {
-    const parent =
-      "Across Funds I to IV the manager realised 2.4x gross MOIC and 21% gross IRR on seventeen exits, and these returns have been generated without recourse to aggressive leverage.";
-    const claims = [
-      claimAt(parent, "Across Funds I to IV the manager realised 2.4x gross MOIC"),
-      claimAt(parent, "21% gross IRR on seventeen exits"),
-    ];
-    const off = residualHasUnclaimedAnchor(parent, claims, { includeEvaluative: false });
-    assert.equal(off.blocked, false);
-    const on = residualHasUnclaimedAnchor(parent, claims);
-    assert.equal(on.blocked, true);
-    assert.ok(on.anchors.some((a) => a.kind === "evaluative" && /aggressive leverage/i.test(a.text)));
-    const rolled = rollupClaimVerdicts({
-      vToday: "partially_confirmed",
-      claimVerdicts: ["confirmed", "confirmed"],
-      residualBlocked: on.blocked,
-      wholeSentenceHasConflict: false,
-    });
-    assert.equal(rolled.claimUpgrade, false);
-    assert.equal(rolled.verdict, "partially_confirmed");
-  });
-
-  test("widely regarded residual with no other anchors blocks", () => {
-    const parent =
-      "The team is widely regarded as among the most disciplined operators in the European lower-mid-market, and the fund generated 2.4x gross MOIC on seventeen exits.";
-    const claims = [
-      claimAt(parent, "operators in the European lower-mid-market"),
-      claimAt(parent, "the fund generated 2.4x gross MOIC on seventeen exits"),
-    ];
-    const off = residualHasUnclaimedAnchor(parent, claims, { includeEvaluative: false });
-    assert.equal(off.blocked, false);
-    const on = residualHasUnclaimedAnchor(parent, claims);
-    assert.equal(on.blocked, true);
-    assert.ok(on.anchors.some((a) => a.kind === "evaluative"));
-    const rolled = rollupClaimVerdicts({
-      vToday: "partially_confirmed",
-      claimVerdicts: ["confirmed", "confirmed"],
-      residualBlocked: on.blocked,
-      wholeSentenceHasConflict: false,
-    });
-    assert.equal(rolled.claimUpgrade, false);
-    assert.equal(rolled.verdict, "partially_confirmed");
-  });
-
-  test("residual with neither an evaluative assertion nor other anchors blocks nothing", () => {
-    const parent = "The remainder is ordinary prose about the investment process, and closing follows.";
-    const guard = residualHasUnclaimedAnchor(parent, []);
-    assert.equal(guard.blocked, false);
-    assert.equal(guard.anchors.length, 0);
-  });
-
-  test("a confirmed-only sentence with fully covering claims still upgrades", () => {
-    const parent = "Revenue was EUR 10 million, and EBITDA was EUR 2 million.";
-    const validated = validateClaimSpans(parent, [
-      "Revenue was EUR 10 million",
-      "EBITDA was EUR 2 million",
-    ]);
-    assert.equal(validated.ok, true);
-    const guard = residualHasUnclaimedAnchor(parent, validated.claims);
-    assert.equal(guard.blocked, false);
-    const rolled = rollupClaimVerdicts({
-      vToday: "partially_confirmed",
-      claimVerdicts: ["confirmed", "confirmed"],
-      residualBlocked: guard.blocked,
-      wholeSentenceHasConflict: false,
-    });
-    assert.equal(rolled.claimUpgrade, true);
-    assert.equal(rolled.verdict, "confirmed");
-  });
-
-  test("extractClaimSpanAnchors does not grow an evaluative class (claim extraction unchanged)", () => {
-    const text = "the franchise is exceptional and widely regarded";
-    const anchors = extractClaimSpanAnchors(text);
-    assert.equal(
-      anchors.filter((a) => a.kind === "evaluative").length,
-      0
-    );
-  });
-
-  test("no verdict becomes more confident when residualBlocked is true", () => {
-    const vTodays = ["confirmed", "partially_confirmed", "conflicting", "not_supported"];
-    const claimSets = [[], ["confirmed"], ["confirmed", "confirmed"], ["confirmed", "partially_confirmed"]];
-    for (const vToday of vTodays) {
-      for (const claimVerdicts of claimSets) {
-        for (const conflict of [false, true]) {
-          const open = rollupClaimVerdicts({
-            vToday,
-            claimVerdicts,
-            residualBlocked: false,
-            wholeSentenceHasConflict: conflict,
-          });
-          const blocked = rollupClaimVerdicts({
-            vToday,
-            claimVerdicts,
-            residualBlocked: true,
-            wholeSentenceHasConflict: conflict,
-          });
-          assert.ok(
-            confidenceRank(blocked.verdict) <= confidenceRank(open.verdict),
-            `${vToday} claims=${JSON.stringify(claimVerdicts)} conflict=${conflict}`
-          );
-          if (open.claimUpgrade) {
-            assert.equal(blocked.claimUpgrade, false);
-          }
-        }
-      }
-    }
   });
 });
 

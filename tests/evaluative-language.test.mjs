@@ -10,7 +10,6 @@ import {
   applyEvaluativeDeletionDirection,
   boundEvaluativeDeletionDirection,
   evaluativeDeletionRefusalDirection,
-  extractEvaluativeAssertionSpans,
   getEvaluativeRestatementDiscardCount,
   hasStrandedEvaluativeScaffolding,
   parseEvaluativeDeletionDirection,
@@ -272,26 +271,5 @@ describe("evaluative deletion restatement bound", () => {
     assert.match(concerns[0].note, /hyperbolic language without substantiation/);
     assert.match(concerns[0].note, /and rewrite the sentence so that it reads naturally without it/);
     assert.equal(getEvaluativeRestatementDiscardCount(), before + 1);
-  });
-});
-
-describe("extractEvaluativeAssertionSpans", () => {
-  test("locates the two known false-green exhibits", () => {
-    const leverage = extractEvaluativeAssertionSpans(
-      "these returns have been generated without recourse to aggressive leverage"
-    );
-    assert.ok(leverage.some((a) => /aggressive leverage/i.test(a.text)));
-    assert.ok(leverage.every((a) => a.kind === "evaluative"));
-    const regarded = extractEvaluativeAssertionSpans(
-      "widely regarded as among the most disciplined operators in the European lower-mid-market"
-    );
-    assert.ok(regarded.some((a) => /widely regarded/i.test(a.text) || /most disciplined/i.test(a.text)));
-  });
-
-  test("does not flag working vocabulary from the instruction", () => {
-    const spans = extractEvaluativeAssertionSpans(
-      "The franchise is strong, high-quality, leading, well-positioned, robust, defensible, compelling, and solid."
-    );
-    assert.equal(spans.length, 0);
   });
 });
