@@ -35,6 +35,18 @@ When writing a new diagnostic, classify it with that rule. If the model is the t
 
 Do not stretch `claim-spans/.baseline.json` into a general cache. It remains a frozen A/B snapshot of Stage 1 plus whole-sentence Stage 2 for the claim-span shadows only.
 
+## Stale Stage 2 references after R3a (2026-08-26)
+
+R3a shipped live (`stage2-rewrite-r3a`, promptHash `bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c`, 12812 chars). Two on-disk caches still hold **old-prompt** Stage 2 rows (promptHash `c718c190315ec131946cfa73452d12f417a01117fc04e2b63daca8e1455d57fe`). Treat them as **STALE for live-product verdict checks**. Do not regenerate in routine work (~$4).
+
+| Path | Status | Notes |
+|------|--------|-------|
+| `claim-spans/.baseline.json` | STALE | Produced under old prompt (promptHash `c718c190`). Shadow A/B snapshot only. |
+| `.llm-cache.json` | STALE for Stage 2 | 643 Stage 2 rows at promptHash `c718c190`. Stage 1 rows may still be usable. |
+| `eval-ablation/r3a-corpus-blast-rows.json` | **CURRENT** | 364 pairs under R3a. Use for Stage 2 blast-radius and graded-set checks. |
+
+Local copies of the stale files may carry a `_staleNote` field at the JSON root when present. Regenerating the claim-spans baseline is backlog **B114** (decision deferred until something needs it).
+
 ## Prerequisites
 
 - Node 20.x, `npm install`

@@ -117,6 +117,7 @@ The backlog is split into four tables by character of work:
 | B111 | **`extractPercents` regex: `\b` after `%` means `"40%"` extracts nothing.** Magnitude backstop is blind on the dominant corpus form (79 of 347 baseline passages; 17 of 26 source files). Related shipped tags `review-percent-extract` / `review-percent-metric-scope` / `review-percent-number-style` do **not** cover this bug. Own commit, own gate. Do not bundle with prompt work. | Stage 2 diagnosis 2026-08-26 | H | Post-MVP | Separate gate from R3a. |
 | B112 | **Worked example 3c is carried on no evidence.** R2 rewrite-ladder measured it moving nothing. Consider dropping it and measuring. Lives in live `stage2_v4.md` (R3a). | rewrite ladder `86d7e2d` | L | Post-MVP | Drop-and-measure candidate. |
 | B113 | **Stage 2 noise floor is 2 of 23 at temperature 0 with seed 1.** Unstable on A x3: F12_S0 and F08_S2. Modality (F08_S2) is soft and will flap in production. Effects must beat this floor. | `noise-floor` / `90249e5`; rewrite ladder standing rule | M | Post-MVP | Standing measurement constraint. |
+| B114 | **Regenerate claim-spans `.baseline.json` under R3a.** Current file is STALE (promptHash `c718c190`). Estimated ~$4. Defer until a shadow gate or A/B arm needs a fresh snapshot; current Stage 2 reference is `eval-ablation/r3a-corpus-blast-rows.json`. | R3a ship closeout; `scripts/diagnostic/README.md` stale refs | L | Post-MVP | Decision deferred. ~$4. |
 
 ---
 
