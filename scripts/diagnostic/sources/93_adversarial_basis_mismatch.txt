@@ -1,6 +1,7 @@
-ADVERSARIAL / SYNTHETIC FIXTURE - REALISED VERSUS MARK
+ADVERSARIAL / SYNTHETIC FIXTURE - BASIS MISMATCH
 Not a production source. Invented material only. Fictional house: Halden Group.
-Plant: draft turns a current mark into capital returned; control states the mark honestly.
+Plants: draft turns a current mark into capital returned; draft states net where
+source states gross. Controls: honest mark wording; both-sides returned.
 
 HALDEN GROUP - FUND IV LP UPDATE
 Date: 12 March 2026

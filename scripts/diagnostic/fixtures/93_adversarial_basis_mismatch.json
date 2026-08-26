@@ -1,0 +1,12 @@
+{
+  "id": "93",
+  "label": "adversarial_basis_mismatch",
+  "sources": ["93_adversarial_basis_mismatch.txt"],
+  "draft": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.\n\nFund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.\n\nFund IV has returned 2.6 times gross MOIC.\n\nFund IV has returned 2.6 times net MOIC.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "ADVERSARIAL / SYNTHETIC. Basis mismatch (realised-versus-mark and gross-versus-net). Invented Halden Group LP update. S0: draft 'has returned' on fund-level figures the source states as 'currently marked at' - expected CONFLICTING. S1 CONTROL: draft 'is currently marked at' same figures - expected CONFIRMED. S2 CONTROL: draft 'has returned 2.6 times gross MOIC' where source also states returned/distributed that figure as gross - expected CONFIRMED (catches verb-alone overreach). S3: draft 'has returned 2.6 times net MOIC' where source states 2.6x as gross - expected CONFLICTING. Until this fixture is in the corpus baseline, any claim that the corpus is clean on basis mismatches is vacuous."
+}

@@ -101,7 +101,7 @@ The fictional house name is **Halden Group**. The real name (Partners Group) app
 | 90 | `90_adversarial_b17_latent.txt` | B17 latent period trap (`last year` vs draft 2024). S1 Munich HQ control expected confirmed. |
 | 91 | `91_adversarial_shopify_2010_trimmed.txt` | Temporal gap: undated present-perfect vs 2010 completed investment. |
 | 92 | `91_adversarial_shopify_2010_trimmed.txt` | Present-tense-stale: 2010 customer count stated as current. |
-| 93 | `93_adversarial_realised_vs_mark.txt` | Realised-versus-mark. S0 draft `has returned` on a fund-level mark expected `partially_confirmed`. S1 CONTROL draft `is currently marked at` same figures expected `confirmed`. Until 93 is in the corpus baseline, any claim that the corpus is clean on basis mismatches is vacuous. |
+| 93 | `93_adversarial_basis_mismatch.txt` | Basis mismatch. S0 draft `has returned` on a fund-level mark expected `conflicting`. S1 CONTROL draft `is currently marked at` same figures expected `confirmed`. S2 CONTROL draft `has returned` where source also states returned expected `confirmed`. S3 draft same number as `net` where source states `gross` expected `conflicting`. Until 93 is in the corpus baseline, any claim that the corpus is clean on basis mismatches is vacuous. |
 
 ## PDF sources (5)
 
