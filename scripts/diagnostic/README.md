@@ -80,6 +80,17 @@ npm run qc:diag:run -- --no-confirm
 
 Fixtures with `draft: "PLACEHOLDER"` are **skipped** with `skipped: draft not yet supplied`. Update only the JSON `draft` field when drafts are ready. No harness code change.
 
+## Passage-selection probe (multi-figure)
+
+Invented Halden LP-update pairs that force at least two performance figures onto one page, plus one Meridian real-source case. Product measurement of live R3a passage selection (false red vs overcorrection). Not a rule arm.
+
+| Path | Purpose |
+|------|---------|
+| `passage-selection-probe/pairs.json` | Ten pairs (MF01 to MF10): six expected confirmed, four expected conflicting. Dimensions: order, distance, metric, entity, wording. |
+| `passage-selection-probe/sources/mf01_*.txt` to `mf10_*.txt` | Invented Halden sources (do not treat as production). MF10 draft uses `eval-ablation/meridian_source.txt` unchanged. |
+| `eval-ablation/run-passage-selection-probe.mjs` | Live R3a x3, cache OFF. Writes rows + `passage-selection-probe.md`. |
+| `eval-ablation/passage-selection-probe.md` | Pre-flight, cost, per-run passages, dimension cross, stopping rule. |
+
 ## Real vs invented sources
 
 Three sources are real published documents. Keep them verbatim. Do not edit them to plant a test case. A real document with an invented fault in it is no longer either thing.

@@ -1,0 +1,178 @@
+{
+  "id": "passage-selection-probe",
+  "prompt": "live R3a stage2_v4.md",
+  "notes": "Invented Halden multi-figure sources plus one Meridian real-source case. Expected labels justified from source text alone before any run. Do not edit meridian_source.txt. Polarity: 6 confirmed / 4 conflicting.",
+  "pairs": [
+    {
+      "id": "MF01",
+      "polarity": "confirmed",
+      "expected": "confirmed",
+      "sourceFile": "passage-selection-probe/sources/mf01_mark_then_returned.txt",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft is byte-identical to the source returned-2.6 sentence; mark-at-1.9 is a different basis for the same fund."
+    },
+    {
+      "id": "MF02",
+      "polarity": "confirmed",
+      "expected": "confirmed",
+      "sourceFile": "passage-selection-probe/sources/mf02_returned_then_mark.txt",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft matches the first performance sentence; the later mark-at-1.9 does not restate returned MOIC."
+    },
+    {
+      "id": "MF03",
+      "polarity": "confirmed",
+      "expected": "confirmed",
+      "sourceFile": "passage-selection-probe/sources/mf03_distant_mark_then_returned.txt",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "paragraph",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft quotes the returned-2.6 line after a filler paragraph; mark-at-1.9 remains a different basis."
+    },
+    {
+      "id": "MF04",
+      "polarity": "confirmed",
+      "expected": "confirmed",
+      "sourceFile": "passage-selection-probe/sources/mf04_irr_then_moic.txt",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 24% gross IRR.",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "different_irr_vs_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft matches the MOIC returned sentence; the competing mark is IRR, not a MOIC multiple."
+    },
+    {
+      "id": "MF05",
+      "polarity": "confirmed",
+      "expected": "confirmed",
+      "sourceFile": "passage-selection-probe/sources/mf05_fund_mark_deal_return.txt",
+      "draft": "Vale Forge returned 2.6 times gross MOIC on exit as a Fund IV platform.",
+      "correspondingPassage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC.",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "deal_vs_fund",
+        "wording": "paraphrase"
+      },
+      "justifyExpected": "Paraphrase restates the Vale Forge exit multiple; fund mark-at-1.9 is a different entity."
+    },
+    {
+      "id": "MF06",
+      "polarity": "conflicting",
+      "expected": "conflicting",
+      "sourceFile": "passage-selection-probe/sources/mf07_false_returned_mark_figure.txt",
+      "draft": "Fund IV has returned 1.9 times gross MOIC.",
+      "correspondingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "competingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical_figure_wrong_basis"
+      },
+      "justifyExpected": "Source marks Fund IV at 1.9x and separately says it has returned 2.6; draft wrongly states returned 1.9."
+    },
+    {
+      "id": "MF07",
+      "polarity": "conflicting",
+      "expected": "conflicting",
+      "sourceFile": "passage-selection-probe/sources/mf08_false_mark_using_return_figure.txt",
+      "draft": "Fund IV is currently marked at 2.6x gross MOIC.",
+      "correspondingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "competingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical_figure_wrong_basis"
+      },
+      "justifyExpected": "Source marks Fund IV at 1.9x; 2.6 appears only as returned MOIC, so a current mark of 2.6 contradicts the mark line."
+    },
+    {
+      "id": "MF08",
+      "polarity": "conflicting",
+      "expected": "conflicting",
+      "sourceFile": "passage-selection-probe/sources/mf09_wrong_return_magnitude.txt",
+      "draft": "Fund IV has returned 3.0 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical_frame_wrong_magnitude"
+      },
+      "justifyExpected": "Source says Fund IV has returned 2.6, not 3.0; mark-at-1.9 is also not 3.0 returned."
+    },
+    {
+      "id": "MF09",
+      "polarity": "conflicting",
+      "expected": "conflicting",
+      "sourceFile": "passage-selection-probe/sources/mf10_false_fund_claim_of_deal_return.txt",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV is currently marked at 1.9x gross MOIC.",
+      "competingPassage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "fund_claims_deal_figure",
+        "wording": "identical_to_wrong_entity"
+      },
+      "justifyExpected": "Source never says Fund IV has returned 2.6; that multiple belongs to Vale Forge, while Fund IV is marked at 1.9x."
+    },
+    {
+      "id": "MF10",
+      "polarity": "confirmed",
+      "expected": "confirmed",
+      "sourceFile": "eval-ablation/meridian_source.txt",
+      "draft": "Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+      "correspondingPassage": "Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+      "competingPassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "dimensions": {
+        "order": "corresponding_after_fund_mark",
+        "distance": "multi_paragraph",
+        "metric": "same_moic",
+        "entity": "deal_vs_fund",
+        "wording": "identical",
+        "fixture": "real_meridian_source"
+      },
+      "justifyExpected": "Draft is byte-identical to the Nordholt realisation sentence; Fund IV mark-at-1.9 is a different fund and basis."
+    }
+  ]
+}
