@@ -193,12 +193,22 @@ Part 2 verdict: NOT_RUN
 
 ## Opinion
 
-Including the R9 probe in the same pass was the right call if Part 1 passed: the only question worth ~$0.30 more is whether hunting survives a clean control. Reference-arm verification alone would have been enough if S2 failed; it would not have answered the hunting hypothesis.
+Part 1 STOP is the result. Part 2 correctly not run.
+
+What the reference arm objected to on S2 (all three runs): it selected the mark-at-1.9 passage and treated 2.6 versus 1.9 as a magnitude conflict. It never cited the identical returned-2.6 line that sits in the same source. CONFIRMED: `f93-restage-and-hunting-rows.json` F93_S2 R3a.
+
+So the failure is not "R9 fires on the verb alone." It is stronger: **live R3a already passage-hunts to a nearby mark sentence when a returned draft is judged against a multi-claim source**, even when a byte-identical returned line is present. The "keep hunting bait in the same document" design made a confirmed S2 control impossible under the reference arm. Cursor's prior HIGH confidence that an identical pair would hold on R3a was wrong.
+
+S3 reading (not a gate): conflicting x3 with corresponding returned-2.6 passages. CONFIRMED: live prompt already catches isolated gross versus net. The R9 gross/net limb is defence in depth, not a graded win. Do not spend money later proving it.
+
+Including an R9 probe in this pass was the right shape *if* Part 1 had passed. Reference verification alone was enough here, and it overturned the hunting story: hunting is not R9-specific on this instrument.
+
+What not to do next: do not retune S2 after this result to remove the mark sentence just to force a confirm. That would erase the hunting bait the probe needed. Separate the control source (returned-only document) from the hunting-bait source (mark + returned) into two instruments, then re-ask the questions. That is a new design pass, not a silent fixture tweak.
 
 ## Technical summary
 
-Restaged fixture 93 (identical S2; isolated S3; S0 demoted). R3a verified S1/S2/S3; R9 probe conditional. Rows in f93-restage-and-hunting-rows.json.
+Restaged fixture 93 (e24d73b). R3a x3 on S1/S2/S3 only ($0.07). S2 failed confirmed (confl x3, mark passages). Part 2 not run. Rows in f93-restage-and-hunting-rows.json.
 
 ## Plain-language summary
 
-This pass checks whether an honest returned sentence still confirms when a mark sentence sits nearby, under the current prompt and under R9.
+An honest returned sentence did not stay green when a mark sentence sat nearby, even on today's live prompt. The model grabbed the wrong line and called a contradiction. That blocks any R9 hunting probe until the control instrument is redesigned.
