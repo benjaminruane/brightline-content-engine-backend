@@ -1,0 +1,2148 @@
+{
+  "meta": {
+    "probe": "stage2-noise-floor",
+    "model": "openai/gpt-4o",
+    "cache": "off",
+    "temperature": 0,
+    "seed": 1,
+    "promptPath": "lib/qc/pipeline-v4/prompts/stage2_v4.md",
+    "promptMeta": {
+      "length": 12451,
+      "sha256": "c718c190315ec131946cfa73452d12f417a01117fc04e2b63daca8e1455d57fe"
+    },
+    "totalCalls": 69,
+    "totalCostUsd": 0.8121424999999995,
+    "totalInputTokens": 292929,
+    "totalOutputTokens": 7982,
+    "ranAt": "2026-08-26T02:02:38.530Z"
+  },
+  "noiseFloor": {
+    "nOf23": 2,
+    "stableCount": 21,
+    "unstableIds": [
+      "F12_S0",
+      "F08_S2"
+    ],
+    "standingConsequence": "From now on every arm runs its baseline x3, not x1, and no arm result counts as an effect unless it exceeds the measured noise floor."
+  },
+  "perStatement": [
+    {
+      "id": "EA_E2",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about team stability and limited key-person risk.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+        "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk."
+      ]
+    },
+    {
+      "id": "CS_E3",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the gross MOIC figures for both Fund IV and Fund III as stated in the statement.",
+        "The source confirms the gross MOIC figures for both Fund IV and Fund III as stated in the statement.",
+        "The source confirms the statement's figures for Fund IV and Fund III's gross MOIC. The additional commentary about the manager's judgement is framing, not a separate checkable claim."
+      ]
+    },
+    {
+      "id": "F01_S10",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source supports the statement by highlighting Shopify's strong product, competitive position, and growth potential. The extra wording in the statement is framing, not a new checkable fact.",
+        "The source supports the statement by highlighting Shopify's strong product offering, competitive position, and growth potential. The description of Shopify's simplicity and robust app store aligns with the statement's claims of exceptional unit economics and growth runway.",
+        "The source supports the statement by highlighting Shopify's strong product, competitive differentiation through its App Store, and growth potential. The description of Shopify's simplicity and competitive position aligns with the statement's claims."
+      ]
+    },
+    {
+      "id": "F04_S20",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the statement by highlighting exceptional user engagement, a defensible position through engagement metrics, and high conviction in the founder team.",
+        "The source confirms the statement's claims about exceptional engagement, a defensible consumer position, and high conviction in the founder team. The memo highlights strong user engagement metrics and expresses high conviction in the founders' capabilities.",
+        "The source confirms the statement by highlighting exceptional user engagement and high conviction in the founder team, aligning with the statement's claims of exceptional engagement and a founder team in which there is high conviction."
+      ]
+    },
+    {
+      "id": "EA_E3",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR.",
+        "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly.",
+        "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR."
+      ]
+    },
+    {
+      "id": "EA_E1",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "labels": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+        "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+        "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim."
+      ]
+    },
+    {
+      "id": "F01_S7",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source supports the statement by identifying marketing investment, international expansion, and App Store development as opportunities to accelerate growth, matching the statement's claims.",
+        "The source supports the statement by identifying marketing investment, international expansion, and App Store development as opportunities to accelerate growth, matching the statement's claims.",
+        "The source confirms the statement by identifying marketing investment, international expansion, and development of the App Store as opportunities to accelerate growth. The substance of the claim is supported."
+      ]
+    },
+    {
+      "id": "F04_S13",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the statement that the company has 8 employees, including the founders. The number of employees matches exactly.",
+        "The source confirms the statement that the company has 8 employees, including the founders. It also confirms the 1.5 million monthly active users.",
+        "The source confirms the statement by stating that the team consists of six full-time employees plus the two founders, totaling eight employees. It also confirms the 1.5 million monthly active users."
+      ]
+    },
+    {
+      "id": "F12_S0",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "partially_confirmed"
+      ],
+      "stable": false,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week, matching the statement.",
+        "The source confirms that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week, matching the statement.",
+        "The source confirms the sale completion but mentions an eighteen-month partnership, not more than four years as stated. The duration of the partnership is an additional checkable claim not covered by the source."
+      ]
+    },
+    {
+      "id": "F04_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the same investment amount, pre-money valuation, and ownership percentage on a fully-diluted basis as stated.",
+        "The source confirms the same investment amount, pre-money valuation, and ownership percentage on a fully-diluted basis as stated.",
+        "The source confirms the investment amount, pre-money valuation, and ownership percentage on a fully-diluted basis, matching the statement."
+      ]
+    },
+    {
+      "id": "F08_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the investment in Helvetia Precision Components, including its location and market focus. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+        "The source confirms the investment in Helvetia Precision Components, describing it as a Zurich-headquartered manufacturer of high-precision machined components for the specified end markets. The statement's framing as a new investment aligns with the source's description of a proposed acquisition.",
+        "The source confirms the investment in Helvetia Precision Components, including its location and market focus. The statement's framing as a new investment aligns with the source's description of a proposed acquisition."
+      ]
+    },
+    {
+      "id": "F92_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms that Shopify serves nearly 10,000 customers, aligning with the statement's claim of approximately 10,000 customers.",
+        "The source confirms that Shopify serves nearly 10,000 customers, aligning with the statement's claim of approximately 10,000 customers.",
+        "The source confirms that Shopify serves nearly 10,000 customers, aligning with the statement's claim of approximately 10,000 customers."
+      ]
+    },
+    {
+      "id": "F14_S4",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "labels": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms that payer willingness to reimburse CDS software has improved markedly, but it does not address digital health products more broadly, which the statement claims.",
+        "The source confirms that payer willingness to reimburse CDS software has improved markedly, but it does not address digital health products more broadly, which the statement claims.",
+        "The source confirms that payer willingness to reimburse CDS software has improved markedly, but it does not address digital health products more broadly, which the statement claims."
+      ]
+    },
+    {
+      "id": "F19_S7",
+      "role": "control",
+      "adjudication": "CONTROL_ADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": "partially_confirmed",
+      "labels": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the figures for parcel volume, revenue growth, and EBITDA margin compression. However, there is a period-role mismatch as the statement refers to 2024 as the investment vintage, while the source provides figures for the operating year 2025.",
+        "The source confirms the figures for parcel volume, revenue growth, and EBITDA margin compression. However, there is a period mismatch: the statement refers to 2024 as the investment vintage, while the source provides figures for 2025.",
+        "The source confirms the figures for parcel volume, revenue growth, and EBITDA margin compression. However, there is a period mismatch: the statement refers to 2024 as the investment vintage, while the source provides figures for 2025."
+      ]
+    },
+    {
+      "id": "F12_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "labels": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms NorTech was strong in Sweden and under-exposed elsewhere in 2021, but it does not support the broader claim of dominance in the Nordics.",
+        "The source confirms NorTech was strong in Sweden and under-exposed elsewhere in 2021, but it does not support the claim of dominance in the Nordics, which is a broader geography.",
+        "The source confirms NorTech was strong in Sweden and under-exposed elsewhere in 2021, but it does not support the claim of dominance in the Nordics, which is a broader geography."
+      ]
+    },
+    {
+      "id": "F14_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "labels": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source indicates that they are not yet in dialogue with any specific company but seeks endorsement to begin sourcing, which partially supports the statement about bringing a specific potential investment to consider.",
+        "The source indicates that they are not yet in dialogue with any specific company, which partially supports the statement about bringing a specific potential investment to consider. The source supports the intent to begin sourcing but does not confirm a specific investment is identified.",
+        "The source indicates that they are not yet in dialogue with any specific company, which partially supports the statement about bringing a specific potential investment to consider. The source supports the intent to engage with potential targets but does not confirm any specific investment consideration."
+      ]
+    },
+    {
+      "id": "F18_S6",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "labels": [
+        "partially_confirmed",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source confirms the strength of the product but does not provide specific details on the comparison with Yardi Nordic or the market penetration and founder team claims.",
+        "The source confirms the strength of the product but does not specifically mention the comparison to Yardi Nordic, the market penetration figure, or the names of the CEO and CTO. Thus, it partially supports the statement.",
+        "The source confirms the strength of the product but does not provide specific details on the comparison with Yardi Nordic or the market penetration and founder team claims."
+      ]
+    },
+    {
+      "id": "F15_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "labels": [
+        "conflicting",
+        "conflicting",
+        "conflicting"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The statement asserts a definite completed action ('We have invested'), while the source indicates the investment is still proposed and pending IC approval, showing it as not yet completed.",
+        "The statement asserts a definite completed action ('We have invested'), while the source indicates that the investment is still proposed and pending IC approval. This is a modality conflict.",
+        "The statement asserts a definite completed action ('We have invested'), while the source indicates that the investment is still proposed and pending IC approval. This is a modality conflict."
+      ]
+    },
+    {
+      "id": "F05_S5",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "labels": [
+        "conflicting",
+        "conflicting",
+        "conflicting"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The source states that the significant investment in composite manufacturing capability occurred during the Bridgepoint ownership period, not Westhaven's. This directly contradicts the statement's claim about the timing of the investment.",
+        "The source states that the investment in composite manufacturing capability occurred during the Bridgepoint ownership period, not Westhaven's. This directly contradicts the statement's claim about the timing of the investment.",
+        "The source states that the significant investment in composite manufacturing capability occurred during the Bridgepoint ownership period, not Westhaven's. This directly contradicts the statement's claim about the timing of the investment."
+      ]
+    },
+    {
+      "id": "F17_S9",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "labels": [
+        "conflicting",
+        "conflicting",
+        "conflicting"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding for the same reversion metric.",
+        "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding for the same reversion metric.",
+        "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding for the same reversion metric."
+      ]
+    },
+    {
+      "id": "F08_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "labels": [
+        "conflicting",
+        "partially_confirmed",
+        "partially_confirmed"
+      ],
+      "stable": false,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The statement asserts a completed investment, while the source indicates the investment is still proposed and pending approval. This is a modality conflict.",
+        "The source confirms the 78% controlling stake and the roles of the Schiller family and management. However, it does not confirm that the investment of EUR 480 million has been completed, as it is still seeking approval.",
+        "The source confirms the 78% controlling stake and the roles of the Schiller family and management. However, it states the investment is proposed, not completed, and does not confirm the exact EUR 480 million investment as already made."
+      ]
+    },
+    {
+      "id": "F01_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "labels": [
+        "no_support",
+        "no_support",
+        "no_support"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address the procedural recommendation directly.",
+        "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address the procedural recommendation directly.",
+        "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address a recommendation for approval."
+      ]
+    },
+    {
+      "id": "F90_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "labels": [
+        "no_support",
+        "no_support",
+        "no_support"
+      ],
+      "stable": true,
+      "fingerprints": [
+        "fp_17e3c4f467",
+        "fp_17e3c4f467",
+        "fp_17e3c4f467"
+      ],
+      "explanations": [
+        "The statement claims the investment occurred in 2024, while the source indicates it happened in 2022 ('last year' from the 2023 document date).",
+        "The statement claims the investment occurred in 2024, while the source indicates it happened in 2022. This is a conflict in the investment vintage year.",
+        "The statement claims the investment occurred in 2024, while the source indicates it happened in 2022 ('last year' from the 2023 document date). This is a period mismatch for the investment vintage."
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "statementId": "EA_E2",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 112
+      },
+      "costUsd": 0.009497499999999999,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "CS_E3",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the gross MOIC figures for both Fund IV and Fund III as stated in the statement.",
+      "passage": "Fund IV is marked at 1.9x gross MOIC. Fund III is marked at 1.7x gross MOIC.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2658,
+        "outputTokens": 70
+      },
+      "costUsd": 0.007345000000000001,
+      "statement": "Fund IV is marked at 1.9x gross MOIC and Fund III at 1.7x, and that level speaks well of the manager's judgement.",
+      "sourceFile": "scripts/diagnostic/claim-spans/evaluative-accident/source_ic_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S10",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source supports the statement by highlighting Shopify's strong product, competitive position, and growth potential. The extra wording in the statement is framing, not a new checkable fact.",
+      "passage": "We are excited by what we see as a great product that has struck a chord with customers. The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours. There�s so much to love about the simplicity of the Shopify and the way it enabled small merchants to easily sell online.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7045,
+        "outputTokens": 121
+      },
+      "costUsd": 0.0188225,
+      "statement": "In summary, Shopify combines exceptional unit economics, a defensible competitive position, and clear growth runway.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F04_S20",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement by highlighting exceptional user engagement, a defensible position through engagement metrics, and high conviction in the founder team.",
+      "passage": "What gives us conviction is the depth of user engagement we have observed. [...] The founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3805,
+        "outputTokens": 98
+      },
+      "costUsd": 0.0104925,
+      "statement": "In summary, the Company combines exceptional engagement, a defensible consumer position, and a founder team in which we have high conviction.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E3",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 124
+      },
+      "costUsd": 0.0096175,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E1",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3361,
+        "outputTokens": 108
+      },
+      "costUsd": 0.0094825,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S7",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source supports the statement by identifying marketing investment, international expansion, and App Store development as opportunities to accelerate growth, matching the statement's claims.",
+      "passage": "Further, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7049,
+        "outputTokens": 94
+      },
+      "costUsd": 0.0185625,
+      "statement": "We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F04_S13",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement that the company has 8 employees, including the founders. The number of employees matches exactly.",
+      "passage": "The team is small — six full-time employees plus the two founders.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3801,
+        "outputTokens": 59
+      },
+      "costUsd": 0.0100925,
+      "statement": "The Company currently has 8 employees, including the founders, and 1.5 million monthly active users.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F12_S0",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week, matching the statement.",
+      "passage": "After eighteen months of work alongside the team, I'm delighted that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2816,
+        "outputTokens": 111
+      },
+      "costUsd": 0.00815,
+      "statement": "After more than four years of partnership, Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/12_synth_linkedin_post.txt",
+      "note": "promoted: baseline false green (duration mismatch)"
+    },
+    {
+      "statementId": "F04_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the same investment amount, pre-money valuation, and ownership percentage on a fully-diluted basis as stated.",
+      "passage": "We seek partnership approval for a Series A investment of USD 10mm in Pinterest, Inc., a visual discovery and bookmarking platform, at a USD 40mm pre-money valuation. We would own approximately 20% on a fully-diluted basis.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3815,
+        "outputTokens": 97
+      },
+      "costUsd": 0.0105075,
+      "statement": "We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million, for approximately 20% on a fully-diluted basis.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F08_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the investment in Helvetia Precision Components, including its location and market focus. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+      "passage": "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG (\"HPC\" or \"the Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4849,
+        "outputTokens": 120
+      },
+      "costUsd": 0.0133225,
+      "statement": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/08_synth_industrial_buyout_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F92_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that Shopify serves nearly 10,000 customers, aligning with the statement's claim of approximately 10,000 customers.",
+      "passage": "With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2783,
+        "outputTokens": 113
+      },
+      "costUsd": 0.008087500000000001,
+      "statement": "Shopify is a small startup serving approximately 10,000 customers.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/91_adversarial_shopify_2010_trimmed.txt",
+      "note": null
+    },
+    {
+      "statementId": "F14_S4",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that payer willingness to reimburse CDS software has improved markedly, but it does not address digital health products more broadly, which the statement claims.",
+      "passage": "Second, payer willingness to reimburse CDS software has improved markedly.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3598,
+        "outputTokens": 66
+      },
+      "costUsd": 0.009655,
+      "statement": "Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/14_synth_thesis_only_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F19_S7",
+      "role": "control",
+      "adjudication": "CONTROL_ADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the figures for parcel volume, revenue growth, and EBITDA margin compression. However, there is a period-role mismatch as the statement refers to 2024 as the investment vintage, while the source provides figures for the operating year 2025.",
+      "passage": "Drift Logistics had a mixed 2025. The European parcel volume environment has been softer than expected, with overall European parcel volumes down approximately 3% year-on-year. The Company has nevertheless gained share, with revenue growing 6% against the negative market backdrop. EBITDA margins have been pressured by overcapacity in the market and have compressed from 14% to 12% year-on-year.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4577,
+        "outputTokens": 202
+      },
+      "costUsd": 0.013462500000000002,
+      "statement": "Drift Logistics, our 2024 third-party logistics investment, faces a softer parcel volume environment (European parcel volumes down 3 percent year-on-year); the Company has nevertheless gained share, with revenue up 6 percent, but EBITDA margins have compressed from 14 to 12 percent.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/19_synth_annual_report.txt",
+      "note": null
+    },
+    {
+      "statementId": "F12_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms NorTech was strong in Sweden and under-exposed elsewhere in 2021, but it does not support the broader claim of dominance in the Nordics.",
+      "passage": "When we acquired NorTech in 2021 it was an excellent company with a clear ceiling — strong in Sweden, under-exposed everywhere else, and held back by a fragmented shareholder structure.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2835,
+        "outputTokens": 144
+      },
+      "costUsd": 0.0085275,
+      "statement": "NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and when we invested in 2021 it was a strong but underexposed business — dominant in the Nordics and barely visible elsewhere.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/12_synth_linkedin_post.txt",
+      "note": null
+    },
+    {
+      "statementId": "F14_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source indicates that they are not yet in dialogue with any specific company but seeks endorsement to begin sourcing, which partially supports the statement about bringing a specific potential investment to consider.",
+      "passage": "We are not yet in dialogue with any specific company. The purpose is to seek Committee endorsement of the thesis itself, which would authorise the team to begin active sourcing and to engage with potential targets at the appropriate level.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3595,
+        "outputTokens": 141
+      },
+      "costUsd": 0.0103975,
+      "statement": "We expect to bring a specific potential investment to consider over the coming months.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/14_synth_thesis_only_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F18_S6",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the strength of the product but does not provide specific details on the comparison with Yardi Nordic or the market penetration and founder team claims.",
+      "passage": "Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3234,
+        "outputTokens": 72
+      },
+      "costUsd": 0.008805,
+      "statement": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/18b_synth_cross_source_pair_update.txt",
+      "note": null
+    },
+    {
+      "statementId": "F15_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The statement asserts a definite completed action ('We have invested'), while the source indicates the investment is still proposed and pending IC approval, showing it as not yet completed.",
+      "passage": "We seek IC approval for an investment of up to EUR 720 million of equity in the acquisition of Casa Verde Group S.p.A.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 8818,
+        "outputTokens": 120
+      },
+      "costUsd": 0.023245,
+      "statement": "We have invested EUR 720 million of equity for an 84% stake.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/15_synth_very_long_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F05_S5",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The source states that the significant investment in composite manufacturing capability occurred during the Bridgepoint ownership period, not Westhaven's. This directly contradicts the statement's claim about the timing of the investment.",
+      "passage": "The Company has invested significantly in new composite manufacturing capability during the Bridgepoint ownership period and now operates three of the most advanced automated composite layup facilities in North America.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3239,
+        "outputTokens": 132
+      },
+      "costUsd": 0.0094175,
+      "statement": "During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/05_synth_competitor_press_release.txt",
+      "note": null
+    },
+    {
+      "statementId": "F17_S9",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding for the same reversion metric.",
+      "passage": "Embedded rental reversion is estimated at approximately 18% across the portfolio, with the strongest reversion potential in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4477,
+        "outputTokens": 146
+      },
+      "costUsd": 0.0126525,
+      "statement": "Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/17_synth_real_estate_logistics.txt",
+      "note": null
+    },
+    {
+      "statementId": "F08_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The statement asserts a completed investment, while the source indicates the investment is still proposed and pending approval. This is a modality conflict.",
+      "passage": "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG ... Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4833,
+        "outputTokens": 139
+      },
+      "costUsd": 0.0134725,
+      "statement": "We have invested EUR 480 million of equity for a 78% controlling stake, with the founding Schiller family and management retaining the balance.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/08_synth_industrial_buyout_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "no_support",
+      "preBackstopClassification": "no_support",
+      "backstopChanged": false,
+      "explanation": "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address the procedural recommendation directly.",
+      "passage": "We recommend this investment.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7029,
+        "outputTokens": 62
+      },
+      "costUsd": 0.018192499999999997,
+      "statement": "We recommend approval.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F90_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 1,
+      "classification": "no_support",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": true,
+      "explanation": "The statement claims the investment occurred in 2024, while the source indicates it happened in 2022 ('last year' from the 2023 document date).",
+      "passage": "We invested last year in Helios Grid Controls GmbH (the \"Company\"), a Munich-headquartered supplier of grid-stabilisation software to European transmission operators.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2724,
+        "outputTokens": 137
+      },
+      "costUsd": 0.00818,
+      "statement": "The firm invested in Helios Grid Controls in 2024.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/90_adversarial_b17_latent.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E2",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 112
+      },
+      "costUsd": 0.009497499999999999,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "CS_E3",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the gross MOIC figures for both Fund IV and Fund III as stated in the statement.",
+      "passage": "Fund IV is marked at 1.9x gross MOIC. Fund III is marked at 1.7x gross MOIC.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2658,
+        "outputTokens": 70
+      },
+      "costUsd": 0.007345000000000001,
+      "statement": "Fund IV is marked at 1.9x gross MOIC and Fund III at 1.7x, and that level speaks well of the manager's judgement.",
+      "sourceFile": "scripts/diagnostic/claim-spans/evaluative-accident/source_ic_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S10",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source supports the statement by highlighting Shopify's strong product offering, competitive position, and growth potential. The description of Shopify's simplicity and robust app store aligns with the statement's claims of exceptional unit economics and growth runway.",
+      "passage": "We are excited by what we see as a great product that has struck a chord with customers. The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours. There�s so much to love about the simplicity of the Shopify and the way it enabled small merchants to easily sell online. One of our colleagues described it as �minutes to learn, a lifetime to master� because it was both so simple to set up but the app store made ecommerce powerful and robust.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7045,
+        "outputTokens": 166
+      },
+      "costUsd": 0.019272499999999998,
+      "statement": "In summary, Shopify combines exceptional unit economics, a defensible competitive position, and clear growth runway.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F04_S20",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement's claims about exceptional engagement, a defensible consumer position, and high conviction in the founder team. The memo highlights strong user engagement metrics and expresses high conviction in the founders' capabilities.",
+      "passage": "What gives us conviction is the depth of user engagement we have observed. [...] The founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3805,
+        "outputTokens": 113
+      },
+      "costUsd": 0.0106425,
+      "statement": "In summary, the Company combines exceptional engagement, a defensible consumer position, and a founder team in which we have high conviction.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E3",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that Fund IV has a 1.9x gross MOIC and a 24% gross IRR, matching the statement exactly.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 132
+      },
+      "costUsd": 0.0096975,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E1",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3361,
+        "outputTokens": 139
+      },
+      "costUsd": 0.0097925,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S7",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source supports the statement by identifying marketing investment, international expansion, and App Store development as opportunities to accelerate growth, matching the statement's claims.",
+      "passage": "Further, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7049,
+        "outputTokens": 94
+      },
+      "costUsd": 0.0185625,
+      "statement": "We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F04_S13",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement that the company has 8 employees, including the founders. It also confirms the 1.5 million monthly active users.",
+      "passage": "The team is small — six full-time employees plus the two founders.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3801,
+        "outputTokens": 65
+      },
+      "costUsd": 0.0101525,
+      "statement": "The Company currently has 8 employees, including the founders, and 1.5 million monthly active users.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F12_S0",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week, matching the statement.",
+      "passage": "After eighteen months of work alongside the team, I'm delighted that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2816,
+        "outputTokens": 111
+      },
+      "costUsd": 0.00815,
+      "statement": "After more than four years of partnership, Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/12_synth_linkedin_post.txt",
+      "note": "promoted: baseline false green (duration mismatch)"
+    },
+    {
+      "statementId": "F04_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the same investment amount, pre-money valuation, and ownership percentage on a fully-diluted basis as stated.",
+      "passage": "We seek partnership approval for a Series A investment of USD 10mm in Pinterest, Inc., a visual discovery and bookmarking platform, at a USD 40mm pre-money valuation. We would own approximately 20% on a fully-diluted basis.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3815,
+        "outputTokens": 97
+      },
+      "costUsd": 0.0105075,
+      "statement": "We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million, for approximately 20% on a fully-diluted basis.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F08_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the investment in Helvetia Precision Components, describing it as a Zurich-headquartered manufacturer of high-precision machined components for the specified end markets. The statement's framing as a new investment aligns with the source's description of a proposed acquisition.",
+      "passage": "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG (\"HPC\" or \"the Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4849,
+        "outputTokens": 135
+      },
+      "costUsd": 0.0134725,
+      "statement": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/08_synth_industrial_buyout_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F92_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that Shopify serves nearly 10,000 customers, aligning with the statement's claim of approximately 10,000 customers.",
+      "passage": "With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2783,
+        "outputTokens": 117
+      },
+      "costUsd": 0.0081275,
+      "statement": "Shopify is a small startup serving approximately 10,000 customers.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/91_adversarial_shopify_2010_trimmed.txt",
+      "note": null
+    },
+    {
+      "statementId": "F14_S4",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that payer willingness to reimburse CDS software has improved markedly, but it does not address digital health products more broadly, which the statement claims.",
+      "passage": "Second, payer willingness to reimburse CDS software has improved markedly.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3598,
+        "outputTokens": 73
+      },
+      "costUsd": 0.009725,
+      "statement": "Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/14_synth_thesis_only_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F19_S7",
+      "role": "control",
+      "adjudication": "CONTROL_ADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the figures for parcel volume, revenue growth, and EBITDA margin compression. However, there is a period mismatch: the statement refers to 2024 as the investment vintage, while the source provides figures for 2025.",
+      "passage": "Drift Logistics had a mixed 2025. The European parcel volume environment has been softer than expected, with overall European parcel volumes down approximately 3% year-on-year. The Company has nevertheless gained share, with revenue growing 6% against the negative market backdrop. EBITDA margins have been pressured by overcapacity in the market and have compressed from 14% to 12% year-on-year.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4577,
+        "outputTokens": 198
+      },
+      "costUsd": 0.0134225,
+      "statement": "Drift Logistics, our 2024 third-party logistics investment, faces a softer parcel volume environment (European parcel volumes down 3 percent year-on-year); the Company has nevertheless gained share, with revenue up 6 percent, but EBITDA margins have compressed from 14 to 12 percent.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/19_synth_annual_report.txt",
+      "note": null
+    },
+    {
+      "statementId": "F12_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms NorTech was strong in Sweden and under-exposed elsewhere in 2021, but it does not support the claim of dominance in the Nordics, which is a broader geography.",
+      "passage": "When we acquired NorTech in 2021 it was an excellent company with a clear ceiling — strong in Sweden, under-exposed everywhere else, and held back by a fragmented shareholder structure.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2835,
+        "outputTokens": 149
+      },
+      "costUsd": 0.0085775,
+      "statement": "NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and when we invested in 2021 it was a strong but underexposed business — dominant in the Nordics and barely visible elsewhere.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/12_synth_linkedin_post.txt",
+      "note": null
+    },
+    {
+      "statementId": "F14_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source indicates that they are not yet in dialogue with any specific company, which partially supports the statement about bringing a specific potential investment to consider. The source supports the intent to begin sourcing but does not confirm a specific investment is identified.",
+      "passage": "We are not yet in dialogue with any specific company. The purpose is to seek Committee endorsement of the thesis itself, which would authorise the team to begin active sourcing and to engage with potential targets at the appropriate level.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3595,
+        "outputTokens": 153
+      },
+      "costUsd": 0.0105175,
+      "statement": "We expect to bring a specific potential investment to consider over the coming months.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/14_synth_thesis_only_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F18_S6",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the strength of the product but does not specifically mention the comparison to Yardi Nordic, the market penetration figure, or the names of the CEO and CTO. Thus, it partially supports the statement.",
+      "passage": "Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3234,
+        "outputTokens": 84
+      },
+      "costUsd": 0.008925,
+      "statement": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/18b_synth_cross_source_pair_update.txt",
+      "note": null
+    },
+    {
+      "statementId": "F15_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The statement asserts a definite completed action ('We have invested'), while the source indicates that the investment is still proposed and pending IC approval. This is a modality conflict.",
+      "passage": "We seek IC approval for an investment of up to EUR 720 million of equity in the acquisition of Casa Verde Group S.p.A.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 8818,
+        "outputTokens": 120
+      },
+      "costUsd": 0.023245,
+      "statement": "We have invested EUR 720 million of equity for an 84% stake.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/15_synth_very_long_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F05_S5",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The source states that the investment in composite manufacturing capability occurred during the Bridgepoint ownership period, not Westhaven's. This directly contradicts the statement's claim about the timing of the investment.",
+      "passage": "The Company has invested significantly in new composite manufacturing capability during the Bridgepoint ownership period and now operates three of the most advanced automated composite layup facilities in North America.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3239,
+        "outputTokens": 131
+      },
+      "costUsd": 0.009407500000000001,
+      "statement": "During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/05_synth_competitor_press_release.txt",
+      "note": null
+    },
+    {
+      "statementId": "F17_S9",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding for the same reversion metric.",
+      "passage": "Embedded rental reversion is estimated at approximately 18% across the portfolio, with the strongest reversion potential in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4477,
+        "outputTokens": 146
+      },
+      "costUsd": 0.0126525,
+      "statement": "Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/17_synth_real_estate_logistics.txt",
+      "note": null
+    },
+    {
+      "statementId": "F08_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the 78% controlling stake and the roles of the Schiller family and management. However, it does not confirm that the investment of EUR 480 million has been completed, as it is still seeking approval.",
+      "passage": "Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4833,
+        "outputTokens": 132
+      },
+      "costUsd": 0.0134025,
+      "statement": "We have invested EUR 480 million of equity for a 78% controlling stake, with the founding Schiller family and management retaining the balance.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/08_synth_industrial_buyout_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "no_support",
+      "preBackstopClassification": "no_support",
+      "backstopChanged": false,
+      "explanation": "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address the procedural recommendation directly.",
+      "passage": "We recommend this investment.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7029,
+        "outputTokens": 62
+      },
+      "costUsd": 0.018192499999999997,
+      "statement": "We recommend approval.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F90_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 2,
+      "classification": "no_support",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": true,
+      "explanation": "The statement claims the investment occurred in 2024, while the source indicates it happened in 2022. This is a conflict in the investment vintage year.",
+      "passage": "We invested last year in Helios Grid Controls GmbH (the \"Company\"), a Munich-headquartered supplier of grid-stabilisation software to European transmission operators.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2724,
+        "outputTokens": 135
+      },
+      "costUsd": 0.00816,
+      "statement": "The firm invested in Helios Grid Controls in 2024.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/90_adversarial_b17_latent.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E2",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement's claim about team stability and limited key-person risk.",
+      "passage": "No senior departures across the last three fund cycles.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 112
+      },
+      "costUsd": 0.009497499999999999,
+      "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "CS_E3",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement's figures for Fund IV and Fund III's gross MOIC. The additional commentary about the manager's judgement is framing, not a separate checkable claim.",
+      "passage": "Fund IV is marked at 1.9x gross MOIC. Fund III is marked at 1.7x gross MOIC.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2658,
+        "outputTokens": 85
+      },
+      "costUsd": 0.007495000000000001,
+      "statement": "Fund IV is marked at 1.9x gross MOIC and Fund III at 1.7x, and that level speaks well of the manager's judgement.",
+      "sourceFile": "scripts/diagnostic/claim-spans/evaluative-accident/source_ic_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S10",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source supports the statement by highlighting Shopify's strong product, competitive differentiation through its App Store, and growth potential. The description of Shopify's simplicity and competitive position aligns with the statement's claims.",
+      "passage": "We are excited by what we see as a great product that has struck a chord with customers. The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours. There�s so much to love about the simplicity of the Shopify and the way it enabled small merchants to easily sell online. One of our colleagues described it as �minutes to learn, a lifetime to master� because it was both so simple to set up but the app store made ecommerce powerful and robust.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7045,
+        "outputTokens": 161
+      },
+      "costUsd": 0.0192225,
+      "statement": "In summary, Shopify combines exceptional unit economics, a defensible competitive position, and clear growth runway.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F04_S20",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement by highlighting exceptional user engagement and high conviction in the founder team, aligning with the statement's claims of exceptional engagement and a founder team in which there is high conviction.",
+      "passage": "What gives us conviction is the depth of user engagement we have observed. [...] The founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3805,
+        "outputTokens": 109
+      },
+      "costUsd": 0.0106025,
+      "statement": "In summary, the Company combines exceptional engagement, a defensible consumer position, and a founder team in which we have high conviction.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E3",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR.",
+      "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3351,
+        "outputTokens": 124
+      },
+      "costUsd": 0.0096175,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "EA_E1",
+      "role": "recorded_only",
+      "adjudication": "RECORDED_ONLY",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the realised gross MOIC of 2.4x across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers, which is an additional checkable claim.",
+      "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3361,
+        "outputTokens": 108
+      },
+      "costUsd": 0.0094825,
+      "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+      "sourceFile": "scripts/diagnostic/eval-ablation/meridian_source.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S7",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement by identifying marketing investment, international expansion, and development of the App Store as opportunities to accelerate growth. The substance of the claim is supported.",
+      "passage": "Further, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7049,
+        "outputTokens": 98
+      },
+      "costUsd": 0.0186025,
+      "statement": "We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F04_S13",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the statement by stating that the team consists of six full-time employees plus the two founders, totaling eight employees. It also confirms the 1.5 million monthly active users.",
+      "passage": "The team is small — six full-time employees plus the two founders. Revenue is currently zero; the founders are deferring monetisation in favour of continued growth in user engagement and product depth.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3801,
+        "outputTokens": 97
+      },
+      "costUsd": 0.010472500000000001,
+      "statement": "The Company currently has 8 employees, including the founders, and 1.5 million monthly active users.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F12_S0",
+      "role": "exhibit",
+      "adjudication": "EXHIBIT_ADJUDICATED_FALSE_GREEN",
+      "baselineLabel": "confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the sale completion but mentions an eighteen-month partnership, not more than four years as stated. The duration of the partnership is an additional checkable claim not covered by the source.",
+      "passage": "After eighteen months of work alongside the team, I'm delighted that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2816,
+        "outputTokens": 128
+      },
+      "costUsd": 0.00832,
+      "statement": "After more than four years of partnership, Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/12_synth_linkedin_post.txt",
+      "note": "promoted: baseline false green (duration mismatch)"
+    },
+    {
+      "statementId": "F04_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the investment amount, pre-money valuation, and ownership percentage on a fully-diluted basis, matching the statement.",
+      "passage": "We seek partnership approval for a Series A investment of USD 10mm in Pinterest, Inc., a visual discovery and bookmarking platform, at a USD 40mm pre-money valuation. We would own approximately 20% on a fully-diluted basis.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3815,
+        "outputTokens": 98
+      },
+      "costUsd": 0.010517499999999999,
+      "statement": "We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million, for approximately 20% on a fully-diluted basis.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/04_synth_vc_pinterest_style_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F08_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the investment in Helvetia Precision Components, including its location and market focus. The statement's framing as a new investment aligns with the source's description of a proposed acquisition.",
+      "passage": "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG (\"HPC\" or \"the Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4849,
+        "outputTokens": 121
+      },
+      "costUsd": 0.013332499999999999,
+      "statement": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/08_synth_industrial_buyout_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F92_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that Shopify serves nearly 10,000 customers, aligning with the statement's claim of approximately 10,000 customers.",
+      "passage": "With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2783,
+        "outputTokens": 71
+      },
+      "costUsd": 0.0076675,
+      "statement": "Shopify is a small startup serving approximately 10,000 customers.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/91_adversarial_shopify_2010_trimmed.txt",
+      "note": null
+    },
+    {
+      "statementId": "F14_S4",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms that payer willingness to reimburse CDS software has improved markedly, but it does not address digital health products more broadly, which the statement claims.",
+      "passage": "Second, payer willingness to reimburse CDS software has improved markedly.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3598,
+        "outputTokens": 66
+      },
+      "costUsd": 0.009655,
+      "statement": "Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/14_synth_thesis_only_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F19_S7",
+      "role": "control",
+      "adjudication": "CONTROL_ADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": "partially_confirmed",
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the figures for parcel volume, revenue growth, and EBITDA margin compression. However, there is a period mismatch: the statement refers to 2024 as the investment vintage, while the source provides figures for 2025.",
+      "passage": "Drift Logistics had a mixed 2025. The European parcel volume environment has been softer than expected, with overall European parcel volumes down approximately 3% year-on-year. The Company has nevertheless gained share, with revenue growing 6% against the negative market backdrop. EBITDA margins have been pressured by overcapacity in the market and have compressed from 14% to 12% year-on-year.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4577,
+        "outputTokens": 198
+      },
+      "costUsd": 0.0134225,
+      "statement": "Drift Logistics, our 2024 third-party logistics investment, faces a softer parcel volume environment (European parcel volumes down 3 percent year-on-year); the Company has nevertheless gained share, with revenue up 6 percent, but EBITDA margins have compressed from 14 to 12 percent.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/19_synth_annual_report.txt",
+      "note": null
+    },
+    {
+      "statementId": "F12_S1",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms NorTech was strong in Sweden and under-exposed elsewhere in 2021, but it does not support the claim of dominance in the Nordics, which is a broader geography.",
+      "passage": "When we acquired NorTech in 2021 it was an excellent company with a clear ceiling — strong in Sweden, under-exposed everywhere else, and held back by a fragmented shareholder structure.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2835,
+        "outputTokens": 149
+      },
+      "costUsd": 0.0085775,
+      "statement": "NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and when we invested in 2021 it was a strong but underexposed business — dominant in the Nordics and barely visible elsewhere.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/12_synth_linkedin_post.txt",
+      "note": null
+    },
+    {
+      "statementId": "F14_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source indicates that they are not yet in dialogue with any specific company, which partially supports the statement about bringing a specific potential investment to consider. The source supports the intent to engage with potential targets but does not confirm any specific investment consideration.",
+      "passage": "We are not yet in dialogue with any specific company. The purpose is to seek Committee endorsement of the thesis itself, which would authorise the team to begin active sourcing and to engage with potential targets at the appropriate level.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3595,
+        "outputTokens": 123
+      },
+      "costUsd": 0.010217500000000001,
+      "statement": "We expect to bring a specific potential investment to consider over the coming months.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/14_synth_thesis_only_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F18_S6",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "partially_confirmed",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the strength of the product but does not provide specific details on the comparison with Yardi Nordic or the market penetration and founder team claims.",
+      "passage": "Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3234,
+        "outputTokens": 72
+      },
+      "costUsd": 0.008805,
+      "statement": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/18b_synth_cross_source_pair_update.txt",
+      "note": null
+    },
+    {
+      "statementId": "F15_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The statement asserts a definite completed action ('We have invested'), while the source indicates that the investment is still proposed and pending IC approval. This is a modality conflict.",
+      "passage": "We seek IC approval for an investment of up to EUR 720 million of equity in the acquisition of Casa Verde Group S.p.A.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 8818,
+        "outputTokens": 120
+      },
+      "costUsd": 0.023245,
+      "statement": "We have invested EUR 720 million of equity for an 84% stake.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/15_synth_very_long_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F05_S5",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The source states that the significant investment in composite manufacturing capability occurred during the Bridgepoint ownership period, not Westhaven's. This directly contradicts the statement's claim about the timing of the investment.",
+      "passage": "The Company has invested significantly in new composite manufacturing capability during the Bridgepoint ownership period and now operates three of the most advanced automated composite layup facilities in North America.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 3239,
+        "outputTokens": 132
+      },
+      "costUsd": 0.0094175,
+      "statement": "During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/05_synth_competitor_press_release.txt",
+      "note": null
+    },
+    {
+      "statementId": "F17_S9",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": false,
+      "explanation": "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding for the same reversion metric.",
+      "passage": "Embedded rental reversion is estimated at approximately 18% across the portfolio, with the strongest reversion potential in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4477,
+        "outputTokens": 146
+      },
+      "costUsd": 0.0126525,
+      "statement": "Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources-extracted/17_synth_real_estate_logistics.txt",
+      "note": null
+    },
+    {
+      "statementId": "F08_S2",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "conflicting",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "backstopChanged": false,
+      "explanation": "The source confirms the 78% controlling stake and the roles of the Schiller family and management. However, it states the investment is proposed, not completed, and does not confirm the exact EUR 480 million investment as already made.",
+      "passage": "Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 4833,
+        "outputTokens": 134
+      },
+      "costUsd": 0.0134225,
+      "statement": "We have invested EUR 480 million of equity for a 78% controlling stake, with the founding Schiller family and management retaining the balance.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/08_synth_industrial_buyout_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F01_S11",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "no_support",
+      "preBackstopClassification": "no_support",
+      "backstopChanged": false,
+      "explanation": "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address a recommendation for approval.",
+      "passage": "We recommend this investment.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 7029,
+        "outputTokens": 62
+      },
+      "costUsd": 0.018192499999999997,
+      "statement": "We recommend approval.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/01_bvp_shopify_memo.txt",
+      "note": null
+    },
+    {
+      "statementId": "F90_S0",
+      "role": "control",
+      "adjudication": "UNADJUDICATED",
+      "baselineLabel": "no_support",
+      "correctLabel": null,
+      "variantId": "A",
+      "run": 3,
+      "classification": "no_support",
+      "preBackstopClassification": "conflicting",
+      "backstopChanged": true,
+      "explanation": "The statement claims the investment occurred in 2024, while the source indicates it happened in 2022 ('last year' from the 2023 document date). This is a period mismatch for the investment vintage.",
+      "passage": "We invested last year in Helios Grid Controls GmbH (the \"Company\"), a Munich-headquartered supplier of grid-stabilisation software to European transmission operators.",
+      "systemFingerprint": "fp_17e3c4f467",
+      "usage": {
+        "inputTokens": 2724,
+        "outputTokens": 146
+      },
+      "costUsd": 0.00827,
+      "statement": "The firm invested in Helios Grid Controls in 2024.",
+      "sourceFile": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/sources/90_adversarial_b17_latent.txt",
+      "note": null
+    }
+  ]
+}
