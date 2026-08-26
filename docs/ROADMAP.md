@@ -2,7 +2,7 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-25 (B88 span wire behind QC_STAGE2_SPAN; coverage-union unexercised)
+Last updated: 2026-08-26 (Stage 2 rewrite R3a shipped; R4 hardening measured PARTIAL)
 
 ---
 
@@ -22,6 +22,7 @@ Last updated: 2026-08-25 (B88 span wire behind QC_STAGE2_SPAN; coverage-union un
 - **Review-quality arc CLOSED 2026-08-21** (backend-only). Residuals in BACKLOG: **B61** (unblocked-but-not-built: store exists, wrong shape; do not treat as a blanket prerequisite, see **B83**), **B53b**, **B74**. **B62** / **B66** / **B68** parked. Arc-close tag: `review-quality-arc` (`7d5a9a3`).
 - **Review-state persistence SHIPPED 2026-08-21.** Tags: `persist-review-state`, `review-state-cors-local`, `v8.71.0-review-state-restore`, `v8.72.0-review-state-cleanup`, `v8.73.0-review-state-no-blobs`, `v8.74.0-review-state-tidy`. **Accepted limitation (F16):** restored PDF/Office sources need re-upload before Review can run again. **Size-limit chapter 2026-08-22:** guard shipped (**F20** `v8.75.0-source-size-guard` + `3fce4fb`; **F21** `v8.76.0-size-message-wording`). Ceiling remains **B79** (OPEN, GUARDED). Blob storage **Pr14** deferred. Unblocked-but-not-built: **B9**, **B61**, **Pr13**. Persistence questions (storage location/jurisdiction, user accounts, retention) remain OPEN.
 - **Pr9 rewrite-correctness SHIPPED 2026-08-23.** Tags: `pr9-claim-spans` (`d8ab2df`), `pr9-soften-or-cut` (`0cd76a5`), `pr9-marker-intent` (`00cce35`), `pr9-cut-punctuation` (`71500c4`). Together they fixed a revision that could attach a note claiming a removal to text it left untouched, reproduced 3/3 on the production sentence. Residuals: **B80**, **B81**. **Pr15** closed 2026-08-24 (Meridian re-run; flow holds). Harness caveat: **P15**. Claude project docs (not in this repo): `claude/pr9-rewrite-correctness-arc.md`, `claude/pr9-finding-handling-rulebook.md`.
+- **Stage 2 rewrite R3a SHIPPED 2026-08-26.** Live `lib/qc/pipeline-v4/prompts/stage2_v4.md` replaced with corpus-checked R3a (trimmed len 12812, promptHash `bce78c19...`). Tag: `stage2-rewrite-r3a` (`7ff4aa4`). Corpus blast `36776f7` ($10.48): five proven false greens fixed; zero moves into confirmed from no_support or conflicting; two accepted lost contradictions on nordholt-dirty; one accepted new false green on F92_S0. **R4 conflict-hardening sentence measured PARTIAL** (S1 recovered; S5 plan exclusivity still soft; HOLDs intact; do not ship; no second wording). Residuals: **B108**–**B113**. Existing test `tests/stage2-b48-calibration.test.mjs` "B48 prompt anchors" still asserts old example headers against the live prompt and fails until separately updated.
 
 ---
 
