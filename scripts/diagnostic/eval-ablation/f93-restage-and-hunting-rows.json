@@ -1,0 +1,201 @@
+{
+  "generatedAt": "2026-08-26T08:46:00.672Z",
+  "costUsd": 0.07494,
+  "part1Verdict": "STOP",
+  "part1Reason": "S2 did not confirm on >=2/3. Source still ill-formed. Part 2 not run.",
+  "part2Verdict": "NOT_RUN",
+  "part2Reason": "Part 1 did not pass.",
+  "s3Reading": "LIVE_ALREADY_CATCHES (R9 gross/net limb is defence in depth)",
+  "promptMeta": {
+    "R3a": {
+      "length": 12812,
+      "sha256": "bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c"
+    },
+    "R9": {
+      "length": 13728,
+      "sha256": "bf42e8fba016aeb511f95f8b8d95c2056df63c582d629c4078a06a52661b956a"
+    }
+  },
+  "rows": [
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S1",
+      "runIndex": 0,
+      "statementText": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "confirmed",
+      "explanation": "The source confirms the statement by stating the same gross MOIC and gross IRR figures for Fund IV.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.008275,
+      "passageCorresponds": true,
+      "passageNote": "mark-1.9"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S1",
+      "runIndex": 1,
+      "statementText": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "confirmed",
+      "explanation": "The source confirms the statement by stating the same gross MOIC and gross IRR for Fund IV.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.008265,
+      "passageCorresponds": true,
+      "passageNote": "mark-1.9"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S1",
+      "runIndex": 2,
+      "statementText": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "confirmed",
+      "explanation": "The source confirms the statement by stating the same gross MOIC and gross IRR for Fund IV.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.008265,
+      "passageCorresponds": true,
+      "passageNote": "mark-1.9"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S2",
+      "runIndex": 0,
+      "statementText": "Fund IV has returned 2.6 times gross MOIC.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "conflicting",
+      "explanation": "The statement claims a return of 2.6 times gross MOIC, while the source states that Fund IV is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.008527499999999999,
+      "passageCorresponds": false,
+      "passageNote": "HUNT_mark-1.9"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S2",
+      "runIndex": 1,
+      "statementText": "Fund IV has returned 2.6 times gross MOIC.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "conflicting",
+      "explanation": "The statement claims a return of 2.6 times gross MOIC, while the source states that Fund IV is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.008527499999999999,
+      "passageCorresponds": false,
+      "passageNote": "HUNT_mark-1.9"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S2",
+      "runIndex": 2,
+      "statementText": "Fund IV has returned 2.6 times gross MOIC.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "conflicting",
+      "explanation": "The statement claims a return of 2.6 times gross MOIC, while the source states that Fund IV is currently marked at 1.9x gross MOIC. These figures are mutually exclusive.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.0084575,
+      "passageCorresponds": false,
+      "passageNote": "HUNT_mark-1.9"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S3",
+      "runIndex": 0,
+      "statementText": "Fund IV has returned 2.6 times net MOIC.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "conflicting",
+      "explanation": "The statement claims a net MOIC, while the source specifies a gross MOIC. This is a basis mismatch, making the figures mutually exclusive on a like-for-like basis.",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.0082075,
+      "passageCorresponds": true,
+      "passageNote": "returned-2.6"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S3",
+      "runIndex": 1,
+      "statementText": "Fund IV has returned 2.6 times net MOIC.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "conflicting",
+      "explanation": "The statement claims a net MOIC, while the source specifies a gross MOIC. This is a basis mismatch, making the figures mutually exclusive on a like-for-like basis.",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.0082075,
+      "passageCorresponds": true,
+      "passageNote": "returned-2.6"
+    },
+    {
+      "variantId": "R3a",
+      "statementId": "F93_S3",
+      "runIndex": 2,
+      "statementText": "Fund IV has returned 2.6 times net MOIC.",
+      "sourceFile": "scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt",
+      "classification": "conflicting",
+      "explanation": "The statement claims a net MOIC, while the source specifies a gross MOIC. This is a basis mismatch, making the figures mutually exclusive on a like-for-like basis.",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "systemFingerprint": "fp_17e3c4f467",
+      "costUsd": 0.0082075,
+      "passageCorresponds": true,
+      "passageNote": "returned-2.6"
+    }
+  ]
+}
