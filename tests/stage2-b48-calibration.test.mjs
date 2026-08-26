@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
+import { hashPromptContent } from "../lib/qc/llm-cache.mjs";
 import { splitDraftIntoCandidatesV2 } from "../lib/extract-statements.mjs";
 import {
   applyPeriodGateBackstop,
@@ -595,26 +596,22 @@ describe("B72 percent canonical ids (sentence scope, prefix collisions)", () => 
 });
 
 describe("B48 prompt anchors", () => {
-  test("stage2_v4.md contains modality, magnitude, framing, CDS, and procedural examples", async () => {
-    const prompt = await readFile(
-      path.join(__dirname, "../lib/qc/pipeline-v4/prompts/stage2_v4.md"),
-      "utf8"
+  test("stage2_v4.md pins R3a promptHash and retains load-bearing rule blocks", async () => {
+    const prompt = (
+      await readFile(path.join(__dirname, "../lib/qc/pipeline-v4/prompts/stage2_v4.md"), "utf8")
+    ).trim();
+    // Changing this hash means a verdict-adjacent change, which needs the graded-set gate
+    // and a corpus blast before it ships.
+    assert.equal(
+      hashPromptContent(prompt),
+      "bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c"
     );
-    assert.match(prompt, /Status \/ modality — definite completed action → conflicting/);
-    assert.match(prompt, /Cover \/ opener sentence — not a modality conflict/);
-    assert.match(prompt, /Checkable fact matches → confirmed/);
-    assert.match(prompt, /We have invested EUR 720 million/);
-    assert.match(prompt, /a new investment in Helvetia Precision Components/);
-    assert.match(prompt, /We have committed USD 10 million/);
-    assert.match(prompt, /Do not fire modality-conflict on "committed"/);
-    assert.match(prompt, /Magnitude beyond rounding → conflicting/);
-    assert.match(prompt, /Extra framing, same claim → confirmed/);
-    assert.match(prompt, /Related but narrower product → partially_confirmed/);
-    assert.match(prompt, /digital health products/);
-    assert.match(prompt, /CDS software/);
-    assert.match(prompt, /Procedural closer → no_support/);
-    assert.match(prompt, /Ownership \/ context swap → conflicting/);
-    assert.match(prompt, /We have invested EUR 720 million/);
+    assert.match(prompt, /Frame and period priority/);
+    assert.match(prompt, /Evaluative claims/);
+    assert.match(
+      prompt,
+      /If the statement says a fact means or implies that a risk is limited/
+    );
   });
 });
 
