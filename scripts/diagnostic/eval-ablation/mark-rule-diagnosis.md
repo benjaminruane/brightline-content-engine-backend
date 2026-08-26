@@ -22,14 +22,14 @@ R5 cost and hashes: see `r5-mark-rule.md`. Live `stage2_v4.md` was not edited by
 Read first from live `lib/qc/pipeline-v4/prompts/stage2_v4.md` (line numbers as in file).
 
 ```
-L23  • "confirmed" — on a like-for-like basis (same metric, same frame, same
+L23  • "confirmed" - on a like-for-like basis (same metric, same frame, same
      entity-role), the source states the same substance as the statement,
      including paraphrase, formatting, correct rounding.
 
-L25  • "partially_confirmed" — ... OR there is a frame/period-role mismatch
+L25  • "partially_confirmed" - ... OR there is a frame/period-role mismatch
      (vintage vs operating year; revenue vs GMV), OR ...
 
-L27  • "conflicting" — ... a status/modality contradiction only when the draft
+L27  • "conflicting" - ... a status/modality contradiction only when the draft
      asserts a definite completed action using invested, acquired, completed,
      sold, or exited, ... that the source directly shows as proposed,
      recommended, sought, or not yet done.
