@@ -90,9 +90,18 @@ Three sources are real published documents. Keep them verbatim. Do not edit them
 | 02 | `02_pg_atnorth_exit.txt` | Partners Group atNorth exit press release (published) |
 | 03 | `03_pg_gestcompost_investment.txt` | Partners Group Gestcompost investment press release (published) |
 
-Planted faults belong only in invented fixtures (`synth_` prefix, the adversarial set 90-92, style-guide stubs, satellite probes).
+Planted faults belong only in invented fixtures (`synth_` prefix, the adversarial set 90-93, style-guide stubs, satellite probes).
 
 The fictional house name is **Halden Group**. The real name (Partners Group) appears only in real published documents. Production must supply the authoring organisation via `AUTHORING_ORGANISATION` or the review request; there is no default house name.
+
+### Adversarial fixtures (per-fixture)
+
+| Fixture | Source | Plant / control |
+|---------|--------|-----------------|
+| 90 | `90_adversarial_b17_latent.txt` | B17 latent period trap (`last year` vs draft 2024). S1 Munich HQ control expected confirmed. |
+| 91 | `91_adversarial_shopify_2010_trimmed.txt` | Temporal gap: undated present-perfect vs 2010 completed investment. |
+| 92 | `91_adversarial_shopify_2010_trimmed.txt` | Present-tense-stale: 2010 customer count stated as current. |
+| 93 | `93_adversarial_realised_vs_mark.txt` | Realised-versus-mark. S0 draft `has returned` on a fund-level mark expected `partially_confirmed`. S1 CONTROL draft `is currently marked at` same figures expected `confirmed`. Until 93 is in the corpus baseline, any claim that the corpus is clean on basis mismatches is vacuous. |
 
 ## PDF sources (5)
 
