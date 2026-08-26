@@ -20,13 +20,32 @@ The passage must be a single contiguous verbatim excerpt from the source. If the
 
 Classification values
 
-• "confirmed" — on a like-for-like basis (same metric, same frame, same entity-role), the source states the same substance as the statement, including paraphrase, formatting, correct rounding, and extra descriptive or framing words that are not additional checkable claims.
+• "confirmed" — on a like-for-like basis (same metric, same frame, same entity-role), the source states the same substance as the statement, including paraphrase, formatting, correct rounding.
 
-• "partially_confirmed" — the source supports part of the statement AND the draft asserts an additional checkable claim the source does not cover, OR the draft is genuinely broader in scope, OR there is a frame/period-role mismatch (vintage vs operating year; revenue vs GMV), OR the source confirms some facts and is silent on others. Mere adjectives, voice, or richer wording around a supported claim stay confirmed.
+• "partially_confirmed" — the source supports part of the statement AND the draft asserts an additional checkable claim the source does not cover, OR the draft is genuinely broader in scope, OR there is a frame/period-role mismatch (vintage vs operating year; revenue vs GMV), OR the source confirms some facts and is silent on others.
 
 • "conflicting" — the source states something mutually exclusive with the draft on a like-for-like basis. This includes: a different named entity or ownership/context in the same role; a number that differs from the source's same-metric figure by more than rounding; a status/modality contradiction only when the draft asserts a definite completed action using invested, acquired, completed, sold, or exited, specific enough to be checkable, that the source directly shows as proposed, recommended, sought, or not yet done. Do not fire modality-conflict on "committed", "a new investment", "the fund holds", or other cover / deal-terms wording that names amount and vehicle without asserting that the transaction has already closed. Those follow ordinary support (confirmed or partial).
 
 • "no_support" — the source does not address the claim at all. A related, narrower, or broader treatment of the same claim is partially_confirmed, not no_support. A non-factual procedural closer with no checkable claim (for example 'We recommend approval.') is no_support.
+
+Wording that adds no new checkable claim, including paraphrase, formatting, correct rounding, voice, and descriptive adjectives, does not by itself block confirmed.
+
+Frame and period priority
+Judge the period, vintage, duration or frame of a statement before judging its figures or its evaluative wording. A duration, tenure, hold length, or partnership length that the source states differently, or does not state, is enough on its own: classify partially_confirmed even when the rest of the statement matches, including when the duration sits in an otherwise matching opener. If the statement attaches a period, vintage, duration or frame the source does not support, the statement is partially_confirmed even when every figure matches and even when every other clause would otherwise confirm.
+
+Evaluative claims
+Descriptive wording is FRAMING when it characterises something the source already asserts. Framing does not block confirmed.
+Descriptive wording is an ADDITIONAL CHECKABLE CLAIM when it asserts a comparison or ranking, a quantity or threshold, a causal relationship, or a level of risk or certainty, and the source does not state it. That makes the statement partially_confirmed even when every other fact matches.
+Test: could a reader ask "compared to what?" or "according to whom?" and find no answer in the source? Then it is a checkable claim, not framing.
+A conclusion drawn from a supported fact is a separate claim. If the statement says a fact means or implies that a risk is limited, a position is strong, a result is good, or an outcome is likely, the source must state that conclusion itself. The supporting fact matching is not enough.
+
+Worked example (evaluative boundary)
+
+3c) Ranking is a checkable claim → partially_confirmed
+Statement: 'The fund returned 2.4x gross MOIC, placing it in the top quartile of European peers.'
+Source: 'The fund returned 2.4x gross MOIC across seventeen exits.'
+Correct classification: partially_confirmed
+Reasoning: The MOIC matches. 'Top quartile of European peers' is a ranking the source does not state.
 
 Worked examples
 
@@ -36,91 +55,73 @@ Source: 'Revenue has grown to GBP 312 million … representing a compound annual
 Correct classification: confirmed
 Reasoning: 18.6 percent correctly rounds to approximately 19 percent on the same CAGR.
 
-2) Extra framing, same claim → confirmed
-Statement: 'We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.'
-Source: 'There is significant headroom to accelerate growth through marketing, international expansion, and the App Store.'
-Correct classification: confirmed
-Reasoning: The source supports the same growth-headroom claim. Extra wording is framing, not a new checkable fact.
-
-3) Extra framing, same claim → confirmed
-Statement: 'In summary, the Company combines a defensible competitive position in a specialised vertical with high switching costs.'
-Source: 'NSH occupies a strong position in a deeply specialised vertical with high switching costs.'
-Correct classification: confirmed
-Reasoning: Substance matches. 'In summary' and 'defensible' do not add a separate checkable claim.
-
-3b) Checkable fact matches → confirmed
-Statement: 'The Company currently has 8 employees, including the founders, and 1.5 million monthly active users.'
-Source: 'The team is six full-time employees plus two founders (eight people in total) and 1.5 million monthly active users.'
-Correct classification: confirmed
-Reasoning: The checkable counts match. Do not classify partially_confirmed while the explanation is that the fact matches.
-
-4) Scope-broadening → partially_confirmed
+2) Scope-broadening → partially_confirmed
 Statement: 'When we invested in 2021 it was dominant in the Nordics.'
 Source: 'When we acquired it in 2021 it was strong in Sweden, under-exposed everywhere else.'
 Correct classification: partially_confirmed
 Reasoning: Sweden is supported; 'the Nordics' is a broader checkable geography.
 
-5) Related but narrower product → partially_confirmed
+3) Related but narrower product → partially_confirmed
 Statement: 'Payer willingness to reimburse digital health products has improved markedly across the major European markets.'
 Source: 'Payer willingness to reimburse CDS software has improved markedly.'
 Correct classification: partially_confirmed
 Reasoning: The source addresses reimbursement willingness for a narrower product class. That is partial support, not silence.
 
-6) Added named party / extra checkable detail → partially_confirmed
+4) Added named party / extra checkable detail → partially_confirmed
 Statement: 'We have invested EUR 480 million for a 78% controlling stake, with the founding family and management retaining the balance.'
 Source: 'The sponsor would acquire a 78% controlling stake from the founding family, with the remainder retained by management.'
 Correct classification: partially_confirmed
 Reasoning: Stake size matches; naming both family and management as retaining the balance is extra checkable detail, not an entity swap.
 
-7) Vintage year vs operating year → partially_confirmed
+5) Vintage year vs operating year → partially_confirmed
 Statement: 'Drift Logistics, our 2024 third-party logistics investment, saw parcel volumes down 3 percent.'
 Source: 'Drift Logistics had a mixed 2025. European parcel volumes down approximately 3% year-on-year.'
 Correct classification: partially_confirmed
 Reasoning: 2024 is investment vintage; 2025 is the operating year of the volume metric.
 
-8) Future intent vs not-yet-in-dialogue → partially_confirmed
+6) Future intent vs not-yet-in-dialogue → partially_confirmed
 Statement: 'We expect to bring a specific potential investment to consider over the coming months.'
 Source: 'We are not yet in dialogue with any specific company. The purpose is to seek Committee endorsement of the thesis itself.'
 Correct classification: partially_confirmed
 Reasoning: The source addresses the sourcing path and current dialogue status. It supports a related claim with a gap, not total silence.
 
-9) Entity swap in the same role → conflicting
+7) Entity swap in the same role → conflicting
 Statement: 'The firm has signed up Pixar, Amnesty International, and Nike.'
 Source: '…Pixar, Amnesty International and Tesla Motors…'
 Correct classification: conflicting
 Reasoning: Nike and Tesla Motors occupy the same customer-name slot.
 
-10) Ownership / context swap → conflicting
+8) Ownership / context swap → conflicting
 Statement: 'During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.'
 Source: 'The Company has invested significantly in new composite manufacturing capability during the Bridgepoint ownership period.'
 Correct classification: conflicting
 Reasoning: Westhaven and Bridgepoint occupy the same ownership-period role for the same investment claim.
 
-11) Status / modality — definite completed action → conflicting
+9) Status / modality — definite completed action → conflicting
 Statement: 'We have invested EUR 720 million of equity for an 84% stake.'
 Source: 'We seek IC approval for an investment of up to EUR 720 million of equity … will hold 84% in aggregate.'
 Correct classification: conflicting
 Reasoning: 'Have invested' is a definite completed action. The source shows the same transaction as still proposed / not yet approved.
 
-11b) Cover / opener sentence — not a modality conflict
+9b) Cover / opener sentence — not a modality conflict
 Statement: 'We are writing to inform you of a new investment in Helvetia Precision Components.'
 Source: 'We seek IC approval to invest in Helvetia Precision Components.'
 Correct classification: confirmed
 Reasoning: The draft names and frames the investment; it does not assert that a specific transaction has already closed. An IC memo recommending the deal supports the topic. Same for 'the fund holds X' or 'this concerns our investment in X' without a completed-action verb.
 
-11c) Deal terms without a closed-transaction verb — not a modality conflict
+9c) Deal terms without a closed-transaction verb — not a modality conflict
 Statement: 'We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million.'
 Source: 'We seek partnership approval for a Series A investment of USD 10mm … at a USD 40mm pre-money valuation.'
 Correct classification: confirmed
 Reasoning: Amounts and valuation match. 'Committed' is deal-terms wording, not invested / acquired / completed / sold / exited. Classify by support, not as a completed-vs-proposed conflict.
 
-12) Magnitude beyond rounding → conflicting
+10) Magnitude beyond rounding → conflicting
 Statement: 'Our plan rests on capturing the embedded reversion as approximately 40 percent of leases roll.'
 Source: 'Embedded reversion is estimated at approximately 18 percent as leases roll.'
 Correct classification: conflicting
 Reasoning: 40 percent and 18 percent are the same reversion metric and cannot be reconciled by rounding.
 
-13) Procedural closer → no_support
+11) Procedural closer → no_support
 Statement: 'We recommend approval.'
 Source: any IC memo discussing the investment case.
 Correct classification: no_support
@@ -129,7 +130,7 @@ Reasoning: The statement is a non-factual procedural closer with no checkable cl
 Numeric rules
 Exact figures confirm. Formatting differences confirm ($132mm and $132 million).
 When the statement uses an approximate qualifier and the source figure rounds to that stated number on the same metric, classify confirmed (example 1).
-A same-metric number that differs by more than rounding is conflicting (example 12), including ~40 percent vs ~18 percent. It is not partial and not confirmed.
+A same-metric number that differs by more than rounding is conflicting (example 10), including ~40 percent vs ~18 percent. It is not partial and not confirmed.
 Different metric frames for two numbers (lease-roll percent vs reversion percent; revenue vs GMV) are not paired as a magnitude conflict.
 
 Frame and period
@@ -140,18 +141,17 @@ Vintage/acquisition year vs operating/reporting year → partially_confirmed.
 Periods match, or the statement makes no period claim → period does not block confirmed.
 
 Voice
-A difference in voice or grammatical person with the same underlying fact is confirmed.
-A definite completed-action claim (invested / acquired / completed / sold / exited) that the source shows as proposed, recommended, sought, or not yet done is conflicting (example 11), not voice.
-A cover or opener that only introduces the investment is not a modality conflict (example 11b).
+A difference in voice or grammatical person is not a conflict.
+A definite completed-action claim (invested / acquired / completed / sold / exited) that the source shows as proposed, recommended, sought, or not yet done is conflicting (example 9), not voice.
+A cover or opener that only introduces the investment is not a modality conflict (example 9b).
 
 Entity roles
-A different entity in the same role, including ownership-period context, is conflicting (examples 9 and 10).
+A different entity in the same role, including ownership-period context, is conflicting (examples 7 and 8).
 The source names fewer entities, and the missing name is absent rather than replaced → partially_confirmed.
 
 Mixed statements
 When some facts are like-for-like confirmed and another fact is like-for-like mutually exclusive, classify conflicting.
 When some facts are confirmed and others are additional checkable claims, broader scope, or a frame/vintage mismatch, classify partially_confirmed.
-If the checkable facts match the source, classify confirmed even if the explanation mentions extra wording. Do not classify partially_confirmed while stating that the fact matches.
 A source that discusses a related or narrower version of the claim is partially_confirmed, not no_support.
 A statement with no verifiable factual assertion is no_support and cannot be conflicting.
 
