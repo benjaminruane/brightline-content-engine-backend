@@ -1,0 +1,940 @@
+{
+  "nordholtFrom": "downloads",
+  "s2Replay": [
+    {
+      "runIndex": 0,
+      "classification": "conflicting",
+      "preBackstopClassification": null,
+      "backstopChanged": null,
+      "note": "hunting harness did not persist preBackstop; replay below",
+      "replayIfModelConfirmed": "confirmed",
+      "replayIfModelConflicting": "conflicting",
+      "gapWouldForce": false,
+      "backstopStmt": [],
+      "backstopPass": [
+        {
+          "value": 24,
+          "raw": "24%",
+          "kind": "percent",
+          "metric": "moic"
+        },
+        {
+          "value": 750000000,
+          "raw": "EUR 750 million",
+          "kind": "money",
+          "currency": "EUR"
+        }
+      ],
+      "explanation": "The statement claims a return of 2.6 times gross MOIC, while the source states that Fund IV is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR."
+    },
+    {
+      "runIndex": 1,
+      "classification": "conflicting",
+      "preBackstopClassification": null,
+      "backstopChanged": null,
+      "note": "hunting harness did not persist preBackstop; replay below",
+      "replayIfModelConfirmed": "confirmed",
+      "replayIfModelConflicting": "conflicting",
+      "gapWouldForce": false,
+      "backstopStmt": [],
+      "backstopPass": [
+        {
+          "value": 24,
+          "raw": "24%",
+          "kind": "percent",
+          "metric": "moic"
+        },
+        {
+          "value": 750000000,
+          "raw": "EUR 750 million",
+          "kind": "money",
+          "currency": "EUR"
+        }
+      ],
+      "explanation": "The statement claims a return of 2.6 times gross MOIC, while the source states that Fund IV is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR."
+    },
+    {
+      "runIndex": 2,
+      "classification": "conflicting",
+      "preBackstopClassification": null,
+      "backstopChanged": null,
+      "note": "hunting harness did not persist preBackstop; replay below",
+      "replayIfModelConfirmed": "confirmed",
+      "replayIfModelConflicting": "conflicting",
+      "gapWouldForce": false,
+      "backstopStmt": [],
+      "backstopPass": [
+        {
+          "value": 24,
+          "raw": "24%",
+          "kind": "percent",
+          "metric": "moic"
+        },
+        {
+          "value": 750000000,
+          "raw": "EUR 750 million",
+          "kind": "money",
+          "currency": "EUR"
+        }
+      ],
+      "explanation": "The statement claims a return of 2.6 times gross MOIC, while the source states that Fund IV is currently marked at 1.9x gross MOIC. These figures are mutually exclusive.",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR."
+    }
+  ],
+  "nPairs": 364,
+  "nStmtHasFig": 186,
+  "nMiss": 45,
+  "missByLabel": {
+    "no_support": 24,
+    "partially_confirmed": 9,
+    "conflicting": 9,
+    "confirmed": 3
+  },
+  "nConflictingMiss": 9,
+  "nBetterAvailable": 7,
+  "nBetterUnavailable": 38,
+  "nSourceUnresolved": 0,
+  "nRepeat": 97,
+  "nRepeatMiss": 5,
+  "nNonRepeat": 89,
+  "nNonRepeatMiss": 40,
+  "missRateRepeat": 0.05154639175257732,
+  "missRateNonRepeat": 0.449438202247191,
+  "conflictingMisses": [
+    {
+      "pairId": "nordholt-clean:S1:IC memo",
+      "caseLabel": "nordholt-clean",
+      "statementId": "nordholt-clean_S1",
+      "classification": "conflicting",
+      "statementText": "The business now operates 14 cold-chain facilities across three Nordic markets and employs 720 people.",
+      "passage": "At the date of this memo the business runs 12 facilities and employs 640 people, principally in Sweden.",
+      "explanation": "The statement claims 14 facilities and 720 employees, while the source states 12 facilities and 640 employees. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "stmtFigs": [
+        {
+          "value": 14,
+          "raw": "14",
+          "kind": "number"
+        },
+        {
+          "value": 720,
+          "raw": "720",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 12,
+          "raw": "12",
+          "kind": "number"
+        },
+        {
+          "value": 640,
+          "raw": "640",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": true,
+      "betterSentence": "INVESTMENT COMMITTEE MEMORANDUM — NORDHOLT LOGISTICS Date: 14 March 2023 Prepared for the Investment Committee of Ashford Capital Partners Fund IV 1."
+    },
+    {
+      "pairId": "nordholt-dirty:S0:fact sheet",
+      "caseLabel": "nordholt-dirty",
+      "statementId": "nordholt-dirty_S0",
+      "classification": "conflicting",
+      "statementText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "passage": "Net IRR to date (Ashford Fund IV): 14 per cent",
+      "explanation": "The statement claims a net IRR of 18 per cent, while the source reports a net IRR of 14 per cent for the same fund, which is a difference beyond rounding.",
+      "stmtFigs": [
+        {
+          "value": 18,
+          "raw": "18 per cent",
+          "kind": "percent"
+        },
+        {
+          "value": 18,
+          "raw": "18",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 14,
+          "raw": "14 per cent",
+          "kind": "percent"
+        },
+        {
+          "value": 14,
+          "raw": "14",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": false,
+      "betterSentence": null
+    },
+    {
+      "pairId": "nordholt-dirty:S0:LP update",
+      "caseLabel": "nordholt-dirty",
+      "statementId": "nordholt-dirty_S0",
+      "classification": "conflicting",
+      "statementText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+      "passage": "Nordholt Logistics continues to perform in line with our underwriting.",
+      "explanation": "The statement claims Nordholt Logistics is performing well ahead of underwriting, while the source states it is performing in line with underwriting, which is mutually exclusive.",
+      "stmtFigs": [
+        {
+          "value": 18,
+          "raw": "18 per cent",
+          "kind": "percent"
+        },
+        {
+          "value": 18,
+          "raw": "18",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": false,
+      "betterSentence": null
+    },
+    {
+      "pairId": "nordholt-dirty:S1:IC memo",
+      "caseLabel": "nordholt-dirty",
+      "statementId": "nordholt-dirty_S1",
+      "classification": "conflicting",
+      "statementText": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+      "passage": "At the date of this memo the business runs 12 facilities and employs 640 people, principally in Sweden.",
+      "explanation": "The statement claims 15 facilities and over 800 employees, while the source states 12 facilities and 640 employees. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "stmtFigs": [
+        {
+          "value": 15,
+          "raw": "15",
+          "kind": "number"
+        },
+        {
+          "value": 800,
+          "raw": "800",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 12,
+          "raw": "12",
+          "kind": "number"
+        },
+        {
+          "value": 640,
+          "raw": "640",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": false,
+      "betterSentence": null
+    },
+    {
+      "pairId": "nordholt-dirty:S4:IC memo",
+      "caseLabel": "nordholt-dirty",
+      "statementId": "nordholt-dirty_S4",
+      "classification": "conflicting",
+      "statementText": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+      "passage": "Reported EBITDA margin is 18.6 per cent. Revenue is underpinned by multi-year customer contracts, with an average contract length of approximately four years.",
+      "explanation": "The source states an EBITDA margin of 18.6 percent, which conflicts with the statement's 25 percent. Additionally, the source mentions an average contract length of approximately four years, conflicting with the statement's claim of at least six years.",
+      "stmtFigs": [
+        {
+          "value": 25,
+          "raw": "25 per cent",
+          "kind": "percent"
+        },
+        {
+          "value": 25,
+          "raw": "25",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 18.6,
+          "raw": "18.6 per cent",
+          "kind": "percent"
+        },
+        {
+          "value": 18.6,
+          "raw": "18.6",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": false,
+      "betterSentence": null
+    },
+    {
+      "pairId": "supersession:S1:source_A_annual_report_2019",
+      "caseLabel": "supersession",
+      "statementId": "supersession_S1",
+      "classification": "conflicting",
+      "statementText": "The company employs 720 people.",
+      "passage": "At 31 December 2019 the fund held 12 portfolio companies across three sectors, and the underlying businesses employed 640 people in aggregate.",
+      "explanation": "The source states that the underlying businesses employed 640 people, which conflicts with the statement that the company employs 720 people.",
+      "stmtFigs": [
+        {
+          "value": 720,
+          "raw": "720",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 31,
+          "raw": "31",
+          "kind": "number"
+        },
+        {
+          "value": 12,
+          "raw": "12",
+          "kind": "number"
+        },
+        {
+          "value": 640,
+          "raw": "640",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": false,
+      "betterSentence": null
+    },
+    {
+      "pairId": "supersession:S2:source_C_fund_update_2026",
+      "caseLabel": "supersession",
+      "statementId": "supersession_S2",
+      "classification": "conflicting",
+      "statementText": "Adjusted EBITDA for FY2024 was EUR 45 million.",
+      "passage": "Adjusted EBITDA for FY2024 has been restated to EUR 40 million following a reclassification of central costs.",
+      "explanation": "The statement claims Adjusted EBITDA for FY2024 was EUR 45 million, while the source states it was restated to EUR 40 million. This is a direct conflict in figures for the same period and metric.",
+      "stmtFigs": [
+        {
+          "value": 45,
+          "raw": "EUR 45 million",
+          "kind": "money"
+        },
+        {
+          "value": 45,
+          "raw": "45",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 40,
+          "raw": "EUR 40 million",
+          "kind": "money"
+        },
+        {
+          "value": 40,
+          "raw": "40",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": false,
+      "betterSentence": null
+    },
+    {
+      "pairId": "supersession:S3:source_C_fund_update_2026",
+      "caseLabel": "supersession",
+      "statementId": "supersession_S3",
+      "classification": "conflicting",
+      "statementText": "The fund holds 12 portfolio companies.",
+      "passage": "The fund now holds 15 portfolio companies, and the underlying businesses employ 720 people in aggregate.",
+      "explanation": "The source states that the fund holds 15 portfolio companies, which directly conflicts with the statement that the fund holds 12 portfolio companies.",
+      "stmtFigs": [
+        {
+          "value": 12,
+          "raw": "12",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 15,
+          "raw": "15",
+          "kind": "number"
+        },
+        {
+          "value": 720,
+          "raw": "720",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": false,
+      "betterSentence": null
+    },
+    {
+      "pairId": "F17:S9:17_synth_real_estate_logistics",
+      "caseLabel": "F17",
+      "statementId": "F17_S9",
+      "classification": "conflicting",
+      "statementText": "Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.",
+      "passage": "Embedded rental reversion is estimated at approximately 18% across the portfolio, with the strongest reversion potential in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.",
+      "explanation": "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding.",
+      "stmtFigs": [
+        {
+          "value": 40,
+          "raw": "40 percent",
+          "kind": "percent"
+        },
+        {
+          "value": 38,
+          "raw": "EUR 38 million",
+          "kind": "money"
+        },
+        {
+          "value": 40,
+          "raw": "40",
+          "kind": "number"
+        },
+        {
+          "value": 38,
+          "raw": "38",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 18,
+          "raw": "18%",
+          "kind": "percent"
+        },
+        {
+          "value": 18,
+          "raw": "18",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": true,
+      "sourceResolved": true,
+      "betterAvailable": true,
+      "betterSentence": "CAPITAL EXPENDITURE PLAN We have budgeted EUR 38 million of value-add capital expenditure across the hold period."
+    }
+  ],
+  "conflictingWithBetter": [
+    {
+      "pairId": "nordholt-clean:S1:IC memo",
+      "caseLabel": "nordholt-clean",
+      "statementId": "nordholt-clean_S1",
+      "classification": "conflicting",
+      "statementText": "The business now operates 14 cold-chain facilities across three Nordic markets and employs 720 people.",
+      "passage": "At the date of this memo the business runs 12 facilities and employs 640 people, principally in Sweden.",
+      "explanation": "The statement claims 14 facilities and 720 employees, while the source states 12 facilities and 640 employees. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "stmtFigs": [
+        {
+          "value": 14,
+          "raw": "14",
+          "kind": "number"
+        },
+        {
+          "value": 720,
+          "raw": "720",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 12,
+          "raw": "12",
+          "kind": "number"
+        },
+        {
+          "value": 640,
+          "raw": "640",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": false,
+      "sourceResolved": true,
+      "betterAvailable": true,
+      "betterSentence": "INVESTMENT COMMITTEE MEMORANDUM — NORDHOLT LOGISTICS Date: 14 March 2023 Prepared for the Investment Committee of Ashford Capital Partners Fund IV 1."
+    },
+    {
+      "pairId": "F17:S9:17_synth_real_estate_logistics",
+      "caseLabel": "F17",
+      "statementId": "F17_S9",
+      "classification": "conflicting",
+      "statementText": "Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.",
+      "passage": "Embedded rental reversion is estimated at approximately 18% across the portfolio, with the strongest reversion potential in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.",
+      "explanation": "The statement claims an embedded reversion of approximately 40 percent, while the source estimates it at approximately 18 percent. This is a magnitude conflict beyond rounding.",
+      "stmtFigs": [
+        {
+          "value": 40,
+          "raw": "40 percent",
+          "kind": "percent"
+        },
+        {
+          "value": 38,
+          "raw": "EUR 38 million",
+          "kind": "money"
+        },
+        {
+          "value": 40,
+          "raw": "40",
+          "kind": "number"
+        },
+        {
+          "value": 38,
+          "raw": "38",
+          "kind": "number"
+        }
+      ],
+      "passFigs": [
+        {
+          "value": 18,
+          "raw": "18%",
+          "kind": "percent"
+        },
+        {
+          "value": 18,
+          "raw": "18",
+          "kind": "number"
+        }
+      ],
+      "miss": true,
+      "repeat": true,
+      "sourceResolved": true,
+      "betterAvailable": true,
+      "betterSentence": "CAPITAL EXPENDITURE PLAN We have budgeted EUR 38 million of value-add capital expenditure across the hold period."
+    }
+  ],
+  "six": [
+    {
+      "id": "EA_E2",
+      "file": "eval-ablation/meridian_source.txt",
+      "n": 3,
+      "sample": [
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not address the additional checkable claim that this stability l",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms no senior departures across the last three fund cycles, supporting the statement's claim about team stability. However, the source does not address the additional checkable claim that this stability l",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms the stability of the team with no senior departures across the last three fund cycles. However, the statement's claim that this limits key-person risk is an additional evaluative claim not addressed b",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        }
+      ]
+    },
+    {
+      "id": "CS_E3",
+      "file": "claim-spans/evaluative-accident/source_ic_memo.txt",
+      "n": 3,
+      "sample": [
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms the MOIC figures for both Fund IV and Fund III. However, the evaluative claim that this level 'speaks well of the manager's judgement' is an additional checkable claim not addressed by the source.",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms the MOIC figures for both Fund IV and Fund III. However, the evaluative claim about the manager's judgement is not addressed in the source.",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms the MOIC figures for both Fund IV and Fund III. However, the evaluative claim that this level 'speaks well of the manager's judgement' is an additional checkable claim not supported by the source.",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        }
+      ]
+    },
+    {
+      "id": "F01_S10",
+      "file": "01_bvp_shopify_memo.txt",
+      "n": 3,
+      "sample": [
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source supports the claim of Shopify having a strong product and competitive position but does not explicitly mention 'exceptional unit economics' or 'clear growth runway'.",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source supports the claim of Shopify having a strong product and competitive position but does not explicitly mention 'exceptional unit economics' or 'clear growth runway'.",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source supports Shopify's competitive position and growth potential but does not explicitly mention 'exceptional unit economics.' The statement's claim about unit economics is an additional checkable claim not covere",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        }
+      ]
+    },
+    {
+      "id": "F04_S20",
+      "file": "04_synth_vc_pinterest_style_memo.txt",
+      "n": 3,
+      "sample": [
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source supports the claim of exceptional engagement and high conviction in the founders. However, it expresses uncertainty about the defensibility of the consumer position, which makes the statement partially_confirm",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source supports the claims of exceptional engagement and high conviction in the founders. However, it expresses uncertainty about the defensibility of the consumer position, which makes the statement partially_confir",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source supports the claim of exceptional engagement and high conviction in the founders. However, it expresses uncertainty about the defensibility of the consumer position, which makes the statement partially_confirm",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        }
+      ]
+    },
+    {
+      "id": "F12_S0",
+      "file": "12_synth_linkedin_post.txt",
+      "n": 3,
+      "sample": [
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms the sale completion but mentions an eighteen-month partnership, whereas the statement claims a partnership of more than four years. This discrepancy in partnership duration results in partial confirma",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms the sale completion but mentions an eighteen-month partnership, whereas the statement claims a partnership of more than four years. This discrepancy in partnership duration results in partial confirma",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        },
+        {
+          "classification": "partially_confirmed",
+          "statement": "",
+          "passage": "",
+          "explanation": "The source confirms the sale of NorTech Industries to Brookfield this week. However, the statement's 'more than four years of partnership' is not addressed in the source, which mentions an acquisition in 2021, leading to",
+          "stmtFigs": [],
+          "passFigs": [],
+          "overlap": false
+        }
+      ]
+    },
+    {
+      "id": "EA_E3",
+      "file": "eval-ablation/meridian_source.txt",
+      "n": 3,
+      "sample": [
+        {
+          "classification": "confirmed",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "explanation": "The source confirms the statement by stating that Fund IV is marked at 1.9x gross MOIC and 24% gross IRR, matching the figures in the statement.",
+          "stmtFigs": [
+            {
+              "value": 24,
+              "raw": "24 per cent",
+              "kind": "percent"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9 times",
+              "kind": "multiple"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9",
+              "kind": "number"
+            },
+            {
+              "value": 24,
+              "raw": "24",
+              "kind": "number"
+            }
+          ],
+          "passFigs": [
+            {
+              "value": 24,
+              "raw": "24%",
+              "kind": "percent"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9x",
+              "kind": "multiple"
+            },
+            {
+              "value": 900,
+              "raw": "EUR 900 million",
+              "kind": "money"
+            },
+            {
+              "value": 900,
+              "raw": "900",
+              "kind": "number"
+            },
+            {
+              "value": 1,
+              "raw": "1",
+              "kind": "number"
+            },
+            {
+              "value": 24,
+              "raw": "24",
+              "kind": "number"
+            },
+            {
+              "value": 4,
+              "raw": "4",
+              "kind": "number"
+            },
+            {
+              "value": 12,
+              "raw": "12",
+              "kind": "number"
+            }
+          ],
+          "overlap": true
+        },
+        {
+          "classification": "confirmed",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "explanation": "The source confirms the statement by providing the same figures for Fund IV's gross MOIC and gross IRR.",
+          "stmtFigs": [
+            {
+              "value": 24,
+              "raw": "24 per cent",
+              "kind": "percent"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9 times",
+              "kind": "multiple"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9",
+              "kind": "number"
+            },
+            {
+              "value": 24,
+              "raw": "24",
+              "kind": "number"
+            }
+          ],
+          "passFigs": [
+            {
+              "value": 24,
+              "raw": "24%",
+              "kind": "percent"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9x",
+              "kind": "multiple"
+            },
+            {
+              "value": 900,
+              "raw": "EUR 900 million",
+              "kind": "money"
+            },
+            {
+              "value": 900,
+              "raw": "900",
+              "kind": "number"
+            },
+            {
+              "value": 1,
+              "raw": "1",
+              "kind": "number"
+            },
+            {
+              "value": 24,
+              "raw": "24",
+              "kind": "number"
+            },
+            {
+              "value": 4,
+              "raw": "4",
+              "kind": "number"
+            },
+            {
+              "value": 12,
+              "raw": "12",
+              "kind": "number"
+            }
+          ],
+          "overlap": true
+        },
+        {
+          "classification": "confirmed",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "explanation": "The source confirms the statement by stating that Fund IV is marked at 1.9x gross MOIC and 24% gross IRR, matching the figures in the statement.",
+          "stmtFigs": [
+            {
+              "value": 24,
+              "raw": "24 per cent",
+              "kind": "percent"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9 times",
+              "kind": "multiple"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9",
+              "kind": "number"
+            },
+            {
+              "value": 24,
+              "raw": "24",
+              "kind": "number"
+            }
+          ],
+          "passFigs": [
+            {
+              "value": 24,
+              "raw": "24%",
+              "kind": "percent"
+            },
+            {
+              "value": 1.9,
+              "raw": "1.9x",
+              "kind": "multiple"
+            },
+            {
+              "value": 900,
+              "raw": "EUR 900 million",
+              "kind": "money"
+            },
+            {
+              "value": 900,
+              "raw": "900",
+              "kind": "number"
+            },
+            {
+              "value": 1,
+              "raw": "1",
+              "kind": "number"
+            },
+            {
+              "value": 24,
+              "raw": "24",
+              "kind": "number"
+            },
+            {
+              "value": 4,
+              "raw": "4",
+              "kind": "number"
+            },
+            {
+              "value": 12,
+              "raw": "12",
+              "kind": "number"
+            }
+          ],
+          "overlap": true
+        }
+      ]
+    }
+  ],
+  "part1Keys": [
+    "id",
+    "run",
+    "classification",
+    "explanation",
+    "costUsd",
+    "systemFingerprint",
+    "sourceFile"
+  ],
+  "part1SampleIds": [
+    "EA_E2",
+    "CS_E3",
+    "F01_S10",
+    "F04_S20",
+    "F12_S0",
+    "F19_S7"
+  ]
+}
