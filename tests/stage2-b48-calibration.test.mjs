@@ -99,6 +99,40 @@ describe("B48 rounding and magnitude backstop", () => {
     assert.equal(out.classification, "conflicting");
   });
 
+  test("percent symbol forms extract (40%, 18%, 8.5%)", () => {
+    const figs = collectBackstopFigures("Margins moved from 40% to 18% with yield-on-cost of 8.5%.");
+    const percents = figs.filter((f) => f.kind === "percent").map((f) => f.value);
+    assert.deepEqual(percents, [40, 18, 8.5]);
+  });
+
+  test("spelled percent forms still extract unchanged", () => {
+    const figs = collectBackstopFigures(
+      "Utilisation is 40 percent, IRR is 18 per cent, and growth was 8.5 percent."
+    );
+    const percents = figs.filter((f) => f.kind === "percent").map((f) => f.value);
+    assert.deepEqual(percents, [40, 18, 8.5]);
+  });
+
+  test("40% vs 18% on the same metric forces conflicting", () => {
+    const statement = "Embedded reversion is approximately 40% as leases roll.";
+    const passage = "Embedded reversion is estimated at approximately 18% as leases roll.";
+    assert.equal(hasEgregiousMagnitudeGap(statement, passage), true);
+  });
+
+  test("F17_S9 replay: arm A and arm D gap verdicts", () => {
+    // Fixture 17 statement S9 and the passages recorded under arm A / arm D.
+    const statement =
+      "Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.";
+    const armAPassage =
+      "Embedded rental reversion is estimated at approximately 18% across the portfolio, with the strongest reversion potential in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.";
+    const armDPassage =
+      "capture of embedded reversion as approximately 40% of leases roll during the hold period, value-add capex returning a yield-on-cost of approximately 8.5%, and exit at a 5.0% yield reflecting modest yield compression supported by continued strong investor demand for the asset class.";
+    // Arm A: 40 (metric lease) vs 18 (metric reversion) — metric mismatch suppresses force.
+    assert.equal(hasEgregiousMagnitudeGap(statement, armAPassage), false);
+    // Arm D: best percent match is 40 vs 40 (same metric) — no egregious gap.
+    assert.equal(hasEgregiousMagnitudeGap(statement, armDPassage), false);
+  });
+
   test("does not force conflict when percent figures have no overlapping metric keys", () => {
     const statement = "The EBITDA margin is approximately 19 per cent.";
     const passage = "Contracted revenue represents approximately 70 per cent of total revenue.";
