@@ -87,7 +87,7 @@ Invented Halden LP-update pairs that force at least two performance figures onto
 | Path | Purpose |
 |------|---------|
 | `passage-selection-probe/pairs.json` | Ten pairs (MF01 to MF10): six expected confirmed, four expected conflicting. Dimensions: order, distance, metric, entity, wording. |
-| `passage-selection-probe/sources/mf01_*.txt` to `mf10_*.txt` | Invented Halden sources (do not treat as production). MF10 draft uses `eval-ablation/meridian_source.txt` unchanged. |
+| `passage-selection-probe/sources/` | Invented Halden sources mf01 to mf05 and mf07 to mf10 (do not treat as production). Pair MF10 draft uses `eval-ablation/meridian_source.txt` unchanged. |
 | `eval-ablation/run-passage-selection-probe.mjs` | Live R3a x3, cache OFF. Writes rows + `passage-selection-probe.md`. |
 | `eval-ablation/passage-selection-probe.md` | Pre-flight, cost, per-run passages, dimension cross, stopping rule. |
 

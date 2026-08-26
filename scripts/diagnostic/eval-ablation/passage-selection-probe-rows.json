@@ -1,0 +1,1641 @@
+{
+  "prompt": {
+    "path": "lib/qc/pipeline-v4/prompts/stage2_v4.md",
+    "length": 12812,
+    "sha256": "bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c"
+  },
+  "cache": "OFF",
+  "runsPerPair": 3,
+  "totalCostUsd": 0.23610000000000006,
+  "hardStopUsd": 1.25,
+  "aggregates": {
+    "pairs": 10,
+    "labelOk2of3": 10,
+    "passageOk2of3": 10,
+    "rightLabelWrongPassage": 0,
+    "falseRed": 0,
+    "falseRedViaWrongPassage": 0,
+    "overcorrection": 0
+  },
+  "stoppingNotes": [
+    {
+      "code": "EDGE_CASE",
+      "detail": "0 expected-confirmed pair(s) with conflicting via non-corresponding on >=2/3."
+    }
+  ],
+  "pairSummaries": [
+    {
+      "id": "MF01",
+      "expected": "confirmed",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft is byte-identical to the source returned-2.6 sentence; mark-at-1.9 is a different basis for the same fund.",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "sourceFile": "passage-selection-probe/sources/mf01_mark_then_returned.txt",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF01",
+          "runIndex": 1,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007415,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF01",
+          "runIndex": 2,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007405,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF01",
+          "runIndex": 3,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007415,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF02",
+      "expected": "confirmed",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft matches the first performance sentence; the later mark-at-1.9 does not restate returned MOIC.",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "sourceFile": "passage-selection-probe/sources/mf02_returned_then_mark.txt",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF02",
+          "runIndex": 1,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source states the same gross MOIC return for Fund IV as the statement, confirming it on a like-for-like basis.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007425,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF02",
+          "runIndex": 2,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source directly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007405,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF02",
+          "runIndex": 3,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source states the same gross MOIC return for Fund IV as the statement, confirming it on a like-for-like basis.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007425,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF03",
+      "expected": "confirmed",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "paragraph",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft quotes the returned-2.6 line after a filler paragraph; mark-at-1.9 remains a different basis.",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "sourceFile": "passage-selection-probe/sources/mf03_distant_mark_then_returned.txt",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF03",
+          "runIndex": 1,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007477500000000001,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF03",
+          "runIndex": 2,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007477500000000001,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF03",
+          "runIndex": 3,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007477500000000001,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF04",
+      "expected": "confirmed",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "different_irr_vs_moic",
+        "entity": "same_fund",
+        "wording": "identical"
+      },
+      "justifyExpected": "Draft matches the MOIC returned sentence; the competing mark is IRR, not a MOIC multiple.",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 24% gross IRR.",
+      "sourceFile": "passage-selection-probe/sources/mf04_irr_then_moic.txt",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF04",
+          "runIndex": 1,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source directly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.0073825,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF04",
+          "runIndex": 2,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source directly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.0073825,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF04",
+          "runIndex": 3,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source states the same gross MOIC return for Fund IV as the statement, confirming it on a like-for-like basis.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.0074025,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF05",
+      "expected": "confirmed",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "deal_vs_fund",
+        "wording": "paraphrase"
+      },
+      "justifyExpected": "Paraphrase restates the Vale Forge exit multiple; fund mark-at-1.9 is a different entity.",
+      "draft": "Vale Forge returned 2.6 times gross MOIC on exit as a Fund IV platform.",
+      "correspondingPassage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC.",
+      "sourceFile": "passage-selection-probe/sources/mf05_fund_mark_deal_return.txt",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF05",
+          "runIndex": 1,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+          "explanation": "The source confirms that Vale Forge, as a Fund IV platform, returned 2.6 times gross MOIC on exit, matching the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "vale-returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": true,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.00794,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF05",
+          "runIndex": 2,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+          "explanation": "The source confirms that Vale Forge, as a Fund IV platform, returned 2.6 times gross MOIC on exit, matching the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "vale-returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": true,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.00794,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF05",
+          "runIndex": 3,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+          "explanation": "The source confirms that Vale Forge, as a Fund IV platform, returned 2.6 times gross MOIC on exit, matching the statement exactly.",
+          "corresponds": true,
+          "correspondNote": "vale-returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": true,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.00794,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF06",
+      "expected": "conflicting",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical_figure_wrong_basis"
+      },
+      "justifyExpected": "Source marks Fund IV at 1.9x and separately says it has returned 2.6; draft wrongly states returned 1.9.",
+      "draft": "Fund IV has returned 1.9 times gross MOIC.",
+      "correspondingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "competingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "sourceFile": "passage-selection-probe/sources/mf07_false_returned_mark_figure.txt",
+      "labels": [
+        "conflicting",
+        "conflicting",
+        "conflicting"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF06",
+          "runIndex": 1,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The statement claims a return of 1.9 times gross MOIC, while the source states a return of 2.6 times gross MOIC for Fund IV, which is mutually exclusive on a like-for-like basis.",
+          "corresponds": false,
+          "correspondNote": "returned-2.6_also_conflict",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007635,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF06",
+          "runIndex": 2,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR. Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source states that Fund IV has returned 2.6 times gross MOIC, which is mutually exclusive with the statement's claim of 1.9 times gross MOIC.",
+          "corresponds": true,
+          "correspondNote": "mark-1.9",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": true
+          },
+          "costUsd": 0.007765,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF06",
+          "runIndex": 3,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR. Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The source states that Fund IV has returned 2.6 times gross MOIC, which is mutually exclusive with the statement's claim of 1.9 times gross MOIC.",
+          "corresponds": true,
+          "correspondNote": "mark-1.9",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": true
+          },
+          "costUsd": 0.007765,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF07",
+      "expected": "conflicting",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical_figure_wrong_basis"
+      },
+      "justifyExpected": "Source marks Fund IV at 1.9x; 2.6 appears only as returned MOIC, so a current mark of 2.6 contradicts the mark line.",
+      "draft": "Fund IV is currently marked at 2.6x gross MOIC.",
+      "correspondingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "competingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "sourceFile": "passage-selection-probe/sources/mf08_false_mark_using_return_figure.txt",
+      "labels": [
+        "conflicting",
+        "conflicting",
+        "conflicting"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF07",
+          "runIndex": 1,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+          "explanation": "The statement claims Fund IV is currently marked at 2.6x gross MOIC, while the source states it is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+          "corresponds": true,
+          "correspondNote": "mark-1.9",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": true
+          },
+          "costUsd": 0.007770000000000001,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF07",
+          "runIndex": 2,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+          "explanation": "The source states that Fund IV is currently marked at 1.9x gross MOIC, which directly conflicts with the statement that it is marked at 2.6x gross MOIC.",
+          "corresponds": true,
+          "correspondNote": "mark-1.9",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": true
+          },
+          "costUsd": 0.007670000000000001,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF07",
+          "runIndex": 3,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+          "explanation": "The statement claims Fund IV is currently marked at 2.6x gross MOIC, while the source states it is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+          "corresponds": true,
+          "correspondNote": "mark-1.9",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": true
+          },
+          "costUsd": 0.007770000000000001,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF08",
+      "expected": "conflicting",
+      "dimensions": {
+        "order": "corresponding_second",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "same_fund",
+        "wording": "identical_frame_wrong_magnitude"
+      },
+      "justifyExpected": "Source says Fund IV has returned 2.6, not 3.0; mark-at-1.9 is also not 3.0 returned.",
+      "draft": "Fund IV has returned 3.0 times gross MOIC.",
+      "correspondingPassage": "Fund IV has returned 2.6 times gross MOIC.",
+      "competingPassage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "sourceFile": "passage-selection-probe/sources/mf09_wrong_return_magnitude.txt",
+      "labels": [
+        "conflicting",
+        "conflicting",
+        "conflicting"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF08",
+          "runIndex": 1,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The statement claims a 3.0 times gross MOIC, while the source states a 2.6 times gross MOIC for Fund IV, which is a significant difference beyond rounding.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007635,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF08",
+          "runIndex": 2,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The statement claims a 3.0 times gross MOIC return for Fund IV, while the source states it has returned 2.6 times gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007645,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF08",
+          "runIndex": 3,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV has returned 2.6 times gross MOIC.",
+          "explanation": "The statement claims a 3.0 times gross MOIC return for Fund IV, while the source states it has returned 2.6 times gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+          "corresponds": true,
+          "correspondNote": "returned-2.6",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": true,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007645,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF09",
+      "expected": "conflicting",
+      "dimensions": {
+        "order": "corresponding_first",
+        "distance": "adjacent",
+        "metric": "same_moic",
+        "entity": "fund_claims_deal_figure",
+        "wording": "identical_to_wrong_entity"
+      },
+      "justifyExpected": "Source never says Fund IV has returned 2.6; that multiple belongs to Vale Forge, while Fund IV is marked at 1.9x.",
+      "draft": "Fund IV has returned 2.6 times gross MOIC.",
+      "correspondingPassage": "Fund IV is currently marked at 1.9x gross MOIC.",
+      "competingPassage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+      "sourceFile": "passage-selection-probe/sources/mf10_false_fund_claim_of_deal_return.txt",
+      "labels": [
+        "conflicting",
+        "conflicting",
+        "conflicting"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF09",
+          "runIndex": 1,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC.",
+          "explanation": "The statement claims Fund IV has returned 2.6 times gross MOIC, while the source states it is currently marked at 1.9x gross MOIC, which is mutually exclusive.",
+          "corresponds": true,
+          "correspondNote": "fund_mark",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007595,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF09",
+          "runIndex": 2,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC.",
+          "explanation": "The statement claims Fund IV has returned 2.6 times gross MOIC, while the source states it is currently marked at 1.9x gross MOIC. These figures are mutually exclusive for the same metric.",
+          "corresponds": true,
+          "correspondNote": "fund_mark",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007645,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF09",
+          "runIndex": 3,
+          "expected": "conflicting",
+          "classification": "conflicting",
+          "passage": "Fund IV is currently marked at 1.9x gross MOIC.",
+          "explanation": "The source states that Fund IV is marked at 1.9x gross MOIC, which directly conflicts with the statement that Fund IV has returned 2.6 times gross MOIC.",
+          "corresponds": true,
+          "correspondNote": "fund_mark",
+          "cues": {
+            "hasMark19": true,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": false,
+            "hasVale": false,
+            "hasNordholt": false,
+            "hasIrr24": false
+          },
+          "costUsd": 0.007585,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    },
+    {
+      "id": "MF10",
+      "expected": "confirmed",
+      "dimensions": {
+        "order": "corresponding_after_fund_mark",
+        "distance": "multi_paragraph",
+        "metric": "same_moic",
+        "entity": "deal_vs_fund",
+        "wording": "identical",
+        "fixture": "real_meridian_source"
+      },
+      "justifyExpected": "Draft is byte-identical to the Nordholt realisation sentence; Fund IV mark-at-1.9 is a different fund and basis.",
+      "draft": "Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+      "correspondingPassage": "Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+      "competingPassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "sourceFile": "eval-ablation/meridian_source.txt",
+      "labels": [
+        "confirmed",
+        "confirmed",
+        "confirmed"
+      ],
+      "labelMatch2of3": true,
+      "passageMatch2of3": true,
+      "rightLabelWrongPassage2of3": false,
+      "falseRed": false,
+      "falseRedViaWrongPassage": false,
+      "overcorrection": false,
+      "runs": [
+        {
+          "pairId": "MF10",
+          "runIndex": 1,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Selected realisation: Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+          "explanation": "The source confirms the statement by providing the same details about Nordholt Systems, including the entry and exit years, the 3.1x gross MOIC, the six-year hold period, and the three bolt-on acquisitions.",
+          "corresponds": true,
+          "correspondNote": "nordholt-3.1",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": true,
+            "hasVale": false,
+            "hasNordholt": true,
+            "hasIrr24": false
+          },
+          "costUsd": 0.010355,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF10",
+          "runIndex": 2,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Selected realisation: Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+          "explanation": "The source confirms the statement by providing the same details about Nordholt Systems, including the entry and exit years, the 3.1x gross MOIC, the six-year hold period, and the three bolt-on acquisitions.",
+          "corresponds": true,
+          "correspondNote": "nordholt-3.1",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": true,
+            "hasVale": false,
+            "hasNordholt": true,
+            "hasIrr24": false
+          },
+          "costUsd": 0.010355,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        },
+        {
+          "pairId": "MF10",
+          "runIndex": 3,
+          "expected": "confirmed",
+          "classification": "confirmed",
+          "passage": "Selected realisation: Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+          "explanation": "The source confirms the statement by providing the same details about Nordholt Systems, including the entry and exit years, the 3.1x gross MOIC, the six-year hold period, and the three bolt-on acquisitions.",
+          "corresponds": true,
+          "correspondNote": "nordholt-3.1",
+          "cues": {
+            "hasMark19": false,
+            "hasRet26": false,
+            "hasRet30": false,
+            "hasRet31": true,
+            "hasVale": false,
+            "hasNordholt": true,
+            "hasIrr24": false
+          },
+          "costUsd": 0.010355,
+          "systemFingerprint": "fp_17e3c4f467",
+          "skipped": false
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "pairId": "MF01",
+      "runIndex": 1,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007415,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF01",
+      "runIndex": 2,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007405,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF01",
+      "runIndex": 3,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007415,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF02",
+      "runIndex": 1,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source states the same gross MOIC return for Fund IV as the statement, confirming it on a like-for-like basis.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007425,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF02",
+      "runIndex": 2,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source directly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007405,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF02",
+      "runIndex": 3,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source states the same gross MOIC return for Fund IV as the statement, confirming it on a like-for-like basis.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007425,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF03",
+      "runIndex": 1,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007477500000000001,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF03",
+      "runIndex": 2,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007477500000000001,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF03",
+      "runIndex": 3,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007477500000000001,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF04",
+      "runIndex": 1,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source directly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.0073825,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF04",
+      "runIndex": 2,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source directly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.0073825,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF04",
+      "runIndex": 3,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source states the same gross MOIC return for Fund IV as the statement, confirming it on a like-for-like basis.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.0074025,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF05",
+      "runIndex": 1,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+      "explanation": "The source confirms that Vale Forge, as a Fund IV platform, returned 2.6 times gross MOIC on exit, matching the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "vale-returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": true,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.00794,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF05",
+      "runIndex": 2,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+      "explanation": "The source confirms that Vale Forge, as a Fund IV platform, returned 2.6 times gross MOIC on exit, matching the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "vale-returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": true,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.00794,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF05",
+      "runIndex": 3,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+      "explanation": "The source confirms that Vale Forge, as a Fund IV platform, returned 2.6 times gross MOIC on exit, matching the statement exactly.",
+      "corresponds": true,
+      "correspondNote": "vale-returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": true,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.00794,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF06",
+      "runIndex": 1,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The statement claims a return of 1.9 times gross MOIC, while the source states a return of 2.6 times gross MOIC for Fund IV, which is mutually exclusive on a like-for-like basis.",
+      "corresponds": false,
+      "correspondNote": "returned-2.6_also_conflict",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007635,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF06",
+      "runIndex": 2,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR. Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source states that Fund IV has returned 2.6 times gross MOIC, which is mutually exclusive with the statement's claim of 1.9 times gross MOIC.",
+      "corresponds": true,
+      "correspondNote": "mark-1.9",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": true
+      },
+      "costUsd": 0.007765,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF06",
+      "runIndex": 3,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR. Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source states that Fund IV has returned 2.6 times gross MOIC, which is mutually exclusive with the statement's claim of 1.9 times gross MOIC.",
+      "corresponds": true,
+      "correspondNote": "mark-1.9",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": true
+      },
+      "costUsd": 0.007765,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF07",
+      "runIndex": 1,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "explanation": "The statement claims Fund IV is currently marked at 2.6x gross MOIC, while the source states it is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "corresponds": true,
+      "correspondNote": "mark-1.9",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": true
+      },
+      "costUsd": 0.007770000000000001,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF07",
+      "runIndex": 2,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "explanation": "The source states that Fund IV is currently marked at 1.9x gross MOIC, which directly conflicts with the statement that it is marked at 2.6x gross MOIC.",
+      "corresponds": true,
+      "correspondNote": "mark-1.9",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": true
+      },
+      "costUsd": 0.007670000000000001,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF07",
+      "runIndex": 3,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "explanation": "The statement claims Fund IV is currently marked at 2.6x gross MOIC, while the source states it is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "corresponds": true,
+      "correspondNote": "mark-1.9",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": true
+      },
+      "costUsd": 0.007770000000000001,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF08",
+      "runIndex": 1,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The statement claims a 3.0 times gross MOIC, while the source states a 2.6 times gross MOIC for Fund IV, which is a significant difference beyond rounding.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007635,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF08",
+      "runIndex": 2,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The statement claims a 3.0 times gross MOIC return for Fund IV, while the source states it has returned 2.6 times gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007645,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF08",
+      "runIndex": 3,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The statement claims a 3.0 times gross MOIC return for Fund IV, while the source states it has returned 2.6 times gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "corresponds": true,
+      "correspondNote": "returned-2.6",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": true,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007645,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF09",
+      "runIndex": 1,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC.",
+      "explanation": "The statement claims Fund IV has returned 2.6 times gross MOIC, while the source states it is currently marked at 1.9x gross MOIC, which is mutually exclusive.",
+      "corresponds": true,
+      "correspondNote": "fund_mark",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007595,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF09",
+      "runIndex": 2,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC.",
+      "explanation": "The statement claims Fund IV has returned 2.6 times gross MOIC, while the source states it is currently marked at 1.9x gross MOIC. These figures are mutually exclusive for the same metric.",
+      "corresponds": true,
+      "correspondNote": "fund_mark",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007645,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF09",
+      "runIndex": 3,
+      "expected": "conflicting",
+      "classification": "conflicting",
+      "passage": "Fund IV is currently marked at 1.9x gross MOIC.",
+      "explanation": "The source states that Fund IV is marked at 1.9x gross MOIC, which directly conflicts with the statement that Fund IV has returned 2.6 times gross MOIC.",
+      "corresponds": true,
+      "correspondNote": "fund_mark",
+      "cues": {
+        "hasMark19": true,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": false,
+        "hasVale": false,
+        "hasNordholt": false,
+        "hasIrr24": false
+      },
+      "costUsd": 0.007585,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF10",
+      "runIndex": 1,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Selected realisation: Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+      "explanation": "The source confirms the statement by providing the same details about Nordholt Systems, including the entry and exit years, the 3.1x gross MOIC, the six-year hold period, and the three bolt-on acquisitions.",
+      "corresponds": true,
+      "correspondNote": "nordholt-3.1",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": true,
+        "hasVale": false,
+        "hasNordholt": true,
+        "hasIrr24": false
+      },
+      "costUsd": 0.010355,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF10",
+      "runIndex": 2,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Selected realisation: Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+      "explanation": "The source confirms the statement by providing the same details about Nordholt Systems, including the entry and exit years, the 3.1x gross MOIC, the six-year hold period, and the three bolt-on acquisitions.",
+      "corresponds": true,
+      "correspondNote": "nordholt-3.1",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": true,
+        "hasVale": false,
+        "hasNordholt": true,
+        "hasIrr24": false
+      },
+      "costUsd": 0.010355,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF10",
+      "runIndex": 3,
+      "expected": "confirmed",
+      "classification": "confirmed",
+      "passage": "Selected realisation: Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.",
+      "explanation": "The source confirms the statement by providing the same details about Nordholt Systems, including the entry and exit years, the 3.1x gross MOIC, the six-year hold period, and the three bolt-on acquisitions.",
+      "corresponds": true,
+      "correspondNote": "nordholt-3.1",
+      "cues": {
+        "hasMark19": false,
+        "hasRet26": false,
+        "hasRet30": false,
+        "hasRet31": true,
+        "hasVale": false,
+        "hasNordholt": true,
+        "hasIrr24": false
+      },
+      "costUsd": 0.010355,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    }
+  ]
+}
