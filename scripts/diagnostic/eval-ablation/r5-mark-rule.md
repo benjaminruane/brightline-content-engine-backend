@@ -89,7 +89,7 @@ F01_S11 plant=PLANTED noise=false r3a=nosup R5 nosup/nosup/nosup hold=true
 
 ## RECORD F92_S0 and EA_E1
 
-F92_S0 expected to stay confirmed on both arms. Say so.
+F92_S0 was expected to stay confirmed on both arms. On this run R3a came back part/part/part and R5 conf/conf/conf. RECORD only; not a HOLD. Do not treat the R3a partial as a new finding without a repeat.
 
 ```
 F92_S0  R3a part/part/part  R5 conf/conf/conf
