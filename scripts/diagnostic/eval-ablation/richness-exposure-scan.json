@@ -1,0 +1,690 @@
+{
+  "out": {
+    "scanned": 60,
+    "errors": [],
+    "withMark": 15,
+    "withRich": 3,
+    "richWithReturnDraft": 2,
+    "richFiles": [
+      {
+        "file": "eval-ablation/meridian_source.txt",
+        "richCount": 1,
+        "rich": [
+          {
+            "markSentence": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+            "following": null,
+            "where": "same_sentence"
+          }
+        ],
+        "returnDraftAgainst": [
+          {
+            "fixtureId": "MF10",
+            "nReturnStatements": 1,
+            "sample": "Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions."
+          },
+          {
+            "fixtureId": "EA_E3",
+            "nReturnStatements": 1,
+            "sample": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+          }
+        ]
+      },
+      {
+        "file": "passage-selection-probe/sources/rich01_mf01_with_rich_mark.txt",
+        "richCount": 1,
+        "rich": [
+          {
+            "markSentence": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+            "following": "Four of twelve platform investments are fully realised; the remainder remain in the portfolio at carrying value.",
+            "where": "following_sentence"
+          }
+        ],
+        "returnDraftAgainst": []
+      },
+      {
+        "file": "sources/93_adversarial_basis_mismatch.txt",
+        "richCount": 1,
+        "rich": [
+          {
+            "markSentence": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+            "following": "Four of twelve platform investments are fully realised; the remainder remain in the portfolio at carrying value.",
+            "where": "following_sentence"
+          }
+        ],
+        "returnDraftAgainst": [
+          {
+            "fixtureId": "93",
+            "nReturnStatements": 3,
+            "sample": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+          },
+          {
+            "fixtureId": "93",
+            "nReturnStatements": 3,
+            "sample": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+          }
+        ]
+      }
+    ],
+    "markOnlyFiles": [
+      "claim-spans/evaluative-accident/draft_e3.txt",
+      "claim-spans/evaluative-accident/source_ic_memo.txt",
+      "passage-selection-probe/sources/mf01_mark_then_returned.txt",
+      "passage-selection-probe/sources/mf02_returned_then_mark.txt",
+      "passage-selection-probe/sources/mf03_distant_mark_then_returned.txt",
+      "passage-selection-probe/sources/mf04_irr_then_moic.txt",
+      "passage-selection-probe/sources/mf05_fund_mark_deal_return.txt",
+      "passage-selection-probe/sources/mf07_false_returned_mark_figure.txt",
+      "passage-selection-probe/sources/mf08_false_mark_using_return_figure.txt",
+      "passage-selection-probe/sources/mf09_wrong_return_magnitude.txt",
+      "passage-selection-probe/sources/mf10_false_fund_claim_of_deal_return.txt",
+      "passage-selection-probe/sources/thin93_f93_with_thin_mark.txt"
+    ]
+  },
+  "rows": [
+    {
+      "rel": "b67-probe/draft_dirty.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "b67-probe/source_fact_sheet.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "b67-probe/source_ic_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "b67-probe/source_lp_update.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "b67-probe/source_press_release.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "claim-spans/evaluative-accident/draft_e1.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "claim-spans/evaluative-accident/draft_e2.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "claim-spans/evaluative-accident/draft_e3.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is marked at 1.9x gross MOIC and Fund III at 1.7x, and that level speaks well of the manager's judgement."
+      ],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "claim-spans/evaluative-accident/source_ic_memo.txt",
+      "hasMark": true,
+      "markCount": 2,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is marked at 1.9x gross MOIC.",
+        "Fund III is marked at 1.7x gross MOIC."
+      ],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "eval-ablation/meridian_source.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [
+        {
+          "markSentence": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "following": null,
+          "where": "same_sentence"
+        }
+      ],
+      "markSamples": [
+        "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF10",
+          "nReturnStatements": 1,
+          "sample": "Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions."
+        },
+        {
+          "fixtureId": "EA_E3",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+        }
+      ]
+    },
+    {
+      "rel": "nordholt-downloads/draft_hold_update_DIRTY.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "nordholt-downloads/draft_hold_update_clean.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "nordholt-downloads/source_1_ic_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "nordholt-downloads/source_2_press_release.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "nordholt-downloads/source_3_fact_sheet.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "nordholt-downloads/source_4_lp_update.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf01_mark_then_returned.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF01",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 2.6 times gross MOIC."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf02_returned_then_mark.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF02",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 2.6 times gross MOIC."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf03_distant_mark_then_returned.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF03",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 2.6 times gross MOIC."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf04_irr_then_moic.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 24% gross IRR."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF04",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 2.6 times gross MOIC."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf05_fund_mark_deal_return.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF05",
+          "nReturnStatements": 1,
+          "sample": "Vale Forge returned 2.6 times gross MOIC on exit as a Fund IV platform."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf07_false_returned_mark_figure.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF06",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 1.9 times gross MOIC."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf08_false_mark_using_return_figure.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf09_wrong_return_magnitude.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF08",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 3.0 times gross MOIC."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/mf10_false_fund_claim_of_deal_return.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "MF09",
+          "nReturnStatements": 1,
+          "sample": "Fund IV has returned 2.6 times gross MOIC."
+        }
+      ]
+    },
+    {
+      "rel": "passage-selection-probe/sources/rich01_mf01_with_rich_mark.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [
+        {
+          "markSentence": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+          "following": "Four of twelve platform investments are fully realised; the remainder remain in the portfolio at carrying value.",
+          "where": "following_sentence"
+        }
+      ],
+      "markSamples": [
+        "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "passage-selection-probe/sources/thin93_f93_with_thin_mark.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [],
+      "markSamples": [
+        "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/01_bvp_shopify_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/02_pg_atnorth_exit.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/03_pg_gestcompost_investment.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/04_synth_vc_pinterest_style_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/05_synth_competitor_press_release.pdf",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/06_synth_listed_pe_report_excerpt.pdf",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/07_synth_vc_thesis_post.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/08_synth_industrial_buyout_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/09_synth_portfolio_update_letter.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/10_synth_public_press_release.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/11_synth_investor_letter_exit.pdf",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/12_synth_linkedin_post.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/13_synth_internal_inconsistency_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/14_synth_thesis_only_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/15_synth_very_long_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/16_synth_healthcare_consumer.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/17_synth_real_estate_logistics.pdf",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "17",
+          "nReturnStatements": 1,
+          "sample": "The Portfolio comprises 337,000 square metres of lettable area distributed across Greater London (89,000 sqm in three assets), Greater Paris (72,000 sqm in three assets), Greater Amsterdam (64,000 sqm in two assets), Greater Madrid (71,000 sqm in two assets), and Greater Milan (41,000 sqm in one asset)."
+        }
+      ]
+    },
+    {
+      "rel": "sources/18a_synth_cross_source_pair_initial.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/18b_synth_cross_source_pair_update.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/19_synth_annual_report.pdf",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/20_synth_fund_close_announcement.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/21_r6_6_2_residual_legs.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/90_adversarial_b17_latent.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/91_adversarial_shopify_2010_trimmed.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/93_adversarial_basis_mismatch.txt",
+      "hasMark": true,
+      "markCount": 1,
+      "rich": [
+        {
+          "markSentence": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+          "following": "Four of twelve platform investments are fully realised; the remainder remain in the portfolio at carrying value.",
+          "where": "following_sentence"
+        }
+      ],
+      "markSamples": [
+        "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR."
+      ],
+      "returnDraftAgainst": [
+        {
+          "fixtureId": "93",
+          "nReturnStatements": 3,
+          "sample": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+        },
+        {
+          "fixtureId": "93",
+          "nReturnStatements": 3,
+          "sample": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+        }
+      ]
+    },
+    {
+      "rel": "sources/ALP_IC_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/ALP_update_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/CRF_IC_memo.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "sources/CRF_diligence_update.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "supersession/draft_supersession.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "supersession/source_A_annual_report_2019.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "supersession/source_B_fy2024_results.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    },
+    {
+      "rel": "supersession/source_C_fund_update_2026.txt",
+      "hasMark": false,
+      "markCount": 0,
+      "rich": [],
+      "markSamples": [],
+      "returnDraftAgainst": []
+    }
+  ]
+}
