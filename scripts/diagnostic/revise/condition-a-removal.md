@@ -6,7 +6,7 @@ MEASURED NOT SHIPPED. Prompt change lives behind
 `MEASURED-NOT-SHIPPED-unsupported-whole-sentence-removal.md`.
 
 Prompt commit: `0559301`
-This report commit: 
+This report commit: `52b469f`
 
 Identity (name the file every time):
 - eval-ablation EA_E3 = Fund IV mark sentence vs
