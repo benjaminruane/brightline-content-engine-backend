@@ -20,15 +20,17 @@ The passage must be a single contiguous verbatim excerpt from the source. If the
 
 Classification values
 
-• "confirmed" — on a like-for-like basis (same metric, same frame, same entity-role), the source states the same substance as the statement, including paraphrase, formatting, correct rounding.
+• "confirmed" — on a like-for-like basis (same metric, same frame, same entity-role, same basis), the source states the same substance as the statement, including paraphrase, formatting, correct rounding. Paraphrase does not cover a basis swap: returned, realised or distributed versus marked at, valued at, carried at or unrealised; or gross versus net.
 
 • "partially_confirmed" — the source supports part of the statement AND the draft asserts an additional checkable claim the source does not cover, OR the draft is genuinely broader in scope, OR there is a frame/period-role mismatch (vintage vs operating year; revenue vs GMV), OR the source confirms some facts and is silent on others.
 
-• "conflicting" — the source states something mutually exclusive with the draft on a like-for-like basis. This includes: a different named entity or ownership/context in the same role; a number that differs from the source's same-metric figure by more than rounding; a status/modality contradiction only when the draft asserts a definite completed action using invested, acquired, completed, sold, or exited, specific enough to be checkable, that the source directly shows as proposed, recommended, sought, or not yet done. Do not fire modality-conflict on "committed", "a new investment", "the fund holds", or other cover / deal-terms wording that names amount and vehicle without asserting that the transaction has already closed. Those follow ordinary support (confirmed or partial).
+• "conflicting" — the source states something mutually exclusive with the draft on a like-for-like basis. This includes: a different named entity or ownership/context in the same role; a number that differs from the source's same-metric figure by more than rounding; the same figure stated on a different basis (gross versus net); a status/modality contradiction only when the draft asserts a definite completed action using invested, acquired, completed, sold, exited, returned, realised, or distributed, specific enough to be checkable, that the source directly shows as proposed, recommended, sought, not yet done, marked at, valued at, carried at, or unrealised. Do not fire modality-conflict on "committed", "a new investment", "the fund holds", or other cover / deal-terms wording that names amount and vehicle without asserting that the transaction has already closed. Those follow ordinary support (confirmed or partial).
 
 • "no_support" — the source does not address the claim at all. A related, narrower, or broader treatment of the same claim is partially_confirmed, not no_support. A non-factual procedural closer with no checkable claim (for example 'We recommend approval.') is no_support.
 
-Wording that adds no new checkable claim, including paraphrase, formatting, correct rounding, voice, and descriptive adjectives, does not by itself block confirmed.
+Wording that adds no new checkable claim, including paraphrase, formatting, correct rounding, voice, and descriptive adjectives, does not by itself block confirmed. That carve-out does not apply where the statement and the source give the same figure under different bases (returned, realised or distributed versus marked at, valued at, carried at or unrealised; gross versus net).
+
+Basis mismatches of returned, realised or distributed versus marked at, valued at, carried at or unrealised may be classified conflicting only when the statement and the cited passage state the same quantity. When those quantities differ, do not fire a basis conflict; select the passage that addresses the same quantity the statement asserts, if one exists, and classify from that passage. Ordinary magnitude conflicts between two returned figures, or two marked figures, or any other same-basis same-metric pair, are unchanged.
 
 Frame and period priority
 Judge the period, vintage, duration or frame of a statement before judging its figures or its evaluative wording. A duration, tenure, hold length, or partnership length that the source states differently, or does not state, is enough on its own: classify partially_confirmed even when the rest of the statement matches, including when the duration sits in an otherwise matching opener. If the statement attaches a period, vintage, duration or frame the source does not support, the statement is partially_confirmed even when every figure matches and even when every other clause would otherwise confirm.
@@ -46,6 +48,12 @@ Statement: 'The fund returned 2.4x gross MOIC, placing it in the top quartile of
 Source: 'The fund returned 2.4x gross MOIC across seventeen exits.'
 Correct classification: partially_confirmed
 Reasoning: The MOIC matches. 'Top quartile of European peers' is a ranking the source does not state.
+
+3d) Basis mismatch (returned versus marked) → conflicting
+Statement: 'Fund IV has returned 1.9 times gross MOIC.'
+Source: 'Fund IV is currently marked at 1.9 times gross MOIC.'
+Correct classification: conflicting
+Reasoning: The figure matches. The statement presents it as returned; the source presents it as a current mark. That is a basis mismatch and is mutually exclusive, not paraphrase.
 
 Worked examples
 

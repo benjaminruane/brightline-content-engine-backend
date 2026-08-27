@@ -630,7 +630,7 @@ describe("B72 percent canonical ids (sentence scope, prefix collisions)", () => 
 });
 
 describe("B48 prompt anchors", () => {
-  test("stage2_v4.md pins R3a promptHash and retains load-bearing rule blocks", async () => {
+  test("stage2_v4.md pins R10 promptHash and retains load-bearing rule blocks", async () => {
     const prompt = (
       await readFile(path.join(__dirname, "../lib/qc/pipeline-v4/prompts/stage2_v4.md"), "utf8")
     ).trim();
@@ -638,14 +638,22 @@ describe("B48 prompt anchors", () => {
     // and a corpus blast before it ships.
     assert.equal(
       hashPromptContent(prompt),
-      "bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c"
+      "44847c61b07bac89855b9a0f555e30f528077ebe0b3a8baa2c2c06669d60b3e1"
     );
+    assert.equal(prompt.length, 14259);
     assert.match(prompt, /Frame and period priority/);
     assert.match(prompt, /Evaluative claims/);
     assert.match(
       prompt,
       /If the statement says a fact means or implies that a risk is limited/
     );
+    // R10: basis limb is quantity-scoped; magnitude conflicts stay on their own route.
+    assert.match(
+      prompt,
+      /Basis mismatches of returned, realised or distributed versus marked at, valued at, carried at or unrealised may be classified conflicting only when the statement and the cited passage state the same quantity/
+    );
+    assert.match(prompt, /Ordinary magnitude conflicts between two returned figures/);
+    assert.match(prompt, /3d\) Basis mismatch \(returned versus marked\)/);
   });
 });
 
