@@ -1,0 +1,182 @@
+{
+  "prompt": {
+    "path": "lib/qc/pipeline-v4/prompts/stage2_v4.md",
+    "length": 12812,
+    "sha256": "bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c"
+  },
+  "cache": "OFF",
+  "draft": "Fund IV has returned 2.6 times gross MOIC.",
+  "richMark": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR. Four of twelve platform investments are fully realised; the remainder remain in the portfolio at carrying value.",
+  "thinMark": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+  "totalCostUsd": 0.09447749999999999,
+  "anchorsOk": true,
+  "reading": "RICHNESS_CONFIRMED",
+  "labels": {
+    "RICH01": [
+      "conflicting",
+      "conflicting",
+      "conflicting"
+    ],
+    "THIN93": [
+      "confirmed",
+      "confirmed",
+      "confirmed"
+    ],
+    "F93_S2": [
+      "conflicting",
+      "conflicting",
+      "confirmed"
+    ],
+    "MF01": [
+      "confirmed",
+      "confirmed",
+      "confirmed"
+    ]
+  },
+  "results": [
+    {
+      "pairId": "RICH01",
+      "runIndex": 1,
+      "role": "swap",
+      "classification": "conflicting",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR. Four of twelve platform investments are fully realised; the remainder remain in the portfolio at carrying value.",
+      "explanation": "The source states that Fund IV is currently marked at 1.9x gross MOIC, which conflicts with the statement that it has returned 2.6 times gross MOIC.",
+      "passageNote": "HUNT_rich_mark-1.9",
+      "costUsd": 0.008425,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "RICH01",
+      "runIndex": 2,
+      "role": "swap",
+      "classification": "conflicting",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "explanation": "The source states that Fund IV is currently marked at 1.9x gross MOIC, which is mutually exclusive with the statement's claim of a 2.6x gross MOIC return.",
+      "passageNote": "HUNT_thin_mark-1.9",
+      "costUsd": 0.008265,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "RICH01",
+      "runIndex": 3,
+      "role": "swap",
+      "classification": "conflicting",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "explanation": "The source states that Fund IV is currently marked at 1.9x gross MOIC, which directly conflicts with the statement that it has returned 2.6 times gross MOIC.",
+      "passageNote": "HUNT_thin_mark-1.9",
+      "costUsd": 0.008244999999999999,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "THIN93",
+      "runIndex": 1,
+      "role": "swap",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "passageNote": "returned-2.6",
+      "costUsd": 0.007555,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "THIN93",
+      "runIndex": 2,
+      "role": "swap",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "passageNote": "returned-2.6",
+      "costUsd": 0.007555,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "THIN93",
+      "runIndex": 3,
+      "role": "swap",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which directly confirms the statement.",
+      "passageNote": "returned-2.6",
+      "costUsd": 0.007555,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "F93_S2",
+      "runIndex": 1,
+      "role": "anchor",
+      "classification": "conflicting",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR. Four of twelve platform investments are fully realised; the remainder remain in the portfolio at carrying value.",
+      "explanation": "The source states that Fund IV is currently marked at 1.9x gross MOIC, which conflicts with the statement that it has returned 2.6 times gross MOIC. The figures are mutually exclusive on a like-for-like basis.",
+      "passageNote": "HUNT_rich_mark-1.9",
+      "costUsd": 0.0084175,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "F93_S2",
+      "runIndex": 2,
+      "role": "anchor",
+      "classification": "conflicting",
+      "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+      "explanation": "The statement claims a return of 2.6 times gross MOIC, while the source states that Fund IV is currently marked at 1.9x gross MOIC. These figures are mutually exclusive and cannot be reconciled by rounding.",
+      "passageNote": "HUNT_thin_mark-1.9",
+      "costUsd": 0.008527499999999999,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "F93_S2",
+      "runIndex": 3,
+      "role": "anchor",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+      "passageNote": "returned-2.6",
+      "costUsd": 0.0076974999999999995,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF01",
+      "runIndex": 1,
+      "role": "anchor",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "passageNote": "returned-2.6",
+      "costUsd": 0.007415,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF01",
+      "runIndex": 2,
+      "role": "anchor",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, matching the statement exactly.",
+      "passageNote": "returned-2.6",
+      "costUsd": 0.007405,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    },
+    {
+      "pairId": "MF01",
+      "runIndex": 3,
+      "role": "anchor",
+      "classification": "confirmed",
+      "passage": "Fund IV has returned 2.6 times gross MOIC.",
+      "explanation": "The source explicitly states that Fund IV has returned 2.6 times gross MOIC, which matches the statement exactly.",
+      "passageNote": "returned-2.6",
+      "costUsd": 0.007415,
+      "systemFingerprint": "fp_17e3c4f467",
+      "skipped": false
+    }
+  ]
+}

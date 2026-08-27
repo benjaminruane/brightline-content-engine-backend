@@ -1,0 +1,14 @@
+ADVERSARIAL / SYNTHETIC - mark-richness probe THIN93
+Not a production source. Copy of fixture 93 with MF01's thin mark sentence.
+Do not edit scripts/diagnostic/sources/93_adversarial_basis_mismatch.txt.
+
+HALDEN GROUP - FUND IV LP UPDATE
+Date: 12 March 2026
+From: Halden Group Investor Relations
+Subject: Fund IV performance update
+
+Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.
+
+Fund IV has returned 2.6 times gross MOIC.
+
+Team and pipeline notes are unchanged from the December 2025 update.
