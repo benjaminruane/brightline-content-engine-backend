@@ -35,15 +35,17 @@ When writing a new diagnostic, classify it with that rule. If the model is the t
 
 Do not stretch `claim-spans/.baseline.json` into a general cache. It remains a frozen A/B snapshot of Stage 1 plus whole-sentence Stage 2 for the claim-span shadows only.
 
-## Stale Stage 2 references after R3a (2026-08-26)
+## Stale Stage 2 references after R10 (2026-08-27)
 
-R3a shipped live (`stage2-rewrite-r3a`, promptHash `bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c`, 12812 chars). Two on-disk caches still hold **old-prompt** Stage 2 rows (promptHash `c718c190315ec131946cfa73452d12f417a01117fc04e2b63daca8e1455d57fe`). Treat them as **STALE for live-product verdict checks**. Do not regenerate in routine work (~$4).
+R10 shipped live (`stage2-basis-conflict-r10`, promptHash `44847c61b07bac89855b9a0f555e30f528077ebe0b3a8baa2c2c06669d60b3e1`, 14259 chars). Prior on-disk caches and some diagnostic harness EXPECTED_R3A pins still name the R3a hash `bce78c19...` (12812 chars) or older `c718c190...`. Treat those as **STALE for live-product verdict checks** unless the harness intentionally compares against a frozen arm file.
 
 | Path | Status | Notes |
 |------|--------|-------|
 | `claim-spans/.baseline.json` | STALE | Produced under old prompt (promptHash `c718c190`). Shadow A/B snapshot only. |
-| `.llm-cache.json` | STALE for Stage 2 | 643 Stage 2 rows at promptHash `c718c190`. Stage 1 rows may still be usable. |
-| `eval-ablation/r3a-corpus-blast-rows.json` | **CURRENT** | 364 pairs under R3a. Use for Stage 2 blast-radius and graded-set checks. |
+| `.llm-cache.json` | STALE for Stage 2 | Rows at pre-R10 promptHash values. |
+| `eval-ablation/r3a-corpus-blast-rows.json` | R3a-era reference | 364 pairs under R3a. Historical. |
+| `eval-ablation/r10-corpus-blast-rows.json` | **CURRENT blast** | 378 pairs R3a vs R10 under `ce3d85e`. |
+| `eval-ablation/basis-conflict-r10.txt` | Measured arm (now live) | Byte-identical to live `stage2_v4.md` at ship. |
 
 Local copies of the stale files may carry a `_staleNote` field at the JSON root when present. Regenerating the claim-spans baseline is backlog **B114** (decision deferred until something needs it).
 
