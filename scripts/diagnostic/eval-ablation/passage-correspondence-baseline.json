@@ -511,7 +511,7 @@
           "hasAllBetter": false,
           "hasSomeBetter": true,
           "bestCoverage": "SOME",
-          "bestSentence": "INVESTMENT COMMITTEE MEMORANDUM — NORDHOLT LOGISTICS Date: 14 March 2023 Prepared for the Investment Committee of Ashford Capital Partners Fund IV 1.",
+          "bestSentence": "INVESTMENT COMMITTEE MEMORANDUM - NORDHOLT LOGISTICS Date: 14 March 2023 Prepared for the Investment Committee of Ashford Capital Partners Fund IV 1.",
           "rejectedCount": 0
         },
         "defensibility": {
@@ -697,7 +697,7 @@
         "caseLabel": "nordholt-clean",
         "classification": "no_support",
         "statementText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
-        "passage": "NORDHOLT LOGISTICS — KEY OPERATING METRICS\nAs at 30 June 2026\n\nEmployees: 720\nFacilities: 14 (Sweden, Denmark, Finland)\nFacility utilisation: 88 per cent\nContracted revenue: 70 per cent of total revenue\nCombined annual revenue: EUR 155 million\nNet IRR to date (Ashford Fund IV): 14 per cent",
+        "passage": "NORDHOLT LOGISTICS - KEY OPERATING METRICS\nAs at 30 June 2026\n\nEmployees: 720\nFacilities: 14 (Sweden, Denmark, Finland)\nFacility utilisation: 88 per cent\nContracted revenue: 70 per cent of total revenue\nCombined annual revenue: EUR 155 million\nNet IRR to date (Ashford Fund IV): 14 per cent",
         "stmtFigs": [
           "percent:19"
         ],
@@ -1109,7 +1109,7 @@
         "caseLabel": "nordholt-dirty",
         "classification": "no_support",
         "statementText": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
-        "passage": "NORDHOLT LOGISTICS — KEY OPERATING METRICS\nAs at 30 June 2026\n\nEmployees: 720\nFacilities: 14 (Sweden, Denmark, Finland)\nFacility utilisation: 88 per cent\nContracted revenue: 70 per cent of total revenue\nCombined annual revenue: EUR 155 million\nNet IRR to date (Ashford Fund IV): 14 per cent",
+        "passage": "NORDHOLT LOGISTICS - KEY OPERATING METRICS\nAs at 30 June 2026\n\nEmployees: 720\nFacilities: 14 (Sweden, Denmark, Finland)\nFacility utilisation: 88 per cent\nContracted revenue: 70 per cent of total revenue\nCombined annual revenue: EUR 155 million\nNet IRR to date (Ashford Fund IV): 14 per cent",
         "stmtFigs": [
           "percent:25"
         ],
@@ -1166,7 +1166,7 @@
           "hasAllBetter": false,
           "hasSomeBetter": true,
           "bestCoverage": "SOME",
-          "bestSentence": "MERIDIAN CAPITAL — FUND III ANNUAL REPORT Date: 12 March 2020 Financial highlights for the year ended 31 December 2019.",
+          "bestSentence": "MERIDIAN CAPITAL - FUND III ANNUAL REPORT Date: 12 March 2020 Financial highlights for the year ended 31 December 2019.",
           "rejectedCount": 0
         },
         "defensibility": {
@@ -1376,7 +1376,7 @@
         "caseLabel": "F12",
         "classification": "no_support",
         "statementText": "Total revenue grew nearly threefold over the hold period and EBITDA margins moved from 11 to 18 percent.",
-        "passage": "Some news worth sharing.\n\nAfter eighteen months of work alongside the team, I'm delighted that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week. NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and one of those quiet category leaders that the Nordic region produces so well.\n\nWhen we acquired NorTech in 2021 it was an excellent company with a clear ceiling — strong in Sweden, under-exposed everywhere else, and held back by a fragmented shareholder structure. Four and a half years later it is a genuinely international business with operations across the Nordic region, Germany, France, the UK, and Poland.",
+        "passage": "Some news worth sharing.\n\nAfter eighteen months of work alongside the team, I'm delighted that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week. NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and one of those quiet category leaders that the Nordic region produces so well.\n\nWhen we acquired NorTech in 2021 it was an excellent company with a clear ceiling - strong in Sweden, under-exposed everywhere else, and held back by a fragmented shareholder structure. Four and a half years later it is a genuinely international business with operations across the Nordic region, Germany, France, the UK, and Poland.",
         "stmtFigs": [
           "percent:18",
           "number:11"
@@ -1401,7 +1401,7 @@
         "caseLabel": "F13",
         "classification": "no_support",
         "statementText": "First, the European freight forwarding software market remains structurally underpenetrated, with approximately 40% of forwarders still on legacy systems or spreadsheets.",
-        "passage": "The principal competition is fragmented legacy software (Riege, CargoWise — which is the dominant player in larger forwarders — and a long tail of regional incumbents). Most legacy products are visibly aged and customer satisfaction is consistently low.",
+        "passage": "The principal competition is fragmented legacy software (Riege, CargoWise - which is the dominant player in larger forwarders - and a long tail of regional incumbents). Most legacy products are visibly aged and customer satisfaction is consistently low.",
         "stmtFigs": [
           "percent:40"
         ],

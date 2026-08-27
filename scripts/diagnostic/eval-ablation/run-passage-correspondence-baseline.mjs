@@ -22,6 +22,12 @@ const ACCIDENT_DIR = path.join(DIAG_ROOT, "claim-spans/evaluative-accident");
 const SUPERSESSION_DIR = path.join(DIAG_ROOT, "supersession");
 const NORDHOLT_DIR = path.join(process.env.HOME || "", "Downloads");
 
+function dashless(s) {
+  return String(s || "")
+    .replace(/\u2013|\u2014/g, "-")
+    .replace(/—|–/g, "-");
+}
+
 function nearlyEqual(a, b) {
   if (a === b) return true;
   const hi = Math.max(Math.abs(a), Math.abs(b));
@@ -724,7 +730,7 @@ async function main() {
   L("");
   L("Identity collision reminder: eval-ablation EA_E3 uses `meridian_source.txt`; claim-spans CS_E3 uses `claim-spans/evaluative-accident/source_ic_memo.txt`; corpus E3:S0:ic_memo is a third statement. Named by file.");
 
-  const md = lines.join("\n") + "\n";
+  const md = dashless(lines.join("\n") + "\n");
   await writeFile(OUT_MD, md, "utf8");
   await writeFile(
     OUT_JSON,

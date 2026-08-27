@@ -185,7 +185,7 @@ nordholt-clean:S1:IC memo
   label=conflicting betterALL=false def=unclear
   note=source has some figures; need case read
   stmtFigs=number:14, number:720
-  better: INVESTMENT COMMITTEE MEMORANDUM — NORDHOLT LOGISTICS Date: 14 March 2023 Prepared for the Investment Committee of Ashford Capital Partners Fund IV 1.
+  better: INVESTMENT COMMITTEE MEMORANDUM - NORDHOLT LOGISTICS Date: 14 March 2023 Prepared for the Investment Committee of Ashford Capital Partners Fund IV 1.
   selected: At the date of this memo the business runs 12 facilities and employs 640 people, principally in Sweden.
 
 nordholt-dirty:S0:fact sheet
@@ -277,7 +277,7 @@ nordholt-clean:S4:fact sheet
   label=no_support betterALL=false def=defensible
   note=source lacks statement figures; NONE+no_support coherent
   stmtFigs=percent:19
-  selected: NORDHOLT LOGISTICS — KEY OPERATING METRICS
+  selected: NORDHOLT LOGISTICS - KEY OPERATING METRICS
 As at 30 June 2026
 
 Employees: 720
