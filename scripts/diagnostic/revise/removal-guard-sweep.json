@@ -1,0 +1,551 @@
+{
+  "ranAt": "2026-08-27T10:29:26.326Z",
+  "modelCalls": 0,
+  "costUsd": 0.0030951,
+  "part1": {
+    "fourNumbers": {
+      "correctCancelledOf9": 5,
+      "wrongCancelled": true,
+      "arguableCancelled": false,
+      "unverifiedQuoteEvents": 2
+    },
+    "passBar": false,
+    "totalCostUsd": 0.0030951,
+    "rows": [
+      {
+        "caseId": "F01",
+        "statementId": "F01:S11",
+        "statementIndex": 11,
+        "sentenceText": "We recommend approval.",
+        "adjudication": "WRONG",
+        "sourceCount": 1,
+        "guardSaysBacked": true,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": true,
+        "wouldCancelDeletion": true,
+        "verifiedSupportingLine": "We recommend this investment.",
+        "verifiedSourceLabel": "01_bvp_shopify_memo",
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.0007102499999999999,
+        "calls": [
+          {
+            "sourceLabel": "01_bvp_shopify_memo",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "We recommend this investment.",
+            "quoteVerified": true,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.0007102499999999999,
+            "usage": {
+              "inputTokens": 4655,
+              "outputTokens": 20
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"We recommend this investment.\"\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F08",
+        "statementId": "F08:S17",
+        "statementIndex": 17,
+        "sentenceText": "We are confident in the team and the opportunity, and we look forward to providing further updates as the hold progresses.",
+        "adjudication": "CORRECT",
+        "sourceCount": 1,
+        "guardSaysBacked": true,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": true,
+        "wouldCancelDeletion": true,
+        "verifiedSupportingLine": "We see meaningful upside optionality from M&A and end-market acceleration.",
+        "verifiedSourceLabel": "08_synth_industrial_buyout_memo",
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.0003855,
+        "calls": [
+          {
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "We see meaningful upside optionality from M&A and end-market acceleration.",
+            "quoteVerified": true,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.0003855,
+            "usage": {
+              "inputTokens": 2454,
+              "outputTokens": 29
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"We see meaningful upside optionality from M&A and end-market acceleration.\"\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F12",
+        "statementId": "F12:S5",
+        "statementIndex": 5,
+        "sentenceText": "The numbers tell one story; the team's transformation tells the bigger one.",
+        "adjudication": "CORRECT",
+        "sourceCount": 1,
+        "guardSaysBacked": true,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": true,
+        "wouldCancelDeletion": true,
+        "verifiedSupportingLine": "Four and a half years later it is a genuinely international business with operations across the Nordic region, Germany, France, the UK, and Poland.",
+        "verifiedSourceLabel": "12_synth_linkedin_post",
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.00009089999999999999,
+        "calls": [
+          {
+            "sourceLabel": "12_synth_linkedin_post",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "Four and a half years later it is a genuinely international business with operations across the Nordic region, Germany, France, the UK, and Poland.",
+            "quoteVerified": true,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.00009089999999999999,
+            "usage": {
+              "inputTokens": 430,
+              "outputTokens": 44
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"Four and a half years later it is a genuinely international business with operations across the Nordic region, Germany, France, the UK, and Poland.\"\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F13",
+        "statementId": "F13:S15",
+        "statementIndex": 15,
+        "sentenceText": "The investment fits well with the broader portfolio strategy.",
+        "adjudication": "CORRECT",
+        "sourceCount": 1,
+        "guardSaysBacked": true,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": true,
+        "wouldCancelDeletion": true,
+        "verifiedSupportingLine": "CloudPivot is a high-quality vertical SaaS asset with strong unit economics, a defensible competitive position, and a clear growth runway.",
+        "verifiedSourceLabel": "13_synth_internal_inconsistency_memo",
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.00028935,
+        "calls": [
+          {
+            "sourceLabel": "13_synth_internal_inconsistency_memo",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "CloudPivot is a high-quality vertical SaaS asset with strong unit economics, a defensible competitive position, and a clear growth runway.",
+            "quoteVerified": true,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.00028935,
+            "usage": {
+              "inputTokens": 1761,
+              "outputTokens": 42
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"CloudPivot is a high-quality vertical SaaS asset with strong unit economics, a defensible competitive position, and a clear growth runway.\"\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F14",
+        "statementId": "F14:S12",
+        "statementIndex": 12,
+        "sentenceText": "We will provide further detail when the work is sufficiently advanced.",
+        "adjudication": "ARGUABLE",
+        "sourceCount": 1,
+        "guardSaysBacked": false,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": false,
+        "wouldCancelDeletion": false,
+        "verifiedSupportingLine": null,
+        "verifiedSourceLabel": null,
+        "unverifiedQuoteEvents": 1,
+        "costUsd": 0.00020835,
+        "calls": [
+          {
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "We would expect to return to the Committee within six months with either a specific transaction memo or a refreshed thesis based on what we have learned.",
+            "quoteVerified": false,
+            "unverifiedQuote": true,
+            "parseOk": true,
+            "costUsd": 0.00020835,
+            "usage": {
+              "inputTokens": 1217,
+              "outputTokens": 43
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"We would expect to return to the Committee within six months with either a specific transaction memo or a refreshed thesis based on what we have learned.\"\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F15",
+        "statementId": "F15:S32",
+        "statementIndex": 32,
+        "sentenceText": "We have high conviction in the management team and the value creation plan, and we look forward to providing further updates as the hold progresses.",
+        "adjudication": "CORRECT",
+        "sourceCount": 1,
+        "guardSaysBacked": true,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": true,
+        "wouldCancelDeletion": true,
+        "verifiedSupportingLine": "The management team is strong.",
+        "verifiedSourceLabel": "15_synth_very_long_memo",
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.0009807,
+        "calls": [
+          {
+            "sourceLabel": "15_synth_very_long_memo",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "The management team is strong.",
+            "quoteVerified": true,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.0009807,
+            "usage": {
+              "inputTokens": 6454,
+              "outputTokens": 21
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"The management team is strong.\"\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F20",
+        "statementId": "F20:S8",
+        "statementIndex": 8,
+        "sentenceText": "Our investment team has been preparing Fund V's pipeline for many months and we expect first capital calls in the second quarter of 2026.",
+        "adjudication": "CORRECT",
+        "sourceCount": 1,
+        "guardSaysBacked": false,
+        "guardRawClaimedBacks": false,
+        "quoteVerified": false,
+        "wouldCancelDeletion": false,
+        "verifiedSupportingLine": null,
+        "verifiedSourceLabel": null,
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.0001116,
+        "calls": [
+          {
+            "sourceLabel": "20_synth_fund_close_announcement",
+            "sourceIndex": 0,
+            "backsClaimed": false,
+            "supportingLine": null,
+            "quoteVerified": false,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.0001116,
+            "usage": {
+              "inputTokens": 680,
+              "outputTokens": 16
+            },
+            "rawResponse": "{\n  \"backs\": false,\n  \"supporting_line\": null\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F21",
+        "statementId": "F21:S3",
+        "statementIndex": 3,
+        "sentenceText": "James Ortiz said, \"Project Atlas will double in value within two years.\"",
+        "adjudication": "CORRECT",
+        "sourceCount": 1,
+        "guardSaysBacked": false,
+        "guardRawClaimedBacks": false,
+        "quoteVerified": false,
+        "wouldCancelDeletion": false,
+        "verifiedSupportingLine": null,
+        "verifiedSourceLabel": null,
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.00005295,
+        "calls": [
+          {
+            "sourceLabel": "21_r6_6_2_residual_legs",
+            "sourceIndex": 0,
+            "backsClaimed": false,
+            "supportingLine": null,
+            "quoteVerified": false,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.00005295,
+            "usage": {
+              "inputTokens": 289,
+              "outputTokens": 16
+            },
+            "rawResponse": "{\n  \"backs\": false,\n  \"supporting_line\": null\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F21",
+        "statementId": "F21:S4",
+        "statementIndex": 4,
+        "sentenceText": "The transaction is expected to close in the second quarter of 2026.",
+        "adjudication": "CORRECT",
+        "sourceCount": 1,
+        "guardSaysBacked": false,
+        "guardRawClaimedBacks": false,
+        "quoteVerified": false,
+        "wouldCancelDeletion": false,
+        "verifiedSupportingLine": null,
+        "verifiedSourceLabel": null,
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.00005295,
+        "calls": [
+          {
+            "sourceLabel": "21_r6_6_2_residual_legs",
+            "sourceIndex": 0,
+            "backsClaimed": false,
+            "supportingLine": null,
+            "quoteVerified": false,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.00005295,
+            "usage": {
+              "inputTokens": 289,
+              "outputTokens": 16
+            },
+            "rawResponse": "{\n  \"backs\": false,\n  \"supporting_line\": null\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F22",
+        "statementId": "F22:S3",
+        "statementIndex": 3,
+        "sentenceText": "Veneto Freight is one of the fund's existing portfolio companies.",
+        "adjudication": "CORRECT",
+        "sourceCount": 2,
+        "guardSaysBacked": false,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": false,
+        "wouldCancelDeletion": false,
+        "verifiedSupportingLine": null,
+        "verifiedSourceLabel": null,
+        "unverifiedQuoteEvents": 1,
+        "costUsd": 0.00013575,
+        "calls": [
+          {
+            "sourceLabel": "ALP_IC_memo",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "The transaction was advised by Elena Foscari, former operations director at Veneto Freight.",
+            "quoteVerified": false,
+            "unverifiedQuote": true,
+            "parseOk": true,
+            "costUsd": 0.0000804,
+            "usage": {
+              "inputTokens": 408,
+              "outputTokens": 32
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"The transaction was advised by Elena Foscari, former operations director at Veneto Freight.\"\n}"
+          },
+          {
+            "sourceLabel": "ALP_update_memo",
+            "sourceIndex": 1,
+            "backsClaimed": false,
+            "supportingLine": null,
+            "quoteVerified": false,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.00005534999999999999,
+            "usage": {
+              "inputTokens": 305,
+              "outputTokens": 16
+            },
+            "rawResponse": "{\n  \"backs\": false,\n  \"supporting_line\": null\n}"
+          }
+        ]
+      },
+      {
+        "caseId": "F23",
+        "statementId": "F23:S4",
+        "statementIndex": 4,
+        "sentenceText": "Aldous Renewables is the fund's largest limited partner.",
+        "adjudication": "CORRECT",
+        "sourceCount": 2,
+        "guardSaysBacked": true,
+        "guardRawClaimedBacks": true,
+        "quoteVerified": true,
+        "wouldCancelDeletion": true,
+        "verifiedSupportingLine": "The opportunity was sourced through the fund's relationship with Aldous Renewables, a long-standing co-investment partner.",
+        "verifiedSourceLabel": "CRF_IC_memo",
+        "unverifiedQuoteEvents": 0,
+        "costUsd": 0.00007680000000000001,
+        "calls": [
+          {
+            "sourceLabel": "CRF_IC_memo",
+            "sourceIndex": 0,
+            "backsClaimed": true,
+            "supportingLine": "The opportunity was sourced through the fund's relationship with Aldous Renewables, a long-standing co-investment partner.",
+            "quoteVerified": true,
+            "unverifiedQuote": false,
+            "parseOk": true,
+            "costUsd": 0.00007680000000000001,
+            "usage": {
+              "inputTokens": 360,
+              "outputTokens": 38
+            },
+            "rawResponse": "{\n  \"backs\": true,\n  \"supporting_line\": \"The opportunity was sourced through the fund's relationship with Aldous Renewables, a long-standing co-investment partner.\"\n}"
+          }
+        ]
+      }
+    ]
+  },
+  "part2": {
+    "patternsSearched": [
+      "non-factual",
+      "procedural",
+      "closer",
+      "not a factual claim",
+      "does not assert",
+      "editorial",
+      "opinion rather than fact",
+      "no checkable claim"
+    ],
+    "patternRegexes": [
+      "non[- ]factual",
+      "\\bprocedural\\b",
+      "\\bcloser\\b",
+      "not a factual claim",
+      "does not assert",
+      "\\beditorial\\b",
+      "opinion rather than fact",
+      "no checkable claim"
+    ],
+    "artefacts": [
+      "claim-spans/.baseline.json",
+      "eval-ablation/r3a-corpus-blast-rows.json",
+      "eval-ablation/r10-corpus-blast-rows.json"
+    ],
+    "pairHits": 12,
+    "uniqueStatements": 4,
+    "uniqueDeclineCluster": 1,
+    "uniqueOtherPattern": 3,
+    "verdictDistributionAll": {
+      "no_support": 1,
+      "confirmed": 3
+    },
+    "verdictDistributionDecline": {
+      "no_support": 1
+    },
+    "verdictDistributionOther": {
+      "confirmed": 3
+    },
+    "fullList": [
+      {
+        "caseId": "F01",
+        "statementId": "F01:S11",
+        "sentence": "We recommend approval.",
+        "classification": "no_support",
+        "declineCluster": true,
+        "patterns": [
+          "non-factual",
+          "procedural",
+          "closer",
+          "no checkable claim"
+        ],
+        "explanation": "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address a recommendation for approval.",
+        "artefact": "claim-spans/.baseline.json"
+      },
+      {
+        "caseId": "F08",
+        "statementId": "F08:S0",
+        "sentence": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+        "classification": "confirmed",
+        "declineCluster": false,
+        "patterns": [
+          "does not assert"
+        ],
+        "explanation": "The source confirms the investment in Helvetia Precision Components, including its location and market focus. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+        "artefact": "claim-spans/.baseline.json"
+      },
+      {
+        "caseId": "F15",
+        "statementId": "F15:S0",
+        "sentence": "We are writing to inform you of a new investment in Casa Verde Group (the \"Company\"), a Milan-headquartered premium European homeware and kitchenware specialist.",
+        "classification": "confirmed",
+        "declineCluster": false,
+        "patterns": [
+          "does not assert"
+        ],
+        "explanation": "The source confirms the statement by discussing the proposed investment in Casa Verde Group, a Milan-headquartered premium European homeware and kitchenware specialist. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+        "artefact": "claim-spans/.baseline.json"
+      },
+      {
+        "caseId": "F17",
+        "statementId": "F17:S0",
+        "sentence": "We are writing to inform you of a new investment in the Urbis Logistics Portfolio, a portfolio of 11 last-mile logistics properties located in major European urban areas.",
+        "classification": "confirmed",
+        "declineCluster": false,
+        "patterns": [
+          "does not assert"
+        ],
+        "explanation": "The source confirms the statement by describing the proposed investment in the Urbis Logistics Portfolio, which consists of 11 last-mile logistics properties in major European urban areas. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+        "artefact": "claim-spans/.baseline.json"
+      }
+    ],
+    "handAdjudication": [
+      {
+        "caseId": "F01",
+        "statementId": "F01:S11",
+        "sentence": "We recommend approval.",
+        "classification": "no_support",
+        "declineCluster": true,
+        "patterns": [
+          "non-factual",
+          "procedural",
+          "closer",
+          "no checkable claim"
+        ],
+        "explanation": "The statement 'We recommend approval.' is a non-factual procedural closer with no checkable claim. The source discusses the investment case but does not address a recommendation for approval.",
+        "sourceBacked": true,
+        "decidingQuote": "We recommend this investment.",
+        "note": "Source closes with an explicit recommendation. Decline-to-verify no_support is a false red."
+      },
+      {
+        "caseId": "F08",
+        "statementId": "F08:S0",
+        "sentence": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+        "classification": "confirmed",
+        "declineCluster": false,
+        "patterns": [
+          "does not assert"
+        ],
+        "explanation": "The source confirms the investment in Helvetia Precision Components, including its location and market focus. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+        "sourceBacked": true,
+        "decidingQuote": "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG (\"HPC\" or \"the Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+        "note": "Pattern hit is modality ('does not assert that the transaction has closed') on a confirmed investment notice, not a decline-to-verify. Source backs the sentence."
+      },
+      {
+        "caseId": "F15",
+        "statementId": "F15:S0",
+        "sentence": "We are writing to inform you of a new investment in Casa Verde Group (the \"Company\"), a Milan-headquartered premium European homeware and kitchenware specialist.",
+        "classification": "confirmed",
+        "declineCluster": false,
+        "patterns": [
+          "does not assert"
+        ],
+        "explanation": "The source confirms the statement by discussing the proposed investment in Casa Verde Group, a Milan-headquartered premium European homeware and kitchenware specialist. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+        "sourceBacked": true,
+        "decidingQuote": "We seek IC approval for an investment of up to EUR 720 million of equity in the acquisition of Casa Verde Group S.p.A. (\"Casa Verde\" or \"the Company\"), a Milan-headquartered premium European homeware and kitchenware retailer and brand owner.",
+        "note": "Same modality 'does not assert' shape on confirmed. Source backs."
+      },
+      {
+        "caseId": "F17",
+        "statementId": "F17:S0",
+        "sentence": "We are writing to inform you of a new investment in the Urbis Logistics Portfolio, a portfolio of 11 last-mile logistics properties located in major European urban areas.",
+        "classification": "confirmed",
+        "declineCluster": false,
+        "patterns": [
+          "does not assert"
+        ],
+        "explanation": "The source confirms the statement by describing the proposed investment in the Urbis Logistics Portfolio, which consists of 11 last-mile logistics properties in major European urban areas. The statement does not assert that the transaction has closed, so there is no modality conflict.",
+        "sourceBacked": true,
+        "decidingQuote": "We seek IC approval for an investment of up to EUR 340 million of equity in the acquisition of the Urbis Logistics Portfolio (\"Urbis\" or \"the Portfolio\"), a portfolio of 11 last-mile logistics properties located in major European urban areas.",
+        "note": "Modality 'does not assert' on confirmed Urbis notice. Source backs the new-investment claim."
+      }
+    ],
+    "extraDeclineFromResultJson": 0
+  }
+}
