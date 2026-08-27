@@ -95,7 +95,9 @@ Invented Halden LP-update pairs that force at least two performance figures onto
 | `eval-ablation/passage-selection-probe.md` | Pre-flight, cost, per-run passages, dimension cross, stopping rule. |
 | `eval-ablation/basis-conflict-r10.txt` | R9 + quantity-scoped basis limb. Harness only. |
 | `eval-ablation/run-r10-scoped-basis-gate.mjs` | R3a vs R10 on graded set + F93 + MF01-10. |
-| `eval-ablation/r10-scoped-basis-gate.md` | R10 measure report. |
+| `eval-ablation/r10-corpus-blast.md` | R10 vs live R3a corpus blast + Part 1 reconfirm. |
+| `eval-ablation/run-r10-corpus-blast.mjs` | Harness for that blast. |
+| `eval-ablation/richness-exposure-count.md` | Free scan: rich-mark trigger exposure in corpus sources. |
 
 ## Real vs invented sources
 
