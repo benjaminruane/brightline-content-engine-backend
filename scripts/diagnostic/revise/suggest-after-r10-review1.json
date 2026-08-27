@@ -1,0 +1,1105 @@
+{
+  "ranAt": "2026-08-27T06:11:01.185Z",
+  "url": "https://brightline-content-engine-backend.vercel.app/api/analyse-statements",
+  "httpStatus": 200,
+  "ms": 16482,
+  "payload": {
+    "ok": true,
+    "statements": [
+      {
+        "id": "0",
+        "text": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "qcCard": {
+          "index": 0,
+          "statement": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "charStart": 0,
+          "charEnd": 196,
+          "supportState": "partial",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Halden Group has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms Halden Group's prior investments with Meridian Capital, including co-investments and debt financings, but does not mention a lead commitment to Meridian Capital Partners V in June 2025. The gap is material as the specific commitment to the EUR 1.2 billion fund is not addressed. The reviewer should verify this specific detail or adjust the statement accordingly.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Halden Group has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms Halden Group's prior investments with Meridian Capital, including co-investments and debt financings, but does not mention a lead commitment to Meridian Capital Partners V in June 2025. The gap is material as the specific commitment to the EUR 1.2 billion fund is not addressed. The reviewer should verify this specific detail or adjust the statement accordingly.",
+          "displayMode": "partial",
+          "draftSpan": {
+            "startChar": 0,
+            "endChar": 196
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "0",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "start": 198,
+              "end": 288
+            },
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "0",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "start": 289,
+              "end": 349
+            },
+            {
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "statementId": "0",
+              "passage": "Halden Group has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.",
+              "start": 3372,
+              "end": 3556
+            }
+          ],
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "0",
+              "classification": "partially_confirmed",
+              "text": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+              "start": 0,
+              "end": 196
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "material",
+            "features": [
+              "monetary_figure",
+              "date_period_claim",
+              "named_person_entity_attribution"
+            ]
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 0,
+          "endChar": 196
+        }
+      },
+      {
+        "id": "1",
+        "text": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+        "qcCard": {
+          "index": 1,
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "charStart": 198,
+          "charEnd": 306,
+          "supportState": "partial",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits)...."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms Meridian's track record with specific figures: a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, the evaluative term 'genuinely exceptional' is subjective and not directly supported by the source. Consider revising the statement to reflect the specific data provided or provide additional context to justify the evaluative claim.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits)....",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms Meridian's track record with specific figures: a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, the evaluative term 'genuinely exceptional' is subjective and not directly supported by the source. Consider revising the statement to reflect the specific data provided or provide additional context to justify the evaluative claim.",
+          "displayMode": "partial",
+          "draftSpan": {
+            "startChar": 198,
+            "endChar": 306
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "1",
+              "passage": "Merits:\nStrong track record\nStable and experienced investment team.\nDisciplined approach to operational value creation.",
+              "start": 3252,
+              "end": 3371
+            }
+          ],
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "1",
+              "classification": "partially_confirmed",
+              "text": "that is, in our view, genuinely exceptional",
+              "start": 64,
+              "end": 107
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "material",
+            "features": []
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [
+            {
+              "concernCode": "framing_fidelity",
+              "category": "framing_fidelity",
+              "note": "The statement uses the term 'genuinely exceptional' which is a subjective evaluation not directly supported by the source, which only describes a 'strong track record'.",
+              "span": [
+                {
+                  "startChar": 0,
+                  "endChar": 108
+                }
+              ]
+            }
+          ],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 198,
+          "endChar": 306
+        }
+      },
+      {
+        "id": "2",
+        "text": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+        "qcCard": {
+          "index": 2,
+          "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "charStart": 308,
+          "charEnd": 436,
+          "supportState": "partial",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits)."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms the realised gross MOIC of 2.4 times across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers. The reviewer should verify this ranking separately or adjust the statement to reflect only the confirmed data.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms the realised gross MOIC of 2.4 times across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers. The reviewer should verify this ranking separately or adjust the statement to reflect only the confirmed data.",
+          "displayMode": "partial",
+          "draftSpan": {
+            "startChar": 308,
+            "endChar": 436
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "statementId": "2",
+              "passage": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+              "start": 912,
+              "end": 996
+            }
+          ],
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "2",
+              "classification": "partially_confirmed",
+              "text": "placing it in the top quartile of European lower-mid-market managers.",
+              "start": 59,
+              "end": 128
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "material",
+            "features": [
+              "regulated_sensitive"
+            ]
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 308,
+          "endChar": 436
+        }
+      },
+      {
+        "id": "3",
+        "text": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+        "qcCard": {
+          "index": 3,
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "charStart": 438,
+          "charEnd": 554,
+          "supportState": "partial",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "No senior departures across the last three fund cycles."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about the team's stability. However, it does not address the claim that this stability limits key-person risk, which is an evaluative assertion not covered by the source. The reviewer should either find additional evidence to support the key-person risk claim or revise the statement to reflect only the confirmed stability.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "No senior departures across the last three fund cycles.",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about the team's stability. However, it does not address the claim that this stability limits key-person risk, which is an evaluative assertion not covered by the source. The reviewer should either find additional evidence to support the key-person risk claim or revise the statement to reflect only the confirmed stability.",
+          "displayMode": "partial",
+          "draftSpan": {
+            "startChar": 438,
+            "endChar": 554
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "3",
+              "passage": "No senior departures across the last three fund cycles.",
+              "start": 1313,
+              "end": 1368
+            }
+          ],
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "3",
+              "classification": "partially_confirmed",
+              "text": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+              "start": 0,
+              "end": 116
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "minor",
+            "features": []
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 438,
+          "endChar": 554
+        }
+      },
+      {
+        "id": "4",
+        "text": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+        "qcCard": {
+          "index": 4,
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "charStart": 556,
+          "charEnd": 626,
+          "supportState": "conflicting",
+          "hasConflict": true,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "displayMode": "conflicting",
+          "draftSpan": {
+            "startChar": 556,
+            "endChar": 626
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "conflict",
+          "concernLevel": "high",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "4",
+              "passage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+              "start": 997,
+              "end": 1144
+            }
+          ],
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "4",
+              "classification": "conflicting",
+              "text": "has returned",
+              "start": 8,
+              "end": 20
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "conflicting",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "material",
+            "features": [
+              "regulated_sensitive"
+            ]
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 556,
+          "endChar": 626
+        }
+      },
+      {
+        "id": "5",
+        "text": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "qcCard": {
+          "index": 5,
+          "statement": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "charStart": 628,
+          "charEnd": 773,
+          "supportState": "supported",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)"
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The source specifies both the target fund size and the focus on these sectors.",
+          "supportRefIds": [
+            0
+          ],
+          "supportRefTitles": [
+            "Meridian Fund V summary (Halden copy)"
+          ],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Strategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The source specifies both the target fund size and the focus on these sectors.",
+          "displayMode": "supported",
+          "draftSpan": {
+            "startChar": 628,
+            "endChar": 773
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "5",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "start": 198,
+              "end": 288
+            },
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "5",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "start": 289,
+              "end": 349
+            }
+          ],
+          "unsupportedSpans": [],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "mechanical",
+            "features": [
+              "monetary_figure",
+              "named_person_entity_attribution"
+            ]
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 628,
+          "endChar": 773
+        }
+      },
+      {
+        "id": "6",
+        "text": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+        "qcCard": {
+          "index": 6,
+          "statement": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+          "charStart": 775,
+          "charEnd": 900,
+          "supportState": "supported",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Typical hold period is 4–6 years. ... No more than 30% of commitments deployed outside the EU."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms the statement by specifying that the typical hold period for investments is four to six years and that no more than 30% of commitments will be deployed outside the EU.",
+          "supportRefIds": [
+            0
+          ],
+          "supportRefTitles": [
+            "Meridian Fund V summary (Halden copy)"
+          ],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Typical hold period is 4–6 years. ... No more than 30% of commitments deployed outside the EU.",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms the statement by specifying that the typical hold period for investments is four to six years and that no more than 30% of commitments will be deployed outside the EU.",
+          "displayMode": "supported",
+          "draftSpan": {
+            "startChar": 775,
+            "endChar": 900
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "6",
+              "passage": "Typical hold period is 4–6 years.",
+              "start": 1548,
+              "end": 1581
+            },
+            {
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "statementId": "6",
+              "passage": "No more than 30% of commitments deployed outside the EU.",
+              "start": 2804,
+              "end": 2860
+            }
+          ],
+          "unsupportedSpans": [],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "mechanical",
+            "features": [
+              "comparative_superlative",
+              "forward_looking"
+            ]
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 775,
+          "endChar": 900
+        }
+      },
+      {
+        "id": "7",
+        "text": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+        "qcCard": {
+          "index": 7,
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "charStart": 902,
+          "charEnd": 1026,
+          "supportState": "partial",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits)...."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms the performance metrics of Fund IV, with a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, it does not explicitly state that Fund V is expected to deliver returns in line with its predecessor, nor does it address the recommendation to commit. The reviewer should consider adding specific projections for Fund V or a direct recommendation to strengthen the statement.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits)....",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms the performance metrics of Fund IV, with a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, it does not explicitly state that Fund V is expected to deliver returns in line with its predecessor, nor does it address the recommendation to commit. The reviewer should consider adding specific projections for Fund V or a direct recommendation to strengthen the statement.",
+          "displayMode": "partial",
+          "draftSpan": {
+            "startChar": 902,
+            "endChar": 1026
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [],
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "7",
+              "classification": "partially_confirmed",
+              "text": "we recommend the commitment",
+              "start": 96,
+              "end": 123
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "minor",
+            "features": []
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 902,
+          "endChar": 1026
+        }
+      },
+      {
+        "id": "8",
+        "text": "The GP provided access to co-investments that would not otherwise have been available to us.",
+        "qcCard": {
+          "index": 8,
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "charStart": 1028,
+          "charEnd": 1120,
+          "supportState": "partial",
+          "hasConflict": false,
+          "primaryExcerpt": {
+            "sourceLabel": "Meridian Fund V summary (Halden copy)",
+            "passage": "Co-investment: The GP has offered co-investment to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis."
+          },
+          "conflictExcerpt": null,
+          "evidenceSummary": "The source confirms that the GP offered co-investments to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis. However, it does not address whether these co-investment opportunities would not have been available otherwise, which is a key part of the statement. The reviewer should verify this aspect or adjust the statement to reflect only the confirmed details.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": "Meridian Fund V summary (Halden copy)",
+          "primarySourceOrigin": null,
+          "primaryExcerptText": "Co-investment: The GP has offered co-investment to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis.",
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": true,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "The source confirms that the GP offered co-investments to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis. However, it does not address whether these co-investment opportunities would not have been available otherwise, which is a key part of the statement. The reviewer should verify this aspect or adjust the statement to reflect only the confirmed details.",
+          "displayMode": "partial",
+          "draftSpan": {
+            "startChar": 1028,
+            "endChar": 1120
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [
+            {
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "statementId": "8",
+              "passage": "Co-investment: The GP has offered co-investment to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis.",
+              "start": 2496,
+              "end": 2621
+            }
+          ],
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "8",
+              "classification": "partially_confirmed",
+              "text": "that would not otherwise have been available to us.",
+              "start": 41,
+              "end": 92
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "minor",
+            "features": []
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 1028,
+          "endChar": 1120
+        }
+      },
+      {
+        "id": "9",
+        "text": "Halden Group expects the relationship to deepen over the life of the fund.",
+        "qcCard": {
+          "index": 9,
+          "statement": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "charStart": 1122,
+          "charEnd": 1196,
+          "supportState": "not_supported",
+          "hasConflict": false,
+          "primaryExcerpt": null,
+          "conflictExcerpt": null,
+          "evidenceSummary": "No source addresses the expectation that the relationship will deepen over the life of the fund. The source only mentions past investments by Halden Group with Meridian Capital. Please add a supporting source or remove the claim.",
+          "supportRefIds": [],
+          "supportRefTitles": [],
+          "primaryRefId": null,
+          "primaryRefTitle": null,
+          "primarySourceOrigin": null,
+          "primaryExcerptText": null,
+          "primaryExcerptStart": null,
+          "primaryExcerptEnd": null,
+          "secondarySupportCount": 0,
+          "supportingReferenceIds": [],
+          "supportingReferenceTitles": [],
+          "hasRealExcerpt": false,
+          "conflictValues": null,
+          "reasoningHeadline": null,
+          "reasoningParagraph": "No source addresses the expectation that the relationship will deepen over the life of the fund. The source only mentions past investments by Halden Group with Meridian Capital. Please add a supporting source or remove the claim.",
+          "displayMode": "not_supported",
+          "draftSpan": {
+            "startChar": 1122,
+            "endChar": 1196
+          },
+          "evidenceTrace": [],
+          "selectedExcerptReason": null,
+          "excerptMatchType": "none",
+          "suggestedImprovement": null,
+          "whyItMatters": null,
+          "displayVerdict": "not_supported",
+          "concernLevel": "high",
+          "sentenceSubclaimCount": null,
+          "qcClaimId": null,
+          "originalClaimText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "citationHovers": [],
+          "primaryExcerptTrusted": false,
+          "conflictEvidence": null,
+          "pipelineVersion": "v4",
+          "supportSpans": [],
+          "unsupportedSpans": [],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary (Halden copy)",
+              "classification": "no_support",
+              "systemFingerprint": "fp_17e3c4f467"
+            }
+          ],
+          "materiality": {
+            "level": "material",
+            "features": [
+              "named_person_entity_attribution",
+              "forward_looking"
+            ]
+          },
+          "sourceRecencyConcerns": [],
+          "framingFidelityConcerns": [],
+          "supersededSourceNotes": [],
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "editorialNote": null,
+          "editorialSuggestedDirection": null,
+          "editorialSuggestedRewrite": null,
+          "complianceVerdict": "clean",
+          "complianceConcerns": [],
+          "complianceNote": null,
+          "complianceSuggestedDirection": null,
+          "complianceSuggestedRewrite": null,
+          "suppressInQcWorkbench": false,
+          "decomposed": false,
+          "claimUpgrade": false,
+          "claims": []
+        },
+        "draftSpan": {
+          "startChar": 1122,
+          "endChar": 1196
+        }
+      }
+    ],
+    "references": [],
+    "sources": [
+      {
+        "index": 0,
+        "id": null,
+        "label": "Meridian Fund V summary (Halden copy)",
+        "text": "Meridian Capital Partners V, L.P. — Fund Summary (for prospective limited partners)\n\nFund: Meridian Capital Partners V, L.P. (\"Fund V\" or \"the Fund\")\nManager: Meridian Capital Management (the \"GP\")\nStrategy: Lower-mid-market buyouts in European industrial technology and business services\nTarget fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)\nGP commitment: 3% of total commitments, funded in cash\nTerm: 10 years from final close, with two one-year extension options at GP discretion\nInvestment period: 5 years from final close\nManagement fee: 1.75% on committed capital during the investment period; 1.5% on invested capital thereafter\nCarried interest: 20%, subject to an 8% preferred return and a 100% GP catch-up\nFirst close: expected Q3 2026; final close targeted within 12 months of first close\n\nTrack record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.\n\nTeam: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles.\n\nSector focus: The Fund targets companies with EUR 20–100 million enterprise value, EUR 5–25 million EBITDA, and defensible positions in niche industrial or B2B services markets. Typical hold period is 4–6 years. The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions.\n\nOrigination: Approximately 60% of Fund IV platform investments were sourced on a proprietary or bilaterally negotiated basis rather than through a broad auction process.\n\nValue creation: The GP operates a four-person operating team supporting portfolio companies on pricing, procurement and buy-and-build. Across Funds III and IV, the GP attributes roughly half of realised value creation to EBITDA growth rather than to multiple expansion.\n\nSelected realisation: Nordholt Systems (Fund III, 2017 entry, 2023 exit), a German industrial sensor manufacturer, returned 3.1x gross MOIC over a six-year hold following three bolt-on acquisitions.\n\nLP base: 78% of Fund IV commitments by value have re-upped into Fund V at first close. The LP base is predominantly European insurers, pension funds and family offices.\n\nCo-investment: The GP has offered co-investment to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis.\n\nPipeline: Four actionable opportunities identified as at Q2 2026, two of which are in exclusivity.\n\nDiversification limits: No single investment to exceed 15% of total commitments. No more than 30% of commitments deployed outside the EU. No more than 20% in any single sub-sector.\n\nESG: The Fund is an Article 8 fund under SFDR and integrates ESG diligence into every investment decision. Annual ESG reporting provided to LPs.\n\nKey risks disclosed: concentration in European industrials; currency exposure for non-EUR LPs; illiquidity over the fund term; reliance on continued availability of leverage in the lower-mid-market.\n\n\nMerits:\nStrong track record\nStable and experienced investment team.\nDisciplined approach to operational value creation.\nHalden Group has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.\n",
+        "publicationState": "unknown"
+      }
+    ],
+    "excludedSources": [],
+    "meta": {
+      "pipelineVersion": "v4",
+      "stagesComplete": 7,
+      "traceId": "23cba6e1-6c84-4e4a-9a1a-d7059ce0321c",
+      "reviewOptions": {
+        "evidenceEnabled": true,
+        "editorialEnabled": false,
+        "complianceEnabled": false
+      }
+    },
+    "bannedWordHits": [],
+    "provenanceFlags": []
+  }
+}
