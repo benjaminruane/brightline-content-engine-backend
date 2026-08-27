@@ -54,6 +54,40 @@ function finalizeOpts(draftText, concerns, traceId) {
   };
 }
 
+/**
+ * Log deterministic removalEvents so production Suggest runs are self-documenting.
+ * One detail line per actual removal; one summary line always (including removals=0).
+ * @param {string} traceId
+ * @param {Array<object>} removalEvents
+ */
+function logDeterministicRemovals(traceId, removalEvents) {
+  const trace = typeof traceId === "string" && traceId.trim() ? traceId.trim() : "suggest-revision";
+  const events = Array.isArray(removalEvents) ? removalEvents : [];
+  const removals = events.filter((e) => e && e.action === "removed");
+
+  for (const ev of removals) {
+    const statementId =
+      (typeof ev.statementId === "string" && ev.statementId) ||
+      (Number.isFinite(ev.statementIndex) ? String(ev.statementIndex) : "-");
+    const reason = typeof ev.reason === "string" && ev.reason ? ev.reason : "removed";
+    let removed = typeof ev.removedSentenceText === "string" ? ev.removedSentenceText : "";
+    if (!removed && typeof ev.statementText === "string") removed = ev.statementText;
+    removed = removed.replace(/\s+/g, " ").trim();
+    if (removed.length > 120) removed = `${removed.slice(0, 120)}...`;
+    const anchor =
+      typeof ev.remnantText === "string"
+        ? ev.remnantText.replace(/\s+/g, " ").trim()
+        : "";
+    console.info(
+      `[revise-removal] trace=${trace} statementId=${statementId} ` +
+        `reason=${reason} removed=${JSON.stringify(removed)} ` +
+        `anchor=${JSON.stringify(anchor)}`
+    );
+  }
+
+  console.info(`[revise-removal] trace=${trace} removals=${removals.length}`);
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
@@ -116,7 +150,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ ok: false, error: "Suggest-revision produced empty revisedDraft" });
     }
 
-    let finalized = finalizeSuggestRevisionText(raw, finalizeOpts(draftText, concerns, "suggest-revision"));
+    let finalizeTraceId = "suggest-revision";
+    let finalized = finalizeSuggestRevisionText(
+      raw,
+      finalizeOpts(draftText, concerns, finalizeTraceId)
+    );
     let vocabHits = findReviewVocabularyHits(finalized.revisedDraft);
     let revisionWarning = null;
     if (vocabHits.length > 0) {
@@ -128,9 +166,10 @@ export default async function handler(req, res) {
       });
       const rawRetry = await rewriteOnce("suggest-revision-retry");
       if (rawRetry) {
+        finalizeTraceId = "suggest-revision-retry";
         const retry = finalizeSuggestRevisionText(
           rawRetry,
-          finalizeOpts(draftText, concerns, "suggest-revision-retry")
+          finalizeOpts(draftText, concerns, finalizeTraceId)
         );
         const retryHits = findReviewVocabularyHits(retry.revisedDraft);
         logReviewVocabularyAttempt({
@@ -151,11 +190,14 @@ export default async function handler(req, res) {
       return res.status(500).json({ ok: false, error: "Suggest-revision produced empty revisedDraft" });
     }
 
+    const removalEvents = Array.isArray(finalized.removalEvents) ? finalized.removalEvents : [];
+    logDeterministicRemovals(finalizeTraceId, removalEvents);
+
     const payload = {
       ok: true,
       revisedDraft: finalized.revisedDraft,
       markers: finalized.markers,
-      removalEvents: Array.isArray(finalized.removalEvents) ? finalized.removalEvents : [],
+      removalEvents,
     };
     if (revisionWarning) payload.revisionWarning = revisionWarning;
     if (finalized.honestyEvents?.length) payload.honestyEvents = finalized.honestyEvents;
