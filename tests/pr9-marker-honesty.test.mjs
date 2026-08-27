@@ -10,7 +10,74 @@ import {
   MARKER_INTENT_KEPT,
   MARKER_INTENT_CUT,
 } from "../lib/pr9-marker-honesty.mjs";
+import { classifyNoteClaim, NOTE_AMBIGUOUS, NOTE_CLAIMS_NO_CHANGE } from "../lib/pr9-marker-note-claim.mjs";
 import { finalizeSuggestRevisionText } from "../lib/build-revision-prompt.mjs";
+
+/**
+ * Meridian original + Suggest1 revised pair from
+ * scripts/diagnostic/revise/suggest-after-r10-suggest1.json (commit 25ae739).
+ * Honesty event noteBefore strings are taken from payload.honestyEvents.
+ */
+const MERIDIAN_ORIGINAL = `In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.
+
+We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.
+
+It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.
+
+The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.
+
+Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.
+
+Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.
+
+The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU.
+
+On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.
+
+The GP provided access to co-investments that would not otherwise have been available to us.
+
+Halden Group expects the relationship to deepen over the life of the fund.`;
+
+const MERIDIAN_SUGGEST1_REVISED = `In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.
+
+We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.
+
+It has realised a gross MOIC of 2.4 times across 17 exits.
+
+The team's stability, with no senior departures across the last three fund cycles.
+
+Fund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR.
+
+Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.
+
+The fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU.
+
+On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.
+
+The GP provided access to co-investments on a no-fee, no-carry basis across Funds III and IV.
+
+Halden Group expects the relationship to deepen over the life of the fund.`;
+
+/** honestyEvents[1].noteBefore from suggest-after-r10-suggest1.json */
+const IRR_NOTE_BEFORE =
+  "Changed 'has returned' to 'is currently marked at' to align with the source description. Confirm before publishing.";
+
+/** honestyEvents[0].noteBefore from suggest-after-r10-suggest1.json */
+const LEAD_NOTE_BEFORE =
+  "Removed the specific 'lead commitment' detail and timing, which are not supported by the source, while retaining the broader point that Halden Group committed to the fund. Confirm before publishing.";
+
+/**
+ * Case C shape from Suggest1 deepen marker note, keep-language stem only.
+ * The live Suggest1 note also said "as removing it would cut the author's point",
+ * which classifyNoteClaim treats as AMBIGUOUS (kept + cut). Part 3 fires only on
+ * pure keep-language; this fixture uses the keep stem from that marker.
+ */
+const DEEPEN_KEEP_NOTE =
+  "Kept the expectation as a forward-looking view despite no direct source support. Confirm before publishing.";
+
+/** Live Suggest1 deepen note (kept + cut) for the mixed-language guard. */
+const DEEPEN_MIXED_NOTE =
+  "Kept the expectation as a forward-looking view despite no direct source support, as removing it would cut the author's point. Confirm before publishing.";
 
 describe("parseMarkerIntentPayload", () => {
   test("reads the three intents and strips them from the note", () => {
@@ -75,7 +142,7 @@ describe("isHouseStyleOnlyDifference", () => {
 });
 
 describe("applyMarkerHonestyCheck", () => {
-  test("CHANGED on an identical span is a contradiction and rewrites the first clause", () => {
+  test("CHANGED on an identical span rewrites the note and flips intent to KEPT (policy change; was CHANGED at L104)", () => {
     const original = "The fund invests with equity checks of EUR 80-100 million apiece.";
     const span = "with equity checks of EUR 80-100 million apiece";
     const start = original.indexOf(span);
@@ -101,7 +168,9 @@ describe("applyMarkerHonestyCheck", () => {
     assert.match(result.markers[0].note, /^Left this wording as written -/);
     assert.match(result.markers[0].note, /sources do not mention ticket size/);
     assert.match(result.markers[0].note, /Confirm before publishing\.$/);
-    assert.equal(result.markers[0].intent, MARKER_INTENT_CHANGED);
+    // Policy change: intent formerly stayed CHANGED (old L104). Now flips to KEPT.
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
+    assert.equal(result.honestyEvents[0].repairedIntent, MARKER_INTENT_KEPT);
     assert.equal(logs.length, 1);
     assert.match(logs[0], /vitest-changed-identical/);
   });
@@ -124,7 +193,7 @@ describe("applyMarkerHonestyCheck", () => {
     assert.equal(result.markers[0].note.includes("Removed the unsupported 14x"), true);
   });
 
-  test("CUT with nothing lost is a contradiction", () => {
+  test("CUT with nothing lost rewrites the note and flips intent to KEPT", () => {
     const original = "The company serves customers across Europe.";
     const revised = original;
     const result = applyMarkerHonestyCheck(original, {
@@ -141,6 +210,7 @@ describe("applyMarkerHonestyCheck", () => {
     assert.equal(result.honestyEvents.length, 1);
     assert.equal(result.honestyEvents[0].contradiction, "cut_but_region_unchanged");
     assert.match(result.markers[0].note, /^Left this wording as written -/);
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
   });
 
   test("KEPT with only house-style difference is honest", () => {
@@ -180,15 +250,129 @@ describe("applyMarkerHonestyCheck", () => {
   });
 });
 
+describe("applyMarkerHonestyCheck Suggest1 evidence (eval-ablation Meridian)", () => {
+  test("Case A IRR remnant: accurate note survives, intent not flipped, remnant_missed_edit", () => {
+    // eval-ablation EA_E3 mark sentence; not claim-spans CS_E3; not corpus E3:S0:ic_memo.
+    const span = "IRR";
+    const start = MERIDIAN_SUGGEST1_REVISED.indexOf("24% gross IRR") + "24% gross ".length;
+    assert.equal(MERIDIAN_SUGGEST1_REVISED.slice(start, start + span.length), span);
+    const result = applyMarkerHonestyCheck(
+      MERIDIAN_ORIGINAL,
+      {
+        revisedDraft: MERIDIAN_SUGGEST1_REVISED,
+        markers: [
+          {
+            start,
+            end: start + span.length,
+            intent: MARKER_INTENT_CHANGED,
+            note: IRR_NOTE_BEFORE,
+          },
+        ],
+      },
+      { traceId: "vitest-irr-remnant", log: () => {} }
+    );
+    assert.equal(result.honestyEvents.length, 1);
+    assert.equal(result.honestyEvents[0].contradiction, "remnant_missed_edit");
+    assert.equal(result.markers[0].note, IRR_NOTE_BEFORE);
+    assert.equal(result.markers[0].intent, MARKER_INTENT_CHANGED);
+  });
+
+  test("Case B lead commitment: intent becomes KEPT; note and intent agree", () => {
+    const span =
+      "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services";
+    const start = MERIDIAN_SUGGEST1_REVISED.indexOf(span);
+    assert.ok(start >= 0);
+    const result = applyMarkerHonestyCheck(
+      MERIDIAN_ORIGINAL,
+      {
+        revisedDraft: MERIDIAN_SUGGEST1_REVISED,
+        markers: [
+          {
+            start,
+            end: start + span.length,
+            intent: MARKER_INTENT_CHANGED,
+            note: LEAD_NOTE_BEFORE,
+          },
+        ],
+      },
+      { traceId: "vitest-lead", log: () => {} }
+    );
+    assert.equal(result.honestyEvents.length, 1);
+    assert.equal(result.honestyEvents[0].contradiction, "changed_but_identical");
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
+    assert.match(result.markers[0].note, /Left this wording as written/);
+    assert.equal(classifyNoteClaim(result.markers[0].note), NOTE_CLAIMS_NO_CHANGE);
+  });
+
+  test("Case C shape: pure keep note with CHANGED intent fires note_intent_mismatch", () => {
+    const span =
+      "Halden Group expects the relationship to deepen over the life of the fund";
+    const start = MERIDIAN_SUGGEST1_REVISED.indexOf(span);
+    assert.ok(start >= 0);
+    assert.equal(classifyNoteClaim(DEEPEN_KEEP_NOTE), NOTE_CLAIMS_NO_CHANGE);
+    const result = applyMarkerHonestyCheck(
+      MERIDIAN_ORIGINAL,
+      {
+        revisedDraft: MERIDIAN_SUGGEST1_REVISED,
+        markers: [
+          {
+            start,
+            end: start + span.length,
+            intent: MARKER_INTENT_CHANGED,
+            note: DEEPEN_KEEP_NOTE,
+          },
+        ],
+      },
+      { traceId: "vitest-case-c", log: () => {} }
+    );
+    assert.ok(result.honestyEvents.some((e) => e.contradiction === "note_intent_mismatch"));
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
+    assert.equal(result.markers[0].note, DEEPEN_KEEP_NOTE);
+  });
+
+  test("mixed keep-and-change language does not fire note_intent_mismatch", () => {
+    assert.equal(classifyNoteClaim(DEEPEN_MIXED_NOTE), NOTE_AMBIGUOUS);
+    const span =
+      "Halden Group expects the relationship to deepen over the life of the fund";
+    const start = MERIDIAN_SUGGEST1_REVISED.indexOf(span);
+    assert.ok(start >= 0);
+    const result = applyMarkerHonestyCheck(
+      MERIDIAN_ORIGINAL,
+      {
+        revisedDraft: MERIDIAN_SUGGEST1_REVISED,
+        markers: [
+          {
+            start,
+            end: start + span.length,
+            intent: MARKER_INTENT_CHANGED,
+            note: DEEPEN_MIXED_NOTE,
+          },
+        ],
+      },
+      { traceId: "vitest-mixed-guard", log: () => {} }
+    );
+    assert.equal(
+      result.honestyEvents.filter((e) => e.contradiction === "note_intent_mismatch").length,
+      0
+    );
+    assert.equal(result.markers[0].intent, MARKER_INTENT_CHANGED);
+    assert.equal(result.markers[0].note, DEEPEN_MIXED_NOTE);
+  });
+});
+
 describe("finalizeSuggestRevisionText honesty", () => {
-  test("does not drop a contradictory marker", () => {
+  test("does not drop a contradictory marker; flips intent to KEPT when span unchanged", () => {
     const original = "Revenue grew 40% last year.";
-    const raw = "{{Revenue grew 40% last year||CHANGED: Removed the 40% figure - sources do not state a rate. Confirm before publishing.}}";
-    const result = finalizeSuggestRevisionText(raw, { originalDraft: original, traceId: "vitest-finalize" });
+    const raw =
+      "{{Revenue grew 40% last year||CHANGED: Removed the 40% figure - sources do not state a rate. Confirm before publishing.}}";
+    const result = finalizeSuggestRevisionText(raw, {
+      originalDraft: original,
+      traceId: "vitest-finalize",
+    });
     assert.equal(result.markers.length, 1);
     assert.equal(result.honestyEvents.length, 1);
     assert.equal(result.revisedDraft.includes("Revenue grew 40% last year"), true);
-    assert.equal(result.markers[0].intent, "CHANGED");
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
   });
 });
 

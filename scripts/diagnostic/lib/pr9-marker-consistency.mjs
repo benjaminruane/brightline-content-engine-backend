@@ -1,10 +1,9 @@
 /**
  * Pr9 marker-consistency classifiers (deterministic; no LLM).
  *
- * Span status lives in lib/pr9-marker-span-status.mjs (shared with a later
- * production post-check). Note claim: whole-word match on a closed verb list,
- * not stems. "cutting" in "consider cutting" is not "cut", so keep-and-flag
- * notes stay CLAIMS_NO_CHANGE when they lead with kept/retained/left in place.
+ * Span status lives in lib/pr9-marker-span-status.mjs. Note claim lives in
+ * lib/pr9-marker-note-claim.mjs (shared with production honesty). Re-exported
+ * here so the diagnostic harness keeps a stable import path.
  */
 
 import {
@@ -15,31 +14,22 @@ import {
   SPAN_UNCHANGED,
 } from "../../../lib/pr9-marker-span-status.mjs";
 import { isHouseStyleOnlyDifference } from "../../../lib/pr9-marker-honesty.mjs";
+import {
+  CHANGE_VERBS,
+  classifyNoteClaim,
+  NOTE_CLAIMS_CHANGE,
+  NOTE_CLAIMS_NO_CHANGE,
+  NOTE_AMBIGUOUS,
+} from "../../../lib/pr9-marker-note-claim.mjs";
 
 export { tokenizeWords, markerSpanStatus, markerSpanAlignment, SPAN_CHANGED, SPAN_UNCHANGED };
-
-export const CHANGE_VERBS = [
-  "removed",
-  "changed",
-  "replaced",
-  "corrected",
-  "softened",
-  "cut",
-  "dropped",
-  "reworded",
-  "qualified",
-  "added",
-];
-
-const CHANGE_VERB_RE = new RegExp(`\\b(?:${CHANGE_VERBS.join("|")})\\b`, "i");
-const KEEP_RE =
-  /\bkept\b|\bretained\b|\bleft in place\b|\bleave in place\b|\bleaving in place\b|\bleaves in place\b/i;
-const CONFIRM_ONLY_RE =
-  /^(?:confirm(?:\s+this(?:\s+softer)?\s+formulation)?(?:\s+before\s+publishing)?[.!?]*)?$/i;
-
-export const NOTE_CLAIMS_CHANGE = "CLAIMS_A_CHANGE";
-export const NOTE_CLAIMS_NO_CHANGE = "CLAIMS_NO_CHANGE";
-export const NOTE_AMBIGUOUS = "AMBIGUOUS";
+export {
+  CHANGE_VERBS,
+  classifyNoteClaim,
+  NOTE_CLAIMS_CHANGE,
+  NOTE_CLAIMS_NO_CHANGE,
+  NOTE_AMBIGUOUS,
+};
 
 export const OUTCOME_CORRECT_CHANGE = "correct_changed_claims_change";
 export const OUTCOME_CORRECT_KEEP = "correct_unchanged_claims_no_change";
@@ -49,31 +39,6 @@ export const OUTCOME_AMBIGUOUS = "ambiguous";
 
 function rangesOverlap(aStart, aEnd, bStart, bEnd) {
   return aStart < bEnd && aEnd > bStart;
-}
-
-function noteBodyWithoutCloser(note) {
-  return String(note || "")
-    .replace(/\s*Confirm before publishing\.?\s*$/i, "")
-    .trim();
-}
-
-/**
- * @param {string} note
- * @returns {"CLAIMS_A_CHANGE"|"CLAIMS_NO_CHANGE"|"AMBIGUOUS"}
- */
-export function classifyNoteClaim(note) {
-  const raw = typeof note === "string" ? note.trim() : "";
-  if (!raw) return NOTE_CLAIMS_NO_CHANGE;
-
-  const claimsChange = CHANGE_VERB_RE.test(raw);
-  const claimsKeep = KEEP_RE.test(raw);
-  if (claimsChange && claimsKeep) return NOTE_AMBIGUOUS;
-  if (claimsChange) return NOTE_CLAIMS_CHANGE;
-  if (claimsKeep) return NOTE_CLAIMS_NO_CHANGE;
-
-  const body = noteBodyWithoutCloser(raw);
-  if (!body || CONFIRM_ONLY_RE.test(body)) return NOTE_CLAIMS_NO_CHANGE;
-  return NOTE_AMBIGUOUS;
 }
 
 /**
