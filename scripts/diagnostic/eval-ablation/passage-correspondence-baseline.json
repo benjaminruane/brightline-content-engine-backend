@@ -1,0 +1,1656 @@
+{
+  "meta": {
+    "blastCommitRef": "ce3d85e",
+    "rowsPath": "r10-corpus-blast-rows.json",
+    "comparison": "SIMILAR",
+    "ranAt": "2026-08-27T03:20:16.990Z"
+  },
+  "summary": {
+    "R3a": {
+      "totals": {
+        "ALL": 131,
+        "SOME": 19,
+        "NONE": 50,
+        "total": 200
+      },
+      "byLabel": {
+        "no_support": {
+          "ALL": 0,
+          "SOME": 1,
+          "NONE": 23,
+          "total": 24
+        },
+        "partially_confirmed": {
+          "ALL": 9,
+          "SOME": 5,
+          "NONE": 9,
+          "total": 23
+        },
+        "conflicting": {
+          "ALL": 7,
+          "SOME": 4,
+          "NONE": 15,
+          "total": 26
+        },
+        "confirmed": {
+          "ALL": 115,
+          "SOME": 9,
+          "NONE": 3,
+          "total": 127
+        }
+      },
+      "byFixture": {
+        "nordholt": {
+          "ALL": 7,
+          "SOME": 3,
+          "NONE": 30,
+          "total": 40
+        },
+        "supersession": {
+          "ALL": 3,
+          "SOME": 2,
+          "NONE": 7,
+          "total": 12
+        },
+        "F01": {
+          "ALL": 3,
+          "SOME": 1,
+          "NONE": 1,
+          "total": 5
+        },
+        "F02": {
+          "ALL": 5,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 5
+        },
+        "F03": {
+          "ALL": 3,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 3
+        },
+        "F04": {
+          "ALL": 5,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 6
+        },
+        "F05": {
+          "ALL": 2,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 2
+        },
+        "F06": {
+          "ALL": 4,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 5
+        },
+        "F08": {
+          "ALL": 8,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 9
+        },
+        "F09": {
+          "ALL": 6,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 6
+        },
+        "F10": {
+          "ALL": 3,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 3
+        },
+        "F11": {
+          "ALL": 8,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 9
+        },
+        "F12": {
+          "ALL": 0,
+          "SOME": 0,
+          "NONE": 2,
+          "total": 2
+        },
+        "F13": {
+          "ALL": 6,
+          "SOME": 2,
+          "NONE": 1,
+          "total": 9
+        },
+        "F15": {
+          "ALL": 16,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 17
+        },
+        "F16": {
+          "ALL": 8,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 8
+        },
+        "F17": {
+          "ALL": 8,
+          "SOME": 0,
+          "NONE": 1,
+          "total": 9
+        },
+        "F18": {
+          "ALL": 7,
+          "SOME": 4,
+          "NONE": 3,
+          "total": 14
+        },
+        "F19": {
+          "ALL": 6,
+          "SOME": 2,
+          "NONE": 0,
+          "total": 8
+        },
+        "F20": {
+          "ALL": 6,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 6
+        },
+        "F22": {
+          "ALL": 2,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 2
+        },
+        "F23": {
+          "ALL": 2,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 2
+        },
+        "corpus_E1": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "corpus_E2": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "corpus_E3": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "F92": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "F93": {
+          "ALL": 3,
+          "SOME": 0,
+          "NONE": 1,
+          "total": 4
+        },
+        "MF_probe": {
+          "ALL": 6,
+          "SOME": 0,
+          "NONE": 4,
+          "total": 10
+        }
+      },
+      "figureBearing": 200
+    },
+    "R10": {
+      "totals": {
+        "ALL": 132,
+        "SOME": 18,
+        "NONE": 50,
+        "total": 200
+      },
+      "byLabel": {
+        "no_support": {
+          "ALL": 0,
+          "SOME": 1,
+          "NONE": 24,
+          "total": 25
+        },
+        "confirmed": {
+          "ALL": 115,
+          "SOME": 10,
+          "NONE": 3,
+          "total": 128
+        },
+        "partially_confirmed": {
+          "ALL": 8,
+          "SOME": 3,
+          "NONE": 8,
+          "total": 19
+        },
+        "conflicting": {
+          "ALL": 9,
+          "SOME": 4,
+          "NONE": 15,
+          "total": 28
+        }
+      },
+      "byFixture": {
+        "nordholt": {
+          "ALL": 7,
+          "SOME": 3,
+          "NONE": 30,
+          "total": 40
+        },
+        "supersession": {
+          "ALL": 3,
+          "SOME": 2,
+          "NONE": 7,
+          "total": 12
+        },
+        "F01": {
+          "ALL": 3,
+          "SOME": 1,
+          "NONE": 1,
+          "total": 5
+        },
+        "F02": {
+          "ALL": 5,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 5
+        },
+        "F03": {
+          "ALL": 3,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 3
+        },
+        "F04": {
+          "ALL": 5,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 6
+        },
+        "F05": {
+          "ALL": 2,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 2
+        },
+        "F06": {
+          "ALL": 4,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 5
+        },
+        "F08": {
+          "ALL": 9,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 9
+        },
+        "F09": {
+          "ALL": 6,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 6
+        },
+        "F10": {
+          "ALL": 3,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 3
+        },
+        "F11": {
+          "ALL": 8,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 9
+        },
+        "F12": {
+          "ALL": 0,
+          "SOME": 0,
+          "NONE": 2,
+          "total": 2
+        },
+        "F13": {
+          "ALL": 6,
+          "SOME": 2,
+          "NONE": 1,
+          "total": 9
+        },
+        "F15": {
+          "ALL": 16,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 17
+        },
+        "F16": {
+          "ALL": 7,
+          "SOME": 1,
+          "NONE": 0,
+          "total": 8
+        },
+        "F17": {
+          "ALL": 8,
+          "SOME": 0,
+          "NONE": 1,
+          "total": 9
+        },
+        "F18": {
+          "ALL": 7,
+          "SOME": 3,
+          "NONE": 4,
+          "total": 14
+        },
+        "F19": {
+          "ALL": 6,
+          "SOME": 2,
+          "NONE": 0,
+          "total": 8
+        },
+        "F20": {
+          "ALL": 6,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 6
+        },
+        "F22": {
+          "ALL": 2,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 2
+        },
+        "F23": {
+          "ALL": 2,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 2
+        },
+        "corpus_E1": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "corpus_E2": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "corpus_E3": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "F92": {
+          "ALL": 1,
+          "SOME": 0,
+          "NONE": 0,
+          "total": 1
+        },
+        "F93": {
+          "ALL": 3,
+          "SOME": 0,
+          "NONE": 1,
+          "total": 4
+        },
+        "MF_probe": {
+          "ALL": 7,
+          "SOME": 0,
+          "NONE": 3,
+          "total": 10
+        }
+      },
+      "figureBearing": 200
+    }
+  },
+  "betterStats": {
+    "noneCount": 50,
+    "missingSource": 0,
+    "hasAllBetter": 3,
+    "hasSomeOnlyBetter": 6,
+    "noBetter": 41,
+    "rejectedFalseFriendCases": 0,
+    "cases": [
+      {
+        "pairId": "nordholt-clean:S0:IC memo",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+        "passage": "The Committee notes that projected returns are attractive but are not guaranteed.",
+        "stmtFigs": [
+          "percent:14"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S0:press release",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+        "passage": "Nordholt Logistics today announced the completion of its acquisition of Baltic ColdCo, extending the group's cold-chain network into Finland.",
+        "stmtFigs": [
+          "percent:14"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S0:LP update",
+        "caseLabel": "nordholt-clean",
+        "classification": "partially_confirmed",
+        "statementText": "Nordholt Logistics continues to perform in line with underwriting, and the fund has generated a net IRR to date of 14 per cent.",
+        "passage": "Nordholt Logistics continues to perform in line with our underwriting.",
+        "stmtFigs": [
+          "percent:14"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source does not carry statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S1:IC memo",
+        "caseLabel": "nordholt-clean",
+        "classification": "conflicting",
+        "statementText": "The business now operates 14 cold-chain facilities across three Nordic markets and employs 720 people.",
+        "passage": "At the date of this memo the business runs 12 facilities and employs 640 people, principally in Sweden.",
+        "stmtFigs": [
+          "number:14",
+          "number:720"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": true,
+          "bestCoverage": "SOME",
+          "bestSentence": "INVESTMENT COMMITTEE MEMORANDUM — NORDHOLT LOGISTICS Date: 14 March 2023 Prepared for the Investment Committee of Ashford Capital Partners Fund IV 1.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "unclear",
+          "note": "source has some figures; need case read",
+          "sourceHasAll": false,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S1:LP update",
+        "caseLabel": "nordholt-clean",
+        "classification": "partially_confirmed",
+        "statementText": "The business now operates 14 cold-chain facilities across three Nordic markets and employs 720 people.",
+        "passage": "Following the completion of the Baltic ColdCo acquisition in June, the Company now operates across three Nordic markets, and integration is progressing to plan.",
+        "stmtFigs": [
+          "number:14",
+          "number:720"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source does not carry statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S2:IC memo",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Following the acquisition of Baltic ColdCo in June 2026, combined annual revenue stands at approximately EUR 155 million, of which around 70 per cent is contracted, providing a solid base of recurring income.",
+        "passage": "Revenue is underpinned by multi-year customer contracts, with an average contract length of approximately four years.",
+        "stmtFigs": [
+          "percent:70",
+          "money:155"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S3:IC memo",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Facility utilisation is 88 per cent.",
+        "passage": "The source does not address facility utilisation.",
+        "stmtFigs": [
+          "percent:88"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S3:press release",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Facility utilisation is 88 per cent.",
+        "passage": "Nordholt Logistics today announced the completion of its acquisition of Baltic ColdCo, extending the group's cold-chain network into Finland. Following the transaction, Nordholt operates 14 facilities across the Nordic region.",
+        "stmtFigs": [
+          "percent:88"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S3:LP update",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Facility utilisation is 88 per cent.",
+        "passage": "Contracted revenue represents approximately 70 per cent of total revenue, providing a solid base of recurring income.",
+        "stmtFigs": [
+          "percent:88"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S4:IC memo",
+        "caseLabel": "nordholt-clean",
+        "classification": "confirmed",
+        "statementText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+        "passage": "Reported EBITDA margin is 18.6 per cent. Revenue is underpinned by multi-year customer contracts, with an average contract length of approximately four years.",
+        "stmtFigs": [
+          "percent:19"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "confirmed with NONE passage and source has no statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S4:press release",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+        "passage": "Nordholt Logistics today announced the completion of its acquisition of Baltic ColdCo, extending the group's cold-chain network into Finland.",
+        "stmtFigs": [
+          "percent:19"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S4:fact sheet",
+        "caseLabel": "nordholt-clean",
+        "classification": "no_support",
+        "statementText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+        "passage": "NORDHOLT LOGISTICS — KEY OPERATING METRICS\nAs at 30 June 2026\n\nEmployees: 720\nFacilities: 14 (Sweden, Denmark, Finland)\nFacility utilisation: 88 per cent\nContracted revenue: 70 per cent of total revenue\nCombined annual revenue: EUR 155 million\nNet IRR to date (Ashford Fund IV): 14 per cent",
+        "stmtFigs": [
+          "percent:19"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-clean:S4:LP update",
+        "caseLabel": "nordholt-clean",
+        "classification": "partially_confirmed",
+        "statementText": "Customer relationships are underpinned by multi-year contracts averaging four years, and the EBITDA margin is approximately 19 per cent.",
+        "passage": "Contracted revenue represents approximately 70 per cent of total revenue, providing a solid base of recurring income.",
+        "stmtFigs": [
+          "percent:19"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source does not carry statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S0:IC memo",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+        "passage": "The Committee notes that projected returns are attractive but are not guaranteed.",
+        "stmtFigs": [
+          "percent:18"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S0:press release",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+        "passage": "Nordholt Logistics today announced the completion of its acquisition of Baltic ColdCo, extending the group's cold-chain network into Finland.",
+        "stmtFigs": [
+          "percent:18"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S0:fact sheet",
+        "caseLabel": "nordholt-dirty",
+        "classification": "conflicting",
+        "statementText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+        "passage": "Net IRR to date (Ashford Fund IV): 14 per cent",
+        "stmtFigs": [
+          "percent:18"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S0:LP update",
+        "caseLabel": "nordholt-dirty",
+        "classification": "conflicting",
+        "statementText": "Nordholt Logistics is performing well ahead of underwriting, and the fund has already locked in a net IRR of 18 per cent.",
+        "passage": "Nordholt Logistics continues to perform in line with our underwriting.",
+        "stmtFigs": [
+          "percent:18"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S1:IC memo",
+        "caseLabel": "nordholt-dirty",
+        "classification": "conflicting",
+        "statementText": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+        "passage": "At the date of this memo the business runs 12 facilities and employs 640 people, principally in Sweden.",
+        "stmtFigs": [
+          "number:15",
+          "number:800"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S1:press release",
+        "caseLabel": "nordholt-dirty",
+        "classification": "conflicting",
+        "statementText": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+        "passage": "Following the transaction, Nordholt operates 14 facilities across the Nordic region.",
+        "stmtFigs": [
+          "number:15",
+          "number:800"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S1:fact sheet",
+        "caseLabel": "nordholt-dirty",
+        "classification": "conflicting",
+        "statementText": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+        "passage": "Employees: 720\nFacilities: 14 (Sweden, Denmark, Finland)",
+        "stmtFigs": [
+          "number:15",
+          "number:800"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S1:LP update",
+        "caseLabel": "nordholt-dirty",
+        "classification": "partially_confirmed",
+        "statementText": "We now run 15 cold-chain facilities across four Nordic markets and employ over 800 people.",
+        "passage": "Following the completion of the Baltic ColdCo acquisition in June, the Company now operates across three Nordic markets, and integration is progressing to plan.",
+        "stmtFigs": [
+          "number:15",
+          "number:800"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source does not carry statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S2:IC memo",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+        "passage": "Revenue is underpinned by multi-year customer contracts, with an average contract length of approximately four years.",
+        "stmtFigs": [
+          "money:155"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S2:LP update",
+        "caseLabel": "nordholt-dirty",
+        "classification": "partially_confirmed",
+        "statementText": "Following our acquisition of Baltic ColdCo, combined revenue has surged to $155m, of which virtually all is locked in under long-term contracts.",
+        "passage": "Contracted revenue represents approximately 70 per cent of total revenue, providing a solid base of recurring income.",
+        "stmtFigs": [
+          "money:155"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source does not carry statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S3:IC memo",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Utilisation has reached a record 88 per cent.",
+        "passage": "The source does not address utilisation rates or any related metrics.",
+        "stmtFigs": [
+          "percent:88"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S3:press release",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Utilisation has reached a record 88 per cent.",
+        "passage": "Nordholt Logistics today announced the completion of its acquisition of Baltic ColdCo, extending the group's cold-chain network into Finland.",
+        "stmtFigs": [
+          "percent:88"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S3:LP update",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Utilisation has reached a record 88 per cent.",
+        "passage": "Nordholt Logistics continues to perform in line with our underwriting. Following the completion of the Baltic ColdCo acquisition in June, the Company now operates across three Nordic markets, and integration is progressing to plan.",
+        "stmtFigs": [
+          "percent:88"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S4:IC memo",
+        "caseLabel": "nordholt-dirty",
+        "classification": "conflicting",
+        "statementText": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+        "passage": "Reported EBITDA margin is 18.6 per cent. Revenue is underpinned by multi-year customer contracts, with an average contract length of approximately four years.",
+        "stmtFigs": [
+          "percent:25"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S4:press release",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+        "passage": "Nordholt Logistics today announced the completion of its acquisition of Baltic ColdCo, extending the group's cold-chain network into Finland.",
+        "stmtFigs": [
+          "percent:25"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S4:fact sheet",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+        "passage": "NORDHOLT LOGISTICS — KEY OPERATING METRICS\nAs at 30 June 2026\n\nEmployees: 720\nFacilities: 14 (Sweden, Denmark, Finland)\nFacility utilisation: 88 per cent\nContracted revenue: 70 per cent of total revenue\nCombined annual revenue: EUR 155 million\nNet IRR to date (Ashford Fund IV): 14 per cent",
+        "stmtFigs": [
+          "percent:25"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "nordholt-dirty:S4:LP update",
+        "caseLabel": "nordholt-dirty",
+        "classification": "no_support",
+        "statementText": "Customer contracts run to at least six years, and the EBITDA margin has expanded to a remarkable 25 per cent.",
+        "passage": "Contracted revenue represents approximately 70 per cent of total revenue, providing a solid base of recurring income.",
+        "stmtFigs": [
+          "percent:25"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "supersession:S0:source_A_annual_report_2019",
+        "caseLabel": "supersession",
+        "classification": "no_support",
+        "statementText": "Revenue for the twelve months to 31 December 2025 was EUR 200 million.",
+        "passage": "Revenue for FY2019 was EUR 100 million, up from EUR 82 million the prior year.",
+        "stmtFigs": [
+          "money:200",
+          "number:31"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": true,
+          "bestCoverage": "SOME",
+          "bestSentence": "MERIDIAN CAPITAL — FUND III ANNUAL REPORT Date: 12 March 2020 Financial highlights for the year ended 31 December 2019.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "unclear",
+          "note": "source has some figures; need case read",
+          "sourceHasAll": false,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "supersession:S1:source_A_annual_report_2019",
+        "caseLabel": "supersession",
+        "classification": "conflicting",
+        "statementText": "The company employs 720 people.",
+        "passage": "At 31 December 2019 the fund held 12 portfolio companies across three sectors, and the underlying businesses employed 640 people in aggregate.",
+        "stmtFigs": [
+          "number:720"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "supersession:S1:source_B_fy2024_results",
+        "caseLabel": "supersession",
+        "classification": "no_support",
+        "statementText": "The company employs 720 people.",
+        "passage": "Adjusted EBITDA for FY2024 was EUR 45 million, reflecting margin expansion across the core holdings.",
+        "stmtFigs": [
+          "number:720"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "supersession:S2:source_A_annual_report_2019",
+        "caseLabel": "supersession",
+        "classification": "no_support",
+        "statementText": "Adjusted EBITDA for FY2024 was EUR 45 million.",
+        "passage": "Financial highlights for the year ended 31 December 2019.",
+        "stmtFigs": [
+          "money:45"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "supersession:S2:source_C_fund_update_2026",
+        "caseLabel": "supersession",
+        "classification": "conflicting",
+        "statementText": "Adjusted EBITDA for FY2024 was EUR 45 million.",
+        "passage": "Adjusted EBITDA for FY2024 has been restated to EUR 40 million following a reclassification of central costs.",
+        "stmtFigs": [
+          "money:45"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "supersession:S3:source_B_fy2024_results",
+        "caseLabel": "supersession",
+        "classification": "no_support",
+        "statementText": "The fund holds 12 portfolio companies.",
+        "passage": "Adjusted EBITDA for FY2024 was EUR 45 million, reflecting margin expansion across the core holdings.",
+        "stmtFigs": [
+          "number:12"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "supersession:S3:source_C_fund_update_2026",
+        "caseLabel": "supersession",
+        "classification": "conflicting",
+        "statementText": "The fund holds 12 portfolio companies.",
+        "passage": "The fund now holds 15 portfolio companies, and the underlying businesses employ 720 people in aggregate.",
+        "stmtFigs": [
+          "number:12"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "F01:S1:01_bvp_shopify_memo",
+        "caseLabel": "F01",
+        "classification": "confirmed",
+        "statementText": "The Company has grown rapidly, with customers increasing from 5'500 a year ago to nearly 10'000 today.",
+        "passage": "Shopify has grown at an impressive rate. With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today (+81% Y/Y).",
+        "stmtFigs": [
+          "number:5",
+          "number:500",
+          "number:10"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": true,
+          "bestCoverage": "SOME",
+          "bestSentence": "We plan to invest $5mm and thereby own 20% on a fully-diluted basis.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "unclear",
+          "note": "source has some figures; need case read",
+          "sourceHasAll": true,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "F12:S3:12_synth_linkedin_post",
+        "caseLabel": "F12",
+        "classification": "partially_confirmed",
+        "statementText": "NorTech today operates across the Nordic region, Germany, France, the UK, and Poland, with international revenue having grown from a fifth of total revenue at entry to more than 40 percent at exit.",
+        "passage": "Four and a half years later it is a genuinely international business with operations across the Nordic region, Germany, France, the UK, and Poland.",
+        "stmtFigs": [
+          "percent:40"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source does not carry statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "F12:S4:12_synth_linkedin_post",
+        "caseLabel": "F12",
+        "classification": "no_support",
+        "statementText": "Total revenue grew nearly threefold over the hold period and EBITDA margins moved from 11 to 18 percent.",
+        "passage": "Some news worth sharing.\n\nAfter eighteen months of work alongside the team, I'm delighted that Meridian Capital has completed the sale of NorTech Industries to Brookfield this week. NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and one of those quiet category leaders that the Nordic region produces so well.\n\nWhen we acquired NorTech in 2021 it was an excellent company with a clear ceiling — strong in Sweden, under-exposed everywhere else, and held back by a fragmented shareholder structure. Four and a half years later it is a genuinely international business with operations across the Nordic region, Germany, France, the UK, and Poland.",
+        "stmtFigs": [
+          "percent:18",
+          "number:11"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "F13:S9:13_synth_internal_inconsistency_memo",
+        "caseLabel": "F13",
+        "classification": "no_support",
+        "statementText": "First, the European freight forwarding software market remains structurally underpenetrated, with approximately 40% of forwarders still on legacy systems or spreadsheets.",
+        "passage": "The principal competition is fragmented legacy software (Riege, CargoWise — which is the dominant player in larger forwarders — and a long tail of regional incumbents). Most legacy products are visibly aged and customer satisfaction is consistently low.",
+        "stmtFigs": [
+          "percent:40"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "F17:S9:17_synth_real_estate_logistics",
+        "caseLabel": "F17",
+        "classification": "conflicting",
+        "statementText": "Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.",
+        "passage": "Embedded rental reversion is estimated at approximately 18% across the portfolio, with the strongest reversion potential in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.",
+        "stmtFigs": [
+          "percent:40",
+          "money:38"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": true,
+          "bestCoverage": "SOME",
+          "bestSentence": "CAPITAL EXPENDITURE PLAN We have budgeted EUR 38 million of value-add capital expenditure across the hold period.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "unclear",
+          "note": "source has some figures; need case read",
+          "sourceHasAll": true,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "F18:S2:18b_synth_cross_source_pair_update",
+        "caseLabel": "F18",
+        "classification": "no_support",
+        "statementText": "We have invested EUR 158 million for a 60% controlling stake.",
+        "passage": "We continue to recommend completion of the transaction on the terms set out in the original recommendation, subject to acknowledgment of the updated financial and operational figures above.",
+        "stmtFigs": [
+          "percent:60",
+          "money:158"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source lacks statement figures; NONE+no_support coherent",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "F18:S6:18a_synth_cross_source_pair_initial",
+        "caseLabel": "F18",
+        "classification": "confirmed",
+        "statementText": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+        "passage": "First, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support.",
+        "stmtFigs": [
+          "percent:40"
+        ],
+        "better": {
+          "hasAllBetter": true,
+          "hasSomeBetter": true,
+          "bestCoverage": "ALL",
+          "bestSentence": "Approximately 40% of Nordic property management companies still use legacy systems or spreadsheets.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "confirmed while citing NONE of figures, yet source has ALL-figure sentence",
+          "sourceHasAll": true,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "F18:S6:18b_synth_cross_source_pair_update",
+        "caseLabel": "F18",
+        "classification": "partially_confirmed",
+        "statementText": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+        "passage": "Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+        "stmtFigs": [
+          "percent:40"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "defensible",
+          "note": "source does not carry statement figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "F18:S7:18b_synth_cross_source_pair_update",
+        "caseLabel": "F18",
+        "classification": "partially_confirmed",
+        "statementText": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+        "passage": "Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+        "stmtFigs": [
+          "money:38",
+          "money:95"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": true,
+          "bestCoverage": "SOME",
+          "bestSentence": "UPDATED FINANCIAL POSITION Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "unclear",
+          "note": "source has some figures; need case read",
+          "sourceHasAll": false,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "F93:S2:93_adversarial_basis_mismatch",
+        "caseLabel": "F93",
+        "classification": "conflicting",
+        "statementText": "Fund IV has returned 2.6 times gross MOIC.",
+        "passage": "Fund IV (2020 vintage, EUR 750 million) is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+        "stmtFigs": [
+          "multiple:2.6"
+        ],
+        "better": {
+          "hasAllBetter": true,
+          "hasSomeBetter": true,
+          "bestCoverage": "ALL",
+          "bestSentence": "Fund IV has returned 2.6 times gross MOIC.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "mixed",
+          "note": "conflicting may still be right if selected span conflicts on other grounds; figure sentence unused",
+          "sourceHasAll": true,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "MF07:S0:mf08_false_mark_using_return_figure.txt",
+        "caseLabel": "MF07",
+        "classification": "conflicting",
+        "statementText": "Fund IV is currently marked at 2.6x gross MOIC.",
+        "passage": "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+        "stmtFigs": [
+          "multiple:2.6",
+          "number:2"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": true,
+          "bestCoverage": "SOME",
+          "bestSentence": "Fund IV has returned 2.6 times gross MOIC.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "unclear",
+          "note": "source has some figures; need case read",
+          "sourceHasAll": false,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      },
+      {
+        "pairId": "MF08:S0:mf09_wrong_return_magnitude.txt",
+        "caseLabel": "MF08",
+        "classification": "conflicting",
+        "statementText": "Fund IV has returned 3.0 times gross MOIC.",
+        "passage": "Fund IV has returned 2.6 times gross MOIC.",
+        "stmtFigs": [
+          "multiple:3"
+        ],
+        "better": {
+          "hasAllBetter": false,
+          "hasSomeBetter": false,
+          "bestCoverage": null,
+          "bestSentence": null,
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "suspect",
+          "note": "conflicting with NONE and source lacks figures",
+          "sourceHasAll": false,
+          "sourceHasSome": false,
+          "magnitudeConflictAvailable": false
+        }
+      },
+      {
+        "pairId": "MF09:S0:mf10_false_fund_claim_of_deal_return.txt",
+        "caseLabel": "MF09",
+        "classification": "conflicting",
+        "statementText": "Fund IV has returned 2.6 times gross MOIC.",
+        "passage": "Fund IV is currently marked at 1.9x gross MOIC.",
+        "stmtFigs": [
+          "multiple:2.6"
+        ],
+        "better": {
+          "hasAllBetter": true,
+          "hasSomeBetter": true,
+          "bestCoverage": "ALL",
+          "bestSentence": "Vale Forge, a Fund IV platform, returned 2.6 times gross MOIC on exit.",
+          "rejectedCount": 0
+        },
+        "defensibility": {
+          "verdict": "mixed",
+          "note": "conflicting may still be right if selected span conflicts on other grounds; figure sentence unused",
+          "sourceHasAll": true,
+          "sourceHasSome": true,
+          "magnitudeConflictAvailable": true
+        }
+      }
+    ]
+  },
+  "defCounts": {
+    "defensible": 30,
+    "suspect": 12,
+    "mixed": 2,
+    "unclear": 6
+  },
+  "rejectedExamples": [],
+  "passageChangedCrosscheck": {
+    "passageChanged": 22,
+    "pcNone": 11
+  }
+}
