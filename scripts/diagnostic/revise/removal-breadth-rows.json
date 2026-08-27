@@ -1,0 +1,272 @@
+{
+  "ranAt": "2026-08-27T09:34:11.663Z",
+  "modelCalls": 0,
+  "costUsd": 0,
+  "reviewArtefact": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/claim-spans/.baseline.json",
+  "reviewNote": "STALE after R3a ship (2026-08-26). Stage 2 rows were produced under promptHash c718c190315ec131946cfa73452d12f417a01117fc04e2b63daca8e1455d57fe. Do not use for live-product verdict checks. Current Stage 2 reference: scripts/diagnostic/eval-ablation/r3a-corpus-blast-rows.json (364 pairs, R3a promptHash bce78c194451ff6b4351eadbb6ab2eac984d872a6edb85c50a52ba3f3c4cb68c). Regeneration: BACKLOG B114 (~$4, deferred).",
+  "currentStage2Reference": "scripts/diagnostic/eval-ablation/r3a-corpus-blast-rows.json",
+  "caseCount": 29,
+  "funnel": {
+    "totalStatements": 296,
+    "notSupported": 14,
+    "gatherUnsupported": 14,
+    "wholeSentence": 11,
+    "blockedConfirmedPreserve": 0,
+    "emptyDraft": 0,
+    "selectedRemoved": 11,
+    "skippedNoMatch": 0,
+    "skippedNotWhole": 3,
+    "skippedOther": 0
+  },
+  "headline": "11 statements across 10 cases would be selected for removal, out of 296 statements in the corpus",
+  "upperBoundNote": "UPPER BOUND: at run time the gate also requires statementText to still match the model's revised draft.",
+  "adjudicationCounts": {
+    "CORRECT": 9,
+    "WRONG": 1,
+    "ARGUABLE": 1
+  },
+  "selected": [
+    {
+      "caseId": "F01",
+      "statementId": "F01:S11",
+      "statementIndex": 11,
+      "sentenceText": "We recommend approval.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "01_bvp_shopify_memo",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "skipped",
+      "gateReason": "remnant_lost_after_delete",
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=skipped reason=remnant_lost_after_delete (sentence still deleted; remnant annotation failed) (evaluated alone against original draft)",
+      "adjudication": "WRONG",
+      "adjudicationSourceLabel": "01_bvp_shopify_memo",
+      "adjudicationQuote": "We recommend this investment.",
+      "adjudicationNote": "Source closes with an explicit recommendation. Draft 'We recommend approval.' is the same speech act; Stage 2 no_support is a miss. Deletion would destroy correct text."
+    },
+    {
+      "caseId": "F08",
+      "statementId": "F08:S17",
+      "statementIndex": 17,
+      "sentenceText": "We are confident in the team and the opportunity, and we look forward to providing further updates as the hold progresses.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "08_synth_industrial_buyout_memo",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "skipped",
+      "gateReason": "remnant_lost_after_delete",
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=skipped reason=remnant_lost_after_delete (sentence still deleted; remnant annotation failed) (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "08_synth_industrial_buyout_memo",
+      "adjudicationQuote": "We recommend approval.",
+      "adjudicationNote": "Source ends on a plain recommend-approval line. It does not state confidence in the team, look-forward language, or hold-progress updates. Boilerplate closing is unsupported."
+    },
+    {
+      "caseId": "F12",
+      "statementId": "F12:S5",
+      "statementIndex": 5,
+      "sentenceText": "The numbers tell one story; the team's transformation tells the bigger one.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "12_synth_linkedin_post",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "skipped",
+      "gateReason": "remnant_lost_after_delete",
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=skipped reason=remnant_lost_after_delete (sentence still deleted; remnant annotation failed) (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "12_synth_linkedin_post",
+      "adjudicationQuote": "When we acquired NorTech in 2021 it was an excellent company with a clear ceiling — strong in Sweden, under-exposed everywhere else, and held back by a fragmented shareholder structure.",
+      "adjudicationNote": "LinkedIn post has no 'numbers tell one story / transformation tells the bigger one' rhetoric. Pure draft flourish."
+    },
+    {
+      "caseId": "F13",
+      "statementId": "F13:S15",
+      "statementIndex": 15,
+      "sentenceText": "The investment fits well with the broader portfolio strategy.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "13_synth_internal_inconsistency_memo",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "skipped",
+      "gateReason": "remnant_lost_after_delete",
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=skipped reason=remnant_lost_after_delete (sentence still deleted; remnant annotation failed) (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "13_synth_internal_inconsistency_memo",
+      "adjudicationQuote": "We are attracted to CloudPivot for the following reasons.",
+      "adjudicationNote": "Memo has an investment thesis section but never claims portfolio-strategy fit. Sentence is unsupported."
+    },
+    {
+      "caseId": "F14",
+      "statementId": "F14:S12",
+      "statementIndex": 12,
+      "sentenceText": "We will provide further detail when the work is sufficiently advanced.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "14_synth_thesis_only_memo",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "skipped",
+      "gateReason": "remnant_lost_after_delete",
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=skipped reason=remnant_lost_after_delete (sentence still deleted; remnant annotation failed) (evaluated alone against original draft)",
+      "adjudication": "ARGUABLE",
+      "adjudicationSourceLabel": "14_synth_thesis_only_memo",
+      "adjudicationQuote": "We would expect to return with clearer perspectives in the next thesis update.",
+      "adjudicationNote": "Source defers detail to a later update after sourcing work. Draft says further detail when work is sufficiently advanced. Same deferral intent, different wording; reasonable people differ on whether that backs deletion."
+    },
+    {
+      "caseId": "F15",
+      "statementId": "F15:S32",
+      "statementIndex": 32,
+      "sentenceText": "We have high conviction in the management team and the value creation plan, and we look forward to providing further updates as the hold progresses.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "15_synth_very_long_memo",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "skipped",
+      "gateReason": "remnant_lost_after_delete",
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=skipped reason=remnant_lost_after_delete (sentence still deleted; remnant annotation failed) (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "15_synth_very_long_memo",
+      "adjudicationQuote": "We recommend approval of an investment of up to EUR 720 million of equity from Halden Group, with the right to syndicate up to EUR 110 million of co-investment, in the acquisition of Casa Verde Group S.p.A.",
+      "adjudicationNote": "Source recommends approval with ticket size. It does not say high conviction in management / value creation plan, nor look-forward hold updates. Stock LP closing is unsupported."
+    },
+    {
+      "caseId": "F20",
+      "statementId": "F20:S8",
+      "statementIndex": 8,
+      "sentenceText": "Our investment team has been preparing Fund V's pipeline for many months and we expect first capital calls in the second quarter of 2026.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "20_synth_fund_close_announcement",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "skipped",
+      "gateReason": "remnant_lost_after_delete",
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=skipped reason=remnant_lost_after_delete (sentence still deleted; remnant annotation failed) (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "20_synth_fund_close_announcement",
+      "adjudicationQuote": "We anticipate making 10 to 12 platform investments over the four-year deployment period, with typical equity tickets in the EUR 300 to 700 million range.",
+      "adjudicationNote": "Announcement covers final close and deployment shape. No pipeline-prep claim and no first capital call in Q2 2026."
+    },
+    {
+      "caseId": "F21",
+      "statementId": "F21:S3",
+      "statementIndex": 3,
+      "sentenceText": "James Ortiz said, \"Project Atlas will double in value within two years.\"",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "21_r6_6_2_residual_legs",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "removed",
+      "gateReason": null,
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=removed (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "21_r6_6_2_residual_legs",
+      "adjudicationQuote": "James Ortiz, former Chief Executive Officer of GridCo Industries, advised Meridian Capital on the transaction structure.",
+      "adjudicationNote": "Ortiz appears only as an adviser. No Project Atlas quote and no 'double in value within two years.'"
+    },
+    {
+      "caseId": "F21",
+      "statementId": "F21:S4",
+      "statementIndex": 4,
+      "sentenceText": "The transaction is expected to close in the second quarter of 2026.",
+      "sourceCount": 1,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "21_r6_6_2_residual_legs",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "removed",
+      "gateReason": null,
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=removed (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "21_r6_6_2_residual_legs",
+      "adjudicationQuote": "Frankfurt, Germany — 1 March 2026 — Meridian Capital (\"Meridian\") today announced the acquisition of NordVolt Storage GmbH (\"NordVolt\"), a Nordic battery storage platform.",
+      "adjudicationNote": "Press release announces the deal as of 1 March 2026. No expected close in Q2 2026."
+    },
+    {
+      "caseId": "F22",
+      "statementId": "F22:S3",
+      "statementIndex": 3,
+      "sentenceText": "Veneto Freight is one of the fund's existing portfolio companies.",
+      "sourceCount": 2,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "ALP_IC_memo",
+          "classification": "no_support"
+        },
+        {
+          "sourceIndex": 1,
+          "sourceLabel": "ALP_update_memo",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "removed",
+      "gateReason": null,
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=removed (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "ALP_IC_memo",
+      "adjudicationQuote": "The transaction was advised by Elena Foscari, former operations director at Veneto Freight, who supported the commercial diligence workstream.",
+      "adjudicationNote": "Veneto Freight is prior employer of an adviser, not a fund portfolio company. Update memo never mentions Veneto Freight."
+    },
+    {
+      "caseId": "F23",
+      "statementId": "F23:S4",
+      "statementIndex": 4,
+      "sentenceText": "Aldous Renewables is the fund's largest limited partner.",
+      "sourceCount": 2,
+      "perSourceClassifications": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "CRF_IC_memo",
+          "classification": "no_support"
+        },
+        {
+          "sourceIndex": 1,
+          "sourceLabel": "CRF_diligence_update",
+          "classification": "no_support"
+        }
+      ],
+      "gateAction": "removed",
+      "gateReason": null,
+      "selectionReason": "aggregated not_supported -> gatherConcerns kind unsupported; whole-sentence on original draft; not blocked by confirmed_preserve; not empty-draft; applyDeterministicUnsupportedRemoval action=removed (evaluated alone against original draft)",
+      "adjudication": "CORRECT",
+      "adjudicationSourceLabel": "CRF_IC_memo",
+      "adjudicationQuote": "The opportunity was sourced through the fund's relationship with Aldous Renewables, a long-standing co-investment partner.",
+      "adjudicationNote": "Aldous is a co-investment partner, not the fund's largest limited partner. Diligence update never names Aldous."
+    }
+  ],
+  "funnelSideRows": []
+}
