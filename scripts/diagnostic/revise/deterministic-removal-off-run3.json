@@ -1,58 +1,58 @@
 {
-  "ranAt": "2026-08-27T09:13:32.982Z",
+  "ranAt": "2026-08-27T10:43:47.011Z",
   "label": "arm-off-run3",
-  "ms": 4540,
+  "ms": 5008,
   "deterministicUnsupportedRemoval": false,
-  "raw": "{{In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services||CHANGED: Removed the specific 'lead commitment' detail and timing, which are not supported by the source, while retaining the broader point that Halden Group invested with Meridian. Confirm before publishing.}}.\n\n{{We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised deals||CHANGED: Replaced 'that is, in our view, genuinely exceptional' with the specific performance figures cited in the source. Confirm before publishing.}}.\n\n{{It has realised a gross MOIC of 2.4 times across 17 exits||CHANGED: Removed the unsupported 'placing it in the top quartile of European lower-mid-market managers' ranking while keeping the confirmed performance data. Confirm before publishing.}}.\n\n{{The team's stability, with no senior departures across the last three fund cycles, is a key consideration in assessing key-person risk||CHANGED: Removed the unsupported assertion that stability 'means key-person risk is limited' and recast to note stability as a consideration instead. Confirm before publishing.}}.\n\n{{Fund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR||CHANGED: Changed 'has returned' to 'is currently marked at' to align with the source description of Fund IV's performance. Confirm before publishing.}}.\n\nMeridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nThe fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU.\n\n{{On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment||CHANGED: Retained the forward-looking view and recommendation but attributed them explicitly to Halden Group, as they are not sourced to external evidence. Confirm before publishing.}}.\n\n{{The GP provided access to co-investments on a no-fee, no-carry basis across Funds III and IV||CHANGED: Removed the unsupported claim that these co-investments would not otherwise have been available and kept the confirmed co-investment terms. Confirm before publishing.}}.\n\n{{Halden Group expects the relationship to deepen over the life of the fund||CHANGED: Kept the expectation language but flagged it, as no source supports this forward-looking relationship statement. Confirm before publishing.}}.",
-  "revisedDraft": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nWe were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised deals.\n\nIt has realised a gross MOIC of 2.4 times across 17 exits.\n\nThe team's stability, with no senior departures across the last three fund cycles, is a key consideration in assessing key-person risk.\n\nFund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR.\n\nMeridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nThe fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU.\n\nOn balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.\n\nThe GP provided access to co-investments on a no-fee, no-carry basis across Funds III and IV.\n\nHalden Group expects the relationship to deepen over the life of the fund.",
+  "raw": "{{In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services||CHANGED: Removed the specific 'lead commitment' characterization and June 2025 timing, which are not supported by the source, while retaining the relationship and fund description. Confirm before publishing.}}.\n\nHalden Group was attracted to Meridian on the strength of {{a track record of 2.4x gross MOIC and 21% gross IRR across fully realised deals||CHANGED: Replaced 'that is, in our view, genuinely exceptional' with the specific performance figures that are supported by the source. Confirm before publishing.}}.\n\nIt has realised a gross MOIC of 2.4 times across 17 exits{{||CHANGED: Removed the unsupported 'top quartile of European lower-mid-market managers' ranking; the source confirms the MOIC and exit count only. Confirm before publishing.}}.\n\nThe team's stability, with no senior departures across the last three fund cycles, {{is a key strength for the strategy||CHANGED: Removed the unsupported assertion that stability 'means key-person risk is limited' and recast to a supported, descriptive point. Confirm before publishing.}}.\n\nFund IV {{is currently marked at||CHANGED: Changed 'has returned' to 'is currently marked at' to align with the source description of Fund IV's performance. Confirm before publishing.}} 1.9 times gross MOIC and a 24% gross IRR.\n\nMeridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nThe fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU.\n\nOn balance, {{Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment||CHANGED: Retained the belief and recommendation as judgement language while removing first-person plural, which is not supported by the source and not aligned with reporting style. Confirm before publishing.}}.\n\nThe GP provided access to co-investments {{on a no-fee, no-carry basis across Funds III and IV||CHANGED: Removed the unsupported claim that co-investments 'would not otherwise have been available' and retained only the confirmed co-investment terms. Confirm before publishing.}}.\n\n{{Halden Group expects the relationship to deepen over the life of the fund||CHANGED: Softened the unsupported forward-looking expectation by recasting it as Halden Group's view rather than a factual prediction. Confirm before publishing.}}.",
+  "revisedDraft": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nHalden Group was attracted to Meridian on the strength of a track record of 2.4x gross MOIC and 21% gross IRR across fully realised deals.\n\nIt has realised a gross MOIC of 2.4 times across 17 exits.\n\nThe team's stability, with no senior departures across the last three fund cycles, is a key strength for the strategy.\n\nFund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR.\n\nMeridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nThe fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU.\n\nOn balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.\n\nThe GP provided access to co-investments on a no-fee, no-carry basis across Funds III and IV.\n\nHalden Group expects the relationship to deepen over the life of the fund.",
   "markers": [
     {
       "start": 0,
       "end": 195,
-      "note": "Left this wording as written. Confirm before publishing.",
-      "intent": "KEPT"
-    },
-    {
-      "start": 198,
-      "end": 338,
-      "note": "Replaced 'that is, in our view, genuinely exceptional' with the specific performance figures cited in the source. Confirm before publishing.",
+      "note": "Removed the specific 'lead commitment' characterization and June 2025 timing, which are not supported by the source, while retaining the relationship and fund description. Confirm before publishing.",
       "intent": "CHANGED"
     },
     {
-      "start": 341,
-      "end": 398,
-      "note": "Removed the unsupported 'placing it in the top quartile of European lower-mid-market managers' ranking while keeping the confirmed performance data. Confirm before publishing.",
+      "start": 256,
+      "end": 335,
+      "note": "Replaced 'that is, in our view, genuinely exceptional' with the specific performance figures that are supported by the source. Confirm before publishing.",
       "intent": "CHANGED"
     },
     {
-      "start": 401,
-      "end": 535,
-      "note": "Removed the unsupported assertion that stability 'means key-person risk is limited' and recast to note stability as a consideration instead. Confirm before publishing.",
+      "start": 390,
+      "end": 395,
+      "note": "Removed the unsupported 'top quartile of European lower-mid-market managers' ranking; the source confirms the MOIC and exit count only. Confirm before publishing.",
       "intent": "CHANGED"
     },
     {
-      "start": 538,
-      "end": 609,
+      "start": 481,
+      "end": 515,
+      "note": "Removed the unsupported assertion that stability 'means key-person risk is limited' and recast to a supported, descriptive point. Confirm before publishing.",
+      "intent": "CHANGED"
+    },
+    {
+      "start": 526,
+      "end": 548,
       "note": "Changed 'has returned' to 'is currently marked at' to align with the source description of Fund IV's performance. Confirm before publishing.",
       "intent": "CHANGED"
     },
     {
-      "start": 878,
-      "end": 1010,
-      "note": "Retained the forward-looking view and recommendation but attributed them explicitly to Halden Group, as they are not sourced to external evidence. Confirm before publishing.",
+      "start": 870,
+      "end": 990,
+      "note": "Retained the belief and recommendation as judgement language while removing first-person plural, which is not supported by the source and not aligned with reporting style. Confirm before publishing.",
       "intent": "KEPT"
     },
     {
-      "start": 1013,
-      "end": 1105,
-      "note": "Removed the unsupported claim that these co-investments would not otherwise have been available and kept the confirmed co-investment terms. Confirm before publishing.",
+      "start": 1034,
+      "end": 1085,
+      "note": "Removed the unsupported claim that co-investments 'would not otherwise have been available' and retained only the confirmed co-investment terms. Confirm before publishing.",
       "intent": "CHANGED"
     },
     {
-      "start": 1108,
-      "end": 1181,
-      "note": "Kept the expectation language but flagged it, as no source supports this forward-looking relationship statement. Confirm before publishing.",
-      "intent": "KEPT"
+      "start": 1088,
+      "end": 1161,
+      "note": "Softened the unsupported forward-looking expectation by recasting it as Halden Group's view rather than a factual prediction. Confirm before publishing.",
+      "intent": "CHANGED"
     }
   ],
   "honestyEvents": [
@@ -60,39 +60,14 @@
       "traceId": "arm-off-run3",
       "intent": "CHANGED",
       "repairedIntent": "KEPT",
-      "span": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services",
-      "contradiction": "changed_but_identical",
-      "houseStyleOnly": false,
-      "origRegionText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
-      "revSpanText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
-      "noteBefore": "Removed the specific 'lead commitment' detail and timing, which are not supported by the source, while retaining the broader point that Halden Group invested with Meridian. Confirm before publishing.",
-      "noteAfter": "Left this wording as written. Confirm before publishing."
-    },
-    {
-      "traceId": "arm-off-run3",
-      "intent": "CHANGED",
-      "repairedIntent": "KEPT",
-      "span": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment",
+      "span": "Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment",
       "contradiction": "note_intent_mismatch",
       "noteClaim": "CLAIMS_NO_CHANGE",
       "houseStyleOnly": false,
-      "origRegionText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
-      "revSpanText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
-      "noteBefore": "Retained the forward-looking view and recommendation but attributed them explicitly to Halden Group, as they are not sourced to external evidence. Confirm before publishing.",
-      "noteAfter": "Retained the forward-looking view and recommendation but attributed them explicitly to Halden Group, as they are not sourced to external evidence. Confirm before publishing."
-    },
-    {
-      "traceId": "arm-off-run3",
-      "intent": "CHANGED",
-      "repairedIntent": "KEPT",
-      "span": "Halden Group expects the relationship to deepen over the life of the fund",
-      "contradiction": "note_intent_mismatch",
-      "noteClaim": "CLAIMS_NO_CHANGE",
-      "houseStyleOnly": false,
-      "origRegionText": "that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
-      "revSpanText": "Halden Group expects the relationship to deepen over the life of the fund.",
-      "noteBefore": "Kept the expectation language but flagged it, as no source supports this forward-looking relationship statement. Confirm before publishing.",
-      "noteAfter": "Kept the expectation language but flagged it, as no source supports this forward-looking relationship statement. Confirm before publishing."
+      "origRegionText": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "revSpanText": "Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+      "noteBefore": "Retained the belief and recommendation as judgement language while removing first-person plural, which is not supported by the source and not aligned with reporting style. Confirm before publishing.",
+      "noteAfter": "Retained the belief and recommendation as judgement language while removing first-person plural, which is not supported by the source and not aligned with reporting style. Confirm before publishing."
     }
   ],
   "removalEvents": [],
@@ -103,25 +78,25 @@
       "sentence": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
       "markerCount": 1,
       "intents": [
-        "KEPT"
+        "CHANGED"
       ],
       "notes": [
-        "Left this wording as written. Confirm before publishing."
+        "Removed the specific 'lead commitment' characterization and June 2025 timing, which are not supported by the source, while retaining the relationship and fund description. Confirm before publishing."
       ],
       "proseNorm": "in june 2025, halden group made a lead commitment to meridian capital partners v, a eur 1.2 billion fund targeting lower-mid-market buyouts in european industrial technology and business services."
     },
     "exceptional": {
       "id": "exceptional",
       "present": true,
-      "sentence": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised deals.",
+      "sentence": "Halden Group was attracted to Meridian on the strength of a track record of 2.4x gross MOIC and 21% gross IRR across fully realised deals.",
       "markerCount": 1,
       "intents": [
         "CHANGED"
       ],
       "notes": [
-        "Replaced 'that is, in our view, genuinely exceptional' with the specific performance figures cited in the source. Confirm before publishing."
+        "Replaced 'that is, in our view, genuinely exceptional' with the specific performance figures that are supported by the source. Confirm before publishing."
       ],
-      "proseNorm": "we were attracted to meridian on the strength of a track record of 2.4x realised gross moic and 21% gross irr across 17 fully realised deals."
+      "proseNorm": "halden group was attracted to meridian on the strength of a track record of 2.4x gross moic and 21% gross irr across fully realised deals."
     },
     "ranking": {
       "id": "ranking",
@@ -132,22 +107,22 @@
         "CHANGED"
       ],
       "notes": [
-        "Removed the unsupported 'placing it in the top quartile of European lower-mid-market managers' ranking while keeping the confirmed performance data. Confirm before publishing."
+        "Removed the unsupported 'top quartile of European lower-mid-market managers' ranking; the source confirms the MOIC and exit count only. Confirm before publishing."
       ],
       "proseNorm": "it has realised a gross moic of 2.4 times across 17 exits."
     },
     "risk": {
       "id": "risk",
       "present": true,
-      "sentence": "The team's stability, with no senior departures across the last three fund cycles, is a key consideration in assessing key-person risk.",
+      "sentence": "The team's stability, with no senior departures across the last three fund cycles, is a key strength for the strategy.",
       "markerCount": 1,
       "intents": [
         "CHANGED"
       ],
       "notes": [
-        "Removed the unsupported assertion that stability 'means key-person risk is limited' and recast to note stability as a consideration instead. Confirm before publishing."
+        "Removed the unsupported assertion that stability 'means key-person risk is limited' and recast to a supported, descriptive point. Confirm before publishing."
       ],
-      "proseNorm": "the team's stability, with no senior departures across the last three fund cycles, is a key consideration in assessing key-person risk."
+      "proseNorm": "the team's stability, with no senior departures across the last three fund cycles, is a key strength for the strategy."
     },
     "mark": {
       "id": "mark",
@@ -189,7 +164,7 @@
         "KEPT"
       ],
       "notes": [
-        "Retained the forward-looking view and recommendation but attributed them explicitly to Halden Group, as they are not sourced to external evidence. Confirm before publishing."
+        "Retained the belief and recommendation as judgement language while removing first-person plural, which is not supported by the source and not aligned with reporting style. Confirm before publishing."
       ],
       "proseNorm": "on balance, halden group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment."
     },
@@ -202,7 +177,7 @@
         "CHANGED"
       ],
       "notes": [
-        "Removed the unsupported claim that these co-investments would not otherwise have been available and kept the confirmed co-investment terms. Confirm before publishing."
+        "Removed the unsupported claim that co-investments 'would not otherwise have been available' and retained only the confirmed co-investment terms. Confirm before publishing."
       ],
       "proseNorm": "the gp provided access to co-investments on a no-fee, no-carry basis across funds iii and iv."
     },
@@ -212,10 +187,10 @@
       "sentence": "Halden Group expects the relationship to deepen over the life of the fund.",
       "markerCount": 1,
       "intents": [
-        "KEPT"
+        "CHANGED"
       ],
       "notes": [
-        "Kept the expectation language but flagged it, as no source supports this forward-looking relationship statement. Confirm before publishing."
+        "Softened the unsupported forward-looking expectation by recasting it as Halden Group's view rather than a factual prediction. Confirm before publishing."
       ],
       "proseNorm": "halden group expects the relationship to deepen over the life of the fund."
     }
@@ -226,20 +201,6 @@
     "cutNote": null,
     "noteNamesNoSource": false,
     "noteInventedSubstitute": false,
-    "honestyOnDeepenMarker": [
-      {
-        "traceId": "arm-off-run3",
-        "intent": "CHANGED",
-        "repairedIntent": "KEPT",
-        "span": "Halden Group expects the relationship to deepen over the life of the fund",
-        "contradiction": "note_intent_mismatch",
-        "noteClaim": "CLAIMS_NO_CHANGE",
-        "houseStyleOnly": false,
-        "origRegionText": "that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
-        "revSpanText": "Halden Group expects the relationship to deepen over the life of the fund.",
-        "noteBefore": "Kept the expectation language but flagged it, as no source supports this forward-looking relationship statement. Confirm before publishing.",
-        "noteAfter": "Kept the expectation language but flagged it, as no source supports this forward-looking relationship statement. Confirm before publishing."
-      }
-    ]
+    "honestyOnDeepenMarker": []
   }
 }

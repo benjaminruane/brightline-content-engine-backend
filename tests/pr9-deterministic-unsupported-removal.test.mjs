@@ -4,6 +4,7 @@ import {
   applyDeterministicUnsupportedRemoval,
   findStatementTextInDraft,
   matchIsWholeSentence,
+  buildDeterministicUnsupportedRemovalCutNote,
   DETERMINISTIC_UNSUPPORTED_EMPTY_DRAFT_NOTE,
   DETERMINISTIC_UNSUPPORTED_REMOVAL_CUT_NOTE,
 } from "../lib/pr9-deterministic-unsupported-removal.mjs";
@@ -19,6 +20,9 @@ const COINVEST =
   "The GP provided access to co-investments on a no-fee, no-carry basis across Funds III and IV.";
 const MARK =
   "Fund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR.";
+
+const EXPECTED_DEEPEN_CUT_NOTE =
+  'Removed this sentence: "Halden Group expects the relationship to deepen over the life of the fund." No supplied source backs that claim. Confirm before publishing.';
 
 function unsupportedConcern(statementText, statementIndex = 9) {
   return {
@@ -51,6 +55,7 @@ describe("applyDeterministicUnsupportedRemoval", () => {
     const cut = result.markers.find((m) => m.intent === "CUT");
     assert.ok(cut);
     assert.equal(result.revisedDraft.slice(cut.start, cut.end), cut ? result.removalEvents[0].remnantText : "");
+    assert.equal(cut.note, EXPECTED_DEEPEN_CUT_NOTE);
     assert.match(cut.note, /no supplied source/i);
     assert.doesNotMatch(cut.note, /author'?s point|materiality|style/i);
     // Offsets: remnant is last word of coinvest, still inside draft.
@@ -277,5 +282,26 @@ describe("empty-draft note vs normalizeMarkerNoteText", () => {
     );
     assert.ok(out.startsWith("No supplied source supports this."));
     assert.match(out, /kept only because removing it would leave the draft empty/i);
+  });
+});
+
+describe("quoted removal note", () => {
+  test("buildDeterministicUnsupportedRemovalCutNote quotes verbatim and survives normalizeMarkerNoteText", () => {
+    const note = buildDeterministicUnsupportedRemovalCutNote(DEEPEN);
+    assert.equal(note, EXPECTED_DEEPEN_CUT_NOTE);
+    assert.equal(normalizeMarkerNoteText(note), note);
+    assert.match(note, /Removed this sentence: "/);
+    assert.match(note, /No supplied source backs that claim/);
+  });
+
+  test("quotes longer than 200 chars are truncated with ellipsis", () => {
+    const long = `${"Word ".repeat(50)}end.`;
+    const note = buildDeterministicUnsupportedRemovalCutNote(long);
+    assert.match(note, /\.\.\." No supplied source backs that claim/);
+    assert.equal(normalizeMarkerNoteText(note), note);
+  });
+
+  test("legacy CUT note constant still documents the old body", () => {
+    assert.match(DETERMINISTIC_UNSUPPORTED_REMOVAL_CUT_NOTE, /Removed this sentence/);
   });
 });
