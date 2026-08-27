@@ -93,7 +93,9 @@ Invented Halden LP-update pairs that force at least two performance figures onto
 | `eval-ablation/run-passage-selection-probe.mjs` | Live R3a x3, cache OFF. Writes rows + `passage-selection-probe.md`. |
 | `eval-ablation/run-mark-richness-probe.mjs` | Richness swap: RICH01, THIN93, F93_S2, MF01. |
 | `eval-ablation/passage-selection-probe.md` | Pre-flight, cost, per-run passages, dimension cross, stopping rule. |
-| `eval-ablation/mark-richness-probe.md` | Richness hypothesis reading (CONFIRMED / REFUTED / MIXED). |
+| `eval-ablation/basis-conflict-r10.txt` | R9 + quantity-scoped basis limb. Harness only. |
+| `eval-ablation/run-r10-scoped-basis-gate.mjs` | R3a vs R10 on graded set + F93 + MF01-10. |
+| `eval-ablation/r10-scoped-basis-gate.md` | R10 measure report. |
 
 ## Real vs invented sources
 
