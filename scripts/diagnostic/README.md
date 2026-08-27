@@ -101,6 +101,8 @@ Invented Halden LP-update pairs that force at least two performance figures onto
 | `eval-ablation/r10-corpus-blast.md` | R10 vs live R3a corpus blast + Part 1 reconfirm. |
 | `eval-ablation/run-r10-corpus-blast.mjs` | Harness for that blast. |
 | `eval-ablation/richness-exposure-count.md` | Free scan: rich-mark trigger exposure in corpus sources. |
+| `eval-ablation/meridian_source.txt` | Invented Meridian Fund V summary (Halden copy). GP-side pack for Meridian draft measures. Do not edit to plant cases. |
+| `eval-ablation/meridian_halden_note.txt` | Invented Halden Group IC note on the Meridian V commitment. Second source for Condition B (draft vs source set). Invented; not production. |
 
 ## Real vs invented sources
 
