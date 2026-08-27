@@ -92,6 +92,7 @@ export default async function handler(req, res) {
         provider: modelConfig.provider,
         model: modelConfig.model,
         temperature: 0,
+        seed: 1,
         messages: [{ role: "user", content: prompt }],
         traceName,
         spanName: traceName,

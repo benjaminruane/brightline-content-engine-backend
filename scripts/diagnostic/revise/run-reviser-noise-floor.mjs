@@ -232,10 +232,11 @@ async function runSuggestOnce(label, statements) {
     provider: modelConfig.provider,
     model: modelConfig.model,
     temperature: 0,
+    seed: 1,
     messages: [{ role: "user", content: prompt }],
     traceName: "reviser-noise-floor",
     spanName: label,
-    metadata: { route: "reviser-noise-floor", label, concernCount: concerns.length },
+    metadata: { route: "reviser-noise-floor", label, concernCount: concerns.length, seed: 1 },
   });
   const ms = Date.now() - t0;
   const raw = stripCodeFence(typeof completion?.text === "string" ? completion.text : "");
