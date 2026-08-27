@@ -269,7 +269,7 @@ a kind below requires a change." That general line also leans keep.
 Minimum bar:
   1. Prose: the sentence (or clause) is gone from the revised draft.
   2. Marker: intent CUT on a surviving remnant (or document-level remnant
-     policy if the whole draft fragment would vanish  -  edge case for later).
+     policy if the whole draft fragment would vanish; edge case for later).
   3. Note: names that no uploaded source supports the claim; does not invent
      a substitute reason (authorial intent, materiality, style).
   4. Honesty: CUT + adjacent deletion window passes applyMarkerHonestyCheck
@@ -354,7 +354,7 @@ uploaded. That does not make today's severity wrong given only the GP pack.
 ### Invented second source: Halden IC paper
 
 ```
-Working title: Halden Group  -  Meridian Capital Partners V IC note (invented)
+Working title: Halden Group / Meridian Capital Partners V IC note (invented)
 Path (when built): scripts/diagnostic/eval-ablation/meridian_halden_ic.txt
 Alongside: scripts/diagnostic/eval-ablation/meridian_source.txt (existing GP pack)
 Draft: same Halden Meridian draft as r10-production-verify / Suggest measure.
