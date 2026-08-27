@@ -193,7 +193,7 @@ describe("applyMarkerHonestyCheck", () => {
     assert.equal(result.markers[0].note.includes("Removed the unsupported 14x"), true);
   });
 
-  test("CUT with nothing lost rewrites the note and flips intent to KEPT", () => {
+  test("CUT with nothing lost rewrites the note and flips intent to KEPT (cut_but_text_present)", () => {
     const original = "The company serves customers across Europe.";
     const revised = original;
     const result = applyMarkerHonestyCheck(original, {
@@ -208,8 +208,98 @@ describe("applyMarkerHonestyCheck", () => {
       ],
     });
     assert.equal(result.honestyEvents.length, 1);
-    assert.equal(result.honestyEvents[0].contradiction, "cut_but_region_unchanged");
+    assert.equal(result.honestyEvents[0].contradiction, "cut_but_text_present");
     assert.match(result.markers[0].note, /^Left this wording as written -/);
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
+  });
+
+  test("cut_but_text_present: CUT span verbatim, no neighbouring edits", () => {
+    const original =
+      "Halden Group expects the relationship to deepen over the life of the fund.";
+    const revised = original;
+    const span = original.replace(/\.$/, "");
+    const result = applyMarkerHonestyCheck(original, {
+      revisedDraft: revised,
+      markers: [
+        {
+          start: 0,
+          end: span.length,
+          intent: MARKER_INTENT_CUT,
+          note: "Removed this expectation - no supplied source backs that claim. Confirm before publishing.",
+        },
+      ],
+    });
+    assert.equal(result.honestyEvents.length, 1);
+    assert.equal(result.honestyEvents[0].contradiction, "cut_but_text_present");
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
+    assert.equal(result.honestyEvents[0].repairedIntent, MARKER_INTENT_KEPT);
+    assert.match(result.markers[0].note, /^Left this wording as written -/);
+  });
+
+  test("cut_but_text_present: CUT span verbatim after preceding sentence deleted (0559301 shape)", () => {
+    const deepen =
+      "Halden Group expects the relationship to deepen over the life of the fund.";
+    const original = `The GP provided access to co-investments that would not otherwise have been available to us.\n\n${deepen}`;
+    const revised = `The GP provided access to co-investments on a no-fee, no-carry basis across Funds III and IV.\n\n${deepen}`;
+    const start = revised.indexOf(deepen);
+    assert.ok(start >= 0);
+    const result = applyMarkerHonestyCheck(original, {
+      revisedDraft: revised,
+      markers: [
+        {
+          start,
+          end: start + deepen.length - 1,
+          intent: MARKER_INTENT_CUT,
+          note: "Removed this expectation statement because no supplied source supports a claim about the future depth of the relationship. Confirm before publishing.",
+        },
+      ],
+    });
+    assert.equal(result.honestyEvents.length, 1);
+    assert.equal(result.honestyEvents[0].contradiction, "cut_but_text_present");
+    assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
+    assert.equal(result.honestyEvents[0].repairedIntent, MARKER_INTENT_KEPT);
+    // LCS window would have reported CHANGED (neighbour deletions); this must not depend on it.
+    assert.match(result.markers[0].note, /^Left this wording as written/);
+  });
+
+  test("CUT with span genuinely absent: true clause-cut remnant, no cut_but_text_present", () => {
+    const original = "The company trades at 14x EV/EBITDA and serves customers across Europe.";
+    const revised = "The company serves customers across Europe.";
+    const result = applyMarkerHonestyCheck(original, {
+      revisedDraft: revised,
+      markers: [
+        {
+          start: 0,
+          end: revised.length - 1,
+          intent: MARKER_INTENT_CUT,
+          note: "Removed the unsupported 14x EV/EBITDA clause - sources do not state a multiple. Confirm before publishing.",
+        },
+      ],
+    });
+    assert.equal(result.honestyEvents.length, 0);
+    assert.equal(result.markers[0].intent, MARKER_INTENT_CUT);
+    assert.equal(
+      result.honestyEvents.some((e) => e.contradiction === "cut_but_text_present"),
+      false
+    );
+  });
+
+  test("KEPT marker with span verbatim present is unchanged", () => {
+    const original =
+      "Halden Group expects the relationship to deepen over the life of the fund.";
+    const revised = original;
+    const result = applyMarkerHonestyCheck(original, {
+      revisedDraft: revised,
+      markers: [
+        {
+          start: 0,
+          end: revised.length - 1,
+          intent: MARKER_INTENT_KEPT,
+          note: "Kept the expectation - no source backs it, so confirm. Confirm before publishing.",
+        },
+      ],
+    });
+    assert.equal(result.honestyEvents.length, 0);
     assert.equal(result.markers[0].intent, MARKER_INTENT_KEPT);
   });
 
