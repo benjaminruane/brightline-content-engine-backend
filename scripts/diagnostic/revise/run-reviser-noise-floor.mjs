@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Reviser noise floor: Suggest x3 against ONE unchanged Review, shipped prompt
- * (measuredUnsupportedWholeSentenceRemoval OFF). Reuses Condition A Review
+ * Prompt: CURRENT SHIPPED (live keep-and-flag EDGE CASE; code owns removal).
+ * Reuses Condition A Review
  * from suggest-after-r10-review1.json (52b469f artefacts).
  *
  * Usage: node scripts/diagnostic/revise/run-reviser-noise-floor.mjs
@@ -337,7 +338,7 @@ async function main() {
   const meta = {
     ranAt: new Date().toISOString(),
     reviewReuse: "suggest-after-r10-review1.json",
-    prompt: "shipped (measuredUnsupportedWholeSentenceRemoval OFF)",
+    prompt: "shipped (live keep-and-flag; code-owned removal)",
     model: `${modelConfig.provider}/${modelConfig.model}`,
     temperature: 0,
     runs: runs.map((r) => ({

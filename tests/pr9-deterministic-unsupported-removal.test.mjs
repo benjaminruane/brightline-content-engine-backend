@@ -263,6 +263,7 @@ describe("finalizeSuggestRevisionText deterministic removal hook", () => {
     });
     assert.equal(result.revisedDraft.includes("deepen"), false);
     assert.equal(result.removalEvents?.[0]?.action, "removed");
+    assert.equal(result.removalEvents?.[0]?.reason, "unsupported_whole_sentence_removed");
     assert.equal(
       (result.honestyEvents || []).some((e) => e.contradiction === "cut_but_text_present"),
       false
@@ -270,6 +271,36 @@ describe("finalizeSuggestRevisionText deterministic removal hook", () => {
     const cut = result.markers.find((m) => m.intent === "CUT");
     assert.ok(cut);
     assert.match(cut.note, /no supplied source/i);
+    assert.equal(result.removalEvents[0].removedSentenceText, DEEPEN);
+    assert.equal(typeof result.removalEvents[0].originalOffset, "number");
+    assert.ok(result.removalEvents[0].originalOffset >= 0);
+  });
+
+  test("model marker wrapping the deleted sentence is dropped (no orphan marker)", () => {
+    const original = `${COINVEST}\n\n${DEEPEN}`;
+    // Model keep-and-flag wrapped the whole deepen sentence; code then deletes it.
+    const raw = `${COINVEST}\n\n{{${DEEPEN.replace(/\.$/, "")}||KEPT: Kept deepen — unsupported. Confirm before publishing.}}.`;
+    const result = finalizeSuggestRevisionText(raw, {
+      originalDraft: original,
+      concerns: [unsupportedConcern(DEEPEN)],
+      deterministicUnsupportedRemoval: true,
+      traceId: "unit-orphan-marker",
+    });
+    assert.equal(result.revisedDraft.includes("deepen"), false);
+    assert.equal(result.removalEvents?.[0]?.action, "removed");
+    // No marker may point past the draft or still wrap deepen prose.
+    for (const m of result.markers) {
+      assert.ok(m.start >= 0 && m.end <= result.revisedDraft.length);
+      assert.ok(m.end > m.start);
+      assert.equal(/deepen/i.test(result.revisedDraft.slice(m.start, m.end)), false);
+    }
+    // The only CUT is on a neighbour remnant, not on absent text.
+    const cuts = result.markers.filter((m) => m.intent === "CUT");
+    assert.equal(cuts.length, 1);
+    assert.equal(
+      result.revisedDraft.includes(result.revisedDraft.slice(cuts[0].start, cuts[0].end)),
+      true
+    );
   });
 });
 

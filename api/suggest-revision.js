@@ -2,7 +2,7 @@
  * Pr9 — Suggest revised draft (generation-side).
  * POST { draftText, statements, outputType?, requiredVersion?, sources? }
  * sources?: [{ index, publicationState }] — optional; absent → no public-source downgrade.
- * → { ok: true, revisedDraft, markers } | { ok: false, error }
+ * → { ok: true, revisedDraft, markers, removalEvents? } | { ok: false, error }
  *
  * Does NOT import or touch the QC pipeline, verdict, or aggregation.
  */
@@ -45,6 +45,15 @@ function stripCodeFence(text) {
   return match ? match[1].trim() : trimmed;
 }
 
+function finalizeOpts(draftText, concerns, traceId) {
+  return {
+    originalDraft: draftText,
+    concerns,
+    deterministicUnsupportedRemoval: true,
+    traceId,
+  };
+}
+
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
@@ -83,6 +92,7 @@ export default async function handler(req, res) {
     const llmMeta = {
       route: "suggest-revision",
       concernCount: concerns.length,
+      deterministicUnsupportedRemoval: true,
       ...(outputType ? { outputType } : {}),
       ...(requiredVersion ? { requiredVersion } : {}),
     };
@@ -106,10 +116,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ ok: false, error: "Suggest-revision produced empty revisedDraft" });
     }
 
-    let finalized = finalizeSuggestRevisionText(raw, {
-      originalDraft: draftText,
-      traceId: "suggest-revision",
-    });
+    let finalized = finalizeSuggestRevisionText(raw, finalizeOpts(draftText, concerns, "suggest-revision"));
     let vocabHits = findReviewVocabularyHits(finalized.revisedDraft);
     let revisionWarning = null;
     if (vocabHits.length > 0) {
@@ -121,10 +128,10 @@ export default async function handler(req, res) {
       });
       const rawRetry = await rewriteOnce("suggest-revision-retry");
       if (rawRetry) {
-        const retry = finalizeSuggestRevisionText(rawRetry, {
-          originalDraft: draftText,
-          traceId: "suggest-revision-retry",
-        });
+        const retry = finalizeSuggestRevisionText(
+          rawRetry,
+          finalizeOpts(draftText, concerns, "suggest-revision-retry")
+        );
         const retryHits = findReviewVocabularyHits(retry.revisedDraft);
         logReviewVocabularyAttempt({
           traceId: "suggest-revision",
@@ -148,6 +155,7 @@ export default async function handler(req, res) {
       ok: true,
       revisedDraft: finalized.revisedDraft,
       markers: finalized.markers,
+      removalEvents: Array.isArray(finalized.removalEvents) ? finalized.removalEvents : [],
     };
     if (revisionWarning) payload.revisionWarning = revisionWarning;
     if (finalized.honestyEvents?.length) payload.honestyEvents = finalized.honestyEvents;

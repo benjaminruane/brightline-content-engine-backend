@@ -2,7 +2,9 @@
 /**
  * Condition A (and B re-run) under measured unsupported whole-sentence removal.
  * Does NOT call production Suggest (live EDGE CASE). Local writing-rewrite with
- * opts.measuredUnsupportedWholeSentenceRemoval: true.
+ * SUPERSEDED: 0559301 measured prompt CUT path was removed when code-owned
+ * deterministicUnsupportedRemoval shipped. This harness is retained as a
+ * historical runner only; it no longer can enable the measured prompt branch.
  *
  * Reuses existing Reviews (Review is unchanged by this pass):
  *   A: suggest-after-r10-review1.json (meridian_source.txt only)
@@ -91,14 +93,13 @@ async function localSuggest({ label, draftText, statements, sources }) {
   const prompt = buildRevisionPrompt(draftText, concerns, {
     outputType: "reporting_commentary",
     requiredVersion: "complete",
-    measuredUnsupportedWholeSentenceRemoval: true,
   });
 
   const hasMeasuredEdge = prompt.includes("EMPTY DRAFT EXCEPTION");
   const hasLiveKeep = prompt.includes("falls to keep-and-flag");
-  if (!hasMeasuredEdge || hasLiveKeep) {
+  if (hasMeasuredEdge || !hasLiveKeep) {
     throw new Error(
-      `[${label}] prompt flag wiring failed: measured=${hasMeasuredEdge} liveKeep=${hasLiveKeep}`
+      `[${label}] expected live keep-and-flag EDGE CASE only: measured=${hasMeasuredEdge} liveKeep=${hasLiveKeep}`
     );
   }
 
@@ -114,7 +115,6 @@ async function localSuggest({ label, draftText, statements, sources }) {
       route: "condition-a-removal",
       label,
       concernCount: concerns.length,
-      measuredUnsupportedWholeSentenceRemoval: true,
     },
   });
   const ms = Date.now() - t0;
@@ -125,6 +125,8 @@ async function localSuggest({ label, draftText, statements, sources }) {
 
   const finalized = finalizeSuggestRevisionText(raw, {
     originalDraft: draftText,
+    concerns,
+    deterministicUnsupportedRemoval: true,
     traceId: label,
   });
 
@@ -269,7 +271,7 @@ async function main() {
   const totalUsd = costLog.reduce((a, c) => a + c.usdEstimate, 0);
   const meta = {
     ranAt: new Date().toISOString(),
-    measuredFlag: "measuredUnsupportedWholeSentenceRemoval",
+    measuredFlag: "removed (code-owned deterministicUnsupportedRemoval)",
     reviewReuse: {
       conditionA: "suggest-after-r10-review1.json",
       conditionB: "condition-b-review.json",
