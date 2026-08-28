@@ -1,0 +1,497 @@
+{
+  "ranAt": "2026-08-28T08:28:53.069Z",
+  "productionUrl": "https://brightline-content-engine-backend.vercel.app",
+  "capturedPayloadKeys": [
+    "selectedTypes",
+    "versionType",
+    "draftText",
+    "versionId",
+    "sources",
+    "evidenceEnabled",
+    "editorialEnabled",
+    "complianceEnabled"
+  ],
+  "fieldDiff": [
+    {
+      "key": "authoringOrganisation",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "Partners Group"
+    },
+    {
+      "key": "complianceEnabled",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "true",
+      "previous": "(absent)"
+    },
+    {
+      "key": "draftText",
+      "status": "DIFFERENT VALUE",
+      "captured": "In June 2026, Partners Group committed to Meridian Capital P…",
+      "previous": "<original fixture>"
+    },
+    {
+      "key": "editorialEnabled",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "true",
+      "previous": "(absent)"
+    },
+    {
+      "key": "evidenceEnabled",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "true",
+      "previous": "(absent)"
+    },
+    {
+      "key": "options.complianceEnabled",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "false"
+    },
+    {
+      "key": "options.editorialEnabled",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "false"
+    },
+    {
+      "key": "options.evidenceEnabled",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "true"
+    },
+    {
+      "key": "options.pipelineRoute",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "v4"
+    },
+    {
+      "key": "outputType",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "reporting_commentary"
+    },
+    {
+      "key": "requiredVersion",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "complete"
+    },
+    {
+      "key": "selectedTypes[0]",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "reporting_commentary",
+      "previous": "(absent)"
+    },
+    {
+      "key": "sources[0].id",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "assess_src_1787905277301_3b448370caf1f8",
+      "previous": "(absent)"
+    },
+    {
+      "key": "sources[0].kind",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "file",
+      "previous": "(absent)"
+    },
+    {
+      "key": "sources[0].label",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "Meridian Fund V summary"
+    },
+    {
+      "key": "sources[0].name",
+      "status": "DIFFERENT VALUE",
+      "captured": "meridian_source_production.txt",
+      "previous": "meridian_production_source.txt"
+    },
+    {
+      "key": "sources[0].publicationState",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "restricted",
+      "previous": "(absent)"
+    },
+    {
+      "key": "sources[0].sourceType",
+      "status": "ONLY IN OLD DIAGNOSTIC",
+      "captured": "(absent)",
+      "previous": "uploaded"
+    },
+    {
+      "key": "sources[0].text",
+      "status": "DIFFERENT VALUE",
+      "captured": "Meridian Capital Partners V, L.P. — Fund Summary (for prospe…",
+      "previous": "<source fixture>"
+    },
+    {
+      "key": "sources[0].title",
+      "status": "DIFFERENT VALUE",
+      "captured": "meridian_source_production.txt",
+      "previous": "Meridian Fund V summary"
+    },
+    {
+      "key": "versionId",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "assess-session-v1",
+      "previous": "(absent)"
+    },
+    {
+      "key": "versionType",
+      "status": "ONLY IN APP REQUEST",
+      "captured": "complete",
+      "previous": "(absent)"
+    }
+  ],
+  "runsPerArm": 3,
+  "originalTarget": {
+    "supported_full": 3
+  },
+  "revisedTarget": {
+    "supported_full": 3
+  },
+  "originalRunsWithProductionSpan": 0,
+  "verdict": "STILL CANNOT REPRODUCE",
+  "editFlipsVerdict": "not answerable, parity not achieved",
+  "flipResults": null,
+  "runs": [
+    {
+      "arm": "original",
+      "run": 1,
+      "label": "original/r1",
+      "httpStatus": 200,
+      "ms": 19276,
+      "traceId": "49918a71-0b44-4112-92d9-dc0d933c9a7d",
+      "statementCount": 6,
+      "outputTypeEcho": {
+        "evidenceEnabled": true,
+        "editorialEnabled": true,
+        "complianceEnabled": true
+      },
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+            "start": 0,
+            "end": 226
+          }
+        ],
+        "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing in the statement. Please verify the timing and Partners Group's involvement or adjust the statement accordingly.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "hasProductionSpan": false
+    },
+    {
+      "arm": "original",
+      "run": 2,
+      "label": "original/r2",
+      "httpStatus": 200,
+      "ms": 5484,
+      "traceId": "e3d2d997-a016-4fa5-91a2-34579ea3f36a",
+      "statementCount": 6,
+      "outputTypeEcho": {
+        "evidenceEnabled": true,
+        "editorialEnabled": true,
+        "complianceEnabled": true
+      },
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+            "start": 0,
+            "end": 226
+          }
+        ],
+        "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing in the statement. Please verify the timing and Partners Group's involvement or adjust the statement accordingly.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "hasProductionSpan": false
+    },
+    {
+      "arm": "original",
+      "run": 3,
+      "label": "original/r3",
+      "httpStatus": 200,
+      "ms": 7509,
+      "traceId": "bb4731ec-0772-40ac-bdbf-e041ad7fa61e",
+      "statementCount": 6,
+      "outputTypeEcho": {
+        "evidenceEnabled": true,
+        "editorialEnabled": true,
+        "complianceEnabled": true
+      },
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+            "start": 0,
+            "end": 226
+          }
+        ],
+        "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing in the statement. Please verify the timing and Partners Group's involvement or adjust the statement accordingly.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "hasProductionSpan": false
+    },
+    {
+      "arm": "revised",
+      "run": 1,
+      "label": "revised/r1",
+      "httpStatus": 200,
+      "ms": 7681,
+      "traceId": "e1c71c4a-abb5-42e3-9486-b10a0be9543e",
+      "statementCount": 5,
+      "outputTypeEcho": {
+        "evidenceEnabled": true,
+        "editorialEnabled": true,
+        "complianceEnabled": true
+      },
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+            "start": 0,
+            "end": 226
+          }
+        ],
+        "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing in the statement. Please verify the timing and Partners Group's involvement or adjust the statement accordingly.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "hasProductionSpan": false
+    },
+    {
+      "arm": "revised",
+      "run": 2,
+      "label": "revised/r2",
+      "httpStatus": 200,
+      "ms": 4504,
+      "traceId": "58781274-b54b-43e4-89da-3fdf4130e4ee",
+      "statementCount": 5,
+      "outputTypeEcho": {
+        "evidenceEnabled": true,
+        "editorialEnabled": true,
+        "complianceEnabled": true
+      },
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+            "start": 0,
+            "end": 226
+          }
+        ],
+        "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing in the statement. Please verify the timing and Partners Group's involvement or adjust the statement accordingly.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "hasProductionSpan": false
+    },
+    {
+      "arm": "revised",
+      "run": 3,
+      "label": "revised/r3",
+      "httpStatus": 200,
+      "ms": 5093,
+      "traceId": "12479377-68e0-4833-9551-e50ba911037b",
+      "statementCount": 5,
+      "outputTypeEcho": {
+        "evidenceEnabled": true,
+        "editorialEnabled": true,
+        "complianceEnabled": true
+      },
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, its stable and experienced investment team, and its disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+            "start": 0,
+            "end": 226
+          }
+        ],
+        "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing stated. The reviewer should verify the timing and Partners Group's involvement or adjust the statement accordingly.",
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "meridian_source_production.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_1a8e2a470b"
+          }
+        ]
+      },
+      "hasProductionSpan": false
+    }
+  ]
+}
