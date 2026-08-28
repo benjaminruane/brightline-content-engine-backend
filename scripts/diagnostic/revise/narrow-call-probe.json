@@ -1,0 +1,288 @@
+{
+  "ranAt": "2026-08-28T11:09:52.261Z",
+  "model": "gpt-5.1-2025-11-13",
+  "replay": {
+    "rows": [
+      {
+        "file": "condition-a-condition-b-suggest-rerun.json",
+        "modelMarkers": 4,
+        "unreported": 1,
+        "regions": [
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "condition-a-suggest.json",
+        "modelMarkers": 8,
+        "unreported": 1,
+        "regions": [
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "deterministic-removal-off-run1.json",
+        "modelMarkers": 8,
+        "unreported": 1,
+        "regions": [
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "deterministic-removal-off-run2.json",
+        "modelMarkers": 8,
+        "unreported": 2,
+        "regions": [
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          },
+          {
+            "text": "has",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "deterministic-removal-off-run3.json",
+        "modelMarkers": 8,
+        "unreported": 2,
+        "regions": [
+          {
+            "text": "24%",
+            "chars": 3,
+            "words": 1
+          },
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "deterministic-removal-on-run1.json",
+        "modelMarkers": 8,
+        "unreported": 2,
+        "regions": [
+          {
+            "text": "24%",
+            "chars": 3,
+            "words": 1
+          },
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "deterministic-removal-on-run2.json",
+        "modelMarkers": 8,
+        "unreported": 2,
+        "regions": [
+          {
+            "text": "24%",
+            "chars": 3,
+            "words": 1
+          },
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "deterministic-removal-on-run3.json",
+        "modelMarkers": 8,
+        "unreported": 1,
+        "regions": [
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "reviser-noise-floor-run1.json",
+        "modelMarkers": 8,
+        "unreported": 1,
+        "regions": [
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "reviser-noise-floor-run2.json",
+        "modelMarkers": 8,
+        "unreported": 1,
+        "regions": [
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      },
+      {
+        "file": "reviser-noise-floor-run3.json",
+        "modelMarkers": 8,
+        "unreported": 3,
+        "regions": [
+          {
+            "text": "is currently marked at",
+            "chars": 22,
+            "words": 4
+          },
+          {
+            "text": "24%",
+            "chars": 3,
+            "words": 1
+          },
+          {
+            "text": "30%",
+            "chars": 3,
+            "words": 1
+          }
+        ]
+      }
+    ],
+    "skipped": [
+      {
+        "file": "condition-b-suggest.json",
+        "why": "raw model output not retained in the artefact"
+      },
+      {
+        "file": "suggest-after-r10-suggest1.json",
+        "why": "raw model output not retained in the artefact"
+      },
+      {
+        "file": "suggest-after-r10-suggest2.json",
+        "why": "raw model output not retained in the artefact"
+      }
+    ],
+    "totalUnreported": 17,
+    "runsWithAny": 11,
+    "dist": {
+      "min": 1,
+      "median": 1,
+      "max": 4,
+      "mean": 1.2
+    }
+  },
+  "probe": {
+    "target": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+    "results": [
+      {
+        "arm": "A",
+        "run": 1,
+        "reused": true,
+        "figureRemoved": false,
+        "revised": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+        "marker": "No change was made - the source only confirms the number of platform investments. Confirm before publishing.",
+        "promptChars": 33845,
+        "promptTokens": 8461
+      },
+      {
+        "arm": "A",
+        "run": 2,
+        "reused": true,
+        "figureRemoved": false,
+        "revised": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+        "marker": "No change was made - the source only confirms the number of platform investments. Confirm before publishing.",
+        "promptChars": 33845,
+        "promptTokens": 8461
+      },
+      {
+        "arm": "A",
+        "run": 3,
+        "reused": true,
+        "figureRemoved": false,
+        "revised": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+        "marker": "No change was made - the source backs only part of this. Confirm before publishing.",
+        "promptChars": 33845,
+        "promptTokens": 8461
+      },
+      {
+        "arm": "B",
+        "run": 1,
+        "reused": false,
+        "figureRemoved": true,
+        "revised": "The fund intends to build a portfolio of 10-14 control-oriented investments.",
+        "marker": "Replaced \"investments, with equity checks of EUR 80-100 million apiece.\" with \"investments.\" - sources do not state a ticket range. Confirm before publishing.",
+        "promptChars": 30638,
+        "promptTokens": 7660
+      },
+      {
+        "arm": "B",
+        "run": 2,
+        "reused": false,
+        "figureRemoved": true,
+        "revised": "The fund intends to build a portfolio of 10-14 control-oriented investments.",
+        "marker": "Replaced \"investments, with equity checks of EUR 80-100 million apiece.\" with \"investments.\" - sources confirm only the number of investments, not the EUR 80-100 million range. Confirm before publishing.",
+        "promptChars": 30638,
+        "promptTokens": 7660
+      },
+      {
+        "arm": "B",
+        "run": 3,
+        "reused": false,
+        "figureRemoved": true,
+        "revised": "The fund intends to build a portfolio of 10-14 control-oriented investments.",
+        "marker": "Replaced \"investments, with equity checks of EUR 80-100 million apiece.\" with \"investments.\" - sources do not state a target ticket range. Confirm before publishing.",
+        "promptChars": 30638,
+        "promptTokens": 7660
+      },
+      {
+        "arm": "C",
+        "run": 1,
+        "reused": false,
+        "figureRemoved": true,
+        "revised": "The fund intends to build a portfolio of 10-14 investments.",
+        "marker": "(minimal prompt asks for no marker)",
+        "promptChars": 1578,
+        "promptTokens": 395
+      },
+      {
+        "arm": "C",
+        "run": 2,
+        "reused": false,
+        "figureRemoved": true,
+        "revised": "The fund intends to build a portfolio of 10–14 investments.",
+        "marker": "(minimal prompt asks for no marker)",
+        "promptChars": 1578,
+        "promptTokens": 395
+      },
+      {
+        "arm": "C",
+        "run": 3,
+        "reused": false,
+        "figureRemoved": true,
+        "revised": "The fund intends to build a portfolio of 10–14 investments.",
+        "marker": "(minimal prompt asks for no marker)",
+        "promptChars": 1578,
+        "promptTokens": 395
+      }
+    ],
+    "verdict": "PREMISE HOLDS"
+  }
+}
