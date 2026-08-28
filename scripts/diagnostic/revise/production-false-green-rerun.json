@@ -1,0 +1,749 @@
+{
+  "ranAt": "2026-08-28T08:13:42.984Z",
+  "productionUrl": "https://brightline-content-engine-backend.vercel.app",
+  "fixtureAssertions": [
+    {
+      "name": "original length is 1087 (trailing newlines trimmed)",
+      "expected": 1087,
+      "actual": 1087,
+      "pass": true,
+      "note": "raw file is 1091 chars, 4 trailing whitespace chars trimmed"
+    },
+    {
+      "name": "revised length is 1000",
+      "expected": 1000,
+      "actual": 1000,
+      "pass": true,
+      "note": "byte for byte, untouched"
+    },
+    {
+      "name": "revised[994:999] === \"funds\"",
+      "expected": "funds",
+      "actual": "funds",
+      "pass": true,
+      "note": "the production CUT marker anchor"
+    },
+    {
+      "name": "revised[544:757] === target sentence without its full stop",
+      "expected": "<target sentence minus '.'>",
+      "actual": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation",
+      "pass": true,
+      "note": "213 chars"
+    }
+  ],
+  "part1": {
+    "runsPerArm": 3,
+    "targetSentence": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+    "originalTarget": {
+      "supported_full": 3
+    },
+    "revisedTarget": {
+      "supported_full": 3
+    },
+    "originalStatement0": {
+      "supported_partial": 3
+    },
+    "revisedStatement0": {
+      "supported_partial": 3
+    },
+    "verdict": "CANNOT REPRODUCE",
+    "stability": {
+      "originalTargetStage2": "3 of 3 (confirmed)",
+      "revisedTargetStage2": "3 of 3 (confirmed)",
+      "originalTargetVerdict": "3 of 3 (supported_full)",
+      "revisedTargetVerdict": "3 of 3 (supported_full)",
+      "originalStatement0": "3 of 3 (supported_partial)",
+      "revisedStatement0": "3 of 3 (supported_partial)"
+    },
+    "runs": [
+      {
+        "arm": "original",
+        "run": 1,
+        "httpStatus": 200,
+        "ms": 14635,
+        "traceId": "9a045f10-2c0f-4e98-a030-55aec2485649",
+        "statementCount": 6,
+        "target": {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "unsupportedSpans": [],
+          "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation."
+            }
+          ]
+        },
+        "statement0": {
+          "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "0",
+              "classification": "partially_confirmed",
+              "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+              "start": 0,
+              "end": 226
+            }
+          ],
+          "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the month of June 2026. Additionally, the source indicates a first close expected in Q3 2026, which does not align with the June 2026 date in the statement. Please verify these details or adjust the statement accordingly.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "text": null,
+              "passage": "First close: expected Q3 2026; final close targeted within 12 months of first close"
+            }
+          ]
+        }
+      },
+      {
+        "arm": "original",
+        "run": 2,
+        "httpStatus": 200,
+        "ms": 7965,
+        "traceId": "3f2f3c80-2558-423e-ace7-723e2912cf2b",
+        "statementCount": 6,
+        "target": {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "unsupportedSpans": [],
+          "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation."
+            }
+          ]
+        },
+        "statement0": {
+          "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "0",
+              "classification": "partially_confirmed",
+              "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+              "start": 0,
+              "end": 226
+            }
+          ],
+          "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the month of June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 date in the statement. Please verify these details or adjust the statement accordingly.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "text": null,
+              "passage": "First close: expected Q3 2026; final close targeted within 12 months of first close"
+            }
+          ]
+        }
+      },
+      {
+        "arm": "original",
+        "run": 3,
+        "httpStatus": 200,
+        "ms": 4177,
+        "traceId": "c18544ed-141c-450c-8080-147ca4a3eb4e",
+        "statementCount": 6,
+        "target": {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "unsupportedSpans": [],
+          "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation."
+            }
+          ]
+        },
+        "statement0": {
+          "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "0",
+              "classification": "partially_confirmed",
+              "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+              "start": 0,
+              "end": 226
+            }
+          ],
+          "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the month of June 2026. Additionally, the source indicates a first close expected in Q3 2026, which does not align with the June 2026 date in the statement. Please verify these details or adjust the statement accordingly.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "text": null,
+              "passage": "First close: expected Q3 2026; final close targeted within 12 months of first close"
+            }
+          ]
+        }
+      },
+      {
+        "arm": "revised",
+        "run": 1,
+        "httpStatus": 200,
+        "ms": 8459,
+        "traceId": "480573b4-e5fb-40f7-820b-c6b9eec27e4e",
+        "statementCount": 5,
+        "target": {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "unsupportedSpans": [],
+          "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation."
+            }
+          ]
+        },
+        "statement0": {
+          "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "0",
+              "classification": "partially_confirmed",
+              "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+              "start": 0,
+              "end": 226
+            }
+          ],
+          "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the month of June 2026. Additionally, the source indicates a first close expected in Q3 2026, which does not align with the June 2026 date in the statement. Please verify these details or adjust the statement accordingly.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services"
+            }
+          ]
+        }
+      },
+      {
+        "arm": "revised",
+        "run": 2,
+        "httpStatus": 200,
+        "ms": 4456,
+        "traceId": "54b273d4-f681-4121-aafc-f7f0fe475b45",
+        "statementCount": 5,
+        "target": {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "unsupportedSpans": [],
+          "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles."
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation."
+            }
+          ]
+        },
+        "statement0": {
+          "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "0",
+              "classification": "partially_confirmed",
+              "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+              "start": 0,
+              "end": 226
+            }
+          ],
+          "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the month of June 2026. Additionally, the source indicates a first close expected in Q3 2026, which does not align with the June 2026 timeline in the statement. Please verify these details or adjust the statement accordingly.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "text": null,
+              "passage": "First close: expected Q3 2026; final close targeted within 12 months of first close"
+            }
+          ]
+        }
+      },
+      {
+        "arm": "revised",
+        "run": 3,
+        "httpStatus": 200,
+        "ms": 3083,
+        "traceId": "5ac0ed35-b135-4526-bb6d-1e41318e7632",
+        "statementCount": 5,
+        "target": {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "concernLevel": "none",
+          "unsupportedSpans": [],
+          "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, its stable and experienced investment team, and its disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Merits:\nStrong track record\nStable and experienced investment team.\nDisciplines approach to operational value creation."
+            }
+          ]
+        },
+        "statement0": {
+          "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial",
+          "concernLevel": "moderate",
+          "unsupportedSpans": [
+            {
+              "sourceRefId": 0,
+              "statementId": "0",
+              "classification": "partially_confirmed",
+              "text": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+              "start": 0,
+              "end": 226
+            }
+          ],
+          "reasoningParagraph": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the month of June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 date in the statement. The reviewer should verify the timing and commitment details or adjust the statement accordingly.",
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ],
+          "supportSpans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)"
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "text": null,
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "part2": {
+    "honestyRepair": {
+      "sha": "ade84fcef5a4dfd51bbce722d1039c847b32a948",
+      "short": "ade84fc",
+      "committedAt": "2026-08-27T14:27:44+08:00"
+    },
+    "total": 9,
+    "historical": 1,
+    "live": 8,
+    "notes": [
+      {
+        "file": "condition-a-suggest.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' description and June 2025 timing, which are not supported by the supplied source on prior Meridian investments. Confirm before publishing.",
+        "ranAt": "2026-08-27T08:37:55.233Z",
+        "artefactCommit": "52b469f",
+        "artefactCommitSubject": "diag(revise): condition A removal and condition B re-run under the changed prompt",
+        "artefactCommittedAt": "2026-08-27T16:41:28+08:00",
+        "honestyEventCount": 1,
+        "honestyContradictions": [
+          "note_intent_mismatch"
+        ],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "deterministic-removal-off-run1.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' characterization and timing, which are not supported by the source, while retaining the relationship with Meridian and the fund description. Confirm before publishing.",
+        "ranAt": "2026-08-27T10:43:37.223Z",
+        "artefactCommit": "fae582f",
+        "artefactCommitSubject": "feat(revise): quote the removed sentence in the removal note so nothing is deleted invisibly",
+        "artefactCommittedAt": "2026-08-27T18:44:43+08:00",
+        "honestyEventCount": 2,
+        "honestyContradictions": [
+          "note_intent_mismatch",
+          "note_intent_mismatch"
+        ],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "deterministic-removal-off-run2.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' characterization and June 2025 timing, which are not supported by the source, while retaining the relationship and fund description. Confirm before publishing.",
+        "ranAt": "2026-08-27T10:43:41.994Z",
+        "artefactCommit": "fae582f",
+        "artefactCommitSubject": "feat(revise): quote the removed sentence in the removal note so nothing is deleted invisibly",
+        "artefactCommittedAt": "2026-08-27T18:44:43+08:00",
+        "honestyEventCount": 0,
+        "honestyContradictions": [],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "deterministic-removal-off-run3.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' characterization and June 2025 timing, which are not supported by the source, while retaining the relationship and fund description. Confirm before publishing.",
+        "ranAt": "2026-08-27T10:43:47.011Z",
+        "artefactCommit": "fae582f",
+        "artefactCommitSubject": "feat(revise): quote the removed sentence in the removal note so nothing is deleted invisibly",
+        "artefactCommittedAt": "2026-08-27T18:44:43+08:00",
+        "honestyEventCount": 1,
+        "honestyContradictions": [
+          "note_intent_mismatch"
+        ],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "deterministic-removal-on-run1.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' characterization and timing, which are not supported by the source, while retaining the broader point that Halden Group committed to the fund. Confirm before publishing.",
+        "ranAt": "2026-08-27T10:43:53.179Z",
+        "artefactCommit": "fae582f",
+        "artefactCommitSubject": "feat(revise): quote the removed sentence in the removal note so nothing is deleted invisibly",
+        "artefactCommittedAt": "2026-08-27T18:44:43+08:00",
+        "honestyEventCount": 1,
+        "honestyContradictions": [
+          "note_intent_mismatch"
+        ],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "deterministic-removal-on-run3.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' characterization and June 2025 timing, which are not supported by the source, while retaining the relationship and fund description. Confirm before publishing.",
+        "ranAt": "2026-08-27T10:44:01.941Z",
+        "artefactCommit": "fae582f",
+        "artefactCommitSubject": "feat(revise): quote the removed sentence in the removal note so nothing is deleted invisibly",
+        "artefactCommittedAt": "2026-08-27T18:44:43+08:00",
+        "honestyEventCount": 1,
+        "honestyContradictions": [
+          "note_intent_mismatch"
+        ],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "reviser-noise-floor-run3.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' detail and timing, which are not supported by the source, while retaining the broader point that Halden Group committed to the fund. Confirm before publishing.",
+        "ranAt": "2026-08-27T09:09:21.197Z",
+        "artefactCommit": "18ac825",
+        "artefactCommitSubject": "feat(revise): deterministic unsupported whole-sentence removal, behind diag flag, after reviser determinism audit",
+        "artefactCommittedAt": "2026-08-27T17:15:02+08:00",
+        "honestyEventCount": 2,
+        "honestyContradictions": [
+          "remnant_missed_edit",
+          "note_intent_mismatch"
+        ],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "reviser-noise-floor-run3.json",
+        "markerIndex": 4,
+        "note": "Changed 'has returned' to 'is currently marked at' to align with the source description of Fund IV's performance. Confirm before publishing.",
+        "ranAt": "2026-08-27T09:09:21.197Z",
+        "artefactCommit": "18ac825",
+        "artefactCommitSubject": "feat(revise): deterministic unsupported whole-sentence removal, behind diag flag, after reviser determinism audit",
+        "artefactCommittedAt": "2026-08-27T17:15:02+08:00",
+        "honestyEventCount": 2,
+        "honestyContradictions": [
+          "remnant_missed_edit",
+          "note_intent_mismatch"
+        ],
+        "predatesHonestyRepair": false,
+        "status": "live"
+      },
+      {
+        "file": "suggest-after-r10-suggest2.json",
+        "markerIndex": 0,
+        "note": "Removed the specific 'lead commitment' characterization and timing, which are not supported by the source, while retaining the broader point that Halden Group committed to the fund. Confirm before publishing.",
+        "ranAt": "2026-08-27T06:11:17.910Z",
+        "artefactCommit": "25ae739",
+        "artefactCommitSubject": "diag(revise): measure Suggest revised draft against the post-R10 reasoning",
+        "artefactCommittedAt": "2026-08-27T14:13:45+08:00",
+        "honestyEventCount": 0,
+        "honestyContradictions": [],
+        "predatesHonestyRepair": true,
+        "status": "historical"
+      }
+    ]
+  }
+}
