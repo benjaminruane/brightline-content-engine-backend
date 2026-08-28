@@ -192,7 +192,14 @@ async function main() {
       };
     });
 
-    runs.push({ run: r, markerCount: markers.length, markers });
+    runs.push({
+      run: r,
+      markerCount: markers.length,
+      markers,
+      // Persisted so a later diagnostic can ask whether a span changed without
+      // a marker, which marker data alone cannot answer.
+      revisedDraft: finalized.revisedDraft,
+    });
     console.log(
       `run ${r}: markers=${markers.length} noChange=${markers.filter((x) => x.noChange).length} ` +
         `removals=${(finalized.removalEvents || []).length}`

@@ -1,0 +1,197 @@
+{
+  "ranAt": "2026-08-28T10:05:26.309Z",
+  "artefactsReplayed": 17,
+  "totalMarkers": 104,
+  "untracedMarkers": 8,
+  "byKind": [
+    {
+      "kind": "unsupported",
+      "opportunities": 15,
+      "markers": 17,
+      "actedWithMarker": 14,
+      "actedSilently": 1,
+      "noChangeMarker": 0,
+      "ignored": 0,
+      "detRemoval": 5,
+      "acted": 15,
+      "actionRatePct": 100,
+      "noChangeRatePct": 0
+    },
+    {
+      "kind": "soften",
+      "opportunities": 3,
+      "markers": 0,
+      "actedWithMarker": 0,
+      "actedSilently": 3,
+      "noChangeMarker": 0,
+      "ignored": 0,
+      "detRemoval": 0,
+      "acted": 3,
+      "actionRatePct": 100,
+      "noChangeRatePct": 0
+    },
+    {
+      "kind": "partial",
+      "opportunities": 78,
+      "markers": 74,
+      "actedWithMarker": 63,
+      "actedSilently": 3,
+      "noChangeMarker": 11,
+      "ignored": 1,
+      "detRemoval": 0,
+      "acted": 66,
+      "actionRatePct": 84.6,
+      "noChangeRatePct": 14.1
+    },
+    {
+      "kind": "conflict",
+      "opportunities": 13,
+      "markers": 13,
+      "actedWithMarker": 11,
+      "actedSilently": 0,
+      "noChangeMarker": 2,
+      "ignored": 0,
+      "detRemoval": 0,
+      "acted": 11,
+      "actionRatePct": 84.6,
+      "noChangeRatePct": 15.4
+    }
+  ],
+  "untraced": {
+    "kind": "(untraced)",
+    "opportunities": 0,
+    "markers": 8,
+    "actedWithMarker": 0,
+    "actedSilently": 0,
+    "noChangeMarker": 0,
+    "ignored": 0,
+    "detRemoval": 0
+  },
+  "directiveKinds": {
+    "opps": 3,
+    "acted": 3,
+    "noChange": 0,
+    "actionRate": "100.0%"
+  },
+  "evidenceKinds": {
+    "opps": 106,
+    "acted": 92,
+    "noChange": 13,
+    "actionRate": "86.8%"
+  },
+  "artefacts": [
+    {
+      "file": "condition-a-condition-b-suggest-rerun.json",
+      "markers": 4,
+      "realEdit": 3,
+      "noChange": 1,
+      "concerns": 3
+    },
+    {
+      "file": "condition-a-suggest.json",
+      "markers": 8,
+      "realEdit": 8,
+      "noChange": 0,
+      "concerns": 8
+    },
+    {
+      "file": "condition-b-suggest.json",
+      "markers": 4,
+      "realEdit": 2,
+      "noChange": 2,
+      "concerns": 3
+    },
+    {
+      "file": "deterministic-removal-off-run1.json",
+      "markers": 8,
+      "realEdit": 8,
+      "noChange": 0,
+      "concerns": 8
+    },
+    {
+      "file": "deterministic-removal-off-run2.json",
+      "markers": 8,
+      "realEdit": 8,
+      "noChange": 0,
+      "concerns": 8
+    },
+    {
+      "file": "deterministic-removal-off-run3.json",
+      "markers": 8,
+      "realEdit": 8,
+      "noChange": 0,
+      "concerns": 8
+    },
+    {
+      "file": "deterministic-removal-on-run1.json",
+      "markers": 8,
+      "realEdit": 8,
+      "noChange": 0,
+      "concerns": 8
+    },
+    {
+      "file": "deterministic-removal-on-run2.json",
+      "markers": 8,
+      "realEdit": 7,
+      "noChange": 1,
+      "concerns": 8
+    },
+    {
+      "file": "deterministic-removal-on-run3.json",
+      "markers": 8,
+      "realEdit": 8,
+      "noChange": 0,
+      "concerns": 8
+    },
+    {
+      "file": "reviser-noise-floor-run1.json",
+      "markers": 8,
+      "realEdit": 7,
+      "noChange": 1,
+      "concerns": 8
+    },
+    {
+      "file": "reviser-noise-floor-run2.json",
+      "markers": 8,
+      "realEdit": 7,
+      "noChange": 1,
+      "concerns": 8
+    },
+    {
+      "file": "reviser-noise-floor-run3.json",
+      "markers": 8,
+      "realEdit": 7,
+      "noChange": 1,
+      "concerns": 8
+    },
+    {
+      "file": "suggest-after-r10-suggest1.json",
+      "markers": 8,
+      "realEdit": 6,
+      "noChange": 2,
+      "concerns": 8
+    },
+    {
+      "file": "suggest-after-r10-suggest2.json",
+      "markers": 8,
+      "realEdit": 8,
+      "noChange": 0,
+      "concerns": 3
+    },
+    {
+      "file": "coverage-gap run 1 (production fixture)",
+      "markers": 3,
+      "concerns": 4
+    },
+    {
+      "file": "coverage-gap run 2 (production fixture)",
+      "markers": 3,
+      "concerns": 4
+    },
+    {
+      "file": "coverage-gap run 3 (production fixture)",
+      "markers": 3,
+      "concerns": 4
+    }
+  ]
+}
