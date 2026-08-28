@@ -1,0 +1,831 @@
+{
+  "ranAt": "2026-08-28T07:58:56.395Z",
+  "productionUrl": "https://brightline-content-engine-backend.vercel.app",
+  "fixture": {
+    "note": "Production drafts were not on disk. Reconstructed from the run evidence; offsets asserted against the production marker spans.",
+    "originalDraft": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nThe fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.\n\nFund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.\n\nPartners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.\n\nThe investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.\n\nPartners Group expects the relationship to deepen over the life of the fund.",
+    "revisedDraft": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.\n\nThe fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.\n\nFund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.\n\nPartners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.\n\nThe investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.",
+    "offsetCheck": {
+      "changedSpan": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation",
+      "cutSpan": "peers",
+      "changedMatches": true,
+      "cutIsLastWordOfPrecedingSentence": true
+    },
+    "sourcePath": "scripts/diagnostic/eval-ablation/meridian_source_production.txt"
+  },
+  "runsPerArm": 3,
+  "originalStates": {
+    "supported_full": 3
+  },
+  "revisedStates": {
+    "supported_full": 3
+  },
+  "verdict": "OTHER",
+  "noiseFloor": {
+    "original": "3 of 3 (supported_full)",
+    "revised": "3 of 3 (supported_full)",
+    "statement0Original": "3 of 3",
+    "statement0Revised": "3 of 3"
+  },
+  "runs": [
+    {
+      "arm": "original",
+      "run": 1,
+      "httpStatus": 200,
+      "ms": 24606,
+      "traceId": "ae4175cb-abb5-4fcb-9784-6ed56f4f7aa3",
+      "statementCount": 6,
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation.",
+              "text": null
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026",
+            "start": 0,
+            "end": 12
+          }
+        ],
+        "reasoningParagraph": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. However, it does not mention Partners Group's commitment to the fund or specify the timing in June 2026. Please verify these missing details or adjust the statement accordingly.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": "PG has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.",
+              "text": null
+            },
+            {
+              "kind": "unsupported",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": null,
+              "text": "In June 2026"
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "allVerdicts": [
+        {
+          "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial"
+        },
+        {
+          "text": "The fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Fund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "The investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group expects the relationship to deepen over the life of the fund.",
+          "supportState": "not_supported",
+          "displayVerdict": "not_supported"
+        }
+      ]
+    },
+    {
+      "arm": "original",
+      "run": 2,
+      "httpStatus": 200,
+      "ms": 3645,
+      "traceId": "ae565d36-2e85-4295-b22d-502365e84624",
+      "statementCount": 6,
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation.",
+              "text": null
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026",
+            "start": 0,
+            "end": 12
+          }
+        ],
+        "reasoningParagraph": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. However, it does not mention Partners Group's commitment to the fund or specify the timing in June 2026. Please verify these missing details or adjust the statement accordingly.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "text": null
+            },
+            {
+              "kind": "unsupported",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": null,
+              "text": "In June 2026"
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "allVerdicts": [
+        {
+          "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial"
+        },
+        {
+          "text": "The fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Fund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "The investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group expects the relationship to deepen over the life of the fund.",
+          "supportState": "not_supported",
+          "displayVerdict": "not_supported"
+        }
+      ]
+    },
+    {
+      "arm": "original",
+      "run": 3,
+      "httpStatus": 200,
+      "ms": 3426,
+      "traceId": "9e13a3d5-be80-4313-a1c0-fbaa9d4b67dc",
+      "statementCount": 6,
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation.",
+              "text": null
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026",
+            "start": 0,
+            "end": 12
+          }
+        ],
+        "reasoningParagraph": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. However, it does not mention Partners Group's commitment to the fund or specify the timing in June 2026. Please verify these missing details or adjust the statement accordingly.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": "First close: expected Q3 2026; final close targeted within 12 months of first close",
+              "text": null
+            },
+            {
+              "kind": "unsupported",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": null,
+              "text": "In June 2026"
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "allVerdicts": [
+        {
+          "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial"
+        },
+        {
+          "text": "The fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Fund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "The investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group expects the relationship to deepen over the life of the fund.",
+          "supportState": "not_supported",
+          "displayVerdict": "not_supported"
+        }
+      ]
+    },
+    {
+      "arm": "revised",
+      "run": 1,
+      "httpStatus": 200,
+      "ms": 8473,
+      "traceId": "9ccd088c-9143-41c6-993b-9ceaee184a3a",
+      "statementCount": 5,
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation.",
+              "text": null
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026",
+            "start": 0,
+            "end": 12
+          }
+        ],
+        "reasoningParagraph": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. However, it does not mention Partners Group's commitment to the fund or specify the timing in June 2026. Please verify these missing details or adjust the statement accordingly.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "text": null
+            },
+            {
+              "kind": "unsupported",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": null,
+              "text": "In June 2026"
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "allVerdicts": [
+        {
+          "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial"
+        },
+        {
+          "text": "The fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Fund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "The investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        }
+      ]
+    },
+    {
+      "arm": "revised",
+      "run": 2,
+      "httpStatus": 200,
+      "ms": 3473,
+      "traceId": "7c22ba3e-a1e1-49b7-aadd-5021a74a4d1e",
+      "statementCount": 5,
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation.",
+              "text": null
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026",
+            "start": 0,
+            "end": 12
+          }
+        ],
+        "reasoningParagraph": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. However, it does not mention Partners Group's commitment to the fund or specify the timing in June 2026. Please verify these missing details or adjust the statement accordingly.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": "PG has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.",
+              "text": null
+            },
+            {
+              "kind": "unsupported",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": null,
+              "text": "In June 2026"
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "allVerdicts": [
+        {
+          "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial"
+        },
+        {
+          "text": "The fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Fund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "The investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        }
+      ]
+    },
+    {
+      "arm": "revised",
+      "run": 3,
+      "httpStatus": 200,
+      "ms": 3743,
+      "traceId": "275390b6-f5dd-4a6a-9dc3-45ccd2b3c846",
+      "statementCount": 5,
+      "target": {
+        "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+        "supportState": "supported",
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "unsupportedSpans": [],
+        "reasoningParagraph": "The source confirms the statement by highlighting Meridian Capital's strong track record, stable and experienced investment team, and disciplined approach to operational value creation. These factors align with the reasons Partners Group was attracted to the investment.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits). Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Team: 14 investment professionals across offices in London, Munich, and Stockholm. Founding partners Anna Lindqvist and Thomas Reiner have worked together since 2008. No senior departures across the last three fund cycles.",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation.",
+              "text": null
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "statement0": {
+        "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "supportState": "partial",
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "In June 2026",
+            "start": 0,
+            "end": 12
+          }
+        ],
+        "reasoningParagraph": "The source confirms that Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. However, it does not mention Partners Group's commitment to the fund or specify the timing in June 2026. Please verify these missing details or adjust the statement accordingly.",
+        "stage2": {
+          "spans": [
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Strategy: Lower-mid-market buyouts in European industrial technology and business services",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "confirmed",
+              "passage": "Target fund size: EUR 1.2 billion (hard cap EUR 1.5 billion)",
+              "text": null
+            },
+            {
+              "kind": "support",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": "PG has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.",
+              "text": null
+            },
+            {
+              "kind": "unsupported",
+              "sourceRefId": 0,
+              "classification": "partially_confirmed",
+              "passage": null,
+              "text": "In June 2026"
+            }
+          ],
+          "stage2SourceFingerprints": [
+            {
+              "sourceIndex": 0,
+              "sourceLabel": "Meridian Fund V summary",
+              "classification": "partially_confirmed",
+              "systemFingerprint": "fp_1a8e2a470b"
+            }
+          ]
+        }
+      },
+      "allVerdicts": [
+        {
+          "text": "In June 2026, Partners Group made a commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "supportState": "partial",
+          "displayVerdict": "supported_partial"
+        },
+        {
+          "text": "The fund is managed by Meridian Capital Management, which has deployed EUR 2.8 billion across 41 platform investments over Funds I to IV and has realised a gross MOIC of 2.4 times and a gross IRR of 21 per cent across 17 fully realised exits.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Fund IV, the 2019 vintage fund of EUR 900 million, is currently marked at 1.9 times gross MOIC to date.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        },
+        {
+          "text": "The investment team comprises 14 professionals across London, Munich and Stockholm, the founding partners have worked together since 2008, and diligence has confirmed no senior departures across the last three fund cycles relative to peers.",
+          "supportState": "supported",
+          "displayVerdict": "supported_full"
+        }
+      ]
+    }
+  ]
+}
