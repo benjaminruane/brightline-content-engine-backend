@@ -1,0 +1,343 @@
+{
+  "ranAt": "2026-08-28T11:47:19.243Z",
+  "model": "gpt-5.1-2025-11-13",
+  "concernKinds": [
+    "partial",
+    "partial",
+    "soften",
+    "unsupported"
+  ],
+  "results": {
+    "OLD": [
+      {
+        "run": 1,
+        "revisedDraft": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million, and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. ",
+        "markers": [
+          {
+            "note": "No change was made - which are not supported by the source, while keeping the fund description. Confirm before publishing.",
+            "intent": "KEPT",
+            "generated": false
+          },
+          {
+            "note": "No change was made - the source only confirms the number of investments. Confirm before publishing.",
+            "intent": "KEPT",
+            "generated": false
+          },
+          {
+            "note": "Removed \"and highly regarded\" - overstated against the source. Confirm before publishing.",
+            "intent": "CUT",
+            "generated": true
+          },
+          {
+            "note": "Removed this sentence: \"This relationship enabled deep insight during the diligence phase.\" No supplied source backs that claim. Confirm before publishing.",
+            "intent": "CUT",
+            "generated": false
+          }
+        ],
+        "unreported": 1,
+        "figureRemoved": false,
+        "usage": {
+          "calls": 1,
+          "input": 7405,
+          "cached": 6272,
+          "output": 300,
+          "cost": 0.00520025,
+          "hitRate": 0.8469952734638757
+        },
+        "events": [],
+        "rejections": []
+      },
+      {
+        "run": 2,
+        "revisedDraft": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship supported Partners Group's work during the diligence phase.",
+        "markers": [
+          {
+            "note": "No change was made - which are not supported by the source, while retaining the fund description. Confirm before publishing.",
+            "intent": "KEPT",
+            "generated": false
+          },
+          {
+            "note": "No change was made - the source only confirms the number of investments. Confirm before publishing.",
+            "intent": "KEPT",
+            "generated": false
+          },
+          {
+            "note": "Removed \"and highly regarded\" - overstated against the source. Confirm before publishing.",
+            "intent": "CUT",
+            "generated": true
+          },
+          {
+            "note": "Replaced \"enabled deep insight\" with \"supported Partners Group's work\" - no supplied source backs this claim. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          }
+        ],
+        "unreported": 1,
+        "figureRemoved": false,
+        "usage": {
+          "calls": 1,
+          "input": 7405,
+          "cached": 7296,
+          "output": 301,
+          "cost": 0.00405825,
+          "hitRate": 0.9852802160702229
+        },
+        "events": [],
+        "rejections": []
+      },
+      {
+        "run": 3,
+        "revisedDraft": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million, and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship supported Partners Group's work during the diligence phase.",
+        "markers": [
+          {
+            "note": "No change was made - which are not supported by the source, while retaining the confirmed fund description. Confirm before publishing.",
+            "intent": "KEPT",
+            "generated": false
+          },
+          {
+            "note": "No change was made - the source only confirms the number of investments. Confirm before publishing.",
+            "intent": "KEPT",
+            "generated": false
+          },
+          {
+            "note": "Removed \"and highly regarded\" - overstated against the source. Confirm before publishing.",
+            "intent": "CUT",
+            "generated": true
+          },
+          {
+            "note": "Replaced \"enabled deep insight\" with \"supported Partners Group's work\" - no supplied source backs this claim. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          }
+        ],
+        "unreported": 1,
+        "figureRemoved": false,
+        "usage": {
+          "calls": 1,
+          "input": 7405,
+          "cached": 7296,
+          "output": 308,
+          "cost": 0.00412825,
+          "hitRate": 0.9852802160702229
+        },
+        "events": [],
+        "rejections": []
+      }
+    ],
+    "NEW": [
+      {
+        "run": 1,
+        "revisedDraft": "Meridian Capital Partners V is a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 platform investments. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship provided additional context during the diligence phase.",
+        "markers": [
+          {
+            "note": "Removed \"In June 2026, Partners Group committed to\", Replaced \"V,\" with \"V is\" - the source backs only part of this. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Replaced \"control-oriented investments, with equity checks of EUR 80-100 million apiece.\" with \"platform investments.\" - the source backs only part of this. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Removed \"and highly regarded\" - The review asked to delete the promotional phrase 'highly regarded' and have the sentence read naturally without replacing it with a softer synonym. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Replaced \"enabled deep insight\" with \"provided additional context\" - no supplied source backs this claim. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          }
+        ],
+        "unreported": 0,
+        "figureRemoved": true,
+        "usage": {
+          "calls": 4,
+          "input": 19319,
+          "cached": 12416,
+          "output": 499,
+          "cost": 0.01517075,
+          "hitRate": 0.6426833687043843
+        },
+        "events": [
+          {
+            "outcome": "edited",
+            "kind": "partial",
+            "what": "Removed the unsupported timing and reference to Partners Group’s commitment while keeping the supported description of the fund’s size and strategy.",
+            "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+          },
+          {
+            "outcome": "edited",
+            "kind": "partial",
+            "what": "Removed the reference to control-oriented investments and the EUR 80-100 million equity check size, and aligned the investment description to 'platform investments'.",
+            "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+          },
+          {
+            "outcome": "edited",
+            "kind": "soften",
+            "what": "Removed the words 'highly regarded' so the sentence now refers only to a 'well-established investment team'.",
+            "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation."
+          },
+          {
+            "outcome": "edited",
+            "kind": "unsupported",
+            "what": "Replaced 'enabled deep insight during the diligence phase' with 'provided additional context during the diligence phase'.",
+            "statementText": "This relationship enabled deep insight during the diligence phase."
+          }
+        ],
+        "rejections": []
+      },
+      {
+        "run": 2,
+        "revisedDraft": "Meridian Capital Partners V is a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 platform investments. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship provided additional context during the diligence phase.",
+        "markers": [
+          {
+            "note": "Removed \"In June 2026, Partners Group committed to\", Replaced \"V,\" with \"V is\" - the source backs only part of this. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Replaced \"control-oriented investments, with equity checks of EUR 80-100 million apiece.\" with \"platform investments.\" - the source backs only part of this. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Removed \"and highly regarded\" - overstated against the source. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Replaced \"enabled deep insight\" with \"provided additional context\" - no supplied source backs this claim. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          }
+        ],
+        "unreported": 0,
+        "figureRemoved": true,
+        "usage": {
+          "calls": 4,
+          "input": 19319,
+          "cached": 18688,
+          "output": 481,
+          "cost": 0.007934749999999999,
+          "hitRate": 0.9673378539261867
+        },
+        "events": [
+          {
+            "outcome": "edited",
+            "kind": "partial",
+            "what": "Removed the June 2026 timing and Partners Group commitment reference, leaving only the supported description of the fund size and strategy.",
+            "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+          },
+          {
+            "outcome": "edited",
+            "kind": "partial",
+            "what": "Removed the reference to control-oriented investments and the EUR 80-100 million equity check size, and aligned the investment description to 'platform investments'.",
+            "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+          },
+          {
+            "outcome": "edited",
+            "kind": "soften",
+            "what": "Removed the words 'highly regarded' from the description of the investment team and smoothed the sentence so it still reads naturally.",
+            "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation."
+          },
+          {
+            "outcome": "edited",
+            "kind": "unsupported",
+            "what": "Replaced 'enabled deep insight during the diligence phase' with 'provided additional context during the diligence phase'.",
+            "statementText": "This relationship enabled deep insight during the diligence phase."
+          }
+        ],
+        "rejections": []
+      },
+      {
+        "run": 3,
+        "revisedDraft": "Meridian Capital Partners V is a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 investments. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship provided additional context during the diligence phase.",
+        "markers": [
+          {
+            "note": "Removed \"In June 2026, Partners Group committed to\", Replaced \"V,\" with \"V is\" - the source backs only part of this. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Replaced \"control-oriented investments, with equity checks of EUR 80-100 million apiece.\" with \"investments.\" - the source backs only part of this. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Removed \"and highly regarded\" - overstated against the source. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          },
+          {
+            "note": "Replaced \"enabled deep insight\" with \"provided additional context\" - no supplied source backs this claim. Confirm before publishing.",
+            "intent": "CHANGED",
+            "generated": false
+          }
+        ],
+        "unreported": 0,
+        "figureRemoved": true,
+        "usage": {
+          "calls": 4,
+          "input": 19319,
+          "cached": 18688,
+          "output": 483,
+          "cost": 0.00795475,
+          "hitRate": 0.9673378539261867
+        },
+        "events": [
+          {
+            "outcome": "edited",
+            "kind": "partial",
+            "what": "Removed the June 2026 timing and Partners Group commitment reference, leaving only the supported description of the fund and its strategy.",
+            "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+          },
+          {
+            "outcome": "edited",
+            "kind": "partial",
+            "what": "Removed the reference to control-oriented investments and the EUR 80-100 million equity check size so the sentence only states the supported number of investments.",
+            "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+          },
+          {
+            "outcome": "edited",
+            "kind": "soften",
+            "what": "Removed the words 'highly regarded' from the description of the investment team and smoothed the sentence so it still reads naturally.",
+            "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation."
+          },
+          {
+            "outcome": "edited",
+            "kind": "unsupported",
+            "what": "Replaced 'enabled deep insight during the diligence phase' with 'provided additional context during the diligence phase'.",
+            "statementText": "This relationship enabled deep insight during the diligence phase."
+          }
+        ],
+        "rejections": []
+      }
+    ]
+  },
+  "refusalNew": 0,
+  "byKind": {
+    "partial": {
+      "edited": 6,
+      "no_change": 0,
+      "rejected": 0
+    },
+    "soften": {
+      "edited": 3,
+      "no_change": 0,
+      "rejected": 0
+    },
+    "unsupported": {
+      "edited": 3,
+      "no_change": 0,
+      "rejected": 0
+    }
+  },
+  "cost": {
+    "OLD": 0.01338675,
+    "NEW": 0.03106025,
+    "hitOld": 0.9391852352014405,
+    "hitNew": 0.8591196921855858
+  }
+}

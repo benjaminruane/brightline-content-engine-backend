@@ -1,0 +1,341 @@
+import assert from "node:assert/strict";
+import { describe, test } from "vitest";
+
+import {
+  DEFAULT_CONCURRENCY,
+  REJECT_INVENTED_FACT,
+  REJECT_NOOP_EDIT,
+  REJECT_NO_JSON,
+  REJECT_OUTSIDE_SPAN,
+  locateSpan,
+  runStage1,
+  usableReason,
+  validateStage1Response,
+} from "../lib/revise-stage1.mjs";
+import {
+  buildStage1Prompt,
+  buildStage1SharedPrefix,
+  livePromptBlocks,
+} from "../lib/revise-stage1-prompt.mjs";
+import { finalizeSuggestRevisionText } from "../lib/build-revision-prompt.mjs";
+
+const EQUITY =
+  "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.";
+
+const spanConcern = (overrides = {}) => ({
+  statementIndex: 1,
+  statementText: EQUITY,
+  evidence: {
+    kind: "partial",
+    reason: "The source confirms the number of investments but not the cheque size.",
+    unsupportedSpans: [{ text: "with equity checks of EUR 80-100 million apiece" }],
+    excerpt: "Meridian IV will make 10-14 platform investments.",
+  },
+  editorial: [],
+  compliance: [],
+  ...overrides,
+});
+
+const noSpanConcern = () => ({
+  statementIndex: 5,
+  statementText: "This relationship enabled deep insight during the diligence phase.",
+  evidence: { kind: "unsupported", verdict: "no_support", reason: "No source addresses this.", unsupportedSpans: [] },
+  editorial: [],
+  compliance: [],
+});
+
+const reply = (o) => JSON.stringify(o);
+
+describe("stage 1 prompt", () => {
+  test("kind-independent content leads, so the prefix can cache", () => {
+    const prompt = buildStage1Prompt(spanConcern(), "partial", {});
+    const prefix = buildStage1SharedPrefix();
+    assert.ok(prompt.startsWith(prefix), "the shared prefix must be a leading substring");
+
+    // The kind rule and the statement must both come after it.
+    assert.ok(prompt.indexOf("KIND HANDLING") > prefix.length - 1);
+    assert.ok(prompt.indexOf("STATEMENT TO REVISE:") > prompt.indexOf("KIND HANDLING"));
+  });
+
+  test("the shared prefix is identical across kinds", () => {
+    const a = buildStage1Prompt(spanConcern(), "partial", {});
+    const b = buildStage1Prompt(noSpanConcern(), "unsupported", {});
+    const prefix = buildStage1SharedPrefix();
+    assert.ok(a.startsWith(prefix) && b.startsWith(prefix));
+  });
+
+  test("carries the full house style guide and only one kind rule", () => {
+    const prompt = buildStage1Prompt(spanConcern(), "partial", {});
+    assert.match(prompt, /hyperbole_vs_qualitative/);
+    assert.match(prompt, /first_person_plural/);
+    assert.match(prompt, /c\) kind "partial"/);
+    assert.doesNotMatch(prompt, /a\) kind "conflict"/);
+    assert.doesNotMatch(prompt, /i\) kind "compliance_strip"/);
+  });
+
+  test("excludes the MARKERS section and whole-draft framing", () => {
+    const prompt = buildStage1Prompt(spanConcern(), "partial", {});
+    assert.doesNotMatch(prompt, /MARKERS \(reviewer-confirm spans\)/);
+    assert.doesNotMatch(prompt, /Rewrite the ENTIRE draft/);
+  });
+
+  test("every kind in the live prompt is extractable", () => {
+    const { kindRules } = livePromptBlocks();
+    for (const kind of [
+      "conflict",
+      "unsupported",
+      "partial",
+      "deletion",
+      "soften",
+      "craft",
+      "compliance_add",
+      "compliance_claim",
+      "compliance_strip",
+    ]) {
+      assert.ok(kindRules.has(kind), `missing kind rule: ${kind}`);
+    }
+  });
+});
+
+describe("the validator", () => {
+  test("rejects an edit identical to the original", () => {
+    const v = validateStage1Response(
+      reply({ action: "edit", revised_statement: EQUITY, what: "x", why: "y" }),
+      spanConcern()
+    );
+    assert.equal(v.accepted, false);
+    assert.equal(v.reason, REJECT_NOOP_EDIT);
+  });
+
+  test("rejects a change outside the unsupported span", () => {
+    // "control-oriented" is inside the span here, so change the protected head.
+    const c = spanConcern({
+      evidence: {
+        ...spanConcern().evidence,
+        unsupportedSpans: [{ text: "EUR 80-100 million" }],
+      },
+    });
+    const v = validateStage1Response(
+      reply({
+        action: "edit",
+        revised_statement:
+          "The fund intends to build a portfolio of 12 investments, with equity checks of an undisclosed size apiece.",
+        what: "x",
+        why: "y",
+      }),
+      c
+    );
+    assert.equal(v.accepted, false);
+    assert.equal(v.reason, REJECT_OUTSIDE_SPAN);
+  });
+
+  test("accepts a change confined to the unsupported span", () => {
+    const v = validateStage1Response(
+      reply({
+        action: "edit",
+        revised_statement: "The fund intends to build a portfolio of 10-14 control-oriented investments.",
+        what: "Removed the cheque size",
+        why: "the sources do not state a ticket range",
+      }),
+      spanConcern()
+    );
+    assert.equal(v.accepted, true, v.detail);
+    assert.equal(v.action, "edit");
+  });
+
+  test("rejects an invented figure absent from statement and source", () => {
+    const v = validateStage1Response(
+      reply({
+        action: "edit",
+        revised_statement:
+          "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 250 million apiece.",
+        what: "x",
+        why: "y",
+      }),
+      spanConcern(),
+      { sourceText: "Meridian IV will make 10-14 platform investments." }
+    );
+    assert.equal(v.accepted, false);
+    assert.equal(v.reason, REJECT_INVENTED_FACT);
+    assert.match(v.detail, /250/);
+  });
+
+  test("allows a figure that appears in the supplied source", () => {
+    const v = validateStage1Response(
+      reply({
+        action: "edit",
+        revised_statement:
+          "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 45 million apiece.",
+        what: "x",
+        why: "y",
+      }),
+      spanConcern(),
+      { sourceText: "Meridian IV writes equity checks of EUR 45 million." }
+    );
+    assert.equal(v.accepted, true, v.detail);
+  });
+
+  test("rejects unparseable JSON and missing fields", () => {
+    assert.equal(validateStage1Response("not json", spanConcern()).reason, REJECT_NO_JSON);
+    assert.equal(
+      validateStage1Response(reply({ action: "edit", revised_statement: "x" }), spanConcern()).reason,
+      REJECT_NO_JSON
+    );
+    assert.equal(
+      validateStage1Response(reply({ action: "maybe", what: "a", why: "b" }), spanConcern()).reason,
+      REJECT_NO_JSON
+    );
+  });
+
+  test("accepts no_change without a revised statement", () => {
+    const v = validateStage1Response(
+      reply({ action: "no_change", revised_statement: null, what: "nothing", why: "the source backs it" }),
+      spanConcern()
+    );
+    assert.equal(v.accepted, true);
+    assert.equal(v.action, "no_change");
+  });
+
+  test("tolerates a fenced JSON reply", () => {
+    const v = validateStage1Response(
+      "```json\n" + reply({ action: "no_change", revised_statement: null, what: "a", why: "b" }) + "\n```",
+      spanConcern()
+    );
+    assert.equal(v.accepted, true);
+  });
+});
+
+describe("the no-span fallback", () => {
+  test("a statement with no span may be rewritten wholesale", () => {
+    const v = validateStage1Response(
+      reply({
+        action: "edit",
+        revised_statement: "The relationship supported the diligence phase.",
+        what: "Softened the insight claim",
+        why: "no supplied source backs this claim",
+      }),
+      noSpanConcern()
+    );
+    assert.equal(v.accepted, true, v.detail);
+  });
+
+  test("locateSpan returns null when the span text is absent", () => {
+    assert.equal(locateSpan("A short statement.", "not in here"), null);
+    assert.deepEqual(locateSpan("A short statement.", "short"), { start: 2, end: 7 });
+  });
+});
+
+describe("assembly", () => {
+  const draft = `Halden Group committed to Meridian Capital Partners IV.\n\n${EQUITY}\n\nThis relationship enabled deep insight during the diligence phase.`;
+
+  test("statements with no concerns are never sent and never touched", async () => {
+    const sent = [];
+    const out = await runStage1(draft, [spanConcern()], {
+      callModel: async (prompt) => {
+        sent.push(prompt);
+        return {
+          text: reply({
+            action: "edit",
+            revised_statement: "The fund intends to build a portfolio of 10-14 control-oriented investments.",
+            what: "Removed the cheque size",
+            why: "the sources do not state a ticket range",
+          }),
+        };
+      },
+    });
+    assert.equal(sent.length, 1, "only the flagged statement is sent");
+    assert.match(out.revisedDraft, /Halden Group committed to Meridian Capital Partners IV\./);
+    assert.match(out.revisedDraft, /This relationship enabled deep insight during the diligence phase\./);
+    assert.equal(out.edits.length, 1);
+  });
+
+  test("a rejected edit keeps the original statement and records the reason", async () => {
+    const out = await runStage1(draft, [spanConcern()], {
+      callModel: async () => ({ text: "definitely not json" }),
+    });
+    assert.equal(out.edits.length, 0);
+    assert.ok(out.revisedDraft.includes(EQUITY), "the original statement survives");
+    assert.equal(out.events[0].outcome, "rejected");
+    assert.equal(out.events[0].reason, REJECT_NO_JSON);
+  });
+
+  test("code marks every change, so the unreported-change detector finds none", async () => {
+    const out = await runStage1(draft, [spanConcern(), noSpanConcern()], {
+      callModel: async (_p, meta) =>
+        meta.kind === "partial"
+          ? {
+              text: reply({
+                action: "edit",
+                revised_statement:
+                  "The fund intends to build a portfolio of 10-14 control-oriented investments.",
+                what: "Removed the cheque size",
+                why: "the sources do not state a ticket range",
+              }),
+            }
+          : {
+              text: reply({
+                action: "edit",
+                revised_statement: "The relationship supported the diligence phase.",
+                what: "Softened the insight claim",
+                why: "no supplied source backs this claim",
+              }),
+            },
+    });
+
+    const finalized = finalizeSuggestRevisionText(out.revisedDraft, {
+      originalDraft: draft,
+      concerns: [spanConcern(), noSpanConcern()],
+      log: () => {},
+    });
+
+    assert.equal(
+      finalized.unreportedEvents.length,
+      0,
+      `stage 1 left ${finalized.unreportedEvents.length} change(s) unmarked: ${JSON.stringify(
+        finalized.unreportedEvents.map((e) => e.regionText)
+      )}`
+    );
+    assert.equal(finalized.markers.length, 2);
+    for (const m of finalized.markers) {
+      assert.match(m.note, /Confirm before publishing\.$/);
+      assert.equal(m.generated, undefined, "code-declared markers are not generated markers");
+    }
+  });
+
+  test("runs in parallel up to the limit", async () => {
+    let live = 0;
+    let peak = 0;
+    const concerns = Array.from({ length: 9 }, (_, i) => ({
+      statementIndex: i,
+      statementText: `Sentence number ${i} sits in the draft.`,
+      evidence: { kind: "unsupported", reason: "r", unsupportedSpans: [] },
+      editorial: [],
+      compliance: [],
+    }));
+    await runStage1("x", concerns, {
+      concurrency: 3,
+      callModel: async () => {
+        live += 1;
+        peak = Math.max(peak, live);
+        await new Promise((r) => setTimeout(r, 5));
+        live -= 1;
+        return { text: reply({ action: "no_change", revised_statement: null, what: "a", why: "b" }) };
+      },
+    });
+    assert.equal(peak, 3);
+  });
+
+  test("the default concurrency is a sane, small number", () => {
+    assert.ok(DEFAULT_CONCURRENCY >= 2 && DEFAULT_CONCURRENCY <= 8);
+  });
+});
+
+describe("usableReason", () => {
+  test("takes a plain reason and rejects marker syntax or waffle", () => {
+    assert.equal(usableReason("the sources do not state a ticket range."), "the sources do not state a ticket range");
+    assert.equal(usableReason("Confirm before publishing."), "");
+    assert.equal(usableReason("{{x||CHANGED: y}}"), "");
+    assert.equal(usableReason("a".repeat(200)), "");
+    assert.equal(usableReason(""), "");
+  });
+});

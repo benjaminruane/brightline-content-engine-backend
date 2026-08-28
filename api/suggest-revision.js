@@ -21,6 +21,7 @@ import {
   finalizeSuggestRevisionText,
   gatherConcerns,
 } from "../lib/build-revision-prompt.mjs";
+import { runStage1 } from "../lib/revise-stage1.mjs";
 import {
   findReviewVocabularyHits,
   logReviewVocabularyAttempt,
@@ -154,7 +155,32 @@ export default async function handler(req, res) {
       return stripCodeFence(typeof completion?.text === "string" ? completion.text : "");
     }
 
-    const raw = await rewriteOnce("suggest-revision");
+    // Stage 1: one call per flagged statement, with code-enforced span
+    // constraints. Off unless the caller asks for it; production does not. It
+    // produces the same marked-up text shape the whole-draft model returns, so
+    // everything below this point is unchanged.
+    let stage1 = null;
+    if (body.perStatementRevise === true) {
+      stage1 = await runStage1(draftText, concerns, {
+        sourceText: sourceTextForValidation(body.sources),
+        callModel: async (stagePrompt, meta) => {
+          const completion = await callLLM({
+            provider: modelConfig.provider,
+            model: modelConfig.model,
+            temperature: 0,
+            seed: 1,
+            responseFormat: "json",
+            messages: [{ role: "user", content: stagePrompt }],
+            traceName: `suggest-revision-stage1-${meta.index}`,
+            spanName: `suggest-revision-stage1-${meta.index}`,
+            metadata: { ...llmMeta, stage: "stage1", kind: meta.kind },
+          });
+          return { text: completion?.text ?? "", usage: completion?.usage ?? null };
+        },
+      });
+    }
+
+    const raw = stage1 ? stage1.revisedDraft : await rewriteOnce("suggest-revision");
     if (!raw) {
       return res.status(500).json({ ok: false, error: "Suggest-revision produced empty revisedDraft" });
     }
@@ -230,4 +256,20 @@ export default async function handler(req, res) {
   } finally {
     await flushObservability();
   }
+}
+
+/**
+ * Every scrap of supplied source text, for the stage 1 invented-fact check.
+ * Shape-tolerant: a figure the validator cannot find here is treated as
+ * invented, so under-collecting would cause false rejections.
+ */
+function sourceTextForValidation(sources) {
+  const list = Array.isArray(sources) ? sources : [];
+  const parts = [];
+  for (const s of list) {
+    for (const key of ["text", "content", "excerpt", "body", "summary", "label", "name"]) {
+      if (typeof s?.[key] === "string") parts.push(s[key]);
+    }
+  }
+  return parts.join("\n\n");
 }
