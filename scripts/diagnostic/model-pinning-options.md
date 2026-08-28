@@ -1,10 +1,11 @@
 # What can we pin, and to what
 
-Part 1 only. **Nothing has been pinned. `lib/qc/model-config.mjs` is unchanged.**
-Awaiting Ben's go-ahead for Part 2.
+**Part 2 executed on Ben's approval.** All three models are now pinned to dated
+snapshots in `lib/qc/model-config.mjs`. See "Part 2, as executed" at the end.
 
-Cost: **under one cent** (~$0.003). `GET /v1/models` is free; three one-shot
-completions were used to resolve what each alias actually serves.
+Cost: **under one cent** (~$0.006). `GET /v1/models` is free; six one-shot
+completions were used — three to resolve what each alias serves, three to
+verify the pinned strings work.
 
 Every model string below came from the provider on 2026-08-28, queried with the
 production key by `scripts/diagnostic/list-model-snapshots.mjs`. Raw output is
@@ -14,11 +15,68 @@ in `scripts/diagnostic/model-snapshots.json`. Nothing here is from memory.
 
 ## Recommendation
 
-| Alias in use | Serves today (probed) | **Pin to** | Behaviour change if pinned | Announced shutdown |
+| Alias in use | Serves today (probed) | **Pinned to** | Behaviour change | Deprecation status | Shutdown date |
+|---|---|---|---|---|---|
+| `gpt-4o` — Stage 2 + 7 stages | `gpt-4o-2024-08-06` | **`gpt-4o-2024-08-06`** | **None. Identical string.** | Not deprecated | **None announced** |
+| `gpt-4o-mini` — extraction, judges | `gpt-4o-mini-2024-07-18` | **`gpt-4o-mini-2024-07-18`** | **None. Only snapshot.** | Not deprecated | **None announced** |
+| `gpt-5.1` — the reviser | `gpt-5.1-2025-11-13` | **`gpt-5.1-2025-11-13`** | **None. Only snapshot.** | Not deprecated | **None announced** |
+
+### Every snapshot available, with its retirement date
+
+Not just the chosen ones. Dates are OpenAI's published direct-API deprecations,
+checked 2026-08-28; the API itself publishes none.
+
+| Snapshot | Created | Deprecation status | Shutdown date | Replacement named |
 |---|---|---|---|---|
-| `gpt-4o` — Stage 2 + 7 stages | `gpt-4o-2024-08-06` | **`gpt-4o-2024-08-06`** | **None. Identical string.** | **None announced** |
-| `gpt-4o-mini` — extraction, judges | `gpt-4o-mini-2024-07-18` | **`gpt-4o-mini-2024-07-18`** | **None. Only snapshot.** | **None announced** |
-| `gpt-5.1` — the reviser | `gpt-5.1-2025-11-13` | **`gpt-5.1-2025-11-13`** | **None. Only snapshot.** | **None announced** |
+| `gpt-4o-2024-05-13` | 2024-05-10 | **Deprecated** | **2026-10-23** — under 2 months | `gpt-5.6-sol` |
+| **`gpt-4o-2024-08-06`** ← pinned | 2024-08-04 | Not deprecated | None announced | — |
+| `gpt-4o-2024-11-20` | 2025-02-12 | Not deprecated | None announced | — |
+| **`gpt-4o-mini-2024-07-18`** ← pinned | 2024-07-16 | Not deprecated | None announced | — |
+| **`gpt-5.1-2025-11-13`** ← pinned | 2025-11-10 | Not deprecated | None announced | — |
+| `gpt-5.1-chat-latest` (not used) | 2025-11-07 | Deprecated | 2026-07-23 — already passed | `gpt-5.6-sol` |
+| `gpt-5.1-codex` (not used) | 2025-11-12 | Deprecated | 2026-07-23 — already passed | `gpt-5.6-sol` |
+| `gpt-5.1-codex-mini` (not used) | 2025-11-13 | Deprecated | 2026-07-23 — already passed | `gpt-5.6-terra` |
+| `gpt-5.1-codex-max` (not used) | 2025-11-20 | Deprecated | 2026-07-23 — already passed | `gpt-5.6-sol` |
+
+**None of the three snapshots we pinned has a shutdown date.** The only `gpt-4o`
+snapshot with one is `2024-05-13`, which we deliberately avoided.
+
+---
+
+## Would pinning have prevented the 2026-08-27 incident?
+
+**Almost certainly not.** This is the honest answer and it matters, because it
+sets expectations for what the pin buys.
+
+First, what we cannot do: **determine it directly.** No artefact recorded the
+resolved snapshot. The Stage 2 cache rows store `systemFingerprint` but no
+model field, and Langfuse records the *requested* string (`gpt-4o`), not what
+the provider routed it to. The one input that would settle this was never
+captured — the same gap the whole drift investigation has been about.
+
+What the evidence supports:
+
+- The alias resolves to `gpt-4o-2024-08-06` today, proven by probe.
+- The newer `gpt-4o-2024-11-20` has existed since 2025-02-12, eighteen months
+  before the incident, and the alias is **not** pointed at it.
+- Aliases do not roll backwards. For production on 2026-08-27 to have been on a
+  different snapshot, the alias would have had to move from something else to
+  the older `2024-08-06` afterwards. That does not happen.
+
+So production on 2026-08-27 was, in all likelihood, already running
+`gpt-4o-2024-08-06` — the exact string now pinned. The fingerprint moved from
+`fp_17e3c4f467` to `fp_1a8e2a470b` (and the probe today gives a third,
+`fp_1812855600`) **within one snapshot**.
+
+**The conclusion: that incident was serving-side variation inside a snapshot,
+not a snapshot promotion, and pinning would not have stopped it.** Pinning
+closes a different door — the one that has not blown open yet.
+
+That does not make the pin wasted. Snapshot promotion is the failure mode that
+would move verdicts *furthest*, it is entirely silent, and it is now closed for
+the price of zero behaviour change. But nobody should read the pin as
+delivering run-to-run determinism, because the thing that actually bit us on
+2026-08-27 is still live and still only detectable by the drift alarm.
 
 All three pins are **behaviour-neutral today**: each one names the exact
 snapshot the alias already routes to, proven by probe rather than assumed. No
@@ -165,17 +223,54 @@ Two things it does not help at all:
 
 ---
 
-## Part 2, on approval
+## Part 2, as executed
 
-On Ben's go-ahead, and not before:
+Approved and applied.
 
-1. Replace the three strings in `lib/qc/model-config.mjs` — `gpt-4o` →
-   `gpt-4o-2024-08-06`, `gpt-4o-mini` → `gpt-4o-mini-2024-07-18`, `gpt-5.1` →
-   `gpt-5.1-2025-11-13`. One table, one commit, nothing else.
-2. Add a unit test asserting every string in `STAGE_MODELS` carries a date
-   suffix, so a later edit cannot silently reintroduce a floating alias. The
-   predicate is already written and exported as `hasDateSuffix` in
-   `scripts/diagnostic/list-model-snapshots.mjs`; it would move to the library.
+1. **`lib/qc/model-config.mjs`** — all 24 stage entries now carry dated
+   snapshots. Three distinct strings, each the snapshot its alias already
+   resolved to.
+
+2. **`lib/observability.js` — a regression caught before it shipped.** The
+   `PRICING` table is keyed on the exact model string, and
+   `calculateLlmCostUsd` returns **0** for anything it does not recognise.
+   Pinning alone would therefore have silently zeroed every cost figure the
+   project reports. Added `gpt-4o-2024-08-06` and `gpt-4o-mini-2024-07-18` at
+   rates identical to their aliases, so reported costs are unchanged.
+
+   Pre-existing gap, left alone deliberately: **`gpt-5.1` has never been in the
+   pricing table**, so reviser costs have always reported as $0. Adding a rate
+   now would change reported costs, which is beyond this spec. Flagged as a
+   known gap rather than fixed silently.
+
+3. **`tests/model-fingerprints.test.mjs`** — three new guards: every
+   `STAGE_MODELS` string carries a date suffix, every configured model is
+   priced (excepting the known `gpt-5.1` gap), and `hasDateSuffix` accepts
+   snapshots while rejecting bare aliases. A future edit cannot reintroduce a
+   floating alias without failing the suite. The predicate now lives in
+   `lib/qc/model-fingerprints.mjs`.
+
+4. **Live verification against the provider.** Every pinned string was called
+   for real. All three returned HTTP 200 and served exactly themselves:
+
+   | Pinned string | HTTP | Served | Fingerprint |
+   |---|---|---|---|
+   | `gpt-4o-2024-08-06` | 200 | `gpt-4o-2024-08-06` | `fp_1812855600` |
+   | `gpt-4o-mini-2024-07-18` | 200 | `gpt-4o-mini-2024-07-18` | `fp_5259353f0d` |
+   | `gpt-5.1-2025-11-13` | 200 | `gpt-5.1-2025-11-13` | none returned |
+
+   `gpt-4o-2024-08-06` returned `fp_1812855600` — the same fingerprint the bare
+   alias returned minutes earlier, which is direct confirmation that the pin is
+   behaviour-identical rather than merely believed to be.
+
+Suite: **31 files, 512 tests, all passing.**
 
 No corpus re-run. Since all three pins are behaviour-neutral, re-baselining is
 not required to make the change safe — that stays a separate decision.
+
+### What now needs a diary entry
+
+Pinning trades silent drift for a dated cliff. Nothing has a shutdown date
+today, and OpenAI guarantees at least six months' notice by email for GA
+models, but the failure mode is now a hard outage rather than a quiet wrong
+answer. Whoever receives OpenAI's deprecation emails needs to act on them.

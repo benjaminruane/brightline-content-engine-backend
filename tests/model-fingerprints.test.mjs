@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { getLlmPricingTable } from "../lib/observability.js";
 import {
   REVIEW_STAGE_KEYS,
   buildModelConfigRecord,
@@ -7,6 +9,7 @@ import {
   collectStageModels,
   evaluateModelDrift,
   fingerprintSetsEqual,
+  hasDateSuffix,
   systemFingerprintFromCompletion,
 } from "../lib/qc/model-fingerprints.mjs";
 import {
@@ -17,6 +20,37 @@ import { fingerprintBanner } from "../scripts/diagnostic/lib/fingerprint-manifes
 
 const card = (...fps) => ({
   stage2SourceFingerprints: fps.map((systemFingerprint) => ({ systemFingerprint })),
+});
+
+describe("STAGE_MODELS is pinned", () => {
+  // Guard against silently reintroducing a floating alias. An alias lets the
+  // provider promote a new snapshot behind the same name, which moves verdicts
+  // with no deploy and no signal.
+  it("gives every stage a dated snapshot, never a floating alias", () => {
+    const floating = Object.entries(STAGE_MODELS)
+      .filter(([, row]) => !hasDateSuffix(row.model))
+      .map(([stage, row]) => `${stage} -> ${row.model}`);
+    expect(floating).toEqual([]);
+  });
+
+  it("prices every configured model, so cost telemetry cannot silently zero", () => {
+    const pricing = getLlmPricingTable();
+    const unpriced = Object.entries(STAGE_MODELS)
+      .filter(([, row]) => !pricing?.[row.provider]?.[row.model])
+      .map(([stage, row]) => `${stage} -> ${row.model}`);
+    // gpt-5.1 carried no price before pinning either; adding one here would
+    // change reported costs, so it stays a known gap rather than a surprise.
+    const unexpected = unpriced.filter((entry) => !entry.includes("gpt-5.1"));
+    expect(unexpected).toEqual([]);
+  });
+
+  it("recognises pinned snapshots and rejects bare aliases", () => {
+    expect(hasDateSuffix("gpt-4o-2024-08-06")).toBe(true);
+    expect(hasDateSuffix("gpt-5.1-2025-11-13")).toBe(true);
+    expect(hasDateSuffix("gpt-4o")).toBe(false);
+    expect(hasDateSuffix("gpt-5.1")).toBe(false);
+    expect(hasDateSuffix("gpt-4o-mini")).toBe(false);
+  });
 });
 
 describe("collectStage2Fingerprints", () => {
@@ -40,7 +74,10 @@ describe("collectStage2Fingerprints", () => {
 describe("collectStageModels", () => {
   it("names the model configured for each review stage", () => {
     const models = collectStageModels(REVIEW_STAGE_KEYS);
-    expect(models["stage2-matching"]).toEqual({ provider: "openai", model: "gpt-4o" });
+    expect(models["stage2-matching"]).toEqual({
+      provider: "openai",
+      model: "gpt-4o-2024-08-06",
+    });
   });
 
   it("skips unknown stage keys", () => {
@@ -56,7 +93,7 @@ describe("buildModelConfigRecord", () => {
     });
     expect(record.ranAt).toBe("2026-08-28T00:00:00.000Z");
     expect(record.stage2Fingerprints).toEqual(["fp_a"]);
-    expect(record.stageModels["stage2-matching"].model).toBe("gpt-4o");
+    expect(record.stageModels["stage2-matching"].model).toBe("gpt-4o-2024-08-06");
   });
 });
 

@@ -21,16 +21,17 @@ loadLocalEnvFiles({ liveMeasurement: true });
 
 const OUT_PATH = path.join(DIAG_ROOT, "model-snapshots.json");
 
-/** A dated snapshot ends in -YYYY-MM-DD, or for some families -YYYYMMDD. */
-const DATE_SUFFIX_RE = /-(\d{4}-\d{2}-\d{2}|\d{8})$/;
-
-export function hasDateSuffix(id) {
-  return typeof id === "string" && DATE_SUFFIX_RE.test(id);
-}
-
-/** Aliases actually configured in the pipeline, deduplicated. */
+/**
+ * Model families the pipeline configures, as bare alias names.
+ *
+ * STAGE_MODELS now holds pinned snapshots, so the date suffix is stripped to
+ * recover the family and keep this script reporting on the alias too.
+ */
 function configuredAliases() {
-  return [...new Set(Object.values(STAGE_MODELS).map((row) => row.model))].sort();
+  const families = Object.values(STAGE_MODELS).map((row) =>
+    row.model.replace(/-(\d{4}-\d{2}-\d{2}|\d{8})$/, "")
+  );
+  return [...new Set(families)].sort();
 }
 
 /**
