@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  CONCERN_KIND_REASONS,
   MAX_LISTED_EDITS,
   NO_CHANGE_CLAUSE,
   QUOTE_MAX_CHARS,
   buildNoteBodyFromDiff,
+  concernKind,
   buildWhatClause,
   diffWordSequences,
   extractModelReason,
@@ -187,6 +189,97 @@ describe("buildNoteBodyFromDiff", () => {
     });
     expect(out.changed).toBe(false);
     expect(out.body).toBe("No change was made - the source never says this");
+  });
+});
+
+describe("concern reason fallback", () => {
+  const original = "The team is well established and highly regarded across the market.";
+  const revised = "The team is well established across the market.";
+  const concernFor = (kindPatch) => [
+    { statementIndex: 0, statementText: original, editorial: [], compliance: [], ...kindPatch },
+  ];
+
+  it("prefers the model's own reason over the fallback", () => {
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised,
+      start: revised.indexOf("well established"),
+      end: revised.indexOf(" across"),
+      note: "Removed it — the source is silent on this point.",
+      concerns: concernFor({ evidence: { kind: "unsupported" } }),
+    });
+    expect(out.reasonSource).toBe("model");
+    expect(out.body).toBe('Removed "and highly regarded" - the source is silent on this point');
+  });
+
+  it("falls back to the concern class when the model buried its reason", () => {
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised,
+      start: revised.indexOf("well established"),
+      end: revised.indexOf(" across"),
+      note: "Removed the unsupported 'highly regarded' ranking.",
+      concerns: concernFor({ evidence: { kind: "unsupported" } }),
+    });
+    expect(out.reasonSource).toBe("concern");
+    expect(out.body).toBe('Removed "and highly regarded" - no supplied source backs this claim');
+  });
+
+  it("uses the right class wording per concern kind", () => {
+    const kinds = {
+      unsupported: "no supplied source backs this claim",
+      conflict: "a source states otherwise",
+      partial: "the source backs only part of this",
+    };
+    for (const [kind, expected] of Object.entries(kinds)) {
+      const out = buildNoteBodyFromDiff({
+        original,
+        revised,
+        start: revised.indexOf("well established"),
+        end: revised.indexOf(" across"),
+        note: "Removed the ranking.",
+        concerns: concernFor({ evidence: { kind } }),
+      });
+      expect(out.reason).toBe(expected);
+    }
+  });
+
+  it("reads editorial and compliance kinds too", () => {
+    expect(concernKind({ editorial: [{ kind: "soften" }] })).toBe("soften");
+    expect(concernKind({ compliance: [{ kind: "compliance_strip" }] })).toBe("compliance_strip");
+    expect(CONCERN_KIND_REASONS.soften).toBe("overstated against the source");
+  });
+
+  it("ignores craft, which never earns a marker", () => {
+    expect(concernKind({ editorial: [{ kind: "craft" }] })).toBeNull();
+  });
+
+  it("emits the what clause alone when no concern can be traced", () => {
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised,
+      start: revised.indexOf("well established"),
+      end: revised.indexOf(" across"),
+      note: "Removed the ranking.",
+      concerns: [{ statementText: "A sentence that is not in this draft.", editorial: [] }],
+    });
+    expect(out.reasonSource).toBe("none");
+    expect(out.body).toBe('Removed "and highly regarded"');
+  });
+
+  it("gives a no-change marker the concern's reason, so the flag still explains itself", () => {
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised: original,
+      start: original.indexOf("well established"),
+      end: original.indexOf(" across"),
+      note: "Removed the unsupported ranking.",
+      concerns: concernFor({ evidence: { kind: "unsupported" } }),
+    });
+    expect(out.changed).toBe(false);
+    expect(normalizeMarkerNoteText(out.body)).toBe(
+      "No change was made - no supplied source backs this claim. Confirm before publishing."
+    );
   });
 });
 

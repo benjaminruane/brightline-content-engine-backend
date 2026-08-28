@@ -13,7 +13,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { buildNoteBodyFromDiff } from "../../../lib/pr9-note-what-from-diff.mjs";
-import { normalizeMarkerNoteText } from "../../../lib/build-revision-prompt.mjs";
+import { gatherConcerns, normalizeMarkerNoteText } from "../../../lib/build-revision-prompt.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = __dirname;
@@ -34,6 +34,29 @@ async function loadOriginalDraftFromScript(scriptName) {
   const match = text.match(/const MERIDIAN_DRAFT = `([\s\S]*?)`;/);
   if (!match) throw new Error(`MERIDIAN_DRAFT not found in ${scriptName}`);
   return match[1];
+}
+
+/**
+ * The Review each Suggest run was built from, per the run scripts' own
+ * hardcoded paths. Condition B is the only one on a different Review.
+ */
+function reviewFileFor(artefactName) {
+  if (artefactName.startsWith("condition-b-suggest")) return "condition-b-review.json";
+  if (artefactName.startsWith("condition-a-condition-b-suggest-rerun")) {
+    return "condition-b-review.json";
+  }
+  if (artefactName.startsWith("suggest-after-r10-suggest2")) return "suggest-after-r10-review2.json";
+  return "suggest-after-r10-review1.json";
+}
+
+async function loadConcerns(reviewFile) {
+  const json = JSON.parse(await readFile(path.join(OUT_DIR, reviewFile), "utf8"));
+  const statements = Array.isArray(json?.payload?.statements)
+    ? json.payload.statements
+    : Array.isArray(json?.statements)
+      ? json.statements
+      : [];
+  return gatherConcerns(statements, null);
 }
 
 function revisedDraftFromArtefact(json) {
@@ -58,6 +81,7 @@ async function main() {
 
   const draftCache = new Map();
   const revisedCache = new Map();
+  const concernCache = new Map();
   const replayed = [];
 
   for (const row of rows) {
@@ -72,6 +96,11 @@ async function main() {
       revisedCache.set(row.file, revisedDraftFromArtefact(json));
     }
 
+    const reviewFile = reviewFileFor(row.file);
+    if (!concernCache.has(reviewFile)) {
+      concernCache.set(reviewFile, await loadConcerns(reviewFile));
+    }
+
     const originalDraft = draftCache.get(mapping.script);
     const revisedDraft = revisedCache.get(row.file);
 
@@ -81,6 +110,7 @@ async function main() {
       start: row.start,
       end: row.end,
       note: row.note,
+      concerns: concernCache.get(reviewFile),
     });
     const newNote = normalizeMarkerNoteText(built.body);
 
@@ -94,6 +124,7 @@ async function main() {
       whatClause: built.clause,
       reasonKept: built.reason,
       changed: built.changed,
+      reasonSource: built.reasonSource,
       editCount: built.edits.length,
       noChange: !built.changed,
       wordingChanged: row.note.trim() !== newNote.trim(),
@@ -133,12 +164,6 @@ async function main() {
     rows: replayed,
   };
 
-  await writeFile(
-    path.join(OUT_DIR, "note-what-from-diff-rows.json"),
-    `${JSON.stringify(summary, null, 2)}\n`,
-    "utf8"
-  );
-
   console.log("");
   console.log("REPLAY  note WHAT from diff, zero model calls");
   console.log(`notes replayed: ${replayed.length}`);
@@ -150,6 +175,28 @@ async function main() {
   console.log("");
   console.log(`4. TOTAL notes that now say no change was made:    ${noChange.length} of ${replayed.length}`);
   console.log("");
+
+  const fromModel = replayed.filter((r) => r.reasonSource === "model");
+  const fromConcern = replayed.filter((r) => r.reasonSource === "concern");
+  const noReason = replayed.filter((r) => r.reasonSource === "none");
+  console.log("REASON FALLBACK");
+  console.log(`carry a reason:            ${fromModel.length + fromConcern.length} of ${replayed.length}`);
+  console.log(`  from the model:          ${fromModel.length}`);
+  console.log(`  from the concern class:  ${fromConcern.length}  <- rescued by the fallback`);
+  console.log(`carry none:                ${noReason.length}`);
+  console.log("");
+  summary.reasonFallback = {
+    carryAReason: fromModel.length + fromConcern.length,
+    fromModel: fromModel.length,
+    fromConcern: fromConcern.length,
+    carryNone: noReason.length,
+  };
+
+  await writeFile(
+    path.join(OUT_DIR, "note-what-from-diff-rows.json"),
+    `${JSON.stringify(summary, null, 2)}\n`,
+    "utf8"
+  );
 
   // Markdown table for the report.
   const lines = [
