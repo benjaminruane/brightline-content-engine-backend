@@ -22,6 +22,7 @@ import {
   gatherConcerns,
 } from "../lib/build-revision-prompt.mjs";
 import { runStage1 } from "../lib/revise-stage1.mjs";
+import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 import {
   findReviewVocabularyHits,
   logReviewVocabularyAttempt,
@@ -52,11 +53,12 @@ function stripCodeFence(text) {
   return match ? match[1].trim() : trimmed;
 }
 
-function finalizeOpts(draftText, concerns, traceId) {
+function finalizeOpts(draftText, concerns, traceId, authoringOrganisation) {
   return {
     originalDraft: draftText,
     concerns,
     deterministicUnsupportedRemoval: true,
+    authoringOrganisation,
     traceId,
   };
 }
@@ -127,6 +129,13 @@ export default async function handler(req, res) {
       typeof body.requiredVersion === "string" ? body.requiredVersion : undefined;
     const publicationMap = buildPublicationMap(body.sources);
 
+    // Read-only, for the author-statement exemption. Resolution precedence is
+    // owned by first-person-actor; with nothing configured it is null and only
+    // the first-person path can fire.
+    const authoringOrganisation = resolveAuthoringOrganisationName(
+      body?.options?.authoringOrganisation ?? body?.authoringOrganisation
+    );
+
     const concerns = gatherConcerns(statements, publicationMap);
     const prompt = buildRevisionPrompt(draftText, concerns, { outputType, requiredVersion });
 
@@ -163,6 +172,7 @@ export default async function handler(req, res) {
     if (body.perStatementRevise === true) {
       stage1 = await runStage1(draftText, concerns, {
         sourceText: sourceTextForValidation(body.sources),
+        authoringOrganisation,
         callModel: async (stagePrompt, meta) => {
           const completion = await callLLM({
             provider: modelConfig.provider,
@@ -188,7 +198,7 @@ export default async function handler(req, res) {
     let finalizeTraceId = "suggest-revision";
     let finalized = finalizeSuggestRevisionText(
       raw,
-      finalizeOpts(draftText, concerns, finalizeTraceId)
+      finalizeOpts(draftText, concerns, finalizeTraceId, authoringOrganisation)
     );
     let vocabHits = findReviewVocabularyHits(finalized.revisedDraft);
     let revisionWarning = null;
@@ -204,7 +214,7 @@ export default async function handler(req, res) {
         finalizeTraceId = "suggest-revision-retry";
         const retry = finalizeSuggestRevisionText(
           rawRetry,
-          finalizeOpts(draftText, concerns, finalizeTraceId)
+          finalizeOpts(draftText, concerns, finalizeTraceId, authoringOrganisation)
         );
         const retryHits = findReviewVocabularyHits(retry.revisedDraft);
         logReviewVocabularyAttempt({
