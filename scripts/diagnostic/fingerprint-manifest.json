@@ -1,0 +1,153 @@
+{
+  "generatedAt": "2026-08-28T08:47:16.064Z",
+  "note": "Serving configurations the corpus baseline was measured on, recovered from systemFingerprint recorded per Stage 2 match. The corpus was not re-run to produce this.",
+  "source": "claim-spans/.baseline.json",
+  "stage2Model": "gpt-4o",
+  "stage2Fingerprints": [
+    "fp_17e3c4f467",
+    "fp_64d0f9e03c",
+    "fp_684acb85fd"
+  ],
+  "caseCount": 29,
+  "perCase": {
+    "nordholt-clean": [
+      "fp_17e3c4f467"
+    ],
+    "nordholt-dirty": [
+      "fp_17e3c4f467"
+    ],
+    "supersession": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F01": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F02": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F03": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F04": [
+      "fp_17e3c4f467"
+    ],
+    "F05": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F06": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F07": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F08": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F09": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F10": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F11": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F12": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F13": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F14": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F15": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F16": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F17": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F18": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F19": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F20": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "F21": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F22": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "F23": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c"
+    ],
+    "E1": [
+      "fp_17e3c4f467"
+    ],
+    "E2": [
+      "fp_17e3c4f467"
+    ],
+    "E3": [
+      "fp_17e3c4f467"
+    ]
+  },
+  "artefacts": {
+    "eval-ablation/r3a-production-verify.json": [
+      "fp_17e3c4f467"
+    ],
+    "eval-ablation/r10-production-verify.json": [
+      "fp_17e3c4f467"
+    ],
+    "eval-ablation/r3a-corpus-blast-rows.json": [
+      "fp_17e3c4f467",
+      "fp_64d0f9e03c",
+      "fp_684acb85fd"
+    ],
+    "revise/condition-b-review.json": [
+      "fp_17e3c4f467"
+    ]
+  },
+  "undatable": []
+}

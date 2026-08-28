@@ -18,6 +18,9 @@ import {
   splitSourcesForResponse,
 } from "../lib/response-sources.mjs";
 import { scanDraftForAiProvenance } from "../lib/provenance-scan.mjs";
+import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
+import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -297,6 +300,16 @@ export default async function handler(req, res) {
     const sources = buildResponseSources(v3Sources);
     const excludedSources = buildExcludedSources(droppedForExclude);
 
+    // Which serving configuration produced this run. Additive; not surfaced in
+    // the main UI. Stage 2 verdicts can move with no code change, so the
+    // fingerprint is recorded alongside the output it produced.
+    const modelConfig = buildModelConfigRecord({ qcCards, ranAt: runStartedAt });
+    await reportModelDrift({
+      stage: "stage2",
+      model: STAGE_MODELS["stage2-matching"].model,
+      fingerprints: modelConfig.stage2Fingerprints,
+    });
+
     return res.status(200).json({
       ok: true,
       statements,
@@ -309,6 +322,7 @@ export default async function handler(req, res) {
         stagesComplete: pipelineResult?._stagesComplete ?? null,
         traceId,
         reviewOptions: pipelineResult?.reviewOptions ?? reviewOptions,
+        modelConfig,
         ...(pipelineResult?.evidenceReviewSkipped === true ? { evidenceReviewSkipped: true } : {}),
         ...(nothingReviewed ? { nothingReviewed: true } : {}),
       },

@@ -13,6 +13,11 @@ import {
   fixtureRunDirName,
   loadAllFixtures,
 } from "./lib/fixtures.mjs";
+import {
+  collectFingerprintsDeep,
+  fingerprintBanner,
+  loadFingerprintManifest,
+} from "./lib/fingerprint-manifest.mjs";
 import { langfuseTraceUrl } from "./lib/langfuse-url.mjs";
 import { RUNS_DIR } from "./lib/paths.mjs";
 import { startPipelineLogCapture } from "./lib/pipeline-log-capture.mjs";
@@ -220,6 +225,7 @@ async function runOneFixture(fixture, runRoot) {
     langfuseTraceUrl: traceUrl,
     error,
     outDir,
+    stage2Fingerprints: collectFingerprintsDeep(pipelineResult),
   };
 }
 
@@ -231,12 +237,22 @@ function batchLabel(batch, batchIndex, totalBatches) {
 }
 
 async function writeIndex(runRoot, runMeta, entries) {
+  const runFingerprints = [
+    ...new Set(entries.flatMap((e) => (Array.isArray(e.stage2Fingerprints) ? e.stage2Fingerprints : []))),
+  ].sort();
+  const banner = fingerprintBanner({
+    runFingerprints,
+    manifest: await loadFingerprintManifest(),
+  });
+
   const lines = [
+    ...(banner ? [banner] : []),
     `# Diagnostic run ${runMeta.timestamp}`,
     "",
     `Started: ${runMeta.startedAt}`,
     `Finished: ${runMeta.finishedAt}`,
     `Aborted: ${runMeta.aborted ? "yes" : "no"}`,
+    `Stage 2 fingerprints: ${runFingerprints.length ? runFingerprints.join(", ") : "none recorded"}`,
     "",
     "| Fixture | Label | Status | Duration (ms) | Statements | Verdict mix | Langfuse | Error |",
     "|---------|-------|--------|---------------|------------|-------------|----------|-------|",

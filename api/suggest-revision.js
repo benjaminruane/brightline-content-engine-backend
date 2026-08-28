@@ -10,6 +10,12 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
+  SUGGEST_STAGE_KEYS,
+  collectStageModels,
+  systemFingerprintFromCompletion,
+} from "../lib/qc/model-fingerprints.mjs";
+import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
+import {
   buildPublicationMap,
   buildRevisionPrompt,
   finalizeSuggestRevisionText,
@@ -131,6 +137,7 @@ export default async function handler(req, res) {
       ...(requiredVersion ? { requiredVersion } : {}),
     };
 
+    const reviserFingerprints = new Set();
     async function rewriteOnce(traceName) {
       const completion = await callLLM({
         provider: modelConfig.provider,
@@ -142,6 +149,8 @@ export default async function handler(req, res) {
         spanName: traceName,
         metadata: llmMeta,
       });
+      const fingerprint = systemFingerprintFromCompletion(completion);
+      if (fingerprint) reviserFingerprints.add(fingerprint);
       return stripCodeFence(typeof completion?.text === "string" ? completion.text : "");
     }
 
@@ -193,11 +202,25 @@ export default async function handler(req, res) {
     const removalEvents = Array.isArray(finalized.removalEvents) ? finalized.removalEvents : [];
     logDeterministicRemovals(finalizeTraceId, removalEvents);
 
+    // Same treatment as Review: record which serving configuration wrote this
+    // revision. Silent when the provider returns no fingerprint for the model.
+    const reviserModelConfig = {
+      ranAt: new Date().toISOString(),
+      reviserFingerprints: [...reviserFingerprints].sort(),
+      stageModels: collectStageModels(SUGGEST_STAGE_KEYS),
+    };
+    await reportModelDrift({
+      stage: "reviser",
+      model: modelConfig.model,
+      fingerprints: reviserModelConfig.reviserFingerprints,
+    });
+
     const payload = {
       ok: true,
       revisedDraft: finalized.revisedDraft,
       markers: finalized.markers,
       removalEvents,
+      modelConfig: reviserModelConfig,
     };
     if (revisionWarning) payload.revisionWarning = revisionWarning;
     if (finalized.honestyEvents?.length) payload.honestyEvents = finalized.honestyEvents;
