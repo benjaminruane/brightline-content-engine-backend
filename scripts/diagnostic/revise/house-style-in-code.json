@@ -1,0 +1,163 @@
+{
+  "ranAt": "2026-08-28T11:34:42.698Z",
+  "guideTotal": 3560,
+  "headerTokens": 55,
+  "byClass": {
+    "MECHANICAL": 96,
+    "ENFORCEABLE": 905,
+    "JUDGEMENT": 2506
+  },
+  "rules": [
+    {
+      "id": "hyperbole_vs_qualitative",
+      "cls": "JUDGEMENT",
+      "tokens": 1180,
+      "why": "The banned word list is detectable, but the required EDIT is the remaining-clause test: delete the evaluative word only if the clause still informs, otherwise keep and flag. It also forbids milder substitution, which needs to know what the replacement would mean."
+    },
+    {
+      "id": "first_person_plural",
+      "cls": "JUDGEMENT",
+      "tokens": 1137,
+      "why": "Pronoun substitution is mechanical, but the view-marker test is not: delete 'in our view' when the sentence subject is already the authoring organisation, convert it when it is not. That requires resolving the grammatical subject after substitution, and every hedge and modal must survive."
+    },
+    {
+      "id": "defined_term_capitalisation",
+      "cls": "ENFORCEABLE",
+      "tokens": 174,
+      "work": "Detect 'X (the Term)' to build the defined-term set, then case-correct later bare uses. The rule's own carve-outs (lowercase 'the' mid-sentence, undefined terms) are mechanical."
+    },
+    {
+      "id": "english_variant",
+      "cls": "ENFORCEABLE",
+      "tokens": 148,
+      "work": "British-to-US word list with a proper-noun exclusion list. The rule already enumerates the pattern; the risk is names like 'Partners Group' and 'Centre Court', which an exclusion list handles."
+    },
+    {
+      "id": "number_spelling",
+      "cls": "ENFORCEABLE",
+      "tokens": 134,
+      "work": "Spell out 0-12, numerals for 13+, with the carve-outs the rule already lists (percentages, currency, dates, ages, units). The carve-outs are all detectable from the adjacent token."
+    },
+    {
+      "id": "oxford_comma",
+      "cls": "ENFORCEABLE",
+      "tokens": 124,
+      "work": "The rule already states the counting algorithm: at least one comma plus a terminal 'and' means three or more items. Insert the comma before 'and'. Nested clauses would need care."
+    },
+    {
+      "id": "percentage_notation",
+      "cls": "ENFORCEABLE",
+      "tokens": 98,
+      "work": "One regex: /\\b(per cent|percent)\\b/ after a number becomes '%'. No context needed."
+    },
+    {
+      "id": "date_format",
+      "cls": "ENFORCEABLE",
+      "tokens": 97,
+      "work": "Parse the four non-conforming date shapes named in the rule and re-emit DD FullMonthName YYYY. Deterministic given an unambiguous input; 05/26/2026 needs a locale assumption."
+    },
+    {
+      "id": "sentence_structure_clarity",
+      "cls": "JUDGEMENT",
+      "tokens": 66,
+      "why": "'Favour clarity over density' has no deterministic test. A clause-count heuristic would fire on legitimate prose."
+    },
+    {
+      "id": "thousand_separator",
+      "cls": "ENFORCEABLE",
+      "tokens": 65,
+      "work": "Digit-group regex rewriting 5,500 to 5'500. Must skip years and figures inside currency amounts already handled elsewhere."
+    },
+    {
+      "id": "currency_format",
+      "cls": "ENFORCEABLE",
+      "tokens": 65,
+      "work": "Symbol-to-ISO map plus a magnitude-suffix expander: EUR445m becomes EUR 445 million. Finite symbol set, finite suffix set."
+    },
+    {
+      "id": "active_voice_preference",
+      "cls": "JUDGEMENT",
+      "tokens": 64,
+      "why": "Conditioned on the subject being known and stating it being appropriate. Both require reading the sentence."
+    },
+    {
+      "id": "register_consistency",
+      "cls": "JUDGEMENT",
+      "tokens": 59,
+      "why": "Consistency of tone across a document. No surface form to match on."
+    },
+    {
+      "id": "smart_quotes",
+      "cls": "MECHANICAL",
+      "tokens": 52,
+      "fn": "normalizePgHouseStyleCharacters (pg-commentary-cleanup.mjs L14-15)",
+      "why": "Curly quotes are already rewritten to straight ones on every revision."
+    },
+    {
+      "id": "em_dash",
+      "cls": "MECHANICAL",
+      "tokens": 44,
+      "fn": "normalizePgHouseStyleCharacters (pg-commentary-cleanup.mjs L16)",
+      "why": "En and em dashes are already rewritten to hyphens on every revision."
+    }
+  ],
+  "trimmed": 2561,
+  "saved": 999,
+  "wholeCallToday": 5427,
+  "wholeCallTrimmed": 4428,
+  "verdict": "GUIDE MUST STAY",
+  "armC": [
+    {
+      "run": 1,
+      "before": "The fund intends to build a portfolio of 10-14 investments.",
+      "after": "The fund intends to build a portfolio of 10-14 investments.",
+      "violationsBefore": [],
+      "violationsAfter": [],
+      "fixed": []
+    },
+    {
+      "run": 2,
+      "before": "The fund intends to build a portfolio of 10–14 investments.",
+      "after": "The fund intends to build a portfolio of 10-14 investments.",
+      "violationsBefore": [
+        "en/em dash"
+      ],
+      "violationsAfter": [],
+      "fixed": [
+        "en/em dash"
+      ]
+    },
+    {
+      "run": 3,
+      "before": "The fund intends to build a portfolio of 10–14 investments.",
+      "after": "The fund intends to build a portfolio of 10-14 investments.",
+      "violationsBefore": [
+        "en/em dash"
+      ],
+      "violationsAfter": [],
+      "fixed": [
+        "en/em dash"
+      ]
+    }
+  ],
+  "cacheProbe": {
+    "model": "gpt-5.1-2025-11-13",
+    "promptTokens": 7672,
+    "runs": [
+      {
+        "run": 1,
+        "inputTokens": 6754,
+        "cachedInputTokens": 0,
+        "hitRate": 0,
+        "costUsd": 0.010522499999999999
+      },
+      {
+        "run": 2,
+        "inputTokens": 6754,
+        "cachedInputTokens": 6528,
+        "hitRate": 0.9665383476458395,
+        "costUsd": 0.0031485
+      }
+    ]
+  }
+}
