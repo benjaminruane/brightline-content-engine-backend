@@ -5,6 +5,8 @@ import {
   findStatementTextInDraft,
   matchIsWholeSentence,
   buildDeterministicUnsupportedRemovalCutNote,
+  enforceRemovalInvariant,
+  REMOVAL_NOTE_PREFIX,
   DETERMINISTIC_UNSUPPORTED_EMPTY_DRAFT_NOTE,
   DETERMINISTIC_UNSUPPORTED_REMOVAL_CUT_NOTE,
 } from "../lib/pr9-deterministic-unsupported-removal.mjs";
@@ -38,6 +40,92 @@ function unsupportedConcern(statementText, statementIndex = 9) {
     compliance: [],
   };
 }
+
+describe("no deletion without a marker", () => {
+  test("no anchorable remnant -> sentence KEPT, marker emitted, nothing deleted", () => {
+    // Two sentences, the second unsupported. The remnant cannot be re-found in
+    // the post-deletion draft, which previously deleted the sentence and
+    // returned no marker at all (fc25060).
+    const draft =
+      "The fund targets industrial technology businesses in Europe. " +
+      "This relationship enabled deep insight during the diligence phase.";
+    const target = "This relationship enabled deep insight during the diligence phase.";
+    const result = applyDeterministicUnsupportedRemoval(
+      { revisedDraft: draft, markers: [] },
+      [unsupportedConcern(target)],
+      { enabled: true }
+    );
+
+    assert.equal(result.revisedDraft, draft, "nothing may be deleted");
+    assert.equal(result.removalEvents.length, 1);
+    assert.equal(result.removalEvents[0].action, "unrecordable_removal_kept");
+    assert.equal(result.removalEvents[0].reason, "remnant_lost_after_delete");
+
+    const kept = result.markers.find((m) => m.intent === "KEPT");
+    assert.ok(kept, "the kept sentence must carry a marker");
+    assert.match(kept.note, /could not be recorded/i);
+    assert.equal(result.revisedDraft.slice(kept.start, kept.end), target);
+  });
+
+  test("a normal removal is unchanged by the guard", () => {
+    const draft = `${COINVEST}\n\n${DEEPEN}`;
+    const result = applyDeterministicUnsupportedRemoval(
+      { revisedDraft: draft, markers: [] },
+      [unsupportedConcern(DEEPEN)],
+      { enabled: true }
+    );
+    assert.equal(result.revisedDraft.includes("deepen"), false);
+    assert.equal(result.removalEvents[0].action, "removed");
+    assert.equal(result.markers.filter((m) => m.intent === "CUT").length, 1);
+  });
+
+  test("the invariant fires and restores when deletions and markers diverge", () => {
+    const preStageDraft = `${COINVEST}\n\n${DEEPEN}`;
+    const logged = [];
+
+    // A sentence recorded as deleted, with no removal marker to show for it.
+    const result = enforceRemovalInvariant(
+      {
+        revisedDraft: COINVEST,
+        markers: [],
+        removalEvents: [{ action: "removed", reason: "unsupported_whole_sentence_removed" }],
+      },
+      {
+        preStageDraft,
+        preStageMarkers: [],
+        traceId: "unit-invariant",
+        log: (m) => logged.push(m),
+      }
+    );
+
+    assert.equal(result.revisedDraft, preStageDraft, "the pre-stage draft must be restored");
+    assert.equal(logged.length, 1);
+    assert.match(logged[0], /^\[removal-invariant] trace=unit-invariant/);
+    assert.match(logged[0], /deleted=1 markers=0/);
+    assert.match(logged[0], /action=restored_pre_stage_draft/);
+    assert.ok(
+      result.removalEvents.some((e) => e.action === "invariant_violated_restored"),
+      "the violation must be reported"
+    );
+  });
+
+  test("the invariant passes a matched deletion through untouched", () => {
+    const logged = [];
+    const markers = [
+      { start: 0, end: 3, intent: "CUT", note: `${REMOVAL_NOTE_PREFIX}: "x." No supplied source backs that claim.` },
+    ];
+    const result = enforceRemovalInvariant(
+      {
+        revisedDraft: COINVEST,
+        markers,
+        removalEvents: [{ action: "removed" }],
+      },
+      { preStageDraft: "SHOULD NOT BE USED", preStageMarkers: [], log: (m) => logged.push(m) }
+    );
+    assert.equal(result.revisedDraft, COINVEST);
+    assert.equal(logged.length, 0);
+  });
+});
 
 describe("applyDeterministicUnsupportedRemoval", () => {
   test("whole-sentence unsupported, previous neighbour available -> removed, CUT on previous", () => {

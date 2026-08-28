@@ -181,7 +181,10 @@ describe("unreported change markers", () => {
       log: vi.fn(),
     });
 
-    expect(finalized.revisedDraft).not.toContain("enabled deep insight");
+    // This draft is the case that exposed the code-side silent deletion: the
+    // remnant cannot be anchored, so the sentence is now kept and flagged
+    // rather than deleted without a marker.
+    expect(finalized.revisedDraft).toContain("enabled deep insight");
     expect(finalized.unreportedEvents).toHaveLength(0);
     expect(finalized.markers.filter((m) => m.generated === true)).toHaveLength(0);
   });
