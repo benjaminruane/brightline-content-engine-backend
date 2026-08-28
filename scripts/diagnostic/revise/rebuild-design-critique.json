@@ -1,0 +1,117 @@
+{
+  "ranAt": "2026-08-28T10:37:57.047Z",
+  "stats": {
+    "statements": 56,
+    "flagged": 33,
+    "withSupportSpans": 47,
+    "supportSpansTotal": 74,
+    "supportSpansNullOffsets": 0,
+    "supportPassageFoundInStatement": 0,
+    "withUnsupportedSpans": 30,
+    "unsupportedSpansTotal": 33,
+    "unsupportedNullOffsets": 0,
+    "unsupportedTextVerifiedInStatement": 33,
+    "unsupportedTextMismatch": 0,
+    "withClaims": 1,
+    "claimsTotal": 2,
+    "claimsConfirmedPreserve": 0,
+    "withCoverageUnion": 0
+  },
+  "q2": {
+    "flaggedWithNoStatementSideConfirmed": 7,
+    "wholeStatementIsOneConfirmedSpan": 0,
+    "confirmedOverlapsUnsupported": 0,
+    "conflictWithNoUnsupportedSpan": 0,
+    "conflictWithUnsupportedInsideConfirmedClaim": 0
+  },
+  "perDraft": [
+    {
+      "artefact": "scripts/diagnostic/eval-ablation/r10-production-verify.json",
+      "statements": 10,
+      "flagged": 8,
+      "flaggedPct": 80
+    },
+    {
+      "artefact": "scripts/diagnostic/eval-ablation/r3a-production-verify.json",
+      "statements": 10,
+      "flagged": 7,
+      "flaggedPct": 70
+    },
+    {
+      "artefact": "scripts/diagnostic/revise/suggest-after-r10-review1.json",
+      "statements": 10,
+      "flagged": 8,
+      "flaggedPct": 80
+    },
+    {
+      "artefact": "scripts/diagnostic/revise/suggest-after-r10-review2.json",
+      "statements": 10,
+      "flagged": 3,
+      "flaggedPct": 30
+    },
+    {
+      "artefact": "scripts/diagnostic/revise/condition-b-review.json",
+      "statements": 10,
+      "flagged": 3,
+      "flaggedPct": 30
+    },
+    {
+      "artefact": "scripts/diagnostic/revise/coverage-gap-review.json",
+      "statements": 6,
+      "flagged": 4,
+      "flaggedPct": 66.7
+    }
+  ],
+  "median": 5.5,
+  "mean": 5.5,
+  "examples": [
+    {
+      "artefact": "scripts/diagnostic/eval-ablation/r10-production-verify.json",
+      "kind": "unsupported",
+      "text": "Halden Group expects the relationship to deepen over the life of the fund.",
+      "supportSpans": 0,
+      "unsupportedSpans": 0,
+      "claims": 0
+    },
+    {
+      "artefact": "scripts/diagnostic/eval-ablation/r3a-production-verify.json",
+      "kind": "unsupported",
+      "text": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend t",
+      "supportSpans": 0,
+      "unsupportedSpans": 0,
+      "claims": 0
+    },
+    {
+      "artefact": "scripts/diagnostic/eval-ablation/r3a-production-verify.json",
+      "kind": "unsupported",
+      "text": "Halden Group expects the relationship to deepen over the life of the fund.",
+      "supportSpans": 0,
+      "unsupportedSpans": 0,
+      "claims": 0
+    },
+    {
+      "artefact": "scripts/diagnostic/revise/suggest-after-r10-review1.json",
+      "kind": "unsupported",
+      "text": "Halden Group expects the relationship to deepen over the life of the fund.",
+      "supportSpans": 0,
+      "unsupportedSpans": 0,
+      "claims": 0
+    },
+    {
+      "artefact": "scripts/diagnostic/revise/suggest-after-r10-review2.json",
+      "kind": "unsupported",
+      "text": "Halden Group expects the relationship to deepen over the life of the fund.",
+      "supportSpans": 0,
+      "unsupportedSpans": 0,
+      "claims": 0
+    },
+    {
+      "artefact": "scripts/diagnostic/revise/coverage-gap-review.json",
+      "kind": "(editorial only)",
+      "text": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vint",
+      "supportSpans": 3,
+      "unsupportedSpans": 0,
+      "claims": 0
+    }
+  ]
+}
