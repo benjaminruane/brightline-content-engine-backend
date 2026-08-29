@@ -11,6 +11,9 @@ import {
   runStage1,
   usableReason,
   validateStage1Response,
+  stage1SendDecision,
+  directivesOn,
+  OUTCOME_SILENCE_NOT_SENT,
 } from "../lib/revise-stage1.mjs";
 import {
   buildStage1Prompt,
@@ -41,6 +44,36 @@ const noSpanConcern = () => ({
   statementText: "This relationship enabled deep insight during the diligence phase.",
   evidence: { kind: "unsupported", verdict: "no_support", reason: "No source addresses this.", unsupportedSpans: [] },
   editorial: [],
+  compliance: [],
+});
+
+/**
+ * The same statement, but with a source that SPOKE. Stage 1 only sends a
+ * statement where a source stated a competing value or an editor gave an
+ * instruction, so the assembly tests need a sendable fixture; the bare
+ * spanConcern is a silence case and is deliberately never sent.
+ */
+const sendableSpanConcern = (overrides = {}) =>
+  spanConcern({
+    evidence: {
+      ...spanConcern().evidence,
+      sourcePassage: "Meridian IV writes equity cheques of EUR 40-60 million.",
+      sourceLabel: "Meridian IV PPM",
+    },
+    ...overrides,
+  });
+
+/** The diligence sentence as it really appears: silent, but under a directive. */
+const directiveConcern = () => ({
+  statementIndex: 5,
+  statementText: "This relationship enabled deep insight during the diligence phase.",
+  evidence: { kind: "unsupported", verdict: "no_support", reason: "No source addresses this.", unsupportedSpans: [] },
+  editorial: [
+    {
+      rule: "overreach_unsupported_causal",
+      suggestedDirection: "Replace 'enabled deep insight during the diligence phase' with a more measured description.",
+    },
+  ],
   compliance: [],
 });
 
@@ -230,7 +263,7 @@ describe("assembly", () => {
 
   test("statements with no concerns are never sent and never touched", async () => {
     const sent = [];
-    const out = await runStage1(draft, [spanConcern()], {
+    const out = await runStage1(draft, [sendableSpanConcern()], {
       callModel: async (prompt) => {
         sent.push(prompt);
         return {
@@ -250,7 +283,7 @@ describe("assembly", () => {
   });
 
   test("a rejected edit keeps the original statement and records the reason", async () => {
-    const out = await runStage1(draft, [spanConcern()], {
+    const out = await runStage1(draft, [sendableSpanConcern()], {
       callModel: async () => ({ text: "definitely not json" }),
     });
     assert.equal(out.edits.length, 0);
@@ -260,7 +293,7 @@ describe("assembly", () => {
   });
 
   test("code marks every change, so the unreported-change detector finds none", async () => {
-    const out = await runStage1(draft, [spanConcern(), noSpanConcern()], {
+    const out = await runStage1(draft, [sendableSpanConcern(), directiveConcern()], {
       callModel: async (_p, meta) =>
         meta.kind === "partial"
           ? {
@@ -284,7 +317,7 @@ describe("assembly", () => {
 
     const finalized = finalizeSuggestRevisionText(out.revisedDraft, {
       originalDraft: draft,
-      concerns: [spanConcern(), noSpanConcern()],
+      concerns: [sendableSpanConcern(), directiveConcern()],
       log: () => {},
     });
 
@@ -308,7 +341,7 @@ describe("assembly", () => {
     const concerns = Array.from({ length: 9 }, (_, i) => ({
       statementIndex: i,
       statementText: `Sentence number ${i} sits in the draft.`,
-      evidence: { kind: "unsupported", reason: "r", unsupportedSpans: [] },
+      evidence: { kind: "conflict", verdict: "conflicting", reason: "r", unsupportedSpans: [] },
       editorial: [],
       compliance: [],
     }));
@@ -337,5 +370,132 @@ describe("usableReason", () => {
     assert.equal(usableReason("{{x||CHANGED: y}}"), "");
     assert.equal(usableReason("a".repeat(200)), "");
     assert.equal(usableReason(""), "");
+  });
+});
+
+describe("stage 1 under the principle", () => {
+  const draft = `${EQUITY} This relationship enabled deep insight during the diligence phase.`;
+  const never = async () => {
+    throw new Error("the model must not be called for a silence-only statement");
+  };
+
+  describe("the gate", () => {
+    test("does not send a statement whose findings all rest on silence", () => {
+      const d = stage1SendDecision(spanConcern());
+      assert.equal(d.send, false);
+      assert.match(d.reason, /silen|speaks/i);
+    });
+
+    test("sends a conflict", () => {
+      const d = stage1SendDecision(spanConcern({ evidence: { kind: "conflict", verdict: "conflicting" } }));
+      assert.equal(d.send, true);
+    });
+
+    test("sends a partial where the source states a value for the element", () => {
+      assert.equal(stage1SendDecision(sendableSpanConcern()).send, true);
+    });
+
+    test("sends a statement carrying an editorial directive", () => {
+      const d = stage1SendDecision(directiveConcern());
+      assert.equal(d.send, true);
+      assert.match(d.reason, /overreach_unsupported_causal/);
+    });
+
+    test("does not send an editorial concern with no suggestedDirection", () => {
+      const bare = { ...directiveConcern(), editorial: [{ rule: "overreach_unsupported_causal" }] };
+      assert.equal(stage1SendDecision(bare).send, false);
+      assert.deepEqual(directivesOn(bare), []);
+    });
+  });
+
+  // Measured on the Meridian fixture: the model named the author where the
+  // original said "this relationship", and the fidelity check called its own
+  // client an invented fact, killing a correct directive edit on every run.
+  test("does not call the authoring organisation's own name an invented fact", async () => {
+    const out = await runStage1(directiveConcern().statementText, [directiveConcern()], {
+      authoringOrganisation: "Partners Group",
+      sourceText: "",
+      callModel: async () => ({
+        text: reply({
+          action: "edit",
+          revised_statement: "This relationship supported Partners Group's work during the diligence phase.",
+          what: "Replaced the causal claim",
+          why: "the sources do not support a causal claim",
+        }),
+      }),
+    });
+    assert.deepEqual(
+      out.events.filter((e) => e.outcome === "rejected"),
+      [],
+      "the author's own name must not be treated as an invention"
+    );
+    assert.match(out.revisedDraft, /supported Partners Group's work/);
+  });
+
+  test("still rejects a genuinely invented third party", async () => {
+    const out = await runStage1(directiveConcern().statementText, [directiveConcern()], {
+      authoringOrganisation: "Partners Group",
+      sourceText: "",
+      callModel: async () => ({
+        text: reply({
+          action: "edit",
+          revised_statement: "This relationship supported Blackstone's work during the diligence phase.",
+          what: "x",
+          why: "the sources do not support a causal claim",
+        }),
+      }),
+    });
+    const rejected = out.events.filter((e) => e.outcome === "rejected");
+    assert.equal(rejected.length, 1);
+    assert.equal(rejected[0].reason, REJECT_INVENTED_FACT);
+  });
+
+  test("records silence_flagged_not_sent, distinct from a refusal and an exemption", async () => {
+    const out = await runStage1(draft, [spanConcern()], { callModel: never });
+    const ev = out.events.filter((e) => e.outcome === OUTCOME_SILENCE_NOT_SENT);
+    assert.equal(ev.length, 1);
+    assert.equal(out.events.filter((e) => e.outcome === "rejected").length, 0);
+    assert.ok(ev[0].register === "LOUD" || ev[0].register === "QUIET");
+  });
+
+  test("leaves the prose of a not-sent statement exactly as written, and flags it", async () => {
+    const out = await runStage1(draft, [spanConcern()], { callModel: never });
+    const stripped = out.revisedDraft.replace(/\{\{([\s\S]*?)\|\|[\s\S]*?\}\}/g, "$1");
+    assert.equal(stripped, draft);
+    assert.match(out.revisedDraft, /\{\{/, "the statement is wrapped in a register marker");
+    assert.match(out.revisedDraft, /No supplied source/);
+  });
+
+  // The case most likely to leak: sent on the directive, but the evidence
+  // finding underneath it rests on silence. The span constraint has to hold.
+  test("a mixed statement is sent, and the edit stays inside the span the source spoke to", async () => {
+    const mixed = spanConcern({
+      editorial: [
+        {
+          rule: "marketing_language_excess",
+          suggestedDirection: "Delete 'control-oriented'.",
+        },
+      ],
+    });
+    assert.equal(stage1SendDecision(mixed).send, true);
+
+    // The model tries to take the silent equity cheque out at the same time.
+    const out = await runStage1(EQUITY, [mixed], {
+      callModel: async () => ({
+        text: reply({
+          action: "edit",
+          revised_statement: "The fund intends to build a portfolio of 10-14 investments.",
+          what: "Removed the cheque size",
+          why: "the sources do not state a ticket range",
+        }),
+      }),
+    });
+    const rejected = out.events.filter((e) => e.outcome === "rejected");
+    assert.equal(rejected.length, 1, "the overreaching edit must be rejected, not applied");
+    assert.equal(rejected[0].reason, REJECT_OUTSIDE_SPAN);
+    assert.ok(
+      out.revisedDraft.includes("equity checks of EUR 80-100 million apiece"),
+      "the silent element survives untouched"
+    );
   });
 });

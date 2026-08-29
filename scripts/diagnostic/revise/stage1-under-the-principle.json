@@ -1,0 +1,1464 @@
+{
+  "ranAt": "2026-08-29T12:52:26.620Z",
+  "model": "gpt-5.1-2025-11-13",
+  "sendCounts": [
+    {
+      "fixture": "MERIDIAN",
+      "before": 4,
+      "after": 2
+    },
+    {
+      "fixture": "R10",
+      "before": 8,
+      "after": 1
+    }
+  ],
+  "runs": [
+    {
+      "arm": "OLD",
+      "fixture": "MERIDIAN",
+      "seed": 1,
+      "revised": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million, and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship enabled deep insight during the diligence phase.",
+      "calls": 1,
+      "conflicts": [],
+      "directives": [
+        {
+          "statementIndex": 3,
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "rule": "marketing_language_excess",
+          "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "target": "highly regarded",
+          "followed": true
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "rule": "overreach_unsupported_causal",
+          "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+          "target": "enabled deep insight during the diligence phase",
+          "followed": false
+        }
+      ],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "element": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "element": "equity checks of EUR 80-100 million apiece",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "element": "This relationship enabled deep insight during the diligence phase.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "This relationship enabled deep insight during the diligence phase."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [],
+      "silenceNotSent": 0,
+      "rejected": 0,
+      "exempt": 0,
+      "proseSignature": "in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece target companies are expected to have enterprise valuations in the range of eur 20-100 million annual ebitda of eur 5-25 million and defensible positions in niche industrial or b2b markets partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation furthermore partners group has a long-established relationship with the manager having invested alongside meridian capital on several co-investments and debt financings while also making several secondary investments in its earlier funds this relationship enabled deep insight during the diligence phase",
+      "markerSignature": "[[\"KEPT\",\"in june 2026 partners group committed to meridian capital partners v\"],[\"KEPT\",\"equity checks of eur 80-100 million apiece\"],[\"CUT\",\"well-established\"],[\"KEPT\",\"enabled deep insight during the diligence phase\"]]",
+      "cost": 0.0044975,
+      "cacheHit": 0.9694299091159461
+    },
+    {
+      "arm": "OLD",
+      "fixture": "MERIDIAN",
+      "seed": 2,
+      "revised": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million, and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship enabled deep insight during the diligence phase.",
+      "calls": 1,
+      "conflicts": [],
+      "directives": [
+        {
+          "statementIndex": 3,
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "rule": "marketing_language_excess",
+          "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "target": "highly regarded",
+          "followed": true
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "rule": "overreach_unsupported_causal",
+          "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+          "target": "enabled deep insight during the diligence phase",
+          "followed": false
+        }
+      ],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "element": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "element": "equity checks of EUR 80-100 million apiece",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "element": "This relationship enabled deep insight during the diligence phase.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "This relationship enabled deep insight during the diligence phase."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [],
+      "silenceNotSent": 0,
+      "rejected": 0,
+      "exempt": 0,
+      "proseSignature": "in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece target companies are expected to have enterprise valuations in the range of eur 20-100 million annual ebitda of eur 5-25 million and defensible positions in niche industrial or b2b markets partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation furthermore partners group has a long-established relationship with the manager having invested alongside meridian capital on several co-investments and debt financings while also making several secondary investments in its earlier funds this relationship enabled deep insight during the diligence phase",
+      "markerSignature": "[[\"KEPT\",\"in june 2026 partners group committed to meridian capital partners v\"],[\"KEPT\",\"equity checks of eur 80-100 million apiece\"],[\"CUT\",\"well-established\"],[\"KEPT\",\"enabled deep insight during the diligence phase\"]]",
+      "cost": 0.0045075,
+      "cacheHit": 0.9694299091159461
+    },
+    {
+      "arm": "OLD",
+      "fixture": "MERIDIAN",
+      "seed": 3,
+      "revised": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million, and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship enabled deep insight during the diligence phase.",
+      "calls": 1,
+      "conflicts": [],
+      "directives": [
+        {
+          "statementIndex": 3,
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "rule": "marketing_language_excess",
+          "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "target": "highly regarded",
+          "followed": true
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "rule": "overreach_unsupported_causal",
+          "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+          "target": "enabled deep insight during the diligence phase",
+          "followed": false
+        }
+      ],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "element": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "element": "equity checks of EUR 80-100 million apiece",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "element": "This relationship enabled deep insight during the diligence phase.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "This relationship enabled deep insight during the diligence phase."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [],
+      "silenceNotSent": 0,
+      "rejected": 0,
+      "exempt": 0,
+      "proseSignature": "in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece target companies are expected to have enterprise valuations in the range of eur 20-100 million annual ebitda of eur 5-25 million and defensible positions in niche industrial or b2b markets partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation furthermore partners group has a long-established relationship with the manager having invested alongside meridian capital on several co-investments and debt financings while also making several secondary investments in its earlier funds this relationship enabled deep insight during the diligence phase",
+      "markerSignature": "[[\"KEPT\",\"in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies\"],[\"KEPT\",\"equity checks of eur 80-100 million apiece\"],[\"CUT\",\"well-established\"],[\"KEPT\",\"this relationship enabled deep insight during the diligence phase\"]]",
+      "cost": 0.004467500000000001,
+      "cacheHit": 0.9694299091159461
+    },
+    {
+      "arm": "NEW",
+      "fixture": "MERIDIAN",
+      "seed": 1,
+      "revised": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship provided additional context during the diligence phase.",
+      "calls": 2,
+      "conflicts": [],
+      "directives": [
+        {
+          "statementIndex": 3,
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "rule": "marketing_language_excess",
+          "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "target": "highly regarded",
+          "followed": true
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "rule": "overreach_unsupported_causal",
+          "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+          "target": "enabled deep insight during the diligence phase",
+          "followed": true
+        }
+      ],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "element": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "element": "equity checks of EUR 80-100 million apiece",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "element": "This relationship enabled deep insight during the diligence phase.",
+          "expectedRegister": "LOUD",
+          "preserved": false,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "This relationship provided additional context during the diligence phase."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is Partners Group and \"committed\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "statementIndex": 0
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: currency_amount, figure",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "statementIndex": 1
+        },
+        {
+          "outcome": "edited",
+          "kind": "soften",
+          "what": "Removed the words 'highly regarded' and smoothed the sentence so it still reads naturally.",
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation."
+        },
+        {
+          "outcome": "edited",
+          "kind": "unsupported",
+          "what": "Replaced 'enabled deep insight during the diligence phase' with 'provided additional context during the diligence phase'.",
+          "statementText": "This relationship enabled deep insight during the diligence phase."
+        }
+      ],
+      "silenceNotSent": 1,
+      "rejected": 0,
+      "exempt": 1,
+      "proseSignature": "in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece target companies are expected to have enterprise valuations in the range of eur 20-100 million annual ebitda of eur 5-25 million and defensible positions in niche industrial or b2b markets partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation furthermore partners group has a long-established relationship with the manager having invested alongside meridian capital on several co-investments and debt financings while also making several secondary investments in its earlier funds this relationship provided additional context during the diligence phase",
+      "markerSignature": "[[\"KEPT\",\"in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies\"],[\"KEPT\",\"the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece\"],[\"CHANGED\",\"partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation\"],[\"CHANGED\",\"this relationship provided additional context during the diligence phase\"]]",
+      "cost": 0.0037805,
+      "cacheHit": 0.9690935490562124
+    },
+    {
+      "arm": "NEW",
+      "fixture": "MERIDIAN",
+      "seed": 2,
+      "revised": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship provided additional context during the diligence phase.",
+      "calls": 2,
+      "conflicts": [],
+      "directives": [
+        {
+          "statementIndex": 3,
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "rule": "marketing_language_excess",
+          "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "target": "highly regarded",
+          "followed": true
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "rule": "overreach_unsupported_causal",
+          "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+          "target": "enabled deep insight during the diligence phase",
+          "followed": true
+        }
+      ],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "element": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "element": "equity checks of EUR 80-100 million apiece",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "element": "This relationship enabled deep insight during the diligence phase.",
+          "expectedRegister": "LOUD",
+          "preserved": false,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "This relationship provided additional context during the diligence phase."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is Partners Group and \"committed\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "statementIndex": 0
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: currency_amount, figure",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "statementIndex": 1
+        },
+        {
+          "outcome": "edited",
+          "kind": "soften",
+          "what": "Removed the words 'highly regarded' and smoothed the sentence so it still reads naturally.",
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation."
+        },
+        {
+          "outcome": "edited",
+          "kind": "unsupported",
+          "what": "Replaced 'enabled deep insight during the diligence phase' with 'provided additional context during the diligence phase'.",
+          "statementText": "This relationship enabled deep insight during the diligence phase."
+        }
+      ],
+      "silenceNotSent": 1,
+      "rejected": 0,
+      "exempt": 1,
+      "proseSignature": "in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece target companies are expected to have enterprise valuations in the range of eur 20-100 million annual ebitda of eur 5-25 million and defensible positions in niche industrial or b2b markets partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation furthermore partners group has a long-established relationship with the manager having invested alongside meridian capital on several co-investments and debt financings while also making several secondary investments in its earlier funds this relationship provided additional context during the diligence phase",
+      "markerSignature": "[[\"KEPT\",\"in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies\"],[\"KEPT\",\"the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece\"],[\"CHANGED\",\"partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation\"],[\"CHANGED\",\"this relationship provided additional context during the diligence phase\"]]",
+      "cost": 0.0037005000000000002,
+      "cacheHit": 0.9690935490562124
+    },
+    {
+      "arm": "NEW",
+      "fixture": "MERIDIAN",
+      "seed": 3,
+      "revised": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship provided additional context during the diligence phase.",
+      "calls": 2,
+      "conflicts": [],
+      "directives": [
+        {
+          "statementIndex": 3,
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "rule": "marketing_language_excess",
+          "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "target": "highly regarded",
+          "followed": true
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "rule": "overreach_unsupported_causal",
+          "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+          "target": "enabled deep insight during the diligence phase",
+          "followed": true
+        }
+      ],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "element": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "element": "equity checks of EUR 80-100 million apiece",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
+        },
+        {
+          "statementIndex": 5,
+          "statementText": "This relationship enabled deep insight during the diligence phase.",
+          "element": "This relationship enabled deep insight during the diligence phase.",
+          "expectedRegister": "LOUD",
+          "preserved": false,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "This relationship provided additional context during the diligence phase."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is Partners Group and \"committed\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "statementIndex": 0
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: currency_amount, figure",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "statementIndex": 1
+        },
+        {
+          "outcome": "edited",
+          "kind": "soften",
+          "what": "Removed the words 'highly regarded' and smoothed the sentence so it still reads naturally.",
+          "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation."
+        },
+        {
+          "outcome": "edited",
+          "kind": "unsupported",
+          "what": "Replaced 'enabled deep insight during the diligence phase' with 'provided additional context during the diligence phase'.",
+          "statementText": "This relationship enabled deep insight during the diligence phase."
+        }
+      ],
+      "silenceNotSent": 1,
+      "rejected": 0,
+      "exempt": 1,
+      "proseSignature": "in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece target companies are expected to have enterprise valuations in the range of eur 20-100 million annual ebitda of eur 5-25 million and defensible positions in niche industrial or b2b markets partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation furthermore partners group has a long-established relationship with the manager having invested alongside meridian capital on several co-investments and debt financings while also making several secondary investments in its earlier funds this relationship provided additional context during the diligence phase",
+      "markerSignature": "[[\"KEPT\",\"in june 2026 partners group committed to meridian capital partners v a eur 12 billion flagship fund from meridian capital targeting lower-mid-market buyouts in european industrial technology and business services companies\"],[\"KEPT\",\"the fund intends to build a portfolio of 10-14 control-oriented investments with equity checks of eur 80-100 million apiece\"],[\"CHANGED\",\"partners group was attracted to this investment given meridian capital's strong track record on its prior vintage funds coupled with its well-established investment team and operational approach to value creation\"],[\"CHANGED\",\"this relationship provided additional context during the diligence phase\"]]",
+      "cost": 0.0042325,
+      "cacheHit": 0.9292677867662311
+    },
+    {
+      "arm": "OLD",
+      "fixture": "R10",
+      "seed": 1,
+      "revised": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised deals. It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers. The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited. Fund IV is currently marked at 1.9 times gross MOIC and 24% gross IRR. Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU. On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment. The GP provided access to co-investments that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
+      "calls": 1,
+      "conflicts": [
+        {
+          "statementIndex": 4,
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "sourcePassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "reason": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "outcome": "acted on, source value",
+          "adopted": [
+            "currently",
+            "marked"
+          ],
+          "revisedSentence": "Fund IV is currently marked at 1.9 times gross MOIC and 24% gross IRR.",
+          "inventedFigures": []
+        }
+      ],
+      "directives": [],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "element": "that is, in our view, genuinely exceptional",
+          "expectedRegister": "QUIET",
+          "preserved": false,
+          "marked": false,
+          "substituted": [
+            "2.4",
+            "21",
+            "17"
+          ],
+          "revisedSentence": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised deals."
+        },
+        {
+          "statementIndex": 2,
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "element": "placing it in the top quartile of European lower-mid-market managers.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers."
+        },
+        {
+          "statementIndex": 3,
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "element": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited."
+        },
+        {
+          "statementIndex": 7,
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "element": "we recommend the commitment",
+          "expectedRegister": "QUIET",
+          "preserved": false,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment."
+        },
+        {
+          "statementIndex": 8,
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "element": "that would not otherwise have been available to us.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The GP provided access to co-investments that would not otherwise have been available to us."
+        },
+        {
+          "statementIndex": 9,
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "Halden Group expects the relationship to deepen over the life of the fund."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [],
+      "silenceNotSent": 0,
+      "rejected": 0,
+      "exempt": 0,
+      "proseSignature": "in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services we were attracted to meridian on the strength of a track record of 24x realised gross moic and 21% gross irr across 17 fully realised deals it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers the team's stability with no senior departures across the last three fund cycles means key-person risk is limited fund iv is currently marked at 19 times gross moic and 24% gross irr meridian capital partners v is a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services the fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the eu on balance halden group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment the gp provided access to co-investments that would not otherwise have been available to us halden group expects the relationship to deepen over the life of the fund",
+      "markerSignature": "[[\"KEPT\",\"halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services\"],[\"CHANGED\",\"we were attracted to meridian on the strength of a track record of 24x realised gross moic and 21% gross irr across 17 fully realised deals\"],[\"KEPT\",\"placing it in the top quartile of european lower-mid-market managers\"],[\"KEPT\",\"means key-person risk is limited\"],[\"CHANGED\",\"marked at 19 times gross moic and 24% gross irr\"],[\"KEPT\",\"halden group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment\"],[\"KEPT\",\"that would not otherwise have been available to us\"],[\"KEPT\",\"halden group expects the relationship to deepen over the life of the fund\"]]",
+      "cost": 0.0070985,
+      "cacheHit": 0.9806581260989701
+    },
+    {
+      "arm": "OLD",
+      "fixture": "R10",
+      "seed": 2,
+      "revised": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional. It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers. The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited. Fund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR. Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU. On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment. The GP provided access to co-investments that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
+      "calls": 1,
+      "conflicts": [
+        {
+          "statementIndex": 4,
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "sourcePassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "reason": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "outcome": "acted on, source value",
+          "adopted": [
+            "currently",
+            "marked"
+          ],
+          "revisedSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR.",
+          "inventedFigures": []
+        }
+      ],
+      "directives": [],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "element": "that is, in our view, genuinely exceptional",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional."
+        },
+        {
+          "statementIndex": 2,
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "element": "placing it in the top quartile of European lower-mid-market managers.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers."
+        },
+        {
+          "statementIndex": 3,
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "element": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited."
+        },
+        {
+          "statementIndex": 7,
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "element": "we recommend the commitment",
+          "expectedRegister": "QUIET",
+          "preserved": false,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment."
+        },
+        {
+          "statementIndex": 8,
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "element": "that would not otherwise have been available to us.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The GP provided access to co-investments that would not otherwise have been available to us."
+        },
+        {
+          "statementIndex": 9,
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "Halden Group expects the relationship to deepen over the life of the fund."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [],
+      "silenceNotSent": 0,
+      "rejected": 0,
+      "exempt": 0,
+      "proseSignature": "in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers the team's stability with no senior departures across the last three fund cycles means key-person risk is limited fund iv is currently marked at 19 times gross moic and a 24% gross irr meridian capital partners v is a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services the fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the eu on balance halden group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment the gp provided access to co-investments that would not otherwise have been available to us halden group expects the relationship to deepen over the life of the fund",
+      "markerSignature": "[[\"KEPT\",\"in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services\"],[\"KEPT\",\"we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional\"],[\"KEPT\",\"placing it in the top quartile of european lower-mid-market managers\"],[\"KEPT\",\"means key-person risk is limited\"],[\"CHANGED\",\"marked at\"],[\"KEPT\",\"halden group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment\"],[\"KEPT\",\"that would not otherwise have been available to us\"],[\"KEPT\",\"halden group expects the relationship to deepen over the life of the fund\"]]",
+      "cost": 0.0066185,
+      "cacheHit": 0.9806581260989701
+    },
+    {
+      "arm": "OLD",
+      "fixture": "R10",
+      "seed": 3,
+      "revised": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional, with a realised gross MOIC of 2.4 times across 17 exits. It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers. The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited. Fund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR. Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the EU. On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment. The GP provided access to co-investments that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
+      "calls": 1,
+      "conflicts": [
+        {
+          "statementIndex": 4,
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "sourcePassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "reason": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "outcome": "acted on, source value",
+          "adopted": [
+            "currently",
+            "marked"
+          ],
+          "revisedSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24% gross IRR.",
+          "inventedFigures": []
+        }
+      ],
+      "directives": [],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "element": "that is, in our view, genuinely exceptional",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional, with a realised gross MOIC of 2.4 times across 17 exits."
+        },
+        {
+          "statementIndex": 2,
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "element": "placing it in the top quartile of European lower-mid-market managers.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers."
+        },
+        {
+          "statementIndex": 3,
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "element": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited."
+        },
+        {
+          "statementIndex": 7,
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "element": "we recommend the commitment",
+          "expectedRegister": "QUIET",
+          "preserved": false,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment."
+        },
+        {
+          "statementIndex": 8,
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "element": "that would not otherwise have been available to us.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The GP provided access to co-investments that would not otherwise have been available to us."
+        },
+        {
+          "statementIndex": 9,
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "Halden Group expects the relationship to deepen over the life of the fund."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [],
+      "silenceNotSent": 0,
+      "rejected": 0,
+      "exempt": 0,
+      "proseSignature": "in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional with a realised gross moic of 24 times across 17 exits it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers the team's stability with no senior departures across the last three fund cycles means key-person risk is limited fund iv is currently marked at 19 times gross moic and a 24% gross irr meridian capital partners v is a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services the fund will hold investments for four to six years and will not deploy more than 30% of commitments outside the eu on balance halden group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment the gp provided access to co-investments that would not otherwise have been available to us halden group expects the relationship to deepen over the life of the fund",
+      "markerSignature": "[[\"KEPT\",\"halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services\"],[\"CHANGED\",\"we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional\"],[\"KEPT\",\"placing it in the top quartile of european lower-mid-market managers\"],[\"KEPT\",\"means key-person risk is limited\"],[\"CHANGED\",\"is currently marked at\"],[\"KEPT\",\"halden group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment\"],[\"KEPT\",\"that would not otherwise have been available to us\"],[\"KEPT\",\"halden group expects the relationship to deepen over the life of the fund\"]]",
+      "cost": 0.0068685000000000005,
+      "cacheHit": 0.9806581260989701
+    },
+    {
+      "arm": "NEW",
+      "fixture": "R10",
+      "seed": 1,
+      "revised": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional. It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers. The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited. Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR. Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU. On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment. The GP provided access to co-investments that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
+      "calls": 1,
+      "conflicts": [
+        {
+          "statementIndex": 4,
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "sourcePassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "reason": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "outcome": "acted on, source value",
+          "adopted": [
+            "currently",
+            "marked"
+          ],
+          "revisedSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "inventedFigures": []
+        }
+      ],
+      "directives": [],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "element": "that is, in our view, genuinely exceptional",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional."
+        },
+        {
+          "statementIndex": 2,
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "element": "placing it in the top quartile of European lower-mid-market managers.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers."
+        },
+        {
+          "statementIndex": 3,
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "element": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited."
+        },
+        {
+          "statementIndex": 7,
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "element": "we recommend the commitment",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment."
+        },
+        {
+          "statementIndex": 8,
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "element": "that would not otherwise have been available to us.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The GP provided access to co-investments that would not otherwise have been available to us."
+        },
+        {
+          "statementIndex": 9,
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "Halden Group expects the relationship to deepen over the life of the fund."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is Halden Group and \"made\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "statementIndex": 0
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is first person and \"attracted\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "statementIndex": 1
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is first person and \"believe\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "statementIndex": 7
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "unsupported",
+          "reason": "the sentence subject is Halden Group and \"expects\" states its own action, view, intention or commitment; no supplied source speaks to this statement",
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "statementIndex": 9
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: ranking_or_superlative",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "statementIndex": 2
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: causal_connective_lexicon",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "statementIndex": 3
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "QUIET",
+          "registerSignal": "no checkable content in the flagged element",
+          "note": "No supplied source speaks to this either way.",
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "statementIndex": 8
+        },
+        {
+          "outcome": "edited",
+          "kind": "conflict",
+          "what": "Changed 'has returned' to 'is currently marked at' to describe the MOIC and IRR as current valuations rather than realized returns.",
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+        }
+      ],
+      "silenceNotSent": 3,
+      "rejected": 0,
+      "exempt": 4,
+      "proseSignature": "in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers the team's stability with no senior departures across the last three fund cycles means key-person risk is limited fund iv is currently marked at 19 times gross moic and a 24 per cent gross irr meridian capital partners v is a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services the fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the eu on balance we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment the gp provided access to co-investments that would not otherwise have been available to us halden group expects the relationship to deepen over the life of the fund",
+      "markerSignature": "[[\"KEPT\",\"in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services\"],[\"KEPT\",\"we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional\"],[\"KEPT\",\"it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers\"],[\"KEPT\",\"the team's stability with no senior departures across the last three fund cycles means key-person risk is limited\"],[\"CHANGED\",\"fund iv is currently marked at 19 times gross moic and a 24 per cent gross irr\"],[\"KEPT\",\"on balance we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment\"],[\"KEPT\",\"the gp provided access to co-investments that would not otherwise have been available to us\"],[\"KEPT\",\"halden group expects the relationship to deepen over the life of the fund\"]]",
+      "cost": 0.0021184999999999997,
+      "cacheHit": 0.9596001665972511
+    },
+    {
+      "arm": "NEW",
+      "fixture": "R10",
+      "seed": 2,
+      "revised": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional. It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers. The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited. Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR. Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU. On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment. The GP provided access to co-investments that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
+      "calls": 1,
+      "conflicts": [
+        {
+          "statementIndex": 4,
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "sourcePassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "reason": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "outcome": "acted on, source value",
+          "adopted": [
+            "currently",
+            "marked"
+          ],
+          "revisedSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "inventedFigures": []
+        }
+      ],
+      "directives": [],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "element": "that is, in our view, genuinely exceptional",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional."
+        },
+        {
+          "statementIndex": 2,
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "element": "placing it in the top quartile of European lower-mid-market managers.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers."
+        },
+        {
+          "statementIndex": 3,
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "element": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited."
+        },
+        {
+          "statementIndex": 7,
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "element": "we recommend the commitment",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment."
+        },
+        {
+          "statementIndex": 8,
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "element": "that would not otherwise have been available to us.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The GP provided access to co-investments that would not otherwise have been available to us."
+        },
+        {
+          "statementIndex": 9,
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "Halden Group expects the relationship to deepen over the life of the fund."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is Halden Group and \"made\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "statementIndex": 0
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is first person and \"attracted\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "statementIndex": 1
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is first person and \"believe\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "statementIndex": 7
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "unsupported",
+          "reason": "the sentence subject is Halden Group and \"expects\" states its own action, view, intention or commitment; no supplied source speaks to this statement",
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "statementIndex": 9
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: ranking_or_superlative",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "statementIndex": 2
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: causal_connective_lexicon",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "statementIndex": 3
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "QUIET",
+          "registerSignal": "no checkable content in the flagged element",
+          "note": "No supplied source speaks to this either way.",
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "statementIndex": 8
+        },
+        {
+          "outcome": "edited",
+          "kind": "conflict",
+          "what": "Changed 'has returned' to 'is currently marked at' to describe the Fund IV performance.",
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+        }
+      ],
+      "silenceNotSent": 3,
+      "rejected": 0,
+      "exempt": 4,
+      "proseSignature": "in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers the team's stability with no senior departures across the last three fund cycles means key-person risk is limited fund iv is currently marked at 19 times gross moic and a 24 per cent gross irr meridian capital partners v is a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services the fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the eu on balance we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment the gp provided access to co-investments that would not otherwise have been available to us halden group expects the relationship to deepen over the life of the fund",
+      "markerSignature": "[[\"KEPT\",\"in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services\"],[\"KEPT\",\"we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional\"],[\"KEPT\",\"it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers\"],[\"KEPT\",\"the team's stability with no senior departures across the last three fund cycles means key-person risk is limited\"],[\"CHANGED\",\"fund iv is currently marked at 19 times gross moic and a 24 per cent gross irr\"],[\"KEPT\",\"on balance we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment\"],[\"KEPT\",\"the gp provided access to co-investments that would not otherwise have been available to us\"],[\"KEPT\",\"halden group expects the relationship to deepen over the life of the fund\"]]",
+      "cost": 0.0020885,
+      "cacheHit": 0.9596001665972511
+    },
+    {
+      "arm": "NEW",
+      "fixture": "R10",
+      "seed": 3,
+      "revised": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional. It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers. The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited. Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR. Meridian Capital Partners V is a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services. The fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the EU. On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment. The GP provided access to co-investments that would not otherwise have been available to us. Halden Group expects the relationship to deepen over the life of the fund.",
+      "calls": 1,
+      "conflicts": [
+        {
+          "statementIndex": 4,
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "sourcePassage": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "reason": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation. The reviewer should reconcile this discrepancy or remove the claim.",
+          "outcome": "acted on, source value",
+          "adopted": [
+            "currently",
+            "marked"
+          ],
+          "revisedSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "inventedFigures": []
+        }
+      ],
+      "directives": [],
+      "silence": [
+        {
+          "statementIndex": 0,
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services."
+        },
+        {
+          "statementIndex": 1,
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "element": "that is, in our view, genuinely exceptional",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional."
+        },
+        {
+          "statementIndex": 2,
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "element": "placing it in the top quartile of European lower-mid-market managers.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers."
+        },
+        {
+          "statementIndex": 3,
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "element": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "expectedRegister": "LOUD",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited."
+        },
+        {
+          "statementIndex": 7,
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "element": "we recommend the commitment",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment."
+        },
+        {
+          "statementIndex": 8,
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "element": "that would not otherwise have been available to us.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "The GP provided access to co-investments that would not otherwise have been available to us."
+        },
+        {
+          "statementIndex": 9,
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "expectedRegister": "QUIET",
+          "preserved": true,
+          "marked": false,
+          "substituted": [],
+          "revisedSentence": "Halden Group expects the relationship to deepen over the life of the fund."
+        }
+      ],
+      "fidelity": [],
+      "notes": [],
+      "stage1Events": [
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is Halden Group and \"made\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "statementIndex": 0
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is first person and \"attracted\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "statementIndex": 1
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "partial",
+          "reason": "the sentence subject is first person and \"believe\" states its own action, view, intention or commitment; no supplied source speaks to the unsupported element",
+          "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "statementIndex": 7
+        },
+        {
+          "outcome": "author_statement_exempt",
+          "kind": "unsupported",
+          "reason": "the sentence subject is Halden Group and \"expects\" states its own action, view, intention or commitment; no supplied source speaks to this statement",
+          "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "statementIndex": 9
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: ranking_or_superlative",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "statementIndex": 2
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "LOUD",
+          "registerSignal": "element text: causal_connective_lexicon",
+          "note": "No supplied source states this. Do not publish it without one.",
+          "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "statementIndex": 3
+        },
+        {
+          "outcome": "silence_flagged_not_sent",
+          "kind": "partial",
+          "reason": "no supplied source speaks to the unsupported element",
+          "register": "QUIET",
+          "registerSignal": "no checkable content in the flagged element",
+          "note": "No supplied source speaks to this either way.",
+          "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "statementIndex": 8
+        },
+        {
+          "outcome": "edited",
+          "kind": "conflict",
+          "what": "Changed 'has returned' to 'is currently marked at' to describe the MOIC and IRR.",
+          "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR."
+        }
+      ],
+      "silenceNotSent": 3,
+      "rejected": 0,
+      "exempt": 4,
+      "proseSignature": "in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers the team's stability with no senior departures across the last three fund cycles means key-person risk is limited fund iv is currently marked at 19 times gross moic and a 24 per cent gross irr meridian capital partners v is a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services the fund will hold investments for four to six years and will not deploy more than 30 per cent of commitments outside the eu on balance we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment the gp provided access to co-investments that would not otherwise have been available to us halden group expects the relationship to deepen over the life of the fund",
+      "markerSignature": "[[\"KEPT\",\"in june 2025 halden group made a lead commitment to meridian capital partners v a eur 12 billion fund targeting lower-mid-market buyouts in european industrial technology and business services\"],[\"KEPT\",\"we were attracted to meridian on the strength of a track record that is in our view genuinely exceptional\"],[\"KEPT\",\"it has realised a gross moic of 24 times across 17 exits placing it in the top quartile of european lower-mid-market managers\"],[\"KEPT\",\"the team's stability with no senior departures across the last three fund cycles means key-person risk is limited\"],[\"CHANGED\",\"fund iv is currently marked at 19 times gross moic and a 24 per cent gross irr\"],[\"KEPT\",\"on balance we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment\"],[\"KEPT\",\"the gp provided access to co-investments that would not otherwise have been available to us\"],[\"KEPT\",\"halden group expects the relationship to deepen over the life of the fund\"]]",
+      "cost": 0.0020984999999999997,
+      "cacheHit": 0.9596001665972511
+    }
+  ],
+  "conflictTable": [
+    {
+      "fixture": "R10",
+      "arm": "OLD",
+      "statementIndex": 4,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceValue": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "actedWithSourceValue": "3/3",
+      "outcomes": [
+        "acted on, source value",
+        "acted on, source value",
+        "acted on, source value"
+      ]
+    },
+    {
+      "fixture": "R10",
+      "arm": "NEW",
+      "statementIndex": 4,
+      "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+      "sourceValue": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+      "actedWithSourceValue": "3/3",
+      "outcomes": [
+        "acted on, source value",
+        "acted on, source value",
+        "acted on, source value"
+      ]
+    }
+  ],
+  "directiveTable": [
+    {
+      "fixture": "MERIDIAN",
+      "arm": "OLD",
+      "rule": "marketing_language_excess",
+      "target": "highly regarded",
+      "followed": "3/3"
+    },
+    {
+      "fixture": "MERIDIAN",
+      "arm": "OLD",
+      "rule": "overreach_unsupported_causal",
+      "target": "enabled deep insight during the diligence phase",
+      "followed": "0/3"
+    },
+    {
+      "fixture": "MERIDIAN",
+      "arm": "NEW",
+      "rule": "marketing_language_excess",
+      "target": "highly regarded",
+      "followed": "3/3"
+    },
+    {
+      "fixture": "MERIDIAN",
+      "arm": "NEW",
+      "rule": "overreach_unsupported_causal",
+      "target": "enabled deep insight during the diligence phase",
+      "followed": "3/3"
+    }
+  ],
+  "silenceTable": [
+    {
+      "fixture": "MERIDIAN",
+      "arm": "OLD",
+      "preservedInEveryRun": "3/3",
+      "substitutionsOnSilence": 0,
+      "stable": true
+    },
+    {
+      "fixture": "MERIDIAN",
+      "arm": "NEW",
+      "preservedInEveryRun": "2/3",
+      "substitutionsOnSilence": 0,
+      "stable": true
+    },
+    {
+      "fixture": "R10",
+      "arm": "OLD",
+      "preservedInEveryRun": "5/7",
+      "substitutionsOnSilence": 1,
+      "stable": false
+    },
+    {
+      "fixture": "R10",
+      "arm": "NEW",
+      "preservedInEveryRun": "7/7",
+      "substitutionsOnSilence": 0,
+      "stable": true
+    }
+  ],
+  "costRows": [
+    {
+      "fixture": "MERIDIAN",
+      "arm": "OLD",
+      "cost": 0.0134725,
+      "calls": 3,
+      "cacheHit": 0.9694299091159461
+    },
+    {
+      "fixture": "MERIDIAN",
+      "arm": "NEW",
+      "cost": 0.0117135,
+      "calls": 6,
+      "cacheHit": 0.9558182949595521
+    },
+    {
+      "fixture": "R10",
+      "arm": "OLD",
+      "cost": 0.0205855,
+      "calls": 3,
+      "cacheHit": 0.9806581260989701
+    },
+    {
+      "fixture": "R10",
+      "arm": "NEW",
+      "cost": 0.0063054999999999995,
+      "calls": 3,
+      "cacheHit": 0.9596001665972511
+    }
+  ],
+  "total": 0.052077
+}
