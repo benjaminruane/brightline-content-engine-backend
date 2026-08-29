@@ -210,7 +210,12 @@ describe("concern reason fallback", () => {
       concerns: concernFor({ evidence: { kind: "unsupported" } }),
     });
     expect(out.reasonSource).toBe("model");
-    expect(out.body).toBe('Removed "and highly regarded" - the source is silent on this point');
+    expect(out.reason).toBe("the source is silent on this point");
+    // The edit trimmed a qualifier; the unsupported claim itself is still
+    // standing, so the register clause is appended rather than masked.
+    expect(out.body).toBe(
+      'Removed "and highly regarded" - the source is silent on this point. No supplied source speaks to this either way.'
+    );
   });
 
   it("falls back to the concern class when the model buried its reason", () => {
@@ -223,6 +228,10 @@ describe("concern reason fallback", () => {
       concerns: concernFor({ evidence: { kind: "unsupported" } }),
     });
     expect(out.reasonSource).toBe("concern");
+    expect(out.reason).toBe("no supplied source backs this claim");
+    // No register clause: the class reason is the evidence concern already
+    // speaking, so appending it would say the same thing twice.
+    expect(out.registerClause).toBe("");
     expect(out.body).toBe('Removed "and highly regarded" - no supplied source backs this claim');
   });
 
@@ -487,5 +496,107 @@ describe("wired into finalizeSuggestRevisionText", () => {
     const note = buildDeterministicUnsupportedRemovalCutNote("We recommend approval.");
     expect(note).toContain("Removed this sentence:");
     expect(note).not.toContain("No change was made");
+  });
+});
+
+describe("an edit must not mask a silence flag", () => {
+  // Measured 2026-08-29: "We recommend approval of the commitment." is rewritten
+  // for first_person_plural house style, and the note explained only the style
+  // change. The reader was never told inline that no source speaks to the
+  // recommendation. 8 of 13 silence-flagged elements were masked this way.
+  const STATEMENT = "We recommend approval of the commitment.";
+  const original = `${STATEMENT} The fund closed in June.`;
+  const revised = "Partners Group recommends approval of the commitment. The fund closed in June.";
+  const end = "Partners Group recommends approval of the commitment.".length;
+
+  const concern = (evidence, statementText = STATEMENT) => [
+    {
+      statementIndex: 0,
+      statementText,
+      compliance: [],
+      editorial: [{ kind: "craft", rule: "first_person_plural" }],
+      evidence,
+    },
+  ];
+
+  const build = (concerns, over = {}) =>
+    buildNoteBodyFromDiff({
+      original,
+      revised,
+      start: 0,
+      end,
+      note: "Rewrote the opening \u2014 house style.",
+      concerns,
+      ...over,
+    });
+
+  it("appends the QUIET clause, and takes no closer", () => {
+    const out = build(concern({ kind: "unsupported", verdict: "no_support" }));
+    expect(out.body).toBe(
+      'Replaced "We recommend" with "Partners Group recommends" - house style names the organisation rather than using first person. No supplied source speaks to this either way.'
+    );
+    // The edit clause leads; the register clause closes.
+    expect(out.body.indexOf("Replaced")).toBeLessThan(out.body.indexOf("No supplied source"));
+    expect(normalizeMarkerNoteText(out.body)).toBe(out.body);
+    expect(out.body).not.toContain("Confirm before publishing");
+  });
+
+  it("appends the LOUD clause, and takes no closer", () => {
+    const loudStatement = "We recommend a EUR 80 million commitment.";
+    const loudOriginal = `${loudStatement} The fund closed in June.`;
+    const loudRevised =
+      "Partners Group recommends a EUR 80 million commitment. The fund closed in June.";
+    const out = buildNoteBodyFromDiff({
+      original: loudOriginal,
+      revised: loudRevised,
+      start: 0,
+      end: "Partners Group recommends a EUR 80 million commitment.".length,
+      note: "Rewrote it \u2014 house style.",
+      concerns: concern({ kind: "unsupported", verdict: "no_support" }, loudStatement),
+    });
+    expect(out.body).toBe(
+      'Replaced "We recommend" with "Partners Group recommends" - house style names the organisation rather than using first person. No supplied source states this. Do not publish it without one.'
+    );
+    expect(normalizeMarkerNoteText(out.body)).toBe(out.body);
+    expect(out.body).not.toContain("Confirm before publishing");
+  });
+
+  it("adds nothing on ORDINARY, where a source did speak", () => {
+    const out = build(
+      concern({ kind: "unsupported", sourcePassage: "the committee recommended approval" })
+    );
+    expect(out.registerClause).toBe("");
+    expect(out.body).not.toContain("No supplied source");
+    expect(normalizeMarkerNoteText(out.body)).toMatch(/Confirm before publishing\.$/);
+  });
+
+  it("adds nothing on a conflict, which is an edit on evidence", () => {
+    const out = build(concern({ kind: "conflict", verdict: "conflicting" }));
+    expect(out.registerClause).toBe("");
+  });
+
+  it("adds nothing where the edit CUT the unsupported claim, so nothing is left to flag", () => {
+    const cut = "The fund closed in June.";
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised: cut,
+      start: 0,
+      end: cut.length,
+      note: "Cut it \u2014 house style.",
+      concerns: concern({
+        kind: "unsupported",
+        verdict: "no_support",
+        unsupportedSpans: [{ text: "We recommend approval of the commitment" }],
+      }),
+    });
+    expect(out.registerClause).toBe("");
+    expect(out.body).not.toContain("No supplied source");
+  });
+
+  it("never doubles the closer", () => {
+    const out = build(concern({ kind: "unsupported", verdict: "no_support" }));
+    const final = normalizeMarkerNoteText(out.body);
+    expect(final.match(/Confirm before publishing/g)).toBeNull();
+    expect(final.match(/No supplied source/g)).toHaveLength(1);
   });
 });

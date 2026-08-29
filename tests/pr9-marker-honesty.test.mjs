@@ -478,3 +478,76 @@ describe("rewriteHonestyNote", () => {
     );
   });
 });
+
+describe("notation house style, and the value guard", () => {
+  // percentage_notation and currency_format are applied silently under rule
+  // (f), but were not canonicalised here, so "24 per cent" -> "24%" scored as a
+  // content-word change and every run generated an unreported-change marker.
+  const cosmetic = [
+    ["24 per cent", "24%"],
+    ["24 percent", "24%"],
+    ["30 per cent", "30%"],
+    ["a 24 per cent gross IRR", "a 24% gross IRR"],
+    ["1.9 times gross MOIC", "1.9x gross MOIC"],
+    ["2.4 times", "2.4x"],
+  ];
+  for (const [a, b] of cosmetic) {
+    test(`treats ${JSON.stringify(a)} -> ${JSON.stringify(b)} as cosmetic`, () => {
+      assert.equal(isHouseStyleOnlyDifference(a, b), true);
+      assert.equal(isHouseStyleOnlyDifference(b, a), true);
+    });
+  }
+
+  // A CHANGE OF VALUE IS NEVER COSMETIC. Two independent comparisons enforce
+  // it: the content-word key and the canonical amount list.
+  const substantive = [
+    ["24%", "22%"],
+    ["24 per cent", "22%"],
+    ["24%", "22 per cent"],
+    ["1.9x", "2.4x"],
+    ["1.9 times", "2.4x"],
+    ["a 24% gross IRR", "a 22% gross IRR"],
+    ["EUR 80 million", "EUR 60 million"],
+  ];
+  for (const [a, b] of substantive) {
+    test(`treats ${JSON.stringify(a)} -> ${JSON.stringify(b)} as substantive`, () => {
+      assert.equal(isHouseStyleOnlyDifference(a, b), false);
+      assert.equal(isHouseStyleOnlyDifference(b, a), false);
+    });
+  }
+
+  test("still treats a word deletion as substantive, notation or not", () => {
+    assert.equal(
+      isHouseStyleOnlyDifference("well-established and highly regarded", "well-established"),
+      false
+    );
+  });
+
+  test("keeps the currency and scale canonicalisation it already had", () => {
+    assert.equal(isHouseStyleOnlyDifference("$7,000,000", "USD 7 million"), true);
+    assert.equal(isHouseStyleOnlyDifference("$7,000,000", "USD 8 million"), false);
+  });
+});
+
+describe("the honesty repair keeps a register clause", () => {
+  const QUIET = "No supplied source speaks to this either way.";
+  const LOUD = "No supplied source states this. Do not publish it without one.";
+
+  test("rewrites the what clause but keeps the register clause and its closer", () => {
+    const note = `Replaced "We recommend" with "Halden Group recommends" - house style. ${QUIET}`;
+    const out = rewriteHonestyNote(note, "Revised this span");
+    assert.equal(out, `Revised this span - house style. ${QUIET}`);
+    assert.ok(!out.includes("Confirm before publishing"));
+  });
+
+  test("does the same for a LOUD clause", () => {
+    const out = rewriteHonestyNote(`Replaced "a" with "b" - house style. ${LOUD}`, "Revised this span");
+    assert.equal(out, `Revised this span - house style. ${LOUD}`);
+    assert.ok(!out.includes("Confirm before publishing"));
+  });
+
+  test("still appends the canonical closer where there is no register clause", () => {
+    const out = rewriteHonestyNote('Replaced "a" with "b" - house style.', "Revised this span");
+    assert.match(out, /Confirm before publishing\.$/);
+  });
+});

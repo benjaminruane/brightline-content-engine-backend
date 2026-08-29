@@ -13,6 +13,9 @@ import {
   causalLexiconFires,
   causalEditorialRuleOn,
   CAUSAL_EDITORIAL_RULE,
+  namedThirdPartiesIn,
+  endsWithFlagRegisterNote,
+  findingAddressedByEdit,
 } from "../lib/revise-flag-register.mjs";
 import { normalizeMarkerNoteText } from "../lib/build-revision-prompt.mjs";
 import { AUTHOR_STATEMENT_KEPT_NOTE } from "../lib/revise-author-statement.mjs";
@@ -277,5 +280,76 @@ describe("causal claims are LOUD, from the card first and the lexicon second", (
     );
     expect(r.register).toBe(REGISTER_QUIET);
     expect(r.note).toBe(QUIET_NOTE);
+  });
+});
+
+describe("the author is not a third party", () => {
+  const HALDEN = "Halden Group expects the relationship to deepen over the life of the fund";
+
+  it("does not count the configured authoring organisation as a third party", () => {
+    expect(namedThirdPartiesIn(HALDEN, "Halden Group")).toEqual([]);
+    expect(loudTextSignalsOf(HALDEN, "Halden Group")).not.toContain("named_third_party");
+  });
+
+  it("moves the author's own expectation out of LOUD", () => {
+    const before = flagRegister(silent(HALDEN), null, HALDEN, { authoringOrganisation: null });
+    const after = flagRegister(silent(HALDEN), null, HALDEN, {
+      authoringOrganisation: "Halden Group",
+    });
+    expect(before.register).toBe(REGISTER_LOUD);
+    expect(before.textSignals).toContain("named_third_party");
+    expect(after.register).toBe(REGISTER_QUIET);
+    expect(after.note).toBe(QUIET_NOTE);
+  });
+
+  it("still sees a genuine third party in the same sentence", () => {
+    const text = "Halden Group committed to Meridian Capital Partners V";
+    expect(namedThirdPartiesIn(text, "Halden Group")).toEqual(["Meridian Capital Partners V"]);
+    expect(loudTextSignalsOf(text, "Halden Group")).toContain("named_third_party");
+  });
+
+  it("excludes names the house name leads, but not unrelated ones", () => {
+    expect(namedThirdPartiesIn("Halden Group Partners advised", "Halden Group")).toEqual([]);
+    expect(namedThirdPartiesIn("Halden Advisory Group advised", "Halden Group")).toEqual([
+      "Halden Advisory Group",
+    ]);
+  });
+
+  it("is unchanged where no organisation is configured", () => {
+    expect(namedThirdPartiesIn(HALDEN, null)).toEqual(["Halden Group"]);
+    expect(loudTextSignalsOf(HALDEN, null)).toContain("named_third_party");
+  });
+});
+
+describe("closer exemption and the addressed test", () => {
+  it("recognises a combined note as closing on its register clause", () => {
+    expect(endsWithFlagRegisterNote(`Replaced "a" with "b" - house style. ${QUIET_NOTE}`)).toBe(
+      true
+    );
+    expect(endsWithFlagRegisterNote(`Replaced "a" with "b" - house style. ${LOUD_NOTE}`)).toBe(
+      true
+    );
+    expect(endsWithFlagRegisterNote("Replaced \"a\" with \"b\". Confirm before publishing.")).toBe(
+      false
+    );
+  });
+
+  it("calls a voice rewrite unaddressed, because the claim survives it", () => {
+    expect(
+      findingAddressedByEdit("we recommend the commitment", "Halden Group recommends the commitment")
+    ).toBe(false);
+  });
+
+  it("calls a clause cut addressed, because the claim is gone", () => {
+    expect(
+      findingAddressedByEdit(
+        "with equity checks of EUR 80-100 million apiece",
+        "The fund intends to build a portfolio of 10-14 control-oriented investments."
+      )
+    ).toBe(true);
+  });
+
+  it("treats an empty element as unaddressed, since ties favour keeping the flag", () => {
+    expect(findingAddressedByEdit("", "anything at all")).toBe(false);
   });
 });
