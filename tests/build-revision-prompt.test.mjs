@@ -804,7 +804,7 @@ describe("gatherConcerns", () => {
     assert.match(prompt, /CONFIRMED AND TO BE PRESERVED: "10-14 control-oriented investments"/);
     assert.match(
       prompt,
-      /Unsupported element \(the softening rule applies to this span\): "equity checks of EUR 80-100 million apiece"/
+      /Unsupported element \(the keep-and-flag rule applies to this span\): "equity checks of EUR 80-100 million apiece"/
     );
     assert.match(prompt, /Partial \(same treatment as a statement-level partial/);
     assert.doesNotMatch(prompt, /Evidence gap \(partially_confirmed\) \[kind=partial\]:/);
@@ -888,7 +888,7 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /Hedge or drop the precise number ONLY when the source states no replacement value/i);
     assert.match(prompt, /kind "unsupported"/);
     assert.match(prompt, /same figure rule as conflict\/partial/);
-    assert.match(prompt, /true unsupported/);
+    assert.match(prompt, /LEAVE THE AUTHOR'S WORDING EXACTLY AS WRITTEN/);
     assert.match(prompt, /kind "partial"/);
     assert.match(prompt, /Keep the CONFIRMED portion unchanged/i);
     assert.match(prompt, /around USD 1\.9 billion/);
@@ -925,30 +925,32 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /natural paragraph structure/i);
   });
 
-  test("unsupported silent source: one test, no author-figure approximation, three kinds of removal", () => {
+  test("unsupported silent source: leave as written, no substitution, no author-figure approximation", () => {
     const concerns = gatherConcerns([evidenceGapCard]);
     const prompt = buildRevisionPrompt(draft, concerns, {});
 
-    assert.match(
-      prompt,
-      /after removing the unsupported figure, does the remaining phrase tell a reader anything they did not already know/
-    );
-    assert.match(prompt, /YES, the claim stands without the number: SOFTEN/);
-    assert.match(prompt, /delivered 22% revenue growth last year/);
-    assert.match(prompt, /delivered revenue growth last year/);
-    assert.match(prompt, /NO, the figure WAS the claim: CUT THE CLAUSE/);
+    // Silence never edits. The soften/cut machinery is gone entirely.
+    assert.doesNotMatch(prompt, /ONE TEST/);
+    assert.doesNotMatch(prompt, /SOFTEN/);
+    assert.doesNotMatch(prompt, /CUT THE CLAUSE/);
+    assert.doesNotMatch(prompt, /softening rule/);
+    assert.match(prompt, /LEAVE THE AUTHOR'S WORDING EXACTLY AS WRITTEN and flag it/);
+    assert.match(prompt, /Do not soften it, do not drop the figure, do not cut the clause/);
+    assert.match(prompt, /Silence is the absence of evidence, not evidence against the claim/);
+
+    // The substitution prohibition, with the run that forced it.
+    assert.match(prompt, /NEVER SUBSTITUTE A DIFFERENT FACT/);
     assert.match(prompt, /with equity checks of EUR 80-100 million apiece/);
-    assert.match(prompt, /The company serves customers across Europe/);
-    assert.match(prompt, /cutting would remove the whole sentence: do NOT cut/);
-    assert.match(
-      prompt,
-      /occupy the space where a number used to be is worse than either alternative/
-    );
+    assert.match(prompt, /with reserved capital for bolt-on acquisitions/);
+    assert.match(prompt, /puts a claim they never made in its place/);
+
+    // Value injection, the half that must survive.
+    assert.match(prompt, /If the source STATES a specific value for what the draft asserts/);
     assert.match(prompt, /Approximating a SOURCE figure is fine/);
     assert.match(prompt, /Approximating the AUTHOR'S unsupported figure is forbidden/);
     assert.match(prompt, /WORSE than leaving the original figure alone/);
     assert.match(prompt, /appearance of diligence with none of the substance/);
-    assert.match(prompt, /same ONE TEST as \(b\) to that element only/);
+    assert.match(prompt, /leave that element exactly as written and wrap it in a marker/);
     assert.match(prompt, /Removing the author's POINT/);
     assert.match(prompt, /Removing unsupported PRECISION/);
     assert.match(prompt, /Removing an ELEMENT for compliance/);
@@ -958,8 +960,12 @@ describe("buildRevisionPrompt", () => {
       prompt,
       /the ONE case where the rewrite removes author content by default/
     );
-    assert.match(prompt, /delivered revenue growth last year\|\|CHANGED: Removed the unsupported 22% figure/);
+    assert.match(
+      prompt,
+      /delivered 22% revenue growth last year\|\|KEPT: Kept the 22% figure as written/
+    );
     assert.doesNotMatch(prompt, /delivered material growth/);
+    assert.doesNotMatch(prompt, /Removed the unsupported 22% figure/);
     assert.match(
       prompt,
       /Where a specific unsupported phrase is named under an Evidence gap, the edit belongs to that phrase and the rest of the sentence should be left alone/

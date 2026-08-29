@@ -13,6 +13,7 @@ import {
   quoteFragment,
   renderWhatClause,
 } from "../lib/pr9-note-what-from-diff.mjs";
+import { markerSpanStatus } from "../lib/pr9-marker-span-status.mjs";
 import {
   finalizeSuggestRevisionText,
   normalizeMarkerNoteText,
@@ -339,13 +340,95 @@ describe("concern reason fallback", () => {
   });
 });
 
-describe("buildWhatClause uses the honesty comparator's window", () => {
-  it("sees an adjacent deletion even when the remnant is byte-identical", () => {
+describe("a note accounts only for its own span", () => {
+  // The honesty comparator's window runs to the next aligned token, which can
+  // be a sentence away when the following sentence was deleted too. The note
+  // must not inherit that reach; the honesty check still must.
+  it("does not report a deletion that happened in the NEXT sentence", () => {
     const original = "Alpha bravo charlie. Delta echo foxtrot.";
     const revised = "Alpha bravo charlie.";
     const out = buildWhatClause(original, revised, 0, "Alpha bravo charlie.".length);
+    expect(out.clause).not.toContain("Delta echo foxtrot");
+    expect(out.changed).toBe(false);
+    expect(out.clause).toBe(NO_CHANGE_CLAUSE);
+    // The honesty comparator is untouched: the cut is still visible to it.
+    expect(markerSpanStatus(original, revised, 0, "Alpha bravo charlie.".length)).toBe("CHANGED");
+  });
+
+  it("reproduces the 986-1057 leak: the replacement is reported, 'We recommend' is not", () => {
+    const original =
+      "This relationship enabled deep insight during the diligence phase. We recommend approval.";
+    const revised = "This relationship provided valuable insights during the diligence phase.";
+    const start = 0;
+    const end = revised.length;
+    const out = buildWhatClause(original, revised, start, end);
+    expect(out.clause).toContain('Replaced "enabled deep insight" with "provided valuable insights"');
+    expect(out.clause).not.toContain("We recommend");
+  });
+
+  it("still accounts for a marker that genuinely straddles two sentences", () => {
+    const original = "Alpha bravo charlie. Delta echo foxtrot.";
+    const revised = "Alpha bravo charlie. Delta echo.";
+    const out = buildWhatClause(original, revised, 0, revised.length);
     expect(out.changed).toBe(true);
-    expect(out.clause).toBe('Removed "Delta echo foxtrot."');
+    expect(out.clause).toContain("foxtrot.");
+  });
+});
+
+describe("an editorial change takes its reason from the editorial concern", () => {
+  // The 1059-1111 defect: a voice-consistency fix on a statement that also
+  // carried an evidence gap was explained with "no supplied source backs this
+  // claim". True of the statement, false of the change.
+  const statementText = "We believe the strategy is sound.";
+  const original = `${statementText} Other text follows here.`;
+  const revised = "Halden Group believes the strategy is sound. Other text follows here.";
+  const span = { start: 0, end: "Halden Group believes the strategy is sound.".length };
+
+  const concerns = [
+    {
+      statementText,
+      evidence: { kind: "unsupported" },
+      editorial: [{ kind: "craft", rule: "first_person_plural", note: "", suggestedDirection: "" }],
+    },
+  ];
+
+  it("explains a first-person fix with house style, not with the evidence gap", () => {
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised,
+      start: span.start,
+      end: span.end,
+      note: "CHANGED: Rewrote the opening - no supplied source backs this claim.",
+      concerns,
+    });
+    expect(out.reasonSource).toBe("editorial");
+    expect(out.reason).toBe(
+      "house style names the organisation rather than using first person"
+    );
+    expect(out.body).not.toContain("no supplied source backs this claim");
+    expect(out.body).toContain('Replaced "We believe" with "Halden Group believes"');
+  });
+
+  it("leaves an evidence-driven change explained by the evidence concern", () => {
+    const evOriginal = "Revenue grew 22% last year. Other text follows here.";
+    const evRevised = "Revenue grew 18% last year. Other text follows here.";
+    const out = buildNoteBodyFromDiff({
+      original: evOriginal,
+      revised: evRevised,
+      start: 0,
+      end: "Revenue grew 18% last year.".length,
+      note: "CHANGED: Corrected the rate.",
+      concerns: [
+        {
+          statementText: "Revenue grew 22% last year.",
+          evidence: { kind: "unsupported" },
+          editorial: [
+            { kind: "craft", rule: "first_person_plural", note: "", suggestedDirection: "" },
+          ],
+        },
+      ],
+    });
+    expect(out.reasonSource).not.toBe("editorial");
   });
 });
 
