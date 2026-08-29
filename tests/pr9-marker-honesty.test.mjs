@@ -9,6 +9,7 @@ import {
   MARKER_INTENT_CHANGED,
   MARKER_INTENT_KEPT,
   MARKER_INTENT_CUT,
+  sentenceBoundsContaining,
 } from "../lib/pr9-marker-honesty.mjs";
 import { classifyNoteClaim, NOTE_AMBIGUOUS, NOTE_CLAIMS_NO_CHANGE } from "../lib/pr9-marker-note-claim.mjs";
 import { finalizeSuggestRevisionText } from "../lib/build-revision-prompt.mjs";
@@ -549,5 +550,62 @@ describe("the honesty repair keeps a register clause", () => {
   test("still appends the canonical closer where there is no register clause", () => {
     const out = rewriteHonestyNote('Replaced "a" with "b" - house style.', "Revised this span");
     assert.match(out, /Confirm before publishing\.$/);
+  });
+});
+
+describe("sentence bounds do not break on decimals or abbreviations", () => {
+  const bound = (text, at = 0) => {
+    const b = sentenceBoundsContaining(text, at, at + 1);
+    return text.slice(b.start, b.end);
+  };
+
+  // Measured on the committed corpus: 19 of 67 sentences truncated, every one
+  // of them a decimal in a figure. Investment writing is full of them.
+  const wholeSentence = [
+    "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts.",
+    "Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR.",
+    "It has realised a gross MOIC of 2.4 times across 17 exits.",
+    "The fund holds approx. 20 investments across the region.",
+    "The GP is Meridian Capital Management Ltd. of London and was founded in 2008.",
+    "Target sectors are e.g. industrial technology and business services.",
+    "See No. 4 in the appendix for the full schedule.",
+    "The trailing off was gradual ... and then it stopped.",
+    "J. Smith led the diligence on this transaction.",
+    "The vehicle is Fund V. The predecessor closed in 2021.",
+  ];
+  for (const sentence of wholeSentence) {
+    test(`bounds the whole of ${JSON.stringify(sentence.slice(0, 46))}`, () => {
+      assert.equal(bound(sentence), sentence);
+    });
+  }
+
+  // An abbreviation exclusion that swallows a real sentence boundary is worse
+  // than the bug it fixes.
+  test("still splits an abbreviation followed by a new sentence", () => {
+    const text = "The GP is Meridian Capital Management Ltd. It was founded in 2008.";
+    assert.equal(bound(text), "The GP is Meridian Capital Management Ltd.");
+    assert.equal(bound(text, text.indexOf("It was")), "It was founded in 2008.");
+  });
+
+  test("still splits two ordinary sentences", () => {
+    const text = "Alpha holds the stake. Beta sold the stake.";
+    assert.equal(bound(text), "Alpha holds the stake.");
+    assert.equal(bound(text, text.indexOf("Beta")), "Beta sold the stake.");
+  });
+
+  test("still splits after a figure that ends a sentence", () => {
+    const text = "The fund returned 1.9x. Performance has since improved.";
+    assert.equal(bound(text), "The fund returned 1.9x.");
+    assert.equal(bound(text, text.indexOf("Performance")), "Performance has since improved.");
+  });
+
+  test("still honours ! and ?", () => {
+    const text = "Is the figure 1.2 billion? Yes.";
+    assert.equal(bound(text), "Is the figure 1.2 billion?");
+  });
+
+  test("still honours a blank line as a boundary", () => {
+    const text = "First para at 1.2 billion.\n\nSecond para.";
+    assert.equal(bound(text), "First para at 1.2 billion.");
   });
 });

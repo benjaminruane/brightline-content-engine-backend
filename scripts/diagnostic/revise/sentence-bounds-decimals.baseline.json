@@ -1,0 +1,216 @@
+{
+  "ranAt": "2026-08-29T12:37:11.909Z",
+  "verdicts": [
+    {
+      "label": "condition-a-suggest",
+      "events": [
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        },
+        {
+          "contradiction": "note_intent_mismatch",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": " and recommends the commitment"
+        },
+        {
+          "contradiction": "cut_but_text_present",
+          "intent": "CUT",
+          "repairedIntent": "KEPT",
+          "span": "Halden Group expects the relationship to deepen over the life of the fund"
+        }
+      ]
+    },
+    {
+      "label": "condition-a-condition-b-suggest-rerun",
+      "events": [
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        },
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        }
+      ]
+    },
+    {
+      "label": "deterministic-removal-off-run1",
+      "events": [
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        },
+        {
+          "contradiction": "note_intent_mismatch",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": "recommends the commitment"
+        },
+        {
+          "contradiction": "note_intent_mismatch",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": "Halden Group expects the relationship to deepen over the life of the fund"
+        }
+      ]
+    },
+    {
+      "label": "deterministic-removal-off-run2",
+      "events": []
+    },
+    {
+      "label": "deterministic-removal-off-run3",
+      "events": [
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        },
+        {
+          "contradiction": "note_intent_mismatch",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": "Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment"
+        }
+      ]
+    },
+    {
+      "label": "deterministic-removal-on-run1",
+      "events": [
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        },
+        {
+          "contradiction": "note_intent_mismatch",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": "and recommends the commitment"
+        }
+      ]
+    },
+    {
+      "label": "deterministic-removal-on-run2",
+      "events": [
+        {
+          "contradiction": "changed_but_identical",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services"
+        },
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        }
+      ]
+    },
+    {
+      "label": "deterministic-removal-on-run3",
+      "events": [
+        {
+          "contradiction": "remnant_missed_edit",
+          "intent": "CHANGED",
+          "repairedIntent": null,
+          "span": ""
+        },
+        {
+          "contradiction": "note_intent_mismatch",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": " and recommends the commitment"
+        },
+        {
+          "contradiction": "note_intent_mismatch",
+          "intent": "CHANGED",
+          "repairedIntent": "KEPT",
+          "span": "Halden Group expects the relationship to deepen over the life of the fund"
+        }
+      ]
+    },
+    {
+      "label": "reviser-noise-floor-run1",
+      "events": [
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services"
+        },
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "recommends the commitment"
+        },
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "that would not otherwise have been available to Halden Group"
+        },
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "Halden Group expects the relationship to deepen over the life of the fund"
+        }
+      ]
+    },
+    {
+      "label": "reviser-noise-floor-run2",
+      "events": [
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "recommends the commitment"
+        }
+      ]
+    },
+    {
+      "label": "reviser-noise-floor-run3",
+      "events": [
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment"
+        },
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "that would not otherwise have been available to Halden Group"
+        },
+        {
+          "contradiction": "kept_but_differs",
+          "intent": "KEPT",
+          "repairedIntent": null,
+          "span": "Halden Group expects the relationship to deepen over the life of the fund"
+        }
+      ]
+    }
+  ],
+  "byKind": {
+    "remnant_missed_edit": 8,
+    "note_intent_mismatch": 7,
+    "cut_but_text_present": 1,
+    "changed_but_identical": 1,
+    "kept_but_differs": 8
+  }
+}
