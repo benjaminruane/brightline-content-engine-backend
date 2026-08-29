@@ -1,0 +1,90 @@
+{
+  "ranAt": "2026-08-29T12:28:06.342Z",
+  "replay": {
+    "markersReplayed": 97,
+    "moved": 23,
+    "fixed": [
+      {
+        "run": "deterministic-removal-on-run2",
+        "reallyChanged": false,
+        "span": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services",
+        "note": "No supplied source states this. Do not publish it without one.",
+        "clauseBefore": "Added \"services.\"",
+        "clauseNow": "No change was made",
+        "changedBefore": true,
+        "changedNow": false
+      },
+      {
+        "run": "reviser-noise-floor-run2",
+        "reallyChanged": false,
+        "span": "Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services",
+        "note": "No supplied source states this. Do not publish it without one.",
+        "clauseBefore": "Added \"services.\"",
+        "clauseNow": "No change was made",
+        "changedBefore": true,
+        "changedNow": false
+      },
+      {
+        "run": "reviser-noise-floor-run3",
+        "reallyChanged": false,
+        "span": "Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services",
+        "note": "No supplied source states this. Do not publish it without one.",
+        "clauseBefore": "Added \"services.\"",
+        "clauseNow": "No change was made",
+        "changedBefore": true,
+        "changedNow": false
+      },
+      {
+        "run": "live-MERIDIAN-run2",
+        "reallyChanged": false,
+        "span": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies",
+        "note": "Added \"companies.\" - the supplied source does not mention timing or Partners Group's involvement, and indicates first close is expected in Q3 2026. No supplied source states this. Do not publish it without one.",
+        "clauseBefore": "Added \"companies.\"",
+        "clauseNow": "No change was made",
+        "changedBefore": true,
+        "changedNow": false
+      },
+      {
+        "run": "live-MERIDIAN-run3",
+        "reallyChanged": false,
+        "span": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies",
+        "note": "Added \"companies.\" - the supplied source only confirms the fund terms and an expected Q3 2026 first close, not this timing or investor. No supplied source states this. Do not publish it without one.",
+        "clauseBefore": "Added \"companies.\"",
+        "clauseNow": "No change was made",
+        "changedBefore": true,
+        "changedNow": false
+      }
+    ],
+    "regressed": []
+  },
+  "noiseFloor": {
+    "previous": {
+      "45db80d_no_seed": 7,
+      "18ac825_seed1": 8,
+      "of": 10
+    },
+    "now": 8,
+    "of": 10,
+    "buckets": {
+      "identical": [
+        "fund_desc",
+        "hold_period"
+      ],
+      "intent": [
+        "mark"
+      ],
+      "noteOnly": [
+        "lead",
+        "ranking",
+        "risk",
+        "recommend",
+        "deepen"
+      ],
+      "prose": [
+        "exceptional",
+        "coinvest"
+      ]
+    },
+    "verdict": "UNCHANGED"
+  }
+}

@@ -1,0 +1,12 @@
+| card | verdict |
+| --- | --- |
+| fund_desc | identical |
+| hold_period | identical |
+| mark | **intent** |
+| lead | **note-only** |
+| ranking | **note-only** |
+| risk | **note-only** |
+| recommend | **note-only** |
+| deepen | **note-only** |
+| exceptional | **prose** |
+| coinvest | **prose** |

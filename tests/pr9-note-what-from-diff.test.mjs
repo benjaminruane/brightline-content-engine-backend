@@ -12,8 +12,9 @@ import {
   extractModelReason,
   quoteFragment,
   renderWhatClause,
+  confineRegionToOwnSentence,
 } from "../lib/pr9-note-what-from-diff.mjs";
-import { markerSpanStatus } from "../lib/pr9-marker-span-status.mjs";
+import { markerSpanStatus, markerSpanAlignment } from "../lib/pr9-marker-span-status.mjs";
 import {
   finalizeSuggestRevisionText,
   normalizeMarkerNoteText,
@@ -598,5 +599,72 @@ describe("an edit must not mask a silence flag", () => {
     const final = normalizeMarkerNoteText(out.body);
     expect(final.match(/Confirm before publishing/g)).toBeNull();
     expect(final.match(/No supplied source/g)).toHaveLength(1);
+  });
+});
+
+describe("a preserved sentence carries no what-clause", () => {
+  // Measured on the Meridian runs of 2026-08-29. The marker over this sentence
+  // carried `Added "companies."` while the sentence was byte-identical. The
+  // decimal point in "EUR 1.2 billion" reads as a sentence terminator, so
+  // sentenceBoundsContaining stopped at "a EUR 1." and the clip dropped the
+  // tail of a sentence nothing had touched.
+  const SENTENCE =
+    "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion " +
+    "flagship fund from Meridian Capital targeting lower-mid-market buyouts in European " +
+    "industrial technology and business services companies.";
+  const draft = `${SENTENCE} The fund intends to build a portfolio of 10-14 investments.`;
+
+  // The marker wraps the sentence without its final full stop, which is what
+  // made the bare-token rescue necessary: the span carries "companies", the
+  // region carries "companies.".
+  const span = SENTENCE.slice(0, -1);
+
+  it("reports no change, and no false Added", () => {
+    const out = buildWhatClause(draft, draft, 0, span.length);
+    expect(out.changed).toBe(false);
+    expect(out.clause).not.toContain("Added");
+    expect(out.clause).not.toContain("companies");
+  });
+
+  it("keeps the whole region, so the note body says nothing was changed", () => {
+    const out = buildNoteBodyFromDiff({
+      original: draft,
+      revised: draft,
+      start: 0,
+      end: span.length,
+      note: "Kept as written.",
+    });
+    expect(out.changed).toBe(false);
+    expect(out.body).not.toContain("Added");
+  });
+
+  it("does not clip a region the span reproduces token for token", () => {
+    const align = markerSpanAlignment(draft, draft, 0, span.length);
+    const kept = confineRegionToOwnSentence(
+      draft,
+      draft,
+      0,
+      span.length,
+      align.origRegion,
+      align.revSpan
+    );
+    expect(kept.length).toBe(align.origRegion.length);
+  });
+
+  it("rescues a sentence's own final token, which the slice stops short of", () => {
+    // The region token is "companies." and the raw slice ends "companies".
+    // Comparing against the slice made the sentence's own last word look
+    // absent from its own span; comparing against the aligned tokens does not.
+    const align = markerSpanAlignment(draft, draft, 0, span.length);
+    expect(align.revSpan.at(-1).text).toBe("companies.");
+    expect(span.endsWith("companies")).toBe(true);
+  });
+
+  it("still clips a genuine leak past the sentence end", () => {
+    const original = "Alpha holds the stake. Beta sold the stake.";
+    const revised = "Alpha holds the stake.";
+    // The marker wraps the surviving sentence; the deletion is the NEXT one.
+    const out = buildWhatClause(original, revised, 0, revised.length);
+    expect(out.clause).not.toContain("Beta");
   });
 });

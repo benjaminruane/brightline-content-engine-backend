@@ -224,8 +224,14 @@ async function runSuggestOnce(label, statements) {
   if (prompt.includes("EMPTY DRAFT EXCEPTION")) {
     throw new Error("measured flag leaked into shipped prompt");
   }
-  if (!prompt.includes("falls to keep-and-flag")) {
-    throw new Error("live EDGE CASE missing from shipped prompt");
+  // Stale self-check, repaired 2026-08-29 so this harness can still run. It
+  // asserted the whole-sentence EDGE CASE string, which 73bca5d retired from
+  // injection when silence stopped editing. The check exists to confirm the
+  // live keep-and-flag path is in the prompt, so it now asserts that directly.
+  // No scoring dimension is touched: cardSnapshot and classifyStability are
+  // byte-identical to 45db80d, which is what makes the comparison valid.
+  if (!prompt.includes("keep-and-flag")) {
+    throw new Error("live keep-and-flag path missing from shipped prompt");
   }
 
   const t0 = Date.now();
