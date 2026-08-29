@@ -149,5 +149,20 @@
       "fp_17e3c4f467"
     ]
   },
-  "undatable": []
+  "undatable": [],
+  "corpusBaseline": {
+    "promotedAt": "2026-08-29T13:56:45.592Z",
+    "source": "scripts/diagnostic/anchor-fix-corpus.json",
+    "model": "openai/gpt-4o-2024-08-06",
+    "promptSha": "44847c61b07bac89855b9a0f555e30f528077ebe0b3a8baa2c2c06669d60b3e1",
+    "fingerprints": [
+      "fp_1a8e2a470b",
+      "fp_c9a0e786b8",
+      "fp_ffd8308b42"
+    ],
+    "cases": 29,
+    "statements": 296,
+    "pairs": 360,
+    "note": "Single current configuration. Supersedes the three-fingerprint baseline in r10-corpus-blast-rows.json. Promoted because the author-anchor fix moved no statement towards supported anywhere in the graded corpus."
+  }
 }
