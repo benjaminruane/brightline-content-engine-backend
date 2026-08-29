@@ -635,5 +635,5 @@ Agree that the tree is larger than the live product. The extra is **orphans (~17
 App lines = api+lib+helpers+utils code (orphans included, scripts excluded). Test lines = `tests/` code. Tracked data lines = json/txt/csv/tsv/log. Repo MB = working tree on disk including node_modules.
 
 ```
-2026-08-29, TO_BE_REPLACED_WITH_COMMIT_SHA, 46766, 13570, 174825, 533.5
+2026-08-29, e5c186ab67a82ae3003eb5849bf03fd3c8b37675, 46766, 13570, 174825, 533.5
 ```
