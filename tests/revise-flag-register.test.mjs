@@ -10,6 +10,9 @@ import {
   isFlagRegisterNote,
   loudTextSignalsOf,
   sourceSpoke,
+  causalLexiconFires,
+  causalEditorialRuleOn,
+  CAUSAL_EDITORIAL_RULE,
 } from "../lib/revise-flag-register.mjs";
 import { normalizeMarkerNoteText } from "../lib/build-revision-prompt.mjs";
 import { AUTHOR_STATEMENT_KEPT_NOTE } from "../lib/revise-author-statement.mjs";
@@ -62,7 +65,7 @@ describe("LOUD: the flagged element carries something checkable", () => {
     ["a multiple", "a gross MOIC of 2.4 times", "multiple"],
     ["a date", "the transaction closed in March 2026", "date_or_period"],
     ["a ranking", "placing it in the top quartile of European managers", "ranking_or_superlative"],
-    ["a causal claim", "This relationship enabled deep insight", "causal_claim"],
+    ["a causal claim", "This relationship enabled deep insight", "causal_connective_lexicon"],
     ["a named third party", "advised by Meridian Capital on the deal", "named_third_party"],
   ];
 
@@ -138,7 +141,7 @@ describe("materiality.features decide only when they can", () => {
       materiality: { level: "material", features: [] },
     });
     expect(r.register).toBe(REGISTER_LOUD);
-    expect(r.textSignals).toContain("causal_claim");
+    expect(r.textSignals).toContain("causal_connective_lexicon");
   });
 });
 
@@ -187,5 +190,92 @@ describe("note register and its carve-outs", () => {
   it("keeps all three quiet-ish registers distinct from one another", () => {
     const notes = new Set([LOUD_NOTE, QUIET_NOTE, AUTHOR_STATEMENT_KEPT_NOTE]);
     expect(notes.size).toBe(3);
+  });
+});
+
+describe("causal claims are LOUD, from the card first and the lexicon second", () => {
+  it("prefers Review's own causal rule, however narrow the flagged element", () => {
+    const concern = silent("This relationship enabled deep insight during the diligence phase.", {
+      editorial: [{ kind: "craft", rule: CAUSAL_EDITORIAL_RULE }],
+    });
+    // A fragment with no causal word in it at all: only the card can decide.
+    const r = flagRegister(concern, null, "deep insight");
+    expect(r.register).toBe(REGISTER_LOUD);
+    expect(r.note).toBe(LOUD_NOTE);
+    expect(r.signal).toBe(`editorial rule ${CAUSAL_EDITORIAL_RULE}`);
+  });
+
+  it("reads the rule off a card's editorialConcerns, where it is called concernCode", () => {
+    const card = { editorialConcerns: [{ concernCode: CAUSAL_EDITORIAL_RULE }] };
+    expect(causalEditorialRuleOn({}, card)).toBe(true);
+    expect(causalEditorialRuleOn({}, { editorialConcerns: [{ concernCode: "em_dash" }] })).toBe(
+      false
+    );
+  });
+
+  // The measured miss from 73bca5d: the old list held "means that", not "means".
+  it("catches the key-person sentence, which QUIET wrongly claimed", () => {
+    const element = "means key-person risk is limited";
+    expect(causalLexiconFires(element)).toBe(true);
+    const r = flagRegister(
+      silent(
+        "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited."
+      ),
+      null,
+      element
+    );
+    expect(r.register).toBe(REGISTER_LOUD);
+    expect(r.textSignals).toContain("causal_connective_lexicon");
+  });
+
+  it.each([
+    "The relationship enabled deep insight",
+    "returns were driven by multiple expansion",
+    "the restructuring led to a write-down",
+    "the delay resulted in a missed close",
+    "strong performance, therefore the fund reopened",
+    "the covenant ensures the fund cannot overcommit",
+    "as a result the manager reduced the target",
+    "the discount stems from the illiquidity",
+    "which is why the team was expanded",
+  ])("fires on %j", (element) => {
+    expect(causalLexiconFires(element)).toBe(true);
+  });
+
+  it.each([
+    ["by means of a co-investment vehicle", "instrument, not cause"],
+    ["a means of accessing the asset class", "instrument, not cause"],
+    ["the report is due to be published in Q3", "scheduled, not caused"],
+    ["managers are allowed to hold cash", "permission, not effect"],
+    ["the fund completed due diligence on four targets", "'due diligence' is not 'due to'"],
+    ["we recommend the commitment", "an author's own position"],
+    ["the team has fourteen investment professionals", "a plain count"],
+  ])("does not fire on %j (%s)", (element) => {
+    expect(causalLexiconFires(element)).toBe(false);
+  });
+
+  it("neutralises only the false friend, so a real cause beside one still fires", () => {
+    expect(causalLexiconFires("by means of a vehicle, which enabled the co-investment")).toBe(true);
+  });
+
+  it("never reaches the lexicon when the SOURCE is the one making the causal claim", () => {
+    const r = flagRegister({
+      statementText: "The write-down resulted in a lower NAV.",
+      evidence: { kind: "unsupported", sourcePassage: "the write-down reduced NAV to EUR 880m" },
+    });
+    expect(r.register).toBe(REGISTER_ORDINARY);
+    expect(r.textSignals).toEqual([]);
+  });
+
+  it("leaves the author's own recommendation QUIET", () => {
+    const r = flagRegister(
+      silent(
+        "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment."
+      ),
+      null,
+      "we recommend the commitment"
+    );
+    expect(r.register).toBe(REGISTER_QUIET);
+    expect(r.note).toBe(QUIET_NOTE);
   });
 });
