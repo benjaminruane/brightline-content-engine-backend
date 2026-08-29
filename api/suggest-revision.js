@@ -57,7 +57,11 @@ function finalizeOpts(draftText, concerns, traceId, authoringOrganisation) {
   return {
     originalDraft: draftText,
     concerns,
-    deterministicUnsupportedRemoval: true,
+    // Silence never edits (Ben, 2026-08-29). Revise acts only where a source
+    // SAYS something. Where no source speaks to a claim the draft is flagged
+    // and never touched, so whole-sentence removal no longer runs. The module
+    // stays on disk, unreferenced, until stage 1 is proven.
+    deterministicUnsupportedRemoval: false,
     authoringOrganisation,
     traceId,
   };
@@ -142,7 +146,7 @@ export default async function handler(req, res) {
     const llmMeta = {
       route: "suggest-revision",
       concernCount: concerns.length,
-      deterministicUnsupportedRemoval: true,
+      deterministicUnsupportedRemoval: false,
       ...(outputType ? { outputType } : {}),
       ...(requiredVersion ? { requiredVersion } : {}),
     };

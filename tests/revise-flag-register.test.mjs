@@ -1,0 +1,191 @@
+import { describe, it, expect } from "vitest";
+
+import {
+  LOUD_NOTE,
+  QUIET_NOTE,
+  REGISTER_LOUD,
+  REGISTER_ORDINARY,
+  REGISTER_QUIET,
+  flagRegister,
+  isFlagRegisterNote,
+  loudTextSignalsOf,
+  sourceSpoke,
+} from "../lib/revise-flag-register.mjs";
+import { normalizeMarkerNoteText } from "../lib/build-revision-prompt.mjs";
+import { AUTHOR_STATEMENT_KEPT_NOTE } from "../lib/revise-author-statement.mjs";
+
+const silent = (statementText, extra = {}) => ({
+  statementIndex: 0,
+  statementText,
+  evidence: { kind: "unsupported", verdict: "no_support" },
+  ...extra,
+});
+
+describe("ORDINARY: a source said something, so Revise is editing", () => {
+  it("classifies a conflict as ORDINARY", () => {
+    const r = flagRegister({
+      statementText: "Fund IV returned 1.9 times gross MOIC.",
+      evidence: { kind: "conflict", verdict: "conflicting" },
+    });
+    expect(r.register).toBe(REGISTER_ORDINARY);
+    expect(r.note).toBeNull();
+    expect(r.signal).toBe("evidence.kind=conflict");
+  });
+
+  it("classifies a source-stated competing value as ORDINARY even on unsupported", () => {
+    const r = flagRegister({
+      statementText: "The fund is EUR 1.2 billion.",
+      evidence: { kind: "unsupported", sourcePassage: "the fund closed at EUR 900 million" },
+    });
+    expect(r.register).toBe(REGISTER_ORDINARY);
+    expect(r.signal).toMatch(/sourcePassage/);
+  });
+
+  it("classifies a decomposed conflicting claim as ORDINARY", () => {
+    const r = flagRegister({
+      statementText: "The fund is large.",
+      evidence: { kind: "partial" },
+      claims: [{ role: "conflict", text: "the fund is large" }],
+    });
+    expect(r.register).toBe(REGISTER_ORDINARY);
+  });
+
+  it("does not treat plain silence as a source speaking", () => {
+    expect(sourceSpoke(silent("Anything at all.")).sourceSpoke).toBe(false);
+  });
+});
+
+describe("LOUD: the flagged element carries something checkable", () => {
+  const loudCases = [
+    ["a currency amount", "equity checks of EUR 80-100 million apiece", "currency_amount"],
+    ["a percentage", "delivered 22% revenue growth", "percentage"],
+    ["a multiple", "a gross MOIC of 2.4 times", "multiple"],
+    ["a date", "the transaction closed in March 2026", "date_or_period"],
+    ["a ranking", "placing it in the top quartile of European managers", "ranking_or_superlative"],
+    ["a causal claim", "This relationship enabled deep insight", "causal_claim"],
+    ["a named third party", "advised by Meridian Capital on the deal", "named_third_party"],
+  ];
+
+  for (const [label, element, signal] of loudCases) {
+    it(`fires on ${label}`, () => {
+      const r = flagRegister(silent(element), null, element);
+      expect(r.register).toBe(REGISTER_LOUD);
+      expect(r.note).toBe(LOUD_NOTE);
+      expect(r.textSignals).toContain(signal);
+      expect(r.signal).toMatch(/^element text:/);
+    });
+  }
+
+  it("reports the element-text signal that decided it, not a black box", () => {
+    const element = "equity checks of EUR 80-100 million apiece";
+    expect(loudTextSignalsOf(element)).toContain("currency_amount");
+  });
+});
+
+describe("QUIET: nothing checkable in the flagged element", () => {
+  const quietCases = [
+    "We recommend approval.",
+    "The investment fits well with the broader portfolio strategy.",
+    "We will provide further detail when the work is sufficiently advanced.",
+  ];
+
+  for (const element of quietCases) {
+    it(`stays quiet on ${JSON.stringify(element.slice(0, 40))}`, () => {
+      const r = flagRegister(silent(element), null, element);
+      expect(r.register).toBe(REGISTER_QUIET);
+      expect(r.note).toBe(QUIET_NOTE);
+    });
+  }
+});
+
+describe("materiality.features decide only when they can", () => {
+  it("uses features when the flagged element is the whole statement", () => {
+    const statement = "The relationship deepened over the fund's life.";
+    const r = flagRegister({
+      ...silent(statement),
+      materiality: { level: "material", features: ["monetary_figure"] },
+    });
+    expect(r.register).toBe(REGISTER_LOUD);
+    expect(r.signal).toBe("materiality.features: monetary_figure");
+  });
+
+  it("ignores features that sit outside a tighter flagged element", () => {
+    const statement = "The fund raised EUR 1.2 billion and the team works well together.";
+    const element = "the team works well together";
+    const r = flagRegister(
+      { ...silent(statement), materiality: { level: "material", features: ["monetary_figure"] } },
+      null,
+      element
+    );
+    expect(r.register).toBe(REGISTER_QUIET);
+    expect(r.signal).toMatch(/sit outside it/);
+  });
+
+  it("does not treat forward_looking as loud on its own", () => {
+    const statement = "We intend to keep the reviewer updated.";
+    const r = flagRegister({
+      ...silent(statement),
+      materiality: { level: "material", features: ["forward_looking"] },
+    });
+    expect(r.register).toBe(REGISTER_QUIET);
+  });
+
+  it("stays quiet on a material level with no features, deciding from text instead", () => {
+    // The measured production card: level material by verdict alone, features [].
+    const statement = "This relationship enabled deep insight during the diligence phase.";
+    const r = flagRegister({
+      ...silent(statement),
+      materiality: { level: "material", features: [] },
+    });
+    expect(r.register).toBe(REGISTER_LOUD);
+    expect(r.textSignals).toContain("causal_claim");
+  });
+});
+
+describe("the three sanity-check sentences", () => {
+  it("the equity cheque is LOUD", () => {
+    const element = "equity checks of EUR 80-100 million apiece";
+    expect(flagRegister(silent(element), null, element).register).toBe(REGISTER_LOUD);
+  });
+
+  it("'We recommend approval.' is QUIET", () => {
+    expect(flagRegister(silent("We recommend approval.")).register).toBe(REGISTER_QUIET);
+  });
+
+  it("the diligence sentence is LOUD", () => {
+    const s = "This relationship enabled deep insight during the diligence phase.";
+    expect(flagRegister(silent(s)).register).toBe(REGISTER_LOUD);
+  });
+});
+
+describe("note register and its carve-outs", () => {
+  it("LOUD is visibly more emphatic than the ordinary register", () => {
+    expect(LOUD_NOTE).toMatch(/Do not publish/);
+    expect(LOUD_NOTE).not.toMatch(/confirm before publishing/i);
+  });
+
+  it("QUIET carries no Confirm before publishing closer", () => {
+    expect(QUIET_NOTE).not.toMatch(/confirm before publishing/i);
+  });
+
+  it("both survive note normalisation unchanged", () => {
+    expect(normalizeMarkerNoteText(LOUD_NOTE)).toBe(LOUD_NOTE);
+    expect(normalizeMarkerNoteText(QUIET_NOTE)).toBe(QUIET_NOTE);
+  });
+
+  it("still appends the closer to an ordinary note", () => {
+    expect(normalizeMarkerNoteText("Softened the claim")).toMatch(/Confirm before publishing\.$/);
+  });
+
+  it("recognises only its own two notes", () => {
+    expect(isFlagRegisterNote(LOUD_NOTE)).toBe(true);
+    expect(isFlagRegisterNote(QUIET_NOTE)).toBe(true);
+    expect(isFlagRegisterNote(AUTHOR_STATEMENT_KEPT_NOTE)).toBe(false);
+    expect(isFlagRegisterNote("Something else.")).toBe(false);
+  });
+
+  it("keeps all three quiet-ish registers distinct from one another", () => {
+    const notes = new Set([LOUD_NOTE, QUIET_NOTE, AUTHOR_STATEMENT_KEPT_NOTE]);
+    expect(notes.size).toBe(3);
+  });
+});

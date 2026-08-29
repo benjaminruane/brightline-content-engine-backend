@@ -1,0 +1,558 @@
+{
+  "ranAt": "2026-08-29T09:51:39.809Z",
+  "model": "gpt-5.1-2025-11-13",
+  "notes": {
+    "LOUD": "No supplied source states this. Do not publish it without one.",
+    "QUIET": "No supplied source speaks to this either way."
+  },
+  "partA": {
+    "rows": [
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 0,
+        "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "elementIsWholeStatement": true,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure",
+            "date_period_claim",
+            "named_person_entity_attribution"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: currency_amount, figure, date_or_period, named_third_party",
+        "featureSignals": [
+          "monetary_figure",
+          "date_period_claim",
+          "named_person_entity_attribution"
+        ],
+        "textSignals": [
+          "currency_amount",
+          "figure",
+          "date_or_period",
+          "named_third_party"
+        ]
+      },
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 1,
+        "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+        "element": "that is, in our view, genuinely exceptional",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element",
+        "featureSignals": [],
+        "textSignals": []
+      },
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 2,
+        "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+        "element": "placing it in the top quartile of European lower-mid-market managers.",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "regulated_sensitive"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: ranking_or_superlative",
+        "featureSignals": [
+          "regulated_sensitive"
+        ],
+        "textSignals": [
+          "ranking_or_superlative"
+        ]
+      },
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 3,
+        "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+        "element": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+        "elementIsWholeStatement": true,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element",
+        "featureSignals": [],
+        "textSignals": []
+      },
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 4,
+        "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+        "element": "has returned",
+        "elementIsWholeStatement": false,
+        "kind": "conflict",
+        "verdict": "conflicting",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "regulated_sensitive"
+          ]
+        },
+        "register": "ORDINARY",
+        "signal": "evidence.kind=conflict",
+        "featureSignals": [],
+        "textSignals": []
+      },
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 7,
+        "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+        "element": "we recommend the commitment",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element",
+        "featureSignals": [],
+        "textSignals": []
+      },
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 8,
+        "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+        "element": "that would not otherwise have been available to us.",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element",
+        "featureSignals": [],
+        "textSignals": []
+      },
+      {
+        "artefact": "suggest-after-r10-review1",
+        "statementIndex": 9,
+        "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+        "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+        "elementIsWholeStatement": true,
+        "kind": "unsupported",
+        "verdict": "no_support",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "named_person_entity_attribution",
+            "forward_looking"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: named_third_party",
+        "featureSignals": [
+          "named_person_entity_attribution"
+        ],
+        "textSignals": [
+          "named_third_party"
+        ]
+      },
+      {
+        "artefact": "suggest-after-r10-review2",
+        "statementIndex": 0,
+        "statementText": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "element": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+        "elementIsWholeStatement": true,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure",
+            "date_period_claim",
+            "named_person_entity_attribution"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: currency_amount, figure, date_or_period, named_third_party",
+        "featureSignals": [
+          "monetary_figure",
+          "date_period_claim",
+          "named_person_entity_attribution"
+        ],
+        "textSignals": [
+          "currency_amount",
+          "figure",
+          "date_or_period",
+          "named_third_party"
+        ]
+      },
+      {
+        "artefact": "suggest-after-r10-review2",
+        "statementIndex": 7,
+        "statementText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+        "element": "recommends the commitment",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "named_person_entity_attribution"
+          ]
+        },
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element (statement features named_person_entity_attribution sit outside it)",
+        "featureSignals": [
+          "named_person_entity_attribution"
+        ],
+        "textSignals": []
+      },
+      {
+        "artefact": "suggest-after-r10-review2",
+        "statementIndex": 9,
+        "statementText": "Halden Group expects the relationship to deepen over the life of the fund.",
+        "element": "Halden Group expects the relationship to deepen over the life of the fund.",
+        "elementIsWholeStatement": true,
+        "kind": "unsupported",
+        "verdict": "no_support",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "named_person_entity_attribution",
+            "forward_looking"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: named_third_party",
+        "featureSignals": [
+          "named_person_entity_attribution"
+        ],
+        "textSignals": [
+          "named_third_party"
+        ]
+      },
+      {
+        "artefact": "condition-b-review",
+        "statementIndex": 2,
+        "statementText": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+        "element": "placing it in the top quartile of European lower-mid-market managers.",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "regulated_sensitive"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: ranking_or_superlative",
+        "featureSignals": [
+          "regulated_sensitive"
+        ],
+        "textSignals": [
+          "ranking_or_superlative"
+        ]
+      },
+      {
+        "artefact": "condition-b-review",
+        "statementIndex": 3,
+        "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+        "element": "means key-person risk is limited",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element",
+        "featureSignals": [],
+        "textSignals": []
+      },
+      {
+        "artefact": "condition-b-review",
+        "statementIndex": 4,
+        "statementText": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+        "element": "has returned",
+        "elementIsWholeStatement": false,
+        "kind": "conflict",
+        "verdict": "conflicting",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "regulated_sensitive"
+          ]
+        },
+        "register": "ORDINARY",
+        "signal": "evidence.kind=conflict",
+        "featureSignals": [],
+        "textSignals": []
+      },
+      {
+        "artefact": "coverage-gap-review",
+        "statementIndex": 0,
+        "statementText": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "element": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+        "elementIsWholeStatement": true,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure",
+            "date_period_claim",
+            "named_person_entity_attribution"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: currency_amount, figure, date_or_period, named_third_party",
+        "featureSignals": [
+          "monetary_figure",
+          "date_period_claim",
+          "named_person_entity_attribution"
+        ],
+        "textSignals": [
+          "currency_amount",
+          "figure",
+          "date_or_period",
+          "named_third_party"
+        ]
+      },
+      {
+        "artefact": "coverage-gap-review",
+        "statementIndex": 1,
+        "statementText": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+        "element": "equity checks of EUR 80-100 million apiece",
+        "elementIsWholeStatement": false,
+        "kind": "partial",
+        "verdict": "partially_confirmed",
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure",
+            "forward_looking"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: currency_amount, figure",
+        "featureSignals": [
+          "monetary_figure"
+        ],
+        "textSignals": [
+          "currency_amount",
+          "figure"
+        ]
+      },
+      {
+        "artefact": "coverage-gap-review",
+        "statementIndex": 3,
+        "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "element": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+        "elementIsWholeStatement": true,
+        "kind": null,
+        "verdict": null,
+        "materiality": {
+          "level": "minor",
+          "features": [
+            "named_person_entity_attribution"
+          ]
+        },
+        "register": "LOUD",
+        "signal": "element text: named_third_party",
+        "featureSignals": [
+          "named_person_entity_attribution"
+        ],
+        "textSignals": [
+          "named_third_party"
+        ]
+      },
+      {
+        "artefact": "coverage-gap-review",
+        "statementIndex": 5,
+        "statementText": "This relationship enabled deep insight during the diligence phase.",
+        "element": "This relationship enabled deep insight during the diligence phase.",
+        "elementIsWholeStatement": true,
+        "kind": "unsupported",
+        "verdict": "no_support",
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "register": "LOUD",
+        "signal": "element text: causal_claim",
+        "featureSignals": [],
+        "textSignals": [
+          "causal_claim"
+        ]
+      }
+    ],
+    "counts": {
+      "LOUD": 10,
+      "QUIET": 6,
+      "ORDINARY": 2
+    },
+    "sanity": [
+      {
+        "label": "equity cheque",
+        "want": "LOUD",
+        "got": "LOUD",
+        "pass": true
+      },
+      {
+        "label": "We recommend approval.",
+        "want": "QUIET",
+        "got": "QUIET",
+        "pass": true
+      },
+      {
+        "label": "diligence sentence",
+        "want": "LOUD",
+        "got": "LOUD",
+        "pass": true
+      }
+    ]
+  },
+  "partB": {
+    "rows": [
+      {
+        "statementId": "F01:S11",
+        "sentenceText": "We recommend approval.",
+        "adjudication": "WRONG",
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element"
+      },
+      {
+        "statementId": "F08:S17",
+        "sentenceText": "We are confident in the team and the opportunity, and we look forward to providing further updates as the hold progresses.",
+        "adjudication": "CORRECT",
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element"
+      },
+      {
+        "statementId": "F12:S5",
+        "sentenceText": "The numbers tell one story; the team's transformation tells the bigger one.",
+        "adjudication": "CORRECT",
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element"
+      },
+      {
+        "statementId": "F13:S15",
+        "sentenceText": "The investment fits well with the broader portfolio strategy.",
+        "adjudication": "CORRECT",
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element"
+      },
+      {
+        "statementId": "F14:S12",
+        "sentenceText": "We will provide further detail when the work is sufficiently advanced.",
+        "adjudication": "ARGUABLE",
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element"
+      },
+      {
+        "statementId": "F15:S32",
+        "sentenceText": "We have high conviction in the management team and the value creation plan, and we look forward to providing further updates as the hold progresses.",
+        "adjudication": "CORRECT",
+        "register": "QUIET",
+        "signal": "no checkable content in the flagged element"
+      },
+      {
+        "statementId": "F20:S8",
+        "sentenceText": "Our investment team has been preparing Fund V's pipeline for many months and we expect first capital calls in the second quarter of 2026.",
+        "adjudication": "CORRECT",
+        "register": "LOUD",
+        "signal": "element text: figure, date_or_period, ranking_or_superlative, named_third_party"
+      },
+      {
+        "statementId": "F21:S3",
+        "sentenceText": "James Ortiz said, \"Project Atlas will double in value within two years.\"",
+        "adjudication": "CORRECT",
+        "register": "LOUD",
+        "signal": "element text: named_third_party"
+      },
+      {
+        "statementId": "F21:S4",
+        "sentenceText": "The transaction is expected to close in the second quarter of 2026.",
+        "adjudication": "CORRECT",
+        "register": "LOUD",
+        "signal": "element text: figure, date_or_period"
+      },
+      {
+        "statementId": "F22:S3",
+        "sentenceText": "Veneto Freight is one of the fund's existing portfolio companies.",
+        "adjudication": "CORRECT",
+        "register": "LOUD",
+        "signal": "element text: named_third_party"
+      },
+      {
+        "statementId": "F23:S4",
+        "sentenceText": "Aldous Renewables is the fund's largest limited partner.",
+        "adjudication": "CORRECT",
+        "register": "LOUD",
+        "signal": "element text: ranking_or_superlative, named_third_party"
+      }
+    ],
+    "counts": {
+      "QUIET": 6,
+      "LOUD": 5
+    }
+  },
+  "partC": {
+    "draft": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship enabled deep insight during the diligence phase.",
+    "revisedDraft": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies. The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece. Target companies are expected to have enterprise valuations in the range of EUR 20-100 million, annual EBITDA of EUR 5-25 million, and defensible positions in niche industrial or B2B markets. Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established investment team and operational approach to value creation. Furthermore, Partners Group has a long-established relationship with the manager, having invested alongside Meridian Capital on several co-investments and debt financings, while also making several secondary investments in its earlier funds. This relationship enabled deep insight during the diligence phase.",
+    "markers": [
+      {
+        "note": "No supplied source states this. Do not publish it without one.",
+        "intent": "KEPT",
+        "span": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies"
+      },
+      {
+        "note": "No supplied source states this. Do not publish it without one.",
+        "intent": "KEPT",
+        "span": "with equity checks of EUR 80-100 million apiece"
+      },
+      {
+        "note": "Removed \"and highly regarded\" - overstated against the source. Confirm before publishing.",
+        "intent": "CUT",
+        "span": "well-established"
+      },
+      {
+        "note": "No supplied source states this. Do not publish it without one.",
+        "intent": "KEPT",
+        "span": "This relationship enabled deep insight during the diligence phase"
+      }
+    ],
+    "removalEventCount": 0,
+    "removals": 0,
+    "orphanedMarkers": 0,
+    "unreported": 1,
+    "diligenceSentenceSurvives": true,
+    "equityFigureSurvives": true,
+    "loudNotesEmitted": 3,
+    "quietNotesEmitted": 0,
+    "usage": {
+      "inputTokens": 7405,
+      "outputTokens": 298,
+      "cachedInputTokens": 7296,
+      "cacheHitRate": 0.9852802160702229
+    },
+    "cost": 0.004028250000000001
+  }
+}

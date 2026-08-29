@@ -267,7 +267,7 @@ describe("concern reason fallback", () => {
     expect(out.body).toBe('Removed "and highly regarded"');
   });
 
-  it("gives a no-change marker the concern's reason, so the flag still explains itself", () => {
+  it("gives a no-change marker on silence the quiet register, closer and all", () => {
     const out = buildNoteBodyFromDiff({
       original,
       revised: original,
@@ -277,9 +277,65 @@ describe("concern reason fallback", () => {
       concerns: concernFor({ evidence: { kind: "unsupported" } }),
     });
     expect(out.changed).toBe(false);
+    expect(out.register).toBe("QUIET");
     expect(normalizeMarkerNoteText(out.body)).toBe(
-      "No change was made - no supplied source backs this claim. Confirm before publishing."
+      "No supplied source speaks to this either way."
     );
+  });
+
+  it("gives a no-change marker on a checkable element the loud register", () => {
+    const statement = "The fund returned 2.4 times gross MOIC across 17 exits.";
+    const out = buildNoteBodyFromDiff({
+      original: statement,
+      revised: statement,
+      start: statement.indexOf("2.4 times"),
+      end: statement.indexOf(" across"),
+      note: "Kept the multiple.",
+      concerns: [
+        {
+          statementIndex: 0,
+          statementText: statement,
+          editorial: [],
+          compliance: [],
+          evidence: { kind: "unsupported" },
+        },
+      ],
+    });
+    expect(out.register).toBe("LOUD");
+    expect(normalizeMarkerNoteText(out.body)).toBe(
+      "No supplied source states this. Do not publish it without one."
+    );
+  });
+
+  it("leaves a conflict on the ordinary register, because a source spoke", () => {
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised: original,
+      start: original.indexOf("well established"),
+      end: original.indexOf(" across"),
+      note: "Kept the wording.",
+      concerns: concernFor({
+        evidence: { kind: "conflict", sourcePassage: "the team is newly assembled" },
+      }),
+    });
+    expect(out.register).toBeUndefined();
+    expect(normalizeMarkerNoteText(out.body)).toBe(
+      "No change was made - a source states otherwise. Confirm before publishing."
+    );
+  });
+
+  it("does not stamp a register note over a span that actually changed", () => {
+    const out = buildNoteBodyFromDiff({
+      original,
+      revised,
+      start: revised.indexOf("well established"),
+      end: revised.indexOf(" across"),
+      note: "Removed the unsupported ranking.",
+      concerns: concernFor({ evidence: { kind: "unsupported" } }),
+    });
+    expect(out.changed).toBe(true);
+    expect(out.register).toBeUndefined();
+    expect(out.body).toContain('Removed "and highly regarded"');
   });
 });
 
