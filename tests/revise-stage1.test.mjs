@@ -12,6 +12,7 @@ import {
   usableReason,
   validateStage1Response,
   stage1SendDecision,
+  OUTCOME_AUTHOR_EXEMPT,
   directivesOn,
   OUTCOME_SILENCE_NOT_SENT,
 } from "../lib/revise-stage1.mjs";
@@ -448,6 +449,59 @@ describe("stage 1 under the principle", () => {
     const rejected = out.events.filter((e) => e.outcome === "rejected");
     assert.equal(rejected.length, 1);
     assert.equal(rejected[0].reason, REJECT_INVENTED_FACT);
+  });
+
+  // Measured on R10: the exemption ran first and swallowed marketing_language_excess
+  // and voice_consistency on the author's own sentences, so three directives the
+  // whole-draft path followed were never even sent to the model.
+  test("an editorial directive outranks the author exemption", async () => {
+    const authorSentence =
+      "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.";
+    const concern = {
+      statementIndex: 1,
+      statementText: authorSentence,
+      evidence: { kind: "unsupported", verdict: "no_support", unsupportedSpans: [] },
+      editorial: [
+        { rule: "marketing_language_excess", suggestedDirection: "Delete 'genuinely exceptional'." },
+      ],
+      compliance: [],
+    };
+    let asked = false;
+    const out = await runStage1(authorSentence, [concern], {
+      authoringOrganisation: "Halden Group",
+      callModel: async () => {
+        asked = true;
+        return {
+          text: reply({
+            action: "edit",
+            revised_statement:
+              "We were attracted to Meridian on the strength of a track record that is, in our view, strong.",
+            what: "Removed the promotional phrase",
+            why: "the review asked for the promotional phrase to go",
+          }),
+        };
+      },
+    });
+    assert.equal(asked, true, "the statement must be sent");
+    assert.equal(out.events.filter((e) => e.outcome === OUTCOME_AUTHOR_EXEMPT).length, 0);
+    assert.doesNotMatch(out.revisedDraft, /genuinely exceptional/);
+  });
+
+  test("the author exemption still holds where there is no directive", async () => {
+    const authorSentence = "We were attracted to Meridian on the strength of its record.";
+    const out = await runStage1(authorSentence, [
+      {
+        statementIndex: 1,
+        statementText: authorSentence,
+        evidence: { kind: "unsupported", verdict: "no_support", unsupportedSpans: [] },
+        editorial: [],
+        compliance: [],
+      },
+    ], {
+      authoringOrganisation: "Halden Group",
+      callModel: never,
+    });
+    assert.equal(out.events.filter((e) => e.outcome === OUTCOME_AUTHOR_EXEMPT).length, 1);
   });
 
   test("records silence_flagged_not_sent, distinct from a refusal and an exemption", async () => {

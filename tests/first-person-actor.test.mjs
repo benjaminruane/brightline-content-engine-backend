@@ -11,6 +11,7 @@ import {
   AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER,
   DEFAULT_AUTHORING_ORGANISATION,
   FIRST_PERSON_ACTOR_INSTRUCTION,
+  isAuthoringOrganisationName,
   applyViewMarkerSubjectBounds,
   boundViewMarkerSubjectDirection,
   buildFirstPersonActorInstruction,
@@ -370,5 +371,38 @@ describe("view-marker subject after first-person substitution", () => {
     const statement = "The pipeline is, in our view, thin.";
     const direction = `Change 'in our view' to 'in ${FICTIONAL_HOUSE}'s view'.`;
     assert.equal(boundViewMarkerSubjectDirection(statement, direction, FICTIONAL_HOUSE), direction);
+  });
+});
+
+describe("isAuthoringOrganisationName", () => {
+  test("recognises the house name, a possessive, and a name it heads", () => {
+    withHouseEnv("Halden Group", () => {
+      assert.equal(isAuthoringOrganisationName("Halden Group"), true);
+      assert.equal(isAuthoringOrganisationName("halden group"), true);
+      assert.equal(isAuthoringOrganisationName("Halden Group's"), true);
+      assert.equal(isAuthoringOrganisationName("Halden Group Partners"), true);
+    });
+  });
+
+  test("does not claim a third party, or a name that merely starts alike", () => {
+    withHouseEnv("Halden Group", () => {
+      assert.equal(isAuthoringOrganisationName("Meridian Capital"), false);
+      assert.equal(isAuthoringOrganisationName("Haldenstein Bank"), false);
+      assert.equal(isAuthoringOrganisationName(""), false);
+      assert.equal(isAuthoringOrganisationName(null), false);
+    });
+  });
+
+  test("claims nothing when no organisation is configured", () => {
+    withUnsetHouseEnv(() => {
+      assert.equal(isAuthoringOrganisationName("Halden Group"), false);
+    });
+  });
+
+  test("an explicit house name overrides the environment", () => {
+    withHouseEnv("Halden Group", () => {
+      assert.equal(isAuthoringOrganisationName("Meridian Capital", "Meridian Capital"), true);
+      assert.equal(isAuthoringOrganisationName("Halden Group", "Meridian Capital"), false);
+    });
   });
 });

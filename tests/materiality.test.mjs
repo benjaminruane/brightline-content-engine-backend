@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { computeCardMateriality, scoreFinding } from "../lib/qc/materiality.mjs";
+import {
+  computeCardMateriality,
+  extractStatementFeatures,
+  scoreFinding,
+} from "../lib/qc/materiality.mjs";
 
 describe("B13 materiality refinements", () => {
   test("craft findings stay minor even when the sentence has named-entity features", () => {
@@ -121,5 +125,46 @@ describe("B13 materiality refinements", () => {
       ],
     });
     assert.equal(card.level, "material");
+  });
+});
+
+describe("the author is not an attribution", () => {
+  const withHouse = (name, fn) => {
+    const prev = process.env.AUTHORING_ORGANISATION;
+    process.env.AUTHORING_ORGANISATION = name;
+    try {
+      return fn();
+    } finally {
+      if (prev === undefined) delete process.env.AUTHORING_ORGANISATION;
+      else process.env.AUTHORING_ORGANISATION = prev;
+    }
+  };
+  const fires = (t) =>
+    extractStatementFeatures(t).includes("named_person_entity_attribution");
+
+  test("a statement naming only the authoring organisation is not an attribution", () => {
+    withHouse("Halden Group", () => {
+      assert.equal(fires("Halden Group expects the relationship to deepen over the next cycle."), false);
+    });
+  });
+
+  test("a third party still fires, and so does the author alongside one", () => {
+    withHouse("Halden Group", () => {
+      assert.equal(fires("Meridian Capital expects the relationship to deepen."), true);
+      assert.equal(fires("Halden Group committed to Meridian Capital Partners V."), true);
+    });
+  });
+
+  test("an explicit attribution verb fires whoever is named", () => {
+    withHouse("Halden Group", () => {
+      assert.equal(fires("According to Halden Group, the fund is performing."), true);
+    });
+  });
+
+  test("nothing is suppressed when no organisation is configured", () => {
+    withHouse("", () => {
+      delete process.env.AUTHORING_ORGANISATION;
+      assert.equal(fires("Halden Group expects the relationship to deepen."), true);
+    });
   });
 });

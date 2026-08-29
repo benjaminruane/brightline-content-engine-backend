@@ -1,0 +1,1326 @@
+{
+  "ranAt": "2026-08-29T13:11:29.085Z",
+  "sites": [
+    {
+      "site": "lib/qc/materiality.mjs extractStatementFeatures -> named_person_entity_attribution",
+      "does": "fires a high-signal materiality feature when a statement names a person or entity",
+      "probe": "author-only fires=false, third-party fires=true",
+      "confusable": false,
+      "fixed": true,
+      "consequence": "was scoring a statement naming only the author as an attribution to an outside party, raising its materiality level and, through it, its flag register. The register filtered the feature out downstream at a5be4f0; FIXED at the producer here, so every consumer now sees the same answer",
+      "resolverAccess": "yes, same package as first-person-actor.mjs",
+      "authorFires": false,
+      "thirdPartyFires": true
+    },
+    {
+      "site": "lib/qc/claim-spans.mjs extractVerifiableAnchors -> named_entity",
+      "does": "marks Title-Case runs as verifiable anchors a source should corroborate",
+      "probe": "author-only anchors: [\"Halden Group\"]",
+      "confusable": false,
+      "consequence": "none that is wrong. An anchor is a checkable thing, not an outside party, and the author's own name in a statement is legitimately checkable",
+      "resolverAccess": "yes, but it should not use it",
+      "legitimate": true
+    },
+    {
+      "site": "lib/revise-stage1.mjs checkNoInventedFacts",
+      "does": "rejects a stage 1 edit introducing a proper noun absent from the statement and sources",
+      "probe": "with resolver ok=true, without resolver ok=false",
+      "confusable": false,
+      "fixed": true,
+      "consequence": "was discarding correct directive edits that named the client. Fixed at 2528a32",
+      "resolverAccess": "yes, threaded through runStage1 as authoringOrganisation"
+    },
+    {
+      "site": "lib/revise-stage1.mjs checkNoSpanEntitiesKept",
+      "does": "rejects a no-span edit that DELETES a named entity the finding does not name",
+      "probe": "dropping the author's name is rejected=true (removed without being flagged: Halden Group)",
+      "confusable": false,
+      "consequence": "none that is wrong. This guard protects against LOSING a name, and losing who acted is a real defect whether the actor is the author or anyone else",
+      "resolverAccess": "yes, but it should not use it",
+      "legitimate": true
+    },
+    {
+      "site": "lib/revise-flag-register.mjs namedThirdPartiesIn",
+      "does": "decides whether a flagged element names an outside party, driving the LOUD register",
+      "probe": "author-only=[], third-party=[\"Meridian Capital\"]",
+      "confusable": false,
+      "fixed": true,
+      "consequence": "was pushing the author's own statements to LOUD. Fixed at a5be4f0",
+      "resolverAccess": "yes, calls resolveAuthoringOrganisationName() directly"
+    },
+    {
+      "site": "lib/pr9-deterministic-unsupported-removal.mjs findCheckableParticulars",
+      "does": "extracts the checkable particulars in a sentence; the count decides whether removing a clause leaves a remnant worth keeping",
+      "probe": "author-only [], third-party [\"Meridian Capital\"], mixed [\"Meridian Capital Partners V\"]",
+      "confusable": false,
+      "fixed": true,
+      "consequence": "was counting the author's own name as a particular an outside source must support, so a sentence about the author's own actions looked more checkable than it is. It already filtered first-person pronouns, which is the same actor by another name. FIXED here",
+      "resolverAccess": "yes, plain ESM import",
+      "authorParticulars": [],
+      "thirdPartyParticulars": [
+        "Meridian Capital"
+      ]
+    },
+    {
+      "site": "lib/qc/evidence-relationship.mjs corePropositionConfirmed",
+      "does": "takes the FIRST Title-Case run in the statement as the entity, and requires the source excerpt to contain it before the proposition can be confirmed",
+      "probe": "entity-led confirmed=true, author-led confirmed=true, author-only confirmed=false",
+      "confusable": false,
+      "fixed": true,
+      "consequence": "a supported statement that OPENS with the author's name could never be confirmed, because no external source mentions the client. A false negative on SUPPORT, the most consequential of the confusions found. FIXED here; where the author is the only name there is still no external anchor and the proposition stays unconfirmed",
+      "resolverAccess": "yes, same package",
+      "authorLed": true,
+      "entityLed": true
+    },
+    {
+      "site": "lib/revise-author-statement.mjs authorStatementExemption",
+      "does": "decides whether a statement attributes an act to the author rather than a third party",
+      "probe": "author-only exempt=true",
+      "confusable": false,
+      "consequence": "this site exists to make the distinction; it is the reference implementation",
+      "resolverAccess": "yes, by construction"
+    }
+  ],
+  "before": {
+    "rows": [
+      {
+        "file": "suggest-after-r10-review1.json",
+        "editorial": 5,
+        "compliance": 0,
+        "withDirection": 5,
+        "dirs": [
+          {
+            "statementIndex": 1,
+            "rule": "marketing_language_excess",
+            "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+          },
+          {
+            "statementIndex": 1,
+            "rule": "voice_consistency",
+            "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'."
+          },
+          {
+            "statementIndex": 3,
+            "rule": "overreach_unsupported_causal",
+            "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'."
+          },
+          {
+            "statementIndex": 7,
+            "rule": "voice_consistency",
+            "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'."
+          },
+          {
+            "statementIndex": 8,
+            "rule": "first_person_plural",
+            "direction": "Replace 'available to us' with 'available to Halden Group'."
+          }
+        ]
+      },
+      {
+        "file": "suggest-after-r10-review2.json",
+        "editorial": 3,
+        "compliance": 0,
+        "withDirection": 3,
+        "dirs": [
+          {
+            "statementIndex": 1,
+            "rule": "voice_consistency",
+            "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'."
+          },
+          {
+            "statementIndex": 3,
+            "rule": "structural_integrity",
+            "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'"
+          },
+          {
+            "statementIndex": 7,
+            "rule": "voice_consistency",
+            "direction": "Replace 'recommends' with 'Halden Group recommends'."
+          }
+        ]
+      },
+      {
+        "file": "condition-b-review.json",
+        "editorial": 4,
+        "compliance": 0,
+        "withDirection": 4,
+        "dirs": [
+          {
+            "statementIndex": 1,
+            "rule": "marketing_language_excess",
+            "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+          },
+          {
+            "statementIndex": 1,
+            "rule": "voice_consistency",
+            "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'."
+          },
+          {
+            "statementIndex": 7,
+            "rule": "voice_consistency",
+            "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'."
+          },
+          {
+            "statementIndex": 8,
+            "rule": "voice_consistency",
+            "direction": "Replace 'available to us' with 'available to Halden Group'."
+          }
+        ]
+      },
+      {
+        "file": "coverage-gap-review.json",
+        "editorial": 2,
+        "compliance": 0,
+        "withDirection": 2,
+        "dirs": [
+          {
+            "statementIndex": 3,
+            "rule": "marketing_language_excess",
+            "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+          },
+          {
+            "statementIndex": 5,
+            "rule": "overreach_unsupported_causal",
+            "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation."
+          }
+        ]
+      }
+    ],
+    "total": 14
+  },
+  "after": {
+    "rows": [
+      {
+        "file": "suggest-after-r10-review1.json",
+        "editorial": 5,
+        "compliance": 0,
+        "withDirection": 5,
+        "dirs": [
+          {
+            "statementIndex": 1,
+            "rule": "marketing_language_excess",
+            "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+          },
+          {
+            "statementIndex": 1,
+            "rule": "voice_consistency",
+            "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'."
+          },
+          {
+            "statementIndex": 3,
+            "rule": "overreach_unsupported_causal",
+            "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'."
+          },
+          {
+            "statementIndex": 7,
+            "rule": "voice_consistency",
+            "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'."
+          },
+          {
+            "statementIndex": 8,
+            "rule": "first_person_plural",
+            "direction": "Replace 'available to us' with 'available to Halden Group'."
+          }
+        ]
+      },
+      {
+        "file": "suggest-after-r10-review2.json",
+        "editorial": 3,
+        "compliance": 0,
+        "withDirection": 3,
+        "dirs": [
+          {
+            "statementIndex": 1,
+            "rule": "voice_consistency",
+            "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'."
+          },
+          {
+            "statementIndex": 3,
+            "rule": "structural_integrity",
+            "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'"
+          },
+          {
+            "statementIndex": 7,
+            "rule": "voice_consistency",
+            "direction": "Replace 'recommends' with 'Halden Group recommends'."
+          }
+        ]
+      },
+      {
+        "file": "condition-b-review.json",
+        "editorial": 4,
+        "compliance": 0,
+        "withDirection": 4,
+        "dirs": [
+          {
+            "statementIndex": 1,
+            "rule": "marketing_language_excess",
+            "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+          },
+          {
+            "statementIndex": 1,
+            "rule": "voice_consistency",
+            "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'."
+          },
+          {
+            "statementIndex": 7,
+            "rule": "voice_consistency",
+            "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'."
+          },
+          {
+            "statementIndex": 8,
+            "rule": "voice_consistency",
+            "direction": "Replace 'available to us' with 'available to Halden Group'."
+          }
+        ]
+      },
+      {
+        "file": "coverage-gap-review.json",
+        "editorial": 2,
+        "compliance": 0,
+        "withDirection": 2,
+        "dirs": [
+          {
+            "statementIndex": 3,
+            "rule": "marketing_language_excess",
+            "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text."
+          },
+          {
+            "statementIndex": 5,
+            "rule": "overreach_unsupported_causal",
+            "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation."
+          }
+        ]
+      }
+    ],
+    "total": 14
+  },
+  "regen": [],
+  "movedVerdicts": [],
+  "directiveRuns": [
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'.",
+      "followed": true,
+      "target": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'.",
+      "followed": true,
+      "target": "means key-person risk is limited",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": false,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "first_person_plural",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": false,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'.",
+      "followed": true,
+      "target": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'.",
+      "followed": true,
+      "target": "means key-person risk is limited",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "first_person_plural",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": false,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'.",
+      "followed": true,
+      "target": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'.",
+      "followed": true,
+      "target": "means key-person risk is limited",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": false,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "first_person_plural",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": false,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'.",
+      "followed": false,
+      "target": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'.",
+      "followed": true,
+      "target": "means key-person risk is limited",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "first_person_plural",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": false,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'.",
+      "followed": false,
+      "target": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'.",
+      "followed": true,
+      "target": "means key-person risk is limited",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "first_person_plural",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": false,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'.",
+      "followed": false,
+      "target": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'.",
+      "followed": true,
+      "target": "means key-person risk is limited",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review1.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "first_person_plural",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'.",
+      "followed": true,
+      "target": "We were attracted to Meridian",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles.",
+      "rule": "structural_integrity",
+      "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'",
+      "followed": false,
+      "target": "The team",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 7,
+      "statementText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'recommends' with 'Halden Group recommends'.",
+      "followed": false,
+      "target": "recommends",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'.",
+      "followed": true,
+      "target": "We were attracted to Meridian",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles.",
+      "rule": "structural_integrity",
+      "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'",
+      "followed": false,
+      "target": "The team",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 7,
+      "statementText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'recommends' with 'Halden Group recommends'.",
+      "followed": false,
+      "target": "recommends",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'.",
+      "followed": true,
+      "target": "We were attracted to Meridian",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles.",
+      "rule": "structural_integrity",
+      "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'",
+      "followed": false,
+      "target": "The team",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 7,
+      "statementText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'recommends' with 'Halden Group recommends'.",
+      "followed": false,
+      "target": "recommends",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'.",
+      "followed": true,
+      "target": "We were attracted to Meridian",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles.",
+      "rule": "structural_integrity",
+      "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'",
+      "followed": false,
+      "target": "The team",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 7,
+      "statementText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'recommends' with 'Halden Group recommends'.",
+      "followed": false,
+      "target": "recommends",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'.",
+      "followed": true,
+      "target": "We were attracted to Meridian",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles.",
+      "rule": "structural_integrity",
+      "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'",
+      "followed": false,
+      "target": "The team",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 7,
+      "statementText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'recommends' with 'Halden Group recommends'.",
+      "followed": false,
+      "target": "recommends",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'.",
+      "followed": true,
+      "target": "We were attracted to Meridian",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 3,
+      "statementText": "The team's stability, with no senior departures across the last three fund cycles.",
+      "rule": "structural_integrity",
+      "direction": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'",
+      "followed": false,
+      "target": "The team",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "suggest-after-r10-review2.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 7,
+      "statementText": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'recommends' with 'Halden Group recommends'.",
+      "followed": false,
+      "target": "recommends",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'.",
+      "followed": true,
+      "target": "We were attracted",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'.",
+      "followed": true,
+      "target": "We were attracted",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'.",
+      "followed": true,
+      "target": "We were attracted",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'.",
+      "followed": true,
+      "target": "We were attracted",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'.",
+      "followed": true,
+      "target": "We were attracted",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "genuinely exceptional",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 1,
+      "statementText": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'.",
+      "followed": true,
+      "target": "We were attracted",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 7,
+      "statementText": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+      "followed": true,
+      "target": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "condition-b-review.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 8,
+      "statementText": "The GP provided access to co-investments that would not otherwise have been available to us.",
+      "rule": "voice_consistency",
+      "direction": "Replace 'available to us' with 'available to Halden Group'.",
+      "followed": true,
+      "target": "available to us",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 3,
+      "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "highly regarded",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "OLD",
+      "seed": 1,
+      "statementIndex": 5,
+      "statementText": "This relationship enabled deep insight during the diligence phase.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+      "followed": false,
+      "target": "enabled deep insight during the diligence phase",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 3,
+      "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "highly regarded",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "OLD",
+      "seed": 2,
+      "statementIndex": 5,
+      "statementText": "This relationship enabled deep insight during the diligence phase.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+      "followed": false,
+      "target": "enabled deep insight during the diligence phase",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 3,
+      "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "highly regarded",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "OLD",
+      "seed": 3,
+      "statementIndex": 5,
+      "statementText": "This relationship enabled deep insight during the diligence phase.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+      "followed": false,
+      "target": "enabled deep insight during the diligence phase",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 3,
+      "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "highly regarded",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "NEW",
+      "seed": 1,
+      "statementIndex": 5,
+      "statementText": "This relationship enabled deep insight during the diligence phase.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+      "followed": true,
+      "target": "enabled deep insight during the diligence phase",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 3,
+      "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "highly regarded",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "NEW",
+      "seed": 2,
+      "statementIndex": 5,
+      "statementText": "This relationship enabled deep insight during the diligence phase.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+      "followed": true,
+      "target": "enabled deep insight during the diligence phase",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 3,
+      "statementText": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+      "rule": "marketing_language_excess",
+      "direction": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "followed": true,
+      "target": "highly regarded",
+      "scoredOn": "span removed"
+    },
+    {
+      "file": "coverage-gap-review.json",
+      "arm": "NEW",
+      "seed": 3,
+      "statementIndex": 5,
+      "statementText": "This relationship enabled deep insight during the diligence phase.",
+      "rule": "overreach_unsupported_causal",
+      "direction": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+      "followed": true,
+      "target": "enabled deep insight during the diligence phase",
+      "scoredOn": "span removed"
+    }
+  ],
+  "totals": {
+    "old": {
+      "followed": 29,
+      "of": 42
+    },
+    "nw": {
+      "followed": 30,
+      "of": 42
+    },
+    "regressions": [
+      "suggest-after-r10-review1.json::marketing_language_excess::1",
+      "suggest-after-r10-review1.json::voice_consistency::1"
+    ]
+  },
+  "reviewCostEstimateUsd": 0,
+  "part3CostUsd": 0.14916700000000005
+}
