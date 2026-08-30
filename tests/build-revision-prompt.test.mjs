@@ -99,6 +99,17 @@ const editorialRemoveMaterialityCard = {
   },
 };
 
+const silentNoExcerptCard = {
+  qcCard: {
+    index: 9,
+    statement: "We believe the fund should deliver.",
+    supportState: "not_supported",
+    displayVerdict: "not_supported",
+    editorialVerdict: "clean",
+    complianceVerdict: "clean",
+  },
+};
+
 const editorialRemoveDirectionCard = {
   qcCard: {
     index: 8,
@@ -888,7 +899,7 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /Hedge or drop the precise number ONLY when the source states no replacement value/i);
     assert.match(prompt, /kind "unsupported"/);
     assert.match(prompt, /same figure rule as conflict\/partial/);
-    assert.match(prompt, /LEAVE THE AUTHOR'S WORDING EXACTLY AS WRITTEN/);
+    assert.match(prompt, /leave the CLAIM exactly as written and flag it/);
     assert.match(prompt, /kind "partial"/);
     assert.match(prompt, /Keep the CONFIRMED portion unchanged/i);
     assert.match(prompt, /around USD 1\.9 billion/);
@@ -925,18 +936,45 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /natural paragraph structure/i);
   });
 
-  test("unsupported silent source: leave as written, no substitution, no author-figure approximation", () => {
-    const concerns = gatherConcerns([evidenceGapCard]);
+  test("unsupported silent source: leave the claim as written, no substitution, no author-figure approximation", () => {
+    const concerns = gatherConcerns([evidenceGapCard, silentNoExcerptCard]);
     const prompt = buildRevisionPrompt(draft, concerns, {});
 
-    // Silence never edits. The soften/cut machinery is gone entirely.
+    // Silence never edits the CLAIM. The soften/cut machinery is gone entirely.
     assert.doesNotMatch(prompt, /ONE TEST/);
     assert.doesNotMatch(prompt, /SOFTEN/);
     assert.doesNotMatch(prompt, /CUT THE CLAUSE/);
     assert.doesNotMatch(prompt, /softening rule/);
-    assert.match(prompt, /LEAVE THE AUTHOR'S WORDING EXACTLY AS WRITTEN and flag it/);
-    assert.match(prompt, /Do not soften it, do not drop the figure, do not cut the clause/);
+    assert.doesNotMatch(prompt, /LEAVE THE AUTHOR'S WORDING EXACTLY AS WRITTEN/);
+    assert.match(prompt, /leave the CLAIM exactly as written and flag it/);
+    assert.match(prompt, /Do not soften the claim, do not drop a figure, do not cut the clause/);
     assert.match(prompt, /Silence is the absence of evidence, not evidence against the claim/);
+    assert.match(prompt, /the author decides what to do about the CLAIM/);
+
+    // Carve-out: one named first-person operation. Never-clauses at equal specificity.
+    assert.match(prompt, /Never delete the actor/);
+    assert.match(prompt, /THE ACTOR STAYS/);
+    assert.match(prompt, /Never "X"/);
+    assert.match(prompt, /Never "is believed"/);
+    assert.match(prompt, /Never "is recommended"/);
+    assert.match(prompt, /Do not recast into an agentless or passive construction/);
+    assert.match(prompt, /Preserve every hedge and modal exactly/);
+    assert.match(prompt, /"should deliver" stays "should deliver"/);
+    assert.match(prompt, /"We believe X" -> "Halden Group believes X"/);
+    assert.match(prompt, /"available to us" -> "available to Halden Group"/);
+
+    // Named exclusions. A later edit must not drop these silently.
+    assert.match(prompt, /marketing_language_excess, kind soften/);
+    assert.match(prompt, /overreach_unsupported_causal/);
+    assert.match(prompt, /removing a hedge or modal/);
+    assert.match(prompt, /completing a fragment/);
+    assert.match(prompt, /deleting a view-marker/);
+
+    // Three amended copies all present (L1089, L1086, L654).
+    assert.match(prompt, /leave the CLAIM exactly as written and flag it/);
+    assert.match(prompt, /the CLAIM is never edited/);
+    assert.match(prompt, /A named first-person subject replacement on that statement is still followed/);
+    assert.match(prompt, /keep the claim as written and flag it\. A named first-person subject replacement on this statement is still followed/);
 
     // The substitution prohibition, with the run that forced it.
     assert.match(prompt, /NEVER SUBSTITUTE A DIFFERENT FACT/);
