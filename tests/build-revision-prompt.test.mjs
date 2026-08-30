@@ -890,7 +890,7 @@ describe("buildRevisionPrompt", () => {
     assert.match(prompt, /thousand_separator/);
     assert.match(prompt, /number_spelling/);
     assert.match(prompt, /first_person_plural/);
-    assert.match(prompt, /hyperbole_vs_qualitative/);
+    assert.doesNotMatch(prompt, /hyperbole_vs_qualitative/);
     assert.match(prompt, /HOUSE STYLE RULES/);
     assert.match(prompt, /SUPPORTED figures: never change the author's number/i);
     assert.match(prompt, /kind "conflict"/);
@@ -1010,10 +1010,10 @@ describe("buildRevisionPrompt", () => {
     );
   });
 
-  test("gates first_person_plural off for investor_letter but still includes hyperbole and currency", () => {
+  test("gates first_person_plural off for investor_letter but still includes currency; hyperbole is not entire-draft", () => {
     const promptIl = buildRevisionPrompt(draft, [], { outputType: "INVESTOR_LETTER" });
     assert.doesNotMatch(promptIl, /first_person_plural:/);
-    assert.match(promptIl, /hyperbole_vs_qualitative/);
+    assert.doesNotMatch(promptIl, /hyperbole_vs_qualitative/);
     assert.match(promptIl, /currency_format/);
   });
 

@@ -98,9 +98,9 @@ describe("stage 1 prompt", () => {
     assert.ok(a.startsWith(prefix) && b.startsWith(prefix));
   });
 
-  test("carries the full house style guide and only one kind rule", () => {
+  test("carries the house style guide and only one kind rule", () => {
     const prompt = buildStage1Prompt(spanConcern(), "partial", {});
-    assert.match(prompt, /hyperbole_vs_qualitative/);
+    assert.doesNotMatch(prompt, /hyperbole_vs_qualitative/);
     assert.match(prompt, /first_person_plural/);
     assert.match(prompt, /c\) kind "partial"/);
     assert.doesNotMatch(prompt, /a\) kind "conflict"/);
