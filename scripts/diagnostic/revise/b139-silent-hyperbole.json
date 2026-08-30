@@ -1,0 +1,22 @@
+{
+  "id": "b139-silent-hyperbole",
+  "note": "Synthetic. not_supported card with a listed hyperbole word whose remaining clause still informs after deletion. No hype concern. Gate is text, not behaviour. Do not cite as a Suggest behaviour fixture.",
+  "payload": {
+    "statements": [
+      {
+        "id": "0",
+        "text": "The franchise has a best-in-class track record: 2.4x gross MOIC and 21% gross IRR across seventeen exits.",
+        "qcCard": {
+          "index": 0,
+          "statement": "The franchise has a best-in-class track record: 2.4x gross MOIC and 21% gross IRR across seventeen exits.",
+          "supportState": "not_supported",
+          "displayVerdict": "not_supported",
+          "editorialVerdict": "clean",
+          "editorialConcerns": [],
+          "complianceVerdict": "clean",
+          "complianceConcerns": []
+        }
+      }
+    ]
+  }
+}
