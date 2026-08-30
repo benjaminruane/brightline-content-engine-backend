@@ -12,6 +12,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
+import { suggestCallRecord } from "../lib/suggest-call-record.mjs";
 import {
   classifyDirection,
   nl,
@@ -250,6 +251,13 @@ async function callArm(fx, arm, prompt, seed) {
     seed,
     elapsedMs: Date.now() - tCall,
     usage: completion?.usage ?? null,
+    callRecord: suggestCallRecord({
+      completion,
+      prompt,
+      model: cfg.model,
+      temperature: 0,
+      seed,
+    }),
     revisedDraft: finalized.revisedDraft,
     origList: fx.origList,
     directives: fx.directives,
@@ -479,6 +487,7 @@ async function writeOutputs({ t0, est, estHi, cost, fixtures, runs, scoreRows, s
       seed: r.seed,
       elapsedMs: r.elapsedMs,
       usage: r.usage,
+      callRecord: r.callRecord ?? null,
       revisedDraft: r.revisedDraft,
     })),
     scoreRows,

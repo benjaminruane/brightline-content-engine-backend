@@ -17,6 +17,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
+import { suggestCallRecord } from "../lib/suggest-call-record.mjs";
 import { nl, scoreDirectiveFollow, stripMarkers } from "./directive-follow-scorer.mjs";
 
 loadLocalEnvFiles({ liveMeasurement: true });
@@ -290,6 +291,13 @@ async function maybeRunTail(prompt, origList, statementText, direction) {
       firstPerson,
       revisedStatement: stmt,
       inputTokens: completion?.usage?.inputTokens ?? null,
+      callRecord: suggestCallRecord({
+        completion,
+        prompt,
+        model: cfg.model,
+        temperature: 0,
+        seed,
+      }),
     });
     console.log(`    followed=${scored.followed} actor=${actor} cost $${cost.toFixed(4)}`);
     console.log(`    ${stmt}`);
