@@ -13,6 +13,7 @@ import {
 } from "../lib/pr9-marker-honesty.mjs";
 import { classifyNoteClaim, NOTE_AMBIGUOUS, NOTE_CLAIMS_NO_CHANGE } from "../lib/pr9-marker-note-claim.mjs";
 import { finalizeSuggestRevisionText } from "../lib/build-revision-prompt.mjs";
+import { LOUD_NOTE } from "../lib/revise-flag-register.mjs";
 
 /**
  * Meridian original + Suggest1 revised pair from
@@ -338,6 +339,36 @@ describe("applyMarkerHonestyCheck", () => {
     assert.equal(result.honestyEvents.length, 1);
     assert.equal(result.honestyEvents[0].contradiction, "kept_but_differs");
     assert.match(result.markers[0].note, /^Revised this span -/);
+  });
+
+  test("KEPT on an unchanged sentence does not inherit a first-token edit in the next sentence (B140)", () => {
+    const original =
+      "This relationship enabled deep insight during the diligence phase. We recommend approval of the commitment.";
+    const revised =
+      "This relationship enabled deep insight during the diligence phase. Partners Group recommends approval of the commitment.";
+    const span = "This relationship enabled deep insight during the diligence phase";
+    const start = revised.indexOf(span);
+    const end = start + span.length;
+    const result = applyMarkerHonestyCheck(original, {
+      revisedDraft: revised,
+      markers: [
+        {
+          start,
+          end,
+          intent: MARKER_INTENT_KEPT,
+          note: LOUD_NOTE,
+        },
+      ],
+    });
+    assert.equal(
+      result.honestyEvents.some((e) => e.contradiction === "kept_but_differs"),
+      false
+    );
+    assert.equal(result.honestyEvents.length, 0);
+    assert.equal(result.markers[0].note, LOUD_NOTE);
+    assert.equal(result.markers[0].note.startsWith("Revised this span"), false);
+    assert.equal(result.markers[0].start, start);
+    assert.equal(result.markers[0].end, end);
   });
 });
 
