@@ -1,0 +1,1245 @@
+{
+  "ranAt": "2026-09-01T09:40:06.221Z",
+  "preflight": {
+    "file": "suggest-after-r10-review1.json",
+    "route": "lib/revise-actions/run.mjs runActionList",
+    "notExercised": [
+      "api/revise-actions.js flag gate (404 when off)",
+      "CORS and OPTIONS",
+      "405 method",
+      "400 missing statements",
+      "500 missing provider key",
+      "Vercel maxDuration 60s",
+      "string-body JSON parse"
+    ],
+    "expectedActionIds": [
+      "S1:editorial:voice_consistency:1",
+      "S4:evidence:conflicting:0",
+      "S7:editorial:voice_consistency:0",
+      "S8:editorial:first_person_plural:0"
+    ],
+    "runs": 3,
+    "expectedCalls": 12,
+    "preflightUsd": 0.07800000000000001,
+    "costCeilingUsd": 1
+  },
+  "actual": {
+    "runs": 3,
+    "calls": 12,
+    "totalUsd": 0.02687125
+  },
+  "runs": [
+    {
+      "run": 1,
+      "ok": true,
+      "actionIds": [
+        "S1:editorial:voice_consistency:1",
+        "S4:evidence:conflicting:0",
+        "S7:editorial:voice_consistency:0",
+        "S8:editorial:first_person_plural:0"
+      ],
+      "actionCount": 4,
+      "acknowledgeCount": 10,
+      "callCount": 4,
+      "callUsd": 0.009063749999999999,
+      "calls": [
+        {
+          "findingId": "S4:evidence:conflicting:0",
+          "costUsd": 0.00224625,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 2023,
+            "usage": {
+              "inputTokens": 781,
+              "outputTokens": 127,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.00224625,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S8:editorial:first_person_plural:0",
+          "costUsd": 0.0020099999999999996,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 2501,
+            "usage": {
+              "inputTokens": 712,
+              "outputTokens": 112,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.0020099999999999996,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S1:editorial:voice_consistency:1",
+          "costUsd": 0.002515,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 2659,
+            "usage": {
+              "inputTokens": 756,
+              "outputTokens": 157,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.002515,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S7:editorial:voice_consistency:0",
+          "costUsd": 0.0022925,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 2765,
+            "usage": {
+              "inputTokens": 738,
+              "outputTokens": 137,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.0022925,
+            "systemFingerprint": null
+          }
+        }
+      ],
+      "entries": [
+        {
+          "id": "S0:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "0",
+          "statement": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+            "startChar": 0,
+            "endChar": 196
+          },
+          "thing2": "The source confirms Halden Group's prior investments with Meridian Capital, including co-investments and debt financings, but does not mention a lead commitment to Meridian Capital Partners V in June 2025. The specific detail about the EUR 1.2 billion fund targeting lower-mid-market buyouts is also not addressed. The reviewer should verify the lead commitment and fund details or adjust the statement accordingly.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S1:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "that is, in our view, genuinely exceptional",
+            "startChar": 64,
+            "endChar": 107
+          },
+          "thing2": "The source confirms Meridian's strong track record by providing quantitative data: a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, it does not directly state that this track record is 'genuinely exceptional,' which is an evaluative claim made in the statement. The reviewer should consider adding a source that explicitly supports the exceptional nature of the track record or adjust the statement to align with the data provided.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S1:editorial:marketing_language_excess:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "marketing_language_excess",
+          "thing1": {
+            "quote": "genuinely exceptional",
+            "startChar": 86,
+            "endChar": 107
+          },
+          "thing2": "'genuinely exceptional' is hyperbolic language without substantiation in the immediate context. The figures provided in the next sentence substantiate the track record without needing this evaluative language.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "marketing_language_excess",
+            "reasonCode": "policy_forbids"
+          },
+          "noProposalReason": "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
+        },
+        {
+          "id": "S1:editorial:voice_consistency:1",
+          "disposition": "ACTION",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "thing1": {
+            "quote": "in our view",
+            "startChar": 73,
+            "endChar": 84
+          },
+          "thing2": "The statement uses first-person plural 'We' and 'in our view', which is inconsistent with the third-person voice required for reporting commentary. The authoring organisation, Halden Group, should be the grammatical subject.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "voice_consistency",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.' with 'Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.'",
+          "resultingSentence": "Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.",
+          "why": "This change replaces the first-person references with the named authoring organisation as the grammatical subject and holder of the opinion, while preserving the evaluative claim, the hedge that it is a matter of Halden Group’s view, and all other wording and substance of the original sentence.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S1:framing:framing_fidelity:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "framing",
+          "rule": "framing_fidelity",
+          "thing1": {
+            "quote": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+            "startChar": 0,
+            "endChar": 108
+          },
+          "thing2": "The statement claims the track record is 'genuinely exceptional,' which goes beyond what the source supports, as it only describes it as 'strong.'",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "framing_fidelity",
+            "reasonCode": "visible_signal"
+          },
+          "noProposalReason": "This concern is on the card so you can see it. Nothing is proposed."
+        },
+        {
+          "id": "S2:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "2",
+          "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "placing it in the top quartile of European lower-mid-market managers.",
+            "startChar": 59,
+            "endChar": 128
+          },
+          "thing2": "The source confirms the realised gross MOIC of 2.4 times across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers. The reviewer should verify this ranking separately or adjust the statement to reflect only the confirmed data.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S3:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+            "startChar": 0,
+            "endChar": 116
+          },
+          "thing2": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about the team's stability. However, it does not address the claim that key-person risk is limited, which is an evaluative judgment not covered by the source. The reviewer should either find additional evidence to support the claim about key-person risk or adjust the statement to reflect only the confirmed stability.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S3:editorial:overreach_unsupported_causal:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "editorial",
+          "rule": "overreach_unsupported_causal",
+          "thing1": {
+            "quote": "means key-person risk is limited",
+            "startChar": 83,
+            "endChar": 115
+          },
+          "thing2": "The phrase 'means key-person risk is limited' implies a direct causation between team stability and limited key-person risk without clear supporting evidence.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "overreach_unsupported_causal",
+            "reasonCode": "policy_forbids"
+          },
+          "noProposalReason": "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
+        },
+        {
+          "id": "S4:evidence:conflicting:0",
+          "disposition": "ACTION",
+          "statementId": "4",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "kind": "evidence",
+          "rule": "conflicting",
+          "thing1": {
+            "quote": "returned",
+            "startChar": 12,
+            "endChar": 20
+          },
+          "thing2": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation without realization. The reviewer should reconcile this discrepancy or remove the claim.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": false,
+            "rule": "conflicting",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'has returned' with 'is currently marked at'.",
+          "resultingSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "why": "The source specifies that Fund IV is 'currently marked at' 1.9x gross MOIC and 24% gross IRR, which refers to current valuations rather than realized returns. Replacing 'has returned' with 'is currently marked at' aligns the sentence with the source while preserving the figures and the substance of the performance claim.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S7:evidence:not_supported:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "thing1": null,
+          "thing2": "No source addresses the claim that the fund should deliver returns in line with its predecessor or the recommendation to commit. The reviewer should add a source that supports this belief or remove the claim.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "not_supported",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S7:editorial:voice_consistency:0",
+          "disposition": "ACTION",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "thing1": {
+            "quote": "we believe",
+            "startChar": 12,
+            "endChar": 22
+          },
+          "thing2": "The statement uses first-person plural 'we believe' and 'we recommend', which is inconsistent with the third-person voice required for reporting commentary.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "voice_consistency",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and Halden Group recommends the commitment'.",
+          "resultingSentence": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and Halden Group recommends the commitment.",
+          "why": "This change replaces the first-person plural subject and object with the named organisation as the actor, preserving the original evaluative claims, hedging language, and recommendation while aligning the sentence with the required third-person institutional voice.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S8:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "that would not otherwise have been available to us",
+            "startChar": 41,
+            "endChar": 91
+          },
+          "thing2": "The source confirms that the GP offered co-investments to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis. However, it does not address whether these co-investment opportunities would not have been available otherwise, which is a key part of the statement. The reviewer should verify this aspect or adjust the statement to reflect only the confirmed details.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S8:editorial:first_person_plural:0",
+          "disposition": "ACTION",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "editorial",
+          "rule": "first_person_plural",
+          "thing1": {
+            "quote": "available to us",
+            "startChar": 76,
+            "endChar": 91
+          },
+          "thing2": "The phrase 'available to us' uses first-person plural, which is not appropriate for reporting commentary. Replace 'us' with 'Halden Group' as the object.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "first_person_plural",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'available to us' with 'available to Halden Group'.",
+          "resultingSentence": "The GP provided access to co-investments that would not otherwise have been available to Halden Group.",
+          "why": "This change replaces the first-person plural object with the named organisation as object, preserving the original claim, its evaluative nature, and all wording apart from the required pronoun substitution, in line with the rule to retain the actor and not alter the substance or tone of the statement.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S9:evidence:not_supported:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "9",
+          "statement": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "thing1": null,
+          "thing2": "No source addresses the expectation that the relationship will deepen over the life of the fund. The source only mentions past investments by Halden Group with Meridian Capital. The reviewer should add a source that supports this claim or remove it.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "not_supported",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "ok": true,
+      "actionIds": [
+        "S1:editorial:voice_consistency:1",
+        "S4:evidence:conflicting:0",
+        "S7:editorial:voice_consistency:0",
+        "S8:editorial:first_person_plural:0"
+      ],
+      "actionCount": 4,
+      "acknowledgeCount": 10,
+      "callCount": 4,
+      "callUsd": 0.00887375,
+      "calls": [
+        {
+          "findingId": "S8:editorial:first_person_plural:0",
+          "costUsd": 0.00189,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 1454,
+            "usage": {
+              "inputTokens": 712,
+              "outputTokens": 100,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.00189,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S4:evidence:conflicting:0",
+          "costUsd": 0.00203625,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 1523,
+            "usage": {
+              "inputTokens": 781,
+              "outputTokens": 106,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.00203625,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S1:editorial:voice_consistency:1",
+          "costUsd": 0.002495,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 1915,
+            "usage": {
+              "inputTokens": 756,
+              "outputTokens": 155,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.002495,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S7:editorial:voice_consistency:0",
+          "costUsd": 0.0024525000000000003,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 1915,
+            "usage": {
+              "inputTokens": 738,
+              "outputTokens": 153,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.0024525000000000003,
+            "systemFingerprint": null
+          }
+        }
+      ],
+      "entries": [
+        {
+          "id": "S0:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "0",
+          "statement": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+            "startChar": 0,
+            "endChar": 196
+          },
+          "thing2": "The source confirms Halden Group's prior investments with Meridian Capital, including co-investments and debt financings, but does not mention a lead commitment to Meridian Capital Partners V in June 2025. The specific detail about the EUR 1.2 billion fund targeting lower-mid-market buyouts is also not addressed. The reviewer should verify the lead commitment and fund details or adjust the statement accordingly.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S1:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "that is, in our view, genuinely exceptional",
+            "startChar": 64,
+            "endChar": 107
+          },
+          "thing2": "The source confirms Meridian's strong track record by providing quantitative data: a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, it does not directly state that this track record is 'genuinely exceptional,' which is an evaluative claim made in the statement. The reviewer should consider adding a source that explicitly supports the exceptional nature of the track record or adjust the statement to align with the data provided.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S1:editorial:marketing_language_excess:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "marketing_language_excess",
+          "thing1": {
+            "quote": "genuinely exceptional",
+            "startChar": 86,
+            "endChar": 107
+          },
+          "thing2": "'genuinely exceptional' is hyperbolic language without substantiation in the immediate context. The figures provided in the next sentence substantiate the track record without needing this evaluative language.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "marketing_language_excess",
+            "reasonCode": "policy_forbids"
+          },
+          "noProposalReason": "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
+        },
+        {
+          "id": "S1:editorial:voice_consistency:1",
+          "disposition": "ACTION",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "thing1": {
+            "quote": "in our view",
+            "startChar": 73,
+            "endChar": 84
+          },
+          "thing2": "The statement uses first-person plural 'We' and 'in our view', which is inconsistent with the third-person voice required for reporting commentary. The authoring organisation, Halden Group, should be the grammatical subject.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "voice_consistency",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.' with 'Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.'",
+          "resultingSentence": "Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.",
+          "why": "This change replaces the first-person references with the named authoring organisation as the grammatical subject and holder of the opinion, while preserving the evaluative claim, the hedge that it is a matter of Halden Group’s view, and all other wording and strength of language.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S1:framing:framing_fidelity:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "framing",
+          "rule": "framing_fidelity",
+          "thing1": {
+            "quote": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+            "startChar": 0,
+            "endChar": 108
+          },
+          "thing2": "The statement claims the track record is 'genuinely exceptional,' which goes beyond what the source supports, as it only describes it as 'strong.'",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "framing_fidelity",
+            "reasonCode": "visible_signal"
+          },
+          "noProposalReason": "This concern is on the card so you can see it. Nothing is proposed."
+        },
+        {
+          "id": "S2:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "2",
+          "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "placing it in the top quartile of European lower-mid-market managers.",
+            "startChar": 59,
+            "endChar": 128
+          },
+          "thing2": "The source confirms the realised gross MOIC of 2.4 times across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers. The reviewer should verify this ranking separately or adjust the statement to reflect only the confirmed data.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S3:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+            "startChar": 0,
+            "endChar": 116
+          },
+          "thing2": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about the team's stability. However, it does not address the claim that key-person risk is limited, which is an evaluative judgment not covered by the source. The reviewer should either find additional evidence to support the claim about key-person risk or adjust the statement to reflect only the confirmed stability.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S3:editorial:overreach_unsupported_causal:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "editorial",
+          "rule": "overreach_unsupported_causal",
+          "thing1": {
+            "quote": "means key-person risk is limited",
+            "startChar": 83,
+            "endChar": 115
+          },
+          "thing2": "The phrase 'means key-person risk is limited' implies a direct causation between team stability and limited key-person risk without clear supporting evidence.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "overreach_unsupported_causal",
+            "reasonCode": "policy_forbids"
+          },
+          "noProposalReason": "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
+        },
+        {
+          "id": "S4:evidence:conflicting:0",
+          "disposition": "ACTION",
+          "statementId": "4",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "kind": "evidence",
+          "rule": "conflicting",
+          "thing1": {
+            "quote": "returned",
+            "startChar": 12,
+            "endChar": 20
+          },
+          "thing2": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation without realization. The reviewer should reconcile this discrepancy or remove the claim.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": false,
+            "rule": "conflicting",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'has returned' with 'is currently marked at'.",
+          "resultingSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "why": "'Returned' implies fully realised performance, while the source specifies that Fund IV is 'currently marked at' these metrics, indicating valuation-based performance. Replacing the verb aligns the sentence with the source without altering the figures or adding unstated information.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S7:evidence:not_supported:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "thing1": null,
+          "thing2": "No source addresses the claim that the fund should deliver returns in line with its predecessor or the recommendation to commit. The reviewer should add a source that supports this belief or remove the claim.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "not_supported",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S7:editorial:voice_consistency:0",
+          "disposition": "ACTION",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "thing1": {
+            "quote": "we believe",
+            "startChar": 12,
+            "endChar": 22
+          },
+          "thing2": "The statement uses first-person plural 'we believe' and 'we recommend', which is inconsistent with the third-person voice required for reporting commentary.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "voice_consistency",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and Halden Group recommends the commitment'.",
+          "resultingSentence": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and Halden Group recommends the commitment.",
+          "why": "This change replaces the first-person plural subjects and objects with the named organisation, Halden Group, while preserving the original evaluative claims, hedging language, and recommendation exactly as stated. It satisfies the requirement for third-person voice without altering the substance, confidence level, or modality of the judgement.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S8:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "that would not otherwise have been available to us",
+            "startChar": 41,
+            "endChar": 91
+          },
+          "thing2": "The source confirms that the GP offered co-investments to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis. However, it does not address whether these co-investment opportunities would not have been available otherwise, which is a key part of the statement. The reviewer should verify this aspect or adjust the statement to reflect only the confirmed details.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S8:editorial:first_person_plural:0",
+          "disposition": "ACTION",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "editorial",
+          "rule": "first_person_plural",
+          "thing1": {
+            "quote": "available to us",
+            "startChar": 76,
+            "endChar": 91
+          },
+          "thing2": "The phrase 'available to us' uses first-person plural, which is not appropriate for reporting commentary. Replace 'us' with 'Halden Group' as the object.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "first_person_plural",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'available to us' with 'available to Halden Group'.",
+          "resultingSentence": "The GP provided access to co-investments that would not otherwise have been available to Halden Group.",
+          "why": "This change replaces the first-person plural object with the named organisation as object, preserving the original claim, its evaluative nature, and all other wording, in line with the rule that only first-person references may be altered.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S9:evidence:not_supported:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "9",
+          "statement": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "thing1": null,
+          "thing2": "No source addresses the expectation that the relationship will deepen over the life of the fund. The source only mentions past investments by Halden Group with Meridian Capital. The reviewer should add a source that supports this claim or remove it.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "not_supported",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "ok": true,
+      "actionIds": [
+        "S1:editorial:voice_consistency:1",
+        "S4:evidence:conflicting:0",
+        "S7:editorial:voice_consistency:0",
+        "S8:editorial:first_person_plural:0"
+      ],
+      "actionCount": 4,
+      "acknowledgeCount": 10,
+      "callCount": 4,
+      "callUsd": 0.00893375,
+      "calls": [
+        {
+          "findingId": "S7:editorial:voice_consistency:0",
+          "costUsd": 0.0022625,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 1643,
+            "usage": {
+              "inputTokens": 738,
+              "outputTokens": 134,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.0022625,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S4:evidence:conflicting:0",
+          "costUsd": 0.00204625,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 1925,
+            "usage": {
+              "inputTokens": 781,
+              "outputTokens": 107,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.00204625,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S8:editorial:first_person_plural:0",
+          "costUsd": 0.0020099999999999996,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 2242,
+            "usage": {
+              "inputTokens": 712,
+              "outputTokens": 112,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.0020099999999999996,
+            "systemFingerprint": null
+          }
+        },
+        {
+          "findingId": "S1:editorial:voice_consistency:1",
+          "costUsd": 0.002615,
+          "conditions": {
+            "provider": "openai",
+            "model": "gpt-5.1-2025-11-13",
+            "temperature": 0,
+            "seed": 1,
+            "latencyMs": 2250,
+            "usage": {
+              "inputTokens": 756,
+              "outputTokens": 167,
+              "cachedInputTokens": 0,
+              "cacheHitRate": 0
+            },
+            "costUsd": 0.002615,
+            "systemFingerprint": null
+          }
+        }
+      ],
+      "entries": [
+        {
+          "id": "S0:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "0",
+          "statement": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+            "startChar": 0,
+            "endChar": 196
+          },
+          "thing2": "The source confirms Halden Group's prior investments with Meridian Capital, including co-investments and debt financings, but does not mention a lead commitment to Meridian Capital Partners V in June 2025. The specific detail about the EUR 1.2 billion fund targeting lower-mid-market buyouts is also not addressed. The reviewer should verify the lead commitment and fund details or adjust the statement accordingly.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S1:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "that is, in our view, genuinely exceptional",
+            "startChar": 64,
+            "endChar": 107
+          },
+          "thing2": "The source confirms Meridian's strong track record by providing quantitative data: a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, it does not directly state that this track record is 'genuinely exceptional,' which is an evaluative claim made in the statement. The reviewer should consider adding a source that explicitly supports the exceptional nature of the track record or adjust the statement to align with the data provided.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S1:editorial:marketing_language_excess:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "marketing_language_excess",
+          "thing1": {
+            "quote": "genuinely exceptional",
+            "startChar": 86,
+            "endChar": 107
+          },
+          "thing2": "'genuinely exceptional' is hyperbolic language without substantiation in the immediate context. The figures provided in the next sentence substantiate the track record without needing this evaluative language.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "marketing_language_excess",
+            "reasonCode": "policy_forbids"
+          },
+          "noProposalReason": "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
+        },
+        {
+          "id": "S1:editorial:voice_consistency:1",
+          "disposition": "ACTION",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "thing1": {
+            "quote": "in our view",
+            "startChar": 73,
+            "endChar": 84
+          },
+          "thing2": "The statement uses first-person plural 'We' and 'in our view', which is inconsistent with the third-person voice required for reporting commentary. The authoring organisation, Halden Group, should be the grammatical subject.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "voice_consistency",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.' with 'Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.'",
+          "resultingSentence": "Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.",
+          "why": "This change replaces the first-person pronoun and viewpoint marker with the named authoring organisation as the grammatical subject and holder of the opinion, preserving the original evaluative claim, the hedge that it is a view, and all other wording and strength of language, in line with the rule that only first-person references may be altered.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S1:framing:framing_fidelity:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "framing",
+          "rule": "framing_fidelity",
+          "thing1": {
+            "quote": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+            "startChar": 0,
+            "endChar": 108
+          },
+          "thing2": "The statement claims the track record is 'genuinely exceptional,' which goes beyond what the source supports, as it only describes it as 'strong.'",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "framing_fidelity",
+            "reasonCode": "visible_signal"
+          },
+          "noProposalReason": "This concern is on the card so you can see it. Nothing is proposed."
+        },
+        {
+          "id": "S2:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "2",
+          "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "placing it in the top quartile of European lower-mid-market managers.",
+            "startChar": 59,
+            "endChar": 128
+          },
+          "thing2": "The source confirms the realised gross MOIC of 2.4 times across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers. The reviewer should verify this ranking separately or adjust the statement to reflect only the confirmed data.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S3:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+            "startChar": 0,
+            "endChar": 116
+          },
+          "thing2": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about the team's stability. However, it does not address the claim that key-person risk is limited, which is an evaluative judgment not covered by the source. The reviewer should either find additional evidence to support the claim about key-person risk or adjust the statement to reflect only the confirmed stability.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S3:editorial:overreach_unsupported_causal:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "editorial",
+          "rule": "overreach_unsupported_causal",
+          "thing1": {
+            "quote": "means key-person risk is limited",
+            "startChar": 83,
+            "endChar": 115
+          },
+          "thing2": "The phrase 'means key-person risk is limited' implies a direct causation between team stability and limited key-person risk without clear supporting evidence.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "overreach_unsupported_causal",
+            "reasonCode": "policy_forbids"
+          },
+          "noProposalReason": "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
+        },
+        {
+          "id": "S4:evidence:conflicting:0",
+          "disposition": "ACTION",
+          "statementId": "4",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "kind": "evidence",
+          "rule": "conflicting",
+          "thing1": {
+            "quote": "returned",
+            "startChar": 12,
+            "endChar": 20
+          },
+          "thing2": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation without realization. The reviewer should reconcile this discrepancy or remove the claim.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": false,
+            "rule": "conflicting",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'has returned' with 'is currently marked at'.",
+          "resultingSentence": "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "why": "'Returned' implies fully realised performance, while the source specifies that Fund IV is 'currently marked at' these metrics, indicating valuation-based figures. Replacing the verb aligns the sentence with the source without altering the stated MOIC or IRR values.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S7:evidence:not_supported:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "thing1": null,
+          "thing2": "No source addresses the claim that the fund should deliver returns in line with its predecessor or the recommendation to commit. The reviewer should add a source that supports this belief or remove the claim.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "not_supported",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S7:editorial:voice_consistency:0",
+          "disposition": "ACTION",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "thing1": {
+            "quote": "we believe",
+            "startChar": 12,
+            "endChar": 22
+          },
+          "thing2": "The statement uses first-person plural 'we believe' and 'we recommend', which is inconsistent with the third-person voice required for reporting commentary.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "voice_consistency",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and Halden Group recommends the commitment'.",
+          "resultingSentence": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and Halden Group recommends the commitment.",
+          "why": "This change replaces the first-person plural subjects and objects with the named organisation, preserving the original evaluative claims, hedging language, and recommendation while aligning the sentence with the required third-person institutional voice.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S8:evidence:partial:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "evidence",
+          "rule": "partial",
+          "thing1": {
+            "quote": "that would not otherwise have been available to us",
+            "startChar": 41,
+            "endChar": 91
+          },
+          "thing2": "The source confirms that the GP offered co-investments to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis. However, it does not address whether these co-investment opportunities would not have been available otherwise, which is a key part of the statement. The reviewer should verify this aspect or adjust the statement to reflect only the confirmed details.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "partial",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        },
+        {
+          "id": "S8:editorial:first_person_plural:0",
+          "disposition": "ACTION",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "editorial",
+          "rule": "first_person_plural",
+          "thing1": {
+            "quote": "available to us",
+            "startChar": 76,
+            "endChar": 91
+          },
+          "thing2": "The phrase 'available to us' uses first-person plural, which is not appropriate for reporting commentary. Replace 'us' with 'Halden Group' as the object.",
+          "sort": {
+            "policyPermit": true,
+            "silenceOnCard": true,
+            "rule": "first_person_plural",
+            "reasonCode": "permitted"
+          },
+          "proposedChange": "Replace 'available to us' with 'available to Halden Group'.",
+          "resultingSentence": "The GP provided access to co-investments that would not otherwise have been available to Halden Group.",
+          "why": "This change replaces the first-person plural object with the named organisation as object, preserving the original claim, its evaluative nature, and all wording apart from the required pronoun substitution, in line with the rule to retain the actor and not alter substance, hedges, or modality.",
+          "verification": {
+            "status": "checked",
+            "detail": "Stated replacement matches the resulting sentence."
+          }
+        },
+        {
+          "id": "S9:evidence:not_supported:0",
+          "disposition": "ACKNOWLEDGE",
+          "statementId": "9",
+          "statement": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "thing1": null,
+          "thing2": "No source addresses the expectation that the relationship will deepen over the life of the fund. The source only mentions past investments by Halden Group with Meridian Capital. The reviewer should add a source that supports this claim or remove it.",
+          "sort": {
+            "policyPermit": false,
+            "silenceOnCard": true,
+            "rule": "not_supported",
+            "reasonCode": "silence_no_edit"
+          },
+          "noProposalReason": "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+        }
+      ]
+    }
+  ]
+}

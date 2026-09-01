@@ -23,7 +23,9 @@ const { runActionList } = await import("../../../../lib/revise-actions/run.mjs")
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CARD_PATH = path.join(__dirname, "..", "suggest-after-r10-review1.json");
-const OUT_PATH = path.join(__dirname, "first-live-run.json");
+const OUT_PATH = process.argv[2]
+  ? path.resolve(process.argv[2])
+  : path.join(__dirname, "first-live-run.json");
 const RUNS = 3;
 const COST_CEILING_USD = 1;
 const PREFLIGHT_IN = 2000;
