@@ -1,0 +1,234 @@
+{
+  "ranAt": "2026-09-01T06:37:07.984Z",
+  "gate": {
+    "file": "suggest-after-r10-review1.json",
+    "actionCount": 6,
+    "actionPhraseCount": 6,
+    "phraseShare": 1,
+    "phraseLine": 0.8,
+    "phraseGate": true,
+    "preflightUsd": 0.04275,
+    "costCeilingUsd": 1,
+    "costGate": true
+  },
+  "actualUsd": 0.01150625,
+  "callCount": 6,
+  "rows": [
+    {
+      "arm": "one",
+      "findingId": "r10-review1:S1:editorial:marketing_language_excess:0",
+      "kind": "editorial",
+      "rule": "marketing_language_excess",
+      "thing1State": "PHRASE",
+      "thing1": {
+        "quote": "genuinely exceptional",
+        "startChar": 86,
+        "endChar": 107,
+        "length": 21,
+        "statementLength": 108,
+        "ratio": 0.19444444444444445,
+        "source": "note_quote"
+      },
+      "thing2": "'genuinely exceptional' is hyperbolic language without substantiation in the immediate context. The figures provided in the next sentence substantiate the track record without needing this evaluative language.",
+      "proposedChange": "DELETE 'genuinely exceptional' (sentence becomes: \"We were attracted to Meridian on the strength of a track record that is, in our view, exceptional.\")",
+      "why": "Removing 'genuinely' directly addresses the concern about hyperbolic marketing language while preserving the author’s evaluative view and sentence structure, and it follows the guidance not to substitute a milder word.",
+      "rawText": "{\n  \"proposedChange\": \"DELETE 'genuinely exceptional' (sentence becomes: \\\"We were attracted to Meridian on the strength of a track record that is, in our view, exceptional.\\\")\",\n  \"why\": \"Removing 'genuinely' directly addresses the concern about hyperbolic marketing language while preserving the author’s evaluative view and sentence structure, and it follows the guidance not to substitute a milder word.\"\n}",
+      "parseOk": true,
+      "conditions": {
+        "provider": "openai",
+        "model": "gpt-5.1-2025-11-13",
+        "temperature": 0,
+        "seed": 1,
+        "latencyMs": 4697,
+        "usage": {
+          "inputTokens": 813,
+          "outputTokens": 99,
+          "cachedInputTokens": 0,
+          "cacheHitRate": 0
+        },
+        "costUsd": 0.0020062500000000002,
+        "systemFingerprint": null
+      }
+    },
+    {
+      "arm": "one",
+      "findingId": "r10-review1:S1:editorial:voice_consistency:1",
+      "kind": "editorial",
+      "rule": "voice_consistency",
+      "thing1State": "PHRASE",
+      "thing1": {
+        "quote": "in our view",
+        "startChar": 73,
+        "endChar": 84,
+        "length": 11,
+        "statementLength": 108,
+        "ratio": 0.10185185185185185,
+        "source": "note_quote"
+      },
+      "thing2": "The statement uses first-person plural 'We' and 'in our view', which is inconsistent with the third-person voice required for reporting commentary. The authoring organisation, Halden Group, should be the grammatical subject.",
+      "proposedChange": "Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.",
+      "why": "The review requires replacing first-person plural with the authoring organisation as grammatical subject while preserving the evaluative language and hedging. This change swaps both instances of 'we/our' for 'Halden Group' but keeps the rest of the sentence, including 'in our view', intact as required by the silence rule.",
+      "rawText": "{\n  \"proposedChange\": \"Halden Group was attracted to Meridian on the strength of a track record that is, in Halden Group’s view, genuinely exceptional.\",\n  \"why\": \"The review requires replacing first-person plural with the authoring organisation as grammatical subject while preserving the evaluative language and hedging. This change swaps both instances of 'we/our' for 'Halden Group' but keeps the rest of the sentence, including 'in our view', intact as required by the silence rule.\"\n}",
+      "parseOk": true,
+      "conditions": {
+        "provider": "openai",
+        "model": "gpt-5.1-2025-11-13",
+        "temperature": 0,
+        "seed": 1,
+        "latencyMs": 1438,
+        "usage": {
+          "inputTokens": 831,
+          "outputTokens": 114,
+          "cachedInputTokens": 0,
+          "cacheHitRate": 0
+        },
+        "costUsd": 0.00217875,
+        "systemFingerprint": null
+      }
+    },
+    {
+      "arm": "one",
+      "findingId": "r10-review1:S3:editorial:overreach_unsupported_causal:0",
+      "kind": "editorial",
+      "rule": "overreach_unsupported_causal",
+      "thing1State": "PHRASE",
+      "thing1": {
+        "quote": "means key-person risk is limited",
+        "startChar": 83,
+        "endChar": 115,
+        "length": 32,
+        "statementLength": 116,
+        "ratio": 0.27586206896551724,
+        "source": "note_quote"
+      },
+      "thing2": "The phrase 'means key-person risk is limited' implies a direct causation between team stability and limited key-person risk without clear supporting evidence.",
+      "proposedChange": "suggests key-person risk may be limited",
+      "why": "This keeps the original claim and judgement but softens the causal certainty from a definitive 'means' to a more supportable 'suggests' and adds 'may' to reflect that the relationship between team stability and key-person risk is indicative rather than proven, addressing the overreach concern without changing the underlying assertion or introducing new facts.",
+      "rawText": "{\n  \"proposedChange\": \"suggests key-person risk may be limited\",\n  \"why\": \"This keeps the original claim and judgement but softens the causal certainty from a definitive 'means' to a more supportable 'suggests' and adds 'may' to reflect that the relationship between team stability and key-person risk is indicative rather than proven, addressing the overreach concern without changing the underlying assertion or introducing new facts.\"\n}",
+      "parseOk": true,
+      "conditions": {
+        "provider": "openai",
+        "model": "gpt-5.1-2025-11-13",
+        "temperature": 0,
+        "seed": 1,
+        "latencyMs": 2540,
+        "usage": {
+          "inputTokens": 797,
+          "outputTokens": 98,
+          "cachedInputTokens": 0,
+          "cacheHitRate": 0
+        },
+        "costUsd": 0.0019762499999999997,
+        "systemFingerprint": null
+      }
+    },
+    {
+      "arm": "one",
+      "findingId": "r10-review1:S4:evidence:conflicting:0",
+      "kind": "evidence",
+      "rule": "conflicting",
+      "thing1State": "PHRASE",
+      "thing1": {
+        "quote": "returned",
+        "startChar": 12,
+        "endChar": 20,
+        "length": 8,
+        "statementLength": 70,
+        "ratio": 0.11428571428571428,
+        "source": "evidenceSummary_quote"
+      },
+      "thing2": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation without realization. The reviewer should reconcile this discrepancy or remove the claim.",
+      "proposedChange": "is currently marked at",
+      "why": "The source states that Fund IV is 'currently marked at 1.9x gross MOIC and 24% gross IRR', which reflects valuation rather than realised returns. Replacing 'returned' with 'is currently marked at' aligns the draft with the specific wording and meaning in the source while preserving the stated figures.",
+      "rawText": "{\n  \"proposedChange\": \"is currently marked at\",\n  \"why\": \"The source states that Fund IV is 'currently marked at 1.9x gross MOIC and 24% gross IRR', which reflects valuation rather than realised returns. Replacing 'returned' with 'is currently marked at' aligns the draft with the specific wording and meaning in the source while preserving the stated figures.\"\n}",
+      "parseOk": true,
+      "conditions": {
+        "provider": "openai",
+        "model": "gpt-5.1-2025-11-13",
+        "temperature": 0,
+        "seed": 1,
+        "latencyMs": 2394,
+        "usage": {
+          "inputTokens": 852,
+          "outputTokens": 93,
+          "cachedInputTokens": 0,
+          "cacheHitRate": 0
+        },
+        "costUsd": 0.001995,
+        "systemFingerprint": null
+      }
+    },
+    {
+      "arm": "one",
+      "findingId": "r10-review1:S7:editorial:voice_consistency:0",
+      "kind": "editorial",
+      "rule": "voice_consistency",
+      "thing1State": "PHRASE",
+      "thing1": {
+        "quote": "we believe",
+        "startChar": 12,
+        "endChar": 22,
+        "length": 10,
+        "statementLength": 124,
+        "ratio": 0.08064516129032258,
+        "source": "note_quote"
+      },
+      "thing2": "The statement uses first-person plural 'we believe' and 'we recommend', which is inconsistent with the third-person voice required for reporting commentary.",
+      "proposedChange": "Halden Group believes",
+      "why": "The review flags first-person voice as inconsistent with house style, and the suggestedDirection explicitly allows replacing 'we' with the authoring organisation. This change preserves the original claim and hedging while aligning the sentence with the required third-person voice.",
+      "rawText": "{\n  \"proposedChange\": \"Halden Group believes\",\n  \"why\": \"The review flags first-person voice as inconsistent with house style, and the suggestedDirection explicitly allows replacing 'we' with the authoring organisation. This change preserves the original claim and hedging while aligning the sentence with the required third-person voice.\"\n}",
+      "parseOk": true,
+      "conditions": {
+        "provider": "openai",
+        "model": "gpt-5.1-2025-11-13",
+        "temperature": 0,
+        "seed": 1,
+        "latencyMs": 1260,
+        "usage": {
+          "inputTokens": 813,
+          "outputTokens": 76,
+          "cachedInputTokens": 0,
+          "cacheHitRate": 0
+        },
+        "costUsd": 0.00177625,
+        "systemFingerprint": null
+      }
+    },
+    {
+      "arm": "one",
+      "findingId": "r10-review1:S8:editorial:first_person_plural:0",
+      "kind": "editorial",
+      "rule": "first_person_plural",
+      "thing1State": "PHRASE",
+      "thing1": {
+        "quote": "available to us",
+        "startChar": 76,
+        "endChar": 91,
+        "length": 15,
+        "statementLength": 92,
+        "ratio": 0.16304347826086957,
+        "source": "note_quote"
+      },
+      "thing2": "The phrase 'available to us' uses first-person plural, which is not appropriate for reporting commentary. Replace 'us' with 'Halden Group' as the object.",
+      "proposedChange": "available to Halden Group",
+      "why": "The review flags first-person plural as inappropriate and the style guidance explicitly permits replacing first-person pronouns with the named authoring organisation while changing nothing else in the sentence.",
+      "rawText": "{\"proposedChange\": \"available to Halden Group\", \"why\": \"The review flags first-person plural as inappropriate and the style guidance explicitly permits replacing first-person pronouns with the named authoring organisation while changing nothing else in the sentence.\"}",
+      "parseOk": true,
+      "conditions": {
+        "provider": "openai",
+        "model": "gpt-5.1-2025-11-13",
+        "temperature": 0,
+        "seed": 1,
+        "latencyMs": 1125,
+        "usage": {
+          "inputTokens": 787,
+          "outputTokens": 59,
+          "cachedInputTokens": 0,
+          "cacheHitRate": 0
+        },
+        "costUsd": 0.00157375,
+        "systemFingerprint": null
+      }
+    }
+  ]
+}

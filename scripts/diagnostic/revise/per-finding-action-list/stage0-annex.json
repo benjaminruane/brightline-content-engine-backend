@@ -1,0 +1,2003 @@
+{
+  "generatedAt": "2026-09-01T06:36:48.838Z",
+  "phraseRatioLine": 0.8,
+  "artefacts": [
+    {
+      "stem": "r10-review1",
+      "file": "suggest-after-r10-review1.json",
+      "findings": [
+        {
+          "id": "r10-review1:S0:evidence:partial:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "0",
+          "statement": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "WHOLE_STATEMENT",
+          "thing1": {
+            "quote": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+            "startChar": 0,
+            "endChar": 196,
+            "length": 196,
+            "statementLength": 196,
+            "ratio": 1,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms Halden Group's prior investments with Meridian Capital, including co-investments and debt financings, but does not mention a lead commitment to Meridian Capital Partners V in June 2025. The specific detail about the EUR 1.2 billion fund targeting lower-mid-market buyouts is also not addressed. The reviewer should verify the lead commitment and fund details or adjust the statement accordingly.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Halden Group has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.",
+          "candidates": [
+            {
+              "quote": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+              "startChar": 0,
+              "endChar": 196,
+              "length": 196,
+              "statementLength": 196,
+              "ratio": 1,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review1:S1:evidence:partial:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "that is, in our view, genuinely exceptional",
+            "startChar": 64,
+            "endChar": 107,
+            "length": 43,
+            "statementLength": 108,
+            "ratio": 0.39814814814814814,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms Meridian's strong track record by providing quantitative data: a realised gross MOIC of 2.4x and a gross IRR of 21% on fully realised deals. However, it does not directly state that this track record is 'genuinely exceptional,' which is an evaluative claim made in the statement. The reviewer should consider adding a source that explicitly supports the exceptional nature of the track record or adjust the statement to align with the data provided.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Track record: Across Funds I–IV, Meridian has deployed EUR 2.8 billion across 41 platform investments. Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits)....",
+          "candidates": [
+            {
+              "quote": "that is, in our view, genuinely exceptional",
+              "startChar": 64,
+              "endChar": 107,
+              "length": 43,
+              "statementLength": 108,
+              "ratio": 0.39814814814814814,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": [
+            "r10-review1:S1:editorial:marketing_language_excess:0",
+            "r10-review1:S1:editorial:voice_consistency:1",
+            "r10-review1:S1:framing:framing_fidelity:0"
+          ]
+        },
+        {
+          "id": "r10-review1:S1:editorial:marketing_language_excess:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "marketing_language_excess",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "genuinely exceptional",
+            "startChar": 86,
+            "endChar": 107,
+            "length": 21,
+            "statementLength": 108,
+            "ratio": 0.19444444444444445,
+            "source": "note_quote"
+          },
+          "thing2": "'genuinely exceptional' is hyperbolic language without substantiation in the immediate context. The figures provided in the next sentence substantiate the track record without needing this evaluative language.",
+          "suggestedDirection": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "candidates": [
+            {
+              "quote": "genuinely exceptional",
+              "startChar": 86,
+              "endChar": 107,
+              "length": 21,
+              "statementLength": 108,
+              "ratio": 0.19444444444444445,
+              "source": "note_quote"
+            },
+            {
+              "quote": "genuinely exceptional",
+              "startChar": 86,
+              "endChar": 107,
+              "length": 21,
+              "statementLength": 108,
+              "ratio": 0.19444444444444445,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": [
+            "r10-review1:S1:evidence:partial:0",
+            "r10-review1:S1:framing:framing_fidelity:0"
+          ]
+        },
+        {
+          "id": "r10-review1:S1:editorial:voice_consistency:1",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "in our view",
+            "startChar": 73,
+            "endChar": 84,
+            "length": 11,
+            "statementLength": 108,
+            "ratio": 0.10185185185185185,
+            "source": "note_quote"
+          },
+          "thing2": "The statement uses first-person plural 'We' and 'in our view', which is inconsistent with the third-person voice required for reporting commentary. The authoring organisation, Halden Group, should be the grammatical subject.",
+          "suggestedDirection": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'.",
+          "candidates": [
+            {
+              "quote": "in our view",
+              "startChar": 73,
+              "endChar": 84,
+              "length": 11,
+              "statementLength": 108,
+              "ratio": 0.10185185185185185,
+              "source": "note_quote"
+            },
+            {
+              "quote": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional",
+              "startChar": 0,
+              "endChar": 107,
+              "length": 107,
+              "statementLength": 108,
+              "ratio": 0.9907407407407407,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": [
+            "r10-review1:S1:evidence:partial:0",
+            "r10-review1:S1:framing:framing_fidelity:0"
+          ]
+        },
+        {
+          "id": "r10-review1:S1:framing:framing_fidelity:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "framing",
+          "rule": "framing_fidelity",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "visible_non_reviser_signal",
+          "sortTestsFired": [
+            "framing_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": true,
+          "thing1State": "WHOLE_STATEMENT",
+          "thing1": {
+            "quote": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+            "startChar": 0,
+            "endChar": 108,
+            "length": 108,
+            "statementLength": 108,
+            "ratio": 1,
+            "source": "span_field"
+          },
+          "thing2": "The statement claims the track record is 'genuinely exceptional,' which goes beyond what the source supports, as it only describes it as 'strong.'",
+          "suggestedDirection": null,
+          "candidates": [
+            {
+              "quote": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+              "startChar": 0,
+              "endChar": 108,
+              "length": 108,
+              "statementLength": 108,
+              "ratio": 1,
+              "source": "span_field"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": [
+            "r10-review1:S1:evidence:partial:0",
+            "r10-review1:S1:editorial:marketing_language_excess:0",
+            "r10-review1:S1:editorial:voice_consistency:1"
+          ]
+        },
+        {
+          "id": "r10-review1:S2:evidence:partial:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "2",
+          "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "placing it in the top quartile of European lower-mid-market managers.",
+            "startChar": 59,
+            "endChar": 128,
+            "length": 69,
+            "statementLength": 128,
+            "ratio": 0.5390625,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms the realised gross MOIC of 2.4 times across 17 exits. However, it does not address the claim about being in the top quartile of European lower-mid-market managers. The reviewer should verify this ranking separately or adjust the statement to reflect only the confirmed data.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+          "candidates": [
+            {
+              "quote": "placing it in the top quartile of European lower-mid-market managers.",
+              "startChar": 59,
+              "endChar": 128,
+              "length": 69,
+              "statementLength": 128,
+              "ratio": 0.5390625,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review1:S3:evidence:partial:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "WHOLE_STATEMENT",
+          "thing1": {
+            "quote": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+            "startChar": 0,
+            "endChar": 116,
+            "length": 116,
+            "statementLength": 116,
+            "ratio": 1,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about the team's stability. However, it does not address the claim that key-person risk is limited, which is an evaluative judgment not covered by the source. The reviewer should either find additional evidence to support the claim about key-person risk or adjust the statement to reflect only the confirmed stability.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "No senior departures across the last three fund cycles.",
+          "candidates": [
+            {
+              "quote": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+              "startChar": 0,
+              "endChar": 116,
+              "length": 116,
+              "statementLength": 116,
+              "ratio": 1,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": [
+            "r10-review1:S3:editorial:overreach_unsupported_causal:0"
+          ]
+        },
+        {
+          "id": "r10-review1:S3:editorial:overreach_unsupported_causal:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "editorial",
+          "rule": "overreach_unsupported_causal",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "means key-person risk is limited",
+            "startChar": 83,
+            "endChar": 115,
+            "length": 32,
+            "statementLength": 116,
+            "ratio": 0.27586206896551724,
+            "source": "note_quote"
+          },
+          "thing2": "The phrase 'means key-person risk is limited' implies a direct causation between team stability and limited key-person risk without clear supporting evidence.",
+          "suggestedDirection": "Replace 'means key-person risk is limited' with 'suggests key-person risk may be limited'.",
+          "candidates": [
+            {
+              "quote": "means key-person risk is limited",
+              "startChar": 83,
+              "endChar": 115,
+              "length": 32,
+              "statementLength": 116,
+              "ratio": 0.27586206896551724,
+              "source": "note_quote"
+            },
+            {
+              "quote": "means key-person risk is limited",
+              "startChar": 83,
+              "endChar": 115,
+              "length": 32,
+              "statementLength": 116,
+              "ratio": 0.27586206896551724,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": [
+            "r10-review1:S3:evidence:partial:0"
+          ]
+        },
+        {
+          "id": "r10-review1:S4:evidence:conflicting:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "4",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "kind": "evidence",
+          "rule": "conflicting",
+          "disposition": "ACTION",
+          "sortChannel": "structural",
+          "sortTestsFired": [
+            "supportState_conflicting",
+            "hasConflict",
+            "stage2_classification_conflicting",
+            "unsupportedSpan_classification_conflicting"
+          ],
+          "proseCuesHit": [
+            "whereas"
+          ],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "returned",
+            "startChar": 12,
+            "endChar": 20,
+            "length": 8,
+            "statementLength": 70,
+            "ratio": 0.11428571428571428,
+            "source": "evidenceSummary_quote"
+          },
+          "thing2": "The statement claims that Fund IV has returned 1.9 times gross MOIC, whereas the source indicates it is currently marked at 1.9x gross MOIC. This presents a contradiction, as 'returned' implies realized gains, while 'marked at' suggests current valuation without realization. The reviewer should reconcile this discrepancy or remove the claim.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "candidates": [
+            {
+              "quote": "has returned",
+              "startChar": 8,
+              "endChar": 20,
+              "length": 12,
+              "statementLength": 70,
+              "ratio": 0.17142857142857143,
+              "source": "unsupportedSpan"
+            },
+            {
+              "quote": "returned",
+              "startChar": 12,
+              "endChar": 20,
+              "length": 8,
+              "statementLength": 70,
+              "ratio": 0.11428571428571428,
+              "source": "evidenceSummary_quote"
+            },
+            {
+              "quote": "returned",
+              "startChar": 12,
+              "endChar": 20,
+              "length": 8,
+              "statementLength": 70,
+              "ratio": 0.11428571428571428,
+              "source": "reasoningParagraph_quote"
+            }
+          ],
+          "q1": {
+            "supportState": "conflicting",
+            "displayVerdict": "conflict",
+            "hasConflict": true,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "conflicting"
+            ],
+            "unsupportedSpanClassifications": [
+              "conflicting"
+            ],
+            "supportSpanClassifications": [
+              "confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review1:S7:evidence:not_supported:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "NONE",
+          "thing1": null,
+          "thing2": "No source addresses the claim that the fund should deliver returns in line with its predecessor or the recommendation to commit. The reviewer should add a source that supports this belief or remove the claim.",
+          "suggestedDirection": null,
+          "primaryExcerpt": null,
+          "candidates": [],
+          "q1": {
+            "supportState": "not_supported",
+            "displayVerdict": "not_supported",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "no_support"
+            ],
+            "unsupportedSpanClassifications": [],
+            "supportSpanClassifications": [],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review1:S7:editorial:voice_consistency:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "we believe",
+            "startChar": 12,
+            "endChar": 22,
+            "length": 10,
+            "statementLength": 124,
+            "ratio": 0.08064516129032258,
+            "source": "note_quote"
+          },
+          "thing2": "The statement uses first-person plural 'we believe' and 'we recommend', which is inconsistent with the third-person voice required for reporting commentary.",
+          "suggestedDirection": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+          "candidates": [
+            {
+              "quote": "we believe",
+              "startChar": 12,
+              "endChar": 22,
+              "length": 10,
+              "statementLength": 124,
+              "ratio": 0.08064516129032258,
+              "source": "note_quote"
+            },
+            {
+              "quote": "we recommend",
+              "startChar": 96,
+              "endChar": 108,
+              "length": 12,
+              "statementLength": 124,
+              "ratio": 0.0967741935483871,
+              "source": "note_quote"
+            },
+            {
+              "quote": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+              "startChar": 12,
+              "endChar": 123,
+              "length": 111,
+              "statementLength": 124,
+              "ratio": 0.8951612903225806,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review1:S8:evidence:partial:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "that would not otherwise have been available to us",
+            "startChar": 41,
+            "endChar": 91,
+            "length": 50,
+            "statementLength": 92,
+            "ratio": 0.5434782608695652,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms that the GP offered co-investments to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis. However, it does not address whether these co-investment opportunities would not have been available otherwise, which is a key part of the statement. The reviewer should verify this aspect or adjust the statement to reflect only the confirmed details.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Co-investment: The GP has offered co-investment to LPs on six occasions across Funds III and IV, on a no-fee, no-carry basis.",
+          "candidates": [
+            {
+              "quote": "that would not otherwise have been available to us",
+              "startChar": 41,
+              "endChar": 91,
+              "length": 50,
+              "statementLength": 92,
+              "ratio": 0.5434782608695652,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": [
+            "r10-review1:S8:editorial:first_person_plural:0"
+          ]
+        },
+        {
+          "id": "r10-review1:S8:editorial:first_person_plural:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "editorial",
+          "rule": "first_person_plural",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "available to us",
+            "startChar": 76,
+            "endChar": 91,
+            "length": 15,
+            "statementLength": 92,
+            "ratio": 0.16304347826086957,
+            "source": "note_quote"
+          },
+          "thing2": "The phrase 'available to us' uses first-person plural, which is not appropriate for reporting commentary. Replace 'us' with 'Halden Group' as the object.",
+          "suggestedDirection": "Replace 'available to us' with 'available to Halden Group'.",
+          "candidates": [
+            {
+              "quote": "available to us",
+              "startChar": 76,
+              "endChar": 91,
+              "length": 15,
+              "statementLength": 92,
+              "ratio": 0.16304347826086957,
+              "source": "note_quote"
+            },
+            {
+              "quote": "available to us",
+              "startChar": 76,
+              "endChar": 91,
+              "length": 15,
+              "statementLength": 92,
+              "ratio": 0.16304347826086957,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": [
+            "r10-review1:S8:evidence:partial:0"
+          ]
+        },
+        {
+          "id": "r10-review1:S9:evidence:not_supported:0",
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "9",
+          "statement": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "NONE",
+          "thing1": null,
+          "thing2": "No source addresses the expectation that the relationship will deepen over the life of the fund. The source only mentions past investments by Halden Group with Meridian Capital. The reviewer should add a source that supports this claim or remove it.",
+          "suggestedDirection": null,
+          "primaryExcerpt": null,
+          "candidates": [],
+          "q1": {
+            "supportState": "not_supported",
+            "displayVerdict": "not_supported",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "no_support"
+            ],
+            "unsupportedSpanClassifications": [],
+            "supportSpanClassifications": [],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        }
+      ],
+      "unsatisfiable": [
+        {
+          "artefact": "r10-review1",
+          "file": "suggest-after-r10-review1.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "delete_vs_keep_in_replacement",
+          "leftRule": "marketing_language_excess",
+          "rightRule": "voice_consistency",
+          "leftDirection": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "rightDirection": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'."
+        }
+      ]
+    },
+    {
+      "stem": "r10-review2",
+      "file": "suggest-after-r10-review2.json",
+      "findings": [
+        {
+          "id": "r10-review2:S0:evidence:partial:0",
+          "artefact": "r10-review2",
+          "file": "suggest-after-r10-review2.json",
+          "statementId": "0",
+          "statement": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "WHOLE_STATEMENT",
+          "thing1": {
+            "quote": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+            "startChar": 0,
+            "endChar": 196,
+            "length": 196,
+            "statementLength": 196,
+            "ratio": 1,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms Halden Group's prior investments with Meridian Capital, including co-investments and debt financings, but does not mention a lead commitment to Meridian Capital Partners V in June 2025. The gap is material as the specific commitment to the EUR 1.2 billion fund is not addressed. The reviewer should verify this specific detail or adjust the statement accordingly.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Halden Group has invested with Meridian Capital on three co-investments and two debt financings, and invested in three earlier secondary investments in LP positions in Fund III and IV.",
+          "candidates": [
+            {
+              "quote": "In June 2025, Halden Group made a lead commitment to Meridian Capital Partners V, a EUR 1.2 billion fund targeting lower-mid-market buyouts in European industrial technology and business services.",
+              "startChar": 0,
+              "endChar": 196,
+              "length": 196,
+              "statementLength": 196,
+              "ratio": 1,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "confirmed",
+              "confirmed",
+              "partially_confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review2:S1:editorial:voice_consistency:0",
+          "artefact": "r10-review2",
+          "file": "suggest-after-r10-review2.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record of 2.4x realised gross MOIC and 21% gross IRR across 17 fully realised exits.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "We were attracted",
+            "startChar": 0,
+            "endChar": 17,
+            "length": 17,
+            "statementLength": 141,
+            "ratio": 0.12056737588652482,
+            "source": "note_quote"
+          },
+          "thing2": "The statement uses first-person plural 'We were attracted', which is inconsistent with the third-person voice required for reporting commentary.",
+          "suggestedDirection": "Replace 'We were attracted to Meridian' with 'Halden Group was attracted to Meridian'.",
+          "candidates": [
+            {
+              "quote": "We were attracted",
+              "startChar": 0,
+              "endChar": 17,
+              "length": 17,
+              "statementLength": 141,
+              "ratio": 0.12056737588652482,
+              "source": "note_quote"
+            },
+            {
+              "quote": "We were attracted to Meridian",
+              "startChar": 0,
+              "endChar": 29,
+              "length": 29,
+              "statementLength": 141,
+              "ratio": 0.20567375886524822,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review2:S3:editorial:structural_integrity:0",
+          "artefact": "r10-review2",
+          "file": "suggest-after-r10-review2.json",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles.",
+          "kind": "editorial",
+          "rule": "structural_integrity",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "The team",
+            "startChar": 0,
+            "endChar": 8,
+            "length": 8,
+            "statementLength": 82,
+            "ratio": 0.0975609756097561,
+            "source": "note_quote"
+          },
+          "thing2": "The statement 'The team's stability, with no senior departures across the last three fund cycles.' is a sentence fragment. It lacks a main clause to complete the thought.",
+          "suggestedDirection": "Rewrite the sentence to include a main clause, such as 'The team's stability is demonstrated by no senior departures across the last three fund cycles.'",
+          "candidates": [
+            {
+              "quote": "The team",
+              "startChar": 0,
+              "endChar": 8,
+              "length": 8,
+              "statementLength": 82,
+              "ratio": 0.0975609756097561,
+              "source": "note_quote"
+            },
+            {
+              "quote": "The team",
+              "startChar": 0,
+              "endChar": 8,
+              "length": 8,
+              "statementLength": 82,
+              "ratio": 0.0975609756097561,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review2:S7:evidence:not_supported:0",
+          "artefact": "r10-review2",
+          "file": "suggest-after-r10-review2.json",
+          "statementId": "7",
+          "statement": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "NONE",
+          "thing1": null,
+          "thing2": "No source addresses the claim that Halden Group believes the fund should deliver returns in line with its predecessor or that it recommends the commitment. The reviewer should add a source that specifically supports this claim or remove it from the document.",
+          "suggestedDirection": null,
+          "primaryExcerpt": null,
+          "candidates": [],
+          "q1": {
+            "supportState": "not_supported",
+            "displayVerdict": "not_supported",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "no_support"
+            ],
+            "unsupportedSpanClassifications": [],
+            "supportSpanClassifications": [],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review2:S7:editorial:voice_consistency:0",
+          "artefact": "r10-review2",
+          "file": "suggest-after-r10-review2.json",
+          "statementId": "7",
+          "statement": "On balance, Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "recommends",
+            "startChar": 107,
+            "endChar": 117,
+            "length": 10,
+            "statementLength": 133,
+            "ratio": 0.07518796992481203,
+            "source": "note_quote"
+          },
+          "thing2": "The statement uses first-person plural 'recommends' in a context that requires third-person reporting. Replace 'recommends' with 'Halden Group recommends'.",
+          "suggestedDirection": "Replace 'recommends' with 'Halden Group recommends'.",
+          "candidates": [
+            {
+              "quote": "recommends",
+              "startChar": 107,
+              "endChar": 117,
+              "length": 10,
+              "statementLength": 133,
+              "ratio": 0.07518796992481203,
+              "source": "note_quote"
+            },
+            {
+              "quote": "recommends",
+              "startChar": 107,
+              "endChar": 117,
+              "length": 10,
+              "statementLength": 133,
+              "ratio": 0.07518796992481203,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "r10-review2:S9:evidence:not_supported:0",
+          "artefact": "r10-review2",
+          "file": "suggest-after-r10-review2.json",
+          "statementId": "9",
+          "statement": "Halden Group expects the relationship to deepen over the life of the fund.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "NONE",
+          "thing1": null,
+          "thing2": "No source addresses the expectation that the relationship will deepen over the life of the fund. The source only mentions past investments by Halden Group with Meridian Capital. The reviewer should add a source that supports this claim or remove it.",
+          "suggestedDirection": null,
+          "primaryExcerpt": null,
+          "candidates": [],
+          "q1": {
+            "supportState": "not_supported",
+            "displayVerdict": "not_supported",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "no_support"
+            ],
+            "unsupportedSpanClassifications": [],
+            "supportSpanClassifications": [],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        }
+      ],
+      "unsatisfiable": []
+    },
+    {
+      "stem": "coverage-gap",
+      "file": "coverage-gap-review.json",
+      "findings": [
+        {
+          "id": "coverage-gap:S0:evidence:partial:0",
+          "artefact": "coverage-gap",
+          "file": "coverage-gap-review.json",
+          "statementId": "0",
+          "statement": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACTION",
+          "sortChannel": "prose_cue",
+          "sortTestsFired": [],
+          "proseCuesHit": [
+            "does not align"
+          ],
+          "withheldFromReviser": false,
+          "thing1State": "WHOLE_STATEMENT",
+          "thing1": {
+            "quote": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+            "startChar": 0,
+            "endChar": 226,
+            "length": 226,
+            "statementLength": 226,
+            "ratio": 1,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing in the statement. Please verify the timing and Partners Group's involvement or adjust the statement accordingly.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "First close: expected Q3 2026; final close targeted within 12 months of first close",
+          "candidates": [
+            {
+              "quote": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+              "startChar": 0,
+              "endChar": 226,
+              "length": 226,
+              "statementLength": 226,
+              "ratio": 1,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "confirmed",
+              "confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "coverage-gap:S1:evidence:partial:0",
+          "artefact": "coverage-gap",
+          "file": "coverage-gap-review.json",
+          "statementId": "1",
+          "statement": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+            "startChar": 47,
+            "endChar": 125,
+            "length": 78,
+            "statementLength": 125,
+            "ratio": 0.624,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms that the fund plans to make 10-14 platform investments, aligning with the statement's claim about the number of investments. However, it does not address the equity check size of EUR 80-100 million each. The reviewer should verify the equity check size or adjust the statement to reflect only the confirmed information.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions.",
+          "candidates": [
+            {
+              "quote": "control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+              "startChar": 47,
+              "endChar": 125,
+              "length": 78,
+              "statementLength": 125,
+              "ratio": 0.624,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "partially_confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": true
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "coverage-gap:S3:editorial:marketing_language_excess:0",
+          "artefact": "coverage-gap",
+          "file": "coverage-gap-review.json",
+          "statementId": "3",
+          "statement": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+          "kind": "editorial",
+          "rule": "marketing_language_excess",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "highly regarded",
+            "startChar": 159,
+            "endChar": 174,
+            "length": 15,
+            "statementLength": 234,
+            "ratio": 0.0641025641025641,
+            "source": "note_quote"
+          },
+          "thing2": "The phrase 'highly regarded' is a distinction-claim without substantiation in the immediate context. Remove or substantiate.",
+          "suggestedDirection": "Delete 'highly regarded' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "candidates": [
+            {
+              "quote": "highly regarded",
+              "startChar": 159,
+              "endChar": 174,
+              "length": 15,
+              "statementLength": 234,
+              "ratio": 0.0641025641025641,
+              "source": "note_quote"
+            },
+            {
+              "quote": "highly regarded",
+              "startChar": 159,
+              "endChar": 174,
+              "length": 15,
+              "statementLength": 234,
+              "ratio": 0.0641025641025641,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "coverage-gap:S5:evidence:not_supported:0",
+          "artefact": "coverage-gap",
+          "file": "coverage-gap-review.json",
+          "statementId": "5",
+          "statement": "This relationship enabled deep insight during the diligence phase.",
+          "kind": "evidence",
+          "rule": "not_supported",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "NONE",
+          "thing1": null,
+          "thing2": "No source addresses the claim that the relationship enabled deep insight during the diligence phase. The reviewer should add a source that supports this claim or remove it from the document.",
+          "suggestedDirection": null,
+          "primaryExcerpt": null,
+          "candidates": [],
+          "q1": {
+            "supportState": "not_supported",
+            "displayVerdict": "not_supported",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "no_support"
+            ],
+            "unsupportedSpanClassifications": [],
+            "supportSpanClassifications": [],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "coverage-gap:S5:editorial:overreach_unsupported_causal:0",
+          "artefact": "coverage-gap",
+          "file": "coverage-gap-review.json",
+          "statementId": "5",
+          "statement": "This relationship enabled deep insight during the diligence phase.",
+          "kind": "editorial",
+          "rule": "overreach_unsupported_causal",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "b138_withheld",
+          "sortTestsFired": [
+            "b138_withheld"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": true,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "enabled deep insight during the diligence phase",
+            "startChar": 18,
+            "endChar": 65,
+            "length": 47,
+            "statementLength": 66,
+            "ratio": 0.7121212121212122,
+            "source": "note_quote"
+          },
+          "thing2": "The phrase 'enabled deep insight during the diligence phase' implies a causal relationship without clear supporting evidence.",
+          "suggestedDirection": "Replace 'enabled deep insight during the diligence phase' with a more neutral statement that does not imply causation.",
+          "candidates": [
+            {
+              "quote": "enabled deep insight during the diligence phase",
+              "startChar": 18,
+              "endChar": 65,
+              "length": 47,
+              "statementLength": 66,
+              "ratio": 0.7121212121212122,
+              "source": "note_quote"
+            },
+            {
+              "quote": "enabled deep insight during the diligence phase",
+              "startChar": 18,
+              "endChar": 65,
+              "length": 47,
+              "statementLength": 66,
+              "ratio": 0.7121212121212122,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        }
+      ],
+      "unsatisfiable": []
+    },
+    {
+      "stem": "condition-b",
+      "file": "condition-b-review.json",
+      "findings": [
+        {
+          "id": "condition-b:S1:editorial:marketing_language_excess:0",
+          "artefact": "condition-b",
+          "file": "condition-b-review.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "marketing_language_excess",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "genuinely exceptional",
+            "startChar": 86,
+            "endChar": 107,
+            "length": 21,
+            "statementLength": 108,
+            "ratio": 0.19444444444444445,
+            "source": "note_quote"
+          },
+          "thing2": "'genuinely exceptional' is hyperbolic language without substantiation in the immediate context. Remove 'genuinely exceptional' to maintain a factual tone.",
+          "suggestedDirection": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+          "candidates": [
+            {
+              "quote": "genuinely exceptional",
+              "startChar": 86,
+              "endChar": 107,
+              "length": 21,
+              "statementLength": 108,
+              "ratio": 0.19444444444444445,
+              "source": "note_quote"
+            },
+            {
+              "quote": "genuinely exceptional",
+              "startChar": 86,
+              "endChar": 107,
+              "length": 21,
+              "statementLength": 108,
+              "ratio": 0.19444444444444445,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "condition-b:S1:editorial:voice_consistency:1",
+          "artefact": "condition-b",
+          "file": "condition-b-review.json",
+          "statementId": "1",
+          "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "in our view",
+            "startChar": 73,
+            "endChar": 84,
+            "length": 11,
+            "statementLength": 108,
+            "ratio": 0.10185185185185185,
+            "source": "note_quote"
+          },
+          "thing2": "The statement uses first-person plural 'We were attracted' and 'in our view', which is inconsistent with the third-person voice required for reporting commentary. Replace with 'Halden Group was attracted' and 'in Halden Group's view'.",
+          "suggestedDirection": "Replace 'We were attracted' with 'Halden Group was attracted' and delete 'in our view'.",
+          "candidates": [
+            {
+              "quote": "We were attracted",
+              "startChar": 0,
+              "endChar": 17,
+              "length": 17,
+              "statementLength": 108,
+              "ratio": 0.1574074074074074,
+              "source": "note_quote"
+            },
+            {
+              "quote": "in our view",
+              "startChar": 73,
+              "endChar": 84,
+              "length": 11,
+              "statementLength": 108,
+              "ratio": 0.10185185185185185,
+              "source": "note_quote"
+            },
+            {
+              "quote": "We were attracted",
+              "startChar": 0,
+              "endChar": 17,
+              "length": 17,
+              "statementLength": 108,
+              "ratio": 0.1574074074074074,
+              "source": "direction_quote"
+            },
+            {
+              "quote": "in our view",
+              "startChar": 73,
+              "endChar": 84,
+              "length": 11,
+              "statementLength": 108,
+              "ratio": 0.10185185185185185,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "condition-b:S2:evidence:partial:0",
+          "artefact": "condition-b",
+          "file": "condition-b-review.json",
+          "statementId": "2",
+          "statement": "It has realised a gross MOIC of 2.4 times across 17 exits, placing it in the top quartile of European lower-mid-market managers.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "placing it in the top quartile of European lower-mid-market managers",
+            "startChar": 59,
+            "endChar": 127,
+            "length": 68,
+            "statementLength": 128,
+            "ratio": 0.53125,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms the realised gross MOIC of 2.4 times across 17 exits. However, it does not mention the claim that this performance places it in the top quartile of European lower-mid-market managers. The reviewer should verify the top quartile ranking separately or adjust the statement to reflect only the confirmed data.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Realised gross MOIC of 2.4x and gross IRR of 21% on fully realised deals (17 exits).",
+          "candidates": [
+            {
+              "quote": "placing it in the top quartile of European lower-mid-market managers.",
+              "startChar": 59,
+              "endChar": 128,
+              "length": 69,
+              "statementLength": 128,
+              "ratio": 0.5390625,
+              "source": "unsupportedSpan"
+            },
+            {
+              "quote": "placing it in the top quartile of European lower-mid-market managers",
+              "startChar": 59,
+              "endChar": 127,
+              "length": 68,
+              "statementLength": 128,
+              "ratio": 0.53125,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed",
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed",
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "partially_confirmed",
+              "partially_confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "condition-b:S3:evidence:partial:0",
+          "artefact": "condition-b",
+          "file": "condition-b-review.json",
+          "statementId": "3",
+          "statement": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+          "kind": "evidence",
+          "rule": "partial",
+          "disposition": "ACKNOWLEDGE",
+          "sortChannel": "silence_no_source_value",
+          "sortTestsFired": [],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "means key-person risk is limited",
+            "startChar": 83,
+            "endChar": 115,
+            "length": 32,
+            "statementLength": 116,
+            "ratio": 0.27586206896551724,
+            "source": "unsupportedSpan"
+          },
+          "thing2": "The source confirms that there have been no senior departures across the last three fund cycles, supporting the statement about the team's stability. However, it does not address the claim that key-person risk is limited, which is an evaluative judgment not covered by the source. The reviewer should either find additional evidence to support the claim about key-person risk or revise the statement to reflect only the confirmed stability.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "No senior departures across the last three fund cycles.",
+          "candidates": [
+            {
+              "quote": "The team's stability, with no senior departures across the last three fund cycles, means key-person risk is limited.",
+              "startChar": 0,
+              "endChar": 116,
+              "length": 116,
+              "statementLength": 116,
+              "ratio": 1,
+              "source": "unsupportedSpan"
+            },
+            {
+              "quote": "means key-person risk is limited",
+              "startChar": 83,
+              "endChar": 115,
+              "length": 32,
+              "statementLength": 116,
+              "ratio": 0.27586206896551724,
+              "source": "unsupportedSpan"
+            }
+          ],
+          "q1": {
+            "supportState": "partial",
+            "displayVerdict": "supported_partial",
+            "hasConflict": false,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "partially_confirmed",
+              "partially_confirmed"
+            ],
+            "unsupportedSpanClassifications": [
+              "partially_confirmed",
+              "partially_confirmed"
+            ],
+            "supportSpanClassifications": [
+              "confirmed",
+              "confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "condition-b:S4:evidence:conflicting:0",
+          "artefact": "condition-b",
+          "file": "condition-b-review.json",
+          "statementId": "4",
+          "statement": "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+          "kind": "evidence",
+          "rule": "conflicting",
+          "disposition": "ACTION",
+          "sortChannel": "structural",
+          "sortTestsFired": [
+            "supportState_conflicting",
+            "hasConflict",
+            "stage2_classification_conflicting",
+            "unsupportedSpan_classification_conflicting"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "returned",
+            "startChar": 12,
+            "endChar": 20,
+            "length": 8,
+            "statementLength": 70,
+            "ratio": 0.11428571428571428,
+            "source": "evidenceSummary_quote"
+          },
+          "thing2": "The statement claims that Fund IV has returned 1.9 times gross MOIC and a 24 percent gross IRR, while the source indicates that Fund IV is currently marked at 1.9x gross MOIC and 24% gross IRR. This presents a contradiction between 'returned' and 'marked at,' which are mutually exclusive terms. The reviewer should reconcile this discrepancy or remove the claim.",
+          "suggestedDirection": null,
+          "primaryExcerpt": "Fund IV (2019 vintage, EUR 900 million) is currently marked at 1.9x gross MOIC and 24% gross IRR, with 4 of 12 platform investments fully realised.",
+          "candidates": [
+            {
+              "quote": "has returned",
+              "startChar": 8,
+              "endChar": 20,
+              "length": 12,
+              "statementLength": 70,
+              "ratio": 0.17142857142857143,
+              "source": "unsupportedSpan"
+            },
+            {
+              "quote": "returned",
+              "startChar": 12,
+              "endChar": 20,
+              "length": 8,
+              "statementLength": 70,
+              "ratio": 0.11428571428571428,
+              "source": "evidenceSummary_quote"
+            },
+            {
+              "quote": "returned",
+              "startChar": 12,
+              "endChar": 20,
+              "length": 8,
+              "statementLength": 70,
+              "ratio": 0.11428571428571428,
+              "source": "reasoningParagraph_quote"
+            }
+          ],
+          "q1": {
+            "supportState": "conflicting",
+            "displayVerdict": "conflict",
+            "hasConflict": true,
+            "conflictExcerptPresent": false,
+            "conflictValues": null,
+            "conflictEvidence": null,
+            "stage2Classifications": [
+              "conflicting",
+              "conflicting"
+            ],
+            "unsupportedSpanClassifications": [
+              "conflicting",
+              "conflicting"
+            ],
+            "supportSpanClassifications": [
+              "confirmed",
+              "confirmed"
+            ],
+            "claimRoles": [],
+            "decomposed": false
+          },
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "condition-b:S7:editorial:voice_consistency:0",
+          "artefact": "condition-b",
+          "file": "condition-b-review.json",
+          "statementId": "7",
+          "statement": "On balance, we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "we believe",
+            "startChar": 12,
+            "endChar": 22,
+            "length": 10,
+            "statementLength": 124,
+            "ratio": 0.08064516129032258,
+            "source": "note_quote"
+          },
+          "thing2": "The statement uses first-person plural 'we believe' and 'we recommend', which is inconsistent with the third-person voice required for reporting commentary.",
+          "suggestedDirection": "Replace 'we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment' with 'Halden Group believes the fund should deliver returns broadly in line with its predecessor and recommends the commitment'.",
+          "candidates": [
+            {
+              "quote": "we believe",
+              "startChar": 12,
+              "endChar": 22,
+              "length": 10,
+              "statementLength": 124,
+              "ratio": 0.08064516129032258,
+              "source": "note_quote"
+            },
+            {
+              "quote": "we recommend",
+              "startChar": 96,
+              "endChar": 108,
+              "length": 12,
+              "statementLength": 124,
+              "ratio": 0.0967741935483871,
+              "source": "note_quote"
+            },
+            {
+              "quote": "we believe the fund should deliver returns broadly in line with its predecessor and we recommend the commitment",
+              "startChar": 12,
+              "endChar": 123,
+              "length": 111,
+              "statementLength": 124,
+              "ratio": 0.8951612903225806,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        },
+        {
+          "id": "condition-b:S8:editorial:voice_consistency:0",
+          "artefact": "condition-b",
+          "file": "condition-b-review.json",
+          "statementId": "8",
+          "statement": "The GP provided access to co-investments that would not otherwise have been available to us.",
+          "kind": "editorial",
+          "rule": "voice_consistency",
+          "disposition": "ACTION",
+          "sortChannel": "editorial_card_row",
+          "sortTestsFired": [
+            "editorial_concern_visible"
+          ],
+          "proseCuesHit": [],
+          "withheldFromReviser": false,
+          "thing1State": "PHRASE",
+          "thing1": {
+            "quote": "available to us",
+            "startChar": 76,
+            "endChar": 91,
+            "length": 15,
+            "statementLength": 92,
+            "ratio": 0.16304347826086957,
+            "source": "note_quote"
+          },
+          "thing2": "The phrase 'available to us' uses first-person plural, which is inconsistent with the third-person voice required for reporting commentary.",
+          "suggestedDirection": "Replace 'available to us' with 'available to Halden Group'.",
+          "candidates": [
+            {
+              "quote": "available to us",
+              "startChar": 76,
+              "endChar": 91,
+              "length": 15,
+              "statementLength": 92,
+              "ratio": 0.16304347826086957,
+              "source": "note_quote"
+            },
+            {
+              "quote": "available to us",
+              "startChar": 76,
+              "endChar": 91,
+              "length": 15,
+              "statementLength": 92,
+              "ratio": 0.16304347826086957,
+              "source": "direction_quote"
+            }
+          ],
+          "q1": null,
+          "quoteOverlapSiblings": []
+        }
+      ],
+      "unsatisfiable": []
+    }
+  ],
+  "summaries": [
+    {
+      "stem": "r10-review1",
+      "file": "suggest-after-r10-review1.json",
+      "findingCount": 14,
+      "byKind": {
+        "evidence": 8,
+        "editorial": 5,
+        "framing": 1
+      },
+      "actionCount": 6,
+      "acknowledgeCount": 8,
+      "actionThing1": {
+        "PHRASE": 6,
+        "WHOLE_STATEMENT": 0,
+        "NONE": 0
+      },
+      "acknowledgeThing1": {
+        "PHRASE": 3,
+        "WHOLE_STATEMENT": 3,
+        "NONE": 2
+      },
+      "actionPhraseShare": 1,
+      "proseCueActionIds": [],
+      "structuralActionIds": [
+        "r10-review1:S4:evidence:conflicting:0"
+      ],
+      "otherActionIds": [
+        {
+          "id": "r10-review1:S1:editorial:marketing_language_excess:0",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "r10-review1:S1:editorial:voice_consistency:1",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "r10-review1:S3:editorial:overreach_unsupported_causal:0",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "r10-review1:S7:editorial:voice_consistency:0",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "r10-review1:S8:editorial:first_person_plural:0",
+          "sortChannel": "editorial_card_row"
+        }
+      ],
+      "withheldAcknowledgeIds": [
+        "r10-review1:S1:framing:framing_fidelity:0"
+      ],
+      "unsatisfiableCount": 1
+    },
+    {
+      "stem": "r10-review2",
+      "file": "suggest-after-r10-review2.json",
+      "findingCount": 6,
+      "byKind": {
+        "evidence": 3,
+        "editorial": 3
+      },
+      "actionCount": 3,
+      "acknowledgeCount": 3,
+      "actionThing1": {
+        "PHRASE": 3,
+        "WHOLE_STATEMENT": 0,
+        "NONE": 0
+      },
+      "acknowledgeThing1": {
+        "PHRASE": 0,
+        "WHOLE_STATEMENT": 1,
+        "NONE": 2
+      },
+      "actionPhraseShare": 1,
+      "proseCueActionIds": [],
+      "structuralActionIds": [],
+      "otherActionIds": [
+        {
+          "id": "r10-review2:S1:editorial:voice_consistency:0",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "r10-review2:S3:editorial:structural_integrity:0",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "r10-review2:S7:editorial:voice_consistency:0",
+          "sortChannel": "editorial_card_row"
+        }
+      ],
+      "withheldAcknowledgeIds": [],
+      "unsatisfiableCount": 0
+    },
+    {
+      "stem": "coverage-gap",
+      "file": "coverage-gap-review.json",
+      "findingCount": 5,
+      "byKind": {
+        "evidence": 3,
+        "editorial": 2
+      },
+      "actionCount": 2,
+      "acknowledgeCount": 3,
+      "actionThing1": {
+        "PHRASE": 1,
+        "WHOLE_STATEMENT": 1,
+        "NONE": 0
+      },
+      "acknowledgeThing1": {
+        "PHRASE": 2,
+        "WHOLE_STATEMENT": 0,
+        "NONE": 1
+      },
+      "actionPhraseShare": 0.5,
+      "proseCueActionIds": [
+        "coverage-gap:S0:evidence:partial:0"
+      ],
+      "structuralActionIds": [],
+      "otherActionIds": [
+        {
+          "id": "coverage-gap:S3:editorial:marketing_language_excess:0",
+          "sortChannel": "editorial_card_row"
+        }
+      ],
+      "withheldAcknowledgeIds": [
+        "coverage-gap:S5:editorial:overreach_unsupported_causal:0"
+      ],
+      "unsatisfiableCount": 0
+    },
+    {
+      "stem": "condition-b",
+      "file": "condition-b-review.json",
+      "findingCount": 7,
+      "byKind": {
+        "editorial": 4,
+        "evidence": 3
+      },
+      "actionCount": 5,
+      "acknowledgeCount": 2,
+      "actionThing1": {
+        "PHRASE": 5,
+        "WHOLE_STATEMENT": 0,
+        "NONE": 0
+      },
+      "acknowledgeThing1": {
+        "PHRASE": 2,
+        "WHOLE_STATEMENT": 0,
+        "NONE": 0
+      },
+      "actionPhraseShare": 1,
+      "proseCueActionIds": [],
+      "structuralActionIds": [
+        "condition-b:S4:evidence:conflicting:0"
+      ],
+      "otherActionIds": [
+        {
+          "id": "condition-b:S1:editorial:marketing_language_excess:0",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "condition-b:S1:editorial:voice_consistency:1",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "condition-b:S7:editorial:voice_consistency:0",
+          "sortChannel": "editorial_card_row"
+        },
+        {
+          "id": "condition-b:S8:editorial:voice_consistency:0",
+          "sortChannel": "editorial_card_row"
+        }
+      ],
+      "withheldAcknowledgeIds": [],
+      "unsatisfiableCount": 0
+    }
+  ],
+  "q1FieldPopulation": {
+    "evidenceFindingCount": 17,
+    "hasConflictTrue": 2,
+    "conflictExcerptPresent": 0,
+    "conflictValuesNonNull": 0,
+    "conflictEvidenceNonNull": 0,
+    "stage2Conflicting": 2,
+    "unsupportedSpanConflicting": 2,
+    "supportSpanConflicting": 0,
+    "claimRoleConflict": 0,
+    "decomposedTrue": 1
+  },
+  "unsatisfiableDirectionPairs": [
+    {
+      "artefact": "r10-review1",
+      "file": "suggest-after-r10-review1.json",
+      "statementId": "1",
+      "statement": "We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional.",
+      "kind": "delete_vs_keep_in_replacement",
+      "leftRule": "marketing_language_excess",
+      "rightRule": "voice_consistency",
+      "leftDirection": "Delete 'genuinely exceptional' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.",
+      "rightDirection": "Replace 'We were attracted to Meridian on the strength of a track record that is, in our view, genuinely exceptional' with 'Halden Group was attracted to Meridian on the strength of a track record that is genuinely exceptional'."
+    }
+  ]
+}
