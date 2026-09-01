@@ -35,4 +35,22 @@ describe("revise-actions verify", () => {
     });
     assert.equal(result.status, "unverified");
   });
+
+  test("stated replacement that the sentence does not reflect is mismatch", () => {
+    const result = verifyAction({
+      proposedChange: "Replace 'has returned' with 'is currently marked at'.",
+      why: "The source states a current mark, not a realised return.",
+      resultingSentence: "Fund IV has returned 1.9 times gross MOIC and a 24 per cent gross IRR.",
+    });
+    assert.equal(result.status, "mismatch");
+  });
+
+  test("stated replacement that the sentence reflects is checked", () => {
+    const result = verifyAction({
+      proposedChange: "Replace 'has returned' with 'is currently marked at'.",
+      why: "The source states a current mark, not a realised return.",
+      resultingSentence: "Fund IV is currently marked at 1.9 times gross MOIC and a 24 per cent gross IRR.",
+    });
+    assert.equal(result.status, "checked");
+  });
 });
