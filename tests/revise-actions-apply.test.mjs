@@ -185,6 +185,68 @@ describe("revise-actions apply", () => {
     assert.equal(result.ok, true);
     assert.equal(result.text, draft);
   });
+
+  test("untouched decisions leave the Brackenhill draft byte for byte", () => {
+    const draft = loadDraft();
+    const sample = loadSample();
+    const result = applyDecisions({
+      draft,
+      entries: sample.entries,
+      decisions: sample.entries.map((e) => ({ id: e.id, choice: "unset" })),
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.text, draft);
+  });
+
+  test("a collision sentence applies the chosen row and leaves the other", () => {
+    const draft = "Alpha is good. Beta is bad.\n";
+    const entries = [
+      {
+        id: "S0:editorial:marketing_language_excess:0",
+        disposition: "ACTION",
+        statementId: "0",
+        statement: "Alpha is good.",
+        resultingSentence: "Alpha is adequate.",
+      },
+      {
+        id: "S0:editorial:voice_consistency:1",
+        disposition: "ACTION",
+        statementId: "0",
+        statement: "Alpha is good.",
+        resultingSentence: "Halden Group finds Alpha good.",
+      },
+    ];
+    const first = applyDecisions({
+      draft,
+      entries,
+      decisions: [
+        { id: entries[0].id, choice: "accept" },
+        { id: entries[1].id, choice: "unset" },
+      ],
+    });
+    assert.equal(first.ok, true);
+    assert.equal(first.text, "Alpha is adequate. Beta is bad.\n");
+    const second = applyDecisions({
+      draft,
+      entries,
+      decisions: [
+        { id: entries[0].id, choice: "unset" },
+        { id: entries[1].id, choice: "accept" },
+      ],
+    });
+    assert.equal(second.ok, true);
+    assert.equal(second.text, "Halden Group finds Alpha good. Beta is bad.\n");
+    const neither = applyDecisions({
+      draft,
+      entries,
+      decisions: [
+        { id: entries[0].id, choice: "unset" },
+        { id: entries[1].id, choice: "unset" },
+      ],
+    });
+    assert.equal(neither.ok, true);
+    assert.equal(neither.text, draft);
+  });
 });
 
 describe("revise-actions apply has no model", () => {
