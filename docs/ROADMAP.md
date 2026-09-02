@@ -2,9 +2,9 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-08-31 (B140 shipped; B123 accepted-not-fixed; B141-B146 opened)
+Last updated: 2026-09-02 (Pr17 apply/save shipped)
 
-Next work: accept, reject or MODIFY per change (**Pr17**, operator decision 2026-08-31; mechanism not decided; also the answer to **B143**), then internal consistency in Review (**Pr16**), then Suggest stability floor (**B135**). The false-red arc is closed as accepted-not-fixed (**B123**).
+Next work: internal consistency in Review (**Pr16**), then Suggest stability floor (**B135**). Per-finding accept / reject / modify / apply is live behind `REVISE_ACTION_LIST` (**Pr17**; also the answer to **B143**). The false-red arc is closed as accepted-not-fixed (**B123**). Step 8 preview was accepted as a v1 deviation (**B151**).
 
 ---
 
