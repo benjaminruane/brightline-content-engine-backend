@@ -2,9 +2,9 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-09-02 (Pr17 Implement Changes on main; no action-list tag)
+Last updated: 2026-09-03 (B154 narrowed to SHAPE B; Brackenhill Review exhibit captured)
 
-Next work: Review group (**B154** live verdict errors; **B155** Review says the authoring organisation cannot be named while configuration names it; **B149**), then the wording pass (**B153**, `ai/AI_OPERATING_MANUAL.md` QC Output Language Standard), then internal consistency in Review (**Pr16**), then Suggest stability floor (**B135**). Ranking is operator 2026-09-02. Implement Changes is on main behind `REVISE_ACTION_LIST` (backend runtime) and `VITE_REVISE_ACTION_LIST` (frontend build-time) (**Pr17**; no action-list tag; residual **B151**; default-accept retired **B152**; also the answer to **B143**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
+Next work: Review group (**B154** SHAPE B only, 2026-09-03 live miss, exhibit `scripts/diagnostic/review/b154-exhibit/`; **B155** Review says the authoring organisation cannot be named while configuration names it; **B149** / **B89** one contract, two faces), then the wording pass (**B153**, `ai/AI_OPERATING_MANUAL.md` QC Output Language Standard), then internal consistency in Review (**Pr16**), then Suggest stability floor (**B135**). Ranking is operator 2026-09-02. Implement Changes is on main behind `REVISE_ACTION_LIST` (backend runtime) and `VITE_REVISE_ACTION_LIST` (frontend build-time) (**Pr17**; no action-list tag; residual **B151**; default-accept retired **B152**; also the answer to **B143**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
 
 ---
 

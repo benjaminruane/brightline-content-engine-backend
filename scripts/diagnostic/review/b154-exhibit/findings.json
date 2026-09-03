@@ -1,0 +1,44 @@
+{
+  "stage1Count": 10,
+  "comparativeNeedleHits": 1,
+  "firstCloseNeedleHits": 1,
+  "mergedOrMissing": null,
+  "shapeB": {
+    "statementIndex": 7,
+    "statementText": "Comparable managers in North American healthcare services have returned a median 2.3 times gross MOIC over the same period.",
+    "supportState": "not_supported",
+    "displayVerdict": "not_supported",
+    "pairClassification": "no_support",
+    "pairPassage": "The portfolio is currently marked at 1.4 times gross MOIC. Net internal rate of return since inception is 11.2%. No portfolio company has been fully realised from Fund III to date, and these figures therefore reflect unrealised valuations prepared in accordance with the Fund's valuation policy.",
+    "pairExplanation": "The source does not address the median gross MOIC of comparable managers in North American healthcare services. It only provides information on Brackenhill Capital Partners' own portfolio performance.",
+    "ownFundFigureCue": true,
+    "namesComparables": false,
+    "reproduced": false,
+    "reproducedBecause": "Did not come back partial (supportState=not_supported, displayVerdict=not_supported, classification=no_support)."
+  },
+  "firstClose": {
+    "statementIndex": 8,
+    "statementText": "Brackenhill expects to hold a first close on Fund IV in the third quarter of 2026.",
+    "supportState": "not_supported",
+    "displayVerdict": "not_supported",
+    "pairClassification": "no_support",
+    "preBackstopClassification": "conflicting",
+    "periodAssessment": {
+      "statementPeriod": "Q3 2026",
+      "sourcePeriod": "Q1 2027",
+      "statementPeriodRole": "figure_period",
+      "sourcePeriodRole": "figure_period"
+    },
+    "periodsDoNotOverlap": true,
+    "reachedNoSupportViaPeriodRule": true,
+    "reachedNoSupportByModelAlone": false
+  },
+  "permissionToEdit": {
+    "statementIndex": 7,
+    "isEvidenceGap": true,
+    "statementIsSilent": true,
+    "testsFired": [],
+    "supportSpan_classification_conflicting": false,
+    "supportSpans": []
+  }
+}

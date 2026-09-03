@@ -1,0 +1,326 @@
+{
+  "qcCards": [
+    {
+      "index": 0,
+      "statement": "Brackenhill Capital Partners III closed at $840 million in March 2024, above its\n$750 million target.",
+      "supportState": "supported",
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "concernLevel": "none",
+      "evidenceSummary": "",
+      "primaryExcerpt": {
+        "sourceLabel": "Fund III Investor Update",
+        "passage": "Brackenhill Capital Partners III (the \"Fund\") held its final close in March 2024 at $840 million in aggregate commitments, ahead of its $750 million target."
+      },
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "confirmed",
+          "statementId": "0",
+          "passage": "Brackenhill Capital Partners III (the \"Fund\") held its final close in March 2024 at $840 million in aggregate commitments, ahead of its $750 million target.",
+          "start": 97,
+          "end": 253
+        }
+      ],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "confirmed",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 1,
+      "statement": "The fund has delivered a net IRR of 18.4% since inception.",
+      "supportState": "conflicting",
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "concernLevel": "high",
+      "evidenceSummary": "",
+      "primaryExcerpt": {
+        "sourceLabel": "Fund III Investor Update",
+        "passage": "Net internal rate of return since inception is 11.2%. No portfolio company has been fully realised from Fund III to date, and these figures therefore reflect unrealised valuations prepared in accordance with the Fund's valuation policy."
+      },
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "1",
+          "passage": "Net internal rate of return since inception is 11.2%.",
+          "start": 690,
+          "end": 743
+        }
+      ],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "conflicting",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 2,
+      "statement": "The fund is currently marked at 1.9 times gross MOIC.",
+      "supportState": "conflicting",
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "concernLevel": "high",
+      "evidenceSummary": "",
+      "primaryExcerpt": {
+        "sourceLabel": "Fund III Investor Update",
+        "passage": "The portfolio is currently marked at 1.4 times gross MOIC. Net internal rate of return since inception is 11.2%."
+      },
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "2",
+          "passage": "The portfolio is currently marked at 1.4 times gross MOIC.",
+          "start": 631,
+          "end": 689
+        }
+      ],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "conflicting",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 3,
+      "statement": "Three full exits have been completed from Fund II at a blended 2.1 times gross\nMOIC.",
+      "supportState": "supported",
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "concernLevel": "none",
+      "evidenceSummary": "",
+      "primaryExcerpt": {
+        "sourceLabel": "Fund III Investor Update",
+        "passage": "Three full exits have been completed from Fund II, at a blended 2.1 times gross MOIC."
+      },
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "confirmed",
+          "statementId": "3",
+          "passage": "Three full exits have been completed from Fund II, at a blended 2.1 times gross MOIC.",
+          "start": 997,
+          "end": 1082
+        }
+      ],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "confirmed",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 4,
+      "statement": "Fund II's realisations were, in our view, an exceptional outcome for a\nfirst-time institutional vehicle.",
+      "supportState": "partial",
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "concernLevel": "moderate",
+      "evidenceSummary": "",
+      "primaryExcerpt": {
+        "sourceLabel": "Fund III Investor Update",
+        "passage": "Three full exits have been completed from Fund II, at a blended 2.1 times gross MOIC."
+      },
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "partially_confirmed",
+          "statementId": "4",
+          "passage": "Three full exits have been completed from Fund II, at a blended 2.1 times gross MOIC.",
+          "start": 997,
+          "end": 1082
+        }
+      ],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "partially_confirmed",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 5,
+      "statement": "The firm's senior team has been stable, which means execution risk on Fund III\nis limited.",
+      "supportState": "partial",
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "concernLevel": "moderate",
+      "evidenceSummary": "",
+      "primaryExcerpt": {
+        "sourceLabel": "Fund III Investor Update",
+        "passage": "Of the four founding partners, two remain with the firm. One founding partner departed in 2025 to pursue interests outside private equity, and one moved to a non-executive role in 2023."
+      },
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "5",
+          "passage": "The investment team comprises fourteen professionals across offices in Chicago and Nashville. Of the four founding partners, two remain with the firm. One founding partner departed in 2025 to pursue interests outside private equity, and one moved to a non-executive role in 2023.",
+          "start": 1135,
+          "end": 1414
+        }
+      ],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "partially_confirmed",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 6,
+      "statement": "We have known the partners since 2019, and in our experience they are candid\nabout underperformance.",
+      "supportState": "not_supported",
+      "displayVerdict": "not_supported",
+      "hasConflict": false,
+      "concernLevel": "high",
+      "evidenceSummary": "",
+      "primaryExcerpt": null,
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "no_support",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 7,
+      "statement": "Comparable managers in North American healthcare services have returned a median\n2.3 times gross MOIC over the same period.",
+      "supportState": "not_supported",
+      "displayVerdict": "not_supported",
+      "hasConflict": false,
+      "concernLevel": "high",
+      "evidenceSummary": "",
+      "primaryExcerpt": null,
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "no_support",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 8,
+      "statement": "Brackenhill expects to hold a first close on Fund IV in the third quarter of\n2026.",
+      "supportState": "not_supported",
+      "displayVerdict": "not_supported",
+      "hasConflict": false,
+      "concernLevel": "high",
+      "evidenceSummary": "",
+      "primaryExcerpt": null,
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "no_support",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    },
+    {
+      "index": 9,
+      "statement": "On balance, we are supportive of the commitment.",
+      "supportState": "not_supported",
+      "displayVerdict": "not_supported",
+      "hasConflict": false,
+      "concernLevel": "high",
+      "evidenceSummary": "",
+      "primaryExcerpt": null,
+      "conflictExcerpt": null,
+      "conflictValues": null,
+      "supportSpans": [],
+      "unsupportedSpans": [],
+      "stage2SourceFingerprints": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Fund III Investor Update",
+          "classification": "no_support",
+          "systemFingerprint": "fp_1a8e2a470b"
+        }
+      ],
+      "claims": [],
+      "decomposed": false,
+      "claimUpgrade": false
+    }
+  ]
+}

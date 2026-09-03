@@ -1,0 +1,84 @@
+{
+  "stage1": {
+    "statements": [
+      {
+        "index": 0,
+        "text": "Brackenhill Capital Partners III closed at $840 million in March 2024, above its\n$750 million target.",
+        "charStart": 61,
+        "charEnd": 162,
+        "attempt": "llm"
+      },
+      {
+        "index": 1,
+        "text": "The fund has delivered a net IRR of 18.4% since inception.",
+        "charStart": 164,
+        "charEnd": 222,
+        "attempt": "llm"
+      },
+      {
+        "index": 2,
+        "text": "The fund is currently marked at 1.9 times gross MOIC.",
+        "charStart": 224,
+        "charEnd": 277,
+        "attempt": "llm"
+      },
+      {
+        "index": 3,
+        "text": "Three full exits have been completed from Fund II at a blended 2.1 times gross\nMOIC.",
+        "charStart": 279,
+        "charEnd": 363,
+        "attempt": "llm"
+      },
+      {
+        "index": 4,
+        "text": "Fund II's realisations were, in our view, an exceptional outcome for a\nfirst-time institutional vehicle.",
+        "charStart": 365,
+        "charEnd": 469,
+        "attempt": "llm"
+      },
+      {
+        "index": 5,
+        "text": "The firm's senior team has been stable, which means execution risk on Fund III\nis limited.",
+        "charStart": 471,
+        "charEnd": 561,
+        "attempt": "llm"
+      },
+      {
+        "index": 6,
+        "text": "We have known the partners since 2019, and in our experience they are candid\nabout underperformance.",
+        "charStart": 563,
+        "charEnd": 663,
+        "attempt": "llm"
+      },
+      {
+        "index": 7,
+        "text": "Comparable managers in North American healthcare services have returned a median\n2.3 times gross MOIC over the same period.",
+        "charStart": 665,
+        "charEnd": 788,
+        "attempt": "llm"
+      },
+      {
+        "index": 8,
+        "text": "Brackenhill expects to hold a first close on Fund IV in the third quarter of\n2026.",
+        "charStart": 790,
+        "charEnd": 872,
+        "attempt": "llm"
+      },
+      {
+        "index": 9,
+        "text": "On balance, we are supportive of the commitment.",
+        "charStart": 874,
+        "charEnd": 922,
+        "attempt": "llm"
+      }
+    ],
+    "source": "llm",
+    "errors": [],
+    "usage": {
+      "inputTokens": 492,
+      "outputTokens": 310
+    },
+    "costUsd": 0.0043300000000000005,
+    "systemFingerprint": "fp_ffd8308b42"
+  }
+}

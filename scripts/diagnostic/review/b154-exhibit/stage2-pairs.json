@@ -1,0 +1,235 @@
+{
+  "matches": [
+    {
+      "statementIndex": 0,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "passage": "Brackenhill Capital Partners III (the \"Fund\") held its final close in March 2024 at $840 million in aggregate commitments, ahead of its $750 million target.",
+      "explanation": "The source confirms that Brackenhill Capital Partners III closed at $840 million in March 2024, exceeding its $750 million target, matching the statement exactly.",
+      "periodAssessment": {
+        "statementPeriod": "March 2024",
+        "sourcePeriod": "March 2024",
+        "statementPeriodRole": "entity_vintage",
+        "sourcePeriodRole": "entity_vintage"
+      },
+      "statementFigures": [
+        {
+          "value": 840000000,
+          "raw": "$840 million",
+          "kind": "money",
+          "currency": "USD"
+        },
+        {
+          "value": 750000000,
+          "raw": "$750 million",
+          "kind": "money",
+          "currency": "USD"
+        }
+      ],
+      "sourceFigures": [
+        {
+          "value": 840000000,
+          "raw": "$840 million",
+          "kind": "money",
+          "currency": "USD"
+        },
+        {
+          "value": 750000000,
+          "raw": "$750 million",
+          "kind": "money",
+          "currency": "USD"
+        }
+      ],
+      "schemaValid": true,
+      "costUsd": 0.006365,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 1,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "passage": "Net internal rate of return since inception is 11.2%. No portfolio company has been fully realised from Fund III to date, and these figures therefore reflect unrealised valuations prepared in accordance with the Fund's valuation policy.",
+      "explanation": "The statement claims a net IRR of 18.4% since inception, while the source states a net IRR of 11.2% for the same period. This is a magnitude conflict beyond rounding.",
+      "periodAssessment": {
+        "statementPeriod": "since inception",
+        "sourcePeriod": "since inception",
+        "statementPeriodRole": "figure_period",
+        "sourcePeriodRole": "figure_period"
+      },
+      "statementFigures": [
+        {
+          "value": 18.4,
+          "raw": "18.4%",
+          "kind": "percent",
+          "metric": "irr"
+        }
+      ],
+      "sourceFigures": [
+        {
+          "value": 11.2,
+          "raw": "11.2%",
+          "kind": "percent"
+        }
+      ],
+      "schemaValid": true,
+      "costUsd": 0.006634999999999999,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 2,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "conflicting",
+      "preBackstopClassification": "conflicting",
+      "passage": "The portfolio is currently marked at 1.4 times gross MOIC. Net internal rate of return since inception is 11.2%.",
+      "explanation": "The statement claims the fund is marked at 1.9 times gross MOIC, while the source states it is marked at 1.4 times gross MOIC. This is a magnitude conflict beyond rounding.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": "Q2 2026",
+        "statementPeriodRole": null,
+        "sourcePeriodRole": "figure_period"
+      },
+      "statementFigures": [],
+      "sourceFigures": [
+        {
+          "value": 11.2,
+          "raw": "11.2%",
+          "kind": "percent"
+        }
+      ],
+      "schemaValid": true,
+      "costUsd": 0.006299999999999999,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 3,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "confirmed",
+      "preBackstopClassification": "confirmed",
+      "passage": "Three full exits have been completed from Fund II, at a blended 2.1 times gross MOIC.",
+      "explanation": "The source confirms that three full exits have been completed from Fund II at a blended 2.1 times gross MOIC, matching the statement exactly.",
+      "periodAssessment": {
+        "statementPeriod": null,
+        "sourcePeriod": null,
+        "statementPeriodRole": null,
+        "sourcePeriodRole": null
+      },
+      "statementFigures": [],
+      "sourceFigures": [],
+      "schemaValid": true,
+      "costUsd": 0.0095675,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 4,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "passage": "Three full exits have been completed from Fund II, at a blended 2.1 times gross MOIC.",
+      "explanation": "The source confirms the realisations from Fund II with a blended 2.1 times gross MOIC but does not address the evaluative claim that these were 'an exceptional outcome for a first-time institutional vehicle.'",
+      "periodAssessment": null,
+      "statementFigures": [],
+      "sourceFigures": [],
+      "schemaValid": true,
+      "costUsd": 0.0059875,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 5,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "partially_confirmed",
+      "preBackstopClassification": "partially_confirmed",
+      "passage": "Of the four founding partners, two remain with the firm. One founding partner departed in 2025 to pursue interests outside private equity, and one moved to a non-executive role in 2023.",
+      "explanation": "The source confirms that the senior team has been relatively stable, with two founding partners still at the firm. However, it does not address execution risk on Fund III, making the statement partially confirmed.",
+      "periodAssessment": null,
+      "statementFigures": [],
+      "sourceFigures": [],
+      "schemaValid": true,
+      "costUsd": 0.005980000000000001,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 6,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "no_support",
+      "preBackstopClassification": "no_support",
+      "passage": "",
+      "explanation": "The source does not mention the partners' candidness about underperformance or the duration of the relationship since 2019. It focuses on fund performance and team composition.",
+      "periodAssessment": null,
+      "statementFigures": [],
+      "sourceFigures": [],
+      "schemaValid": true,
+      "costUsd": 0.005747499999999999,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 7,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "no_support",
+      "preBackstopClassification": "no_support",
+      "passage": "The portfolio is currently marked at 1.4 times gross MOIC. Net internal rate of return since inception is 11.2%. No portfolio company has been fully realised from Fund III to date, and these figures therefore reflect unrealised valuations prepared in accordance with the Fund's valuation policy.",
+      "explanation": "The source does not address the median gross MOIC of comparable managers in North American healthcare services. It only provides information on Brackenhill Capital Partners' own portfolio performance.",
+      "periodAssessment": {
+        "statementPeriod": "Q2 2026",
+        "sourcePeriod": null,
+        "statementPeriodRole": "figure_period",
+        "sourcePeriodRole": null
+      },
+      "statementFigures": [],
+      "sourceFigures": [
+        {
+          "value": 11.2,
+          "raw": "11.2%",
+          "kind": "percent"
+        }
+      ],
+      "schemaValid": true,
+      "costUsd": 0.006702499999999999,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 8,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "no_support",
+      "preBackstopClassification": "conflicting",
+      "passage": "The firm expects to hold a first close on Brackenhill Capital Partners IV in the first quarter of 2027. No formal marketing has commenced.",
+      "explanation": "The statement claims a first close in Q3 2026, while the source states it is expected in Q1 2027. This is a direct conflict in the expected timing of the first close.",
+      "periodAssessment": {
+        "statementPeriod": "Q3 2026",
+        "sourcePeriod": "Q1 2027",
+        "statementPeriodRole": "figure_period",
+        "sourcePeriodRole": "figure_period"
+      },
+      "statementFigures": [],
+      "sourceFigures": [],
+      "schemaValid": true,
+      "costUsd": 0.006545,
+      "systemFingerprint": "fp_1a8e2a470b"
+    },
+    {
+      "statementIndex": 9,
+      "sourceIndex": 0,
+      "sourceLabel": "Fund III Investor Update",
+      "classification": "no_support",
+      "preBackstopClassification": "no_support",
+      "passage": "No portfolio company has been fully realised from Fund III to date, and these figures therefore reflect unrealised valuations prepared in accordance with the Fund's valuation policy.",
+      "explanation": "The source does not address the statement's claim about being supportive of the commitment. It provides information on fund performance and operations but does not express any stance on commitment support.",
+      "periodAssessment": null,
+      "statementFigures": [],
+      "sourceFigures": [],
+      "schemaValid": true,
+      "costUsd": 0.0059375,
+      "systemFingerprint": "fp_1a8e2a470b"
+    }
+  ]
+}
