@@ -1,0 +1,30 @@
+[
+  {
+    "pairId": "F19:S2:19_synth_annual_report",
+    "statementId": "F19_S2",
+    "statement": "The exit of NorTech Industries - which closed in January 2026 at SEK 18.4 billion and generated a 3.56x gross MOIC / 31.4 percent gross IRR - is the largest realisation in the Fund's history and the principal driver of the Fund's current returns trajectory.",
+    "plant": "CORPUS",
+    "sourceLabel": "19_synth_annual_report",
+    "preBackstopClassification": "partially_confirmed",
+    "classification": "conflicting",
+    "backstopChanged": true,
+    "proceduralCloser": false,
+    "periodGateShaped": false,
+    "periodAssessmentPresent": false,
+    "exploratory": true
+  },
+  {
+    "pairId": "F90:S0:90_adversarial_b17_latent",
+    "statementId": "F90_S0",
+    "statement": "The firm invested in Helios Grid Controls in 2024.",
+    "plant": "PLANTED",
+    "sourceLabel": "90_adversarial_b17_latent",
+    "preBackstopClassification": "conflicting",
+    "classification": "no_support",
+    "backstopChanged": true,
+    "proceduralCloser": false,
+    "periodGateShaped": true,
+    "periodAssessmentPresent": false,
+    "exploratory": true
+  }
+]

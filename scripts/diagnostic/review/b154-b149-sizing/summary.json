@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-09-03T10:05:22.617Z",
+  "exploratory": true,
+  "baseline": false,
+  "gate": false,
+  "design": {
+    "exploratory": true,
+    "baseline": false,
+    "gate": false,
+    "billed": false,
+    "countingRulePinnedBeforeNumbers": true,
+    "count1": "B149: evidence-gap qcCards on the four Stage 0 Review artefacts. b149SpanConflictFired = supportSpan_classification_conflicting fired. b149SoleCause = that was the only STRUCTURAL_TESTS fire. Per artefact. Never summed.",
+    "count2": "Period-gate shaped: corpusRows variantId R10, preBackstopClassification in {confirmed, conflicting}, classification no_support, not a procedural closer. Not a SHAPE A rate.",
+    "count3": "SHAPE A / SHAPE B rates refused. No sound mechanical check."
+  },
+  "count1_b149": {
+    "artefacts": [
+      {
+        "stem": "r10-review1",
+        "file": "suggest-after-r10-review1.json",
+        "cardCount": 10,
+        "evidenceGapCount": 8,
+        "partialCount": 5,
+        "notSupportedCount": 2,
+        "silentGapCount": 7,
+        "notSilentGapCount": 1,
+        "b149SpanConflictFired": 0,
+        "b149SoleCause": 0,
+        "b149SpanConflictOnPartial": 0,
+        "b149SoleCauseOnPartial": 0,
+        "doNotSum": true,
+        "exploratory": true
+      },
+      {
+        "stem": "r10-review2",
+        "file": "suggest-after-r10-review2.json",
+        "cardCount": 10,
+        "evidenceGapCount": 3,
+        "partialCount": 1,
+        "notSupportedCount": 2,
+        "silentGapCount": 3,
+        "notSilentGapCount": 0,
+        "b149SpanConflictFired": 0,
+        "b149SoleCause": 0,
+        "b149SpanConflictOnPartial": 0,
+        "b149SoleCauseOnPartial": 0,
+        "doNotSum": true,
+        "exploratory": true
+      },
+      {
+        "stem": "coverage-gap",
+        "file": "coverage-gap-review.json",
+        "cardCount": 6,
+        "evidenceGapCount": 3,
+        "partialCount": 2,
+        "notSupportedCount": 1,
+        "silentGapCount": 3,
+        "notSilentGapCount": 0,
+        "b149SpanConflictFired": 0,
+        "b149SoleCause": 0,
+        "b149SpanConflictOnPartial": 0,
+        "b149SoleCauseOnPartial": 0,
+        "doNotSum": true,
+        "exploratory": true
+      },
+      {
+        "stem": "condition-b",
+        "file": "condition-b-review.json",
+        "cardCount": 10,
+        "evidenceGapCount": 3,
+        "partialCount": 2,
+        "notSupportedCount": 0,
+        "silentGapCount": 2,
+        "notSilentGapCount": 1,
+        "b149SpanConflictFired": 0,
+        "b149SoleCause": 0,
+        "b149SpanConflictOnPartial": 0,
+        "b149SoleCauseOnPartial": 0,
+        "doNotSum": true,
+        "exploratory": true
+      }
+    ],
+    "neverSumAcrossArtefacts": true,
+    "note": "EXPLORATORY. Per artefact only. Not a SHAPE B rate. Not a live exposure rate."
+  },
+  "count2_periodGateShaped": {
+    "source": "scripts/diagnostic/eval-ablation/r10-corpus-blast-rows.json corpusRows",
+    "variant": "R10",
+    "r10RowCount": 378,
+    "backstopChangedRowCount": 2,
+    "periodGateShapedCount": 1,
+    "periodGateShapedPlanted": 1,
+    "periodGateShapedIndependent": 0,
+    "periodGateShapedCorpus": 0,
+    "periodAssessmentPresentOnBlastRows": false,
+    "note": "EXPLORATORY. Fixture corpus. Not a SHAPE A rate. Not live exposure."
+  },
+  "count3_shapeRates": {
+    "refused": true,
+    "reason": "No sound mechanical check. Commentary and primaryExcerpt are forbidden detectors. Stored Review cards lack preBackstopClassification and periodAssessment."
+  },
+  "brackenhillEvidenceRowCount": 8
+}
