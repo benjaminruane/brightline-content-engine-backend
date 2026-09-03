@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-09-03T11:07:53.729Z",
+  "billed": false,
+  "populationsNotSummed": true,
+  "r10CorpusBlast": {
+    "file": "scripts/diagnostic/eval-ablation/r10-corpus-blast-rows.json",
+    "variant": "R10",
+    "pairCount": 378,
+    "periodGateRewriteCount": 1,
+    "rows": [
+      {
+        "pairId": "F90:S0:90_adversarial_b17_latent",
+        "statementId": "F90_S0",
+        "statement": "The firm invested in Helios Grid Controls in 2024.",
+        "plant": "PLANTED",
+        "sourceLabel": "90_adversarial_b17_latent",
+        "preBackstopClassification": "conflicting",
+        "classification": "no_support",
+        "explanation": "The statement claims the investment occurred in 2024, while the source indicates the investment took place in 2022 ('last year' from the 2023 document date). This is a period mismatch for the investment vintage.",
+        "passage": "We invested last year in Helios Grid Controls GmbH (the \"Company\"), a Munich-headquartered supplier of grid-stabilisation software to European transmission operators.",
+        "periodAssessmentPresent": false,
+        "ifRewriteStopped": "classification would remain conflicting; Stage 3 would aggregate conflicting from this pair."
+      }
+    ],
+    "periodAssessmentPresentOnBlastRows": false,
+    "note": "Shaped by preBackstop vs classification. Blast rows do not store periodAssessment, so this is period-gate-shaped, not period-gate-proven. The one row is planted F90 (B17 latent). Zero CORPUS. Zero INDEPENDENT."
+  },
+  "b154Exhibit": {
+    "file": "scripts/diagnostic/review/b154-exhibit/stage2-pairs.json",
+    "pairCount": 10,
+    "periodGateRewriteCount": 1,
+    "rows": [
+      {
+        "statementIndex": 8,
+        "preBackstopClassification": "conflicting",
+        "classification": "no_support",
+        "periodAssessment": {
+          "statementPeriod": "Q3 2026",
+          "sourcePeriod": "Q1 2027",
+          "statementPeriodRole": "figure_period",
+          "sourcePeriodRole": "figure_period"
+        },
+        "periodsDoNotOverlap": true,
+        "explanation": "The statement claims a first close in Q3 2026, while the source states it is expected in Q1 2027. This is a direct conflict in the expected timing of the first close.",
+        "passage": "The firm expects to hold a first close on Brackenhill Capital Partners IV in the first quarter of 2027. No formal marketing has commenced.",
+        "ifRewriteStopped": "classification would remain conflicting. Card displayVerdict would be conflict, not not_supported. Silence would not treat the card as silent. Implement Changes could grant ACTION."
+      }
+    ],
+    "note": "Proven: periodsDoNotOverlap and applyPeriodGateBackstop on the stored periodAssessment."
+  }
+}

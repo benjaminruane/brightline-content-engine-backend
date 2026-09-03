@@ -2,9 +2,9 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-09-03 (B154 narrowed to SHAPE B; Brackenhill Review exhibit captured)
+Last updated: 2026-09-03 (period-gate discarded-conflict scoped, not filed; B154 S7 characterised unstable)
 
-Next work: Review group (**B154** SHAPE B only, 2026-09-03 live miss, exhibit `scripts/diagnostic/review/b154-exhibit/`; **B155** Review says the authoring organisation cannot be named while configuration names it; **B149** / **B89** one contract, two faces), then the wording pass (**B153**, `ai/AI_OPERATING_MANUAL.md` QC Output Language Standard), then internal consistency in Review (**Pr16**), then Suggest stability floor (**B135**). Ranking is operator 2026-09-02. Implement Changes is on main behind `REVISE_ACTION_LIST` (backend runtime) and `VITE_REVISE_ACTION_LIST` (frontend build-time) (**Pr17**; no action-list tag; residual **B151**; default-accept retired **B152**; also the answer to **B143**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
+Next work: Review group (**B155** Review says the authoring organisation cannot be named while configuration names it; **B154** SHAPE B, exhibit `scripts/diagnostic/review/b154-exhibit/`, S7 not stable; **B149** / **B89** one contract, two faces), then the wording pass (**B153**, `ai/AI_OPERATING_MANUAL.md` QC Output Language Standard), then internal consistency in Review (**Pr16**), then Suggest stability floor (**B135**). The discarded `conflicting` judgement on non-overlapping periods is a separate product question, not **B154**, and was not filed this pass. Ranking is operator 2026-09-02 except **B155** stays ahead of any period-gate verdict move. Implement Changes is on main behind `REVISE_ACTION_LIST` (backend runtime) and `VITE_REVISE_ACTION_LIST` (frontend build-time) (**Pr17**; no action-list tag; residual **B151**; default-accept retired **B152**; also the answer to **B143**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
 
 ---
 

@@ -1,0 +1,101 @@
+{
+  "capturedAt": "2026-09-03T11:08:01.248Z",
+  "billedUsd": 0.023622,
+  "costCeilingUsd": 2,
+  "doing": {
+    "b1": "characterising whether S7 classifies stably at shipped seed 1 temperature 0. Three live pair calls. Cache off. Stop if any run is partial or confirmed. 3/3 no_support is a stable clean result.",
+    "b1Not": "hunting for the false green. Extra seeds. Full pipeline. Regenerating the action-list sample.",
+    "b2": "Stage 5 commentary on stored S8 (first close) and S7 (comparatives), using the production Stage 5 inputs from the saved exhibit pairs."
+  },
+  "b1": {
+    "design": "characterising whether S7 classifies stably at shipped seed 1 temperature 0. Three live pair calls. Cache off. Stop if any run is partial or confirmed. 3/3 no_support is a stable clean result.",
+    "runs": [
+      {
+        "run": 1,
+        "statementIndex": 7,
+        "classification": "no_support",
+        "preBackstopClassification": "no_support",
+        "passage": "The portfolio is currently marked at 1.4 times gross MOIC. Net internal rate of return since inception is 11.2%. No portfolio company has been fully realised from Fund III to date, and these figures therefore reflect unrealised valuations prepared in accordance with the Fund's valuation policy.",
+        "explanation": "The source does not address the median gross MOIC of comparable managers in North American healthcare services. It only provides information about Brackenhill Capital Partners' own portfolio performance.",
+        "periodAssessment": {
+          "statementPeriod": "Q2 2026",
+          "sourcePeriod": "Q2 2026",
+          "statementPeriodRole": "figure_period",
+          "sourcePeriodRole": null
+        },
+        "costUsd": 0.0101125,
+        "systemFingerprint": "fp_1a8e2a470b",
+        "shapeBThisRun": false
+      },
+      {
+        "run": 2,
+        "statementIndex": 7,
+        "classification": "partially_confirmed",
+        "preBackstopClassification": "partially_confirmed",
+        "passage": "The portfolio is currently marked at 1.4 times gross MOIC. Net internal rate of return since inception is 11.2%. No portfolio company has been fully realised from Fund III to date, and these figures therefore reflect unrealised valuations prepared in accordance with the Fund's valuation policy.",
+        "explanation": "The source provides a gross MOIC for Brackenhill Capital Partners III but does not address the median MOIC for comparable managers in North American healthcare services. The statement's period is not directly supported by the source.",
+        "periodAssessment": {
+          "statementPeriod": "Q2 2026",
+          "sourcePeriod": null,
+          "statementPeriodRole": "figure_period",
+          "sourcePeriodRole": null
+        },
+        "costUsd": 0.006172500000000001,
+        "systemFingerprint": "fp_1a8e2a470b",
+        "shapeBThisRun": true
+      }
+    ],
+    "classifications": [
+      "no_support",
+      "partially_confirmed"
+    ],
+    "stableClean": false,
+    "falseGreenAppeared": true,
+    "stoppedEarly": true,
+    "priorExhibitClassification": "no_support"
+  },
+  "b2": {
+    "firstClose": {
+      "statementIndex": 8,
+      "statement": "Brackenhill expects to hold a first close on Fund IV in the third quarter of\n2026.",
+      "productionVerdict": "not_supported",
+      "productionHasConflict": false,
+      "productionPrimaryExcerpt": null,
+      "sourceExplanations": [
+        {
+          "classification": "no_support",
+          "explanation": "The statement claims a first close in Q3 2026, while the source states it is expected in Q1 2027. This is a direct conflict in the expected timing of the first close."
+        }
+      ],
+      "preBackstopClassification": "conflicting",
+      "commentary": "No source addresses the claim that Brackenhill expects to hold a first close on Fund IV in the third quarter of 2026. The source actually mentions a different timeline, expecting the first close in the first quarter of 2027. The reviewer should add a source that supports the original claim or revise the statement to align with the available information.",
+      "commentaryCostUsd": 0.0038475000000000002,
+      "userFacing": {
+        "badge": "No support",
+        "line": "No support from sources",
+        "commentary": "No source addresses the claim that Brackenhill expects to hold a first close on Fund IV in the third quarter of 2026. The source actually mentions a different timeline, expecting the first close in the first quarter of 2027. The reviewer should add a source that supports the original claim or revise the statement to align with the available information."
+      }
+    },
+    "comparatives": {
+      "statementIndex": 7,
+      "statement": "Comparable managers in North American healthcare services have returned a median\n2.3 times gross MOIC over the same period.",
+      "productionVerdict": "not_supported",
+      "productionHasConflict": false,
+      "productionPrimaryExcerpt": null,
+      "sourceExplanations": [
+        {
+          "classification": "no_support",
+          "explanation": "The source does not address the median gross MOIC of comparable managers in North American healthcare services. It only provides information on Brackenhill Capital Partners' own portfolio performance."
+        }
+      ],
+      "preBackstopClassification": "no_support",
+      "commentary": "No source addresses the claim about the median 2.3 times gross MOIC for comparable managers in North American healthcare services. Please add a supporting source or remove the claim.",
+      "commentaryCostUsd": 0.0034874999999999997,
+      "userFacing": {
+        "badge": "No support",
+        "line": "No support from sources",
+        "commentary": "No source addresses the claim about the median 2.3 times gross MOIC for comparable managers in North American healthcare services. Please add a supporting source or remove the claim."
+      }
+    }
+  }
+}

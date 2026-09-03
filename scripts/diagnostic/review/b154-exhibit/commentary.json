@@ -1,0 +1,44 @@
+{
+  "firstClose": {
+    "statementIndex": 8,
+    "statement": "Brackenhill expects to hold a first close on Fund IV in the third quarter of\n2026.",
+    "productionVerdict": "not_supported",
+    "productionHasConflict": false,
+    "productionPrimaryExcerpt": null,
+    "sourceExplanations": [
+      {
+        "classification": "no_support",
+        "explanation": "The statement claims a first close in Q3 2026, while the source states it is expected in Q1 2027. This is a direct conflict in the expected timing of the first close."
+      }
+    ],
+    "preBackstopClassification": "conflicting",
+    "commentary": "No source addresses the claim that Brackenhill expects to hold a first close on Fund IV in the third quarter of 2026. The source actually mentions a different timeline, expecting the first close in the first quarter of 2027. The reviewer should add a source that supports the original claim or revise the statement to align with the available information.",
+    "commentaryCostUsd": 0.0038475000000000002,
+    "userFacing": {
+      "badge": "No support",
+      "line": "No support from sources",
+      "commentary": "No source addresses the claim that Brackenhill expects to hold a first close on Fund IV in the third quarter of 2026. The source actually mentions a different timeline, expecting the first close in the first quarter of 2027. The reviewer should add a source that supports the original claim or revise the statement to align with the available information."
+    }
+  },
+  "comparatives": {
+    "statementIndex": 7,
+    "statement": "Comparable managers in North American healthcare services have returned a median\n2.3 times gross MOIC over the same period.",
+    "productionVerdict": "not_supported",
+    "productionHasConflict": false,
+    "productionPrimaryExcerpt": null,
+    "sourceExplanations": [
+      {
+        "classification": "no_support",
+        "explanation": "The source does not address the median gross MOIC of comparable managers in North American healthcare services. It only provides information on Brackenhill Capital Partners' own portfolio performance."
+      }
+    ],
+    "preBackstopClassification": "no_support",
+    "commentary": "No source addresses the claim about the median 2.3 times gross MOIC for comparable managers in North American healthcare services. Please add a supporting source or remove the claim.",
+    "commentaryCostUsd": 0.0034874999999999997,
+    "userFacing": {
+      "badge": "No support",
+      "line": "No support from sources",
+      "commentary": "No source addresses the claim about the median 2.3 times gross MOIC for comparable managers in North American healthcare services. Please add a supporting source or remove the claim."
+    }
+  }
+}

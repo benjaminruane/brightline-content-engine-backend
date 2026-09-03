@@ -61,3 +61,17 @@ One live run. Metered Stage 1 plus Stage 2: $0.07. Prompt pin held (R10, trimmed
 1. SHAPE B did not reproduce. S7 comparative sentence: Stage 2 `no_support`, card `not_supported` / `displayVerdict` `not_supported`. Explanation: source does not address comparable-manager MOIC. Card `primaryExcerpt` is null. The pair object still carried the Fund III 1.4x mark as `passage`; that did not become a green or partial badge.
 2. First-close S8 reached `no_support` through the period-overlap rule. `preBackstopClassification` `conflicting`, `classification` `no_support`, periods Q3 2026 vs Q1 2027, `periodsDoNotOverlap` true.
 3. Permission-to-edit did not fire on the comparatives sentence. Card is silent. `supportSpans` empty. Widened pass skips `no_support`.
+
+## Additions (2026-09-03, Part B, $0.02)
+
+Characterisation, not a hunt. Cache off. Seed 1. Stopped when a partial appeared. Do not take further observations looking for another one.
+
+```
+node scripts/diagnostic/review/b154-exhibit/run-commentary-and-stability.mjs
+```
+
+Writes `stability.json`, `commentary.json`, `part-b-summary.json`.
+
+B1. S7 is not stable. Run 1 `no_support`. Run 2 `partially_confirmed` on the Fund III 1.4x mark (SHAPE B). Stopped. Prior full exhibit was also `no_support`. Three observations: two clean, one partial.
+
+B2. First-close user-facing artefact: badge **No support**, line **No support from sources**, commentary names Q1 2027 and also says no source addresses the claim. `commentary.json` `firstClose.userFacing`.
