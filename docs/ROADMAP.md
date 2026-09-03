@@ -2,9 +2,9 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-09-03 (B149 silence face shipped; B155 diagnosed; fifth-state scoped not filed; B154 same-passage flap)
+Last updated: 2026-09-03 (B155 overrule attacked, not built; B156 fifth state scoped, not built)
 
-Next work: **B155** (Review and Implement Changes contradict on an unnamed author; Ben must choose whether the card names the configured house), then a display-only period-mismatch state if Ben wants it (classification stays `no_support`; do not move the period gate), then the wording pass (**B153**, `ai/AI_OPERATING_MANUAL.md` QC Output Language Standard), then internal consistency in Review (**Pr16**), then Suggest stability floor (**B135**). **B154** SHAPE B is hash-pinned if a peer-MOIC backstop is built; last. **B89** drawer mislabel remains. The discarded `conflicting` judgement is not **B154** and is not filed. Implement Changes is on main behind `REVISE_ACTION_LIST` (backend runtime) and `VITE_REVISE_ACTION_LIST` (frontend build-time) (**Pr17**; no action-list tag; residual **B151**; default-accept retired **B152**; also the answer to **B143**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
+Next work: **B155** remains open (config-as-truth overrule did not survive PART 0; presence check stands). **B156** fifth display state after Ben approves the freeze carve-out and the wording; classification stays `no_support`; do not move the period gate; unlock of Implement Changes is a later slice. Then the wording pass (**B153**), then **Pr16**, then **B135**. **B154** last if a backstop is built. **B89** drawer mislabel remains. Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
 
 ---
 
