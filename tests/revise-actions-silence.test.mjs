@@ -47,19 +47,14 @@ describe("B149 silence does not read widened span conflicts", () => {
     assert.equal(sorted.sort?.reasonCode, "silence_no_edit");
   });
 
-  test("Stage 3 conflict still counts as a source speaking", () => {
-    const card = {
+  test("Stage 3 conflicting supportState alone still grants ACTION", () => {
+    const card = partialCard({
       supportState: "conflicting",
       displayVerdict: "conflict",
-      hasConflict: true,
-      stage2SourceFingerprints: [{ classification: "conflicting" }],
-      unsupportedSpans: [],
-      supportSpans: [],
-      claims: [],
-      conflictExcerpt: null,
-      conflictValues: null,
-      conflictEvidence: null,
-    };
+      hasConflict: false,
+      stage2SourceFingerprints: [],
+    });
+    assert.deepEqual(sourceSpokeTestsFired(card), ["supportState_conflicting"]);
     assert.equal(statementIsSilent(card), false);
     const sorted = sortFinding(
       { kind: "evidence", rule: "conflicting", statement: "Net IRR is 18.4%.", card },
@@ -68,8 +63,21 @@ describe("B149 silence does not read widened span conflicts", () => {
     assert.equal(sorted.disposition, "ACTION");
   });
 
-  test("hasConflict on a partial card still counts as a source speaking", () => {
+  test("hasConflict on a partial card still grants ACTION", () => {
     const card = partialCard({ hasConflict: true });
+    assert.deepEqual(sourceSpokeTestsFired(card), ["hasConflict"]);
     assert.equal(statementIsSilent(card), false);
+    const sorted = sortFinding(evidenceFinding(card), statementIsSilent(card));
+    assert.equal(sorted.disposition, "ACTION");
+  });
+
+  test("Stage 2 single-pick conflicting on a partial card still grants ACTION", () => {
+    const card = partialCard({
+      stage2SourceFingerprints: [{ classification: "conflicting" }],
+    });
+    assert.deepEqual(sourceSpokeTestsFired(card), ["stage2_classification_conflicting"]);
+    assert.equal(statementIsSilent(card), false);
+    const sorted = sortFinding(evidenceFinding(card), statementIsSilent(card));
+    assert.equal(sorted.disposition, "ACTION");
   });
 });
