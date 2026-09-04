@@ -247,6 +247,146 @@ describe("revise-actions apply", () => {
     assert.equal(neither.ok, true);
     assert.equal(neither.text, draft);
   });
+
+  test("a rewritten statement is skipped and the rest still apply", () => {
+    const result = applyDecisions({
+      draft: "Gamma is new. Beta is bad.\n",
+      entries: [
+        {
+          id: "S0:editorial:marketing_language_excess:0",
+          disposition: "ACTION",
+          statementId: "0",
+          statement: "Alpha is good.",
+          resultingSentence: "Alpha is adequate.",
+        },
+        {
+          id: "S1:evidence:conflicting:0",
+          disposition: "ACTION",
+          statementId: "1",
+          statement: "Beta is bad.",
+          resultingSentence: "Beta is mixed.",
+        },
+      ],
+      decisions: [
+        { id: "S0:editorial:marketing_language_excess:0", choice: "accept" },
+        { id: "S1:evidence:conflicting:0", choice: "accept" },
+      ],
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.text, "Gamma is new. Beta is mixed.\n");
+  });
+
+  test("an inserted paragraph does not skip later statements", () => {
+    const result = applyDecisions({
+      draft: "Preface.\nAlpha is good. Beta is bad.\n",
+      entries: [
+        {
+          id: "S0:editorial:marketing_language_excess:0",
+          disposition: "ACTION",
+          statementId: "0",
+          statement: "Alpha is good.",
+          resultingSentence: "Alpha is adequate.",
+        },
+        {
+          id: "S1:evidence:conflicting:0",
+          disposition: "ACTION",
+          statementId: "1",
+          statement: "Beta is bad.",
+          resultingSentence: "Beta is mixed.",
+        },
+      ],
+      decisions: [
+        { id: "S0:editorial:marketing_language_excess:0", choice: "accept" },
+        { id: "S1:evidence:conflicting:0", choice: "accept" },
+      ],
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.text, "Preface.\nAlpha is adequate. Beta is mixed.\n");
+  });
+
+  test("duplicate sentences are assigned in extraction order", () => {
+    const statements = [
+      {
+        id: "0",
+        text: "Same line.",
+        qcCard: { statement: "Same line.", charStart: 0, charEnd: 10 },
+      },
+      {
+        id: "1",
+        text: "Same line.",
+        qcCard: { statement: "Same line.", charStart: 11, charEnd: 21 },
+      },
+    ];
+    const entries = [
+      {
+        id: "S0:editorial:currency_format:0",
+        disposition: "ACTION",
+        statementId: "0",
+        statement: "Same line.",
+        resultingSentence: "First.",
+      },
+      {
+        id: "S1:editorial:currency_format:0",
+        disposition: "ACTION",
+        statementId: "1",
+        statement: "Same line.",
+        resultingSentence: "Second.",
+      },
+    ];
+    const result = applyDecisions({
+      draft: "Same line. Same line.\n",
+      statements,
+      entries,
+      decisions: [
+        { id: entries[0].id, choice: "accept" },
+        { id: entries[1].id, choice: "accept" },
+      ],
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.text, "First. Second.\n");
+  });
+
+  test("editing the last duplicate skips only that statement", () => {
+    const statements = [
+      {
+        id: "0",
+        text: "Same line.",
+        qcCard: { statement: "Same line.", charStart: 0, charEnd: 10 },
+      },
+      {
+        id: "1",
+        text: "Same line.",
+        qcCard: { statement: "Same line.", charStart: 11, charEnd: 21 },
+      },
+    ];
+    const entries = [
+      {
+        id: "S0:editorial:currency_format:0",
+        disposition: "ACTION",
+        statementId: "0",
+        statement: "Same line.",
+        resultingSentence: "First.",
+      },
+      {
+        id: "S1:editorial:currency_format:0",
+        disposition: "ACTION",
+        statementId: "1",
+        statement: "Same line.",
+        resultingSentence: "Second.",
+      },
+    ];
+    const result = applyDecisions({
+      draft: "Same line. Changed.\n",
+      statements,
+      entries,
+      decisions: [
+        { id: entries[0].id, choice: "accept" },
+        { id: entries[1].id, choice: "accept" },
+      ],
+    });
+    assert.equal(result.ok, true);
+    assert.equal(result.text, "First. Changed.\n");
+  });
 });
 
 describe("revise-actions apply has no model", () => {
