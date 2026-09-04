@@ -61,5 +61,9 @@ describe("revise-actions user-facing copy", () => {
 
   test("unnamed first-person acknowledge wording is clean", () => {
     assert.deepEqual(findBannedUserCopy(NO_PROPOSAL.first_person_unnamed), []);
+    assert.equal(
+      NO_PROPOSAL.first_person_unnamed,
+      "This sentence is written in the first person, which reporting commentary does not allow. Nothing is proposed. Rewrite it in the third person in the draft."
+    );
   });
 });
