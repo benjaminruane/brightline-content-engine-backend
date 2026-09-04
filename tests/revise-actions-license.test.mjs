@@ -34,13 +34,15 @@ const CONVERT_IDS = [
   "S5:editorial:overreach_unsupported_causal:0",
   "S7:evidence:partial:0",
 ];
+const VOICE_UNNAMED_IDS = [
+  "S4:editorial:voice_consistency:1",
+  "S6:editorial:voice_consistency:0",
+  "S9:editorial:voice_consistency:0",
+];
 const KEEP_ACTION_IDS = [
   "S0:editorial:currency_format:0",
   "S1:evidence:conflicting:0",
   "S2:evidence:conflicting:0",
-  "S4:editorial:voice_consistency:1",
-  "S6:editorial:voice_consistency:0",
-  "S9:editorial:voice_consistency:0",
 ];
 const KEEP_ACK_IDS = [
   "S4:evidence:partial:0",
@@ -49,6 +51,23 @@ const KEEP_ACK_IDS = [
   "S6:evidence:not_supported:0",
   "S8:evidence:not_supported:0",
   "S9:evidence:not_supported:0",
+];
+const SAMPLE_ORDER = [
+  "S0:editorial:currency_format:0",
+  "S1:evidence:conflicting:0",
+  "S2:evidence:conflicting:0",
+  "S4:evidence:partial:0",
+  "S4:editorial:marketing_language_excess:0",
+  "S4:editorial:voice_consistency:1",
+  "S4:framing:framing_fidelity:0",
+  "S5:evidence:partial:0",
+  "S5:editorial:overreach_unsupported_causal:0",
+  "S6:evidence:not_supported:0",
+  "S6:editorial:voice_consistency:0",
+  "S7:evidence:partial:0",
+  "S8:evidence:not_supported:0",
+  "S9:evidence:not_supported:0",
+  "S9:editorial:voice_consistency:0",
 ];
 
 function loadReview2Statements() {
@@ -214,12 +233,124 @@ describe("revise-actions licensed change", () => {
     assert.equal(result.disposition, "ACKNOWLEDGE");
     assert.equal(result.noProposalReason, NO_PROPOSAL.visible_signal);
   });
+
+  test("fillAction does not call the model on first-person when the draft does not name the house", async () => {
+    let called = 0;
+    const result = await fillAction(
+      actionEntry({
+        id: "S9:editorial:voice_consistency:0",
+        statement: "On balance, we are supportive of the commitment.",
+        kind: "editorial",
+        rule: "voice_consistency",
+        sort: {
+          policyPermit: true,
+          silenceOnCard: true,
+          rule: "voice_consistency",
+          reasonCode: "permitted",
+        },
+      }),
+      {
+        authoringOrganisation: "Halden Group",
+        callModel: async () => {
+          called += 1;
+          return {
+            text: JSON.stringify({
+              proposedChange: "Replace 'we' with 'Halden Group'.",
+              resultingSentence: "On balance, Halden Group is supportive of the commitment.",
+              why: "Third-person voice.",
+            }),
+          };
+        },
+      }
+    );
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "first_person_unnamed");
+    assert.equal(result.noProposalReason, NO_PROPOSAL.first_person_unnamed);
+    assert.equal(result.resultingSentence, undefined);
+  });
+
+  test("fillAction still proposes when this statement names the configured house", async () => {
+    let called = 0;
+    const statement = "We were attracted to Meridian after Halden Group completed the screening.";
+    const resultingSentence =
+      "Halden Group was attracted to Meridian after Halden Group completed the screening.";
+    const result = await fillAction(
+      actionEntry({
+        id: "S0:editorial:voice_consistency:0",
+        statement,
+        kind: "editorial",
+        rule: "voice_consistency",
+        sort: {
+          policyPermit: true,
+          silenceOnCard: false,
+          rule: "voice_consistency",
+          reasonCode: "permitted",
+        },
+      }),
+      {
+        authoringOrganisation: "Halden Group",
+        callModel: async () => {
+          called += 1;
+          return {
+            text: JSON.stringify({
+              proposedChange: "Replace 'We' with 'Halden Group'.",
+              resultingSentence,
+              why: "The draft already names Halden Group.",
+            }),
+          };
+        },
+      }
+    );
+    assert.equal(called, 1);
+    assert.equal(result.disposition, "ACTION");
+    assert.equal(result.resultingSentence, resultingSentence);
+  });
+
+  test("fillAction still proposes when another sentence in the draft names the house", async () => {
+    let called = 0;
+    const statement = "On balance, we are supportive of the commitment.";
+    const resultingSentence = "On balance, Halden Group is supportive of the commitment.";
+    const result = await fillAction(
+      actionEntry({
+        id: "S9:editorial:voice_consistency:0",
+        statement,
+        kind: "editorial",
+        rule: "voice_consistency",
+        sort: {
+          policyPermit: true,
+          silenceOnCard: true,
+          rule: "voice_consistency",
+          reasonCode: "permitted",
+        },
+      }),
+      {
+        authoringOrganisation: "Halden Group",
+        draftText:
+          "In June 2025, Halden Group made a commitment to Meridian.\nOn balance, we are supportive of the commitment.",
+        callModel: async () => {
+          called += 1;
+          return {
+            text: JSON.stringify({
+              proposedChange: "Replace 'we' with 'Halden Group'.",
+              resultingSentence,
+              why: "The draft already names Halden Group.",
+            }),
+          };
+        },
+      }
+    );
+    assert.equal(called, 1);
+    assert.equal(result.disposition, "ACTION");
+    assert.equal(result.resultingSentence, resultingSentence);
+  });
 });
 
 describe("Brackenhill 2026-09-02 recorded sample", () => {
-  test("three named rows convert; six ACTION and six ACKNOWLEDGE stay", async () => {
+  test("three identity rows and three unnamed-voice rows convert; three ACTION stay", async () => {
     const sample = loadSample();
     assert.equal(sample.entries.length, 15);
+    const draftText = sample.entries.map((e) => e.statement).join("\n");
     const replayed = [];
     for (const entry of sample.entries) {
       if (entry.disposition !== "ACTION") {
@@ -229,15 +360,42 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
       replayed.push(
         await fillAction(asSortedAction(entry), {
           authoringOrganisation: "Halden Group",
+          draftText,
           callModel: stubModel(entry),
         })
       );
     }
     const byId = Object.fromEntries(replayed.map((e) => [e.id, e]));
+    const mix = SAMPLE_ORDER.map((id) => `${id} ${byId[id]?.disposition}`);
+    assert.deepEqual(mix, [
+      "S0:editorial:currency_format:0 ACTION",
+      "S1:evidence:conflicting:0 ACTION",
+      "S2:evidence:conflicting:0 ACTION",
+      "S4:evidence:partial:0 ACKNOWLEDGE",
+      "S4:editorial:marketing_language_excess:0 ACKNOWLEDGE",
+      "S4:editorial:voice_consistency:1 ACKNOWLEDGE",
+      "S4:framing:framing_fidelity:0 ACKNOWLEDGE",
+      "S5:evidence:partial:0 ACKNOWLEDGE",
+      "S5:editorial:overreach_unsupported_causal:0 ACKNOWLEDGE",
+      "S6:evidence:not_supported:0 ACKNOWLEDGE",
+      "S6:editorial:voice_consistency:0 ACKNOWLEDGE",
+      "S7:evidence:partial:0 ACKNOWLEDGE",
+      "S8:evidence:not_supported:0 ACKNOWLEDGE",
+      "S9:evidence:not_supported:0 ACKNOWLEDGE",
+      "S9:editorial:voice_consistency:0 ACKNOWLEDGE",
+    ]);
+    assert.equal(replayed.filter((e) => e.disposition === "ACTION").length, 3);
+    assert.equal(replayed.filter((e) => e.disposition === "ACKNOWLEDGE").length, 12);
     for (const id of CONVERT_IDS) {
       assert.equal(byId[id]?.disposition, "ACKNOWLEDGE", `${id} must convert`);
       assert.equal(byId[id]?.sort?.reasonCode, "visible_signal", `${id} reason`);
       assert.equal(byId[id]?.noProposalReason, NO_PROPOSAL.visible_signal, `${id} copy`);
+    }
+    for (const id of VOICE_UNNAMED_IDS) {
+      assert.equal(byId[id]?.disposition, "ACKNOWLEDGE", `${id} must convert`);
+      assert.equal(byId[id]?.sort?.reasonCode, "first_person_unnamed", `${id} reason`);
+      assert.equal(byId[id]?.noProposalReason, NO_PROPOSAL.first_person_unnamed, `${id} copy`);
+      assert.equal(byId[id]?.resultingSentence, undefined, `${id} proposes nothing`);
     }
     for (const id of KEEP_ACTION_IDS) {
       assert.equal(byId[id]?.disposition, "ACTION", `${id} must stay ACTION`);

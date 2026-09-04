@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 import { findBannedUserCopy } from "../lib/revise-actions/user-copy.mjs";
-import { buildSortedEntries } from "../lib/revise-actions/sort.mjs";
+import { buildSortedEntries, NO_PROPOSAL } from "../lib/revise-actions/sort.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REVIEW_PATH = path.join(
@@ -57,5 +57,9 @@ describe("revise-actions user-facing copy", () => {
       ),
       []
     );
+  });
+
+  test("unnamed first-person acknowledge wording is clean", () => {
+    assert.deepEqual(findBannedUserCopy(NO_PROPOSAL.first_person_unnamed), []);
   });
 });
