@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 import editorialRules from "../lib/rulebook/editorialRules.js";
 import {
@@ -267,6 +269,55 @@ describe("first_person_plural and voice_consistency share the actor contract", (
     assert.match(styleRule.correct_example, /Halden Group was attracted to Meridian/);
     assert.match(styleRule.correct_example, /Halden Group believes the fund should deliver/);
     assert.match(styleRule.description, /Halden Group was attracted to X/);
+  });
+
+  test("promptHouseName null does not interpolate a configured house even when env is set", () => {
+    withHouseEnv(FICTIONAL_HOUSE, () => {
+      const rules = resolveStyleGuide({
+        outputType: "reporting_commentary",
+        promptHouseName: null,
+      });
+      const styleRule = ruleById(rules, "first_person_plural");
+      assert.ok(styleRule);
+      assert.doesNotMatch(styleRule.description, new RegExp(FICTIONAL_HOUSE));
+      assert.doesNotMatch(styleRule.correct_example, new RegExp(FICTIONAL_HOUSE));
+      assert.match(
+        styleRule.correct_example,
+        new RegExp(`${AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER} was attracted to Meridian`)
+      );
+    });
+  });
+
+  test("promptHouseName keeps the named-actor instruction when the draft named the house", () => {
+    const rules = resolveStyleGuide({
+      outputType: "reporting_commentary",
+      promptHouseName: FICTIONAL_HOUSE,
+    });
+    const styleRule = ruleById(rules, "first_person_plural");
+    assert.match(styleRule.description, /Halden Group was attracted to X/);
+    assert.match(styleRule.correct_example, /Halden Group was attracted to Meridian/);
+  });
+
+  test("combined reviewer presence-checks the draft before interpolating the house", () => {
+    const src = readFileSync(
+      fileURLToPath(new URL("../lib/qc/editorial-compliance-reviewer.mjs", import.meta.url)),
+      "utf8"
+    );
+    const start = src.indexOf("export async function runEditorialStyleReview");
+    const end = src.indexOf("export async function runComplianceReview");
+    const body = src.slice(start, end);
+    assert.match(body, /identifyAuthoringOrganisation\(/);
+    assert.match(body, /promptHouseName:/);
+    const styleBody = src.slice(
+      src.indexOf("export async function runStyleGuideReview"),
+      src.indexOf("export async function runEditorialReview")
+    );
+    assert.match(styleBody, /identifyAuthoringOrganisation\(/);
+    const editorialBody = src.slice(
+      src.indexOf("export async function runEditorialReview"),
+      src.indexOf("export async function runEditorialStyleReview")
+    );
+    assert.match(editorialBody, /identifyAuthoringOrganisation\(/);
   });
 
   test("correct examples name the actor; incorrect examples keep first person", () => {

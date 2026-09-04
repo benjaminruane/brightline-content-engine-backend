@@ -2,9 +2,9 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-09-04 (B155 flag-only: ACTION-without-proposal is a contract change, not built)
+Last updated: 2026-09-04 (B155 cheap path shipped: unnamed first-person is flag-only)
 
-Next work: **B155** remains open (flag-only on unnamed drafts; ACTION-without-proposal needs its own spec). **B156** fifth display state after Ben approves the freeze carve-out and the wording; classification stays `no_support`; do not move the period gate; unlock of Implement Changes is a later slice. Then the wording pass (**B153**), then **Pr16**, then **B135**. **B154** last if a backstop is built. **B89** drawer mislabel remains. Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
+Next work: **B156** fifth display state after Ben approves the freeze carve-out and the wording; classification stays `no_support`; do not move the period gate; unlock of Implement Changes is a later slice. Then the wording pass (**B153**), then **Pr16**, then **B135**. **B154** last if a backstop is built. **B89** drawer mislabel remains. Implement Changes Modify-without-a-proposal is parked (save is blocked if the draft has been edited since Review). Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**).
 
 ---
 
