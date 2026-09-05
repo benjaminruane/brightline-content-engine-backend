@@ -13,7 +13,23 @@ Conflict rule: if ANY uploaded source contradicts the statement, the label is X 
 
 Older sources: if the draft matches the most recent source and only an older source disagrees, the label is C (Confirmed). Treat the older figure as out of date, not as a contradiction. If you cannot tell which source is more recent, label X.
 
-Mixed statements: judge the whole sentence, and let the most serious problem decide. If any part of it is contradicted by a source, label X, even if the rest is fine. Otherwise, if some parts are supported and some are not, label P. If nothing in the statement is addressed by the sources at all, label N. If all of it is supported, label C.
+Mixed statements: judge the whole sentence and let the most serious problem decide. If any part is contradicted by a source, label X even if the rest is fine. Otherwise, if some parts are supported and some are not, label P. If nothing in the statement is addressed at all, label N. If all of it is supported, label C.
+
+Contradicted is not the same as quiet. A source that positions a transaction as still pending contradicts a claim that it is done. A source that simply never says what happened next does not: that is P, not X.
+
+Intensifiers. An intensifier the source does not offer is unsupported, so P. An intensifier the source matches in strength is C.
+
+Attribution. A correct figure credited to only some of the causes the source names is partly unsupported, so P.
+
+Escalation and broadening. Raising the degree of a claim, or widening its scope, without source backing is unsupported rather than contradicted, so P.
+
+Stripped alternatives. Dropping a source's stated either/or and asserting one branch as expected contradicts the source's own hedge, so X.
+
+Severed antecedents. Where the split leaves a sentence unable to identify what it refers to, label P. Reserve E for sentences that are genuinely malformed.
+
+Paraphrase. A fragment or reworded list item that carries the source's meaning is confirmed. Form is not the test.
+
+Implied but not stated. A detail the source strongly implies but never states is not addressed.
 
 Work fixture by fixture. Read the source once. Then label the listed statements in the order given (draft order).
 

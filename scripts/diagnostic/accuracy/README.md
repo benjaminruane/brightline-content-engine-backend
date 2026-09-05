@@ -22,6 +22,28 @@ Current Stage 3 is any-confirmed-wins (`lib/qc/pipeline-v4/stage3-aggregate-verd
 
 A superseded figure in an older source is not a live contradiction (Ben, 2026-09-05). If the draft matches the most recent source and only an older source disagrees, the label is Confirmed. Matches the supersession rule shipped under tag `review-supersession`. On 2026-09-05 the two F13 ARR rows were moved from Group A to Group B for this reason. Group A is 11. Group B is 89. The 100 statements were not resampled.
 
+## Adjudication rules
+
+Settled by Ben on 2026-09-05 while labelling the 100-statement set. The same text sits on the worksheet cover.
+
+Mixed statements: judge the whole sentence and let the most serious problem decide. If any part is contradicted by a source, label X even if the rest is fine. Otherwise, if some parts are supported and some are not, label P. If nothing in the statement is addressed at all, label N. If all of it is supported, label C.
+
+Contradicted is not the same as quiet. A source that positions a transaction as still pending contradicts a claim that it is done. A source that simply never says what happened next does not: that is P, not X.
+
+Intensifiers. An intensifier the source does not offer is unsupported, so P. An intensifier the source matches in strength is C.
+
+Attribution. A correct figure credited to only some of the causes the source names is partly unsupported, so P.
+
+Escalation and broadening. Raising the degree of a claim, or widening its scope, without source backing is unsupported rather than contradicted, so P.
+
+Stripped alternatives. Dropping a source's stated either/or and asserting one branch as expected contradicts the source's own hedge, so X.
+
+Severed antecedents. Where the split leaves a sentence unable to identify what it refers to, label P. Reserve E for sentences that are genuinely malformed.
+
+Paraphrase. A fragment or reworded list item that carries the source's meaning is confirmed. Form is not the test.
+
+Implied but not stated. A detail the source strongly implies but never states is not addressed.
+
 ## Seed
 
 `20260905`
