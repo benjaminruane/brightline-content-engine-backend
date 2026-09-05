@@ -75,3 +75,15 @@ Writes `stability.json`, `commentary.json`, `part-b-summary.json`.
 B1. S7 is not stable. Run 1 `no_support`. Run 2 `partially_confirmed` on the Fund III 1.4x mark (SHAPE B). Stopped. Prior full exhibit was also `no_support`. Three observations: two clean, one partial.
 
 B2. First-close user-facing artefact: badge **No support**, line **No support from sources**, commentary names Q1 2027 and also says no source addresses the claim. `commentary.json` `firstClose.userFacing`.
+
+## Characterisation (2026-09-05)
+
+Question: on the current model build, is the wrong answer consistent, or still a flap? Also: is the cited passage the same each time?
+
+```
+node scripts/diagnostic/review/b154-exhibit/run-characterisation.mjs
+```
+
+Writes `characterisation-2026-09-05.json`. Reusable as a gate. Cache off. Seed 1. n=20. No early stop. Stored Stage 1 S7. No Stage 2 prompt change.
+
+Result: still a flap. 17 `no_support`, 3 `partially_confirmed`. Fingerprint `fp_0ea3a61dc5`. Billed $0.124448. Conservative pre-flight $0.48. Two passage hashes: the long Fund III 1.4x mark, and one trimmed prefix of the same mark (run 9). All 20 rows `ownFundMarkCue` true. Same evidence, different grade. Not gateable. The pass condition for a future fix stays the bad answer disappearing across repeats. Do not build a backstop here.
