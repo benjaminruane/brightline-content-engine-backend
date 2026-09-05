@@ -87,3 +87,7 @@ node scripts/diagnostic/review/b154-exhibit/run-characterisation.mjs
 Writes `characterisation-2026-09-05.json`. Reusable as a gate. Cache off. Seed 1. n=20. No early stop. Stored Stage 1 S7. No Stage 2 prompt change.
 
 Result: still a flap. 17 `no_support`, 3 `partially_confirmed`. Fingerprint `fp_0ea3a61dc5`. Billed $0.124448. Conservative pre-flight $0.48. Two passage hashes: the long Fund III 1.4x mark, and one trimmed prefix of the same mark (run 9). All 20 rows `ownFundMarkCue` true. Same evidence, different grade. Not gateable. The pass condition for a future fix stays the bad answer disappearing across repeats. Do not build a backstop here.
+
+## Parked (2026-09-05)
+
+Last measurement. No further characterisation. A production-shaped rate check would exceed the then ceiling of $1, and the named harness differences cannot change this sentence's whole-sentence grade. The 3/3 production streak is a short look at the known flap. The row is parked until the sequence reaches it. The fix moves the pin and goes last.
