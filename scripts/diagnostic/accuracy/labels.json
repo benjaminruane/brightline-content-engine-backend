@@ -1,707 +1,815 @@
 {
   "schema": "accuracy-labels-v1",
-  "status": "empty-skeleton",
-  "labelledAt": null,
+  "status": "adjudicated",
+  "labelledAt": "2026-09-05",
+  "source": "Claude proposed, Ben adjudicated, 2026-09-05",
+  "mix": {
+    "C": 76,
+    "P": 11,
+    "X": 12,
+    "N": 1,
+    "E": 0
+  },
   "labels": [
-    {
-      "fixtureId": "05",
-      "statementText": "Halden Group has agreed to acquire Norwell Aerospace Components, a leading manufacturer of structural composite components and titanium machined parts, from Westhaven Capital.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "05",
-      "statementText": "During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "05",
-      "statementText": "Halden Group will support continued growth in commercial aerospace and an accelerated expansion of Norwell's space applications business, where the Company has identified meaningful capacity to grow share.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "13",
-      "statementText": "It serves over 1'200 freight forwarder and customs broker customers across 28 European countries and generates annual recurring revenue (ARR) of EUR 84 million as of October 2025, up from EUR 52 million two years prior.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "13",
-      "statementText": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "13",
-      "statementText": "The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "13",
-      "statementText": "We project ARR growth from EUR 81 million today to approximately EUR 195 million over a five-year hold, representing 19% CAGR.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "18",
-      "statementText": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "18",
-      "statementText": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "18",
-      "statementText": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "18",
-      "statementText": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "18",
-      "statementText": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
-    {
-      "fixtureId": "18",
-      "statementText": "The base case generates 2.8x MOIC and 23% gross IRR.",
-      "occurrence": 0,
-      "group": "A",
-      "label": null
-    },
     {
       "fixtureId": "01",
       "statementText": "Shopify (the \"Company\") is a Canadian e-commerce platform serving small and medium businesses, founded in 2007 in Ottawa.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "01",
       "statementText": "The Company is profitable and has raised just USD 1 million to date.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "01",
       "statementText": "Shopify's 24 employees are based in Ottawa, where the Company has recruited strong design and engineering talent at 60-70% of comparable Silicon Valley or New York costs.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "01",
       "statementText": "We recommend approval.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "02",
       "statementText": "Partners Group has agreed to sell atNorth, a leading pan-Nordic data center platform, to Canada Pension Plan Investment Board and Equinix in a transaction valuing the Company at an enterprise value of USD 4 billion.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "02",
       "statementText": "As AI workloads continue to drive demand for location-agnostic compute, atNorth is exceptionally well positioned to capitalize on this opportunity.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "02",
       "statementText": "This transaction marks a successful control exit from the firm's data center portfolio, although Partners Group remains thematically focused on the data center sector across multiple geographies.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "03",
       "statementText": "The investment will be made via a continuation fund managed by current owner Suma Capital, with Partners Group acting as cornerstone investor and taking two seats on the Company's board.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "03",
       "statementText": "Since Suma Capital's investment in 2020, Gestcompost has tripled its EBITDA, expanded its workforce, and grown its treatment capacity through new facilities.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "03",
       "statementText": "Partners Group's Infrastructure business manages USD 27 billion in assets globally.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "We are writing to inform you of a new investment in Pinterest (the \"Company\"), a visual discovery and bookmarking platform that lets users organize images they find interesting onto themed boards.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "The median active user pins around eight items per week.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "These are exceptional engagement metrics for a consumer product at this stage.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "The Company's user base is unusual in two respects.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "The founders, Mr. Ben Silbermann and Mr. Evan Sharp, are first-time founders but our diligence has been deeply positive.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "The Company currently has 8 employees, including the founders, and 1.5 million monthly active users.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "The current engagement profile may not survive scaling beyond the early adopter cohort.",
       "occurrence": 0,
+      "worksheetRow": 7,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "04",
       "statementText": "We have stress-tested for total loss and consider the risk-adjusted return profile acceptable given the conviction we have in the engagement signal and the founder team.",
       "occurrence": 0,
+      "worksheetRow": 8,
       "group": "B",
-      "label": null
+      "label": "confirmed"
+    },
+    {
+      "fixtureId": "05",
+      "statementText": "Halden Group has agreed to acquire Norwell Aerospace Components, a leading manufacturer of structural composite components and titanium machined parts, from Westhaven Capital.",
+      "occurrence": 0,
+      "worksheetRow": 1,
+      "group": "A",
+      "label": "conflicting"
     },
     {
       "fixtureId": "05",
       "statementText": "Norwell, headquartered in Cleveland, Ohio, supplies the major commercial aircraft original equipment manufacturers and the leading US defense primes.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "05",
       "statementText": "Revenue has grown at a compound annual rate of approximately 11 percent over the past five years, supported by the post-pandemic recovery in commercial aerospace and sustained strength in defense end markets.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
+    },
+    {
+      "fixtureId": "05",
+      "statementText": "During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.",
+      "occurrence": 0,
+      "worksheetRow": 4,
+      "group": "A",
+      "label": "conflicting"
+    },
+    {
+      "fixtureId": "05",
+      "statementText": "Halden Group will support continued growth in commercial aerospace and an accelerated expansion of Norwell's space applications business, where the Company has identified meaningful capacity to grow share.",
+      "occurrence": 0,
+      "worksheetRow": 5,
+      "group": "A",
+      "label": "conflicting"
     },
     {
       "fixtureId": "06",
       "statementText": "Adjusted EBITDA grew from GBP 41 million to GBP 78 million over the same period, with margins expanding from 21.9 percent to 25.0 percent.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "06",
       "statementText": "Moreno Iberica has had a more challenging period.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "06",
       "statementText": "Operational changes introduced during 2025 — including a new Chief Commercial Officer and a new Chairman — are expected to begin contributing meaningfully in 2026, and we continue to view the underlying business as fundamentally sound.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "06",
       "statementText": "Female representation in senior management across the portfolio reached 31 percent at the end of 2025, up from 26 percent at the end of 2024.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "07",
       "statementText": "That description covers a meaningful share of back-office work in financial services, healthcare administration, logistics, legal services, and accounting.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "07",
       "statementText": "This is not a thesis about general intelligence.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "07",
       "statementText": "We expect significant disruption to the incumbent vertical SaaS industry, deep changes to commercial models, and strong winner-takes-most dynamics emerging within each vertical category.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "08",
       "statementText": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "08",
       "statementText": "The Company's competitive position is exceptional.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "08",
       "statementText": "Switching costs for medical device customers are very high — supplier qualification typically takes 18 to 24 months and involves clinical trial impact assessments.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "08",
       "statementText": "- International margin expansion — footprint consolidation in Switzerland and procurement programs are expected to deliver 300-400 basis points of EBITDA margin uplift.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "08",
       "statementText": "- End-market growth — structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "08",
       "statementText": "The base case generates 2.4x MOIC and 19% gross IRR.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "08",
       "statementText": "Principal risks include semiconductor cyclicality, customer concentration in medical implants, foreign exchange exposure, and the upcoming founder transition — each is understood and reflected in our planning, with specific mitigations in place.",
       "occurrence": 0,
+      "worksheetRow": 7,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "09",
       "statementText": "Period revenue of EUR 318 million was 4 percent above plan, and EBITDA of EUR 58 million was 7 percent above plan with margins of 18.3 percent.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "09",
       "statementText": "Strong demand in medical implants, particularly from our largest orthopaedic customer, has been the principal driver of the upside.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "09",
       "statementText": "Our base case returns remain intact but the segment will be a moderating factor through 2026.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "09",
       "statementText": "Klaus Wenger joined as Chief Procurement Officer in September and has already secured EUR 2.1 million of annualised savings, against a year-one target of EUR 5 million.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "09",
       "statementText": "The Brno automation programme has progressed to first-phase capex approval of EUR 18 million, with installation targeted for Q3 2026.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "09",
       "statementText": "We continue to expect base case returns of 2.4x MOIC and 19 percent IRR.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "10",
       "statementText": "Headquartered in Frankfurt, the Company operates three production facilities across Germany and Belgium and employs approximately 850 people.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "10",
       "statementText": "It supplies more than 600 customers worldwide, with particular strength in ultra-high-purity solvents used in semiconductor wafer fabrication and pharmaceutical active ingredient manufacturing.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "11",
       "statementText": "The transaction closed on 19 January 2026 at an enterprise value of SEK 18.4 billion, approximately EUR 1.62 billion.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "11",
       "statementText": "The realisation generates gross proceeds to Fund IV of SEK 12.8 billion on invested capital of SEK 3.6 billion — a gross MOIC of 3.56x and a gross IRR of 31.4 percent over a 4.7-year hold.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "11",
       "statementText": "NorTech is the largest single realisation in Fund IV's history and moves the Fund's overall net IRR from 16.8 percent to 19.7 percent.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "11",
       "statementText": "Manufacturing footprint optimisation and the new Polish facility completed the operational picture.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "11",
       "statementText": "Total Company revenue grew from SEK 4.2 billion at entry to SEK 11.4 billion at exit, with EBITDA expanding from SEK 480 million to SEK 2.08 billion and margins from 11.4 percent to 18.2 percent.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "11",
       "statementText": "CEO Magnus Karlsson and the management team supported the Brookfield offer at the indicative stage; Brookfield's commitment to retain the Stockholm headquarters was an additional factor in the Company's preference.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "12",
       "statementText": "NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and when we invested in 2021 it was a strong but underexposed business — dominant in the Nordics and barely visible elsewhere.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "12",
       "statementText": "Magnus Karlsson, who took on the international expansion challenge with grace and decisiveness.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "12",
       "statementText": "Mikael Bergström, who navigated three generations of founding-family shareholder dynamics with patience and integrity.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "12",
       "statementText": "And the wider NorTech team across Stockholm and the new international footprint, who built something genuinely exceptional.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "13",
       "statementText": "CloudPivot Systems (the \"Company\") is a London-headquartered vertical SaaS platform for the European freight forwarding industry.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "13",
       "statementText": "The Company has built strong fundamentals.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
+    },
+    {
+      "fixtureId": "13",
+      "statementText": "It serves over 1'200 freight forwarder and customs broker customers across 28 European countries and generates annual recurring revenue (ARR) of EUR 84 million as of October 2025, up from EUR 52 million two years prior.",
+      "occurrence": 0,
+      "worksheetRow": 3,
+      "group": "B",
+      "label": "confirmed"
+    },
+    {
+      "fixtureId": "13",
+      "statementText": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
+      "occurrence": 0,
+      "worksheetRow": 4,
+      "group": "A",
+      "label": "conflicting"
+    },
+    {
+      "fixtureId": "13",
+      "statementText": "The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore.",
+      "occurrence": 0,
+      "worksheetRow": 5,
+      "group": "A",
+      "label": "conflicting"
     },
     {
       "fixtureId": "13",
       "statementText": "Third, the addressable European market of 14'000 forwarders gives meaningful headroom from the Company's current 8.6% penetration.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "confirmed"
+    },
+    {
+      "fixtureId": "13",
+      "statementText": "We project ARR growth from EUR 81 million today to approximately EUR 195 million over a five-year hold, representing 19% CAGR.",
+      "occurrence": 0,
+      "worksheetRow": 7,
+      "group": "B",
+      "label": "confirmed"
     },
     {
       "fixtureId": "13",
       "statementText": "Our base case generates 2.6x MOIC and 21% gross IRR.",
       "occurrence": 0,
+      "worksheetRow": 8,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "14",
       "statementText": "The category — software that helps clinicians make better, faster, more consistent treatment decisions at the point of care — is at a structural inflection point driven by three forces.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "14",
       "statementText": "Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "14",
       "statementText": "The opportunity is for products that genuinely improve clinical workflows.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "14",
       "statementText": "At the same time, generative AI is exposing incumbents that lack credible AI strategies to renewed competitive risk from challengers — and from each other.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "14",
       "statementText": "We expect to bring a specific potential investment to consider over the coming months.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "conflicting"
     },
     {
       "fixtureId": "14",
       "statementText": "We will provide further detail when the work is sufficiently advanced.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "no_support"
     },
     {
       "fixtureId": "15",
       "statementText": "Revenue in 2025 was EUR 612 million with EBITDA margins of 24.3%.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "15",
       "statementText": "Continued own-brand penetration uplift — own-brand share has grown from 38% in 2020 to 54% in 2025, with continued runway to 70% contributing material gross margin expansion.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "15",
       "statementText": "The UK and Nordic launches are the largest single contributor to growth.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "15",
       "statementText": "We have direct experience of homeware concepts that have failed in the UK market and have mitigated through detailed commercial diligence, a phased rollout, and a recruited UK country manager subject to deal completion.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "15",
       "statementText": "Germany has been notably weak in 2025, while Italy and Spain remain strong.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "15",
       "statementText": "We have stress-tested the model for sustained German weakness and the returns remain attractive.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "16",
       "statementText": "Trailing twelve months revenue is EUR 64 million, up from EUR 19 million in 2022 — a 47 percent compound annual growth rate.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "16",
       "statementText": "Gross margin is 71.4 percent and EBITDA margin is 32.8 percent.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "16",
       "statementText": "Channel mix is approximately 64 percent direct-to-consumer, 19 percent Amazon, 14 percent premium wholesale, and 3 percent clinic channel.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "16",
       "statementText": "Bloom is supported by a clinical advisory board of seven specialists across endocrinology, nutrition, and women's health.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "16",
       "statementText": "The principal risks are customer acquisition cost inflation in direct-to-consumer (Bloom's payback has lengthened from 3.8 months in 2022 to 5.2 months today), founder-dependency on Sarah Whitmore who is closely associated with the brand, and the regulatory environment for women's health nutrition claims, which is becoming more demanding across European markets.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "17",
       "statementText": "We are writing to inform you of a new investment in the Urbis Logistics Portfolio, a portfolio of 11 last-mile logistics properties located in major European urban areas.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "17",
       "statementText": "The transaction values the Portfolio at EUR 612 million, representing a going-in net initial yield of 5.4 percent and approximately EUR 1,820 per lettable square metre.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "17",
       "statementText": "Demand growth — driven by continued e-commerce penetration and same-day/next-day delivery expectations — is running well ahead of supply, which is constrained by urban planning priorities and political resistance to logistics development in city centres.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "17",
       "statementText": "Levered at 55 percent loan-to-value, the base case generates an equity gross IRR of 16.8 percent and an MOIC of 2.1x over a five-year hold.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
+    },
+    {
+      "fixtureId": "18",
+      "statementText": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+      "occurrence": 0,
+      "worksheetRow": 1,
+      "group": "A",
+      "label": "conflicting"
     },
     {
       "fixtureId": "18",
       "statementText": "We have invested EUR 158 million for a 60% controlling stake.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
+    },
+    {
+      "fixtureId": "18",
+      "statementText": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+      "occurrence": 0,
+      "worksheetRow": 3,
+      "group": "A",
+      "label": "conflicting"
+    },
+    {
+      "fixtureId": "18",
+      "statementText": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+      "occurrence": 0,
+      "worksheetRow": 4,
+      "group": "A",
+      "label": "conflicting"
+    },
+    {
+      "fixtureId": "18",
+      "statementText": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+      "occurrence": 0,
+      "worksheetRow": 5,
+      "group": "A",
+      "label": "conflicting"
+    },
+    {
+      "fixtureId": "18",
+      "statementText": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+      "occurrence": 0,
+      "worksheetRow": 6,
+      "group": "A",
+      "label": "conflicting"
+    },
+    {
+      "fixtureId": "18",
+      "statementText": "The base case generates 2.8x MOIC and 23% gross IRR.",
+      "occurrence": 0,
+      "worksheetRow": 7,
+      "group": "A",
+      "label": "conflicting"
     },
     {
       "fixtureId": "19",
       "statementText": "Across the remaining eight active portfolio companies, performance has been broadly positive with two notable challenges.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "19",
       "statementText": "Continental Plastics, acquired in March 2023, has had a more difficult 2025 with revenue growth of only 4 percent against an underwriting of 9 percent and broadly flat EBITDA.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "19",
       "statementText": "We have responded with operational changes including a new Chief Operating Officer and a structured cost reduction programme targeting EUR 22 million of annualised savings; early progress is encouraging but the realisation timeline has lengthened by approximately 12 months.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "19",
       "statementText": "All eight active portfolio companies have completed or are in the final stages of SBTi submission.",
       "occurrence": 0,
+      "worksheetRow": 4,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "19",
       "statementText": "Absolute Scope 1 and Scope 2 emissions reduced 8 percent during 2025 despite portfolio revenue growth of approximately 12 percent.",
       "occurrence": 0,
+      "worksheetRow": 5,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "19",
       "statementText": "We expect two further realisations during 2026.",
       "occurrence": 0,
+      "worksheetRow": 6,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "20",
       "statementText": "We are pleased to announce the final close of Meridian European Industrials Fund V at hard cap, with total commitments of EUR 4.8 billion.",
       "occurrence": 0,
+      "worksheetRow": 1,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "20",
       "statementText": "The fundraise was completed in eleven months from first close, well ahead of the original eighteen-month target.",
       "occurrence": 0,
+      "worksheetRow": 2,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     },
     {
       "fixtureId": "20",
       "statementText": "Demand exceeded the hard cap by approximately EUR 1.2 billion.",
       "occurrence": 0,
+      "worksheetRow": 3,
       "group": "B",
-      "label": null
+      "label": "confirmed"
     }
   ]
 }
