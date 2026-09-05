@@ -39,7 +39,7 @@ const REQUIRED_PHRASES = [
   "Every judgement keeps an owner",
   "redundant rather than protective",
   "A first-person fix which makes a claim more confident is a failure of the rule, not a bonus",
-  "leave the first-person wording in place",
+  "Do not tell the writer to keep the first-person wording",
   "Never infer one",
   "already been confirmed to appear in the draft",
 ];
@@ -82,7 +82,11 @@ describe("authoring organisation configuration", () => {
         "We believe the fund should deliver returns broadly in line with its predecessor."
       );
       assert.match(block, /not identified in this draft/);
-      assert.match(block, /leave the first-person wording unchanged/);
+      assert.match(block, /Raise the first-person concern/);
+      assert.match(block, /Do not recast into an agentless or passive construction/);
+      assert.match(block, /do not invent a firm name/);
+      assert.match(block, /Do not tell the writer to keep the first-person wording/);
+      assert.equal(/leave the first-person wording unchanged/.test(block), false);
       assert.doesNotMatch(block, /Partners Group/);
       assert.doesNotMatch(block, new RegExp(FICTIONAL_HOUSE));
     });
@@ -161,7 +165,11 @@ describe("first-person actor identification", () => {
     assert.equal(identifyAuthoringOrganisation(draft, FICTIONAL_HOUSE), null);
     const unnamed = formatAuthoringOrganisationPromptBlock(draft, FICTIONAL_HOUSE);
     assert.match(unnamed, /not identified in this draft/);
-    assert.match(unnamed, /leave the first-person wording unchanged/);
+    assert.match(unnamed, /Raise the first-person concern/);
+    assert.match(unnamed, /Do not recast into an agentless or passive construction/);
+    assert.match(unnamed, /do not invent a firm name/);
+    assert.match(unnamed, /Do not tell the writer to keep the first-person wording/);
+    assert.equal(/leave the first-person wording unchanged/.test(unnamed), false);
     assert.doesNotMatch(unnamed, new RegExp(FICTIONAL_HOUSE));
     assert.doesNotMatch(unnamed, /Partners Group/);
   });
@@ -188,6 +196,21 @@ describe("first-person actor identification", () => {
     );
   });
 
+  test("unnamed fallback flags first person and does not tell the writer to keep it", () => {
+    const unnamed = formatAuthoringOrganisationPromptBlock(
+      "We believe the fund should deliver returns broadly in line with its predecessor.",
+      FICTIONAL_HOUSE
+    );
+    assert.match(unnamed, /not identified in this draft/);
+    assert.match(unnamed, /Raise the first-person concern/);
+    assert.match(unnamed, /Do not recast into an agentless or passive construction/);
+    assert.match(unnamed, /do not invent a firm name/);
+    assert.match(unnamed, /Do not tell the writer to keep the first-person wording/);
+    assert.equal(/leave the first-person wording unchanged/.test(unnamed), false);
+    assert.doesNotMatch(unnamed, new RegExp(FICTIONAL_HOUSE));
+    assert.doesNotMatch(unnamed, /Partners Group/);
+  });
+
   test("payload names the actor when present and refuses recast when absent", () => {
     const named = formatAuthoringOrganisationPromptBlock(
       `${FICTIONAL_HOUSE} made a commitment to Meridian.`,
@@ -201,7 +224,9 @@ describe("first-person actor identification", () => {
       FICTIONAL_HOUSE
     );
     assert.match(unnamed, /not identified/);
-    assert.match(unnamed, /leave the first-person wording unchanged/);
+    assert.match(unnamed, /Raise the first-person concern/);
+    assert.match(unnamed, /Do not tell the writer to keep the first-person wording/);
+    assert.equal(/leave the first-person wording unchanged/.test(unnamed), false);
     assert.doesNotMatch(unnamed, new RegExp(FICTIONAL_HOUSE));
     assert.doesNotMatch(unnamed, /Partners Group/);
   });
