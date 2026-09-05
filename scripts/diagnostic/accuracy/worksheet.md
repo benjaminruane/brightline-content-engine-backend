@@ -13,6 +13,8 @@ Conflict rule: if ANY uploaded source contradicts the statement, the label is X 
 
 Older sources: if the draft matches the most recent source and only an older source disagrees, the label is C (Confirmed). Treat the older figure as out of date, not as a contradiction. If you cannot tell which source is more recent, label X.
 
+Mixed statements: judge the whole sentence, and let the most serious problem decide. If any part of it is contradicted by a source, label X, even if the rest is fine. Otherwise, if some parts are supported and some are not, label P. If nothing in the statement is addressed by the sources at all, label N. If all of it is supported, label C.
+
 Work fixture by fixture. Read the source once. Then label the listed statements in the order given (draft order).
 
 ## F01 bvp_shopify_memo
