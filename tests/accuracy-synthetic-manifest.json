@@ -1,0 +1,10 @@
+{
+  "seed": 20260905,
+  "groupA": [
+    { "fixtureId": "05", "statementText": "Halden acquires Norwell.", "occurrence": 0 }
+  ],
+  "groupB": [
+    { "fixtureId": "01", "statementText": "Revenue grew.", "occurrence": 0 },
+    { "fixtureId": "01", "statementText": "Dear investors.", "occurrence": 0 }
+  ]
+}

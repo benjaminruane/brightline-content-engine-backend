@@ -1,0 +1,10 @@
+{
+  "schema": "accuracy-labels-v1",
+  "status": "synthetic-scorer-fixture",
+  "labels": [
+    { "fixtureId": "05", "statementText": "Halden acquires Norwell.", "occurrence": 0, "label": "X" },
+    { "fixtureId": "01", "statementText": "Revenue grew.", "occurrence": 0, "label": "C" },
+    { "fixtureId": "01", "statementText": "Dear investors.", "occurrence": 0, "label": "E" },
+    { "fixtureId": "01", "statementText": "Only labelled.", "occurrence": 0, "label": "N" }
+  ]
+}

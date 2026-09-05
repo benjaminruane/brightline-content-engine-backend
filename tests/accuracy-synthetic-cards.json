@@ -1,0 +1,33 @@
+{
+  "cards": [
+    {
+      "fixtureId": "05",
+      "statement": "Halden acquires Norwell.",
+      "occurrence": 0,
+      "displayVerdict": "supported_full",
+      "hasConflict": true,
+      "sourceMatches": [
+        { "classification": "confirmed" },
+        { "classification": "conflicting" }
+      ]
+    },
+    {
+      "fixtureId": "01",
+      "statement": "Revenue grew.",
+      "occurrence": 0,
+      "displayVerdict": "supported_full"
+    },
+    {
+      "fixtureId": "01",
+      "statement": "Dear investors.",
+      "occurrence": 0,
+      "displayVerdict": "not_supported"
+    },
+    {
+      "fixtureId": "01",
+      "statement": "Only in cards.",
+      "occurrence": 0,
+      "displayVerdict": "conflict"
+    }
+  ]
+}
