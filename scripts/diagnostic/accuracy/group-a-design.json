@@ -1,0 +1,97 @@
+{
+  "writtenAt": "2026-09-05",
+  "protocol": "A statement joins Group A if its text contains the design span. Spans are quoted from the fixture draft. Why-notes cite the matching source contradiction. No verdict, classification, excerpt, or commentary fields.",
+  "faults": [
+    {
+      "id": "F05-acquirer",
+      "fixtureId": "05",
+      "span": "Halden Group has agreed to acquire Norwell Aerospace Components",
+      "quotedFrom": "scripts/diagnostic/fixtures/05_synth_competitor_press_release.json draft",
+      "why": "Draft names Halden as acquirer from Westhaven. Source names Westhaven acquiring Norwell from Bridgepoint."
+    },
+    {
+      "id": "F05-ownership",
+      "fixtureId": "05",
+      "span": "During Westhaven's ownership",
+      "quotedFrom": "scripts/diagnostic/fixtures/05_synth_competitor_press_release.json draft",
+      "why": "Draft attributes the ownership period to Westhaven. Source attributes it to Bridgepoint."
+    },
+    {
+      "id": "F05-forward-support",
+      "fixtureId": "05",
+      "span": "Halden Group will support continued growth",
+      "quotedFrom": "scripts/diagnostic/fixtures/05_synth_competitor_press_release.json draft",
+      "why": "Draft asserts Halden support. Source never names Halden."
+    },
+    {
+      "id": "F13-employees",
+      "fixtureId": "13",
+      "span": "employs 320 people",
+      "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
+      "why": "Draft and source section 1 say 320. Source section 6 says 285."
+    },
+    {
+      "id": "F13-arr-84",
+      "fixtureId": "13",
+      "span": "ARR) of EUR 84 million as of October 2025",
+      "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
+      "why": "Draft cites 84 million. Source section 2 says 84 and section 4 says 81."
+    },
+    {
+      "id": "F13-arr-81",
+      "fixtureId": "13",
+      "span": "ARR growth from EUR 81 million today",
+      "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
+      "why": "Draft cites 81 million as today's ARR. Source section 2 says 84 and section 4 says 81."
+    },
+    {
+      "id": "F13-ebitda",
+      "fixtureId": "13",
+      "span": "EBITDA margin is 11.1%",
+      "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
+      "why": "Draft cites 11.1%. Source recommendation says approximately 13% and section 2 says 11.1%."
+    },
+    {
+      "id": "F18-completion",
+      "fixtureId": "18",
+      "span": "confirm completion of the transaction",
+      "quotedFrom": "scripts/diagnostic/fixtures/18_synth_cross_source_pair.json draft",
+      "why": "Draft confirms completion. Both 18a and 18b are still a recommendation to complete."
+    },
+    {
+      "id": "F18-customers",
+      "fixtureId": "18",
+      "span": "serves 380 property management companies",
+      "quotedFrom": "scripts/diagnostic/fixtures/18_synth_cross_source_pair.json draft",
+      "why": "Draft uses 18a 380. 18b updates to 412."
+    },
+    {
+      "id": "F18-headcount",
+      "fixtureId": "18",
+      "span": "employs 142 people",
+      "quotedFrom": "scripts/diagnostic/fixtures/18_synth_cross_source_pair.json draft",
+      "why": "Draft uses 18a 142. 18b updates to 167."
+    },
+    {
+      "id": "F18-arr-current",
+      "fixtureId": "18",
+      "span": "ARR) of EUR 38 million as of March 2025",
+      "quotedFrom": "scripts/diagnostic/fixtures/18_synth_cross_source_pair.json draft",
+      "why": "Draft uses 18a 38 million. 18b updates cleaned ARR to 35 million."
+    },
+    {
+      "id": "F18-arr-growth",
+      "fixtureId": "18",
+      "span": "ARR growth from EUR 38 million",
+      "quotedFrom": "scripts/diagnostic/fixtures/18_synth_cross_source_pair.json draft",
+      "why": "Draft projects from 18a 38 million. 18b updates cleaned ARR to 35 million."
+    },
+    {
+      "id": "F18-returns",
+      "fixtureId": "18",
+      "span": "2.8x MOIC and 23% gross IRR",
+      "quotedFrom": "scripts/diagnostic/fixtures/18_synth_cross_source_pair.json draft",
+      "why": "Draft uses 18a 2.8x / 23%. 18b updates to 2.6x / 21%."
+    }
+  ]
+}
