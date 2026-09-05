@@ -50,13 +50,27 @@ Implied but not stated. A detail the source strongly implies but never states is
 
 ## Prices
 
-- Stage 1 extract (this pass): accepted ceiling $1. Estimate was about $0.15 per pass. Actual: run 1 $0.1357, run 2 $0.1357, total $0.2714. Stability gate passed with 0 mismatched slots.
-- Evidence scoring run (not run): estimate $8 to $15, ceiling $20. Editorial and compliance off. Price again before spending. Do not run it until `labels.json` is filled.
+- Stage 1 extract: accepted ceiling $1. Estimate was about $0.15 per pass. Actual: run 1 $0.1357, run 2 $0.1357, total $0.2714. Stability gate passed with 0 mismatched slots.
+- Evidence scoring run (2026-09-05, fixtures 01-20, cache off, editorial and compliance off, commentary skipped): Ben approved a combined ceiling of $40 for two independent passes. Pre-run estimate was about $6 to $12 per pass, $12 to $24 for both, under the ceiling. The runner metered $0.00 on both passes because `lib/qc/pipeline-v4/index.mjs` copies Stage 2 matches without `costUsd` or `usage` (lines 364-377), so `run-evidence.mjs` has nothing to sum. Wall clock: pass 1 254411 ms, pass 2 249500 ms. Stage 1 alone was $0.14. Pass 1 stored 271 whole-sentence Stage 2 pairs across 261 cards. Dollar spend is therefore HYPOTHESIS, not a meter: well under $40, likely in the original $12 to $24 band. Do not re-run to recover the missing meter.
 
-## Falsifiers (report loudly once labels land)
+## Scoreboard (run 1 scored; run 2 for stability only)
 
-- Escape rate above 15 percent: the statement unit is the wrong grain. This is May again.
-- Group B Ben-Confirmed below 40 after escapes: the false-alarm number cannot be spoken aloud.
+- Join: 100 labels in, 100 matched to frozen `statements.json`, 0 unmatched. Same 100 joined to pass-1 cards. Mix 76 C, 11 P, 12 X, 1 N, 0 E. Groups A=11 B=89.
+- Stability: **97 of 100** labelled statements kept the same mapped `displayVerdict` across the two cache-off passes. **3 moved.** That qualifies every rate below.
+- Metered spend: $0.00 / $0.00 (instrumentation, not a free run). Wall clock ~4.2 min per pass.
+- Group A: 3/11 = 0.2727, Wilson 95% [0.0975, 0.5657].
+- Group B: 75/89 = 0.8427, Wilson 95% [0.7531, 0.9039]. Never average A and B.
+- Leave-correct-sentences-alone (Ben-Confirmed in Group B that the pipeline also confirmed): 70/76 = 0.9211, Wilson 95% [0.8383, 0.9633].
+- Any-confirmed-wins disagreements: 4, all Group A, all F18.
+- Escapes: 0. Group B Ben-Confirmed: 76. Neither falsifier fired.
+- If scored on run 2 instead: Group A 2/11, Group B still 75/89.
+
+Full disagreement list and the three movers live in `score-result.json`. Cards: `runs/evidence-pass-1/cards.json` and `runs/evidence-pass-2/cards.json`.
+
+## Falsifiers (report loudly)
+
+- Escape rate above 15 percent: the statement unit is the wrong grain. This is May again. Observed 2026-09-05: 0.
+- Group B Ben-Confirmed below 40 after escapes: the false-alarm number cannot be spoken aloud. Observed 2026-09-05: 76.
 
 ## Join
 
@@ -72,8 +86,16 @@ The current splitter drops salutations, closings, and transitions (`lib/qc/pipel
 node scripts/diagnostic/accuracy/extract-stage1.mjs --stability-gate
 node scripts/diagnostic/accuracy/sample.mjs
 node scripts/diagnostic/accuracy/generate-worksheet.mjs
+node scripts/diagnostic/accuracy/load-labels.mjs
+node scripts/diagnostic/accuracy/run-evidence.mjs --pass 1
+node scripts/diagnostic/accuracy/run-evidence.mjs --pass 2
 node scripts/diagnostic/accuracy/score.mjs --labels <file> --cards <file> --manifest scripts/diagnostic/accuracy/sample-manifest.json
+node scripts/diagnostic/accuracy/score-passes.mjs \
+  --labels scripts/diagnostic/accuracy/labels.json \
+  --manifest scripts/diagnostic/accuracy/sample-manifest.json \
+  --run1 scripts/diagnostic/accuracy/runs/evidence-pass-1/cards.json \
+  --run2 scripts/diagnostic/accuracy/runs/evidence-pass-2/cards.json
 npx vitest run tests/accuracy-label-set.test.mjs
 ```
 
-Do not re-run extract or sample after labels exist.
+Do not re-run extract or sample after labels exist. Do not regenerate `labels.json`.

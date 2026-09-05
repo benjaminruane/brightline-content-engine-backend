@@ -1,0 +1,361 @@
+{
+  "scoredAt": "2026-09-05T13:10:57.191Z",
+  "pass1WallClockMs": 254411,
+  "pass2WallClockMs": 249500,
+  "pass1Cards": 261,
+  "pass2Cards": 261,
+  "labelled": 100,
+  "stability": {
+    "same": 97,
+    "moved": [
+      {
+        "fixtureId": "08",
+        "statementText": "The Company's competitive position is exceptional.",
+        "run1": "confirmed",
+        "run2": "partially_confirmed",
+        "run1Raw": "supported_full",
+        "run2Raw": "supported_partial"
+      },
+      {
+        "fixtureId": "08",
+        "statementText": "- End-market growth — structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.",
+        "run1": "confirmed",
+        "run2": "partially_confirmed",
+        "run1Raw": "supported_full",
+        "run2Raw": "supported_partial"
+      },
+      {
+        "fixtureId": "18",
+        "statementText": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+        "run1": "conflicting",
+        "run2": "confirmed",
+        "run1Raw": "conflict",
+        "run2Raw": "supported_full"
+      }
+    ],
+    "missing": 0,
+    "n": 100
+  },
+  "run1": {
+    "groupA": {
+      "n": 11,
+      "agreements": 3,
+      "rate": 0.2727272727272727,
+      "wilson95": {
+        "rate": 0.2727272727272727,
+        "low": 0.09745880573921467,
+        "high": 0.5656502930102463
+      },
+      "confusion": {
+        "confirmed": {
+          "confirmed": 0,
+          "partially_confirmed": 0,
+          "conflicting": 0,
+          "no_support": 0
+        },
+        "partially_confirmed": {
+          "confirmed": 0,
+          "partially_confirmed": 0,
+          "conflicting": 0,
+          "no_support": 0
+        },
+        "conflicting": {
+          "confirmed": 7,
+          "partially_confirmed": 1,
+          "conflicting": 3,
+          "no_support": 0
+        },
+        "no_support": {
+          "confirmed": 0,
+          "partially_confirmed": 0,
+          "conflicting": 0,
+          "no_support": 0
+        }
+      },
+      "disagreements": [
+        {
+          "fixtureId": "05",
+          "statementText": "Halden Group will support continued growth in commercial aerospace and an accelerated expansion of Norwell's space applications business, where the Company has identified meaningful capacity to grow share.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_partial",
+          "pipelineMapped": "partially_confirmed"
+        },
+        {
+          "fixtureId": "13",
+          "statementText": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "13",
+          "statementText": "The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "The base case generates 2.8x MOIC and 23% gross IRR.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        }
+      ]
+    },
+    "groupB": {
+      "n": 89,
+      "agreements": 75,
+      "rate": 0.8426966292134831,
+      "wilson95": {
+        "rate": 0.8426966292134831,
+        "low": 0.7531102751273543,
+        "high": 0.9039227790207861
+      },
+      "confusion": {
+        "confirmed": {
+          "confirmed": 70,
+          "partially_confirmed": 4,
+          "conflicting": 1,
+          "no_support": 1
+        },
+        "partially_confirmed": {
+          "confirmed": 7,
+          "partially_confirmed": 4,
+          "conflicting": 0,
+          "no_support": 0
+        },
+        "conflicting": {
+          "confirmed": 0,
+          "partially_confirmed": 1,
+          "conflicting": 0,
+          "no_support": 0
+        },
+        "no_support": {
+          "confirmed": 0,
+          "partially_confirmed": 0,
+          "conflicting": 0,
+          "no_support": 1
+        }
+      },
+      "disagreements": [
+        {
+          "fixtureId": "01",
+          "statementText": "Shopify (the \"Company\") is a Canadian e-commerce platform serving small and medium businesses, founded in 2007 in Ottawa.",
+          "occurrence": 0,
+          "benLabel": "partially_confirmed",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "01",
+          "statementText": "We recommend approval.",
+          "occurrence": 0,
+          "benLabel": "confirmed",
+          "pipelineDisplayVerdict": "not_supported",
+          "pipelineMapped": "no_support"
+        },
+        {
+          "fixtureId": "04",
+          "statementText": "We are writing to inform you of a new investment in Pinterest (the \"Company\"), a visual discovery and bookmarking platform that lets users organize images they find interesting onto themed boards.",
+          "occurrence": 0,
+          "benLabel": "partially_confirmed",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "04",
+          "statementText": "The Company's user base is unusual in two respects.",
+          "occurrence": 0,
+          "benLabel": "confirmed",
+          "pipelineDisplayVerdict": "supported_partial",
+          "pipelineMapped": "partially_confirmed"
+        },
+        {
+          "fixtureId": "04",
+          "statementText": "We have stress-tested for total loss and consider the risk-adjusted return profile acceptable given the conviction we have in the engagement signal and the founder team.",
+          "occurrence": 0,
+          "benLabel": "confirmed",
+          "pipelineDisplayVerdict": "supported_partial",
+          "pipelineMapped": "partially_confirmed"
+        },
+        {
+          "fixtureId": "08",
+          "statementText": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+          "occurrence": 0,
+          "benLabel": "partially_confirmed",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "08",
+          "statementText": "- International margin expansion — footprint consolidation in Switzerland and procurement programs are expected to deliver 300-400 basis points of EBITDA margin uplift.",
+          "occurrence": 0,
+          "benLabel": "partially_confirmed",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "08",
+          "statementText": "- End-market growth — structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.",
+          "occurrence": 0,
+          "benLabel": "partially_confirmed",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "09",
+          "statementText": "Strong demand in medical implants, particularly from our largest orthopaedic customer, has been the principal driver of the upside.",
+          "occurrence": 0,
+          "benLabel": "partially_confirmed",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "13",
+          "statementText": "The Company has built strong fundamentals.",
+          "occurrence": 0,
+          "benLabel": "confirmed",
+          "pipelineDisplayVerdict": "supported_partial",
+          "pipelineMapped": "partially_confirmed"
+        },
+        {
+          "fixtureId": "14",
+          "statementText": "Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.",
+          "occurrence": 0,
+          "benLabel": "confirmed",
+          "pipelineDisplayVerdict": "supported_partial",
+          "pipelineMapped": "partially_confirmed"
+        },
+        {
+          "fixtureId": "14",
+          "statementText": "We expect to bring a specific potential investment to consider over the coming months.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_partial",
+          "pipelineMapped": "partially_confirmed"
+        },
+        {
+          "fixtureId": "17",
+          "statementText": "We are writing to inform you of a new investment in the Urbis Logistics Portfolio, a portfolio of 11 last-mile logistics properties located in major European urban areas.",
+          "occurrence": 0,
+          "benLabel": "partially_confirmed",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "We have invested EUR 158 million for a 60% controlling stake.",
+          "occurrence": 0,
+          "benLabel": "confirmed",
+          "pipelineDisplayVerdict": "conflict",
+          "pipelineMapped": "conflicting"
+        }
+      ],
+      "amongBenConfirmed": {
+        "n": 76,
+        "pipelineAlsoConfirmed": 70,
+        "rate": 0.9210526315789473,
+        "wilson95": {
+          "rate": 0.9210526315789473,
+          "low": 0.8382706480636879,
+          "high": 0.9633164944785457
+        }
+      }
+    },
+    "anyConfirmedWins": {
+      "count": 4,
+      "groupA": 4,
+      "groupB": 0,
+      "rows": [
+        {
+          "fixtureId": "18",
+          "statementText": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        },
+        {
+          "fixtureId": "18",
+          "statementText": "The base case generates 2.8x MOIC and 23% gross IRR.",
+          "occurrence": 0,
+          "benLabel": "conflicting",
+          "pipelineDisplayVerdict": "supported_full",
+          "pipelineMapped": "confirmed"
+        }
+      ]
+    },
+    "escapes": {
+      "count": 0,
+      "rate": 0,
+      "perFixture": {}
+    },
+    "unmatchedLabels": [],
+    "unmatchedPredictions": [],
+    "falsifiers": {
+      "escapeRate": 0,
+      "escapeRateOver15": false,
+      "groupBBenConfirmed": 76,
+      "groupBBenConfirmedBelow40": false
+    }
+  },
+  "run2Rates": {
+    "groupA": 0.18181818181818182,
+    "groupAAgreements": 2,
+    "groupB": 0.8426966292134831,
+    "groupBAgreements": 75
+  }
+}
