@@ -28,28 +28,14 @@
       "fixtureId": "13",
       "span": "employs 320 people",
       "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
-      "why": "Draft and source section 1 say 320. Source section 6 says 285."
-    },
-    {
-      "id": "F13-arr-84",
-      "fixtureId": "13",
-      "span": "ARR) of EUR 84 million as of October 2025",
-      "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
-      "why": "Draft cites 84 million. Source section 2 says 84 and section 4 says 81."
-    },
-    {
-      "id": "F13-arr-81",
-      "fixtureId": "13",
-      "span": "ARR growth from EUR 81 million today",
-      "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
-      "why": "Draft cites 81 million as today's ARR. Source section 2 says 84 and section 4 says 81."
+      "why": "Draft and source section 1 say 320. Source section 6 says 285. Same-fact contradiction, no date defence."
     },
     {
       "id": "F13-ebitda",
       "fixtureId": "13",
       "span": "EBITDA margin is 11.1%",
       "quotedFrom": "scripts/diagnostic/fixtures/13_synth_internal_inconsistency_memo.json draft",
-      "why": "Draft cites 11.1%. Source recommendation says approximately 13% and section 2 says 11.1%."
+      "why": "Draft cites 11.1%. Source recommendation says approximately 13% and section 2 says 11.1%. Same-fact contradiction, no date defence."
     },
     {
       "id": "F18-completion",

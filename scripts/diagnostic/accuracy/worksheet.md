@@ -11,6 +11,8 @@ E  Cannot rate. This is not a proper statement, or you cannot tell from these so
 
 Conflict rule: if ANY uploaded source contradicts the statement, the label is X (Conflicting), even where another source or passage confirms it. A contradicting source is exactly what a reviewer must see. When a false red trades against a false green, keep the false red.
 
+Older sources: if the draft matches the most recent source and only an older source disagrees, the label is C (Confirmed). Treat the older figure as out of date, not as a contradiction. If you cannot tell which source is more recent, label X.
+
 Work fixture by fixture. Read the source once. Then label the listed statements in the order given (draft order).
 
 ## F01 bvp_shopify_memo

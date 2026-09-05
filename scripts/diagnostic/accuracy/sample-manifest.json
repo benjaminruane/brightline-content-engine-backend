@@ -1,8 +1,8 @@
 {
   "seed": 20260905,
   "labelBudget": 100,
-  "groupACount": 13,
-  "groupBCount": 87,
+  "groupACount": 11,
+  "groupBCount": 89,
   "f15Cap": 6,
   "perFixtureFloor": 0,
   "weighting": {
@@ -130,15 +130,6 @@
     },
     {
       "fixtureId": "13",
-      "statementText": "It serves over 1'200 freight forwarder and customs broker customers across 28 European countries and generates annual recurring revenue (ARR) of EUR 84 million as of October 2025, up from EUR 52 million two years prior.",
-      "occurrence": 0,
-      "index": 3,
-      "designIds": [
-        "F13-arr-84"
-      ]
-    },
-    {
-      "fixtureId": "13",
       "statementText": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
       "occurrence": 0,
       "index": 4,
@@ -153,15 +144,6 @@
       "index": 7,
       "designIds": [
         "F13-employees"
-      ]
-    },
-    {
-      "fixtureId": "13",
-      "statementText": "We project ARR growth from EUR 81 million today to approximately EUR 195 million over a five-year hold, representing 19% CAGR.",
-      "occurrence": 0,
-      "index": 12,
-      "designIds": [
-        "F13-arr-81"
       ]
     },
     {
@@ -546,9 +528,21 @@
     },
     {
       "fixtureId": "13",
+      "statementText": "It serves over 1'200 freight forwarder and customs broker customers across 28 European countries and generates annual recurring revenue (ARR) of EUR 84 million as of October 2025, up from EUR 52 million two years prior.",
+      "occurrence": 0,
+      "index": 3
+    },
+    {
+      "fixtureId": "13",
       "statementText": "Third, the addressable European market of 14'000 forwarders gives meaningful headroom from the Company's current 8.6% penetration.",
       "occurrence": 0,
       "index": 11
+    },
+    {
+      "fixtureId": "13",
+      "statementText": "We project ARR growth from EUR 81 million today to approximately EUR 195 million over a five-year hold, representing 19% CAGR.",
+      "occurrence": 0,
+      "index": 12
     },
     {
       "fixtureId": "13",

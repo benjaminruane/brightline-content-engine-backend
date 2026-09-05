@@ -10,11 +10,17 @@ Permanent instrument for a 100-statement accuracy measurement of Review evidence
 4. Ben labels on `worksheet.md`. Blind: no pipeline output. Labels: C / P / X / N / E.
 5. Score later with `score.mjs` against `displayVerdict` (map `not_supported` to `no_support`; also map `supported_full` to confirmed, `supported_partial` to partially_confirmed, `conflict` to conflicting). Never average Group A and Group B.
 
+## Known limit of this instrument
+
+The label unit is one statement against the sources, so it cannot express a contradiction between two statements in the same draft. F13 was built to test internal inconsistency and this set can only measure the part of it that shows up as a single statement disagreeing with its source.
+
 ## Ruling 1 (Ben, 2026-09-05)
 
 If ANY uploaded source contradicts the statement, the label is Conflicting, even where another source or passage confirms it. A contradicting source is exactly what a reviewer must see. When a false red trades against a false green, keep the false red.
 
 Current Stage 3 is any-confirmed-wins (`lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs` lines 31-35). The scorer counts that behaviour as wrong on those statements, and also reports how many disagreements are attributable to any-confirmed-wins rather than to a matching or grading error.
+
+A superseded figure in an older source is not a live contradiction (Ben, 2026-09-05). If the draft matches the most recent source and only an older source disagrees, the label is Confirmed. Matches the supersession rule shipped under tag `review-supersession`. On 2026-09-05 the two F13 ARR rows were moved from Group A to Group B for this reason. Group A is 11. Group B is 89. The 100 statements were not resampled.
 
 ## Seed
 

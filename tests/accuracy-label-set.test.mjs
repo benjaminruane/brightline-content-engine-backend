@@ -62,6 +62,10 @@ describe("worksheet generator cannot read pipeline output", () => {
   test("cover page is the shipped string", () => {
     assert.match(WORKSHEET_COVER, /if ANY uploaded source contradicts the statement, the label is X/);
     assert.match(WORKSHEET_COVER, /If you would be guessing, use E/);
+    assert.match(
+      WORKSHEET_COVER,
+      /if the draft matches the most recent source and only an older source disagrees, the label is C/
+    );
   });
 });
 
