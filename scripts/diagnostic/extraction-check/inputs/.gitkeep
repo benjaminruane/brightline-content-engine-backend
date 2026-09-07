@@ -1,0 +1,3 @@
+# Public PDFs are downloaded into this folder and gitignored.
+# URLs and the run command live in REPORT.md.
+#   node scripts/diagnostic/extraction-check/run-extraction-check.mjs

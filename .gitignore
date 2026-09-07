@@ -33,6 +33,10 @@ node_modules/
 # R7 extractor survey — throwaway benchmark scaffolding (findings doc is kept in docs/)
 scripts/diagnostic/extractor-survey/
 
+# Extraction-check extracted text (regenerable; public PDF URLs live in REPORT.md)
+scripts/diagnostic/extraction-check/outputs/
+scripts/diagnostic/extraction-check/inputs/*.pdf
+
 # diagnostic run logs (regenerable)
 tests/output/*.log
 .env*
