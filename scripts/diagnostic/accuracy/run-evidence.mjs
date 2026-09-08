@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Evidence-only accuracy scoring run. Fixtures 01-20. Cache off.
- * Editorial and compliance off. Commentary skipped (Stages 1, 1b, 2, 3).
+ * Editorial and compliance off. Commentary skipped (Stages 2, 3 onward).
+ * Stage 1 is not called. Statements come from the frozen list in statements.json.
  *
  *   node scripts/diagnostic/accuracy/run-evidence.mjs --pass 1
  *   node scripts/diagnostic/accuracy/run-evidence.mjs --pass 2
@@ -9,17 +10,18 @@
  * Combined ceiling USD 40 for both passes. Remaining budget via ACCURACY_COST_REMAINING.
  */
 
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { filterFixtures, loadAllFixtures } from "../lib/fixtures.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
-import { addOccurrenceIndices, padFixtureId } from "./lib.mjs";
+import { addOccurrenceIndices, flattenStatements, normalizeStatementText, padFixtureId } from "./lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const COMBINED_CEILING_USD = 40;
+const FREEZE_PATH = path.join(__dirname, "statements.json");
 
 function runningAsMain() {
   const entry = process.argv[1];
@@ -117,11 +119,52 @@ export function compactCards(fixtureId, pipelineResult) {
   }));
 }
 
-async function runOneFixture(fixture, runPipelineV4, calculateLlmCostUsd) {
+export function frozenRowsByFixture(statementsDoc) {
+  const all = flattenStatements(statementsDoc);
+  const byId = new Map();
+  for (const row of all) {
+    const id = padFixtureId(row.fixtureId);
+    if (!byId.has(id)) byId.set(id, []);
+    byId.get(id).push(row);
+  }
+  return { all, byId };
+}
+
+/**
+ * Fail loudly if the pipeline did not run the exact frozen list.
+ * Compares count and each statement text (NFC, collapsed whitespace).
+ */
+export function assertMatchesFreeze({ fixtureId, frozenRows, cards, stage1Source }) {
+  const id = padFixtureId(fixtureId);
+  const freeze = Array.isArray(frozenRows) ? frozenRows : [];
+  const loaded = Array.isArray(cards) ? cards : [];
+  if (stage1Source !== "frozen") {
+    throw new Error(
+      `FROZEN LIST LEAK F${id}: stage1.source is ${JSON.stringify(stage1Source)}, expected "frozen". Stage 1 must not run on this path.`
+    );
+  }
+  if (loaded.length !== freeze.length) {
+    throw new Error(
+      `FROZEN LIST LEAK F${id}: loaded ${loaded.length} statements, freeze has ${freeze.length}.`
+    );
+  }
+  for (let i = 0; i < freeze.length; i += 1) {
+    const expected = normalizeStatementText(freeze[i]?.text);
+    const got = normalizeStatementText(loaded[i]?.statement ?? loaded[i]?.text);
+    if (expected !== got) {
+      throw new Error(
+        `FROZEN LIST LEAK F${id}: statement ${i} text differs from freeze.\nfreeze: ${expected}\nloaded: ${got}`
+      );
+    }
+  }
+}
+
+async function runOneFixture(fixture, runPipelineV4, calculateLlmCostUsd, frozenRows) {
   const id = padFixtureId(fixture.data.id);
   const draft = typeof fixture.data.draft === "string" ? fixture.data.draft : "";
   const sources = await loadPipelineSources(fixture.data.sources || []);
   const cfg = fixture.data.config && typeof fixture.data.config === "object" ? fixture.data.config : {};
+  const freeze = Array.isArray(frozenRows) ? frozenRows : [];
   const result = await runPipelineV4(draft, sources, {
     pipelineRoute: "v4",
     requiredVersion: cfg.requiredVersion === "public" ? "public" : "complete",
@@ -130,14 +173,27 @@ async function runOneFixture(fixture, runPipelineV4, calculateLlmCostUsd) {
     editorialEnabled: false,
     complianceEnabled: false,
     skipCommentary: true,
+    frozenStatements: freeze.map((s) => ({
+      text: s.text,
+      charStart: s.charStart,
+      charEnd: s.charEnd,
+      index: s.index,
+    })),
+  });
+  const cards = compactCards(id, result);
+  assertMatchesFreeze({
+    fixtureId: id,
+    frozenRows: freeze,
+    cards,
+    stage1Source: result?.stage1?.source ?? null,
   });
   return {
     fixtureId: id,
     label: fixture.data.label ?? "",
     costUsd: sumMatchCosts(result, calculateLlmCostUsd),
-    statementCount: Array.isArray(result?.qcCards) ? result.qcCards.length : 0,
+    statementCount: cards.length,
     stage1Source: result?.stage1?.source ?? null,
-    cards: compactCards(id, result),
+    cards,
   };
 }
 
@@ -152,6 +208,12 @@ async function main() {
   const remaining = Number(process.env.ACCURACY_COST_REMAINING || COMBINED_CEILING_USD);
   if (!(remaining > 0)) {
     throw new Error(`No remaining budget (ACCURACY_COST_REMAINING=${remaining}). Stopping.`);
+  }
+
+  const statementsDoc = JSON.parse(await readFile(FREEZE_PATH, "utf8"));
+  const { all: frozenAll, byId: frozenByFixture } = frozenRowsByFixture(statementsDoc);
+  if (frozenAll.length !== 261) {
+    throw new Error(`Freeze has ${frozenAll.length} statements, expected 261. Not spending.`);
   }
 
   const { runPipelineV4 } = await import("../../../lib/qc/pipeline-v4/index.mjs");
@@ -173,8 +235,9 @@ async function main() {
   let spent = 0;
   for (const fixture of fixtures) {
     const id = padFixtureId(fixture.data.id);
-    console.log(`pass ${pass} F${id} starting remaining=${(remaining - spent).toFixed(4)}`);
-    const row = await runOneFixture(fixture, runPipelineV4, calculateLlmCostUsd);
+    const freeze = frozenByFixture.get(id) || [];
+    console.log(`pass ${pass} F${id} starting remaining=${(remaining - spent).toFixed(4)} freeze=${freeze.length}`);
+    const row = await runOneFixture(fixture, runPipelineV4, calculateLlmCostUsd, freeze);
     await flushObservability();
     spent += row.costUsd;
     fixturesOut.push(row);
@@ -189,13 +252,21 @@ async function main() {
   }
 
   const allCards = fixturesOut.flatMap((f) => f.cards);
+  if (allCards.length !== frozenAll.length) {
+    throw new Error(
+      `FROZEN LIST LEAK: loaded ${allCards.length} cards across fixtures, freeze has ${frozenAll.length}.`
+    );
+  }
+
   const payload = {
-    pass: Number(pass),
+    pass: Number.isFinite(Number(pass)) ? Number(pass) : pass,
     range: "01-20",
     cache: "off",
     editorialEnabled: false,
     complianceEnabled: false,
     skipCommentary: true,
+    frozenList: true,
+    frozenFrom: statementsDoc.frozenFrom ?? "statements.json",
     costUsd: spent,
     ceilingRemainingAtStart: remaining,
     extractedAt: new Date().toISOString(),
