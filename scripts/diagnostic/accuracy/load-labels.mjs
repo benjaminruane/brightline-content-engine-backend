@@ -31,7 +31,7 @@ export const ADJUDICATED_ROWS = {
   "10": ["C", "C"],
   "11": ["C", "C", "C", "C", "C", "C"],
   "12": ["P", "C", "C", "C"],
-  "13": ["C", "C", "C", "X", "X", "C", "C", "C"],
+  "13": ["C", "C", "C", "X", "X", "C", "C", "P"],
   "14": ["C", "C", "C", "P", "X", "N"],
   "15": ["C", "C", "C", "C", "C", "C"],
   "16": ["C", "C", "C", "C", "C"],
@@ -153,7 +153,7 @@ async function main() {
     throw new Error("JOIN FAILED. Not writing labels.json. Not spending.");
   }
   if (built.count !== 100) throw new Error(`expected 100 labels, got ${built.count}`);
-  if (built.mix.C !== 76 || built.mix.P !== 11 || built.mix.X !== 12 || built.mix.N !== 1 || built.mix.E !== 0) {
+  if (built.mix.C !== 75 || built.mix.P !== 12 || built.mix.X !== 12 || built.mix.N !== 1 || built.mix.E !== 0) {
     throw new Error(`mix mismatch: ${JSON.stringify(built.mix)}`);
   }
   const doc = {

@@ -18,7 +18,7 @@ The label unit is one statement against the sources, so it cannot express a cont
 
 If ANY uploaded source contradicts the statement, the label is Conflicting, even where another source or passage confirms it. A contradicting source is exactly what a reviewer must see. When a false red trades against a false green, keep the false red.
 
-Current Stage 3 is any-confirmed-wins (`lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs` lines 31-35). The scorer counts that behaviour as wrong on those statements, and also reports how many disagreements are attributable to any-confirmed-wins rather than to a matching or grading error.
+Stage 3 is conflict-wins as of 2026-09-08 (`lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs` lines 31-35). The scorer still reports how many disagreements would have been any-confirmed-wins under the old precedence.
 
 A superseded figure in an older source is not a live contradiction (Ben, 2026-09-05). If the draft matches the most recent source and only an older source disagrees, the label is Confirmed. Matches the supersession rule shipped under tag `review-supersession`. On 2026-09-05 the two F13 ARR rows were moved from Group A to Group B for this reason. Group A is 11. Group B is 89. The 100 statements were not resampled.
 
@@ -31,6 +31,10 @@ Mixed statements: judge the whole sentence and let the most serious problem deci
 Contradicted is not the same as quiet. A source that positions a transaction as still pending contradicts a claim that it is done. A source that simply never says what happened next does not: that is P, not X.
 
 Intensifiers. An intensifier the source does not offer is unsupported, so P. An intensifier the source matches in strength is C.
+
+## Ruling 2 (Ben, 2026-09-08)
+
+Where a source states an unqualified IRR and the draft calls it a GROSS IRR, the label is Partially confirmed. The draft specifies something the source does not carry. Not contradicted, so not X. Not fully supported, so not C. This is the existing intensifier / specification rule above. Applied to F13 worksheet row 8, "Our base case generates 2.6x MOIC and 21% gross IRR." Label moved from C to P. Mix is 75 C, 12 P, 12 X, 1 N. Group A stays 11. Group B stays 89. No other label moved. This is a one-row correction ruled in writing before the intra-source reducer was scored, not a regeneration of the protected set.
 
 Attribution. A correct figure credited to only some of the causes the source names is partly unsupported, so P.
 
