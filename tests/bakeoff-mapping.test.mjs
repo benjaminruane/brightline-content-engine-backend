@@ -10,8 +10,10 @@ import {
 import {
   decisionRule,
   isDetected,
+  locatabilityFromPassageRows,
   locatabilityFromQuotes,
 } from "../scripts/diagnostic/bakeoff/score-bakeoff.mjs";
+import { validatePassageAgainstSource } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 
 describe("containment join", () => {
   test("matches a shorter quote to the frozen statement", () => {
@@ -116,6 +118,28 @@ describe("silence, coverage, locatability, win rule", () => {
     assert.equal(loc.failZeroQuotes, true);
   });
 
+  test("empty passage counts against locatability rather than being dropped", () => {
+    const loc = locatabilityFromPassageRows([
+      { passage: "exact hit in source", sourceText: "prefix exact hit in source suffix" },
+      { passage: "", sourceText: "prefix exact hit in source suffix" },
+    ]);
+    assert.equal(loc.quoted, 1);
+    assert.equal(loc.empty, 1);
+    assert.equal(loc.slots, 2);
+    assert.equal(loc.located, 1);
+    assert.equal(loc.rate, 0.5);
+    assert.equal(loc.failZeroQuotes, false);
+    assert.equal(loc.pass, false);
+  });
+
+  test("all empty passages fail locatability rather than scoring 100%", () => {
+    const loc = locatabilityFromPassageRows([{ passage: "", sourceText: "abc" }]);
+    assert.equal(loc.quoted, 0);
+    assert.equal(loc.rate, 0);
+    assert.equal(loc.failZeroQuotes, true);
+    assert.equal(loc.pass, false);
+  });
+
   test("detection and agreement are separate", () => {
     assert.equal(isDetected("conflicting"), true);
     assert.equal(isDetected("partially_confirmed"), true);
@@ -125,5 +149,23 @@ describe("silence, coverage, locatability, win rule", () => {
     const ben = "conflicting";
     assert.equal(isDetected(detectedWrongLabel), true);
     assert.notEqual(detectedWrongLabel, ben);
+  });
+});
+
+describe("validatePassageAgainstSource", () => {
+  test("accepts an exact substring and rejects a paraphrase", () => {
+    const source = "The total team of 285 people is split approximately as follows.";
+    const ok = validatePassageAgainstSource(
+      "The total team of 285 people is split approximately as follows.",
+      source
+    );
+    const bad = validatePassageAgainstSource("The company has 285 staff in total.", source);
+    assert.equal(ok.accepted, true);
+    assert.equal(bad.accepted, false);
+  });
+
+  test("empty passage is not accepted", () => {
+    const v = validatePassageAgainstSource("", "The total team of 285 people.");
+    assert.equal(v.accepted, false);
   });
 });

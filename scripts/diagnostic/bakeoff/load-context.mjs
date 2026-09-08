@@ -69,32 +69,54 @@ export async function loadFixtureContexts() {
   return out;
 }
 
-export function estimateFourRunsUsd(contexts, promptA, promptB) {
+function tokensFromChars(chars) {
+  return Math.ceil(chars / 4);
+}
+
+function costUsd(inChars, outChars) {
+  return (
+    (tokensFromChars(inChars) / 1_000_000) * INPUT_USD_PER_M +
+    (tokensFromChars(outChars) / 1_000_000) * OUTPUT_USD_PER_M
+  );
+}
+
+export function estimatePassAUsd(contexts, promptA) {
   let inputCharsA = 0;
   let outputCharsA = 0;
-  let inputCharsB = 0;
-  let outputCharsB = 0;
   for (const fx of contexts) {
     const sourceChars = fx.sources.reduce((n, s) => n + String(s.text || "").length, 0);
     const stmtChars = fx.statements.reduce((n, s) => n + String(s.text || "").length, 0);
     const draftChars = String(fx.draft || "").length;
     inputCharsA += promptA.length + draftChars + sourceChars + stmtChars + 400;
     outputCharsA += fx.statements.length * 420;
+  }
+  const onePassA = costUsd(inputCharsA, outputCharsA);
+  return {
+    model: MODEL,
+    onePassA,
+    twoPassA: 2 * onePassA,
+    inputCharsA,
+  };
+}
+
+export function estimateFourRunsUsd(contexts, promptA, promptB) {
+  const a = estimatePassAUsd(contexts, promptA);
+  let inputCharsB = 0;
+  let outputCharsB = 0;
+  for (const fx of contexts) {
+    const sourceChars = fx.sources.reduce((n, s) => n + String(s.text || "").length, 0);
+    const draftChars = String(fx.draft || "").length;
     inputCharsB += promptB.length + draftChars + sourceChars + 400;
     outputCharsB += 2500;
   }
-  const tokens = (chars) => Math.ceil(chars / 4);
-  const cost = (inC, outC) =>
-    (tokens(inC) / 1_000_000) * INPUT_USD_PER_M + (tokens(outC) / 1_000_000) * OUTPUT_USD_PER_M;
-  const oneA = cost(inputCharsA, outputCharsA);
-  const oneB = cost(inputCharsB, outputCharsB);
-  const four = 2 * oneA + 2 * oneB;
+  const oneB = costUsd(inputCharsB, outputCharsB);
   return {
     model: MODEL,
-    onePassA: oneA,
+    onePassA: a.onePassA,
     onePassB: oneB,
-    fourRuns: four,
-    inputCharsA,
+    fourRuns: 2 * a.onePassA + 2 * oneB,
+    twoPassA: a.twoPassA,
+    inputCharsA: a.inputCharsA,
     inputCharsB,
   };
 }

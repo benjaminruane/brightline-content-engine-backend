@@ -14,6 +14,7 @@ import {
   wilsonInterval,
 } from "../accuracy/lib.mjs";
 import { locatePassageInSource } from "../../../lib/qc/pipeline-v4/stage2-match-multipassage.mjs";
+import { validatePassageAgainstSource } from "../../../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import { mapVariantB } from "./map-variant-b.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -43,7 +44,7 @@ export function isDetected(label) {
 export function locatabilityFromQuotes(quotes) {
   const list = Array.isArray(quotes) ? quotes.filter((q) => q && String(q.passage || "").trim()) : [];
   if (list.length === 0) {
-    return { quoted: 0, located: 0, rate: 0, pass: false, failZeroQuotes: true };
+    return { quoted: 0, located: 0, empty: 0, rate: 0, pass: false, failZeroQuotes: true };
   }
   let located = 0;
   for (const q of list) {
@@ -54,9 +55,79 @@ export function locatabilityFromQuotes(quotes) {
   return {
     quoted: list.length,
     located,
+    empty: 0,
     rate,
     pass: rate >= 0.95,
     failZeroQuotes: false,
+  };
+}
+
+/**
+ * Locatability for Variant A verbatim re-run.
+ * Empty passages stay in the denominator as misses. Zero non-empty quotes is a fail.
+ */
+export function locatabilityFromPassageRows(rows) {
+  const list = Array.isArray(rows) ? rows.filter((q) => q) : [];
+  const nonEmpty = list.filter((q) => String(q.passage || "").trim());
+  const empty = list.length - nonEmpty.length;
+  if (nonEmpty.length === 0) {
+    return {
+      quoted: 0,
+      located: 0,
+      empty,
+      slots: list.length,
+      rate: 0,
+      pass: false,
+      failZeroQuotes: true,
+    };
+  }
+  let located = 0;
+  for (const q of list) {
+    const passage = String(q.passage || "");
+    if (!passage.trim()) continue;
+    const hit = locatePassageInSource(q.sourceText || "", q.passage);
+    if (hit.start != null) located += 1;
+  }
+  const rate = located / list.length;
+  return {
+    quoted: nonEmpty.length,
+    located,
+    empty,
+    slots: list.length,
+    rate,
+    pass: rate >= 0.95,
+    failZeroQuotes: false,
+  };
+}
+
+export function validationFromPassageRows(rows) {
+  const list = Array.isArray(rows) ? rows.filter((q) => q) : [];
+  let empty = 0;
+  let accepted = 0;
+  let rejected = 0;
+  for (const r of list) {
+    const passage = String(r.passage || "");
+    if (!passage.trim()) {
+      empty += 1;
+      continue;
+    }
+    const named = r.sourceText || "";
+    const acceptedFlag =
+      typeof r.passageValidated === "boolean"
+        ? r.passageValidated
+        : validatePassageAgainstSource(passage, named).accepted === true;
+    if (acceptedFlag) accepted += 1;
+    else rejected += 1;
+  }
+  const nonEmpty = accepted + rejected;
+  return {
+    n: list.length,
+    empty,
+    nonEmpty,
+    accepted,
+    rejected,
+    failureRateNonEmpty: nonEmpty ? rejected / nonEmpty : 0,
+    failureRateIncludingEmpty: list.length ? (rejected + empty) / list.length : 0,
   };
 }
 
@@ -220,6 +291,32 @@ export function collectQuotesFromA(fixtureResults, sourceByFixture) {
   return quotes;
 }
 
+export function collectPassageRowsFromA(fixtureResults, sourceByFixture) {
+  const rows = [];
+  for (const fx of Array.isArray(fixtureResults) ? fixtureResults : []) {
+    const sources = sourceByFixture.get(fx.fixtureId) || [];
+    for (const stmt of fx.statements || []) {
+      for (const s of Array.isArray(stmt.sources) ? stmt.sources : []) {
+        const passage = typeof s.passage === "string" ? s.passage : "";
+        const idx = Number.isFinite(s.sourceIndex) ? s.sourceIndex : Number(s.index);
+        const src = sources[idx] || sources[0];
+        rows.push({
+          fixtureId: fx.fixtureId,
+          statementText: stmt.statementText,
+          occurrence: stmt.occurrence,
+          overall: stmt.overall,
+          classification: s.classification,
+          passage,
+          sourceText: src?.text || "",
+          passageValidated: s.passageValidated,
+          passageEmpty: s.passageEmpty === true || !passage.trim(),
+        });
+      }
+    }
+  }
+  return rows;
+}
+
 export function collectQuotesFromB(findings, sourceByFixture) {
   const quotes = [];
   for (const f of Array.isArray(findings) ? findings : []) {
@@ -259,6 +356,7 @@ async function main() {
   let rows;
   let loc;
   let offList = [];
+  let extra = null;
   if (variant === "b") {
     const findings = [];
     const stmts = labels.map((l) => ({
@@ -297,11 +395,30 @@ async function main() {
         });
       }
     }
-    loc = locatabilityFromQuotes(collectQuotesFromA(run.fixtures, sourceByFixture));
     rows = rowsFromVariantA(labels, aStatements);
+    const passageRows = collectPassageRowsFromA(run.fixtures, sourceByFixture);
+    loc = locatabilityFromPassageRows(passageRows);
+    extra = { validation: validationFromPassageRows(passageRows) };
   }
-  const scored = scoreRows(rows, { groupAKeys, groupBKeys, locatability: loc, offList });
-  console.log(JSON.stringify({ variant, decision: scored.decision, groupAAgreement: scored.groupAAgreement, groupADetection: scored.groupADetection, groupBAgreement: scored.groupBAgreement, coverage: scored.coverage, partialsIgnored: scored.partialsIgnored, locatability: scored.locatability, offListCount: offList.length }, null, 2));
+  const scored = scoreRows(rows, { groupAKeys, groupBKeys, locatability: loc, offList, extra });
+  console.log(
+    JSON.stringify(
+      {
+        variant,
+        decision: scored.decision,
+        groupAAgreement: scored.groupAAgreement,
+        groupADetection: scored.groupADetection,
+        groupBAgreement: scored.groupBAgreement,
+        coverage: scored.coverage,
+        partialsIgnored: scored.partialsIgnored,
+        locatability: scored.locatability,
+        validation: extra?.validation || null,
+        offListCount: offList.length,
+      },
+      null,
+      2
+    )
+  );
 }
 
 if (runningAsMain()) {

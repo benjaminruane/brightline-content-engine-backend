@@ -14,14 +14,15 @@ import { loadLocalEnvFiles } from "../lib/env.mjs";
 import {
   MODEL,
   buildVariantAUser,
-  estimateFourRunsUsd,
+  estimatePassAUsd,
   loadFixtureContexts,
   loadPrompt,
   parseJsonObject,
 } from "./load-context.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CEILING_USD = 15;
+const CEILING_USD = 5;
+const OUT_PREFIX = "variant-a-verbatim";
 
 function runningAsMain() {
   const entry = process.argv[1];
@@ -47,17 +48,17 @@ async function main() {
   const { callLLM, calculateLlmCostUsd, flushObservability, hasProviderApiKey } = await import(
     "../../../lib/observability.js"
   );
+  const { validatePassageAgainstSource } = await import("../../../lib/qc/pipeline-v4/stage2-match-sources.mjs");
   if (isLlmCacheEnabled()) throw new Error("QC_LLM_CACHE must be off");
 
   const contexts = await loadFixtureContexts();
   const promptA = await loadPrompt("variant-a.md");
-  const promptB = await loadPrompt("variant-b.md");
-  const estimate = estimateFourRunsUsd(contexts, promptA, promptB);
+  const estimate = estimatePassAUsd(contexts, promptA);
   console.log(
-    `estimate four-runs USD ${estimate.fourRuns.toFixed(4)} (A ${estimate.onePassA.toFixed(4)} / B ${estimate.onePassB.toFixed(4)}) ceiling ${CEILING_USD}`
+    `estimate two-pass A USD ${estimate.twoPassA.toFixed(4)} (one pass ${estimate.onePassA.toFixed(4)}) ceiling ${CEILING_USD}`
   );
-  if (estimate.fourRuns > CEILING_USD) {
-    throw new Error(`Estimate ${estimate.fourRuns.toFixed(4)} exceeds ceiling ${CEILING_USD}. Stopping.`);
+  if (estimate.twoPassA > CEILING_USD) {
+    throw new Error(`Estimate ${estimate.twoPassA.toFixed(4)} exceeds ceiling ${CEILING_USD}. Stopping.`);
   }
   if (estimateOnly) return;
 
@@ -82,7 +83,7 @@ async function main() {
     });
     const cost = calculateLlmCostUsd("openai", MODEL, res.usage);
     spent += cost;
-    if (spent > CEILING_USD) throw new Error(`Spent ${spent.toFixed(4)} exceeds ceiling. Stopping.`);
+    if (spent > CEILING_USD) throw new Error(`Spent ${spent.toFixed(4)} exceeds ceiling ${CEILING_USD}. Stopping.`);
     let parsed;
     try {
       parsed = parseJsonObject(res.text);
@@ -96,12 +97,28 @@ async function main() {
     const statements = fx.statements.map((s, i) => {
       const row = byIndex.get(i) || {};
       const sources = Array.isArray(row.sources)
-        ? row.sources.map((src, si) => ({
-            sourceIndex: Number.isFinite(src.sourceIndex) ? src.sourceIndex : si,
-            classification: sTrim(src.classification),
-            passage: typeof src.passage === "string" ? src.passage : "",
-          }))
-        : fx.sources.map((_, si) => ({ sourceIndex: si, classification: "no_support", passage: "" }));
+        ? row.sources.map((src, si) => {
+            const sourceIndex = Number.isFinite(src.sourceIndex) ? src.sourceIndex : si;
+            const passage = typeof src.passage === "string" ? src.passage : "";
+            const named = fx.sources[sourceIndex] || fx.sources[si] || fx.sources[0];
+            const validation = validatePassageAgainstSource(passage, named?.text || "");
+            return {
+              sourceIndex,
+              classification: sTrim(src.classification),
+              passage,
+              passageEmpty: !String(passage).trim(),
+              passageValidated: validation.accepted === true,
+              passageAbridged: validation.abridged === true,
+            };
+          })
+        : fx.sources.map((_, si) => ({
+            sourceIndex: si,
+            classification: "no_support",
+            passage: "",
+            passageEmpty: true,
+            passageValidated: false,
+            passageAbridged: false,
+          }));
       return {
         statementIndex: i,
         statementText: s.text,
@@ -123,9 +140,10 @@ async function main() {
 
   const outDir = path.join(__dirname, "runs");
   await mkdir(outDir, { recursive: true });
-  const outPath = path.join(outDir, `variant-a-pass-${pass}.json`);
+  const outPath = path.join(outDir, `${OUT_PREFIX}-pass-${pass}.json`);
   const doc = {
     variant: "A",
+    quoting: "verbatim-enforced",
     pass,
     model: MODEL,
     temperature: 0,
