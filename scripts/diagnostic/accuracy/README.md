@@ -77,6 +77,18 @@ Implied but not stated. A detail the source strongly implies but never states is
 
 Full disagreement list and the three movers live in `score-result.json`. Cards: `runs/evidence-pass-1/cards.json` and `runs/evidence-pass-2/cards.json`.
 
+## Measurement noise floor (2026-09-08)
+
+This pack cannot validate a judging change smaller than the noise already measured on identical cache-off pairs. Further tuning against these 100 labels is not evidence. Expand the corpus first.
+
+- Leave-alone moved 4 percentage points between two identical rounding-tolerance runs: 67 of 74 = 90.54% on `runs/evidence-pass-rt-1/cards.json` against 64 of 74 = 86.49% on `runs/evidence-pass-rt-2/cards.json`. Same pipeline, same freeze, same labels.
+- Stability of the 100 labelled statements across billed pairs: **97, 95, 96, 94 of 100**. Orig `evidence-pass-1`/`2` (README scoreboard above): 97. Conflict-wins `evidence-pass-cw-1`/`2`: 95. Intra-source reducer `evidence-pass-reducer-1`/`2`: 96. Rounding-tolerance `evidence-pass-rt-1`/`2`: 94. Every mover on the last pair was live Stage 2 wobbling between confirmed and partial on evaluative sentences.
+- Catch of 11 has a Wilson 95 percent interval 43 percentage points wide at the observed 9 of 11: [0.5230, 0.9486]. At the original 3 of 11 it was 47 points: [0.0975, 0.5657]. An interval "roughly 25 points wide" is a floor. The measured width is larger.
+
+Differences smaller than these (a few leave-alone points, a stability tick, a catch of 11 moving by one) are not evidence that a judging change worked. This instrument cannot tell them from Stage 2 noise. Do not propose another judging change against this labelled set. The next work is a larger corpus.
+
+Current reading after the lift-only span fix (one billed pass, `runs/evidence-pass-lift-1/cards.json`, 2026-09-08, spend USD 2.27, ceiling USD 5): freeze 261 / 0 unmatched. Catch 9 of 11, Wilson [0.5230, 0.9486]. Leave-alone 67 of 74 = 90.54%. PASS (catch at least 6 of 11 and leave-alone at least 85%). BUILD-QUALITY (leave-alone at least 89%). Conflict cards with no excerpt: 0. One non-planted intra-source confirm-plus-conflict remains red (F15 Atelier 18 stores). No second pass: the last pair already measured the noise.
+
 ## Falsifiers (report loudly)
 
 - Escape rate above 15 percent: the statement unit is the wrong grain. This is May again. Observed 2026-09-05: 0.
