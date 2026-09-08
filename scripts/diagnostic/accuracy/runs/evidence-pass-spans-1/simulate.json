@@ -1,0 +1,326 @@
+{
+  "costUsd": 2.2206150000000004,
+  "cards": 262,
+  "withConflictSpan": [
+    {
+      "fixtureId": "13",
+      "current": "confirmed",
+      "statement": "Our base case generates 2.6x MOIC and 21% gross IRR.",
+      "spans": [
+        {
+          "classification": "conflicting",
+          "sourceRefId": 0,
+          "passage": "Returns: our base case generates a 2.6x MOIC and 21% IRR."
+        }
+      ]
+    }
+  ],
+  "groupARows": [
+    {
+      "id": "F05-acquirer",
+      "fixtureId": "05",
+      "statement": "Halden Group has agreed to acquire Norwell Aerospace Components, a leading manufacturer of structural composite components and titanium machined parts, from Westhaven Capital.",
+      "now": "conflicting",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "0",
+          "passage": "Westhaven Capital agrees to acquire Norwell Aerospace Components from Bridgepoint",
+          "start": 14,
+          "end": 95
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "conflicting",
+          "sourceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "F05-ownership",
+      "fixtureId": "05",
+      "statement": "During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability.",
+      "now": "conflicting",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "5",
+          "passage": "The Company has invested significantly in new composite manufacturing capability during the Bridgepoint ownership period and now operates three of the most advanced automated composite layup facilities in North America.",
+          "start": 1702,
+          "end": 1921
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "conflicting",
+          "sourceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "F05-forward-support",
+      "fixtureId": "05",
+      "statement": "Halden Group will support continued growth in commercial aerospace and an accelerated expansion of Norwell's space applications business, where the Company has identified meaningful capacity to grow share.",
+      "now": "partially_confirmed",
+      "sim": "partially_confirmed",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [],
+      "sourceMatches": [
+        {
+          "classification": "partially_confirmed",
+          "sourceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "F13-ebitda",
+      "fixtureId": "13",
+      "statement": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
+      "now": "confirmed",
+      "sim": "confirmed",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [],
+      "sourceMatches": [
+        {
+          "classification": "confirmed",
+          "sourceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "F13-employees",
+      "fixtureId": "13",
+      "statement": "The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore.",
+      "now": "confirmed",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "7",
+          "passage": "The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.",
+          "start": 6559,
+          "end": 6743
+        }
+      ],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "7",
+          "passage": "The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.",
+          "start": 6559,
+          "end": 6743
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "confirmed",
+          "sourceIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "F18-completion",
+      "fixtureId": "18",
+      "statement": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+      "now": "conflicting",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 0,
+          "classification": "conflicting",
+          "statementId": "0",
+          "passage": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+          "start": 295,
+          "end": 528
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "conflicting",
+          "sourceIndex": 0
+        },
+        {
+          "classification": "no_support",
+          "sourceIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "F18-customers",
+      "fixtureId": "18",
+      "statement": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+      "now": "confirmed",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [
+        {
+          "sourceRefId": 1,
+          "classification": "conflicting",
+          "statementId": "3",
+          "passage": "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+          "start": 1960,
+          "end": 2062
+        }
+      ],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 1,
+          "classification": "conflicting",
+          "statementId": "3",
+          "passage": "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+          "start": 1960,
+          "end": 2062
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "confirmed",
+          "sourceIndex": 0
+        },
+        {
+          "classification": "partially_confirmed",
+          "sourceIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "F18-arr-current",
+      "fixtureId": "18",
+      "statement": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+      "now": "conflicting",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 1,
+          "classification": "conflicting",
+          "statementId": "4",
+          "passage": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+          "start": 593,
+          "end": 703
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "confirmed",
+          "sourceIndex": 0
+        },
+        {
+          "classification": "conflicting",
+          "sourceIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "F18-headcount",
+      "fixtureId": "18",
+      "statement": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+      "now": "conflicting",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 1,
+          "classification": "conflicting",
+          "statementId": "5",
+          "passage": "The Company employs 167 people as of 28 May, not 142 as stated in our initial memo.",
+          "start": 1356,
+          "end": 1439
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "confirmed",
+          "sourceIndex": 0
+        },
+        {
+          "classification": "conflicting",
+          "sourceIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "F18-arr-growth",
+      "fixtureId": "18",
+      "statement": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+      "now": "confirmed",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [
+        {
+          "sourceRefId": 1,
+          "classification": "conflicting",
+          "statementId": "7",
+          "passage": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+          "start": 593,
+          "end": 703
+        }
+      ],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 1,
+          "classification": "conflicting",
+          "statementId": "7",
+          "passage": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+          "start": 593,
+          "end": 703
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "confirmed",
+          "sourceIndex": 0
+        },
+        {
+          "classification": "partially_confirmed",
+          "sourceIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "F18-returns",
+      "fixtureId": "18",
+      "statement": "The base case generates 2.8x MOIC and 23% gross IRR.",
+      "now": "conflicting",
+      "sim": "conflicting",
+      "ignoredConflictSpans": [],
+      "allConflictSpans": [
+        {
+          "sourceRefId": 1,
+          "classification": "conflicting",
+          "statementId": "8",
+          "passage": "Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+          "start": 2265,
+          "end": 2405
+        }
+      ],
+      "sourceMatches": [
+        {
+          "classification": "confirmed",
+          "sourceIndex": 0
+        },
+        {
+          "classification": "conflicting",
+          "sourceIndex": 1
+        }
+      ]
+    }
+  ],
+  "catchNow": 6,
+  "catchSim": 9,
+  "leaveNow": 69,
+  "leaveSim": 68,
+  "gate": {
+    "passStandingBar": true,
+    "worthBuildingPerWrittenGate": true,
+    "note": "leave-alone sim 68 of 76 meets the at-or-above-68 build gate. Standing bar is catch at least 6 of 11 AND leave-alone at or above 65 of 76."
+  }
+}

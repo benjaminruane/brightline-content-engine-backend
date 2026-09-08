@@ -64,6 +64,18 @@ export function sumMatchCosts(pipelineResult, calculateLlmCostUsd) {
   return total;
 }
 
+function compactSupportSpans(card) {
+  const spans = Array.isArray(card?.supportSpans) ? card.supportSpans : [];
+  return spans.map((s) => ({
+    sourceRefId: s?.sourceRefId,
+    classification: s?.classification ?? null,
+    statementId: s?.statementId ?? null,
+    passage: typeof s?.passage === "string" ? s.passage : "",
+    start: Number.isFinite(s?.start) ? s.start : s?.start ?? null,
+    end: Number.isFinite(s?.end) ? s.end : s?.end ?? null,
+  }));
+}
+
 export function compactCards(fixtureId, pipelineResult) {
   const cards = Array.isArray(pipelineResult?.qcCards) ? pipelineResult.qcCards : [];
   const rows = cards.map((card, i) => ({
@@ -81,6 +93,7 @@ export function compactCards(fixtureId, pipelineResult) {
       classification: m?.classification ?? null,
       sourceIndex: m?.sourceIndex,
     })),
+    supportSpans: compactSupportSpans(card),
   }));
   return addOccurrenceIndices(
     rows.map((r) => ({
@@ -90,6 +103,7 @@ export function compactCards(fixtureId, pipelineResult) {
       displayVerdict: r.displayVerdict,
       hasConflict: r.hasConflict,
       sourceMatches: r.sourceMatches,
+      supportSpans: r.supportSpans,
     }))
   ).map((r) => ({
     fixtureId: r.fixtureId,
@@ -99,6 +113,7 @@ export function compactCards(fixtureId, pipelineResult) {
     displayVerdict: r.displayVerdict,
     hasConflict: r.hasConflict,
     sourceMatches: r.sourceMatches,
+    supportSpans: r.supportSpans,
   }));
 }
 
