@@ -1,0 +1,72 @@
+{
+  "fixtureId": "13",
+  "statementIndex": 7,
+  "statement": "The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore.",
+  "cache": "off",
+  "ceilingUsd": 1,
+  "estimateUsd": 0.02778,
+  "costUsd": {
+    "stage2Actual": 0.012055,
+    "widenedActual": 0.00996,
+    "combined": 0.022015
+  },
+  "extractedAt": "2026-09-08T09:34:18.776Z",
+  "stage2": {
+    "classification": "confirmed",
+    "passage": "CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore.",
+    "explanation": "The source confirms the statement by stating that CloudPivot employs 320 people across the specified offices in London, Hamburg, Lisbon, and Bangalore.",
+    "costUsd": 0.012055,
+    "usage": {
+      "inputTokens": 4542,
+      "outputTokens": 70
+    }
+  },
+  "widenedRaw": [
+    {
+      "sourceIndex": 0,
+      "sourceLabel": "13_synth_internal_inconsistency_memo",
+      "passage": "CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore.",
+      "classification": "confirmed",
+      "costUsd": 0.00996
+    },
+    {
+      "sourceIndex": 0,
+      "sourceLabel": "13_synth_internal_inconsistency_memo",
+      "passage": "The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.",
+      "classification": "conflicting",
+      "costUsd": 0.00996
+    }
+  ],
+  "supportSpans": [
+    {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "7",
+      "passage": "CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore.",
+      "start": 1662,
+      "end": 1764
+    },
+    {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "7",
+      "passage": "The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.",
+      "start": 6559,
+      "end": 6743
+    }
+  ],
+  "spansMentioning285": [
+    {
+      "classification": "conflicting",
+      "passage": "The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.",
+      "start": 6559,
+      "end": 6743
+    }
+  ],
+  "spansWithVerbatimNeedle": [
+    {
+      "classification": "conflicting",
+      "passage": "The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10."
+    }
+  ]
+}
