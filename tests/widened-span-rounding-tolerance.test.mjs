@@ -79,4 +79,26 @@ describe("widened span rounding tolerance", () => {
     assert.equal(reduced[0].classification, "conflicting");
     assert.equal(agg.verdict, "conflicting");
   });
+
+  test("a confirmed span is not forced to conflicting by the magnitude arm", () => {
+    const statement =
+      "Total Company revenue grew from SEK 4.2 billion at entry to SEK 11.4 billion at exit, with EBITDA expanding from SEK 480 million to SEK 2.08 billion and margins from 11.4 percent to 18.2 percent.";
+    const passage =
+      "At the time of our investment, the Company generated revenue of SEK 4.2 billion and EBITDA of SEK 480 million, representing an EBITDA margin of 11.4%.";
+    const forced = applyRoundingToleranceBackstop(
+      { classification: "confirmed", passage, explanation: "" },
+      { statementText: statement }
+    );
+    assert.equal(forced.classification, "conflicting", "the full backstop still forces on a confirmed pick");
+    const reduced = applyIntraSourceReducer({
+      sourceMatches: [{ sourceIndex: 0, classification: "confirmed", passage }],
+      supportSpans: [
+        { sourceRefId: 0, classification: "confirmed", passage, start: 0, end: passage.length },
+      ],
+      sources: [{ text: passage }],
+      statementText: statement,
+    });
+    assert.equal(reduced[0].classification, "confirmed");
+    assert.equal(aggregateVerdict({ statementMatches: reduced }).verdict, "confirmed");
+  });
 });
