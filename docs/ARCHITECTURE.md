@@ -51,7 +51,7 @@ Deterministic code is the **referee**; the LLM is the **commentator** (and, in S
 
 ### Conflicts always surface
 
-If any source returns `conflicting` for a statement, `hasConflict` is true and conflict excerpts are available on the card — even when another source `confirmed` the same sentence. The reviewer sees both signals and decides materiality. Nothing in the pipeline suppresses a conflict because a confirming source exists.
+Stage 3 is conflict-wins (`9f8fc41`). If any reduced pair is `conflicting`, the card verdict is `conflicting` and `hasConflict` is true. A confirming source does not outrank a contradicting one. Conflict excerpts are selected when a conflicting passage is available. Residual: some conflict cards still carry the quote only in `primaryExcerpt` with `conflictExcerpt` empty (**B158**).
 
 ### Deterministic verdicts
 
