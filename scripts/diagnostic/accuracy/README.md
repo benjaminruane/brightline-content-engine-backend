@@ -34,7 +34,13 @@ Intensifiers. An intensifier the source does not offer is unsupported, so P. An 
 
 ## Ruling 2 (Ben, 2026-09-08)
 
-Where a source states an unqualified IRR and the draft calls it a GROSS IRR, the label is Partially confirmed. The draft specifies something the source does not carry. Not contradicted, so not X. Not fully supported, so not C. This is the existing intensifier / specification rule above. Applied to F13 worksheet row 8, "Our base case generates 2.6x MOIC and 21% gross IRR." Label moved from C to P. Mix is 75 C, 12 P, 12 X, 1 N. Group A stays 11. Group B stays 89. No other label moved. This is a one-row correction ruled in writing before the intra-source reducer was scored, not a regeneration of the protected set.
+Where a source states an unqualified IRR and the draft calls it a GROSS IRR, the label is Partially confirmed. The draft specifies something the source does not carry. Not contradicted, so not X. Not fully supported, so not C. This is the existing intensifier / specification rule above. Applied to F13 worksheet row 8, "Our base case generates 2.6x MOIC and 21% gross IRR." Label moved from C to P. Mix at that point was 75 C, 12 P, 12 X, 1 N. Group A stays 11. Group B stays 89. No other label moved. This is a one-row correction ruled in writing before the intra-source reducer was scored, not a regeneration of the protected set.
+
+## Correction 3 (Claude labelling error, 2026-09-08)
+
+F15 worksheet row 2: Continued own-brand penetration uplift, own-brand share has grown from 38% in 2020 to 54% in 2025, with continued runway to 70% contributing material gross margin expansion. Claude proposed C and did not flag it for Ben, so it was never adjudicated. The source says the company sees "a credible path" to 70%, contributing "approximately 250 basis points" of gross margin expansion. The draft turns a credible path into continued runway, dropping the hedge, and replaces a specific figure with "material". Under the existing intensifier rule, and the rule that an unsupported specification is P, the label is Partially confirmed. Not a new rule. Mix is 74 C, 13 P, 12 X, 1 N. Group A stays 11. Group B stays 89.
+
+THE LABELLED SET IS NOW CLOSED. Two corrections is the limit (Ruling 2 and this Claude error). Any further disagreement between a label and the pipeline is an OPEN QUESTION for the expanded corpus, never fixed in place.
 
 Attribution. A correct figure credited to only some of the causes the source names is partly unsupported, so P.
 

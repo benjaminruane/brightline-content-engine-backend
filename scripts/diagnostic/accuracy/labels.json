@@ -4,8 +4,8 @@
   "labelledAt": "2026-09-05",
   "source": "Claude proposed, Ben adjudicated, 2026-09-05",
   "mix": {
-    "C": 75,
-    "P": 12,
+    "C": 74,
+    "P": 13,
     "X": 12,
     "N": 1,
     "E": 0
@@ -577,7 +577,7 @@
       "occurrence": 0,
       "worksheetRow": 2,
       "group": "B",
-      "label": "confirmed"
+      "label": "partially_confirmed"
     },
     {
       "fixtureId": "15",
