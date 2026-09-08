@@ -54,6 +54,22 @@ Paraphrase. A fragment or reworded list item that carries the source's meaning i
 
 Implied but not stated. A detail the source strongly implies but never states is not addressed.
 
+## Open questions (carry to the expanded corpus)
+
+The labelled set is closed. These are cases where a label and the pipeline disagree, or a planted fault is still missed. They are not fixed in place. They go to the expanded corpus.
+
+Label versus pipeline:
+
+- F13 returns, "2.6x MOIC and 21% gross IRR". Ben P, pipeline X. The model reads a missing qualifier as a contradiction. Needs a Stage 2 prompt change, which moves the pinned hash, so it waits for the held-out split.
+- F15 own-brand. Ben P after Correction 3, pipeline X on some runs.
+- F04 risk-adjusted return profile. Ben C, pipeline P on some runs.
+- F11 revenue and EBITDA from SEK 4.2 billion. Ben C, pipeline varies.
+
+Two remaining catch misses (Group A still not caught). The expanded corpus must cover them:
+
+- F05 Halden support. No contradicting passage exists to find. Rubric: an invented actor reads as an omission.
+- F13 EBITDA 11.1%. The widened matcher returns the 11.1% passage and never the "approximately 13%" line. The wider window is not reliably wider.
+
 ## Seed
 
 `20260905`
@@ -61,9 +77,15 @@ Implied but not stated. A detail the source strongly implies but never states is
 ## Prices
 
 - Stage 1 extract: accepted ceiling $1. Estimate was about $0.15 per pass. Actual: run 1 $0.1357, run 2 $0.1357, total $0.2714. Stability gate passed with 0 mismatched slots.
-- Evidence scoring run (2026-09-05, fixtures 01-20, cache off, editorial and compliance off, commentary skipped): Ben approved a combined ceiling of $40 for two independent passes. Pre-run estimate was about $6 to $12 per pass, $12 to $24 for both, under the ceiling. The runner metered $0.00 on both passes because `lib/qc/pipeline-v4/index.mjs` copies Stage 2 matches without `costUsd` or `usage` (lines 364-377), so `run-evidence.mjs` has nothing to sum. Wall clock: pass 1 254411 ms, pass 2 249500 ms. Stage 1 alone was $0.14. Pass 1 stored 271 whole-sentence Stage 2 pairs across 261 cards. Dollar spend is therefore HYPOTHESIS, not a meter: well under $40, likely in the original $12 to $24 band. Do not re-run to recover the missing meter.
+- Evidence scoring run (2026-09-05, fixtures 01-20, cache off, editorial and compliance off, commentary skipped): Ben approved a combined ceiling of $40 for two independent passes. Pre-run estimate was about $6 to $12 per pass, $12 to $24 for both, under the ceiling. The runner metered $0.00 on both of those passes because `lib/qc/pipeline-v4/index.mjs` copied Stage 2 matches without `costUsd` or `usage` (lines 364-377), so `run-evidence.mjs` had nothing to sum. That cause was fixed in `32f3b97`. Later passes metered correctly: $5.41 for the reducer pair, $5.36 for the rounding pair, $2.27 for the lift pass. Wall clock on the 2026-09-05 pair: pass 1 254411 ms, pass 2 249500 ms. Stage 1 alone was $0.14. Pass 1 stored 271 whole-sentence Stage 2 pairs across 261 cards. The 2026-09-05 pair has no meter. Do not re-run it to recover the missing meter.
 
-## Scoreboard (run 1 scored; run 2 for stability only)
+## Scoreboard
+
+Current reading (2026-09-08, `runs/evidence-pass-lift-1`): catch 9 of 11, leave-alone 67 of 74.
+
+### Baseline (2026-09-05)
+
+The rates below are the original pair (run 1 scored, run 2 for stability only). The mix shown is pre-correction: 76 C, 11 P, 12 X, 1 N, 0 E. Ruling 2 and Correction 3 later superseded two Confirmed rows. Do not take these rates as live.
 
 - Join: 100 labels in, 100 matched to frozen `statements.json`, 0 unmatched. Same 100 joined to pass-1 cards. Mix 76 C, 11 P, 12 X, 1 N, 0 E. Groups A=11 B=89.
 - Stability: **97 of 100** labelled statements kept the same mapped `displayVerdict` across the two cache-off passes. **3 moved.** That qualifies every rate below.
@@ -82,7 +104,7 @@ Full disagreement list and the three movers live in `score-result.json`. Cards: 
 This pack cannot validate a judging change smaller than the noise already measured on identical cache-off pairs. Further tuning against these 100 labels is not evidence. Expand the corpus first.
 
 - Leave-alone moved 4 percentage points between two identical rounding-tolerance runs: 67 of 74 = 90.54% on `runs/evidence-pass-rt-1/cards.json` against 64 of 74 = 86.49% on `runs/evidence-pass-rt-2/cards.json`. Same pipeline, same freeze, same labels.
-- Stability of the 100 labelled statements across billed pairs: **97, 95, 96, 94 of 100**. Orig `evidence-pass-1`/`2` (README scoreboard above): 97. Conflict-wins `evidence-pass-cw-1`/`2`: 95. Intra-source reducer `evidence-pass-reducer-1`/`2`: 96. Rounding-tolerance `evidence-pass-rt-1`/`2`: 94. Every mover on the last pair was live Stage 2 wobbling between confirmed and partial on evaluative sentences.
+- Stability of the 100 labelled statements across billed pairs: **97, 95, 96, 94 of 100**. Orig `evidence-pass-1`/`2` (baseline scoreboard above): 97. Conflict-wins `evidence-pass-cw-1`/`2`: 95. Intra-source reducer `evidence-pass-reducer-1`/`2`: 96. Rounding-tolerance `evidence-pass-rt-1`/`2`: 94. Every mover on the last pair was live Stage 2 wobbling between confirmed and partial on evaluative sentences.
 - Catch of 11 has a Wilson 95 percent interval 43 percentage points wide at the observed 9 of 11: [0.5230, 0.9486]. At the original 3 of 11 it was 47 points: [0.0975, 0.5657]. An interval "roughly 25 points wide" is a floor. The measured width is larger.
 
 Differences smaller than these (a few leave-alone points, a stability tick, a catch of 11 moving by one) are not evidence that a judging change worked. This instrument cannot tell them from Stage 2 noise. Do not propose another judging change against this labelled set. The next work is a larger corpus.
