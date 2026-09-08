@@ -37,6 +37,9 @@ scripts/diagnostic/extractor-survey/
 scripts/diagnostic/extraction-check/outputs/
 scripts/diagnostic/extraction-check/inputs/*.pdf
 
+# Bake-off run artefacts (REPORT.md is kept)
+scripts/diagnostic/bakeoff/runs/
+
 # diagnostic run logs (regenerable)
 tests/output/*.log
 .env*
