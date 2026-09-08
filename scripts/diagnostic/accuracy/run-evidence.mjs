@@ -78,6 +78,12 @@ function compactSupportSpans(card) {
   }));
 }
 
+function excerptPassage(value) {
+  if (typeof value === "string") return value;
+  if (value && typeof value.passage === "string") return value.passage;
+  return "";
+}
+
 export function compactCards(fixtureId, pipelineResult) {
   const cards = Array.isArray(pipelineResult?.qcCards) ? pipelineResult.qcCards : [];
   const rows = cards.map((card, i) => ({
@@ -96,6 +102,8 @@ export function compactCards(fixtureId, pipelineResult) {
       sourceIndex: m?.sourceIndex,
     })),
     supportSpans: compactSupportSpans(card),
+    primaryExcerpt: excerptPassage(card?.primaryExcerpt),
+    conflictExcerpt: excerptPassage(card?.conflictExcerpt),
   }));
   return addOccurrenceIndices(
     rows.map((r) => ({
@@ -106,6 +114,8 @@ export function compactCards(fixtureId, pipelineResult) {
       hasConflict: r.hasConflict,
       sourceMatches: r.sourceMatches,
       supportSpans: r.supportSpans,
+      primaryExcerpt: r.primaryExcerpt,
+      conflictExcerpt: r.conflictExcerpt,
     }))
   ).map((r) => ({
     fixtureId: r.fixtureId,
@@ -116,6 +126,8 @@ export function compactCards(fixtureId, pipelineResult) {
     hasConflict: r.hasConflict,
     sourceMatches: r.sourceMatches,
     supportSpans: r.supportSpans,
+    primaryExcerpt: r.primaryExcerpt,
+    conflictExcerpt: r.conflictExcerpt,
   }));
 }
 
