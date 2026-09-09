@@ -19,6 +19,23 @@ export const BEN_LABELS = {
   E: "unrateable",
 };
 
+export const LABEL_KIND_STATEMENT = "statement";
+export const LABEL_KIND_DRAFT_INTERNAL_PAIR = "draft_internal_pair";
+
+/**
+ * Label row kind. Missing or empty kind is "statement" so corpus 1 labels parse unchanged.
+ * Do not reuse unrateable / E for pairs; that is the escape falsifier.
+ */
+export function labelKind(row) {
+  const k = row?.kind;
+  if (k == null || String(k).trim() === "") return LABEL_KIND_STATEMENT;
+  return String(k);
+}
+
+export function isStatementLabel(row) {
+  return labelKind(row) === LABEL_KIND_STATEMENT;
+}
+
 /**
  * Locked before the Stage 1 stability run. A mismatched slot is one index
  * (after padding the shorter list) where the two runs' normalised texts differ.
@@ -435,7 +452,15 @@ export function scoreAccuracy({ labels, cards, groupAKeys, groupBKeys }) {
   }
   const unmatchedLabels = [];
   const matched = [];
+  const skippedByKind = {};
+  let skippedNonStatementCount = 0;
   for (const row of Array.isArray(labels) ? labels : []) {
+    const kind = labelKind(row);
+    if (kind !== LABEL_KIND_STATEMENT) {
+      skippedNonStatementCount += 1;
+      skippedByKind[kind] = (skippedByKind[kind] || 0) + 1;
+      continue;
+    }
     const ben = mapBenLabel(row.label);
     if (ben == null) continue;
     const key = joinKey(row.fixtureId, row.statementText ?? row.text, row.occurrence);
@@ -521,6 +546,10 @@ export function scoreAccuracy({ labels, cards, groupAKeys, groupBKeys }) {
     },
     unmatchedLabels,
     unmatchedPredictions,
+    skippedNonStatement: {
+      count: skippedNonStatementCount,
+      byKind: skippedByKind,
+    },
     falsifiers: {
       escapeRate,
       escapeRateOver15: escapeRate > ESCAPE_RATE_FALSIFIER,
@@ -575,6 +604,8 @@ export function formatScoreReport(result) {
   }
   lines.push(`ESCAPES: ${result.escapes.count} rate=${result.escapes.rate.toFixed(4)}`);
   lines.push(`  perFixture: ${JSON.stringify(result.escapes.perFixture)}`);
+  const skipped = result.skippedNonStatement || { count: 0, byKind: {} };
+  lines.push(`SKIPPED_NON_STATEMENT: ${skipped.count} byKind=${JSON.stringify(skipped.byKind || {})}`);
   lines.push(`UNMATCHED LABELS: ${result.unmatchedLabels.length}`);
   for (const u of result.unmatchedLabels) {
     lines.push(`  ${u.fixtureId} #${u.occurrence} ${u.statementText}`);

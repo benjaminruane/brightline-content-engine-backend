@@ -9,8 +9,11 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import {
+  LABEL_KIND_DRAFT_INTERNAL_PAIR,
+  LABEL_KIND_STATEMENT,
   flattenStatements,
   joinKey,
+  labelKind,
   normalizeStatementText,
   padFixtureId,
 } from "./lib.mjs";
@@ -48,6 +51,40 @@ const LETTER_TO_LABEL = {
   N: "no_support",
   E: "unrateable",
 };
+
+/**
+ * Missing kind reads as "statement" so corpus 1 labels.json parses unchanged.
+ */
+export function normalizeLabelRow(row) {
+  const kind = labelKind(row);
+  if (kind === LABEL_KIND_DRAFT_INTERNAL_PAIR) {
+    return {
+      kind: LABEL_KIND_DRAFT_INTERNAL_PAIR,
+      fixtureId: padFixtureId(row.fixtureId),
+      statementTextA: typeof row.statementTextA === "string" ? row.statementTextA : "",
+      occurrenceA: Number(row.occurrenceA) || 0,
+      statementTextB: typeof row.statementTextB === "string" ? row.statementTextB : "",
+      occurrenceB: Number(row.occurrenceB) || 0,
+      worksheetRow: row.worksheetRow ?? null,
+      group: row.group ?? null,
+      label: row.label ?? null,
+    };
+  }
+  return {
+    kind: LABEL_KIND_STATEMENT,
+    fixtureId: padFixtureId(row.fixtureId),
+    statementText: typeof row.statementText === "string" ? row.statementText : typeof row.text === "string" ? row.text : "",
+    occurrence: Number(row.occurrence) || 0,
+    worksheetRow: row.worksheetRow ?? null,
+    group: row.group ?? null,
+    label: row.label ?? null,
+  };
+}
+
+export function normalizeLabelsDoc(doc) {
+  const labels = Array.isArray(doc?.labels) ? doc.labels : Array.isArray(doc) ? doc : [];
+  return labels.map((row) => normalizeLabelRow(row));
+}
 
 function runningAsMain() {
   const entry = process.argv[1];
@@ -122,14 +159,16 @@ export function buildLabels({ worksheetMd, statementsDoc, manifest }) {
       const stmt = bucket[0];
       const key = joinKey(stmt.fixtureId, stmt.text, stmt.occurrence);
       mix[letter] += 1;
-      labels.push({
-        fixtureId: stmt.fixtureId,
-        statementText: stmt.text,
-        occurrence: stmt.occurrence,
-        worksheetRow: rows[i].worksheetRow,
-        group: groupByKey.get(key) || null,
-        label: LETTER_TO_LABEL[letter],
-      });
+      labels.push(
+        normalizeLabelRow({
+          fixtureId: stmt.fixtureId,
+          statementText: stmt.text,
+          occurrence: stmt.occurrence,
+          worksheetRow: rows[i].worksheetRow,
+          group: groupByKey.get(key) || null,
+          label: LETTER_TO_LABEL[letter],
+        })
+      );
     }
   }
   return { labels, unmatched, mix, count: labels.length };

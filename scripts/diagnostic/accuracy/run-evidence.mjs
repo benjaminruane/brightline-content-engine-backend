@@ -6,6 +6,7 @@
  *
  *   node scripts/diagnostic/accuracy/run-evidence.mjs --pass 1
  *   node scripts/diagnostic/accuracy/run-evidence.mjs --pass 2
+ *   node scripts/diagnostic/accuracy/run-evidence.mjs --ids 01,03 --statements path.json --pass c2-1
  *
  * Combined ceiling USD 40 for both passes. Remaining budget via ACCURACY_COST_REMAINING.
  */
@@ -15,13 +16,14 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
-import { filterFixtures, loadAllFixtures } from "../lib/fixtures.mjs";
+import { filterFixtures, loadAllFixtures, parseIdsArg } from "../lib/fixtures.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
 import { addOccurrenceIndices, flattenStatements, normalizeStatementText, padFixtureId } from "./lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const COMBINED_CEILING_USD = 40;
-const FREEZE_PATH = path.join(__dirname, "statements.json");
+export const DEFAULT_RANGE = { from: "01", to: "20" };
+export const DEFAULT_STATEMENTS_PATH = path.join(__dirname, "statements.json");
 
 function runningAsMain() {
   const entry = process.argv[1];
@@ -142,6 +144,54 @@ export function frozenRowsByFixture(statementsDoc) {
   return { all, byId };
 }
 
+export function parseEvidenceArgs(argv) {
+  const out = { pass: "1", ids: [], statements: null };
+  const args = Array.isArray(argv) ? argv : [];
+  for (let i = 0; i < args.length; i += 1) {
+    if (args[i] === "--pass" && args[i + 1]) out.pass = String(args[++i]);
+    else if (args[i] === "--ids" && args[i + 1]) out.ids = parseIdsArg(args[++i]);
+    else if (args[i] === "--statements" && args[i + 1]) out.statements = args[++i];
+  }
+  return out;
+}
+
+export function evidenceFilterFromArgs(args) {
+  if (Array.isArray(args?.ids) && args.ids.length > 0) return { ids: args.ids };
+  return { range: DEFAULT_RANGE };
+}
+
+export function selectedIdsFromFixtures(fixtures) {
+  return (Array.isArray(fixtures) ? fixtures : []).map((f) => padFixtureId(f.data.id));
+}
+
+/**
+ * Count freeze rows for the selected fixture ids. Replaces the corpus-1-only 261 check.
+ * @returns {{ actual: number, expected: number, missing: string[] }}
+ */
+export function countFreezeRowsForSelectedIds(statementsDoc, selectedIds) {
+  const { byId } = frozenRowsByFixture(statementsDoc);
+  const ids = (Array.isArray(selectedIds) ? selectedIds : []).map((id) => padFixtureId(id));
+  const missing = [];
+  let actual = 0;
+  for (const id of ids) {
+    const n = (byId.get(id) || []).length;
+    actual += n;
+    if (n === 0) missing.push(id);
+  }
+  return { actual, expected: actual, missing, selectedIds: ids };
+}
+
+export function assertFreezeCountForSelectedIds(statementsDoc, selectedIds) {
+  const ids = (Array.isArray(selectedIds) ? selectedIds : []).map((id) => padFixtureId(id));
+  const { actual, missing } = countFreezeRowsForSelectedIds(statementsDoc, ids);
+  if (ids.length === 0 || actual === 0 || missing.length > 0) {
+    throw new Error(
+      `Freeze has ${actual} statements for selected ids [${ids.join(",")}], expected freeze rows for each selected id (missing [${missing.join(",") || "none"}], actual ${actual}). Not spending.`
+    );
+  }
+  return actual;
+}
+
 /**
  * Fail loudly if the pipeline did not run the exact frozen list.
  * Compares count and each statement text (NFC, collapsed whitespace).
@@ -214,19 +264,22 @@ async function main() {
   process.env.QC_LLM_CACHE = "0";
   delete process.env.QC_LLM_CACHE_DISK;
 
-  const argv = process.argv.slice(2);
-  const passIdx = argv.indexOf("--pass");
-  const pass = passIdx >= 0 ? String(argv[passIdx + 1] || "1") : "1";
+  const args = parseEvidenceArgs(process.argv.slice(2));
+  const pass = args.pass || "1";
   const remaining = Number(process.env.ACCURACY_COST_REMAINING || COMBINED_CEILING_USD);
   if (!(remaining > 0)) {
     throw new Error(`No remaining budget (ACCURACY_COST_REMAINING=${remaining}). Stopping.`);
   }
 
-  const statementsDoc = JSON.parse(await readFile(FREEZE_PATH, "utf8"));
-  const { all: frozenAll, byId: frozenByFixture } = frozenRowsByFixture(statementsDoc);
-  if (frozenAll.length !== 261) {
-    throw new Error(`Freeze has ${frozenAll.length} statements, expected 261. Not spending.`);
-  }
+  const statementsPath = args.statements
+    ? path.resolve(args.statements)
+    : DEFAULT_STATEMENTS_PATH;
+  const statementsDoc = JSON.parse(await readFile(statementsPath, "utf8"));
+  const { byId: frozenByFixture } = frozenRowsByFixture(statementsDoc);
+  const filter = evidenceFilterFromArgs(args);
+  const fixtures = filterFixtures(await loadAllFixtures(), filter);
+  const selectedIds = selectedIdsFromFixtures(fixtures);
+  const selectedFrozenCount = assertFreezeCountForSelectedIds(statementsDoc, selectedIds);
 
   const { runPipelineV4 } = await import("../../../lib/qc/pipeline-v4/index.mjs");
   const { isLlmCacheEnabled } = await import("../../../lib/qc/llm-cache.mjs");
@@ -239,7 +292,6 @@ async function main() {
     throw new Error("OPENAI_API_KEY required");
   }
 
-  const fixtures = filterFixtures(await loadAllFixtures(), { range: { from: "01", to: "20" } });
   const outDir = path.join(__dirname, "runs", `evidence-pass-${pass}`);
   await mkdir(outDir, { recursive: true });
 
@@ -264,15 +316,15 @@ async function main() {
   }
 
   const allCards = fixturesOut.flatMap((f) => f.cards);
-  if (allCards.length !== frozenAll.length) {
+  if (allCards.length !== selectedFrozenCount) {
     throw new Error(
-      `FROZEN LIST LEAK: loaded ${allCards.length} cards across fixtures, freeze has ${frozenAll.length}.`
+      `FROZEN LIST LEAK: loaded ${allCards.length} cards across fixtures, freeze has ${selectedFrozenCount} statements for selected ids [${selectedIds.join(",")}].`
     );
   }
 
   const payload = {
     pass: Number.isFinite(Number(pass)) ? Number(pass) : pass,
-    range: "01-20",
+    range: selectedIds.length ? selectedIds.join(",") : "01-20",
     cache: "off",
     editorialEnabled: false,
     complianceEnabled: false,

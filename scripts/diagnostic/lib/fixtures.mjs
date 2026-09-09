@@ -25,14 +25,33 @@ export async function loadAllFixtures() {
 }
 
 /**
+ * Parse a comma-separated fixture id list into zero-padded ids.
+ * @param {string} raw
+ * @returns {string[]}
+ */
+export function parseIdsArg(raw) {
+  return String(raw ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => String(s).padStart(2, "0"));
+}
+
+/**
  * @param {Array<{ data: object }>} fixtures
- * @param {{ only?: string, range?: { from: string, to: string } }} filter
+ * @param {{ ids?: string[], only?: string, range?: { from: string, to: string } }} filter
+ * Precedence: ids > only > range.
  */
 export function filterFixtures(fixtures, filter = {}) {
   const num = (id) => parseInt(String(id), 10);
+  const pad = (id) => String(id ?? "").padStart(2, "0");
+  if (Array.isArray(filter.ids) && filter.ids.length > 0) {
+    const want = new Set(filter.ids.map(pad));
+    return fixtures.filter((f) => want.has(pad(f.data.id)));
+  }
   if (filter.only) {
-    const want = String(filter.only).padStart(2, "0");
-    return fixtures.filter((f) => String(f.data.id).padStart(2, "0") === want);
+    const want = pad(filter.only);
+    return fixtures.filter((f) => pad(f.data.id) === want);
   }
   if (filter.range) {
     const from = num(filter.range.from);

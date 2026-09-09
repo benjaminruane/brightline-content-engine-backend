@@ -12,6 +12,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { formatScoreReport, joinKey, scoreAccuracy } from "./lib.mjs";
+import { normalizeLabelsDoc } from "./load-labels.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -46,7 +47,8 @@ export async function runScore({ labelsPath, cardsPath, manifestPath }) {
   const labelsDoc = JSON.parse(await readFile(labelsPath, "utf8"));
   const cardsDoc = JSON.parse(await readFile(cardsPath, "utf8"));
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
-  const labels = Array.isArray(labelsDoc.labels) ? labelsDoc.labels : labelsDoc;
+  const labelsRaw = Array.isArray(labelsDoc.labels) ? labelsDoc.labels : labelsDoc;
+  const labels = normalizeLabelsDoc({ labels: labelsRaw });
   const cards = Array.isArray(cardsDoc.cards) ? cardsDoc.cards : cardsDoc;
   const result = scoreAccuracy({
     labels,

@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 /**
- * Stage 1 only, fixtures 01-20. Cache off. No Stage 1b.
+ * Stage 1 only. Default fixtures 01-20. Cache off. No Stage 1b.
  *
- *   node scripts/diagnostic/accuracy/extract-stage1.mjs --stability-gate
+ *   node scripts/diagnostic/accuracy/extract-stage1.mjs --stability-gate --out path.json
  *   node scripts/diagnostic/accuracy/extract-stage1.mjs --out path.json
+ *   node scripts/diagnostic/accuracy/extract-stage1.mjs --ids 01,03,05 --out path.json
  *
  * Stability gate (locked before the run): mismatched statement slots across
  * two cache-off extracts must be <= STABILITY_MISMATCH_THRESHOLD (5).
- * Freeze run 1 as statements.json on pass. Cost ceiling $1 for both passes.
+ * Freeze run 1 to --out on pass. Never writes the corpus 1 P29 files.
+ * Cost ceiling $1 for both passes.
  */
 
 import { mkdir, writeFile } from "node:fs/promises";
@@ -15,17 +17,103 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
-import { filterFixtures, loadAllFixtures } from "../lib/fixtures.mjs";
+import { filterFixtures, loadAllFixtures, parseIdsArg } from "../lib/fixtures.mjs";
 import {
   STABILITY_MISMATCH_THRESHOLD,
   addOccurrenceIndices,
   countMismatchedSlots,
+  normalizeStatementText,
   padFixtureId,
 } from "./lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const COST_CEILING_USD = 1;
-const RANGE = { from: "01", to: "20" };
+export const RANGE = { from: "01", to: "20" };
+
+export const P29_PROTECTED_NAMES = [
+  "statements.json",
+  "labels.json",
+  "group-a-design.json",
+  "sample-manifest.json",
+];
+
+export function p29ProtectedPaths(accuracyDir = __dirname) {
+  return P29_PROTECTED_NAMES.map((name) => path.resolve(accuracyDir, name));
+}
+
+/**
+ * Hard refusal. No flag can override. Corpus 1 is closed.
+ */
+export function assertNotP29ProtectedWrite(outPath, accuracyDir = __dirname) {
+  const resolved = path.resolve(outPath);
+  const protectedSet = new Set(p29ProtectedPaths(accuracyDir));
+  if (protectedSet.has(resolved)) {
+    const name = path.basename(resolved);
+    throw new Error(
+      `${name} is P29-protected and corpus 1 is closed. Refusing to write ${resolved}.`
+    );
+  }
+}
+
+export function parseExtractArgs(argv) {
+  const out = { ids: [], out: null, stabilityGate: false };
+  const args = Array.isArray(argv) ? argv : [];
+  for (let i = 0; i < args.length; i += 1) {
+    if (args[i] === "--ids" && args[i + 1]) {
+      out.ids = parseIdsArg(args[++i]);
+    } else if (args[i] === "--out" && args[i + 1]) {
+      out.out = args[++i];
+    } else if (args[i] === "--stability-gate") {
+      out.stabilityGate = true;
+    }
+  }
+  return out;
+}
+
+export function extractFilterFromArgs(args) {
+  if (Array.isArray(args?.ids) && args.ids.length > 0) return { ids: args.ids };
+  return { range: RANGE };
+}
+
+export function filterLabel(filter) {
+  if (Array.isArray(filter?.ids) && filter.ids.length > 0) {
+    return filter.ids.map((id) => padFixtureId(id)).join(",");
+  }
+  if (filter?.range) return `${filter.range.from}-${filter.range.to}`;
+  return "01-20";
+}
+
+/**
+ * New freezes only. Does not read or re-validate the corpus 1 freeze.
+ */
+export function assertNoIntraFixtureNormalizedDuplicates(freezeDoc) {
+  const fixtures = Array.isArray(freezeDoc?.fixtures) ? freezeDoc.fixtures : [];
+  const dups = [];
+  for (const fx of fixtures) {
+    const counts = new Map();
+    for (const s of Array.isArray(fx.statements) ? fx.statements : []) {
+      const norm = normalizeStatementText(s?.text);
+      if (!norm) continue;
+      counts.set(norm, (counts.get(norm) || 0) + 1);
+    }
+    for (const [text, count] of counts) {
+      if (count > 1) {
+        dups.push({ fixtureId: padFixtureId(fx.fixtureId), text, count });
+      }
+    }
+  }
+  if (dups.length > 0) {
+    const detail = dups.map((d) => `F${d.fixtureId} ${JSON.stringify(d.text)}`).join("; ");
+    throw new Error(
+      `Freeze has duplicate normalised statement text within a fixture: ${detail}`
+    );
+  }
+}
+
+function unfrozenCompanion(outPath, tag) {
+  const parsed = path.parse(path.resolve(outPath));
+  return path.join(parsed.dir, `${parsed.name}-${tag}${parsed.ext || ".json"}`);
+}
 
 function runningAsMain() {
   const entry = process.argv[1];
@@ -66,8 +154,9 @@ export function buildFixtureRecord(fixture, stage1) {
   };
 }
 
-export async function extractRange({ extractStatements, fixtures }) {
-  const selected = filterFixtures(fixtures, { range: RANGE });
+export async function extractRange({ extractStatements, fixtures, filter }) {
+  const applied = filter && typeof filter === "object" ? filter : { range: RANGE };
+  const selected = filterFixtures(fixtures, applied);
   const records = [];
   let costUsd = 0;
   for (const fixture of selected) {
@@ -87,7 +176,7 @@ export async function extractRange({ extractStatements, fixtures }) {
   }
   return {
     extractedAt: new Date().toISOString(),
-    range: "01-20",
+    range: filterLabel(applied),
     stage1b: false,
     cache: "off",
     costUsd,
@@ -100,7 +189,7 @@ export function freezeRun1(run1, run2, comparison) {
   for (const f of run1.fixtures) counts[f.fixtureId] = f.statements.length;
   return {
     extractedAt: run1.extractedAt,
-    range: "01-20",
+    range: run1.range ?? "01-20",
     stage1b: false,
     cache: "off",
     frozenFrom: "run1",
@@ -120,11 +209,22 @@ export function freezeRun1(run1, run2, comparison) {
 }
 
 async function writeJson(filePath, value) {
+  assertNotP29ProtectedWrite(filePath);
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
 async function main() {
+  const args = parseExtractArgs(process.argv.slice(2));
+  if (!args.out) {
+    throw new Error(
+      "statements.json is P29-protected and corpus 1 is closed. Pass --out <path>. Every write requires an explicit --out."
+    );
+  }
+  const outPath = path.resolve(args.out);
+  assertNotP29ProtectedWrite(outPath);
+  const filter = extractFilterFromArgs(args);
+
   loadLocalEnvFiles({ liveMeasurement: true });
   process.env.QC_LLM_CACHE = "0";
   delete process.env.QC_LLM_CACHE_DISK;
@@ -142,16 +242,12 @@ async function main() {
     throw new Error("OPENAI_API_KEY is required for Stage 1 extract");
   }
 
-  const argv = process.argv.slice(2);
-  const outIdx = argv.indexOf("--out");
-  const freezePath = path.join(__dirname, "statements.json");
-
   const fixtures = await loadAllFixtures();
 
-  if (outIdx >= 0 && argv[outIdx + 1]) {
-    const run = await extractRange({ extractStatements, fixtures });
-    await writeJson(path.resolve(argv[outIdx + 1]), run);
-    console.log(`wrote ${argv[outIdx + 1]} costUsd=${run.costUsd.toFixed(4)}`);
+  if (!args.stabilityGate) {
+    const run = await extractRange({ extractStatements, fixtures, filter });
+    await writeJson(outPath, run);
+    console.log(`wrote ${outPath} costUsd=${run.costUsd.toFixed(4)}`);
     return;
   }
 
@@ -159,7 +255,7 @@ async function main() {
     `stability gate: two cache-off extracts, fail if mismatched slots > ${STABILITY_MISMATCH_THRESHOLD}`
   );
   console.log("run 1");
-  const run1 = await extractRange({ extractStatements, fixtures });
+  const run1 = await extractRange({ extractStatements, fixtures, filter });
   console.log(`run 1 costUsd=${run1.costUsd.toFixed(4)}`);
   const remaining = COST_CEILING_USD - run1.costUsd;
   if (remaining <= 0) {
@@ -168,7 +264,7 @@ async function main() {
     );
   }
   console.log("run 2");
-  const run2 = await extractRange({ extractStatements, fixtures });
+  const run2 = await extractRange({ extractStatements, fixtures, filter });
   console.log(`run 2 costUsd=${run2.costUsd.toFixed(4)}`);
   const total = run1.costUsd + run2.costUsd;
   console.log(`total costUsd=${total.toFixed(4)}`);
@@ -191,15 +287,18 @@ async function main() {
   }
 
   if (comparison.mismatchedSlots > STABILITY_MISMATCH_THRESHOLD) {
-    await writeJson(path.join(__dirname, "statements-run1-unfrozen.json"), run1);
-    await writeJson(path.join(__dirname, "statements-run2-unfrozen.json"), run2);
-    console.error("STABILITY GATE FAILED. Not freezing statements.json. Not continuing.");
+    const run1Path = unfrozenCompanion(outPath, "run1-unfrozen");
+    const run2Path = unfrozenCompanion(outPath, "run2-unfrozen");
+    await writeJson(run1Path, run1);
+    await writeJson(run2Path, run2);
+    console.error("STABILITY GATE FAILED. Not freezing. Not continuing.");
     process.exit(1);
   }
 
   const frozen = freezeRun1(run1, run2, comparison);
-  await writeJson(freezePath, frozen);
-  console.log(`STABILITY GATE PASSED. froze ${freezePath} from run 1`);
+  assertNoIntraFixtureNormalizedDuplicates(frozen);
+  await writeJson(outPath, frozen);
+  console.log(`STABILITY GATE PASSED. froze ${outPath} from run 1`);
 }
 
 if (runningAsMain()) {
