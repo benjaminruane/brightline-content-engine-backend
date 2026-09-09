@@ -6,24 +6,31 @@
  *
  *   node scripts/diagnostic/accuracy/run-evidence.mjs --pass 1
  *   node scripts/diagnostic/accuracy/run-evidence.mjs --pass 2
- *   node scripts/diagnostic/accuracy/run-evidence.mjs --ids 01,03 --statements path.json --pass c2-1
+ *   node scripts/diagnostic/accuracy/run-evidence.mjs --ids 01,03 --statements path.json --runs-root dir --pass c2-1
  *
  * Combined ceiling USD 40 for both passes. Remaining budget via ACCURACY_COST_REMAINING.
  */
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { filterFixtures, loadAllFixtures, parseIdsArg } from "../lib/fixtures.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
-import { addOccurrenceIndices, flattenStatements, normalizeStatementText, padFixtureId } from "./lib.mjs";
+import {
+  addOccurrenceIndices,
+  flattenStatements,
+  normalizeStatementText,
+  padFixtureId,
+  writeAccuracyFile,
+} from "./lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const COMBINED_CEILING_USD = 40;
 export const DEFAULT_RANGE = { from: "01", to: "20" };
 export const DEFAULT_STATEMENTS_PATH = path.join(__dirname, "statements.json");
+export const DEFAULT_RUNS_ROOT = path.join(__dirname, "runs");
 
 function runningAsMain() {
   const entry = process.argv[1];
@@ -145,14 +152,25 @@ export function frozenRowsByFixture(statementsDoc) {
 }
 
 export function parseEvidenceArgs(argv) {
-  const out = { pass: "1", ids: [], statements: null };
+  const out = { pass: "1", ids: [], statements: null, runsRoot: null };
   const args = Array.isArray(argv) ? argv : [];
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === "--pass" && args[i + 1]) out.pass = String(args[++i]);
     else if (args[i] === "--ids" && args[i + 1]) out.ids = parseIdsArg(args[++i]);
     else if (args[i] === "--statements" && args[i + 1]) out.statements = args[++i];
+    else if (args[i] === "--runs-root" && args[i + 1]) out.runsRoot = args[++i];
   }
   return out;
+}
+
+export function evidenceCardsOutPath(runsRoot, pass) {
+  const root = runsRoot ? path.resolve(runsRoot) : DEFAULT_RUNS_ROOT;
+  return path.join(root, `evidence-pass-${String(pass)}`, "cards.json");
+}
+
+export async function writeEvidenceCards(outPath, payload) {
+  await writeAccuracyFile(outPath, `${JSON.stringify(payload, null, 2)}\n`);
+  return path.resolve(outPath);
 }
 
 export function evidenceFilterFromArgs(args) {
@@ -292,8 +310,8 @@ async function main() {
     throw new Error("OPENAI_API_KEY required");
   }
 
-  const outDir = path.join(__dirname, "runs", `evidence-pass-${pass}`);
-  await mkdir(outDir, { recursive: true });
+  const outPath = evidenceCardsOutPath(args.runsRoot, pass);
+  await mkdir(path.dirname(outPath), { recursive: true });
 
   const fixturesOut = [];
   let spent = 0;
@@ -343,8 +361,7 @@ async function main() {
     })),
     cards: allCards,
   };
-  const outPath = path.join(outDir, "cards.json");
-  await writeFile(outPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+  await writeEvidenceCards(outPath, payload);
   console.log(`PASS ${pass} DONE costUsd=${spent.toFixed(4)} cards=${allCards.length} wrote ${outPath}`);
 }
 

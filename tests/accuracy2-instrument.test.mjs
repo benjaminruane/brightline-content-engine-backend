@@ -6,24 +6,30 @@ import { describe, test } from "vitest";
 import {
   LABEL_KIND_DRAFT_INTERNAL_PAIR,
   LABEL_KIND_STATEMENT,
+  P29_PROTECTED_NAMES,
+  assertNotP29ProtectedWrite,
   formatScoreReport,
+  p29ProtectedPaths,
   scoreAccuracy,
 } from "../scripts/diagnostic/accuracy/lib.mjs";
 import {
-  P29_PROTECTED_NAMES,
   assertNoIntraFixtureNormalizedDuplicates,
-  assertNotP29ProtectedWrite,
   parseExtractArgs,
-  p29ProtectedPaths,
 } from "../scripts/diagnostic/accuracy/extract-stage1.mjs";
 import {
   assertFreezeCountForSelectedIds,
   countFreezeRowsForSelectedIds,
+  evidenceCardsOutPath,
   parseEvidenceArgs,
+  writeEvidenceCards,
 } from "../scripts/diagnostic/accuracy/run-evidence.mjs";
-import { normalizeLabelRow, normalizeLabelsDoc } from "../scripts/diagnostic/accuracy/load-labels.mjs";
+import { normalizeLabelRow, normalizeLabelsDoc, parseLoadLabelsArgs, writeLabels } from "../scripts/diagnostic/accuracy/load-labels.mjs";
+import { buildSample, parseSampleArgs, writeSample } from "../scripts/diagnostic/accuracy/sample.mjs";
+import { parseWorksheetArgs, writeWorksheet } from "../scripts/diagnostic/accuracy/generate-worksheet.mjs";
 import { filterFixtures, parseIdsArg } from "../scripts/diagnostic/lib/fixtures.mjs";
 import { runScore } from "../scripts/diagnostic/accuracy/score.mjs";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ACC = path.join(ROOT, "scripts/diagnostic/accuracy");
@@ -126,10 +132,20 @@ describe("extract-stage1 freeze duplicate guard", () => {
 
 describe("run-evidence --statements and selected-id freeze count", () => {
   test("accepts --statements at a non-default path", () => {
-    const args = parseEvidenceArgs(["--statements", "/tmp/c2-statements.json", "--ids", "01,03", "--pass", "c2-1"]);
+    const args = parseEvidenceArgs([
+      "--statements",
+      "/tmp/c2-statements.json",
+      "--ids",
+      "01,03",
+      "--pass",
+      "c2-1",
+      "--runs-root",
+      "/tmp/c2-runs",
+    ]);
     assert.equal(args.statements, "/tmp/c2-statements.json");
     assert.deepEqual(args.ids, ["01", "03"]);
     assert.equal(args.pass, "c2-1");
+    assert.equal(args.runsRoot, "/tmp/c2-runs");
   });
 
   test("validates freeze count against selected ids rather than 261", () => {
@@ -262,5 +278,215 @@ describe("corpus 1 score is unchanged", () => {
     assert.equal(result.groupB.amongBenConfirmed.n, 74);
     assert.equal(result.groupB.amongBenConfirmed.pipelineAlsoConfirmed, 67);
     assert.equal(result.skippedNonStatement.count, 0);
+  });
+});
+
+function make54FaultCorpus() {
+  const planted = [];
+  const faults = [];
+  for (let i = 0; i < 54; i += 1) {
+    const token = `ZXFAULT${String(i).padStart(3, "0")}Q`;
+    planted.push({
+      index: i,
+      text: `${token} unique planted sentence.`,
+      charStart: i,
+      charEnd: i + 1,
+      occurrence: 0,
+    });
+    faults.push({ id: `F01-f${i}`, fixtureId: "01", span: token });
+  }
+  const clean = Array.from({ length: 50 }, (_, i) => ({
+    index: 54 + i,
+    text: `Clean bulk sentence ${i}.`,
+    charStart: 54 + i,
+    charEnd: 55 + i,
+    occurrence: 0,
+  }));
+  return {
+    statementsDoc: { fixtures: [{ fixtureId: "01", label: "synthetic", statements: [...planted, ...clean] }] },
+    design: { faults },
+  };
+}
+
+describe("P29 write refusal on remaining writers", () => {
+  test("each of the four writers refuses each of the four P29 paths", async () => {
+    const dummy = path.join(ACC, "labels.json");
+    const writers = [
+      (outPath) => writeSample({ statementsPath: dummy, designPath: dummy, outPath }),
+      (outPath) => writeWorksheet({ manifestPath: dummy, statementsPath: dummy, outPath }),
+      (outPath) => writeLabels({ worksheetPath: dummy, manifestPath: dummy, statementsPath: dummy, outPath }),
+      (outPath) => writeEvidenceCards(outPath, { cards: [] }),
+    ];
+    for (const p29 of p29ProtectedPaths(ACC)) {
+      for (const write of writers) {
+        await assert.rejects(
+          () => write(p29),
+          (err) => {
+            const msg = String(err.message);
+            assert.match(msg, /P29-protected/);
+            assert.match(msg, /corpus 1 is closed/);
+            assert.ok(msg.includes(path.basename(p29)), msg);
+            return true;
+          }
+        );
+      }
+    }
+  });
+});
+
+describe("parameterised writers", () => {
+  test("sample, worksheet and load-labels write to supplied non-default paths", async () => {
+    const dir = await mkdtemp(path.join(os.tmpdir(), "accuracy2-writers-"));
+    try {
+      const designCopy = path.join(dir, "in-design.json");
+      const statementsCopy = path.join(dir, "in-statements-c1.json");
+      await writeFile(designCopy, await readFile(path.join(ACC, "group-a-design.json")));
+      await writeFile(statementsCopy, await readFile(path.join(ACC, "statements.json")));
+      const sampleArgs = parseSampleArgs([
+        "--design",
+        designCopy,
+        "--statements",
+        statementsCopy,
+        "--out",
+        path.join(dir, "sample-manifest.json"),
+        "--group-a-cap",
+        "25",
+      ]);
+      const sampled = await writeSample({
+        designPath: sampleArgs.design,
+        statementsPath: sampleArgs.statements,
+        outPath: sampleArgs.out,
+        groupACap: sampleArgs.groupACap,
+      });
+      const writtenManifest = JSON.parse(await readFile(sampled.outPath, "utf8"));
+      assert.equal(writtenManifest.groupACount, 11);
+      assert.equal(writtenManifest.groupAHardCap, 25);
+
+      const tinyManifest = {
+        groupA: [
+          { fixtureId: "01", statementText: "Hello world.", occurrence: 0, index: 0, designIds: ["t"] },
+        ],
+        groupB: [],
+      };
+      const tinyStatements = { fixtures: [{ fixtureId: "01", statements: [{ text: "Hello world.", index: 0 }] }] };
+      const manifestPath = path.join(dir, "in-manifest.json");
+      const statementsPath = path.join(dir, "in-statements.json");
+      await writeFile(manifestPath, `${JSON.stringify(tinyManifest)}\n`);
+      await writeFile(statementsPath, `${JSON.stringify(tinyStatements)}\n`);
+      const wsArgs = parseWorksheetArgs([
+        "--manifest",
+        manifestPath,
+        "--statements",
+        statementsPath,
+        "--out",
+        path.join(dir, "worksheet.md"),
+        "--ids",
+        "01",
+      ]);
+      const sheet = await writeWorksheet({
+        manifestPath: wsArgs.manifest,
+        statementsPath: wsArgs.statements,
+        outPath: wsArgs.out,
+        ids: wsArgs.ids,
+        loadFixtures: async () => [
+          {
+            data: {
+              id: "01",
+              label: "synthetic",
+              sources: ["synthetic.txt"],
+              config: { outputType: "memo", requiredVersion: "complete" },
+            },
+          },
+        ],
+        loadSources: async () => [{ label: "synthetic", text: "Source body." }],
+      });
+      const md = await readFile(sheet.outPath, "utf8");
+      assert.match(md, /Hello world\./);
+      assert.match(md, /Source body\./);
+
+      const worksheetCopy = path.join(dir, "in-worksheet.md");
+      const manifestCopy = path.join(dir, "in-c1-manifest.json");
+      await writeFile(worksheetCopy, await readFile(path.join(ACC, "worksheet.md")));
+      await writeFile(manifestCopy, await readFile(path.join(ACC, "sample-manifest.json")));
+      const labelArgs = parseLoadLabelsArgs([
+        "--worksheet",
+        worksheetCopy,
+        "--manifest",
+        manifestCopy,
+        "--statements",
+        statementsCopy,
+        "--out",
+        path.join(dir, "labels.json"),
+      ]);
+      const labelled = await writeLabels({
+        worksheetPath: labelArgs.worksheet,
+        manifestPath: labelArgs.manifest,
+        statementsPath: labelArgs.statements,
+        outPath: labelArgs.out,
+      });
+      const labelsDoc = JSON.parse(await readFile(labelled.outPath, "utf8"));
+      assert.equal(labelsDoc.labels.length, 100);
+      assert.equal(labelsDoc.mix.C, 74);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("run-evidence writes under a supplied --runs-root", async () => {
+    const dir = await mkdtemp(path.join(os.tmpdir(), "accuracy2-runs-"));
+    try {
+      const args = parseEvidenceArgs(["--runs-root", dir, "--pass", "c2-1"]);
+      const outPath = evidenceCardsOutPath(args.runsRoot, args.pass);
+      await writeEvidenceCards(outPath, { pass: "c2-1", cards: [{ fixtureId: "01", statement: "x" }] });
+      const written = JSON.parse(await readFile(outPath, "utf8"));
+      assert.equal(written.pass, "c2-1");
+      assert.equal(path.dirname(path.dirname(outPath)), path.resolve(dir));
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("configurable group A cap", () => {
+  test("cap of 60 accepts 54 mapped faults; cap of 25 refuses them", async () => {
+    const { statementsDoc, design } = make54FaultCorpus();
+    const ok = await buildSample({ statementsDoc, design, groupACap: 60 });
+    assert.equal(ok.mapped.groupA.length, 54);
+    assert.equal(ok.manifest.groupAHardCap, 60);
+    await assert.rejects(
+      () => buildSample({ statementsDoc, design, groupACap: 25 }),
+      (err) => {
+        const msg = String(err.message);
+        assert.match(msg, /54/);
+        assert.match(msg, /25/);
+        return true;
+      }
+    );
+  });
+
+  test("an ambiguous span still fails sampling regardless of the cap", async () => {
+    const statementsDoc = {
+      fixtures: [
+        {
+          fixtureId: "01",
+          statements: [
+            { index: 0, text: "The same span appears here.", occurrence: 0 },
+            { index: 1, text: "And the same span appears again.", occurrence: 0 },
+            { index: 2, text: "Clean leftover.", occurrence: 0 },
+          ],
+        },
+      ],
+    };
+    const design = { faults: [{ id: "ambig", fixtureId: "01", span: "same span appears" }] };
+    await assert.rejects(
+      () => buildSample({ statementsDoc, design, groupACap: 60 }),
+      (err) => {
+        const msg = String(err.message);
+        assert.match(msg, /exactly one statement/);
+        assert.match(msg, /ambiguous/);
+        assert.equal(/hard cap/.test(msg), false);
+        return true;
+      }
+    );
   });
 });

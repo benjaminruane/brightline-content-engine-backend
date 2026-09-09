@@ -3,6 +3,10 @@
  * No pipeline imports. Membership and sampling never read a verdict field.
  */
 
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 export const SAMPLE_SEED = 20260905;
 export const F15_CAP = 6;
 export const LABEL_BUDGET = 100;
@@ -10,6 +14,59 @@ export const GROUP_A_HARD_CAP = 25;
 export const STABILITY_MISMATCH_THRESHOLD = 5;
 export const ESCAPE_RATE_FALSIFIER = 0.15;
 export const GROUP_B_BEN_CONFIRMED_FLOOR = 40;
+
+const ACCURACY_DIR = path.dirname(fileURLToPath(import.meta.url));
+
+export const P29_PROTECTED_NAMES = [
+  "statements.json",
+  "labels.json",
+  "group-a-design.json",
+  "sample-manifest.json",
+];
+
+export function p29ProtectedPaths(accuracyDir = ACCURACY_DIR) {
+  return P29_PROTECTED_NAMES.map((name) => path.resolve(accuracyDir, name));
+}
+
+/**
+ * Hard refusal. No flag can override. Corpus 1 is closed.
+ */
+export function assertNotP29ProtectedWrite(outPath, accuracyDir = ACCURACY_DIR) {
+  const resolved = path.resolve(outPath);
+  const protectedSet = new Set(p29ProtectedPaths(accuracyDir));
+  if (protectedSet.has(resolved)) {
+    const name = path.basename(resolved);
+    throw new Error(
+      `${name} is P29-protected and corpus 1 is closed. Refusing to write ${resolved}.`
+    );
+  }
+}
+
+export async function writeAccuracyFile(outPath, contents, accuracyDir = ACCURACY_DIR) {
+  assertNotP29ProtectedWrite(outPath, accuracyDir);
+  const resolved = path.resolve(outPath);
+  await mkdir(path.dirname(resolved), { recursive: true });
+  await writeFile(resolved, contents, "utf8");
+}
+
+export function resolveGroupAHardCap(value) {
+  if (value == null || value === "") return GROUP_A_HARD_CAP;
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 1) {
+    throw new Error(`Invalid group A cap: ${value}`);
+  }
+  return n;
+}
+
+export function assertGroupAWithinCap(mappedCount, cap = GROUP_A_HARD_CAP) {
+  const n = Number(mappedCount) || 0;
+  const limit = resolveGroupAHardCap(cap);
+  if (n > limit) {
+    throw new Error(
+      `Group A mapping yielded ${n} statements, above the hard cap of ${limit}. Stop. Ben cuts the design file in writing before Group B is sampled.`
+    );
+  }
+}
 
 export const BEN_LABELS = {
   C: "confirmed",

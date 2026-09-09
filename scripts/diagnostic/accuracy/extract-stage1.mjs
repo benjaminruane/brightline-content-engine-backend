@@ -12,7 +12,6 @@
  * Cost ceiling $1 for both passes.
  */
 
-import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -21,39 +20,21 @@ import { filterFixtures, loadAllFixtures, parseIdsArg } from "../lib/fixtures.mj
 import {
   STABILITY_MISMATCH_THRESHOLD,
   addOccurrenceIndices,
+  assertNotP29ProtectedWrite,
   countMismatchedSlots,
   normalizeStatementText,
   padFixtureId,
+  writeAccuracyFile,
 } from "./lib.mjs";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+export {
+  P29_PROTECTED_NAMES,
+  assertNotP29ProtectedWrite,
+  p29ProtectedPaths,
+} from "./lib.mjs";
+
 const COST_CEILING_USD = 1;
 export const RANGE = { from: "01", to: "20" };
-
-export const P29_PROTECTED_NAMES = [
-  "statements.json",
-  "labels.json",
-  "group-a-design.json",
-  "sample-manifest.json",
-];
-
-export function p29ProtectedPaths(accuracyDir = __dirname) {
-  return P29_PROTECTED_NAMES.map((name) => path.resolve(accuracyDir, name));
-}
-
-/**
- * Hard refusal. No flag can override. Corpus 1 is closed.
- */
-export function assertNotP29ProtectedWrite(outPath, accuracyDir = __dirname) {
-  const resolved = path.resolve(outPath);
-  const protectedSet = new Set(p29ProtectedPaths(accuracyDir));
-  if (protectedSet.has(resolved)) {
-    const name = path.basename(resolved);
-    throw new Error(
-      `${name} is P29-protected and corpus 1 is closed. Refusing to write ${resolved}.`
-    );
-  }
-}
 
 export function parseExtractArgs(argv) {
   const out = { ids: [], out: null, stabilityGate: false };
@@ -209,9 +190,7 @@ export function freezeRun1(run1, run2, comparison) {
 }
 
 async function writeJson(filePath, value) {
-  assertNotP29ProtectedWrite(filePath);
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  await writeAccuracyFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
 async function main() {

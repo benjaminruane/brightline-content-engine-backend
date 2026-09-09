@@ -4,21 +4,28 @@
  * No pipeline. No spend.
  */
 
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import {
   LABEL_KIND_DRAFT_INTERNAL_PAIR,
   LABEL_KIND_STATEMENT,
+  assertNotP29ProtectedWrite,
   flattenStatements,
   joinKey,
   labelKind,
   normalizeStatementText,
   padFixtureId,
+  writeAccuracyFile,
 } from "./lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export const DEFAULT_WORKSHEET_PATH = path.join(__dirname, "worksheet.md");
+export const DEFAULT_MANIFEST_PATH = path.join(__dirname, "sample-manifest.json");
+export const DEFAULT_STATEMENTS_PATH = path.join(__dirname, "statements.json");
+export const DEFAULT_OUT_PATH = path.join(__dirname, "labels.json");
 
 /** Worksheet row number -> C/P/X/N. Source: Claude proposed, Ben adjudicated, 2026-09-05. */
 export const ADJUDICATED_ROWS = {
@@ -84,6 +91,18 @@ export function normalizeLabelRow(row) {
 export function normalizeLabelsDoc(doc) {
   const labels = Array.isArray(doc?.labels) ? doc.labels : Array.isArray(doc) ? doc : [];
   return labels.map((row) => normalizeLabelRow(row));
+}
+
+export function parseLoadLabelsArgs(argv) {
+  const out = { worksheet: null, manifest: null, statements: null, out: null };
+  const args = Array.isArray(argv) ? argv : [];
+  for (let i = 0; i < args.length; i += 1) {
+    if (args[i] === "--worksheet" && args[i + 1]) out.worksheet = args[++i];
+    else if (args[i] === "--manifest" && args[i + 1]) out.manifest = args[++i];
+    else if (args[i] === "--statements" && args[i + 1]) out.statements = args[++i];
+    else if (args[i] === "--out" && args[i + 1]) out.out = args[++i];
+  }
+  return out;
 }
 
 function runningAsMain() {
@@ -174,16 +193,13 @@ export function buildLabels({ worksheetMd, statementsDoc, manifest }) {
   return { labels, unmatched, mix, count: labels.length };
 }
 
-async function main() {
-  const worksheetMd = await readFile(path.join(__dirname, "worksheet.md"), "utf8");
-  const statementsDoc = JSON.parse(await readFile(path.join(__dirname, "statements.json"), "utf8"));
-  const manifest = JSON.parse(await readFile(path.join(__dirname, "sample-manifest.json"), "utf8"));
+export async function writeLabels({ worksheetPath, manifestPath, statementsPath, outPath }) {
+  const resolvedOut = path.resolve(outPath);
+  assertNotP29ProtectedWrite(resolvedOut);
+  const worksheetMd = await readFile(path.resolve(worksheetPath), "utf8");
+  const statementsDoc = JSON.parse(await readFile(path.resolve(statementsPath), "utf8"));
+  const manifest = JSON.parse(await readFile(path.resolve(manifestPath), "utf8"));
   const built = buildLabels({ worksheetMd, statementsDoc, manifest });
-  console.log(`labels in: ${built.count} unmatched: ${built.unmatched.length}`);
-  console.log(`mix C=${built.mix.C} P=${built.mix.P} X=${built.mix.X} N=${built.mix.N} E=${built.mix.E}`);
-  const groupA = built.labels.filter((l) => l.group === "A").length;
-  const groupB = built.labels.filter((l) => l.group === "B").length;
-  console.log(`groups A=${groupA} B=${groupB}`);
   if (built.unmatched.length > 0) {
     for (const u of built.unmatched) {
       console.error(`UNMATCHED F${u.fixtureId} row ${u.worksheetRow} matches=${u.matchCount}`);
@@ -203,8 +219,24 @@ async function main() {
     mix: built.mix,
     labels: built.labels,
   };
-  await writeFile(path.join(__dirname, "labels.json"), `${JSON.stringify(doc, null, 2)}\n`, "utf8");
-  console.log("JOIN OK 100 labels in, 100 matched, 0 unmatched. wrote labels.json");
+  await writeAccuracyFile(resolvedOut, `${JSON.stringify(doc, null, 2)}\n`);
+  return { built, outPath: resolvedOut, doc };
+}
+
+async function main() {
+  const args = parseLoadLabelsArgs(process.argv.slice(2));
+  const { built, outPath } = await writeLabels({
+    worksheetPath: args.worksheet ? path.resolve(args.worksheet) : DEFAULT_WORKSHEET_PATH,
+    manifestPath: args.manifest ? path.resolve(args.manifest) : DEFAULT_MANIFEST_PATH,
+    statementsPath: args.statements ? path.resolve(args.statements) : DEFAULT_STATEMENTS_PATH,
+    outPath: args.out ? path.resolve(args.out) : DEFAULT_OUT_PATH,
+  });
+  console.log(`labels in: ${built.count} unmatched: ${built.unmatched.length}`);
+  console.log(`mix C=${built.mix.C} P=${built.mix.P} X=${built.mix.X} N=${built.mix.N} E=${built.mix.E}`);
+  const groupA = built.labels.filter((l) => l.group === "A").length;
+  const groupB = built.labels.filter((l) => l.group === "B").length;
+  console.log(`groups A=${groupA} B=${groupB}`);
+  console.log(`JOIN OK 100 labels in, 100 matched, 0 unmatched. wrote ${outPath}`);
 }
 
 if (runningAsMain()) {

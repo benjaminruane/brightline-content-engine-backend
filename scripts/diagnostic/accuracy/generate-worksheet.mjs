@@ -2,17 +2,25 @@
 /**
  * Blind worksheet. This file must not import pipeline output.
  * Sources and draft-order statements only.
+ *
+ *   node scripts/diagnostic/accuracy/generate-worksheet.mjs \
+ *     --manifest path --statements path --out path [--ids 01,03]
  */
 
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { filterFixtures, loadAllFixtures } from "../lib/fixtures.mjs";
+import { filterFixtures, loadAllFixtures, parseIdsArg } from "../lib/fixtures.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
-import { padFixtureId } from "./lib.mjs";
+import { assertNotP29ProtectedWrite, padFixtureId, writeAccuracyFile } from "./lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export const DEFAULT_STATEMENTS_PATH = path.join(__dirname, "statements.json");
+export const DEFAULT_MANIFEST_PATH = path.join(__dirname, "sample-manifest.json");
+export const DEFAULT_OUT_PATH = path.join(__dirname, "worksheet.md");
+export const DEFAULT_RANGE = { from: "01", to: "20" };
 
 export const COVER_PAGE = `ACCURACY LABELLING WORKSHEET
 
@@ -48,6 +56,18 @@ Paraphrase. A fragment or reworded list item that carries the source's meaning i
 Implied but not stated. A detail the source strongly implies but never states is not addressed.
 
 Work fixture by fixture. Read the source once. Then label the listed statements in the order given (draft order).`;
+
+export function parseWorksheetArgs(argv) {
+  const out = { manifest: null, statements: null, out: null, ids: [] };
+  const args = Array.isArray(argv) ? argv : [];
+  for (let i = 0; i < args.length; i += 1) {
+    if (args[i] === "--manifest" && args[i + 1]) out.manifest = args[++i];
+    else if (args[i] === "--statements" && args[i + 1]) out.statements = args[++i];
+    else if (args[i] === "--out" && args[i + 1]) out.out = args[++i];
+    else if (args[i] === "--ids" && args[i + 1]) out.ids = parseIdsArg(args[++i]);
+  }
+  return out;
+}
 
 function runningAsMain() {
   const entry = process.argv[1];
@@ -102,8 +122,10 @@ export function buildWorksheetMarkdown({ fixtures, sourcesById, sampledByFixture
   return `${parts.join("\n")}\n`;
 }
 
-export async function generateWorksheet({ statementsDoc, manifest, loadFixtures, loadSources }) {
-  const fixtures = filterFixtures(await loadFixtures(), { range: { from: "01", to: "20" } });
+export async function generateWorksheet({ statementsDoc, manifest, loadFixtures, loadSources, ids }) {
+  const filter =
+    Array.isArray(ids) && ids.length > 0 ? { ids } : { range: DEFAULT_RANGE };
+  const fixtures = filterFixtures(await loadFixtures(), filter);
   const sampledByFixture = new Map();
   const add = (row) => {
     const id = padFixtureId(row.fixtureId);
@@ -121,18 +143,38 @@ export async function generateWorksheet({ statementsDoc, manifest, loadFixtures,
   return buildWorksheetMarkdown({ fixtures, sourcesById, sampledByFixture });
 }
 
-async function main() {
-  const statementsDoc = JSON.parse(await readFile(path.join(__dirname, "statements.json"), "utf8"));
-  const manifest = JSON.parse(await readFile(path.join(__dirname, "sample-manifest.json"), "utf8"));
+export async function writeWorksheet({
+  manifestPath,
+  statementsPath,
+  outPath,
+  ids,
+  loadFixtures = loadAllFixtures,
+  loadSources = loadPipelineSources,
+}) {
+  const resolvedOut = path.resolve(outPath);
+  assertNotP29ProtectedWrite(resolvedOut);
+  const statementsDoc = JSON.parse(await readFile(path.resolve(statementsPath), "utf8"));
+  const manifest = JSON.parse(await readFile(path.resolve(manifestPath), "utf8"));
   const md = await generateWorksheet({
     statementsDoc,
     manifest,
-    loadFixtures: loadAllFixtures,
-    loadSources: loadPipelineSources,
+    loadFixtures,
+    loadSources,
+    ids,
   });
-  const outPath = path.join(__dirname, "worksheet.md");
-  await writeFile(outPath, md, "utf8");
-  console.log(`wrote ${outPath} chars=${md.length}`);
+  await writeAccuracyFile(resolvedOut, md);
+  return { outPath: resolvedOut, markdown: md };
+}
+
+async function main() {
+  const args = parseWorksheetArgs(process.argv.slice(2));
+  const { outPath } = await writeWorksheet({
+    manifestPath: args.manifest ? path.resolve(args.manifest) : DEFAULT_MANIFEST_PATH,
+    statementsPath: args.statements ? path.resolve(args.statements) : DEFAULT_STATEMENTS_PATH,
+    outPath: args.out ? path.resolve(args.out) : DEFAULT_OUT_PATH,
+    ids: args.ids,
+  });
+  console.log(`wrote ${outPath}`);
 }
 
 if (runningAsMain()) {
