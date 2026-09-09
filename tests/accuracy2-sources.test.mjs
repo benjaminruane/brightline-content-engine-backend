@@ -12,10 +12,13 @@ import {
   DEFAULT_ALLOW_LIST_PATH,
   DEFAULT_IN_DIR,
   DEFAULT_MAP_PATH,
+  DEFAULT_OUT_DIR,
   SOURCE_FILES,
+  fromMatchRegex,
   lineCount,
   numericTokens,
   prepareSources,
+  prepareText,
   scanUnmappedNames,
 } from "../scripts/diagnostic/accuracy2/prepare-sources.mjs";
 
@@ -102,6 +105,60 @@ describe("unmapped-name scan", () => {
   });
 });
 
+describe("matcher wrap, case and scan false positives", () => {
+  test("a name split across a newline is replaced and line count is unchanged", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const input = "hold assets Royal\nSanders, and by the performance\n";
+    const output = prepareText(input, nameMap);
+    assert.match(output, /Skaldwick/);
+    assert.equal(lineCount(output), lineCount(input));
+    assert.equal(fromMatchRegex("Royal Sanders").test(output), false);
+  });
+
+  test("a lowercase occurrence inside a URL is replaced in lower case", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const output = prepareText("visit harbourvest.com/hpif for the fund\n", nameMap);
+    assert.match(output, /cravenford\.com\/cpif/);
+    assert.doesNotMatch(output, /harbourvest/i);
+    assert.doesNotMatch(output, /hpif/i);
+  });
+
+  test("an all-caps occurrence is replaced in all caps", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const output = prepareText("See HPIF and HVP notes.\n", nameMap);
+    assert.match(output, /CPIF/);
+    assert.match(output, /CVP/);
+    assert.doesNotMatch(output, /HPIF/);
+    assert.doesNotMatch(output, /HVP/);
+  });
+
+  test("the scan does not flag a truncated line beginning with a mapped replacement", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const allowDoc = JSON.parse(await readFile(DEFAULT_ALLOW_LIST_PATH, "utf8"));
+    const hits = scanUnmappedNames("Cravenford Registered Advisers L.P. continues.", {
+      nameMap,
+      allowTerms: allowDoc.terms,
+      fileLabel: "trunc.txt",
+    });
+    assert.equal(
+      hits.filter((h) => /Cravenford Registered Advisers/.test(h.text)).length,
+      0,
+      JSON.stringify(hits)
+    );
+  });
+
+  test("the scan still flags a genuinely unmapped capitalised name", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const allowDoc = JSON.parse(await readFile(DEFAULT_ALLOW_LIST_PATH, "utf8"));
+    const hits = scanUnmappedNames("ZephyrQuay Holdings reported results.", {
+      nameMap,
+      allowTerms: allowDoc.terms,
+      fileLabel: "planted.txt",
+    });
+    assert.ok(hits.some((h) => /ZephyrQuay/.test(h.text)));
+  });
+});
+
 describe.skipIf(!HAS_EXTRACTS)("renamed corpus 2 sources", () => {
   async function renamed() {
     const dir = await mkdtemp(path.join(os.tmpdir(), "accuracy2-rename-"));
@@ -115,9 +172,8 @@ describe.skipIf(!HAS_EXTRACTS)("renamed corpus 2 sources", () => {
       const nameMap = result.nameMap;
       for (const file of result.files) {
         for (const row of nameMap.replacements) {
-          const from = row.from;
-          const re = new RegExp(`(?<![A-Za-z0-9])${from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![A-Za-z0-9])`);
-          assert.equal(re.test(file.output), false, `${file.outputName} still contains ${JSON.stringify(from)}`);
+          const re = fromMatchRegex(row.from);
+          assert.equal(re.test(file.output), false, `${file.outputName} still contains ${JSON.stringify(row.from)}`);
         }
       }
     } finally {
@@ -125,14 +181,14 @@ describe.skipIf(!HAS_EXTRACTS)("renamed corpus 2 sources", () => {
     }
   });
 
-  test("line count of each output equals its input except the asserted ten23 delta", async () => {
+  test("line count of each output equals its input except the asserted press-contact delta", async () => {
     const { dir, result } = await renamed();
     try {
       const press = result.files.find((f) => f.outputName === "press-release-fy25-highlights.txt");
       const sheet = result.files.find((f) => f.outputName === "fund-factsheet-march-2026.txt");
       assert.equal(lineCount(sheet.output), lineCount(sheet.input));
-      const ten23Delta = lineCount(press.output) - lineCount(press.input);
-      assert.equal(ten23Delta, 0);
+      const contactDelta = lineCount(press.output) - lineCount(press.input);
+      assert.equal(contactDelta, -5);
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
@@ -171,14 +227,63 @@ describe.skipIf(!HAS_EXTRACTS)("renamed corpus 2 sources", () => {
 
       const inPress = numericTokens(press.input);
       const outPress = numericTokens(press.output);
-      const expected54 = (inPress.get("54") || 0) - 1;
-      assert.equal(outPress.get("54") || 0, expected54);
+      const removed = numericTokens(result.nameMap.deletions.map((d) => d.before).join("\n"));
       for (const [token, count] of inPress) {
-        if (token === "54") continue;
-        assert.equal(outPress.get(token) || 0, count, `press-release numeric ${token}`);
+        const expected = count - (removed.get(token) || 0);
+        assert.equal(outPress.get(token) || 0, expected, `press-release numeric ${token}`);
       }
     } finally {
       await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("the press-contact deletion removes the expected block and nothing above it", async () => {
+    const { dir, result } = await renamed();
+    try {
+      const press = result.files.find((f) => f.outputName === "press-release-fy25-highlights.txt");
+      assert.doesNotMatch(press.output, /Silvia Santoro/);
+      assert.doesNotMatch(press.output, /Kathryn van der Kroft/);
+      assert.doesNotMatch(press.output, /please contact:/);
+      assert.doesNotMatch(press.output, /020 7975 3258/);
+      assert.doesNotMatch(press.output, /020 7975 3021/);
+      assert.match(press.output, /A year of consistently strong growth/);
+      assert.match(press.output, /Martin Ashcombe/);
+      assert.match(press.output, /Financial highlights/);
+      assert.match(press.output, /For further information regarding the announcement/);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+const COMMITTED_PRESS = path.join(DEFAULT_OUT_DIR, "press-release-fy25-highlights.txt");
+const COMMITTED_SHEET = path.join(DEFAULT_OUT_DIR, "fund-factsheet-march-2026.txt");
+const HAS_COMMITTED = existsSync(COMMITTED_PRESS) && existsSync(COMMITTED_SHEET);
+
+describe.skipIf(!HAS_COMMITTED)("committed corpus 2 sources", () => {
+  test("defect-survival assertions still pass on the final committed files", async () => {
+    const sheet = await readFile(COMMITTED_SHEET, "utf8");
+    const returnsLine = "2025 N/A N/A N/A 1.03% 2.83% 1.95% -0.31% 0.75% -0.17% -0.98% 0.92% -0.17% 5.95%";
+    assert.ok(sheet.split(returnsLine).length - 1 >= 2);
+    const fundHits = sheet.split("Cravenford Private Investments Fund").length - 1;
+    assert.ok(fundHits >= 3, `fund name count=${fundHits}`);
+    assert.match(sheet, /YTD 2/);
+    assert.ok(
+      sheet.includes(
+        "I n ve s t m e n t o b je c t ive : Se e k t o g e n e ra t e c a p it a l g ro w t h o ve r t h e lo n g -t e rm ."
+      )
+    );
+  });
+
+  test("no from value from map v1 or v2 survives in either committed file", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const press = await readFile(COMMITTED_PRESS, "utf8");
+    const sheet = await readFile(COMMITTED_SHEET, "utf8");
+    for (const body of [press, sheet]) {
+      for (const row of nameMap.replacements) {
+        const re = fromMatchRegex(row.from);
+        assert.equal(re.test(body), false, `committed file still contains ${JSON.stringify(row.from)}`);
+      }
     }
   });
 });

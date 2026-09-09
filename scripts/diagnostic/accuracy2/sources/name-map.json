@@ -1,22 +1,33 @@
 {
-  "version": 1,
+  "version": 2,
   "createdAt": "2026-09-09",
-  "note": "Every replacement was web-checked for an exact company match on 2026-09-09. NO NAME MAY BE ADDED WITHOUT THE SAME CHECK.",
+  "note": "Every replacement was web-checked for an exact company match on 2026-09-09, including map version 2. NO NAME MAY BE ADDED WITHOUT THE SAME CHECK. Claude asserted the v2 names; it is not verifiable from the repo.",
   "replacements": [
     { "from": "HarbourVest Private Investments Fund", "to": "Cravenford Private Investments Fund", "checked": true },
+    { "from": "Paralel Distributors LLC", "to": "Hallamby Distributors LLC", "checked": true },
     { "from": "3i Infrastructure plc", "to": "Kelvedge Infrastructure plc", "checked": true },
+    { "from": "Paralel Distributors", "to": "Hallamby Distributors", "checked": true },
+    { "from": "Kaseya Holdings Inc", "to": "Drummault Holdings Inc", "checked": true },
     { "from": "OMS Prüfservice", "to": "Wenbach Prüfservice", "checked": true },
+    { "from": "Project Whisker", "to": "Project Larkspur", "checked": true },
     { "from": "OMS Prufservice", "to": "Wenbach Prufservice", "checked": true },
-    { "from": "3i Group plc", "to": "Kelvedge Group plc", "checked": true },
     { "from": "Simon Borrows", "to": "Martin Ashcombe", "checked": true },
     { "from": "Royal Sanders", "to": "Skaldwick", "checked": true },
     { "from": "Constellation", "to": "Fennovar", "checked": true },
+    { "from": "3i Group plc", "to": "Kelvedge Group plc", "checked": true },
+    { "from": "PrimeSource", "to": "Wolverby Building Supply", "checked": true },
     { "from": "HarbourVest", "to": "Cravenford", "checked": true },
+    { "from": "Mavis Tire", "to": "Piquesta Tire", "checked": true },
     { "from": "WaterWipes", "to": "Cloverbeck", "checked": true },
+    { "from": "FundApps", "to": "Nasketh Compliance", "checked": true },
+    { "from": "Infoblox", "to": "Marnholt Networks", "checked": true },
+    { "from": "Paralel", "to": "Hallamby", "checked": true },
     { "from": "nexeye", "to": "Vyrenza", "checked": true },
+    { "from": "Kaseya", "to": "Drummault", "checked": true },
     { "from": "Action", "to": "Grulden", "checked": true },
     { "from": "HPIF", "to": "CPIF", "checked": true },
     { "from": "3iN", "to": "KIP", "checked": true },
+    { "from": "HVP", "to": "CVP", "checked": true },
     { "from": "WP", "to": "RD", "checked": true },
     { "from": "3i", "to": "Kelvedge", "checked": true }
   ],
@@ -26,6 +37,12 @@
       "before": "investment in Royal Sanders and £54 million in the further development of ten23 health.",
       "after": "investment in Royal Sanders.",
       "note": "Remove the ten23 health further-investment item and its amount. The remaining investment clauses are Action; Constellation, WaterWipes and OMS Prüfservice; and Royal Sanders. List punctuation repaired by dropping the trailing 'and <item>'."
+    },
+    {
+      "id": "press-contact",
+      "before": "For further information, please contact:\nSilvia Santoro\nGroup Investor Relations Director Tel: 020 7975 3258\nKathryn van der Kroft Tel: 020 7975 3021\nCommunications Director\n",
+      "after": "",
+      "note": "Remove the press-contact names, titles and phone numbers. Does not include the CEO quote or the webcast paragraph below. Phone numbers 020 7975 3258 and 020 7975 3021 are contact figures, not investment facts; the block contains no date."
     }
   ]
 }

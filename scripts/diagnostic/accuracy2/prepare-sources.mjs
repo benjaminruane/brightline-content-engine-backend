@@ -190,6 +190,51 @@ function escapeRegex(s) {
   return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * Multi-word "from" matches any whitespace run between tokens, newlines included.
+ * Letter-boundaries so HVP1 / 3i.com still match; digits may follow.
+ */
+export function fromMatchRegex(from) {
+  const tokens = String(from ?? "")
+    .split(/\s+/)
+    .filter(Boolean);
+  if (tokens.length === 0) return /(?!)/g;
+  const inner = tokens.map(escapeRegex).join("\\s+");
+  return new RegExp(`(?<![A-Za-z])${inner}(?![A-Za-z])`, "gi");
+}
+
+export function caseForMatch(matched, replacement) {
+  const s = String(matched);
+  const lower = s.toLowerCase();
+  const upper = s.toUpperCase();
+  if (s === lower && s !== upper) return String(replacement).toLowerCase();
+  if (s === upper && s !== lower) return String(replacement).toUpperCase();
+  return String(replacement);
+}
+
+/**
+ * Keep the whitespace (including newlines) found between matched tokens so
+ * line-wrapped names stay wrapped and line count does not change.
+ */
+export function spliceWhitespace(matched, casedTo) {
+  const parts = String(matched).split(/(\s+)/);
+  const gaps = [];
+  for (let i = 1; i < parts.length; i += 2) gaps.push(parts[i]);
+  const toTokens = String(casedTo)
+    .split(/\s+/)
+    .filter(Boolean);
+  if (toTokens.length === 0) return "";
+  if (toTokens.length === 1) return `${toTokens[0]}${gaps.join("")}`;
+  let out = toTokens[0];
+  for (let i = 1; i < toTokens.length; i += 1) {
+    out += (gaps[i - 1] ?? " ") + toTokens[i];
+  }
+  if (gaps.length > toTokens.length - 1) {
+    out += gaps.slice(toTokens.length - 1).join("");
+  }
+  return out;
+}
+
 export function applyDeletions(text, deletions, { requiredIds = [] } = {}) {
   let out = String(text ?? "");
   const applied = [];
@@ -218,7 +263,8 @@ export function applyReplacements(text, replacements) {
     const to = row?.to;
     if (typeof from !== "string" || from.length === 0 || typeof to !== "string") continue;
     if (from === to) continue;
-    out = out.split(from).join(to);
+    const re = fromMatchRegex(from);
+    out = out.replace(re, (matched) => spliceWhitespace(matched, caseForMatch(matched, to)));
   }
   return out;
 }
@@ -330,20 +376,38 @@ function tokenRunsOnLine(line) {
 
 function leftoverFromHits(text, replacements, fileLabel) {
   const hits = [];
-  const lines = String(text ?? "").split("\n");
-  const ordered = sortReplacements(replacements);
-  for (let i = 0; i < lines.length; i += 1) {
-    const line = lines[i];
-    for (const row of ordered) {
-      const from = String(row?.from ?? "");
-      if (!from) continue;
-      const re = new RegExp(`(?<![A-Za-z0-9])${escapeRegex(from)}(?![A-Za-z0-9])`, "i");
-      if (re.test(line)) {
-        hits.push({ file: fileLabel, line: i + 1, text: from });
-      }
+  const src = String(text ?? "");
+  for (const row of sortReplacements(replacements)) {
+    const from = String(row?.from ?? "");
+    if (!from) continue;
+    const re = fromMatchRegex(from);
+    let m;
+    while ((m = re.exec(src))) {
+      const line = src.slice(0, m.index).split("\n").length;
+      hits.push({ file: fileLabel, line, text: from });
+      if (m[0].length === 0) re.lastIndex += 1;
     }
   }
   return hits;
+}
+
+function replacementToValues(nameMap) {
+  return sortReplacements(nameMap?.replacements).map((row) => String(row?.to ?? "").trim()).filter(Boolean);
+}
+
+function runBeginsWithMappedTo(runText, nameMap) {
+  const text = String(runText ?? "");
+  const lower = text.toLowerCase();
+  for (const to of replacementToValues(nameMap)) {
+    const needle = to.toLowerCase();
+    if (!needle) continue;
+    if (lower === needle) return true;
+    if (lower.startsWith(needle)) {
+      const next = text[to.length];
+      if (next == null || /[^A-Za-z]/.test(next)) return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -381,6 +445,7 @@ export function scanUnmappedNames(text, { nameMap, allowTerms = [], fileLabel = 
       );
       if (remaining.length === 0) continue;
       if (isAllowedTerm(run.text, allowed)) continue;
+      if (runBeginsWithMappedTo(run.text, nameMap)) continue;
       push({ file: fileLabel, line: i + 1, text: run.text });
     }
   }
@@ -428,7 +493,9 @@ export async function prepareSources({
     const inputPath = path.join(inDir, spec.inputName);
     const outputPath = path.join(outDir, spec.outputName);
     const raw = await readFile(inputPath, "utf8");
-    const requiredIds = raw.includes("ten23 health") ? ["ten23-health"] : [];
+    const requiredIds = [];
+    if (raw.includes("ten23 health")) requiredIds.push("ten23-health");
+    if (raw.includes("For further information, please contact:")) requiredIds.push("press-contact");
     const prepared = prepareText(raw, nameMap, { requiredIds });
     if (write) await writeFile(outputPath, prepared, "utf8");
     const hits = scanUnmappedNames(prepared, {
