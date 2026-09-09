@@ -23,6 +23,11 @@
     { "from": "Infoblox", "to": "Marnholt Networks", "checked": true },
     { "from": "Paralel", "to": "Hallamby", "checked": true },
     { "from": "nexeye", "to": "Vyrenza", "checked": true },
+    {
+      "from": "ten23 health",
+      "to": "an existing healthcare holding",
+      "note": "Restored as a replacement. The previous deletion removed a figure the sentence's stated total depends on, which would have put an unlabelled numeric inconsistency into a corpus built to measure numeric inconsistency."
+    },
     { "from": "Kaseya", "to": "Drummault", "checked": true },
     { "from": "Action", "to": "Grulden", "checked": true },
     { "from": "HPIF", "to": "CPIF", "checked": true },
@@ -32,12 +37,6 @@
     { "from": "3i", "to": "Kelvedge", "checked": true }
   ],
   "deletions": [
-    {
-      "id": "ten23-health",
-      "before": "investment in Royal Sanders and £54 million in the further development of ten23 health.",
-      "after": "investment in Royal Sanders.",
-      "note": "Remove the ten23 health further-investment item and its amount. The remaining investment clauses are Action; Constellation, WaterWipes and OMS Prüfservice; and Royal Sanders. List punctuation repaired by dropping the trailing 'and <item>'."
-    },
     {
       "id": "press-contact",
       "before": "For further information, please contact:\nSilvia Santoro\nGroup Investor Relations Director Tel: 020 7975 3258\nKathryn van der Kroft Tel: 020 7975 3021\nCommunications Director\n",

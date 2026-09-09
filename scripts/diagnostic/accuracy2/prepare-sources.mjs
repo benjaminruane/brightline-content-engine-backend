@@ -203,13 +203,47 @@ export function fromMatchRegex(from) {
   return new RegExp(`(?<![A-Za-z])${inner}(?![A-Za-z])`, "gi");
 }
 
-export function caseForMatch(matched, replacement) {
+export function surroundingToken(text, index, length) {
+  const src = String(text ?? "");
+  const startIndex = Math.max(0, Number(index) || 0);
+  const len = Math.max(0, Number(length) || 0);
+  let start = startIndex;
+  let end = startIndex + len;
+  while (start > 0 && !/\s/.test(src[start - 1])) start -= 1;
+  while (end < src.length && !/\s/.test(src[end])) end += 1;
+  return src.slice(start, end);
+}
+
+export function isUrlOrEmailToken(token) {
+  const raw = String(token ?? "");
+  if (/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.test(raw)) return true;
+  if (/https?:\/\//i.test(raw)) return true;
+  if (/\bwww\./i.test(raw)) return true;
+  const core = raw.replace(/^[("'<\[]+|[)"'>\].,;:!?]+$/g, "");
+  if (/^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)+\.[A-Za-z]{2,}(?:[/:?#].*)?$/i.test(core)) {
+    return true;
+  }
+  if (/^[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?:[/:?#].*)?$/i.test(core)) return true;
+  return false;
+}
+
+/**
+ * If "from" contains an uppercase letter, preserve case from the matched text.
+ * If it does not, emit "to" as written in the map, except lowercase inside a
+ * URL or email (detected from the surrounding token).
+ */
+export function caseForMatch(matched, replacement, { from, surrounding } = {}) {
+  const to = String(replacement);
+  if (from != null && !/[A-Z]/.test(String(from))) {
+    if (surrounding != null && isUrlOrEmailToken(surrounding)) return to.toLowerCase();
+    return to;
+  }
   const s = String(matched);
   const lower = s.toLowerCase();
   const upper = s.toUpperCase();
-  if (s === lower && s !== upper) return String(replacement).toLowerCase();
-  if (s === upper && s !== lower) return String(replacement).toUpperCase();
-  return String(replacement);
+  if (s === lower && s !== upper) return to.toLowerCase();
+  if (s === upper && s !== lower) return to.toUpperCase();
+  return to;
 }
 
 /**
@@ -264,7 +298,19 @@ export function applyReplacements(text, replacements) {
     if (typeof from !== "string" || from.length === 0 || typeof to !== "string") continue;
     if (from === to) continue;
     const re = fromMatchRegex(from);
-    out = out.replace(re, (matched) => spliceWhitespace(matched, caseForMatch(matched, to)));
+    let result = "";
+    let last = 0;
+    let m;
+    while ((m = re.exec(out))) {
+      const matched = m[0];
+      result += out.slice(last, m.index);
+      const surrounding = surroundingToken(out, m.index, matched.length);
+      result += spliceWhitespace(matched, caseForMatch(matched, to, { from, surrounding }));
+      last = m.index + matched.length;
+      if (matched.length === 0) re.lastIndex += 1;
+    }
+    result += out.slice(last);
+    out = result;
   }
   return out;
 }
@@ -494,7 +540,6 @@ export async function prepareSources({
     const outputPath = path.join(outDir, spec.outputName);
     const raw = await readFile(inputPath, "utf8");
     const requiredIds = [];
-    if (raw.includes("ten23 health")) requiredIds.push("ten23-health");
     if (raw.includes("For further information, please contact:")) requiredIds.push("press-contact");
     const prepared = prepareText(raw, nameMap, { requiredIds });
     if (write) await writeFile(outputPath, prepared, "utf8");

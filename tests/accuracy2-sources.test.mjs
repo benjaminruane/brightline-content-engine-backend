@@ -15,11 +15,13 @@ import {
   DEFAULT_OUT_DIR,
   SOURCE_FILES,
   fromMatchRegex,
+  isUrlOrEmailToken,
   lineCount,
   numericTokens,
   prepareSources,
   prepareText,
   scanUnmappedNames,
+  surroundingToken,
 } from "../scripts/diagnostic/accuracy2/prepare-sources.mjs";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -121,6 +123,30 @@ describe("matcher wrap, case and scan false positives", () => {
     assert.match(output, /cravenford\.com\/cpif/);
     assert.doesNotMatch(output, /harbourvest/i);
     assert.doesNotMatch(output, /hpif/i);
+  });
+
+  test("a from value that carries case still follows the matched text in the same URL", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const output = prepareText(
+      "visit www.HarbourVest.com/investment - strategies/harbourvest - private\n",
+      nameMap
+    );
+    assert.match(output, /www\.Cravenford\.com/);
+    assert.match(output, /cravenford - private/);
+  });
+
+  test("a from value with no uppercase emits the map spelling except inside a URL or email", async () => {
+    const nameMap = JSON.parse(await readFile(DEFAULT_MAP_PATH, "utf8"));
+    const prose = prepareText("from 3i of cash and realisations of nexeye and WP.\n", nameMap);
+    assert.match(prose, /Kelvedge/);
+    assert.match(prose, /Vyrenza/);
+    assert.doesNotMatch(prose, /kelvedge/);
+    assert.doesNotMatch(prose, /vyrenza/);
+    const url = prepareText("please visit www.3i.com.\n", nameMap);
+    assert.match(url, /www\.kelvedge\.com/);
+    assert.doesNotMatch(url, /www\.Kelvedge\.com/);
+    const mail = prepareText("write to desk@3i.com for copies.\n", nameMap);
+    assert.match(mail, /desk@kelvedge\.com/);
   });
 
   test("an all-caps occurrence is replaced in all caps", async () => {
@@ -285,5 +311,64 @@ describe.skipIf(!HAS_COMMITTED)("committed corpus 2 sources", () => {
         assert.equal(re.test(body), false, `committed file still contains ${JSON.stringify(row.from)}`);
       }
     }
+  });
+
+  test("itemised investment figures sum to within £5 million of the stated total", async () => {
+    const press = await readFile(COMMITTED_PRESS, "utf8");
+    const start = press.search(/invested £[\d,]+ million/);
+    assert.ok(start >= 0);
+    const fromStart = press.slice(start);
+    const nextBullet = fromStart.search(/\n• /);
+    const block = nextBullet >= 0 ? fromStart.slice(0, nextBullet) : fromStart.slice(0, 800);
+    const figures = [];
+    const re = /£(\d+(?:,\d{3})*)\s*million/gi;
+    let m;
+    while ((m = re.exec(block))) figures.push(Number(m[1].replace(/,/g, "")));
+    assert.ok(figures.length >= 5, `parsed figures=${figures.join(",")}`);
+    const stated = figures[0];
+    const itemised = figures.slice(1);
+    const sum = itemised.reduce((a, b) => a + b, 0);
+    assert.equal(stated, 1177);
+    assert.deepEqual(
+      [...itemised].sort((a, b) => a - b),
+      [39, 54, 318, 768]
+    );
+    assert.ok(Math.abs(sum - stated) <= 5, `stated=${stated} itemised=${itemised.join("+")} sum=${sum}`);
+  });
+
+  test("the ten23 clause is a replacement, not a deletion", async () => {
+    const press = await readFile(COMMITTED_PRESS, "utf8");
+    assert.equal(press.split("an existing healthcare holding").length - 1, 1);
+    assert.doesNotMatch(press, /ten23/);
+  });
+
+  test("every lowercase kelvedge is inside a URL", async () => {
+    const press = await readFile(COMMITTED_PRESS, "utf8");
+    const re = /kelvedge/g;
+    let m;
+    let hits = 0;
+    while ((m = re.exec(press))) {
+      hits += 1;
+      const token = surroundingToken(press, m.index, m[0].length);
+      assert.ok(isUrlOrEmailToken(token), `lowercase kelvedge outside a URL, token=${JSON.stringify(token)}`);
+    }
+    assert.ok(hits > 0, "expected at least one lowercase kelvedge inside a URL");
+  });
+
+  test("capitalised Kelvedge appears in the body and in the financial highlights table", async () => {
+    const press = await readFile(COMMITTED_PRESS, "utf8");
+    const highlights = press.indexOf("Financial highlights");
+    assert.ok(highlights > 0);
+    const ends = press.indexOf("\nENDS");
+    const body = press.slice(0, highlights);
+    const table = press.slice(highlights, ends >= 0 ? ends : press.length);
+    assert.match(body, /Kelvedge/);
+    assert.match(table, /Kelvedge/);
+  });
+
+  test("Vyrenza is capitalised in the realisations sentence and lowercase vyrenza is absent", async () => {
+    const press = await readFile(COMMITTED_PRESS, "utf8");
+    assert.match(press, /realisations of Vyrenza/);
+    assert.equal(press.includes("vyrenza"), false);
   });
 });
