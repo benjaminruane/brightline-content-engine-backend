@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-09",
+  "note": "Every replacement was web-checked for an exact company match on 2026-09-09. NO NAME MAY BE ADDED WITHOUT THE SAME CHECK.",
+  "replacements": [
+    { "from": "HarbourVest Private Investments Fund", "to": "Cravenford Private Investments Fund", "checked": true },
+    { "from": "3i Infrastructure plc", "to": "Kelvedge Infrastructure plc", "checked": true },
+    { "from": "OMS Prüfservice", "to": "Wenbach Prüfservice", "checked": true },
+    { "from": "OMS Prufservice", "to": "Wenbach Prufservice", "checked": true },
+    { "from": "3i Group plc", "to": "Kelvedge Group plc", "checked": true },
+    { "from": "Simon Borrows", "to": "Martin Ashcombe", "checked": true },
+    { "from": "Royal Sanders", "to": "Skaldwick", "checked": true },
+    { "from": "Constellation", "to": "Fennovar", "checked": true },
+    { "from": "HarbourVest", "to": "Cravenford", "checked": true },
+    { "from": "WaterWipes", "to": "Cloverbeck", "checked": true },
+    { "from": "nexeye", "to": "Vyrenza", "checked": true },
+    { "from": "Action", "to": "Grulden", "checked": true },
+    { "from": "HPIF", "to": "CPIF", "checked": true },
+    { "from": "3iN", "to": "KIP", "checked": true },
+    { "from": "WP", "to": "RD", "checked": true },
+    { "from": "3i", "to": "Kelvedge", "checked": true }
+  ],
+  "deletions": [
+    {
+      "id": "ten23-health",
+      "before": "investment in Royal Sanders and £54 million in the further development of ten23 health.",
+      "after": "investment in Royal Sanders.",
+      "note": "Remove the ten23 health further-investment item and its amount. The remaining investment clauses are Action; Constellation, WaterWipes and OMS Prüfservice; and Royal Sanders. List punctuation repaired by dropping the trailing 'and <item>'."
+    }
+  ]
+}

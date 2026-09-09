@@ -22,6 +22,7 @@ export const P29_PROTECTED_NAMES = [
   "labels.json",
   "group-a-design.json",
   "sample-manifest.json",
+  "worksheet.md",
 ];
 
 export function p29ProtectedPaths(accuracyDir = ACCURACY_DIR) {

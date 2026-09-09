@@ -65,10 +65,10 @@ describe("filterFixtures ids", () => {
 describe("extract-stage1 P29 write guard", () => {
   test("refuses to write each of the four P29 paths", () => {
     const protectedPaths = p29ProtectedPaths(ACC);
-    assert.equal(protectedPaths.length, 4);
+    assert.equal(protectedPaths.length, 5);
     assert.deepEqual(
       P29_PROTECTED_NAMES.slice().sort(),
-      ["group-a-design.json", "labels.json", "sample-manifest.json", "statements.json"]
+      ["group-a-design.json", "labels.json", "sample-manifest.json", "statements.json", "worksheet.md"]
     );
     for (const filePath of protectedPaths) {
       assert.throws(
