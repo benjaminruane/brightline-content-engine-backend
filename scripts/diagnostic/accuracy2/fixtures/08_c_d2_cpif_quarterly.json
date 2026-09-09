@@ -1,0 +1,14 @@
+{
+  "id": "08",
+  "label": "c_d2_cpif_quarterly",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/fund-factsheet-march-2026.txt"
+  ],
+  "draft": "Class D shares returned -1.03% in March 2026. Class A shares returned -2.45% year to date at 31 March 2026. The Fund's healthcare diagnostics sleeve was the largest detractor in the quarter. Cravenford's Chief Investment Officer described the Fund as seeking capital growth over the long term. Marnholt Networks is an outstanding position and the Fund's strongest holding.\n\nManagement fees have been waived through to the end of 2026. Total annual expenses for Class A are 5.10% before the waiver. After the expense limitation and fee waiver, Class A total annual expenses are 2.44%. Class I total annual expenses after the waiver are 1.69%. The management fee is 1.25% of net asset value per annum, accrued monthly and payable quarterly.\n\nThe incentive fee is 12.5% of net profits above the Loss Recovery Account. Class A carries a maximum sales load of 3.50%. Class D carries a distribution and servicing fee of 0.25% of net asset value. Class I returned -0.99% in January 2026. The largest holding by net asset value is a co-investment at 4.2% of the portfolio.\n\nMarnholt Networks is the largest named holding at 3.7%. Piquesta Tire follows at 3.6%. A 2% early repurchase fee may be charged on shares repurchased within one year. Tax reporting is on IRS Form 1099. The Fund's investment objective is to seek to generate capital growth over the long term.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "fund_update"
+  },
+  "notes": "C-D2 CPIF quarterly summary. Sources: C1."
+}

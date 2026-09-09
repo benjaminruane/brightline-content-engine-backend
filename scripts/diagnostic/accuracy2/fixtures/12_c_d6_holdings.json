@@ -1,0 +1,15 @@
+{
+  "id": "12",
+  "label": "c_d6_holdings",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/fund-factsheet-march-2026.clean.txt",
+    "scripts/diagnostic/accuracy2/sources/cravenford-q1-2026-letter.txt"
+  ],
+  "draft": "Piquesta Tire is the Fund's largest named holding at 3.7% of the portfolio. Marnholt Networks follows at 3.6%. Project Larkspur represents 3.2% of the portfolio. Piquesta Tire rose to 3.6% of the portfolio during the quarter. Drummault Holdings Inc. represents 2.8%.\n\nNasketh Compliance represents 2.7%. The Fund's holdings in Marnholt Networks are valued at $24.5 million. The Fund's 88% direct exposure comes from co-investments. Marnholt Networks sits in Technology Hardware, Storage and Peripherals. Piquesta Tire sits in Automotive Parts and Equipment.\n\nProject Larkspur sits in Health Care Services. Nasketh Compliance sits in IT Consulting and Other Services. Drummault Holdings Inc. also sits in IT Consulting and Other Services. Marnholt Networks was among the stronger contributors in the quarter. Piquesta Tire was held flat.\n\nThe seeded portfolio was acquired at attractive prices. The unnamed co-investment is the largest position because it was the Fund's first investment. Portfolio percentages exclude short-term investments such as cash and money market funds. Both Nasketh Compliance and the second unnamed co-investment stand at 2.7%. The Fund's net asset value at 31 March 2026 was $653.0 million.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "fund_update"
+  },
+  "notes": "C-D6 Holdings note. Sources: C2, C3."
+}

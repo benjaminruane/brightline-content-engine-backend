@@ -1,0 +1,14 @@
+{
+  "id": "01",
+  "label": "k_d1_fy2025_results",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/press-release-fy25-highlights.txt"
+  ],
+  "draft": "Kelvedge Group delivered a total return of £5,049 million for the year to 31 March 2025, or 25% on opening shareholders' funds, against £3,839 million and 23% a year earlier. Net asset value per share rose to 2,542 pence from 2,085 pence, after a 27 pence per share loss on foreign exchange translation. The net total return of 25% was achieved against a challenging macro-economic and geopolitical backdrop. The Private Equity business delivered a gross investment return of £5,113 million, or 26%, up from £4,059 million and 25%. That return was driven by Grulden.\n\nSkaldwick generated a gross investment return of £4,551 million, or 32% on its opening value. Grulden delivered annual revenue growth of 22%, like-for-like sales growth of 10.3% and EBITDA growth of 29% in 2024. The business started 2025 well, with net sales of EUR 3,521 million against EUR 3,004 million in the first three periods of 2024. Operating EBITDA over the same periods was EUR 464 million, against EUR 397 million. Run-rate EBITDA on a last-twelve-months basis to the third period of 2025 reached EUR 2,328 million, a 26% increase.\n\nPrivate Equity contributed £5,113 million of the Group's £5,211 million gross investment return. At the end of week 19, Grulden's cash balance stood at EUR 427 billion. Grulden had added 76 new stores by mid-May. The Private Equity team invested £1,177 million in the year, including £768 million in a further stake in Grulden. Realised proceeds of £659 million came from the exits of Vyrenza and RD, both at money multiples of 2.0x or higher.\n\nInfrastructure generated a gross investment return of £52 million, or 3%, against £99 million and 7% a year earlier. Infrastructure returns fell because of higher interest rates. The Group took £2.4 billion of cash proceeds out of the portfolio and ended the year with liquidity of £1,323 million and gearing of 3%. The Group ended the year with net debt of £771 million. Total dividend for FY2025 was 73.0 pence per share.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "portfolio_update"
+  },
+  "notes": "K-D1 FY2025 results commentary. Sources: K1."
+}

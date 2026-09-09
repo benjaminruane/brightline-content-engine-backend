@@ -1,0 +1,15 @@
+{
+  "id": "06",
+  "label": "k_d6_grulden_note",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/press-release-fy25-highlights.txt",
+    "scripts/diagnostic/accuracy2/sources/kelvedge-half-year-update.txt"
+  ],
+  "draft": "Grulden delivered like-for-like sales growth of 10.3%. Grulden's like-for-like sales growth was 5.4%. Net sales in the first three periods of 2025 were EUR 3,521 million, against EUR 3,004 million a year earlier. Operating EBITDA over those periods was EUR 464 million, against EUR 397 million. Run-rate EBITDA on a last-twelve-months basis reached EUR 2,328 million to the third period of 2025.\n\nThat represented a 26% increase on the same period a year earlier. Grulden generated a gross investment return of £4,551 million, or 32% on its opening value. Value growth of £4,324 million was supported by that trading performance. Realised proceeds and dividend distributions to Kelvedge were £1,597 million. At week 19 of 2025, year-to-date like-for-like sales growth was 6.8%.\n\n76 new stores had been added at that date. By 30 September 2025, 168 new stores had been added year to date. Grulden's cash balance was EUR 512 million at the September half year. Net sales in the first eight periods of 2025 were EUR 9,873 million. Operating EBITDA over those periods was EUR 1,204 million.\n\nGrulden is expected to open between 350 and 400 new stores in the 2025 calendar year. Kelvedge invested a further £768 million in Grulden during the year to 31 March 2025. Annual revenue growth was 22% in 2024. EBITDA growth was 29% in 2024. Grulden continues to take share, though at a more measured rate.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "portfolio_update"
+  },
+  "notes": "K-D6 Grulden portfolio note. Sources: K1, K3."
+}

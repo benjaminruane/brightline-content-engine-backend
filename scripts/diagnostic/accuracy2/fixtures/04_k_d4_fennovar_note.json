@@ -1,0 +1,15 @@
+{
+  "id": "04",
+  "label": "k_d4_fennovar_note",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/press-release-fy25-highlights.txt",
+    "scripts/diagnostic/accuracy2/sources/kelvedge-ic-memo-fennovar.txt"
+  ],
+  "draft": "Kelvedge invested £318 million in Fennovar in the year to 31 March 2025. Fennovar is a European provider of specialist industrial coatings, headquartered in Lyon. The company manufactures in France, Germany and Poland. Revenue for the year to 31 December 2025 was EUR 287 million, 14% ahead of the prior year. EBITDA was EUR 41 million, an increase of 18%, representing a margin of 14.3%.\n\nThe EBITDA increase reflects price realisation and lower resin input costs. Fennovar is the dominant independent participant in the European specialist coatings market. Management expect revenue to reach EUR 340 million by 2027. That expectation depends on the successful integration of the two bolt-on acquisitions completed in the second half of 2025. The team sees a credible path to an EBITDA margin of 16% over the hold period.\n\nThe largest customer represents 9% of revenue and the top ten represent 34%. Raw material cost inflation remains the principal exposure. The team is seeking approval for a follow-on investment of up to £95 million. The follow-on would fund the acquisition of a Spanish competitor, on terms that are not yet agreed. The Spanish target would add roughly EUR 60 million of revenue.\n\nIt would give Fennovar a manufacturing presence in Iberia for the first time. The team recommends no change to the carrying value at this time. Integration risk on the two completed bolt-ons has not been fully retired. Fennovar was one of three new investments completed that year, alongside Cloverbeck and Wenbach Pruefservice. The company sells primarily to industrial original equipment manufacturers.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "new_investment"
+  },
+  "notes": "K-D4 Fennovar investment note. Sources: K1, K4."
+}

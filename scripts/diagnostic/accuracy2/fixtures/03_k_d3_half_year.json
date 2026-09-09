@@ -1,0 +1,15 @@
+{
+  "id": "03",
+  "label": "k_d3_half_year",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/press-release-fy25-highlights.txt",
+    "scripts/diagnostic/accuracy2/sources/kelvedge-half-year-update.txt"
+  ],
+  "draft": "Kelvedge delivered a total return of £1,724 million in the six months to 30 September 2025, or 7% on opening shareholders' funds. That compares with £2,109 million and 10% in the same period a year earlier. Net asset value per share reached 2,681 pence, from 2,542 pence at the March year end. The Group's gross investment return for the year to 31 March 2025 was £5,211 million. Private Equity generated a gross investment return of £1,904 million, or 9%.\n\nSkaldwick delivered like-for-like sales growth of 5.4% in the first eight periods of 2025. Grulden's net sales over those periods were EUR 9,873 million, against EUR 8,614 million a year earlier. Grulden's cash balance at 30 September 2025 was EUR 512 million. The Private Equity team invested £486 million in the half year and generated £402 million of realised proceeds. Grulden had added 168 new stores year to date.\n\nThe Group continues to expect Grulden to open between 350 and 400 new stores in the 2025 calendar year. Infrastructure generated a gross investment return of £71 million, or 4%, with income the principal contributor. Grulden's slower like-for-like growth reflects weaker consumer confidence in its core markets. The interim dividend was held at 30.5 pence per share. Net debt fell to £688 million and gearing to 2%.\n\nPortfolio value stood at £26,104 million at the half year. No new platform investments were completed in the half year. Management's patience on new investment was reinforced by pricing they did not believe in. Like-for-like growth of 5.4% compares with 9.1% in the first eight periods of 2024. Cash investment in the half was £486 million, against £571 million a year earlier.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "portfolio_update"
+  },
+  "notes": "K-D3 Half-year commentary. Sources: K1, K3."
+}

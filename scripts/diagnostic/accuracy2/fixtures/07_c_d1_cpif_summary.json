@@ -1,0 +1,14 @@
+{
+  "id": "07",
+  "label": "c_d1_cpif_summary",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/fund-factsheet-march-2026.txt"
+  ],
+  "draft": "The Cravenford Private Investments Fund is a non-diversified, closed-end tender offer fund registered under the 1940 and 1933 Acts. Fund net asset value was $653.0 billion at 31 March 2026. The Fund held 61 companies at that date. Those companies sit across more than 40 general partner relationships. Cravenford has a 40+ year track record of investing across all private market asset classes.\n\nTotal assets under management across all strategies were $161.0 billion. The firm employs 233 investment professionals. Class A returned -2.45% in the twelve months to 31 March 2026. Class A returned 3.35% over the twelve months to 31 March 2026. The Fund's net asset value net of the incentive fee accrual was $653.0 million.\n\nDirect investments represent 88% of the portfolio and secondaries 12%. North America accounts for 70% of the portfolio, with Europe at 25%. Class A returned -1.06% in January 2026. Asia and Australia together account for 5% of the portfolio. The Fund's net asset value was $0.653 billion.\n\nThe Fund is perpetual in term. All investors must be Qualified Clients. The minimum initial subscription for Class I is $1,000,000. Repurchase offers are expected quarterly and are capped at 5% of net asset value. Class D and Class I both showed a net asset value per share of 10.17.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "fund_update"
+  },
+  "notes": "C-D1 CPIF fund summary. Sources: C1."
+}

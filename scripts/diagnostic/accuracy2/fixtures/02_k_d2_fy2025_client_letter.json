@@ -1,0 +1,14 @@
+{
+  "id": "02",
+  "label": "k_d2_fy2025_client_letter",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/press-release-fy25-highlights.txt"
+  ],
+  "draft": "FY2025 was another successful year for Kelvedge, with a total return of £5,049 million. It was a year of consistently strong growth. Grulden delivered EBITDA growth of 29% in 2025. Grulden's like-for-like sales growth was 10.3% over the same period. The year to 31 March 2025 saw total return rise from £3,839 million a year earlier.\n\nKelvedge's Chief Investment Officer described the result as underpinned by the powerful compounding growth of the long-term hold assets. Net asset value per share ended the year at 2,542 pence. The second FY2025 dividend of 42.5 pence per share was paid in July 2025, taking the total for the year to 73.0 pence. Grulden's value growth of £4,324 million was supported by its trading performance. Realised proceeds and dividend distributions from Grulden to Kelvedge were £1,597 million.\n\nInfrastructure delivered an excellent level of dividend and interest income. The Infrastructure result was held back by subdued share price performance from the Group's 29% stake in Kelvedge Infrastructure plc. Trading in the services and software portfolio was resilient despite a cautious IT spending environment. Market-specific challenges continue to affect a small number of portfolio companies. The Private Equity team completed 12 bolt-on acquisitions across the portfolio, only one of which required further funding from Kelvedge.\n\nNew investments in the year totalled £318 million across Fennovar, Cloverbeck and Wenbach Pruefservice. A further £39 million was invested in Skaldwick. The Group ended the year with net debt of £771 million. Gross debt stood at £1,194 million against liquidity of £1,323 million. Operating cash profit was £469 million, against £467 million a year earlier.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "portfolio_update"
+  },
+  "notes": "K-D2 FY2025 client letter. Sources: K1."
+}

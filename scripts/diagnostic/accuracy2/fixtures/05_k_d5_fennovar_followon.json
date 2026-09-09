@@ -1,0 +1,14 @@
+{
+  "id": "05",
+  "label": "k_d5_fennovar_followon",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/kelvedge-ic-memo-fennovar.txt"
+  ],
+  "draft": "The team recommends a follow-on investment of up to £95 million in Fennovar. Kelvedge invested £142 million in Fennovar in November 2024. Fennovar will deliver an EBITDA margin of 16% over the hold period. That margin improvement contributes approximately 180 basis points of the value underwritten at entry. Revenue reached EUR 287 million in the year to 31 December 2025.\n\nEBITDA of EUR 41 million represented a margin of 14.3%. Revenue growth of 14% was achieved alongside an 18% increase in EBITDA. If the Spanish transaction does not complete on acceptable terms, the team will return to the Committee with a revised proposal. Fennovar's diagnostics division is expected to contribute to the 2026 result. The company has manufacturing in France, Germany and Poland.\n\nCustomer concentration is moderate. The top ten customers represent 34% of revenue. The follow-on would be made alongside existing shareholders. Terms of the Spanish acquisition are not yet agreed. The team is not recommending any specific alternative transaction at this stage.\n\nFennovar sells primarily to industrial original equipment manufacturers, with a smaller aftermarket business. The Polish acquisition completed in 2024 contributed a full year of earnings in 2025. Integration risk on the two completed bolt-ons is not yet fully retired. The Spanish target would give Fennovar its first manufacturing presence in Iberia. Raw material cost inflation is the principal exposure.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "follow_on"
+  },
+  "notes": "K-D5 Fennovar follow-on summary. Sources: K4."
+}

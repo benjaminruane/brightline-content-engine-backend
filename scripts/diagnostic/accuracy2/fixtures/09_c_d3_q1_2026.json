@@ -1,0 +1,14 @@
+{
+  "id": "09",
+  "label": "c_d3_q1_2026",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/cravenford-q1-2026-letter.txt"
+  ],
+  "draft": "Class I shares returned -2.27% in the first quarter of 2026. Class A shares returned -2.45% over the same period. Since inception in April 2025, Class I has returned 3.54% on an annualised basis. The Fund's net asset value at 31 March 2026 was $653.0 million. The quarter's decline reflects a mark-down at two software holdings.\n\nThe Fund will season through 2026. Exit conditions weakened materially during the quarter. Marnholt Networks was an exceptional contributor in the quarter. The Fund held 57 companies at the quarter end. Those companies sit across more than 40 general partner relationships.\n\nPiquesta Tire was held flat in the quarter. Total annual expenses for Class I after the waiver are 1.69%. Before the waiver the equivalent figure is 4.35%. Management fees remain waived until 31 December 2026. North America represents 70% of the portfolio and Europe 25%.\n\nDirect investments represent 88% of the portfolio. The adviser is not forecasting a particular level of realisations. The two software holdings are not named and will be discussed at the annual meeting. The adviser considers patience the correct posture from here. The seeded portfolio was acquired at attractive prices in the adviser's view.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "fund_update"
+  },
+  "notes": "C-D3 Q1 2026 commentary. Sources: C3."
+}

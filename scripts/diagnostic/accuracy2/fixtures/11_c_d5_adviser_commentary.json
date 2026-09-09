@@ -1,0 +1,14 @@
+{
+  "id": "11",
+  "label": "c_d5_adviser_commentary",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/cravenford-q1-2026-letter.txt"
+  ],
+  "draft": "The adviser expects the direct portfolio to season through 2026. That expectation depends on exit conditions that have not yet improved. The Board will reduce the repurchase level to preserve liquidity. Shareholders will be notified before any change to the repurchase level. Class I returned -2.27% in the first quarter of 2026.\n\nClass I returned -2.27% over the twelve months to 31 March 2026. The quarter's decline reflects a mark-down at two software holdings, dollar strength against the euro, and the timing of a continuation vehicle valuation. The Fund's chief executive said patience is the correct posture from here. The Fund is invested across North America, Europe, Asia and Australia. Cravenford invests globally in private equity.\n\nManagement fees remain waived until 31 December 2026. Class A total annual expenses after the waiver are 2.44%. The net asset value at 31 March 2026 was finalised at $661.4 million. The Fund held 57 companies at that date. Marnholt Networks was among the stronger contributors.\n\nPiquesta Tire was held flat. The two software holdings will be discussed at the annual meeting. The continuation vehicle valuation will now fall into the second quarter. The adviser is not forecasting a particular level of realisations. Direct investments represent 88% of the portfolio.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "fund_update"
+  },
+  "notes": "C-D5 Adviser commentary. Sources: C3."
+}

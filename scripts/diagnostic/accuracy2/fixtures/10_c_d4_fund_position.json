@@ -1,0 +1,15 @@
+{
+  "id": "10",
+  "label": "c_d4_fund_position",
+  "sources": [
+    "scripts/diagnostic/accuracy2/sources/fund-factsheet-march-2026.txt",
+    "scripts/diagnostic/accuracy2/sources/cravenford-q1-2026-letter.txt"
+  ],
+  "draft": "The Fund's net asset value at 31 March 2026 was $661.4 million. That figure was finalised after the March valuation cycle closed. The March factsheet showed $653.0 million. The Fund held 57 companies at the quarter end. The Fund's net asset value per share for Class A was 10.15.\n\nClass A returned -1.09% in March 2026. The Fund returned 5.95% in 2025 across all three share classes. Cravenford has a 40+ year track record of investing in private equity. The Board will maintain the current repurchase level through the second half. The difference between the two net asset value figures relates to a continuation vehicle.\n\nClass I has returned 3.54% since inception in April 2025. The continuation vehicle valuation has been completed and is included in the March figures. Class I returned -0.27% in February 2026. The firm's total assets under management were $161.0 million. The firm maintains more than 675 active general partner relationships.\n\nThe Fund is distributed by Hallamby Distributors LLC, which is unaffiliated with the adviser. The adviser is Cravenford Registered Advisers L.P. Repurchase offers are capped at 5% of net asset value. The Fund's largest industry exposure is Application Software at 15%. The seeded portfolio came from a US institutional investor.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "fund_update"
+  },
+  "notes": "C-D4 Fund position note. Sources: C1, C3."
+}
