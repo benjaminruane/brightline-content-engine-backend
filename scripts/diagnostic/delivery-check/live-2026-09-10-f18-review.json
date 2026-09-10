@@ -1,2 +1,1545 @@
-blbe
-pbpaste > scripts/diagnostic/delivery-check/live-2026-09-10-f18-review.json
+{
+  "ok": true,
+  "statements": [
+    {
+      "id": "0",
+      "text": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+      "qcCard": {
+        "index": 0,
+        "statement": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+        "charStart": 24,
+        "charEnd": 229,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The statement claims that the transaction with Nordic SaaS Holdings has been completed, but the source indicates it is only a recommendation to invest EUR 158 million for a 60% stake, suggesting the transaction has not yet been finalized. This is a direct contradiction. The source does confirm that Nordic SaaS Holdings is a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector, but the completion of the transaction itself is not supported. The reviewer should reconcile this discrepancy or remove the claim of completion.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "18a_synth_cross_source_pair_initial.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement claims that the transaction with Nordic SaaS Holdings has been completed, but the source indicates it is only a recommendation to invest EUR 158 million for a 60% stake, suggesting the transaction has not yet been finalized. This is a direct contradiction. The source does confirm that Nordic SaaS Holdings is a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector, but the completion of the transaction itself is not supported. The reviewer should reconcile this discrepancy or remove the claim of completion.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 24,
+          "endChar": 229
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "conflicting",
+            "statementId": "0",
+            "passage": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+            "start": 295,
+            "end": 528
+          },
+          {
+            "sourceRefId": 1,
+            "classification": "partially_confirmed",
+            "statementId": "0",
+            "passage": "We continue to recommend completion of the transaction on the terms set out in the original recommendation, subject to acknowledgment of the updated financial and operational figures above.",
+            "start": 3019,
+            "end": 3208
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "conflicting",
+            "text": "We are writing to confirm completion of the transaction",
+            "start": 0,
+            "end": 55
+          },
+          {
+            "sourceRefId": 1,
+            "statementId": "0",
+            "classification": "partially_confirmed",
+            "text": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+            "start": 0,
+            "end": 205
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "voice_consistency",
+            "note": "The statement uses first-person plural 'We are writing' in an investor letter, but the authoring organisation is not identified in this draft. Replace the pronoun with the named authoring organisation as the grammatical subject.",
+            "category": "editorial",
+            "suggestedDirection": "Replace 'We are writing' with 'The authoring organisation is writing'.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 14,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace 'We are writing' with 'The authoring organisation is writing'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 24,
+        "endChar": 229
+      }
+    },
+    {
+      "id": "1",
+      "text": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+      "qcCard": {
+        "index": 1,
+        "statement": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+        "charStart": 230,
+        "charEnd": 467,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "The Company provides an integrated software platform for residential property managers, covering rent collection, maintenance management, tenant communication, and regulatory reporting....",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that the company provides an integrated software platform for residential property managers, which automates workflows such as rent collection, maintenance management, tenant communication, and regulatory reporting. This aligns with the statement's claim about the company's services in the Nordic region.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "18a_synth_cross_source_pair_initial.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "18a_synth_cross_source_pair_initial.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "The Company provides an integrated software platform for residential property managers, covering rent collection, maintenance management, tenant communication, and regulatory reporting....",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that the company provides an integrated software platform for residential property managers, which automates workflows such as rent collection, maintenance management, tenant communication, and regulatory reporting. This aligns with the statement's claim about the company's services in the Nordic region.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 230,
+          "endChar": 467
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "1",
+            "passage": "The Company provides an integrated software platform for residential property managers, covering rent collection, maintenance management, tenant communication, and regulatory reporting.",
+            "start": 627,
+            "end": 812
+          },
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "1",
+            "passage": "The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.",
+            "start": 813,
+            "end": 975
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "named_person_entity_attribution"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 230,
+        "endChar": 467
+      }
+    },
+    {
+      "id": "2",
+      "text": "We have invested EUR 158 million for a 60% controlling stake.",
+      "qcCard": {
+        "index": 2,
+        "statement": "We have invested EUR 158 million for a 60% controlling stake.",
+        "charStart": 468,
+        "charEnd": 529,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\")",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The statement claims that an investment of EUR 158 million for a 60% controlling stake has been made, while the source indicates this is merely a recommendation, not a completed transaction. This is a modality conflict. The reviewer should reconcile this discrepancy or remove the claim.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "18a_synth_cross_source_pair_initial.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\")",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement claims that an investment of EUR 158 million for a 60% controlling stake has been made, while the source indicates this is merely a recommendation, not a completed transaction. This is a modality conflict. The reviewer should reconcile this discrepancy or remove the claim.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 468,
+          "endChar": 529
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "We have invested EUR 158 million for a 60% controlling stake.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "2",
+            "passage": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+            "start": 295,
+            "end": 528
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "2",
+            "classification": "conflicting",
+            "text": "We have invested EUR 158 million for a 60% controlling stake.",
+            "start": 0,
+            "end": 61
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure",
+            "percentage_metric"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "voice_consistency",
+            "note": "The statement uses first-person plural 'We have invested' in an investor letter, but the authoring organisation is not identified in this draft. Replace the pronoun with the named authoring organisation as the grammatical subject.",
+            "category": "editorial",
+            "suggestedDirection": "Replace 'We have invested' with 'The authoring organisation has invested'.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 16,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace 'We have invested' with 'The authoring organisation has invested'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 468,
+        "endChar": 529
+      }
+    },
+    {
+      "id": "3",
+      "text": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+      "qcCard": {
+        "index": 3,
+        "statement": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+        "charStart": 531,
+        "charEnd": 697,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The statement claims that the company serves 380 property management companies, but the source indicates that the correct number is 412. This discrepancy needs to be reconciled. While the source confirms that these companies manage more than 240,000 residential units across Sweden, Norway, Denmark, and Finland, the conflicting number of companies served requires correction or clarification.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "18a_synth_cross_source_pair_initial.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "18b_synth_cross_source_pair_update.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement claims that the company serves 380 property management companies, but the source indicates that the correct number is 412. This discrepancy needs to be reconciled. While the source confirms that these companies manage more than 240,000 residential units across Sweden, Norway, Denmark, and Finland, the conflicting number of companies served requires correction or clarification.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 531,
+          "endChar": 697
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "3",
+            "passage": "The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.",
+            "start": 813,
+            "end": 975
+          },
+          {
+            "sourceRefId": 1,
+            "classification": "conflicting",
+            "statementId": "3",
+            "passage": "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+            "start": 1960,
+            "end": 2062
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 1,
+            "statementId": "3",
+            "classification": "conflicting",
+            "text": "serves 380 property management companies across Sweden, Norway, Denmark, and Finland",
+            "start": 22,
+            "end": 106
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "named_person_entity_attribution",
+            "comparative_superlative"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": true,
+        "claimUpgrade": false,
+        "claims": [
+          {
+            "index": 0,
+            "text": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland",
+            "draftStart": 531,
+            "draftEnd": 637,
+            "verdict": "conflicting",
+            "hasConflict": true,
+            "matches": [
+              {
+                "sourceIndex": 0,
+                "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+                "classification": "confirmed",
+                "passage": "The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.",
+                "explanation": "The source confirms that the company serves over 380 property management companies across the specified Nordic countries, matching the statement.",
+                "systemFingerprint": "fp_27008f43d1"
+              },
+              {
+                "sourceIndex": 1,
+                "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+                "classification": "conflicting",
+                "passage": "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+                "explanation": "The source states that the company serves 412 property management companies, which conflicts with the statement that claims the company serves 380.",
+                "systemFingerprint": "fp_27008f43d1"
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "text": "collectively managing more than 240'000 residential units.",
+            "draftStart": 639,
+            "draftEnd": 697,
+            "verdict": "confirmed",
+            "hasConflict": false,
+            "matches": [
+              {
+                "sourceIndex": 0,
+                "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+                "classification": "confirmed",
+                "passage": "The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.",
+                "explanation": "The source confirms the statement by stating that the platform serves over 380 property management companies collectively managing more than 240,000 residential units.",
+                "systemFingerprint": "fp_27008f43d1"
+              },
+              {
+                "sourceIndex": 1,
+                "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+                "classification": "no_support",
+                "passage": "Confirmatory diligence raised no other material issues.",
+                "explanation": "The source does not address the number of residential units managed, focusing instead on financial, employee, and customer count updates. There is no mention of residential units in the source.",
+                "systemFingerprint": "fp_27008f43d1"
+              }
+            ]
+          }
+        ]
+      },
+      "draftSpan": {
+        "startChar": 531,
+        "endChar": 697
+      }
+    },
+    {
+      "id": "4",
+      "text": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+      "qcCard": {
+        "index": 4,
+        "statement": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+        "charStart": 698,
+        "charEnd": 840,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The statement claims an annual recurring revenue (ARR) of EUR 38 million as of March 2025, but the source provides conflicting information, stating the ARR was EUR 35 million at the end of April 2025. This discrepancy suggests different reporting conventions or a potential error in the statement. The reviewer should reconcile these figures or remove the claim to ensure accuracy.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "18a_synth_cross_source_pair_initial.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "18b_synth_cross_source_pair_update.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement claims an annual recurring revenue (ARR) of EUR 38 million as of March 2025, but the source provides conflicting information, stating the ARR was EUR 35 million at the end of April 2025. This discrepancy suggests different reporting conventions or a potential error in the statement. The reviewer should reconcile these figures or remove the claim to ensure accuracy.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 698,
+          "endChar": 840
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "4",
+            "passage": "Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.",
+            "start": 1128,
+            "end": 1273
+          },
+          {
+            "sourceRefId": 1,
+            "classification": "conflicting",
+            "statementId": "4",
+            "passage": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+            "start": 593,
+            "end": 703
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 1,
+            "statementId": "4",
+            "classification": "conflicting",
+            "text": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+            "start": 0,
+            "end": 142
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure",
+            "date_period_claim"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 698,
+        "endChar": 840
+      }
+    },
+    {
+      "id": "5",
+      "text": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+      "qcCard": {
+        "index": 5,
+        "statement": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+        "charStart": 841,
+        "charEnd": 909,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "The Company employs 167 people as of 28 May, not 142 as stated in our initial memo....",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The statement that the company employs 142 people is directly contradicted by a source stating the company employs 167 people as of 28 May. This discrepancy in employee count needs to be reconciled. While another source confirms the 142 figure with specific numbers for each location, the conflicting information must be addressed. Verify the correct employee count and update the statement accordingly.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "18a_synth_cross_source_pair_initial.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "18b_synth_cross_source_pair_update.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "The Company employs 167 people as of 28 May, not 142 as stated in our initial memo....",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement that the company employs 142 people is directly contradicted by a source stating the company employs 167 people as of 28 May. This discrepancy in employee count needs to be reconciled. While another source confirms the 142 figure with specific numbers for each location, the conflicting information must be addressed. Verify the correct employee count and update the statement accordingly.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 841,
+          "endChar": 909
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "5",
+            "passage": "The Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people).",
+            "start": 977,
+            "end": 1127
+          },
+          {
+            "sourceRefId": 1,
+            "classification": "conflicting",
+            "statementId": "5",
+            "passage": "The Company employs 167 people as of 28 May, not 142 as stated in our initial memo.",
+            "start": 1356,
+            "end": 1439
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 1,
+            "statementId": "5",
+            "classification": "conflicting",
+            "text": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+            "start": 0,
+            "end": 68
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "named_person_entity_attribution"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "materiality",
+            "note": "The statement 'The Company employs 142 people across Stockholm, Oslo, and Helsinki.' adds no meaningful information or advancement to the argument, as it does not connect to the investment thesis or provide context for the company's operations.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'The Company employs 142 people across Stockholm, Oslo, and Helsinki.' as it does not add value to the narrative.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 68,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Delete 'The Company employs 142 people across Stockholm, Oslo, and Helsinki.' as it does not add value to the narrative.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 841,
+        "endChar": 909
+      }
+    },
+    {
+      "id": "6",
+      "text": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+      "qcCard": {
+        "index": 6,
+        "statement": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+        "charStart": 911,
+        "charEnd": 1387,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "First, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement, specifically noting that independent customer research rated the company's product significantly higher than its principal Nordic competitor, Yardi Nordic, on usability and feature completeness. Additionally, the source supports the other pillars of the investment thesis, including the underpenetrated market and the exceptional founder team.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "18a_synth_cross_source_pair_initial.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "18a_synth_cross_source_pair_initial.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "First, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement, specifically noting that independent customer research rated the company's product significantly higher than its principal Nordic competitor, Yardi Nordic, on usability and feature completeness. Additionally, the source supports the other pillars of the investment thesis, including the underpenetrated market and the exceptional founder team.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 911,
+          "endChar": 1387
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "6",
+            "passage": "First, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support.",
+            "start": 1903,
+            "end": 2152
+          },
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "6",
+            "passage": "Second, the Nordic property management technology market remains structurally underpenetrated. Approximately 40% of Nordic property management companies still use legacy systems or spreadsheets.",
+            "start": 2216,
+            "end": 2410
+          },
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "6",
+            "passage": "Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.",
+            "start": 2484,
+            "end": 2757
+          },
+          {
+            "sourceRefId": 1,
+            "classification": "partially_confirmed",
+            "statementId": "6",
+            "passage": "Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+            "start": 2590,
+            "end": 2698
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": [
+            "percentage_metric",
+            "named_person_entity_attribution",
+            "comparative_superlative"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "marketing_language_excess",
+            "note": "The phrase 'genuinely market-leading product' uses hyperbolic language without substantiation in the immediate context. Remove or substantiate the claim.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'genuinely market-leading'. The phrase becomes 'a product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness)'.",
+            "span": [
+              {
+                "startChar": 54,
+                "endChar": 86,
+                "source": "note_quote"
+              },
+              {
+                "startChar": 54,
+                "endChar": 78,
+                "source": "direction_quote"
+              }
+            ]
+          },
+          {
+            "concernCode": "marketing_language_excess",
+            "note": "The phrase 'exceptional founder team' is a hyperbolic claim without substantiation in the immediate context. Remove or substantiate the claim.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'exceptional'. The phrase becomes 'a founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen'.",
+            "span": [
+              {
+                "startChar": 394,
+                "endChar": 418,
+                "source": "note_quote"
+              },
+              {
+                "startChar": 394,
+                "endChar": 405,
+                "source": "direction_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Delete 'genuinely market-leading'. The phrase becomes 'a product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness)'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": true,
+        "claimUpgrade": false,
+        "claims": [
+          {
+            "index": 0,
+            "text": "independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness",
+            "draftStart": 999,
+            "draftEnd": 1155,
+            "verdict": "confirmed",
+            "hasConflict": false,
+            "matches": [
+              {
+                "sourceIndex": 0,
+                "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+                "classification": "confirmed",
+                "passage": "Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support.",
+                "explanation": "The source confirms that independent customer research rated NSH significantly higher than Yardi Nordic on usability and feature completeness, matching the statement.",
+                "systemFingerprint": "fp_27008f43d1"
+              },
+              {
+                "sourceIndex": 1,
+                "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+                "classification": "no_support",
+                "passage": "Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+                "explanation": "The source mentions customer reference work confirming the product's strength but does not specifically compare it to Yardi Nordic on usability and feature completeness.",
+                "systemFingerprint": "fp_27008f43d1"
+              }
+            ]
+          },
+          {
+            "index": 1,
+            "text": "approximately 40% of Nordic property management companies still use legacy systems or spreadsheets",
+            "draftStart": 1197,
+            "draftEnd": 1295,
+            "verdict": "confirmed",
+            "hasConflict": false,
+            "matches": [
+              {
+                "sourceIndex": 0,
+                "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+                "classification": "confirmed",
+                "passage": "Second, the Nordic property management technology market remains structurally underpenetrated. Approximately 40% of Nordic property management companies still use legacy systems or spreadsheets.",
+                "explanation": "The source directly states that approximately 40% of Nordic property management companies still use legacy systems or spreadsheets, confirming the statement.",
+                "systemFingerprint": "fp_27008f43d1"
+              },
+              {
+                "sourceIndex": 1,
+                "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+                "classification": "no_support",
+                "passage": "Confirmatory diligence raised no other material issues. Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+                "explanation": "The source does not address the claim about the percentage of Nordic property management companies using legacy systems or spreadsheets. It focuses on financial and operational updates without mentioning market penetration or technology adoption rates.",
+                "systemFingerprint": "fp_27008f43d1"
+              }
+            ]
+          },
+          {
+            "index": 2,
+            "text": "an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+            "draftStart": 1302,
+            "draftEnd": 1387,
+            "verdict": "confirmed",
+            "hasConflict": false,
+            "matches": [
+              {
+                "sourceIndex": 0,
+                "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+                "classification": "confirmed",
+                "passage": "Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.",
+                "explanation": "The source confirms the statement by describing the founder team as exceptional and naming Erik Lindqvist as CEO and Pekka Virtanen as CTO, matching the roles stated.",
+                "systemFingerprint": "fp_27008f43d1"
+              },
+              {
+                "sourceIndex": 1,
+                "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+                "classification": "no_support",
+                "passage": "Confirmatory diligence raised no other material issues. Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.",
+                "explanation": "The source does not address the claim about the founder team or the leadership of CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen. It focuses on financial and operational updates without mentioning the management team.",
+                "systemFingerprint": "fp_27008f43d1"
+              }
+            ]
+          }
+        ]
+      },
+      "draftSpan": {
+        "startChar": 911,
+        "endChar": 1387
+      }
+    },
+    {
+      "id": "7",
+      "text": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+      "qcCard": {
+        "index": 7,
+        "statement": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+        "charStart": 1389,
+        "charEnd": 1612,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+        "conflictExcerpt": {
+          "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+          "passage": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo."
+        },
+        "evidenceSummary": "The statement claims an ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by organic growth, expansion, and M&A. However, the source contradicts this by stating that the ARR at the end of April was EUR 35 million, not EUR 38 million. The reviewer should reconcile this discrepancy or remove the claim. While the source confirms the growth projection and strategies, the initial ARR figure is incorrect.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "18a_synth_cross_source_pair_initial.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "18b_synth_cross_source_pair_update.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement claims an ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by organic growth, expansion, and M&A. However, the source contradicts this by stating that the ARR at the end of April was EUR 35 million, not EUR 38 million. The reviewer should reconcile this discrepancy or remove the claim. While the source confirms the growth projection and strategies, the initial ARR figure is incorrect.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 1389,
+          "endChar": 1612
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "7",
+            "passage": "Our base case envisages ARR growth from EUR 38 million today to approximately EUR 95 million over a five-year hold. This is supported by continued strong organic growth (we underwrite 22% ARR CAGR over the hold period), modest expansion into adjacent verticals (commercial property management), and selective add-on M&A.",
+            "start": 2780,
+            "end": 3100
+          },
+          {
+            "sourceRefId": 1,
+            "classification": "conflicting",
+            "statementId": "7",
+            "passage": "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+            "start": 593,
+            "end": 703
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 1,
+            "statementId": "7",
+            "classification": "partially_confirmed",
+            "text": "ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+            "start": 24,
+            "end": 223
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "voice_consistency",
+            "note": "The statement uses first-person plural 'Our base case envisages' without identifying the authoring organisation. Replace the pronoun with the named authoring organisation as the grammatical subject.",
+            "category": "editorial",
+            "suggestedDirection": "Replace 'Our base case envisages' with 'The authoring organisation's base case envisages'.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 23,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace 'Our base case envisages' with 'The authoring organisation's base case envisages'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1389,
+        "endChar": 1612
+      }
+    },
+    {
+      "id": "8",
+      "text": "The base case generates 2.8x MOIC and 23% gross IRR.",
+      "qcCard": {
+        "index": 8,
+        "statement": "The base case generates 2.8x MOIC and 23% gross IRR.",
+        "charStart": 1613,
+        "charEnd": 1665,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The statement conflicts with the source, which reports that the updated base case generates a 2.6x MOIC and 21% IRR, not the 2.8x MOIC and 23% IRR claimed. The source does confirm the original figures of 2.8x MOIC and 23% IRR as part of an initial recommendation, but the updated figures differ. The reviewer should reconcile these discrepancies or remove the claim.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "18a_synth_cross_source_pair_initial.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "18b_synth_cross_source_pair_update.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement conflicts with the source, which reports that the updated base case generates a 2.6x MOIC and 21% IRR, not the 2.8x MOIC and 23% IRR claimed. The source does confirm the original figures of 2.8x MOIC and 23% IRR as part of an initial recommendation, but the updated figures differ. The reviewer should reconcile these discrepancies or remove the claim.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 1613,
+          "endChar": 1665
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The base case generates 2.8x MOIC and 23% gross IRR.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "conflicting",
+            "statementId": "8",
+            "passage": "The base case generates a 2.8x MOIC and 23% IRR.",
+            "start": 3278,
+            "end": 3326
+          },
+          {
+            "sourceRefId": 1,
+            "classification": "conflicting",
+            "statementId": "8",
+            "passage": "Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+            "start": 2265,
+            "end": 2405
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 1,
+            "statementId": "8",
+            "classification": "conflicting",
+            "text": "The base case generates 2.8x MOIC and 23% gross IRR.",
+            "start": 0,
+            "end": 52
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "percentage_metric",
+            "regulated_sensitive"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1613,
+        "endChar": 1665
+      }
+    },
+    {
+      "id": "9",
+      "text": "In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.",
+      "qcCard": {
+        "index": 9,
+        "statement": "In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.",
+        "charStart": 1667,
+        "charEnd": 1788,
+        "supportState": "partial",
+        "hasConflict": false,
+        "primaryExcerpt": "NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction. First, the product is genuinely market-leading.…",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that the company has a strong competitive position, noting its presence in a deeply specialized vertical with high switching costs and a consolidation opportunity. However, it does not explicitly mention a 'defensible' position or a 'growing category.' Additionally, while the source supports the strength of the product, it does not address the credibility of the operational team. The reviewer should consider adding more specific details about the defensibility and growth of the category, as well as the operational team's credibility, to fully substantiate the statement.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "18a_synth_cross_source_pair_initial.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction. First, the product is genuinely market-leading.…",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that the company has a strong competitive position, noting its presence in a deeply specialized vertical with high switching costs and a consolidation opportunity. However, it does not explicitly mention a 'defensible' position or a 'growing category.' Additionally, while the source supports the strength of the product, it does not address the credibility of the operational team. The reviewer should consider adding more specific details about the defensibility and growth of the category, as well as the operational team's credibility, to fully substantiate the statement.",
+        "displayMode": "partial",
+        "draftSpan": {
+          "startChar": 1667,
+          "endChar": 1788
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "9",
+            "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity.",
+            "start": 1737,
+            "end": 1865
+          },
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "9",
+            "passage": "The founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.",
+            "start": null,
+            "end": null
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "9",
+            "classification": "partially_confirmed",
+            "text": "a credible operational team",
+            "start": 93,
+            "end": 120
+          },
+          {
+            "sourceRefId": 1,
+            "statementId": "9",
+            "classification": "partially_confirmed",
+            "text": "the Company combines a defensible competitive position in a growing category and a credible operational team.",
+            "start": 12,
+            "end": 121
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "18a_synth_cross_source_pair_initial.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "18b_synth_cross_source_pair_update.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_27008f43d1"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [
+          {
+            "concernCode": "framing_fidelity",
+            "category": "framing_fidelity",
+            "note": "The statement claims a 'defensible' competitive position, which is not explicitly supported by the source. The source describes a strong position but does not confirm that it is defensible.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 121
+              }
+            ]
+          }
+        ],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "materiality",
+            "note": "The statement 'In summary, the Company combines a defensible competitive position in a growing category and a credible operational team' does not add new information or advance the argument, as it restates points already made in the draft.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'In summary, the Company combines a defensible competitive position in a growing category and a credible operational team' as it is redundant.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 120,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Delete 'In summary, the Company combines a defensible competitive position in a growing category and a credible operational team' as it is redundant.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1667,
+        "endChar": 1788
+      }
+    }
+  ],
+  "references": [],
+  "sources": [
+    {
+      "index": 0,
+      "id": "assess_src_1789043627316_9bfd9bc383c03",
+      "label": "18a_synth_cross_source_pair_initial.txt",
+      "text": "INVESTMENT MEMORANDUM — STRICTLY CONFIDENTIAL\n\nTo:        Investment Committee\nFrom:      Tech Team — Sarah Klein (Member of Management), Marco Bianchi (Senior Vice President)\nDate:      15 April 2025\nSubject:   Project Lattice — Initial recommendation, Nordic SaaS Holdings AB\n\nRECOMMENDATION\n\nWe recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.\n\nCOMPANY OVERVIEW\n\nNSH was founded in 2013 by Erik Lindqvist (current CEO) and three co-founders. The Company provides an integrated software platform for residential property managers, covering rent collection, maintenance management, tenant communication, and regulatory reporting. The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.\n\nThe Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people). Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.\n\nFINANCIAL PROFILE\n\nTrailing twelve months revenue is EUR 34 million, with EBITDA of EUR 7.2 million representing a 21% margin. Gross margin is 76% and the Company is free cash flow positive. Net revenue retention is 118% and gross retention is 96%.\n\nThe Company has raised approximately EUR 22 million across two prior funding rounds, with the most recent being a Series B led by Atomico in 2022 that valued NSH at EUR 110 million pre-money.\n\nINVESTMENT THESIS\n\nNSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction.\n\nFirst, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support. NPS scores are in the high 60s, exceptional for B2B software.\n\nSecond, the Nordic property management technology market remains structurally underpenetrated. Approximately 40% of Nordic property management companies still use legacy systems or spreadsheets. NSH has a clear runway to continue penetrating this addressable market.\n\nThird, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.\n\nVALUE CREATION PLAN\n\nOur base case envisages ARR growth from EUR 38 million today to approximately EUR 95 million over a five-year hold. This is supported by continued strong organic growth (we underwrite 22% ARR CAGR over the hold period), modest expansion into adjacent verticals (commercial property management), and selective add-on M&A.\n\nEBITDA margin is expected to expand from 21% to 32% over the hold as the Company achieves greater operational scale and as Rule of 40 discipline drives more efficient growth.\n\nThe base case generates a 2.8x MOIC and 23% IRR.\n\nKEY RISKS\n\nThe principal risks are (a) competitive response from Yardi or other larger international software platforms entering the Nordic market more aggressively, (b) consolidation of property management companies themselves, which could reduce the addressable customer base, and (c) execution risk in the planned adjacent expansion into commercial property management, where NSH has limited current presence.\n\nCONCLUSION\n\nNSH is a high-quality Nordic vertical SaaS asset with strong unit economics, exceptional product strength, and a clear growth runway. We recommend approval.\n",
+      "publicationState": "restricted"
+    },
+    {
+      "index": 1,
+      "id": "assess_src_1789043627319_e82a5d1223f8c",
+      "label": "18b_synth_cross_source_pair_update.txt",
+      "text": "POST-SIGNING CONFIRMATORY DILIGENCE — STRICTLY CONFIDENTIAL\n\nTo:        Investment Committee\nFrom:      Tech Team — Sarah Klein (Member of Management), Marco Bianchi (Senior Vice President)\nDate:      28 May 2025\nSubject:   Project Lattice — Updated findings from confirmatory diligence, Nordic SaaS Holdings AB\n\nPURPOSE\n\nThis memo provides an update to the Investment Committee following completion of confirmatory diligence on NSH. Two findings warrant Committee attention as they materially update the picture set out in the initial recommendation of 15 April.\n\nUPDATED FINANCIAL POSITION\n\nAnnual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.\n\nThis is a meaningful adjustment but does not fundamentally change the investment thesis. The cleaned ARR figure is reflected in our updated returns analysis below. We have agreed with Company management to migrate to the cleaned ARR convention for all future reporting.\n\nUPDATED EMPLOYEE COUNT\n\nThe Company employs 167 people as of 28 May, not 142 as stated in our initial memo. The difference reflects (a) the closing of two Norwegian hiring rounds that completed in late April and (b) the inclusion of approximately 18 contractors who function as full-time team members but had been excluded from the headcount provided to us initially.\n\nThis higher headcount has implications for our operating leverage assumptions. We have updated our base case to reflect the higher current cost base, partially offset by reduced incremental hiring in the early years of our ownership.\n\nUPDATED CUSTOMER COUNT\n\nThe Company currently serves 412 property management companies, not 380 as stated in our initial memo. This is a positive update reflecting strong net new logo addition over the past two months.\n\nUPDATED RETURNS\n\nThe combined effect of the above updates is a modest reduction in our underwritten returns. Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation. The investment remains attractive and we are not recommending changes to the transaction structure or pricing.\n\nOTHER FINDINGS\n\nConfirmatory diligence raised no other material issues. Bain & Company's customer reference work confirmed the strength of the product and the relationship picture. Deloitte's financial diligence confirmed the underlying revenue quality, cash generation, and working capital position. KPMG's tax review identified no items of concern. Slaughter and May's legal diligence identified two minor commercial contract items that have been addressed through specific indemnities in the SPA.\n\nWe continue to recommend completion of the transaction on the terms set out in the original recommendation, subject to acknowledgment of the updated financial and operational figures above.\n",
+      "publicationState": "restricted"
+    }
+  ],
+  "excludedSources": [],
+  "meta": {
+    "pipelineVersion": "v4",
+    "stagesComplete": 7,
+    "traceId": "6242aa95-0b0d-411b-b16d-facb8482dcd5",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "modelConfig": {
+      "ranAt": "2026-09-10T12:34:16.450Z",
+      "stage2Fingerprints": [
+        "fp_27008f43d1"
+      ],
+      "stageModels": {
+        "stage1-splitting": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage1b-claim-spans": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage2-matching": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage5-commentary": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "compliance-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        }
+      }
+    }
+  },
+  "bannedWordHits": [],
+  "provenanceFlags": []
+}
