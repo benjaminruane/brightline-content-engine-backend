@@ -9,6 +9,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 import { buildSortedEntries, NO_PROPOSAL } from "../lib/revise-actions/sort.mjs";
+import { fillAction } from "../lib/revise-actions/run.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REVIEW_PATH = path.join(
@@ -61,6 +62,30 @@ describe("revise-actions sort (r10-review1)", () => {
     const found = row(entries, "4", "evidence", "conflicting");
     assert.ok(found, "S4 evidence finding must exist");
     assert.equal(found.disposition, "ACTION");
+  });
+
+  test("a non-closable conflict fill is ACKNOWLEDGE conflict_unaddressed", async () => {
+    const found = row(entries, "4", "evidence", "conflicting");
+    assert.ok(found, "S4 evidence finding must exist");
+    let called = 0;
+    const result = await fillAction(
+      {
+        ...found,
+        statement: "We are writing to confirm completion of the transaction.",
+        primaryExcerpt: "We recommend an investment of EUR 158 million.",
+        thing2: "",
+      },
+      {
+        callModel: async () => {
+          called += 1;
+          return { text: "{}" };
+        },
+      }
+    );
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
+    assert.equal(result.noProposalReason, NO_PROPOSAL.conflict_unaddressed);
   });
 
   test("S7 voice is ACTION", () => {

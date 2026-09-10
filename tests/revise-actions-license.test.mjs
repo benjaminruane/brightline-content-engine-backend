@@ -352,6 +352,7 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
     assert.equal(sample.entries.length, 15);
     const draftText = sample.entries.map((e) => e.statement).join("\n");
     const replayed = [];
+    let conflictingEvidenceModelCalls = 0;
     for (const entry of sample.entries) {
       if (entry.disposition !== "ACTION") {
         replayed.push(entry);
@@ -361,7 +362,12 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
         await fillAction(asSortedAction(entry), {
           authoringOrganisation: "Halden Group",
           draftText,
-          callModel: stubModel(entry),
+          callModel: async (...args) => {
+            if (entry.kind === "evidence" && entry.rule === "conflicting") {
+              conflictingEvidenceModelCalls += 1;
+            }
+            return stubModel(entry)(...args);
+          },
         })
       );
     }
@@ -401,6 +407,15 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
       assert.equal(byId[id]?.disposition, "ACTION", `${id} must stay ACTION`);
       assert.ok(byId[id]?.resultingSentence, `${id} keeps the proposal`);
     }
+    assert.equal(conflictingEvidenceModelCalls, 0);
+    assert.equal(
+      byId["S1:evidence:conflicting:0"]?.resultingSentence,
+      "The fund has delivered a net IRR of 11.2% since inception."
+    );
+    assert.equal(
+      byId["S2:evidence:conflicting:0"]?.resultingSentence,
+      "The fund is currently marked at 1.4 times gross MOIC."
+    );
     for (const id of KEEP_ACK_IDS) {
       assert.equal(byId[id]?.disposition, "ACKNOWLEDGE", `${id} must stay ACKNOWLEDGE`);
     }

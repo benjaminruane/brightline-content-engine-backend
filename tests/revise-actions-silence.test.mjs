@@ -9,6 +9,7 @@ import {
   statementIsSilent,
 } from "../lib/revise-actions/silence.mjs";
 import { NO_PROPOSAL, sortFinding } from "../lib/revise-actions/sort.mjs";
+import { fillAction } from "../lib/revise-actions/run.mjs";
 
 function partialCard(extra = {}) {
   return {
@@ -140,5 +141,59 @@ describe("B149 silence does not read widened span conflicts", () => {
     assert.equal(statementIsSilent(card), false);
     const sorted = sortFinding(evidenceFinding(card), statementIsSilent(card));
     assert.equal(sorted.disposition, "ACTION");
+  });
+});
+
+describe("conflict-signal cards stay ACTION at sort; fill cheap-paths when not closable", () => {
+  async function fillConflicting(statement) {
+    let called = 0;
+    const result = await fillAction(
+      {
+        id: "S0:evidence:conflicting:0",
+        disposition: "ACTION",
+        statementId: "0",
+        statement,
+        kind: "evidence",
+        rule: "conflicting",
+        thing1: null,
+        thing1State: "NONE",
+        thing2: "",
+        primaryExcerpt: "",
+        sort: {
+          policyPermit: true,
+          silenceOnCard: false,
+          rule: "conflicting",
+          reasonCode: "permitted",
+        },
+      },
+      {
+        callModel: async () => {
+          called += 1;
+          return { text: "{}" };
+        },
+      }
+    );
+    return { result, called };
+  }
+
+  test("Stage 3 conflicting supportState fill is ACKNOWLEDGE when not closable", async () => {
+    const { result, called } = await fillConflicting("Net IRR is 18.4%.");
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
+  });
+
+  test("hasConflict on a partial card fill is ACKNOWLEDGE when the finding is conflicting and not closable", async () => {
+    const { result, called } = await fillConflicting("Comparable managers have returned 2.3 times gross MOIC.");
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
+  });
+
+  test("Stage 2 single-pick conflicting fill is ACKNOWLEDGE when not closable", async () => {
+    const { result, called } = await fillConflicting("Net IRR is 18.4%.");
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
   });
 });

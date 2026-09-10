@@ -102,4 +102,12 @@ describe("revise-actions user-facing copy", () => {
       "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
     );
   });
+
+  test("conflict_unaddressed wording is clean and byte-stable", () => {
+    assert.deepEqual(findBannedUserCopy(NO_PROPOSAL.conflict_unaddressed), []);
+    assert.equal(
+      NO_PROPOSAL.conflict_unaddressed,
+      "A source contradicts this statement. Nothing is proposed. Decide whether the sentence should match the source."
+    );
+  });
 });
