@@ -26,7 +26,7 @@ import {
 import { normalizeLabelRow, normalizeLabelsDoc, parseLoadLabelsArgs, writeLabels } from "../scripts/diagnostic/accuracy/load-labels.mjs";
 import { buildSample, parseSampleArgs, writeSample } from "../scripts/diagnostic/accuracy/sample.mjs";
 import { parseWorksheetArgs, writeWorksheet } from "../scripts/diagnostic/accuracy/generate-worksheet.mjs";
-import { filterFixtures, parseIdsArg } from "../scripts/diagnostic/lib/fixtures.mjs";
+import { filterFixtures, loadAllFixtures, parseIdsArg } from "../scripts/diagnostic/lib/fixtures.mjs";
 import { runScore } from "../scripts/diagnostic/accuracy/score.mjs";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -62,6 +62,19 @@ describe("filterFixtures ids", () => {
   });
 });
 
+describe("loadAllFixtures directory selection", () => {
+  test("default directory is corpus 1; --fixtures-dir can load corpus 2", async () => {
+    const corpus1 = await loadAllFixtures();
+    assert.ok(corpus1.length > 12);
+    const corpus2 = await loadAllFixtures(path.join(ROOT, "scripts/diagnostic/accuracy2/fixtures"));
+    assert.equal(corpus2.length, 12);
+    assert.deepEqual(
+      corpus2.map((f) => String(f.data.id).padStart(2, "0")),
+      ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    );
+  });
+});
+
 describe("extract-stage1 P29 write guard", () => {
   test("refuses to write each of the four P29 paths", () => {
     const protectedPaths = p29ProtectedPaths(ACC);
@@ -90,11 +103,22 @@ describe("extract-stage1 P29 write guard", () => {
     );
   });
 
-  test("parseExtractArgs reads --ids, --out, and --stability-gate", () => {
-    const args = parseExtractArgs(["--stability-gate", "--ids", "01,03,05", "--out", "/tmp/c2.json"]);
+  test("parseExtractArgs reads --ids, --out, --fixtures-dir, and --stability-gate", () => {
+    const args = parseExtractArgs([
+      "--stability-gate",
+      "--ids",
+      "01,03,05",
+      "--out",
+      "/tmp/c2.json",
+      "--fixtures-dir",
+      "scripts/diagnostic/accuracy2/fixtures",
+    ]);
     assert.equal(args.stabilityGate, true);
     assert.deepEqual(args.ids, ["01", "03", "05"]);
     assert.equal(args.out, "/tmp/c2.json");
+    assert.equal(args.fixturesDir, "scripts/diagnostic/accuracy2/fixtures");
+    const defaults = parseExtractArgs(["--out", "/tmp/c1.json"]);
+    assert.equal(defaults.fixturesDir, null);
   });
 });
 
@@ -141,11 +165,14 @@ describe("run-evidence --statements and selected-id freeze count", () => {
       "c2-1",
       "--runs-root",
       "/tmp/c2-runs",
+      "--fixtures-dir",
+      "scripts/diagnostic/accuracy2/fixtures",
     ]);
     assert.equal(args.statements, "/tmp/c2-statements.json");
     assert.deepEqual(args.ids, ["01", "03"]);
     assert.equal(args.pass, "c2-1");
     assert.equal(args.runsRoot, "/tmp/c2-runs");
+    assert.equal(args.fixturesDir, "scripts/diagnostic/accuracy2/fixtures");
   });
 
   test("validates freeze count against selected ids rather than 261", () => {
@@ -382,7 +409,10 @@ describe("parameterised writers", () => {
         path.join(dir, "worksheet.md"),
         "--ids",
         "01",
+        "--fixtures-dir",
+        "scripts/diagnostic/accuracy2/fixtures",
       ]);
+      assert.equal(wsArgs.fixturesDir, "scripts/diagnostic/accuracy2/fixtures");
       const sheet = await writeWorksheet({
         manifestPath: wsArgs.manifest,
         statementsPath: wsArgs.statements,

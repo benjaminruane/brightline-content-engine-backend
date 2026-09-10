@@ -57,10 +57,54 @@ export function parseSampleArgs(argv) {
   return out;
 }
 
+const IN_REACH_SHAPE = /^S(0[1-9]|1[0-6])$/;
+
+export function expandDesignSpans(design) {
+  const faults = [];
+  for (const fault of Array.isArray(design?.faults) ? design.faults : []) {
+    faults.push(fault);
+    if (typeof fault?.spanB === "string" && fault.spanB.trim()) {
+      faults.push({ ...fault, id: `${fault.id}#spanB`, span: fault.spanB });
+    }
+  }
+  return { ...design, faults };
+}
+
+export function membershipDesign(design) {
+  const faults = Array.isArray(design?.faults) ? design.faults : [];
+  const shaped = faults.some((f) => typeof f.shape === "string" && f.shape.length > 0);
+  if (!shaped) return design;
+  return {
+    ...design,
+    faults: faults.filter((f) => f.kind === "statement" && IN_REACH_SHAPE.test(f.shape)),
+  };
+}
+
+export function resolveSampleParams(design, groupACap) {
+  const seed = Number.isFinite(Number(design?.seed)) ? Number(design.seed) : SAMPLE_SEED;
+  const labelBudget = Number.isFinite(Number(design?.labelBudget))
+    ? Number(design.labelBudget)
+    : LABEL_BUDGET;
+  const cap = resolveGroupAHardCap(groupACap ?? design?.groupACap ?? GROUP_A_HARD_CAP);
+  const f15Cap = Object.prototype.hasOwnProperty.call(design ?? {}, "f15Cap")
+    ? design.f15Cap
+    : design?.labelBudget != null
+      ? null
+      : F15_CAP;
+  return { seed, labelBudget, cap, f15Cap };
+}
+
 export async function buildSample({ statementsDoc, design, groupACap }) {
-  const cap = resolveGroupAHardCap(groupACap ?? GROUP_A_HARD_CAP);
+  const { seed, labelBudget, cap, f15Cap } = resolveSampleParams(design, groupACap);
   const statements = flattenStatements(statementsDoc);
-  const mapped = mapGroupA(statements, design);
+  const spanCheck = mapGroupA(statements, expandDesignSpans(design));
+  if (spanCheck.failed.length > 0) {
+    const detail = spanCheck.failed
+      .map((f) => `${f.id} status=${f.status} matchCount=${f.matchCount} span=${JSON.stringify(f.span)}`)
+      .join("; ");
+    throw new Error(`Group A span failed to map to exactly one statement: ${detail}`);
+  }
+  const mapped = mapGroupA(statements, membershipDesign(design));
   if (mapped.failed.length > 0) {
     const detail = mapped.failed
       .map((f) => `${f.id} status=${f.status} matchCount=${f.matchCount}`)
@@ -69,13 +113,13 @@ export async function buildSample({ statementsDoc, design, groupACap }) {
   }
   assertGroupAWithinCap(mapped.groupA.length, cap);
   const groupAKeys = mapped.groupA.map((s) => joinKey(s.fixtureId, s.text, s.occurrence));
-  const targetB = LABEL_BUDGET - mapped.groupA.length;
+  const targetB = labelBudget - mapped.groupA.length;
   const sampled = sampleGroupB({
     statements,
     groupAKeys,
-    seed: SAMPLE_SEED,
+    seed,
     targetCount: targetB,
-    f15Cap: F15_CAP,
+    f15Cap: f15Cap == null || !Number.isFinite(Number(f15Cap)) ? Number.POSITIVE_INFINITY : f15Cap,
   });
   if (sampled.groupB.length !== targetB) {
     throw new Error(
@@ -83,23 +127,27 @@ export async function buildSample({ statementsDoc, design, groupACap }) {
     );
   }
   const f15Drawn = sampled.drawnPerFixture["15"] || 0;
-  if (f15Drawn > F15_CAP) {
-    throw new Error(`F15 Group B draw ${f15Drawn} exceeds cap ${F15_CAP}`);
+  if (f15Cap != null && Number.isFinite(Number(f15Cap)) && f15Drawn > f15Cap) {
+    throw new Error(`F15 Group B draw ${f15Drawn} exceeds cap ${f15Cap}`);
   }
   return {
     mapped,
+    spanCheck,
     manifest: {
-      seed: SAMPLE_SEED,
-      labelBudget: LABEL_BUDGET,
+      seed,
+      labelBudget,
       groupACount: mapped.groupA.length,
       groupBCount: sampled.groupB.length,
       groupAHardCap: cap,
-      f15Cap: F15_CAP,
+      f15Cap: f15Cap == null ? null : f15Cap,
       perFixtureFloor: 0,
       weighting: {
-        method: "hamilton-largest-remainder then F15 cap then cap-to-pool",
+        method:
+          f15Cap == null
+            ? "hamilton-largest-remainder then cap-to-pool"
+            : "hamilton-largest-remainder then F15 cap then cap-to-pool",
         weight: "non-A statement count per fixture",
-        f15CapApplied: true,
+        f15CapApplied: f15Cap != null && Number.isFinite(Number(f15Cap)),
         rawWeights: sampled.rawWeights,
         allocationBeforeCap: sampled.allocationBeforeCap,
         allocationAfterCap: sampled.allocationAfterCap,
@@ -152,7 +200,9 @@ async function main() {
     console.log(`  ${row.id} ${row.status} matches=${row.matchCount}`);
   }
   console.log(`Group B: ${manifest.groupBCount} seed=${manifest.seed}`);
-  console.log(`F15 B draw: ${manifest.weighting.drawnPerFixture["15"] || 0} cap=${F15_CAP}`);
+  console.log(
+    `F15 B draw: ${manifest.weighting.drawnPerFixture["15"] || 0} cap=${manifest.f15Cap ?? "none"}`
+  );
   console.log(`wrote ${outPath}`);
 }
 

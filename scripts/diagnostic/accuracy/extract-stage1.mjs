@@ -5,6 +5,7 @@
  *   node scripts/diagnostic/accuracy/extract-stage1.mjs --stability-gate --out path.json
  *   node scripts/diagnostic/accuracy/extract-stage1.mjs --out path.json
  *   node scripts/diagnostic/accuracy/extract-stage1.mjs --ids 01,03,05 --out path.json
+ *   node scripts/diagnostic/accuracy/extract-stage1.mjs --fixtures-dir path --stability-gate --out path.json
  *
  * Stability gate (locked before the run): mismatched statement slots across
  * two cache-off extracts must be <= STABILITY_MISMATCH_THRESHOLD (5).
@@ -37,13 +38,15 @@ const COST_CEILING_USD = 1;
 export const RANGE = { from: "01", to: "20" };
 
 export function parseExtractArgs(argv) {
-  const out = { ids: [], out: null, stabilityGate: false };
+  const out = { ids: [], out: null, stabilityGate: false, fixturesDir: null };
   const args = Array.isArray(argv) ? argv : [];
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === "--ids" && args[i + 1]) {
       out.ids = parseIdsArg(args[++i]);
     } else if (args[i] === "--out" && args[i + 1]) {
       out.out = args[++i];
+    } else if (args[i] === "--fixtures-dir" && args[i + 1]) {
+      out.fixturesDir = args[++i];
     } else if (args[i] === "--stability-gate") {
       out.stabilityGate = true;
     }
@@ -221,7 +224,7 @@ async function main() {
     throw new Error("OPENAI_API_KEY is required for Stage 1 extract");
   }
 
-  const fixtures = await loadAllFixtures();
+  const fixtures = await loadAllFixtures(args.fixturesDir);
 
   if (!args.stabilityGate) {
     const run = await extractRange({ extractStatements, fixtures, filter });

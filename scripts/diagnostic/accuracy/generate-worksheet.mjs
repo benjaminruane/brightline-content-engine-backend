@@ -57,14 +57,28 @@ Implied but not stated. A detail the source strongly implies but never states is
 
 Work fixture by fixture. Read the source once. Then label the listed statements in the order given (draft order).`;
 
+export const COVER_PAGE_CORPUS2_EXTRA = `UNFALSIFIABLE FAULTS. Where a statement invents something the sources never address, the correct card is no support, not conflicting. Any verdict other than confirmed counts as a catch.
+
+COMPOUND FAULTS. A statement carrying more than one error shape is assigned one owning shape. The second is tagged and counts in no denominator.
+
+TABLE CELLS. Where a figure can only be settled by reading a row against a column in a flattened table, there is no C, P or X target. The pass condition is that the tool must not return confirmed.`;
+
+export function coverPage({ corpus2 = false } = {}) {
+  if (!corpus2) return COVER_PAGE;
+  return `${COVER_PAGE}
+
+${COVER_PAGE_CORPUS2_EXTRA}`;
+}
+
 export function parseWorksheetArgs(argv) {
-  const out = { manifest: null, statements: null, out: null, ids: [] };
+  const out = { manifest: null, statements: null, out: null, ids: [], fixturesDir: null };
   const args = Array.isArray(argv) ? argv : [];
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === "--manifest" && args[i + 1]) out.manifest = args[++i];
     else if (args[i] === "--statements" && args[i + 1]) out.statements = args[++i];
     else if (args[i] === "--out" && args[i + 1]) out.out = args[++i];
     else if (args[i] === "--ids" && args[i + 1]) out.ids = parseIdsArg(args[++i]);
+    else if (args[i] === "--fixtures-dir" && args[i + 1]) out.fixturesDir = args[++i];
   }
   return out;
 }
@@ -87,8 +101,8 @@ function cell(text) {
   return String(text ?? "").replace(/\|/g, "\\|").replace(/\n/g, " ");
 }
 
-export function buildWorksheetMarkdown({ fixtures, sourcesById, sampledByFixture }) {
-  const parts = [COVER_PAGE, ""];
+export function buildWorksheetMarkdown({ fixtures, sourcesById, sampledByFixture, cover = COVER_PAGE }) {
+  const parts = [cover, ""];
   const ids = [...sampledByFixture.keys()].sort();
   for (const id of ids) {
     const fx = fixtures.find((f) => padFixtureId(f.data.id) === id);
@@ -122,7 +136,7 @@ export function buildWorksheetMarkdown({ fixtures, sourcesById, sampledByFixture
   return `${parts.join("\n")}\n`;
 }
 
-export async function generateWorksheet({ statementsDoc, manifest, loadFixtures, loadSources, ids }) {
+export async function generateWorksheet({ statementsDoc, manifest, loadFixtures, loadSources, ids, cover }) {
   const filter =
     Array.isArray(ids) && ids.length > 0 ? { ids } : { range: DEFAULT_RANGE };
   const fixtures = filterFixtures(await loadFixtures(), filter);
@@ -140,7 +154,12 @@ export async function generateWorksheet({ statementsDoc, manifest, loadFixtures,
     const entries = fx?.data?.sources ?? [];
     sourcesById.set(id, await loadSources(entries));
   }
-  return buildWorksheetMarkdown({ fixtures, sourcesById, sampledByFixture });
+  return buildWorksheetMarkdown({
+    fixtures,
+    sourcesById,
+    sampledByFixture,
+    cover: cover ?? COVER_PAGE,
+  });
 }
 
 export async function writeWorksheet({
@@ -148,19 +167,24 @@ export async function writeWorksheet({
   statementsPath,
   outPath,
   ids,
-  loadFixtures = loadAllFixtures,
+  fixturesDir,
+  loadFixtures,
   loadSources = loadPipelineSources,
+  cover,
 }) {
   const resolvedOut = path.resolve(outPath);
   assertNotP29ProtectedWrite(resolvedOut);
   const statementsDoc = JSON.parse(await readFile(path.resolve(statementsPath), "utf8"));
   const manifest = JSON.parse(await readFile(path.resolve(manifestPath), "utf8"));
+  const load = loadFixtures ?? (() => loadAllFixtures(fixturesDir));
+  const corpus2 = String(fixturesDir ?? "").includes("accuracy2");
   const md = await generateWorksheet({
     statementsDoc,
     manifest,
-    loadFixtures,
+    loadFixtures: load,
     loadSources,
     ids,
+    cover: cover ?? coverPage({ corpus2 }),
   });
   await writeAccuracyFile(resolvedOut, md);
   return { outPath: resolvedOut, markdown: md };
@@ -173,6 +197,7 @@ async function main() {
     statementsPath: args.statements ? path.resolve(args.statements) : DEFAULT_STATEMENTS_PATH,
     outPath: args.out ? path.resolve(args.out) : DEFAULT_OUT_PATH,
     ids: args.ids,
+    fixturesDir: args.fixturesDir,
   });
   console.log(`wrote ${outPath}`);
 }

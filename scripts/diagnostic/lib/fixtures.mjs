@@ -3,14 +3,16 @@ import path from "node:path";
 import { FIXTURES_DIR } from "./paths.mjs";
 
 /**
+ * @param {string} [fixturesDir]
  * @returns {Promise<Array<{ filePath: string, data: object, sortKey: string }>>}
  */
-export async function loadAllFixtures() {
-  const names = await readdir(FIXTURES_DIR);
+export async function loadAllFixtures(fixturesDir = FIXTURES_DIR) {
+  const dir = path.resolve(fixturesDir || FIXTURES_DIR);
+  const names = await readdir(dir);
   const jsonFiles = names.filter((n) => n.endsWith(".json") && !n.startsWith("_")).sort();
   const out = [];
   for (const name of jsonFiles) {
-    const filePath = path.join(FIXTURES_DIR, name);
+    const filePath = path.join(dir, name);
     const raw = await readFile(filePath, "utf8");
     const data = JSON.parse(raw);
     const id = String(data?.id ?? name.slice(0, 2));

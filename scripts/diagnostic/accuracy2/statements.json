@@ -1,0 +1,1869 @@
+{
+  "extractedAt": "2026-09-10T09:34:31.372Z",
+  "range": "01-20",
+  "stage1b": false,
+  "cache": "off",
+  "frozenFrom": "run1",
+  "stability": {
+    "threshold": 5,
+    "mismatchedSlots": 0,
+    "passed": true,
+    "diffs": [],
+    "run1CostUsd": 0.08649499999999999,
+    "run2CostUsd": 0.08649499999999999,
+    "totalCostUsd": 0.17298999999999998
+  },
+  "costUsd": 0.08649499999999999,
+  "perFixtureCounts": {
+    "10": 20,
+    "11": 20,
+    "12": 20,
+    "01": 20,
+    "02": 20,
+    "03": 20,
+    "04": 20,
+    "05": 20,
+    "06": 20,
+    "07": 20,
+    "08": 20,
+    "09": 20
+  },
+  "fixtures": [
+    {
+      "fixtureId": "01",
+      "label": "k_d1_fy2025_results",
+      "source": "llm",
+      "costUsd": 0.0092375,
+      "usage": {
+        "inputTokens": 783,
+        "outputTokens": 728
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "Kelvedge Group delivered a total return of £5,049 million for the year to 31 March 2025, or 25% on opening shareholders' funds, against £3,839 million and 23% a year earlier.",
+          "charStart": 0,
+          "charEnd": 174,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Net asset value per share rose to 2,542 pence from 2,085 pence, after a 27 pence per share loss on foreign exchange translation.",
+          "charStart": 175,
+          "charEnd": 303,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "The net total return of 25% was achieved against a challenging macro-economic and geopolitical backdrop.",
+          "charStart": 304,
+          "charEnd": 408,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "The Private Equity business delivered a gross investment return of £5,113 million, or 26%, up from £4,059 million and 25%.",
+          "charStart": 409,
+          "charEnd": 531,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "That return was driven by Grulden.",
+          "charStart": 532,
+          "charEnd": 566,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Skaldwick generated a gross investment return of £4,551 million, or 32% on its opening value.",
+          "charStart": 568,
+          "charEnd": 661,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Grulden delivered annual revenue growth of 22%, like-for-like sales growth of 10.3% and EBITDA growth of 29% in 2024.",
+          "charStart": 662,
+          "charEnd": 779,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "The business started 2025 well, with net sales of EUR 3,521 million against EUR 3,004 million in the first three periods of 2024.",
+          "charStart": 780,
+          "charEnd": 909,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "Operating EBITDA over the same periods was EUR 464 million, against EUR 397 million.",
+          "charStart": 910,
+          "charEnd": 994,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "Run-rate EBITDA on a last-twelve-months basis to the third period of 2025 reached EUR 2,328 million, a 26% increase.",
+          "charStart": 995,
+          "charEnd": 1111,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Private Equity contributed £5,113 million of the Group's £5,211 million gross investment return.",
+          "charStart": 1113,
+          "charEnd": 1209,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "At the end of week 19, Grulden's cash balance stood at EUR 427 billion.",
+          "charStart": 1210,
+          "charEnd": 1281,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Grulden had added 76 new stores by mid-May.",
+          "charStart": 1282,
+          "charEnd": 1325,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "The Private Equity team invested £1,177 million in the year, including £768 million in a further stake in Grulden.",
+          "charStart": 1326,
+          "charEnd": 1440,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "Realised proceeds of £659 million came from the exits of Vyrenza and RD, both at money multiples of 2.0x or higher.",
+          "charStart": 1441,
+          "charEnd": 1556,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "Infrastructure generated a gross investment return of £52 million, or 3%, against £99 million and 7% a year earlier.",
+          "charStart": 1558,
+          "charEnd": 1674,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "Infrastructure returns fell because of higher interest rates.",
+          "charStart": 1675,
+          "charEnd": 1736,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "The Group took £2.4 billion of cash proceeds out of the portfolio and ended the year with liquidity of £1,323 million and gearing of 3%.",
+          "charStart": 1737,
+          "charEnd": 1873,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "The Group ended the year with net debt of £771 million.",
+          "charStart": 1874,
+          "charEnd": 1929,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "Total dividend for FY2025 was 73.0 pence per share.",
+          "charStart": 1930,
+          "charEnd": 1981,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "02",
+      "label": "k_d2_fy2025_client_letter",
+      "source": "llm",
+      "costUsd": 0.0078175,
+      "usage": {
+        "inputTokens": 671,
+        "outputTokens": 614
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "FY2025 was another successful year for Kelvedge, with a total return of £5,049 million.",
+          "charStart": 0,
+          "charEnd": 87,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "It was a year of consistently strong growth.",
+          "charStart": 88,
+          "charEnd": 132,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "Grulden delivered EBITDA growth of 29% in 2025.",
+          "charStart": 133,
+          "charEnd": 180,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "Grulden's like-for-like sales growth was 10.3% over the same period.",
+          "charStart": 181,
+          "charEnd": 249,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "The year to 31 March 2025 saw total return rise from £3,839 million a year earlier.",
+          "charStart": 250,
+          "charEnd": 333,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Kelvedge's Chief Investment Officer described the result as underpinned by the powerful compounding growth of the long-term hold assets.",
+          "charStart": 335,
+          "charEnd": 471,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Net asset value per share ended the year at 2,542 pence.",
+          "charStart": 472,
+          "charEnd": 528,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "The second FY2025 dividend of 42.5 pence per share was paid in July 2025, taking the total for the year to 73.0 pence.",
+          "charStart": 529,
+          "charEnd": 647,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "Grulden's value growth of £4,324 million was supported by its trading performance.",
+          "charStart": 648,
+          "charEnd": 730,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "Realised proceeds and dividend distributions from Grulden to Kelvedge were £1,597 million.",
+          "charStart": 731,
+          "charEnd": 821,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Infrastructure delivered an excellent level of dividend and interest income.",
+          "charStart": 823,
+          "charEnd": 899,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "The Infrastructure result was held back by subdued share price performance from the Group's 29% stake in Kelvedge Infrastructure plc.",
+          "charStart": 900,
+          "charEnd": 1033,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Trading in the services and software portfolio was resilient despite a cautious IT spending environment.",
+          "charStart": 1034,
+          "charEnd": 1138,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "Market-specific challenges continue to affect a small number of portfolio companies.",
+          "charStart": 1139,
+          "charEnd": 1223,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "The Private Equity team completed 12 bolt-on acquisitions across the portfolio, only one of which required further funding from Kelvedge.",
+          "charStart": 1224,
+          "charEnd": 1361,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "New investments in the year totalled £318 million across Fennovar, Cloverbeck and Wenbach Pruefservice.",
+          "charStart": 1363,
+          "charEnd": 1466,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "A further £39 million was invested in Skaldwick.",
+          "charStart": 1467,
+          "charEnd": 1515,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "The Group ended the year with net debt of £771 million.",
+          "charStart": 1516,
+          "charEnd": 1571,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "Gross debt stood at £1,194 million against liquidity of £1,323 million.",
+          "charStart": 1572,
+          "charEnd": 1643,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "Operating cash profit was £469 million, against £467 million a year earlier.",
+          "charStart": 1644,
+          "charEnd": 1720,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "03",
+      "label": "k_d3_half_year",
+      "source": "llm",
+      "costUsd": 0.0081,
+      "usage": {
+        "inputTokens": 692,
+        "outputTokens": 637
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "Kelvedge delivered a total return of £1,724 million in the six months to 30 September 2025, or 7% on opening shareholders' funds.",
+          "charStart": 0,
+          "charEnd": 129,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "That compares with £2,109 million and 10% in the same period a year earlier.",
+          "charStart": 130,
+          "charEnd": 206,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "Net asset value per share reached 2,681 pence, from 2,542 pence at the March year end.",
+          "charStart": 207,
+          "charEnd": 293,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "The Group's gross investment return for the year to 31 March 2025 was £5,211 million.",
+          "charStart": 294,
+          "charEnd": 379,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "Private Equity generated a gross investment return of £1,904 million, or 9%.",
+          "charStart": 380,
+          "charEnd": 456,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Skaldwick delivered like-for-like sales growth of 5.4% in the first eight periods of 2025.",
+          "charStart": 458,
+          "charEnd": 548,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Grulden's net sales over those periods were EUR 9,873 million, against EUR 8,614 million a year earlier.",
+          "charStart": 549,
+          "charEnd": 653,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Grulden's cash balance at 30 September 2025 was EUR 512 million.",
+          "charStart": 654,
+          "charEnd": 718,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "The Private Equity team invested £486 million in the half year and generated £402 million of realised proceeds.",
+          "charStart": 719,
+          "charEnd": 830,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "Grulden had added 168 new stores year to date.",
+          "charStart": 831,
+          "charEnd": 877,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "The Group continues to expect Grulden to open between 350 and 400 new stores in the 2025 calendar year.",
+          "charStart": 879,
+          "charEnd": 982,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "Infrastructure generated a gross investment return of £71 million, or 4%, with income the principal contributor.",
+          "charStart": 983,
+          "charEnd": 1095,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Grulden's slower like-for-like growth reflects weaker consumer confidence in its core markets.",
+          "charStart": 1096,
+          "charEnd": 1190,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "The interim dividend was held at 30.5 pence per share.",
+          "charStart": 1191,
+          "charEnd": 1245,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "Net debt fell to £688 million and gearing to 2%.",
+          "charStart": 1246,
+          "charEnd": 1294,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "Portfolio value stood at £26,104 million at the half year.",
+          "charStart": 1296,
+          "charEnd": 1354,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "No new platform investments were completed in the half year.",
+          "charStart": 1355,
+          "charEnd": 1415,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "Management's patience on new investment was reinforced by pricing they did not believe in.",
+          "charStart": 1416,
+          "charEnd": 1506,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "Like-for-like growth of 5.4% compares with 9.1% in the first eight periods of 2024.",
+          "charStart": 1507,
+          "charEnd": 1590,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "Cash investment in the half was £486 million, against £571 million a year earlier.",
+          "charStart": 1591,
+          "charEnd": 1673,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "04",
+      "label": "k_d4_fennovar_note",
+      "source": "llm",
+      "costUsd": 0.0072075,
+      "usage": {
+        "inputTokens": 619,
+        "outputTokens": 566
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "Kelvedge invested £318 million in Fennovar in the year to 31 March 2025.",
+          "charStart": 0,
+          "charEnd": 72,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Fennovar is a European provider of specialist industrial coatings, headquartered in Lyon.",
+          "charStart": 73,
+          "charEnd": 162,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "The company manufactures in France, Germany and Poland.",
+          "charStart": 163,
+          "charEnd": 218,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "Revenue for the year to 31 December 2025 was EUR 287 million, 14% ahead of the prior year.",
+          "charStart": 219,
+          "charEnd": 309,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "EBITDA was EUR 41 million, an increase of 18%, representing a margin of 14.3%.",
+          "charStart": 310,
+          "charEnd": 388,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "The EBITDA increase reflects price realisation and lower resin input costs.",
+          "charStart": 390,
+          "charEnd": 465,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Fennovar is the dominant independent participant in the European specialist coatings market.",
+          "charStart": 466,
+          "charEnd": 558,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Management expect revenue to reach EUR 340 million by 2027.",
+          "charStart": 559,
+          "charEnd": 618,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "That expectation depends on the successful integration of the two bolt-on acquisitions completed in the second half of 2025.",
+          "charStart": 619,
+          "charEnd": 743,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "The team sees a credible path to an EBITDA margin of 16% over the hold period.",
+          "charStart": 744,
+          "charEnd": 822,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "The largest customer represents 9% of revenue and the top ten represent 34%.",
+          "charStart": 824,
+          "charEnd": 900,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "Raw material cost inflation remains the principal exposure.",
+          "charStart": 901,
+          "charEnd": 960,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "The team is seeking approval for a follow-on investment of up to £95 million.",
+          "charStart": 961,
+          "charEnd": 1038,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "The follow-on would fund the acquisition of a Spanish competitor, on terms that are not yet agreed.",
+          "charStart": 1039,
+          "charEnd": 1138,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "The Spanish target would add roughly EUR 60 million of revenue.",
+          "charStart": 1139,
+          "charEnd": 1202,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "It would give Fennovar a manufacturing presence in Iberia for the first time.",
+          "charStart": 1204,
+          "charEnd": 1281,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "The team recommends no change to the carrying value at this time.",
+          "charStart": 1282,
+          "charEnd": 1347,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "Integration risk on the two completed bolt-ons has not been fully retired.",
+          "charStart": 1348,
+          "charEnd": 1422,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "Fennovar was one of three new investments completed that year, alongside Cloverbeck and Wenbach Pruefservice.",
+          "charStart": 1423,
+          "charEnd": 1532,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "The company sells primarily to industrial original equipment manufacturers.",
+          "charStart": 1533,
+          "charEnd": 1608,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "05",
+      "label": "k_d5_fennovar_followon",
+      "source": "llm",
+      "costUsd": 0.006690000000000001,
+      "usage": {
+        "inputTokens": 580,
+        "outputTokens": 524
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "The team recommends a follow-on investment of up to £95 million in Fennovar.",
+          "charStart": 0,
+          "charEnd": 76,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Kelvedge invested £142 million in Fennovar in November 2024.",
+          "charStart": 77,
+          "charEnd": 137,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "Fennovar will deliver an EBITDA margin of 16% over the hold period.",
+          "charStart": 138,
+          "charEnd": 205,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "That margin improvement contributes approximately 180 basis points of the value underwritten at entry.",
+          "charStart": 206,
+          "charEnd": 308,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "Revenue reached EUR 287 million in the year to 31 December 2025.",
+          "charStart": 309,
+          "charEnd": 373,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "EBITDA of EUR 41 million represented a margin of 14.3%.",
+          "charStart": 375,
+          "charEnd": 430,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Revenue growth of 14% was achieved alongside an 18% increase in EBITDA.",
+          "charStart": 431,
+          "charEnd": 502,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "If the Spanish transaction does not complete on acceptable terms, the team will return to the Committee with a revised proposal.",
+          "charStart": 503,
+          "charEnd": 631,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "Fennovar's diagnostics division is expected to contribute to the 2026 result.",
+          "charStart": 632,
+          "charEnd": 709,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "The company has manufacturing in France, Germany and Poland.",
+          "charStart": 710,
+          "charEnd": 770,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Customer concentration is moderate.",
+          "charStart": 772,
+          "charEnd": 807,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "The top ten customers represent 34% of revenue.",
+          "charStart": 808,
+          "charEnd": 855,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "The follow-on would be made alongside existing shareholders.",
+          "charStart": 856,
+          "charEnd": 916,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "Terms of the Spanish acquisition are not yet agreed.",
+          "charStart": 917,
+          "charEnd": 969,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "The team is not recommending any specific alternative transaction at this stage.",
+          "charStart": 970,
+          "charEnd": 1050,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "Fennovar sells primarily to industrial original equipment manufacturers, with a smaller aftermarket business.",
+          "charStart": 1052,
+          "charEnd": 1161,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "The Polish acquisition completed in 2024 contributed a full year of earnings in 2025.",
+          "charStart": 1162,
+          "charEnd": 1247,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "Integration risk on the two completed bolt-ons is not yet fully retired.",
+          "charStart": 1248,
+          "charEnd": 1320,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "The Spanish target would give Fennovar its first manufacturing presence in Iberia.",
+          "charStart": 1321,
+          "charEnd": 1403,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "Raw material cost inflation is the principal exposure.",
+          "charStart": 1404,
+          "charEnd": 1458,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "06",
+      "label": "k_d6_grulden_note",
+      "source": "llm",
+      "costUsd": 0.007555,
+      "usage": {
+        "inputTokens": 646,
+        "outputTokens": 594
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "Grulden delivered like-for-like sales growth of 10.3%.",
+          "charStart": 0,
+          "charEnd": 54,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Grulden's like-for-like sales growth was 5.4%.",
+          "charStart": 55,
+          "charEnd": 101,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "Net sales in the first three periods of 2025 were EUR 3,521 million, against EUR 3,004 million a year earlier.",
+          "charStart": 102,
+          "charEnd": 212,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "Operating EBITDA over those periods was EUR 464 million, against EUR 397 million.",
+          "charStart": 213,
+          "charEnd": 294,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "Run-rate EBITDA on a last-twelve-months basis reached EUR 2,328 million to the third period of 2025.",
+          "charStart": 295,
+          "charEnd": 395,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "That represented a 26% increase on the same period a year earlier.",
+          "charStart": 397,
+          "charEnd": 463,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Grulden generated a gross investment return of £4,551 million, or 32% on its opening value.",
+          "charStart": 464,
+          "charEnd": 555,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Value growth of £4,324 million was supported by that trading performance.",
+          "charStart": 556,
+          "charEnd": 629,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "Realised proceeds and dividend distributions to Kelvedge were £1,597 million.",
+          "charStart": 630,
+          "charEnd": 707,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "At week 19 of 2025, year-to-date like-for-like sales growth was 6.8%.",
+          "charStart": 708,
+          "charEnd": 777,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "76 new stores had been added at that date.",
+          "charStart": 779,
+          "charEnd": 821,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "By 30 September 2025, 168 new stores had been added year to date.",
+          "charStart": 822,
+          "charEnd": 887,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Grulden's cash balance was EUR 512 million at the September half year.",
+          "charStart": 888,
+          "charEnd": 958,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "Net sales in the first eight periods of 2025 were EUR 9,873 million.",
+          "charStart": 959,
+          "charEnd": 1027,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "Operating EBITDA over those periods was EUR 1,204 million.",
+          "charStart": 1028,
+          "charEnd": 1086,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "Grulden is expected to open between 350 and 400 new stores in the 2025 calendar year.",
+          "charStart": 1088,
+          "charEnd": 1173,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "Kelvedge invested a further £768 million in Grulden during the year to 31 March 2025.",
+          "charStart": 1174,
+          "charEnd": 1259,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "Annual revenue growth was 22% in 2024.",
+          "charStart": 1260,
+          "charEnd": 1298,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "EBITDA growth was 29% in 2024.",
+          "charStart": 1299,
+          "charEnd": 1329,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "Grulden continues to take share, though at a more measured rate.",
+          "charStart": 1330,
+          "charEnd": 1394,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "07",
+      "label": "c_d1_cpif_summary",
+      "source": "llm",
+      "costUsd": 0.0069,
+      "usage": {
+        "inputTokens": 596,
+        "outputTokens": 541
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "The Cravenford Private Investments Fund is a non-diversified, closed-end tender offer fund registered under the 1940 and 1933 Acts.",
+          "charStart": 0,
+          "charEnd": 131,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Fund net asset value was $653.0 billion at 31 March 2026.",
+          "charStart": 132,
+          "charEnd": 189,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "The Fund held 61 companies at that date.",
+          "charStart": 190,
+          "charEnd": 230,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "Those companies sit across more than 40 general partner relationships.",
+          "charStart": 231,
+          "charEnd": 301,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "Cravenford has a 40+ year track record of investing across all private market asset classes.",
+          "charStart": 302,
+          "charEnd": 394,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Total assets under management across all strategies were $161.0 billion.",
+          "charStart": 396,
+          "charEnd": 468,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "The firm employs 233 investment professionals.",
+          "charStart": 469,
+          "charEnd": 515,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Class A returned -2.45% in the twelve months to 31 March 2026.",
+          "charStart": 516,
+          "charEnd": 578,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "Class A returned 3.35% over the twelve months to 31 March 2026.",
+          "charStart": 579,
+          "charEnd": 642,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "The Fund's net asset value net of the incentive fee accrual was $653.0 million.",
+          "charStart": 643,
+          "charEnd": 722,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Direct investments represent 88% of the portfolio and secondaries 12%.",
+          "charStart": 724,
+          "charEnd": 794,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "North America accounts for 70% of the portfolio, with Europe at 25%.",
+          "charStart": 795,
+          "charEnd": 863,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Class A returned -1.06% in January 2026.",
+          "charStart": 864,
+          "charEnd": 904,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "Asia and Australia together account for 5% of the portfolio.",
+          "charStart": 905,
+          "charEnd": 965,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "The Fund's net asset value was $0.653 billion.",
+          "charStart": 966,
+          "charEnd": 1012,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "The Fund is perpetual in term.",
+          "charStart": 1014,
+          "charEnd": 1044,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "All investors must be Qualified Clients.",
+          "charStart": 1045,
+          "charEnd": 1085,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "The minimum initial subscription for Class I is $1,000,000.",
+          "charStart": 1086,
+          "charEnd": 1145,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "Repurchase offers are expected quarterly and are capped at 5% of net asset value.",
+          "charStart": 1146,
+          "charEnd": 1227,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "Class D and Class I both showed a net asset value per share of 10.17.",
+          "charStart": 1228,
+          "charEnd": 1297,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "08",
+      "label": "c_d2_cpif_quarterly",
+      "source": "llm",
+      "costUsd": 0.0071175000000000006,
+      "usage": {
+        "inputTokens": 611,
+        "outputTokens": 559
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "Class D shares returned -1.03% in March 2026.",
+          "charStart": 0,
+          "charEnd": 45,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Class A shares returned -2.45% year to date at 31 March 2026.",
+          "charStart": 46,
+          "charEnd": 107,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "The Fund's healthcare diagnostics sleeve was the largest detractor in the quarter.",
+          "charStart": 108,
+          "charEnd": 190,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "Cravenford's Chief Investment Officer described the Fund as seeking capital growth over the long term.",
+          "charStart": 191,
+          "charEnd": 293,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "Marnholt Networks is an outstanding position and the Fund's strongest holding.",
+          "charStart": 294,
+          "charEnd": 372,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Management fees have been waived through to the end of 2026.",
+          "charStart": 374,
+          "charEnd": 434,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Total annual expenses for Class A are 5.10% before the waiver.",
+          "charStart": 435,
+          "charEnd": 497,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "After the expense limitation and fee waiver, Class A total annual expenses are 2.44%.",
+          "charStart": 498,
+          "charEnd": 583,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "Class I total annual expenses after the waiver are 1.69%.",
+          "charStart": 584,
+          "charEnd": 641,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "The management fee is 1.25% of net asset value per annum, accrued monthly and payable quarterly.",
+          "charStart": 642,
+          "charEnd": 738,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "The incentive fee is 12.5% of net profits above the Loss Recovery Account.",
+          "charStart": 740,
+          "charEnd": 814,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "Class A carries a maximum sales load of 3.50%.",
+          "charStart": 815,
+          "charEnd": 861,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Class D carries a distribution and servicing fee of 0.25% of net asset value.",
+          "charStart": 862,
+          "charEnd": 939,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "Class I returned -0.99% in January 2026.",
+          "charStart": 940,
+          "charEnd": 980,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "The largest holding by net asset value is a co-investment at 4.2% of the portfolio.",
+          "charStart": 981,
+          "charEnd": 1064,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "Marnholt Networks is the largest named holding at 3.7%.",
+          "charStart": 1066,
+          "charEnd": 1121,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "Piquesta Tire follows at 3.6%.",
+          "charStart": 1122,
+          "charEnd": 1152,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "A 2% early repurchase fee may be charged on shares repurchased within one year.",
+          "charStart": 1153,
+          "charEnd": 1232,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "Tax reporting is on IRS Form 1099.",
+          "charStart": 1233,
+          "charEnd": 1267,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "The Fund's investment objective is to seek to generate capital growth over the long term.",
+          "charStart": 1268,
+          "charEnd": 1357,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "09",
+      "label": "c_d3_q1_2026",
+      "source": "llm",
+      "costUsd": 0.006335,
+      "usage": {
+        "inputTokens": 550,
+        "outputTokens": 496
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "Class I shares returned -2.27% in the first quarter of 2026.",
+          "charStart": 0,
+          "charEnd": 60,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Class A shares returned -2.45% over the same period.",
+          "charStart": 61,
+          "charEnd": 113,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "Since inception in April 2025, Class I has returned 3.54% on an annualised basis.",
+          "charStart": 114,
+          "charEnd": 195,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "The Fund's net asset value at 31 March 2026 was $653.0 million.",
+          "charStart": 196,
+          "charEnd": 259,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "The quarter's decline reflects a mark-down at two software holdings.",
+          "charStart": 260,
+          "charEnd": 328,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "The Fund will season through 2026.",
+          "charStart": 330,
+          "charEnd": 364,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "Exit conditions weakened materially during the quarter.",
+          "charStart": 365,
+          "charEnd": 420,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Marnholt Networks was an exceptional contributor in the quarter.",
+          "charStart": 421,
+          "charEnd": 485,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "The Fund held 57 companies at the quarter end.",
+          "charStart": 486,
+          "charEnd": 532,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "Those companies sit across more than 40 general partner relationships.",
+          "charStart": 533,
+          "charEnd": 603,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Piquesta Tire was held flat in the quarter.",
+          "charStart": 605,
+          "charEnd": 648,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "Total annual expenses for Class I after the waiver are 1.69%.",
+          "charStart": 649,
+          "charEnd": 710,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Before the waiver the equivalent figure is 4.35%.",
+          "charStart": 711,
+          "charEnd": 760,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "Management fees remain waived until 31 December 2026.",
+          "charStart": 761,
+          "charEnd": 814,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "North America represents 70% of the portfolio and Europe 25%.",
+          "charStart": 815,
+          "charEnd": 876,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "Direct investments represent 88% of the portfolio.",
+          "charStart": 878,
+          "charEnd": 928,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "The adviser is not forecasting a particular level of realisations.",
+          "charStart": 929,
+          "charEnd": 995,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "The two software holdings are not named and will be discussed at the annual meeting.",
+          "charStart": 996,
+          "charEnd": 1080,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "The adviser considers patience the correct posture from here.",
+          "charStart": 1081,
+          "charEnd": 1142,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "The seeded portfolio was acquired at attractive prices in the adviser's view.",
+          "charStart": 1143,
+          "charEnd": 1220,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "10",
+      "label": "c_d4_fund_position",
+      "source": "llm",
+      "costUsd": 0.0066275,
+      "usage": {
+        "inputTokens": 575,
+        "outputTokens": 519
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "The Fund's net asset value at 31 March 2026 was $661.4 million.",
+          "charStart": 0,
+          "charEnd": 63,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "That figure was finalised after the March valuation cycle closed.",
+          "charStart": 64,
+          "charEnd": 129,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "The March factsheet showed $653.0 million.",
+          "charStart": 130,
+          "charEnd": 172,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "The Fund held 57 companies at the quarter end.",
+          "charStart": 173,
+          "charEnd": 219,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "The Fund's net asset value per share for Class A was 10.15.",
+          "charStart": 220,
+          "charEnd": 279,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Class A returned -1.09% in March 2026.",
+          "charStart": 281,
+          "charEnd": 319,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "The Fund returned 5.95% in 2025 across all three share classes.",
+          "charStart": 320,
+          "charEnd": 383,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Cravenford has a 40+ year track record of investing in private equity.",
+          "charStart": 384,
+          "charEnd": 454,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "The Board will maintain the current repurchase level through the second half.",
+          "charStart": 455,
+          "charEnd": 532,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "The difference between the two net asset value figures relates to a continuation vehicle.",
+          "charStart": 533,
+          "charEnd": 622,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Class I has returned 3.54% since inception in April 2025.",
+          "charStart": 624,
+          "charEnd": 681,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "The continuation vehicle valuation has been completed and is included in the March figures.",
+          "charStart": 682,
+          "charEnd": 773,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Class I returned -0.27% in February 2026.",
+          "charStart": 774,
+          "charEnd": 815,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "The firm's total assets under management were $161.0 million.",
+          "charStart": 816,
+          "charEnd": 877,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "The firm maintains more than 675 active general partner relationships.",
+          "charStart": 878,
+          "charEnd": 948,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "The Fund is distributed by Hallamby Distributors LLC, which is unaffiliated with the adviser.",
+          "charStart": 950,
+          "charEnd": 1043,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "The adviser is Cravenford Registered Advisers L.P.",
+          "charStart": 1044,
+          "charEnd": 1094,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "Repurchase offers are capped at 5% of net asset value.",
+          "charStart": 1095,
+          "charEnd": 1149,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "The Fund's largest industry exposure is Application Software at 15%.",
+          "charStart": 1150,
+          "charEnd": 1218,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "The seeded portfolio came from a US institutional investor.",
+          "charStart": 1219,
+          "charEnd": 1278,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "11",
+      "label": "c_d5_adviser_commentary",
+      "source": "llm",
+      "costUsd": 0.006414999999999999,
+      "usage": {
+        "inputTokens": 558,
+        "outputTokens": 502
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "The adviser expects the direct portfolio to season through 2026.",
+          "charStart": 0,
+          "charEnd": 64,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "That expectation depends on exit conditions that have not yet improved.",
+          "charStart": 65,
+          "charEnd": 136,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "The Board will reduce the repurchase level to preserve liquidity.",
+          "charStart": 137,
+          "charEnd": 202,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "Shareholders will be notified before any change to the repurchase level.",
+          "charStart": 203,
+          "charEnd": 275,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "Class I returned -2.27% in the first quarter of 2026.",
+          "charStart": 276,
+          "charEnd": 329,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Class I returned -2.27% over the twelve months to 31 March 2026.",
+          "charStart": 331,
+          "charEnd": 395,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "The quarter's decline reflects a mark-down at two software holdings, dollar strength against the euro, and the timing of a continuation vehicle valuation.",
+          "charStart": 396,
+          "charEnd": 550,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "The Fund's chief executive said patience is the correct posture from here.",
+          "charStart": 551,
+          "charEnd": 625,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "The Fund is invested across North America, Europe, Asia and Australia.",
+          "charStart": 626,
+          "charEnd": 696,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "Cravenford invests globally in private equity.",
+          "charStart": 697,
+          "charEnd": 743,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Management fees remain waived until 31 December 2026.",
+          "charStart": 745,
+          "charEnd": 798,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "Class A total annual expenses after the waiver are 2.44%.",
+          "charStart": 799,
+          "charEnd": 856,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "The net asset value at 31 March 2026 was finalised at $661.4 million.",
+          "charStart": 857,
+          "charEnd": 926,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "The Fund held 57 companies at that date.",
+          "charStart": 927,
+          "charEnd": 967,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "Marnholt Networks was among the stronger contributors.",
+          "charStart": 968,
+          "charEnd": 1022,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "Piquesta Tire was held flat.",
+          "charStart": 1024,
+          "charEnd": 1052,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "The two software holdings will be discussed at the annual meeting.",
+          "charStart": 1053,
+          "charEnd": 1119,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "The continuation vehicle valuation will now fall into the second quarter.",
+          "charStart": 1120,
+          "charEnd": 1193,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "The adviser is not forecasting a particular level of realisations.",
+          "charStart": 1194,
+          "charEnd": 1260,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "Direct investments represent 88% of the portfolio.",
+          "charStart": 1261,
+          "charEnd": 1311,
+          "occurrence": 0
+        }
+      ]
+    },
+    {
+      "fixtureId": "12",
+      "label": "c_d6_holdings",
+      "source": "llm",
+      "costUsd": 0.0064925,
+      "usage": {
+        "inputTokens": 561,
+        "outputTokens": 509
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "Piquesta Tire is the Fund's largest named holding at 3.7% of the portfolio.",
+          "charStart": 0,
+          "charEnd": 75,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "Marnholt Networks follows at 3.6%.",
+          "charStart": 76,
+          "charEnd": 110,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "Project Larkspur represents 3.2% of the portfolio.",
+          "charStart": 111,
+          "charEnd": 161,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "Piquesta Tire rose to 3.6% of the portfolio during the quarter.",
+          "charStart": 162,
+          "charEnd": 225,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "Drummault Holdings Inc. represents 2.8%.",
+          "charStart": 226,
+          "charEnd": 266,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "Nasketh Compliance represents 2.7%.",
+          "charStart": 268,
+          "charEnd": 303,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "The Fund's holdings in Marnholt Networks are valued at $24.5 million.",
+          "charStart": 304,
+          "charEnd": 373,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Direct deals include both co-investments and single asset continuation deals.",
+          "charStart": 374,
+          "charEnd": 451,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "Marnholt Networks sits in Technology Hardware, Storage and Peripherals.",
+          "charStart": 452,
+          "charEnd": 523,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": " Piquesta Tire sits in Automotive Parts and Equipment.",
+          "charStart": 523,
+          "charEnd": 577,
+          "occurrence": 0
+        },
+        {
+          "index": 10,
+          "text": "Project Larkspur sits in Health Care Services.",
+          "charStart": 579,
+          "charEnd": 625,
+          "occurrence": 0
+        },
+        {
+          "index": 11,
+          "text": "Nasketh Compliance sits in IT Consulting and Other Services.",
+          "charStart": 626,
+          "charEnd": 686,
+          "occurrence": 0
+        },
+        {
+          "index": 12,
+          "text": "Drummault Holdings Inc. also sits in IT Consulting and Other Services.",
+          "charStart": 687,
+          "charEnd": 757,
+          "occurrence": 0
+        },
+        {
+          "index": 13,
+          "text": "Marnholt Networks was among the stronger contributors in the quarter.",
+          "charStart": 758,
+          "charEnd": 827,
+          "occurrence": 0
+        },
+        {
+          "index": 14,
+          "text": "Piquesta Tire was held flat.",
+          "charStart": 828,
+          "charEnd": 856,
+          "occurrence": 0
+        },
+        {
+          "index": 15,
+          "text": "The seeded portfolio was acquired at attractive prices.",
+          "charStart": 858,
+          "charEnd": 913,
+          "occurrence": 0
+        },
+        {
+          "index": 16,
+          "text": "The unnamed co-investment is the largest position because it was the Fund's first investment.",
+          "charStart": 914,
+          "charEnd": 1007,
+          "occurrence": 0
+        },
+        {
+          "index": 17,
+          "text": "Portfolio percentages exclude short-term investments such as cash and money market funds.",
+          "charStart": 1008,
+          "charEnd": 1097,
+          "occurrence": 0
+        },
+        {
+          "index": 18,
+          "text": "Both Nasketh Compliance and the second unnamed co-investment stand at 2.7%.",
+          "charStart": 1098,
+          "charEnd": 1173,
+          "occurrence": 0
+        },
+        {
+          "index": 19,
+          "text": "The Fund's net asset value at 31 March 2026 was $653.0 million.",
+          "charStart": 1174,
+          "charEnd": 1237,
+          "occurrence": 0
+        }
+      ]
+    }
+  ]
+}

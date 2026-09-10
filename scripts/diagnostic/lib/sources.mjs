@@ -1,7 +1,8 @@
 import { readFile, copyFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { normalizePublicationState } from "../../../lib/source-publication-state.mjs";
-import { SOURCES_DIR, SOURCES_EXTRACTED_DIR } from "./paths.mjs";
+import { REPO_ROOT, SOURCES_DIR, SOURCES_EXTRACTED_DIR } from "./paths.mjs";
+import { existsSync } from "node:fs";
 
 /**
  * @param {string | { file?: string, filename?: string, publicationState?: string }} entry
@@ -24,9 +25,11 @@ function sourceEntryFilename(entry) {
  * @returns {Promise<{ text: string, resolvedFrom: string }>}
  */
 export async function resolveSourceText(filename) {
-  const base = path.basename(filename);
+  const raw = String(filename ?? "");
+  const base = path.basename(raw);
   if (base.endsWith(".txt")) {
-    const filePath = path.join(SOURCES_DIR, base);
+    const repoRelative = path.isAbsolute(raw) ? raw : path.join(REPO_ROOT, raw);
+    const filePath = existsSync(repoRelative) ? repoRelative : path.join(SOURCES_DIR, base);
     const text = await readFile(filePath, "utf8");
     return { text, resolvedFrom: filePath };
   }

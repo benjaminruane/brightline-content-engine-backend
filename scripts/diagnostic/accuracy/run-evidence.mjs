@@ -152,13 +152,14 @@ export function frozenRowsByFixture(statementsDoc) {
 }
 
 export function parseEvidenceArgs(argv) {
-  const out = { pass: "1", ids: [], statements: null, runsRoot: null };
+  const out = { pass: "1", ids: [], statements: null, runsRoot: null, fixturesDir: null };
   const args = Array.isArray(argv) ? argv : [];
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === "--pass" && args[i + 1]) out.pass = String(args[++i]);
     else if (args[i] === "--ids" && args[i + 1]) out.ids = parseIdsArg(args[++i]);
     else if (args[i] === "--statements" && args[i + 1]) out.statements = args[++i];
     else if (args[i] === "--runs-root" && args[i + 1]) out.runsRoot = args[++i];
+    else if (args[i] === "--fixtures-dir" && args[i + 1]) out.fixturesDir = args[++i];
   }
   return out;
 }
@@ -295,7 +296,7 @@ async function main() {
   const statementsDoc = JSON.parse(await readFile(statementsPath, "utf8"));
   const { byId: frozenByFixture } = frozenRowsByFixture(statementsDoc);
   const filter = evidenceFilterFromArgs(args);
-  const fixtures = filterFixtures(await loadAllFixtures(), filter);
+  const fixtures = filterFixtures(await loadAllFixtures(args.fixturesDir), filter);
   const selectedIds = selectedIdsFromFixtures(fixtures);
   const selectedFrozenCount = assertFreezeCountForSelectedIds(statementsDoc, selectedIds);
 
