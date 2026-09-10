@@ -63,9 +63,14 @@ COMPOUND FAULTS. A statement carrying more than one error shape is assigned one 
 
 TABLE CELLS. Where a figure can only be settled by reading a row against a column in a flattened table, there is no C, P or X target. The pass condition is that the tool must not return confirmed.`;
 
-export function coverPage({ corpus2 = false } = {}) {
-  if (!corpus2) return COVER_PAGE;
-  return `${COVER_PAGE}
+export function coverPage({ corpus2 = false, labelBudget = 100 } = {}) {
+  const n = Number.isFinite(Number(labelBudget)) && Number(labelBudget) > 0 ? Number(labelBudget) : 100;
+  const body = COVER_PAGE.replace(
+    "You are labelling 100 statements",
+    `You are labelling ${n} statements`
+  );
+  if (!corpus2) return body;
+  return `${body}
 
 ${COVER_PAGE_CORPUS2_EXTRA}`;
 }
@@ -158,7 +163,7 @@ export async function generateWorksheet({ statementsDoc, manifest, loadFixtures,
     fixtures,
     sourcesById,
     sampledByFixture,
-    cover: cover ?? COVER_PAGE,
+    cover: cover ?? coverPage({ labelBudget: manifest?.labelBudget }),
   });
 }
 
@@ -184,7 +189,7 @@ export async function writeWorksheet({
     loadFixtures: load,
     loadSources,
     ids,
-    cover: cover ?? coverPage({ corpus2 }),
+    cover: cover ?? coverPage({ corpus2, labelBudget: manifest.labelBudget }),
   });
   await writeAccuracyFile(resolvedOut, md);
   return { outPath: resolvedOut, markdown: md };

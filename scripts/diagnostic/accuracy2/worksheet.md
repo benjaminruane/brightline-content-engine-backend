@@ -1,6 +1,6 @@
 ACCURACY LABELLING WORKSHEET
 
-You are labelling 100 statements against the sources on this page. The pipeline's answers are not here. Do not try to remember what Review said.
+You are labelling 240 statements against the sources on this page. The pipeline's answers are not here. Do not try to remember what Review said.
 
 Labels (pick one):
 C  Confirmed. The sources support the statement.
