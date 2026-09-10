@@ -102,13 +102,14 @@ export function parseDraftFile(md) {
     const fence = chunk.split("```")[1] ?? "";
     const tags = [];
     let current = null;
+    const tierRe = /(?:^|\s)([CPX-])\s+(ugly|clean(?:\s+twin)?)/i;
     for (const line of fence.split("\n")) {
       const m = line.match(/^\s*(\d+)\s+(S\d{2}|D\d{2})\b(.*)$/);
       if (m) {
         if (current) tags.push(current);
         const rest = m[3];
         const train = /TRAIN/i.test(rest);
-        const expectedMatch = rest.match(/\b([CPX-])\s+(ugly|clean(?:\s+twin)?)/i);
+        const expectedMatch = rest.match(tierRe);
         const tierRaw = (expectedMatch?.[2] ?? "").toLowerCase();
         let sourceTier = "clean";
         if (tierRaw.includes("twin")) sourceTier = "cleantwin";
@@ -123,9 +124,19 @@ export function parseDraftFile(md) {
           expected,
           sourceTier,
         };
-      } else if (current && line.trim() && !/^[A-Z]/.test(line.trim().slice(0, 8))) {
-        current.rest += ` ${line.trim()}`;
-        if (/TRAIN/i.test(line)) current.train = true;
+      } else if (current && line.trim() && !/^\s*\d+\s+(S\d{2}|D\d{2})\b/.test(line)) {
+        const cont = line.match(tierRe);
+        if (!/^[A-Z]/.test(line.trim().slice(0, 8)) || cont) {
+          current.rest += ` ${line.trim()}`;
+          if (/TRAIN/i.test(line)) current.train = true;
+          if (cont) {
+            const tierRaw = cont[2].toLowerCase();
+            if (tierRaw.includes("twin")) current.sourceTier = "cleantwin";
+            else if (tierRaw.includes("ugly")) current.sourceTier = "ugly";
+            else current.sourceTier = "clean";
+            current.expected = cont[1] === "-" ? "notConfirmed" : cont[1];
+          }
+        }
       }
     }
     if (current) tags.push(current);
@@ -184,11 +195,22 @@ export function applyCorrections(drafts) {
       sourceTier: "ugly",
     });
   }
+  const kd1s14 = kd1.tags.find((t) => t.stmt === 5);
+  if (kd1s14) {
+    kd1s14.shape = "S14";
+    kd1s14.expected = "P";
+    kd1s14.sourceTier = "ugly";
+    kd1s14.train = false;
+    kd1s14.rest =
+      "S14 INCOMPLETE ATTRIBUTION. The press release names Grulden primarily, then Skaldwick, then several other portfolio companies.";
+  }
   const cd3 = byId["C-D3"];
   const t5 = cd3.tags.find((t) => t.stmt === 5);
   if (t5) {
     t5.shape = "S14";
     t5.expected = "P";
+    t5.sourceTier = "clean";
+    t5.train = false;
     t5.rest = "S14 incomplete attribution: the named cause is real and two others are dropped.";
   }
   const cd4 = byId["C-D4"];
@@ -222,13 +244,9 @@ export function applyCorrections(drafts) {
   replaceStatement(
     cd6,
     8,
-    "The Fund's 88% direct exposure comes from co-investments."
+    "Direct deals include both co-investments and single asset continuation deals."
   );
-  upsertTag(cd6, 8, "S14", {
-    why: "S14 INCOMPLETE ATTRIBUTION. Footnote 1 says co-investments AND single asset continuation deals.",
-    expected: "P",
-    sourceTier: "cleantwin",
-  });
+  removeTag(cd6, 8, "S14");
   replaceStatement(cd6, 16, "The seeded portfolio was acquired at attractive prices.");
   removeTag(cd6, 16, "D02");
   upsertTag(cd6, 16, "S11", {
@@ -346,6 +364,7 @@ function fillDecoys(drafts) {
   for (const d of drafts) {
     const used = taggedKeys(d);
     for (const s of d.statements) {
+      if (d.draftId === "C-D6" && s.n === 8) continue;
       if (!used.has(s.n)) untagged.push({ draft: d, stmt: s.n });
     }
   }
