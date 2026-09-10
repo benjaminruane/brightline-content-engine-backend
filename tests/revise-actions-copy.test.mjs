@@ -66,4 +66,40 @@ describe("revise-actions user-facing copy", () => {
       "This sentence is written in the first person, which reporting commentary does not allow. Nothing is proposed. Rewrite it in the third person in the draft."
     );
   });
+
+  test("partial_no_edit and partial_policy contain no silence claim", () => {
+    const silenceClaims = [
+      "no source speaks",
+      "no supplied source",
+      "no source spoke",
+      "speaks to this claim",
+      "speaks to the claim",
+    ];
+    for (const text of [NO_PROPOSAL.partial_no_edit, NO_PROPOSAL.partial_policy]) {
+      const lowered = text.toLowerCase();
+      for (const claim of silenceClaims) {
+        assert.equal(lowered.includes(claim), false, `${text} must not contain "${claim}"`);
+      }
+      assert.deepEqual(findBannedUserCopy(text), []);
+    }
+    assert.equal(
+      NO_PROPOSAL.partial_no_edit,
+      "A source supports part of this statement, not all of it. Nothing is proposed and the wording is yours."
+    );
+    assert.equal(
+      NO_PROPOSAL.partial_policy,
+      "This concern stands. Nothing is proposed. The wording is yours."
+    );
+  });
+
+  test("true-silence acknowledge strings are unchanged", () => {
+    assert.equal(
+      NO_PROPOSAL.silence_no_edit,
+      "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+    );
+    assert.equal(
+      NO_PROPOSAL.policy_forbids,
+      "This concern stands. No source speaks to the claim, so changing the wording is yours to decide, not the product's."
+    );
+  });
 });

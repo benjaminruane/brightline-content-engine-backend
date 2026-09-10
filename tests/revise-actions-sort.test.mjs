@@ -1,6 +1,6 @@
 /**
  * Primary control for the per-finding action list.
- * S1 marketing and S3 overreach must be ACKNOWLEDGE policy_forbids.
+ * S1 marketing and S3 overreach must stay ACKNOWLEDGE (conflict-free partials).
  * If they come back ACTION, the slice is wrong.
  */
 import assert from "node:assert/strict";
@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
-import { buildSortedEntries } from "../lib/revise-actions/sort.mjs";
+import { buildSortedEntries, NO_PROPOSAL } from "../lib/revise-actions/sort.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REVIEW_PATH = path.join(
@@ -41,14 +41,14 @@ describe("revise-actions sort (r10-review1)", () => {
     const found = row(entries, "1", "editorial", "marketing_language_excess");
     assert.ok(found, "S1 marketing finding must exist");
     assert.equal(found.disposition, "ACKNOWLEDGE");
-    assert.equal(found.sort?.reasonCode, "policy_forbids");
+    assert.equal(found.sort?.reasonCode, "partial_policy");
   });
 
   test("S3 overreach is ACKNOWLEDGE policy_forbids", () => {
     const found = row(entries, "3", "editorial", "overreach_unsupported_causal");
     assert.ok(found, "S3 overreach finding must exist");
     assert.equal(found.disposition, "ACKNOWLEDGE");
-    assert.equal(found.sort?.reasonCode, "policy_forbids");
+    assert.equal(found.sort?.reasonCode, "partial_policy");
   });
 
   test("S1 voice is ACTION", () => {
@@ -79,6 +79,16 @@ describe("revise-actions sort (r10-review1)", () => {
     const found = row(entries, "1", "evidence", "partial");
     assert.ok(found, "S1 evidence finding must exist");
     assert.equal(found.disposition, "ACKNOWLEDGE");
-    assert.equal(found.sort?.reasonCode, "silence_no_edit");
+    assert.equal(found.sort?.reasonCode, "partial_no_edit");
+  });
+
+  test("S1 evidence copy is the partial_no_edit sentence", () => {
+    const found = row(entries, "1", "evidence", "partial");
+    assert.ok(found, "S1 evidence finding must exist");
+    assert.equal(
+      found.noProposalReason,
+      "A source supports part of this statement, not all of it. Nothing is proposed and the wording is yours."
+    );
+    assert.equal(found.noProposalReason, NO_PROPOSAL.partial_no_edit);
   });
 });
