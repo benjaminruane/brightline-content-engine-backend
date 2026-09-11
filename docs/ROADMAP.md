@@ -2,9 +2,9 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-09-08 (accuracy judging arc: conflict-wins, intra-source reducer, lift-only rounding; tag `review-conflict-wins`)
+Last updated: 2026-09-11 (delivery arc recorded; source-style conflation claim corrected)
 
-Next work: **expanded accuracy corpus (Ben)**. Do not tune judging against the closed 100-statement pack (**B162**). Product next remains **B156** fifth display state after Ben approves the freeze carve-out and the wording; classification stays `no_support`; do not move the period gate; unlock of Implement Changes is a later slice. Then the wording pass (**B153**), then **Pr16**, then **B135**. **B154** last if a backstop is built. **B89** drawer mislabel remains. Implement Changes Modify-without-a-proposal is parked (save is blocked if the draft has been edited since Review). Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Production flag state is not verified in this sync. The false-red arc is closed as accepted-not-fixed (**B123**). **B158** second excerpt gap before the sources drawer is built.
+Next work on the **delivery track**, in this order: house-style inversion (**B176**); cross-document disagreement (**B173**); unsupported dependents as a finding (**B172**); user-supplied authoring organisation (**B171**); a card-integrity instrument (not yet a backlog row: catch cards that contradict themselves); shorter model readings (not yet a backlog row). Frozen corpus stays at catch **9 of 11**, leave-alone **67 of 74** and is not re-run (**B162**). Do not tune judging against that pack. **B153** wording pass remains open and frozen. **B156** fifth display state remains scoped, not built. **Pr16** remains. **B158** second excerpt gap before the sources drawer. Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Every spec ends with `npm run verify:ship` in both repos.
 
 ---
 
@@ -101,6 +101,47 @@ Next work: **expanded accuracy corpus (Ben)**. Do not tune judging against the c
 ---
 
 ## Recently shipped (closed specs)
+
+### Delivery arc (2026-09-10–11)
+
+The Review card-and-proposal track after the 2026-09-08 accuracy judging close. Action-list and card face only. Stage 2 pin and the frozen corpus were not moved. No accuracy re-run.
+
+**Shipped, by commit, what a reviewer sees:**
+
+- **Card-face quote.** Backend `4a89a16` (string `primaryExcerpt`); frontend `659b5ef`. The source passage sits on the card under every verdict, not only behind the magnifier.
+- **Silence copy on conflict-free partials.** `9980553`. A Partially confirmed card no longer says no source spoke. Disposition stays ACKNOWLEDGE. True-silence copy unchanged. **B153** freeze not closed; this was a slice.
+- **House name: one draft-presence rule, and no example text reaches a reader.** `202b357` (Design B). The configured organisation is written only when that name is already in the draft. Placeholder example wording is stripped. **B170** residue; **B171** is the user-supplied name.
+- **Multi-value correction under the owner’s rulings.** Design A `362cb42` (contradicted evidence never calls the rewrite model; one same-kind pair → exact-quote replace, else acknowledge). Locator then `548f131`. Ruled table `4536ac7` (**B169**). A contradicted sentence is corrected in every licensed figure, or not at all. Live F18 pin: replace S3, S4 (38→35 and March→April 2025), S5, S8 (both returns, `gross` stays); acknowledge S0, S2, S7 (forecast, R5).
+- **Explanation slot; “Nothing is proposed” removed.** Backend `fdd9a1c`; frontend `fd36aac`. One explanation above the passage. Specific locator copy replaces the Stage 5 paragraph. First-person unnamed cards keep the deterministic line only.
+- **Confirming passage and card chrome.** Backend `12311c4`; frontend `de81f14`, then `5c11fa7` / `bad36cf`. A same-document confirming span is painted when it supports a figure left in the sentence; the clause *“It confirms the residential unit count, which is left unchanged.”* is emitted only then. Caption `Proposed change`. Change counts inline. Source name in full, wrapping, no tooltip. Preview tints in product blue, not yellow.
+
+**Ship verifier.** Backend `7b704d6`; frontend `5b838fb`. `npm run verify:ship` is the standard tail of every spec: clean tree, HEAD on the remote, suite green.
+
+**Owner’s six rulings on figure correction (governing product decisions, not implementation notes).** Do not redesign in a later session. Source: `scripts/diagnostic/delivery-check/quantity-matching-design.md`; built at `4536ac7`.
+
+1. **R1.** The source must not disagree with itself. A confirming span on the **same** `sourceRefId` vetoes a swap of that figure. A confirming span on a different document does not. Pack-wide “any confirming passage anywhere” is rejected.
+2. **R2.** A replacement may change more than one value. Every written value must be quoted from the source. The only permitted derived value is R3’s year.
+3. **R3.** Year inheritance: source month with no year, draft year kept, only when the source month is the same as or later in the calendar year than the draft month. Earlier month → decline that inheritance. No general derivation path.
+4. **R4.** All or none. More than one contradicted figure in a sentence: correct every licensed one, or none. A draft figure the source never mentions does not block.
+5. **R5.** Do not change a figure that other figures in the same sentence are derived from, unless the source also addresses those dependents.
+6. **R6.** Qualifiers, four states: same qualifier → propose; different qualifier → decline; no qualifier but the source **names** the draft’s own figure → propose; no qualifier and does not name it → decline.
+
+**Three card rules** (safety line; not open for redesign):
+
+1. One explanation above the passage.
+2. Never narrate an absence.
+3. Never say a proposal might be wrong. Say what the source did and did not say.
+
+**Open on this track, priority order:**
+
+1. **House-style inversion (**B176**).** The product flags a house-correct thousands separator and offers the form the style guide forbids. Class, not one card. See **R6.2d** correction below.
+2. **Cross-document disagreement (**B173**).** Two sources disagree and neither supersedes. Acknowledge, propose nothing, and say so, naming both figures.
+3. **Unsupported dependents (**B172**).** A contradicted base leaves hanging figures; the product knows and currently says nothing beyond the confirming-passage clause where that passage exists. **Pr16** remains.
+4. **User-supplied authoring organisation (**B171**).** The house name should come from the user, not a server setting. **B95** / **B96** / **B124** / **B170** stay open.
+5. **Card-integrity instrument.** Not yet a backlog row. Catch cards that contradict themselves (computed truth discarded; inverted copy; competing writes on one sentence) before the reviewer does.
+6. **Shorter model readings.** Not yet a backlog row. Cut residual generative prose on the card now that the explanation is code.
+
+Do not close **B153**, **B156**, **B157**, **B158**, **B166**, **B170**, **B174**, or **Pr16**. **B177** (per-card expand/collapse) needs a wording carve-out or its own copy; leave **B153** frozen.
 
 ### Accuracy judging arc (2026-09-08). Tag: `review-conflict-wins`
 
@@ -272,7 +313,7 @@ Vercel rejects any function request body over 4.5 MB at the edge. After base64 i
 
 - **R6.5.4 —** Three more deterministic backstops added: `thousand_separator` (drops when cited span uses apostrophe and no comma), `currency_format` (drops when ISO 4217 code precedes amount), `defined_term_capitalisation` (drops when cited span starts with capitalised defined term).
 
-- **R6.5.5 —** Broadened `thousand_separator` and `currency_format` filters to statement scope (regex runs on full `statementText`, not the LLM-returned span which is often too narrow to contain the structural pattern).
+- **R6.5.5 —** Broadened `thousand_separator` and `currency_format` filters to statement scope (regex runs on full `statementText`, not the LLM-returned span which is often too narrow to contain the structural pattern). **Correction 2026-09-11 (do not delete this ship):** the broadened regex still never runs when `deriveConcernSpan` is null; the filter fails open. See **R6.2d** and diagnostic `626524d`.
 
 - **R6.5.6 —** `defined_term_capitalisation` made draft-aware. Rule now only applies when the term is defined in the draft (e.g. "Shopify (the Company)"). When no definition exists, the rule is silent. When a definition exists, only genuine violations fire (lowercase noun or omitted "the"); correct mid-sentence "the Company" is suppressed. Tag: `r6.5.6-defined-term-refinement`.
 
@@ -712,7 +753,7 @@ Rules to add:
 - Fidelity discipline — eliminate fabricated quotes in editorial commentary. Evidence: `[FIDELITY_DROP]` log entries from both diagnostic runs; feeds **D1.5**.
 - **Fidelity-drop-on-corrected-phrase pattern** (observed R6.5.1 testing): LLM cites the corrected form of a violation rather than the offending text. Examples: `number_spelling` cites `'12'` when statement contains `'7 investments'`; `currency_format` cites `'EUR 445 million'` when statement contains `'€445m'`; `english_variant` cites `'organize'` when statement contains `'organise'`. Fidelity guard correctly rejects but the concern is lost.
 - **Contradictory-concern-field pattern** (observed R6.5.1, R6.5.4 testing): LLM produces a concern where the note acknowledges the text is correct, the `suggestedDirection` asks for a change, and the `suggestedRewrite` is identical to the input. Examples: S3 `defined_term_capitalisation` pre-R6.5.4 produced "Change 'The Company is profitable' to 'The Company is profitable'"; S9 `defined_term_capitalisation` pre-R6.5.6 produced "Change 'the Company' to 'the Company'".
-- **Source-style conflation pattern** (observed R6.5 F01 live regression): LLM treats source text style as authoritative over house style. Statement uses `5'500` (PG-correct apostrophe separator); source uses `5,500` (comma separator); LLM fires `thousand_separator` concern recommending changing the correct draft to match the source's incorrect form. Resolved at the filter layer via R6.5.5.
+- **Source-style conflation pattern** (observed R6.5 F01 live regression): LLM treats source text style as authoritative over house style. Statement uses `5'500` (PG-correct apostrophe separator); source uses `5,500` (comma separator); LLM fires `thousand_separator` concern recommending changing the correct draft to match the source's incorrect form. **Believed resolved at the filter layer via R6.5.5. That claim is false as written.** The statement-scoped regex exists, but `applyDeterministicStyleFilters` **fails open**: if the flagged text cannot be located as a span, the concern is kept. The apostrophe the house rule requires is the character that defeats quote location. Diagnostic `626524d` (`scripts/diagnostic/delivery-check/house-style-inversion-findings.md`): **61** unique already-compliant house-style flags across stored batches; live exhibit **B176**. **Evidence caveat:** those 61 counts come from gitignored local `scripts/diagnostic/runs/` folders. A fresh clone cannot reproduce them. Committed accuracy runs return **zero** because editorial is disabled in all of them.
 
 **R6.4 sub-items (Public version compliance):**
 
@@ -1096,7 +1137,7 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 **Parked from EDITORIAL RULE BUG-FIX PASS (do not spec):**
 
 - **`structural_integrity`** — appositive false-positive not reproducible in post-fix verification; watch only.
-- **`thousand_separator`** — source-style conflation addressed by R6.5.5 statement-scoped backstop; confirm clean on next diagnostic batch.
+- **`thousand_separator`** — R6.5.5 statement-scoped backstop was believed to have closed source-style conflation. **Corrected 2026-09-11:** the filter fails open when it cannot locate the flagged text; diagnostic `626524d` counts 61 already-compliant flags on gitignored local batches. Live residue **B176**. Do not treat this watch item as clean.
 
 ---
 
