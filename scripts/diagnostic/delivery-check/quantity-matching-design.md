@@ -1,14 +1,18 @@
 # Matching figures by what they measure
 
-Design pass, 2026-09-11. Do not build from this note until Ben rules the JUDGEMENT rows. No product code changed here. No LLM call, pipeline, extract, evidence pass, action-list run, or accuracy run. Metered spend: **USD 0.00**.
+Revision, 2026-09-11. Reworked in place around Ben’s rulings the same day. The central assumption of the first pass — **single-token replacement, fail closed unless exactly one surviving pair** — is withdrawn. Do not append; this is the note.
 
-Closes the gap recorded in **B169**. Does not close **B159**. Does not close **B95**, **B96**, **B124**, or **B170**.
+Do not build from this commit. The expectation table is now the pin. No product code changed here. No LLM call, pipeline, extract, evidence pass, action-list run, or accuracy run. Metered spend: **USD 0.00**.
 
-Code authority: `lib/revise-actions/conflict-engagement.mjs` at `548f131`. Stored cards: `scripts/diagnostic/accuracy/runs/evidence-pass-lift-1/cards.json`. Painted excerpt is what the locator already reads (`excerptTextForFinding`: `primaryExcerpt`, else `conflictExcerpt.passage`).
+Closes the gap recorded in **B169** only after the ruled table is built and tests pin it. Does not close **B159**. Does not close **B95**, **B96**, **B124**, **B170**, **B171**, or **B172**.
+
+Code authority today: `lib/revise-actions/conflict-engagement.mjs` at `548f131`. Stored cards: `scripts/diagnostic/accuracy/runs/evidence-pass-lift-1/cards.json`. Pairing still reads the painted excerpt (`excerptTextForFinding`: `primaryExcerpt`, else `conflictExcerpt.passage`). R1 veto additionally reads `finding.card.supportSpans` (question A).
 
 ---
 
 ## Part 0. Claude’s claims
+
+**Survives unchanged** from the first pass. Kept as-is, not rewritten.
 
 ### W1 BLOCKING — 6 and 12 split
 
@@ -57,208 +61,217 @@ Whether to **propose a swap** is `findCandidatePairs` → `applyConflictProposal
 
 ---
 
-## Design. What makes two figures the same quantity
+## Ben’s rulings, 2026-09-11
 
-Target: a contradicted sentence gets a **single-token** replacement when the painted excerpt states a different value for the **same quantity**, identified by what the figure is called on each side, whether or not the source is phrased as a correction. When identity is not clear, no proposal. Failure direction: **decline**.
+These are the product owner’s decisions. They are not open for redesign. The rest of this note implements them.
 
-The locator still runs only on contradicted evidence ACTION, still does not call a model, still quotes the source token byte-for-byte, still fails closed unless exactly one surviving pair remains.
+**R1. The source must not disagree with itself.** If any passage the product matched against **that source** supports the draft’s own figure, propose nothing for that figure, even when another passage of the same source contradicts it. Two different sources (initial memo vs update) are not self-disagreement; conflict-wins still lets the contradicting source license a swap. Pack-wide “any confirming passage anywhere” would refuse every updated KPI that an earlier source still states. That reading is rejected because the ruling is titled self-disagreement and because the owner’s table proposes those updates.
 
-### a. How the name is extracted (deterministic, no model)
+**R2. A replacement may change more than one value.** The single-token rule is withdrawn. Every value written must be quoted from the source. The only permitted derived value is the year rule in R3.
 
-Reuse `tokenizeQuantities`. Extend kind detection so `\d+ percent` / `\d+ per cent` is a **percentage**, not a bare count (F17-S9’s `40 percent` and F19-S2’s `31.4 percent` are currently `count`). Do not parse spelled-out numbers in this pass (see **g**).
+**R3. Year inheritance.** When the source states a month with no year and the draft sentence states a year, the replacement inherits the draft’s year, **but only** when the source’s month is the same as or later in the calendar year than the draft’s month. If the source’s month is earlier, decline: the year is ambiguous across a year end. If the draft sentence carries no year, decline **that inheritance** (do not invent a year). R3 is not a veto of an undated KPI swap that does not write a date.
 
-For each token, the **host fragment** is the substring between the nearest clause breaks on either side. Clause breaks: `.` `;` `:` and `,` when the comma separates list items (digit or capitalised head after the comma). Then:
+**R4. All or none.** If a sentence carries more than one contradicted figure, correct every one of them or correct none. Never produce a proposal that leaves a known wrong figure in the sentence. A draft figure the source never mentions does not block.
 
-1. **Left window:** words after the previous quantity token (or fragment start) and before this token.
-2. **Right window:** words after this token and before the next quantity token (or fragment end), capped at six content words.
-3. **Parenthetical:** a `(...)` immediately before the token, immediately after the token, or immediately after the head noun, is merged into the label. `(ARR)` on `annual recurring revenue (ARR)` becomes the canonical key `arr`.
-4. **Stop words dropped** from the label (closed list): a, an, the, of, to, for, in, on, at, as, from, with, and, or, by, its, their, this, that, is, was, has, have, been, currently, approximately, more, than, over, during.
-5. **Qualifiers** are extracted from the same fragment into a separate set (see **c**), not mixed into the name Jaccard.
+**R5. Dependent figures.** Do not change a figure that other figures in the same sentence are derived from, unless the source also addresses those. Changing the start of a growth path silently changes the implied growth; changing a total silently changes the percentages hanging off it.
 
-Shapes:
+**R6. Qualifiers, four states, not two.**
 
-| Shape | What the window does |
+| Source qualifier vs draft | Outcome |
 |---|---|
-| Figure starts the sentence (`320 people across…`) | Left empty; right window carries the name. |
-| Figure inside parentheses (`(ARR of EUR 38 million)` or `EUR 38 million (ARR)`) | Parenthetical body is merged; if the body is only a unit, inherit the outer head noun. |
-| Table-like fragment (`engineering 110, customer success 75`) | Each comma-separated item is its own fragment, so 110 is labelled `engineering`, not `people`. |
+| SAME qualifier as the draft | PROPOSE |
+| DIFFERENT qualifier | DECLINE |
+| NO qualifier, but the source **explicitly names** the draft’s own figure and offers a replacement for it | PROPOSE |
+| NO qualifier and does not name the draft’s figure | DECLINE |
 
-If the remaining name set is empty, that token cannot pair. Decline it. Do not fall back to kind-only.
+Ben’s reasoning, recorded: when the source names the draft’s figure it has told you what its own figure is being compared against, and that is better evidence than any matching the product could do for itself.
 
-### b. What counts as a match
+---
 
-A draft token `D` pairs with a source token `S` only if **all** of:
+## Target (revised)
 
-1. Same kind and compatible scale (existing `kindKey`, plus currency — **d**). Values differ. Same value is identity, skip.
-2. Qualifier sets match under **c**.
-3. Names match under the rule below.
-4. After pairing, **exactly one** surviving pair on the statement. Two or more → decline the whole statement.
+A contradicted sentence gets a **source-quoted replacement of every licensed figure** when the painted excerpt states different values for the same quantities, identified by what each figure is called, whether or not the source is phrased as a correction. Identity rules from the first pass still apply (name windows, abbreviation list, units/scale). What changed: more than one value may be written; R1/R3/R4/R5/R6 can veto a licensed pair or the whole sentence; the year in R3 is the sole derived write.
 
-**Names.** Canonicalise a closed abbreviation list, case-insensitive, word-boundary:
+The locator still runs only on contradicted evidence ACTION, still does not call a model, still fails closed when identity is not clear. Failure direction: **decline**.
 
-`IRR` ← irr, internal rate of return  
-`MOIC` ← moic, money-on-invested-capital, multiple on invested capital  
-`ARR` ← arr, annual recurring revenue  
-`NAV` ← nav, net asset value  
-`DPI` ← dpi  
-`TVPI` ← tvpi  
-`EBITDA` ← ebitda  
-`AUM` ← aum  
-Headcount ← people, employees, employee, employs, team, headcount, staff, personnel  
-Stores ← stores, store, locations, sites (only when not also matching a different abbreviation)
+---
 
-Plurals: strip a trailing `s`/`es` on tokens longer than three letters after abbreviation canonicalisation (`companies` / `company`). Word order is ignored (set match, not sequence).
+## Design questions raised by the rulings
 
-Then:
+### A. R1 implementation
 
-- If either side has a canonical abbreviation, the abbreviations must intersect. Extra content words are not required.
-- If neither side has an abbreviation, Jaccard on the remaining content-word sets must be **≥ 0.6**, and the intersection must be non-empty.
+The locator’s pairing universe is still the painted excerpt. A passage elsewhere in the same source that supports the draft is invisible to pairing. That is how F13-S7’s painted excerpt (`The total team of 285 people is split…`) would still form a 320→285 pair if pairing were left alone.
 
-When in doubt (empty name, Jaccard below 0.6, abbreviation clash, two candidates), **decline**. Do not pick the numerically closer figure. Do not pick the first figure in the excerpt.
+**What the card already carries.** `qcCard.supportSpans[]` objects `{ sourceRefId, classification, statementId, passage, start, end }`. Inventory puts `card` on the finding. Classifications on the card are `confirmed` | `partially_confirmed` | `conflicting`. Compact `sourceMatches` in the stored run often have only `{ classification, sourceIndex }` and **no passage**.
 
-### c. Qualifiers are part of the quantity’s identity
+**Are matched spans sufficient?** Yes for the exhibit. F13-S7’s card has a `confirmed` span whose passage states `CloudPivot employs 320 people…` and a `conflicting` span with the 285 split, **same source**. Group spans by `sourceRefId`. A source supports the draft figure when a span from that source is `confirmed` or `partially_confirmed` **and** its passage contains the draft token as an asserted value (not inside a rejection span: `not 380`, `compared with the 2.8x`). If that same `sourceRefId` is also the source of the pairing excerpt, veto the figure. F18-S3/S4/S5/S8 have a confirming span on **source 0** and a contradicting span on **source 1**. Different `sourceRefId` does not veto. That is why those rows still PROPOSE.
 
-Closed qualifier lexicon, extracted from the **same fragment** as the name. Matching is by family, not by synonym spelling.
+**What R1 cannot see even then.** Any passage Stage 2 never returned. Compact `sourceMatches` that are `confirmed` / `partially_confirmed` for the pairing source with **no** `supportSpans` passage: R1 cannot inspect the figure. Fail closed on that figure (do not propose). Do not re-scan the raw source file.
 
-| Family | Members (any spelling / common abbr.) |
+**Narrowest widening.** Pairing stays on the painted excerpt. The **veto** reads `finding.card.supportSpans` grouped by `sourceRefId`. That is not a pairing-universe widening and not a Stage 2 prompt change.
+
+### B. R2 enforcement
+
+Do not trust the writer. After `resultingSentence` is built, collect every numeric or date span that differs from the draft. Each written span must be a contiguous substring of the pairing excerpt (`pair.to.raw`), **except** the R3 carve-out below. If any written span fails, drop the **whole** proposal (R4). No arithmetic (`38 - 3`), no unit conversion, no stitching distant tokens (`35` from one clause and `million` from another).
+
+**R3 carve-out, closed.** A written span may equal `sourceMonthToken + " " + draftYear` when **all** of: the source token is a month with no year; the draft sentence contains a year attached to the date being replaced; the source month’s calendar index is ≥ the draft month’s; the month token itself is a contiguous substring of the excerpt. If any predicate fails, that date pair is unwritable. There is no other derivation helper and no general “assemble a value from source parts” path. Bare month tokens (`April` in `end of April`) are not date tokens in `tokenizeQuantities` today; extend kind detection for month names so R3 can see them. That is tokenisation, not derivation.
+
+### C. R4 scope
+
+**“Contradicted figure in the sentence”** means a draft quantity token that has a **licensed counterpart** in the pairing excerpt: name match (surviving **a**/**b**), compatible kind/scale, values differ, and R6 qualifier states pass. It is **not** every figure in the sentence. It is **not** every figure Stage 2’s verdict rested on.
+
+A draft figure the source never mentions (F18-S3’s `240'000`; F18-S4’s `EUR 28 million`) is unmatched, stays in the sentence, and **does not block**.
+
+If any licensed pair cannot be written (R1 veto, R5 veto, R3 year ambiguous, two source figures match one draft name), drop **all** licensed pairs on that statement. Zero writable licensed pairs → ACKNOWLEDGE `conflict_unaddressed`. One or more, and every one writable → write every one.
+
+### D. R5 detection
+
+Deterministic, no model. After name-pairing, inspect the **draft sentence** (not the excerpt) for these shapes. Closed patterns, word-boundary, case-insensitive:
+
+1. **From–to growth path.** `from <tokenA> to <tokenB>`, `growth from <tokenA> to <tokenB>`, `<tokenA> to <tokenB> over`. A is the start. Do not change A unless B is also a licensed pair (source addresses the destination). F18-S7: `from EUR 38 million to approximately EUR 95 million` — source addresses only 38 → veto 38 → R4 drops the sentence.
+2. **Total with components.** A token whose fragment contains `total` / `in total` / `employs` / `headcount` / `team of` and the same sentence contains another quantity in a fragment with a component cue (`split`, `comprising`, `of which`, `including`, plus the closed department list already in **e**). Do not change the total unless every hanging component is also licensed.
+3. **Percentage of a base.** `N% of <token>` / `percent of <token>`. Do not change `<token>` unless that percentage is also licensed.
+
+**What it will miss.** Implied year-on-year with no from–to (`representing strong growth from EUR 28 million` while changing current ARR 38→35 — 28 is unmatched, not a written dependent; R5 does not fire). Separately stated CAGR in another clause. Word-number paths (`from four to eighteen`). A destination written without `from`/`to` (`grow 38 million into 95 million`). Those stay declined only if some other rule catches them; do not invent a model judge to recover them.
+
+### E. R6 naming
+
+**“The source explicitly names the draft’s figure”** means: the pairing excerpt contains a quantity token whose **value equals the draft token’s value** (same kind, same numeric/date raw after existing normalisation), and that token sits inside a **citation span**. Citation spans, reused from today’s splitter and applied only as this test, not as identity:
+
+- `not <token>`
+- `compared with <token>` / `versus <token>` / `rather than <token>` / `instead of <token>`
+- `<token> as stated` / `as stated in` / `in our initial` / `in our recommendation` / `in the memo`
+
+Bare co-occurrence of the same number in the excerpt is **not** naming. Kind-only pairing of an unqualified source IRR with a draft `gross IRR` because both are percentages is **not** naming. F18-S8 qualifies: `compared with the 2.8x / 23%`. W2 does **not** use this exception; both sides already carry `net` + `since inception`, so R6’s SAME-qualifier row licenses it.
+
+### F. Surviving draft qualifier
+
+If the draft says `gross` and the swap happens under R6’s named-figure exception, **the word `gross` stays**, attached to the new number.
+
+That is acceptable. The source licensed a replacement for the **named draft figure**. It did not license a change to the claim’s identity. Dropping `gross` would turn a gross IRR claim into an unqualified IRR claim, which is a different quantity (the B159 shape, decided here only as a swap refusal when the source does **not** name the draft figure). The reviewer still sees `gross`; if the source’s 21% is in fact net, that is the residual risk recorded below, and R6’s DIFFERENT-qualifier row still refuses a genuine gross-vs-net clash.
+
+---
+
+## Surviving machinery (first pass, not rewritten)
+
+These sections survive with the deltas named. The first-pass text is the authority except where a ruling overrides it.
+
+| Section | Status |
 |---|---|
-| Gross / net | gross, net |
-| Realised | realised, realized, unrealised, unrealized |
-| Return window | since inception, inception; annualised, annualized; last twelve months, LTM, trailing twelve months, TTM; year to date, YTD |
-| Per share | per share, per-share, /share |
-| Currency basis | constant currency, cc, FX-neutral |
-| Pro forma | pro forma, pro-forma |
-| Fees | before fees, after fees, net of fees, gross of fees |
-| Leverage | levered, unlevered, equity (when attached to IRR/MOIC) |
-
-**Rule.** For each family: if either side has a member, both sides must have the **same** member. Present on one side and absent on the other is **not** a match. Conflicting members (gross vs net) are not a match. Both absent is a match on that family.
-
-**Observation as-at dates** (`as of March 2025`, `as of 28 May`, `at end of April`) are **not** this lexicon. They are when a stock metric was measured. A contradicted card whose source restates ARR or headcount at a later date is the case this pass exists to close. Treating those dates as identity would refuse every updated KPI. **Return windows** (inception / LTM / YTD / annualised) stay in the lexicon because they change the calculation, not the observation time.
-
-**Ben rules this split** on F18-S4 and F18-S5 (JUDGEMENT rows). If he folds as-at dates into identity, those two currently-pinned replacements decline.
-
-Three worked examples where naive word-overlap would swap wrongly:
-
-1. **Gross vs absent.** Draft: `The base case generates 23% gross IRR.` Source: `The IRR is 21%.` Shared token `IRR`. Naive overlap swaps 23→21. This rule declines (gross present on one side only). Exhibit shape of **B159**, decided here only as a swap refusal.
-
-2. **Inception vs LTM.** Draft: `The fund has delivered a net IRR of 18.4% since inception.` Source: `The LTM net IRR is 11.2%.` Shared `net` + `IRR`. Naive overlap swaps 18.4→11.2. This rule declines (return-window family disagrees). Contrast W2, where both sides say since inception and the swap is licensed.
-
-3. **Realised vs headline MOIC.** Draft: `Realised MOIC is 2.1x.` Source: `MOIC is 2.6x.` Shared `MOIC`. Naive overlap swaps 2.1→2.6. This rule declines (realised present on one side only).
-
-### d. Units and scale
-
-Keep the existing disqualifiers, and add currency:
-
-| Clash | Disqualifies |
-|---|---|
-| Percentage vs multiple (`23%` vs `2.8x`) | Yes |
-| Money vs count | Yes |
-| Million vs billion vs ones | Yes. Do not convert. |
-| Currency code mismatch (EUR / USD / GBP / SEK / CHF / …) | Yes. Extend `classify` so the code is part of identity. Today only EUR/USD/GBP are even detected; SEK 18.4 billion is just `money/billion`. |
-| One side has a currency code, the other is a bare number of the same scale | Yes. Do not assume. |
-| `%` vs spelled `percent` | No, once (a) treats `N percent` as percentage. |
-
-### e. Ambiguity
-
-**Two source figures both match one draft name** → decline. Do not pick.
-
-**Total vs breakdown** (the F13-S7 shape). A fragment whose label contains a component cue is not a total. Closed component cues: `split`, `comprising`, `of which`, `including`, plus a function/department word from a closed list (`engineering`, `sales`, `support`, `implementation`, `administrative`, `g&a`, `customer success`, `customer support`). A fragment that contains `total` / `in total` / `employs` / `headcount` / `team of` and does **not** carry a component cue is a total.
-
-After dropping components, if the source does not have **exactly one** remaining token that names-matches the draft, decline. If it does, that total may pair. The locator still reads only the painted excerpt, not other passages in the same source. F13-S7’s other span (`employs 320 people…`) is therefore invisible to the locator. That is JUDGEMENT, not a silent expansion of the excerpt.
-
-### f. Correction-wording route
-
-**Subsumed.** Naming is necessary and sufficient. Correction wording is not a parallel path and does not license a kind-only swap.
-
-`not 380 as stated` can raise confidence in a log line. It must not change the pair set. The product stays binary (**h**), so that log is diagnostic only.
-
-Justification: Claude’s correction stands. Correction wording is prose style. Keeping it as a separate path would re-open the kind-only pairing `548f131` shut on unmarked excerpts, and would treat F14-S11’s qualitative `not` as if it were a superseded figure.
-
-### g. Figures written as words
-
-**Out of scope.** F12-S0 (`four years` vs `eighteen months`) has no digit token today. Bringing it in needs a number-word parser **and** unit conversion (years vs months). That is a different slice. This pass extends pairing, not tokenisation beyond `N percent`. F12-S0 declines.
-
-### h. Confidence
-
-**Strictly binary.** A row a reviewer can Accept is not the place for a hedge. No middle tier, no “likely the same quantity”, no warning badge on a live proposal. Correction wording does not create a second grade.
-
-### i. Copy when the rule declines
-
-Keep `NO_PROPOSAL.conflict_unaddressed`:
-
-> A source contradicts this statement. Nothing is proposed. Decide whether the sentence should match the source.
-
-It still reads correctly for qualitative contradictions (recommend vs complete, buyer vs seller) and for declined figure cases (gross vs net, two pairs, unnamed). A new reason code would be a data-contract change. Do not add one in this pass.
+| **a.** Name extraction windows, stop words, parentheticals, `N percent` as percentage | Unchanged. |
+| **b.** Kind/scale, names, Jaccard ≥ 0.6, abbreviation list, decline when empty/clash/two candidates for one name | Unchanged **except b.4**. “Exactly one surviving pair or decline the statement” is **withdrawn**. Replace with C: write every licensed writable pair, or none. |
+| **c.** Qualifier families and the as-at-date split | Qualifier **lexicon** unchanged. The match rule is **replaced by R6** (four states, including named-figure exception). As-at dates remain observation time, not identity. F18-S4/S5 are no longer JUDGEMENT. |
+| **d.** Units and scale, currency clash | Unchanged. |
+| **e.** Two source figures for one draft name → decline. Component cues for pairing hygiene | Unchanged as pairing hygiene. F13-S7 is no longer a JUDGEMENT PROPOSE via the component filter; **R1** declines it. Do not expand pairing onto other passages to “find” the 320. |
+| **f.** Correction-wording route subsumed for **identity** | Unchanged. Citation spans survive **only** as R6’s naming test (E), not as a kind-only back door and not as a parallel pair finder. `rejectedRanges` as the **only** way to form a pair goes away. |
+| **g.** Word-numbers out of scope | Unchanged. F12-S0 declines. |
+| **h.** Strictly binary confidence | Unchanged. A warning on Accept is a hedge; Ben rejected that shape for **B172** as well. |
+| **i.** Keep `conflict_unaddressed` copy | Unchanged. No new reason code (data contract). |
 
 ---
 
 ## Expectation table
 
-Universe: every `displayVerdict: "conflict"` card in `scripts/diagnostic/accuracy/runs/evidence-pass-lift-1/cards.json` (18), plus the W2 extra row. Excerpt = painted `primaryExcerpt` (same string the locator sees). **Do not build against this column until Ben rules the JUDGEMENT rows.** The ruled table is the pinned threshold.
+Universe: every `displayVerdict: "conflict"` card in `scripts/diagnostic/accuracy/runs/evidence-pass-lift-1/cards.json` (18), plus the W2 extra row. Excerpt = painted `primaryExcerpt` (same string pairing sees). R1 veto may read `supportSpans` on the same card.
 
-Proposed resulting sentences replace only the source-quoted token. Everything else in the draft sentence stays.
+Claude’s five PROPOSE rows are **confirmed** under the rulings as written. None were adjusted by changing a ruling. The one reading that had to be stated, not redesigned: **R1 is intra-source**. Pack-wide application would decline F18-S3/S4/S5/S8 because source 0 still states the draft figures; the ruling’s title is self-disagreement, and those rows are the product the owner listed as PROPOSE.
 
-| Mark | ID | Draft (trimmed) | Excerpt (trimmed) | Draft figure | Source figure | Outcome | Reason |
-|---|---|---|---|---|---|---|---|
-| CLEAR | F05-S0 | Halden Group has agreed to acquire Norwell Aerospace Components … from Westhaven Capital. | Westhaven Capital agrees to acquire Norwell Aerospace Components from Bridgepoint | — | — | DECLINE | No quantity tokens. Buyer/seller identity. |
-| CLEAR | F05-S5 | During Westhaven's ownership, Norwell has invested significantly in advanced composite manufacturing capability. | …during the Bridgepoint ownership period and now operates three of the most advanced… | — | — | DECLINE | No quantity tokens. Party identity. |
-| CLEAR | F08-S2 | We have invested EUR 480 million of equity for a 78% controlling stake… | Halden Group would acquire a 78% controlling stake from the founding Schiller family… | EUR 480 million; 78% | 78% | DECLINE | 78% is the same value. Painted excerpt has no competing figure. Tense is invested vs would acquire. |
-| CLEAR | F12-S0 | After more than four years of partnership, Meridian Capital has completed the sale… | After eighteen months of work alongside the team, I'm delighted that Meridian Capital has completed the sale… | four years (words) | eighteen months (words) | DECLINE | Word-numbers out of scope (**g**). |
-| JUDGEMENT | F13-S7 | The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore. | The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10. | 320 | 285 (total); 110/75/55/35/10 (components) | **PROPOSE** `The Company employs 285 people across offices in London, Hamburg, Lisbon, and Bangalore.` | Component filter leaves one total (285 people / team). Same source also has a confirmed span stating 320; locator does not read it. |
-| CLEAR | F14-S11 | We expect to bring a specific potential investment to consider over the coming months. | We are not yet in dialogue with any specific company. … | — | — | DECLINE | No quantity tokens. Qualitative `not`. |
-| CLEAR | F15-S2 | We have invested EUR 720 million of equity for an 84% stake. | We seek IC approval for an investment of up to EUR 720 million of equity in the acquisition of Casa Verde Group S.p.A. | EUR 720 million; 84% | EUR 720 million | DECLINE | 720 million is the same value. Invested vs seek approval. |
-| CLEAR | F15-S11 | The format currently operates 18 stores and represents a fifth value driver alongside the four pillars above. | Fifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar. The 18 stores operating today generate average four-wall margins of 18%… | 18 (stores) | 18 (stores); 18% (margins); 73 (banner name) | DECLINE | Store count matches. 18% is a different quantity. Conflict is fifth vs third pillar. |
-| JUDGEMENT | F17-S9 | …capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme… | Embedded rental reversion is estimated at approximately 18% across the portfolio… | 40 percent; EUR 38 million | 18% | **DECLINE** | `40 percent of leases roll` is a share of leases; `18%` is rental reversion. Shared headword “reversion”, different quantities. Capex 38 million has no counterpart in the painted excerpt. |
-| CLEAR | F18-S0 | We are writing to confirm completion of the transaction with Nordic SaaS Holdings… | We recommend an investment of EUR 158 million for a 60% controlling stake… | — | EUR 158 million; 60% | DECLINE | Completion vs recommend. No draft figure to replace. |
-| CLEAR | F18-S2 | We have invested EUR 158 million for a 60% controlling stake. | We recommend an investment of EUR 158 million for a 60% controlling stake… | EUR 158 million; 60% | EUR 158 million; 60% | DECLINE | Values match. Invested vs recommend. |
-| CLEAR | F18-S3 | The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units. | The Company currently serves 412 property management companies, not 380 as stated in our initial memo. | 380; 240'000 | 412; 380 (rejected) | **PROPOSE** `The Company currently serves 412 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.` | One named pair: property management companies. 240'000 unmatched, ignored. Naming subsumes `not 380`. |
-| JUDGEMENT | F18-S4 | It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year. | Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. | EUR 38 million; EUR 28 million | EUR 35 million; EUR 38 million (rejected) | **PROPOSE** `It generates annual recurring revenue (ARR) of EUR 35 million as of March 2025, representing strong growth from EUR 28 million the prior year.` | ARR names match. March vs April treated as observation time, not identity (**c**). 28 million unmatched, kept. |
-| JUDGEMENT | F18-S5 | The Company employs 142 people across Stockholm, Oslo, and Helsinki. | The Company employs 167 people as of 28 May, not 142 as stated in our initial memo. | 142 | 167; 142 (rejected) | **PROPOSE** `The Company employs 167 people across Stockholm, Oslo, and Helsinki.` | Employs / people. One-sided as-at date is observation time, not identity. |
-| JUDGEMENT | F18-S7 | Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold… | Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. | EUR 38 million (from); EUR 95 million (to) | EUR 35 million (current ARR) | **DECLINE** | Draft 38 is the start of a forecast path; source 35 is current ARR. Same abbreviation, not the same quantity. Today `548f131` proposes this swap. This pass would reverse that pin. |
-| JUDGEMENT | F18-S8 | The base case generates 2.8x MOIC and 23% gross IRR. | Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation. | 2.8x; 23% | 2.6x; 21% | **DECLINE** | IRR pair fails **c** (gross vs absent). If IRR is dropped, MOIC 2.8x→2.6x would be the sole survivor — that half-fix leaves the contradicted IRR in place. Fail closed unless exactly one licensed pair on the original statement **before** qualifier drop, or Ben rules that a remaining licensed pair may still propose. Recommendation: decline the sentence. |
-| JUDGEMENT | F19-S2 | The exit of NorTech Industries — which closed in January 2026 at SEK 18.4 billion and generated a 3.56x gross MOIC / 31.4 percent gross IRR — is the largest realisation… | …The exit generated gross proceeds of SEK 12.8 billion to Fund IV on invested capital of SEK 3.6 billion, representing a 3.56x gross MOIC and 31.4% gross IRR.… | SEK 18.4 billion; 3.56x; 31.4 percent | SEK 12.8 billion (proceeds); SEK 3.6 billion (invested capital); 3.56x; 31.4% | **DECLINE** | `closed at SEK 18.4 billion` is not named as `gross proceeds to Fund IV`. MOIC and IRR values already match. |
-| CLEAR | F19-S13 | Brightway Industrial Coatings and Eltex Power Systems are both progressing toward exit-readiness, with formal processes likely to launch in the first and third quarters respectively. | We anticipate two additional realisations during 2026… We will provide further updates as these processes develop. | — | 2026 | DECLINE | Timing / whether a process has launched. No figure pair. |
-| CLEAR | W2 (extra) | The fund has delivered a net IRR of 18.4% since inception. | The net IRR since inception is 11.2%. | 18.4% | 11.2% | **PROPOSE** `The fund has delivered a net IRR of 11.2% since inception.` | Net + IRR + since inception on both sides. This is the unmarked fact-sheet case B169 exists for. Today: no proposal. |
+Exact resulting sentences replace every licensed value. Unmatched draft figures stay.
 
-**Proposed pin after Ben rules (not to be built against until then):**
+| Mark | ID | Outcome | Exact resulting sentence, or decline reason |
+|---|---|---|---|
+| CLEAR | F05-S0 | DECLINE | No quantity tokens. Buyer/seller identity. |
+| CLEAR | F05-S5 | DECLINE | No quantity tokens. Party identity. |
+| CLEAR | F08-S2 | DECLINE | 78% same value. Painted excerpt has no competing figure. |
+| CLEAR | F12-S0 | DECLINE | Word-numbers out of scope (**g**). |
+| CLEAR | F13-S7 | **DECLINE** | **R1.** Same source has a `confirmed` span `CloudPivot employs 320 people…` and a conflicting 285 split. Any matched passage of that source supports the draft figure. |
+| CLEAR | F14-S11 | DECLINE | No quantity tokens. Qualitative `not`. |
+| CLEAR | F15-S2 | DECLINE | 720 million same value. Invested vs seek approval. |
+| CLEAR | F15-S11 | DECLINE | Store count matches. Conflict is fifth vs third pillar. |
+| CLEAR | F17-S9 | DECLINE | `40 percent of leases roll` is not rental reversion `18%`. Capex unmatched. |
+| CLEAR | F18-S0 | DECLINE | Completion vs recommend. No draft figure to replace. |
+| CLEAR | F18-S2 | DECLINE | Values match. Invested vs recommend. |
+| CLEAR | F18-S3 | **PROPOSE** | `The Company currently serves 412 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.` 380→412. `240'000` unmatched; R4 does not block. Source 0 confirming 380 is a different `sourceRefId` than the update; R1 does not fire. |
+| CLEAR | F18-S4 | **PROPOSE** | `It generates annual recurring revenue (ARR) of EUR 35 million as of April 2025, representing strong growth from EUR 28 million the prior year.` 38→35 **and** March 2025→April 2025. April ≥ March; inherit 2025 (**R3**). `28 million` unmatched; R4 does not block. R5 does not fire: 38 is current ARR, not the `from` start of a from–to path; implied YoY is not a written dependent (**D**). |
+| CLEAR | F18-S5 | **PROPOSE** | `The Company employs 167 people across Stockholm, Oslo, and Helsinki.` 142→167. Draft carries no date, so R3 is not invoked; `as of 28 May` is not written. |
+| CLEAR | F18-S7 | **DECLINE** | **R5.** `from EUR 38 million to approximately EUR 95 million`. Source addresses only the start. Changing it silently changes implied growth to 95. R4 then writes nothing. |
+| CLEAR | F18-S8 | **PROPOSE** | `The base case generates 2.6x MOIC and 21% gross IRR.` Both the multiple and the rate (**R2**, **R4**). Licensed by **R6** because the source names both draft figures (`compared with the 2.8x / 23%`). `gross` stays (**F**). |
+| CLEAR | F19-S2 | DECLINE | `closed at SEK 18.4 billion` is not `gross proceeds of SEK 12.8 billion`. MOIC and IRR already match. |
+| CLEAR | F19-S13 | DECLINE | Timing / whether a process has launched. No figure pair. |
+| CLEAR | W2 (extra) | **PROPOSE** | `The fund has delivered a net IRR of 11.2% since inception.` Same qualifier (`net`) and same return window (`since inception`) on both sides. R6 SAME-qualifier row. Unmarked; no citation span required. |
 
-- CLEAR PROPOSE: F18-S3, W2.
-- JUDGEMENT PROPOSE, pending Ben: F13-S7, F18-S4, F18-S5.
-- JUDGEMENT DECLINE, pending Ben: F17-S9, F18-S7, F18-S8, F19-S2.
-- CLEAR DECLINE: the other eleven.
+**Pin this commit defines (not yet built):**
 
-Today’s `548f131` pin on live F18 was 4 replace (S3, S4, S5, S7) and 3 ack (S0, S2, S8). This design keeps S3, asks Ben on S4/S5, and proposes to **drop S7** (forecast-from vs current ARR) and to **keep S8 declined**.
+- PROPOSE: F18-S3, F18-S4 (two values), F18-S5, F18-S8 (two values), W2.
+- DECLINE: F13-S7 (R1), F18-S7 (R5), and every remaining contradicted card in the stored run.
+
+Live F18 membership after the build: still four replace and three acknowledge, **different rows**. Replace **S3, S4, S5, S8**. Acknowledge **S0, S2, S7**. Today’s `548f131` pin was replace S3, S4, S5, **S7** and acknowledge S0, S2, **S8**.
+
+---
+
+## What the rulings break
+
+Do not change these in this pass. Listed so the build knows which pins become wrong.
+
+**Shipped behaviour at `548f131` that becomes wrong**
+
+- Single-token only. `applyConflictProposal` fail-closed unless `pairs.length === 1` (`lib/revise-actions/conflict-engagement.mjs`). Wrong under R2/R4. S4 writes two values; S8 writes two values.
+- Correction-wording required to form a pair (`rejectedTokens.length === 0` → no pairs). Wrong under naming + R6. W2 must PROPOSE.
+- Live F18 four-and-three split: S7 is a replace (forecast start 38→35) and S8 is an acknowledgement (two pairs). Wrong: S7 must ACKNOWLEDGE (R5); S8 must ACTION (both figures).
+- B168 text: “4 replace (380/412, 142/167, two ARR 38/35), 3 acknowledge (… one two-pair MOIC/IRR)”. The two ARR 38/35 included S7. That sentence is wrong under these rulings. B168 stays a shipped-history row; do not rewrite the pin it records.
+
+**Tests that become wrong** (`tests/revise-actions-conflict-engagement.test.mjs`)
+
+| Test | Today | Under the rulings |
+|---|---|---|
+| `pinned split: four exact single-token replacements and three acknowledgements` | S3, S4, S5, S7 replace; S0, S2, S8 ack | S3, S4 (multi-value), S5, S8 (multi-value) replace; S0, S2, S7 ack |
+| `two figure pairs fail closed` | S8 → ACKNOWLEDGE | S8 → PROPOSE both, `The base case generates 2.6x MOIC and 21% gross IRR.` |
+| `an excerpt stating a different same-kind figure with no negation produces no pair and acknowledges` | W2 → ACKNOWLEDGE | W2 → PROPOSE `The fund has delivered a net IRR of 11.2% since inception.` |
+| `a draft figure the source never mentions is ignored, not a fail-closed` | S4 keeps `March 2025` | S4 also replaces `March 2025` with `April 2025` (R3). Unmatched `28 million` still ignored. |
+| `F18 S5 142 versus 167 is a single-token replace` | Still ACTION 142→167 | Still ACTION; sentence unchanged from today. Keep. |
+| `a correction-shaped source (412, not 380 as stated) IS closable` | Closable via `not` | Still closable, via naming, not via `not`. Keep the outcome. |
+| `an unmarked same-kind figure for an unrelated quantity produces no pair` | Decline | Still decline. Keep. |
+
+**Other tests that move when the locator lands**
+
+- `tests/revise-actions-license.test.mjs` — `UNMARKED_CONFLICT_ACK_IDS` (`S1:evidence:conflicting:0`, `S2:evidence:conflicting:0`) and `three identity rows and three unnamed-voice rows convert; unmarked conflicts acknowledge`. Brackenhill S1 **is** the W2 sentence (`net IRR of 18.4%` / source 11.2%). S2 is `1.9 times gross MOIC` vs `1.4 times gross MOIC` (same qualifier). Both become ACTION if `fillAction` sees an excerpt that names those quantities. Today they ACKNOWLEDGE because there is no correction wording. The mix-array pin becomes wrong.
+- `tests/revise-actions-sort.test.mjs` — `a non-closable conflict fill is ACKNOWLEDGE conflict_unaddressed` stays valid only if that fixture remains unlicensed (no name match). Do not retarget it to W2.
+- `tests/revise-actions-silence.test.mjs` — empty-excerpt fills stay ACKNOWLEDGE. Unchanged.
+- `tests/revise-actions-verify.test.mjs` — already parses multiple `Replace 'x' with 'y' and 'x2' with 'y2'` pairs. Data contract of one `proposedChange` string can stay.
+
+**First-pass design pins this revision overturns** (the unruled table, not shipped code): F13-S7 JUDGEMENT PROPOSE 320→285; F18-S4 single-token keeping March 2025; F18-S8 DECLINE because gross vs absent and one-pair fail-closed; “exactly one surviving pair”.
 
 ---
 
 ## Files (eventual build)
 
-**Inline. No new production module.** Replace the pair finder inside the existing locator. Do not add a second path.
+**Inline. No new production module.** Replace the pair finder and the apply step inside the existing locator. R3 year assembly is a closed helper in the same file, not a derivation module.
 
 | Path | Decision |
 |---|---|
-| `lib/revise-actions/conflict-engagement.mjs` | **Replace** `findCandidatePairs`: drop the rejected-token requirement; add name windows, qualifier families, currency on `classify`, `N percent` as percentage, component filter. Keep `tokenizeQuantities` (extended), `applyConflictProposal`, exact-quote `buildReplaceProposal`, fail-closed unless exactly one surviving pair, `CONFLICT_PROPOSAL_UNENGAGED`. |
-| `lib/revise-actions/run.mjs` | No change if `applyConflictProposal`’s contract stays `{ status, pair, proposal }`. |
-| `tests/revise-actions-conflict-engagement.test.mjs` | Change. W2 unmarked IRR becomes PROPOSE. F18-S7 pin follows Ben’s ruling. Unrelated 142 people vs 167 investments stays decline. Correction-shaped 412/380 stays closable **via naming**, not via `not`. |
-| `docs/BACKLOG.md` | Close **B169** only after the ruled table is built and tests pin it. Not in this design commit beyond the annotation below. |
+| `lib/revise-actions/conflict-engagement.mjs` | **Replace** `findCandidatePairs`: drop rejected-token-as-sole-path; add name windows, R6 qualifier states, currency on `classify`, `N percent` as percentage, bare month tokens, component filter for pairing. **Replace** `applyConflictProposal`: accept `pairs.length >= 1`; apply R1 veto from `supportSpans`; apply R5; apply R3; R4 all-or-none; post-check every written value is excerpt-verbatim except the R3 year. Keep `tokenizeQuantities` (extended), exact-quote `buildReplaceProposal` (multiple `Replace 'x' with 'y'` joined by `and`), `CONFLICT_PROPOSAL_UNENGAGED`. |
+| `lib/revise-actions/run.mjs` | Small change if `applyConflictProposal`’s contract becomes `{ status, pairs, proposal }` instead of `{ status, pair, proposal }`. |
+| `tests/revise-actions-conflict-engagement.test.mjs` | Change. See the broken-pin table. |
+| `tests/revise-actions-license.test.mjs` | Change when W2-shaped Brackenhill S1/S2 become ACTION. |
+| `docs/BACKLOG.md` | Close **B169** only after the ruled table is built and tests pin it. **B172** is filing only; do not build it in the quantity-matching slice. |
 
 **NEW FILES (eventual build):**
 
-- `tests/revise-actions-quantity-match.test.mjs` — one test per ruled table row (PROPOSE asserts the exact resulting sentence; DECLINE asserts no pair / ACKNOWLEDGE `conflict_unaddressed`). No diagnostic JSON read at runtime; inline the fixtures.
+- `tests/revise-actions-quantity-match.test.mjs` — one test per ruled table row (PROPOSE asserts the exact resulting sentence, including every value changed; DECLINE asserts no writable pairs / ACKNOWLEDGE `conflict_unaddressed`). No diagnostic JSON read at runtime; inline the fixtures. F13-S7’s fixture must include `card.supportSpans` so R1 is actually exercised.
 
-**NEW FILES (this design commit):**
-
-- `scripts/diagnostic/delivery-check/quantity-matching-design.md` (this file).
-
-**Correction-wording code:** **replaced**, not extended. `rejectedRanges` / split-by-`not` goes away. Naming does its job. Do not leave a parallel kind-only path behind a correction regex.
+**NEW FILES (this design commit):** none. This file is revised in place. One backlog row (**B172**) is added in `docs/BACKLOG.md`.
 
 ---
 
 ## Risk
 
-**Worst wrong swap this rule could still produce:** treating a forecast **from** ARR as current ARR and writing the source’s current figure into a base-case growth path (live F18-S7: `from EUR 38 million to approximately EUR 95 million` ← `EUR 35 million` current ARR). Second-worst: swapping `closed at SEK 18.4 billion` for `gross proceeds of SEK 12.8 billion` (F19-S2), or `40 percent of leases roll` for `18%` rental reversion (F17-S9).
+**Worst wrong proposal still possible under the rulings:** R6’s named-figure exception writes a new IRR into a sentence that still says `gross`, when the source’s named replacement is actually net (or otherwise differently based) and the source never said so. F18-S8 is the exhibit: `21%` lands in `21% gross IRR` because the source named `23%` and offered `21%` with no qualifier.
 
-**What catches it:** the name/qualifier rule as written (from/to + hold period vs as-at current; closed-at vs proceeds; leases-roll vs rental reversion); fail-closed on ≠1 pair; Ben’s JUDGEMENT rulings before any build; the pinned table test. A false acknowledgement is preferred to a wrong proposal. Do not loosen Jaccard or drop the qualifier families to recover a declined row.
+**What catches it:** nothing in this locator, by design. R6 licenses that write. DIFFERENT-qualifier still refuses an explicit gross-vs-net clash. Binary confidence (**h**) forbids a warning on Accept. A false acknowledgement remains preferred to a swap the rulings do not license; this residual is a swap the rulings **do** license.
+
+Second residual: R3 attaching the draft year when the source’s later-or-equal month is actually the prior calendar year (draft March 2025, source “April” meaning April 2024). The ruling as written licenses April 2025. What catches it: the earlier-month decline only; same-or-later is accepted.
+
+Third: a from–to path R5’s closed patterns miss, so a start figure is rewritten and implied growth moves. What catches it: the patterns in **D**, plus R4 if a second licensed figure then cannot be written. Misses listed in **D** stay misses.
 
 Do not re-run the frozen corpus. Do not call a model.
 
@@ -266,16 +279,16 @@ Do not re-run the frozen corpus. Do not call a model.
 
 ## Recorded, not designed
 
-### B171 — user-supplied authoring organisation (new)
+### B171 — user-supplied authoring organisation
 
-Ben’s decision 2026-09-11: the authoring organisation should be supplied by the user, not by a server setting. It can be entered in account settings (which do not exist yet) or as a pre-populated input field in the interface.
+**Survives unchanged** from the first pass. Out of scope for the quantity-matching build. Do not close **B95**, **B96**, **B124**, or **B170**.
 
-Already true in code, still true after this record:
+### B172 — unsupported dependents as a finding (new)
 
-- The request-body path exists and has never been exercised (**B95**).
-- The environment value is one identity per deployment (**B124**). Deployed value is still the fixture name (**B96**).
-- After `202b357` a wrong or missing value is no longer dangerous: the draft-presence gate refuses the write. It also **silently does nothing**, which is its own problem.
+Ben’s decision 2026-09-11. When a source contradicts a figure that other figures in the same sentence are derived from, the product knows those dependent figures are now unsupported and currently says nothing. Direction: **surface that as a finding in its own right**, not as a caveat attached to a proposal a reviewer can accept.
 
-When this is built, the draft-presence check changes job from **gate** (do not write a name the draft never mentioned) to **sanity check**: if the user states an organisation the draft never mentions, **tell them**, rather than acting silently. Do not close **B95**, **B96**, **B124**, or **B170** from this record.
+Worked example: F18-S7, a base case growing revenue from one figure to another over a hold (`from EUR 38 million to approximately EUR 95 million over a five-year hold`). The source contradicts the starting figure (current ARR 35, not 38). The destination and the implied growth are then unsupported by any source. Under R5 this slice **declines a proposal** and stops. It does not tell the reviewer that 95 and the path are now hanging.
 
-Out of scope for the quantity-matching build.
+A warning attached to an Accept button is a hedge and was **rejected** for that reason.
+
+Out of scope for the quantity-matching build. Relate it to **Pr16** (internal consistency: the draft is never compared against itself; deterministic half first — same quantity stated two ways, a figure that disagrees with itself) rather than duplicating Pr16. Pr16 is draft-against-draft across the memo (**P30**). This row is the same class of silence — the product knows something is now inconsistent and does not say so — scoped to dependents left hanging **inside one sentence** after a source contradicts their base. Do not invent a second internal-consistency programme. Do not close **Pr16** from this record.
