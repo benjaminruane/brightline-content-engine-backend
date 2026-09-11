@@ -196,6 +196,123 @@ describe("revise-actions licensed change", () => {
     assert.equal(result.resultingSentence, undefined);
   });
 
+  test("organisation in the result, not the original, with a pronoun on an unnamed draft is not ACTION", async () => {
+    const statement = "We are writing to confirm completion of the transaction.";
+    const resultingSentence = "Halden Group is writing to confirm completion of the transaction.";
+    let called = 0;
+    const result = await fillAction(
+      actionEntry({
+        id: "S0:editorial:overreach_unsupported_causal:0",
+        statement,
+        kind: "editorial",
+        rule: "overreach_unsupported_causal",
+        sort: {
+          policyPermit: true,
+          silenceOnCard: false,
+          rule: "overreach_unsupported_causal",
+          reasonCode: "permitted",
+        },
+      }),
+      {
+        authoringOrganisation: "Halden Group",
+        draftText: statement,
+        callModel: async () => {
+          called += 1;
+          return {
+            text: JSON.stringify({
+              proposedChange: "Replace 'We' with 'Halden Group'.",
+              resultingSentence,
+              why: "Third-person voice.",
+            }),
+          };
+        },
+      }
+    );
+    assert.equal(called, 1);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "visible_signal");
+    assert.equal(result.noProposalReason, NO_PROPOSAL.visible_signal);
+    assert.equal(result.resultingSentence, undefined);
+    assert.equal(JSON.stringify(result).includes("Halden Group"), false);
+  });
+
+  test("evidence ACTION on an unnamed first-person conflict does not insert the env house", async () => {
+    const statement = "We are writing to confirm completion of the transaction.";
+    let called = 0;
+    const result = await fillAction(
+      actionEntry({
+        id: "S0:evidence:conflicting:0",
+        statement,
+        kind: "evidence",
+        rule: "conflicting",
+        primaryExcerpt:
+          'We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB ("NSH" or "the Company").',
+        sort: {
+          policyPermit: true,
+          silenceOnCard: false,
+          rule: "conflicting",
+          reasonCode: "permitted",
+        },
+      }),
+      {
+        authoringOrganisation: "Halden Group",
+        draftText: statement,
+        callModel: async () => {
+          called += 1;
+          return {
+            text: JSON.stringify({
+              proposedChange: "Replace 'We' with 'Halden Group'.",
+              resultingSentence: "Halden Group is writing to confirm completion of the transaction.",
+              why: "Third-person voice.",
+            }),
+          };
+        },
+      }
+    );
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
+    assert.equal(result.noProposalReason, NO_PROPOSAL.conflict_unaddressed);
+    assert.equal(result.resultingSentence, undefined);
+    assert.equal(JSON.stringify(result).includes("Halden Group"), false);
+  });
+
+  test("placeholder in a model result is ACKNOWLEDGE and does not ship the example wording", async () => {
+    const errors = [];
+    const original = console.error;
+    console.error = (...args) => {
+      errors.push(args.map(String).join(" "));
+    };
+    try {
+      const result = await fillAction(
+        actionEntry({
+          statement: "The pipeline is thin.",
+        }),
+        {
+          authoringOrganisation: "Halden Group",
+          callModel: async () => ({
+            text: JSON.stringify({
+              proposedChange:
+                "Replace 'We are writing' with 'The authoring organisation is writing'.",
+              resultingSentence: "The authoring organisation notes that the pipeline is thin.",
+              why: "Third-person voice.",
+            }),
+          }),
+        }
+      );
+      assert.equal(result.disposition, "ACKNOWLEDGE");
+      assert.equal(result.sort?.reasonCode, "visible_signal");
+      assert.equal(result.resultingSentence, undefined);
+      assert.equal(/the authoring organisation/i.test(JSON.stringify(result)), false);
+      assert.equal(
+        errors.some((line) => line.includes("PLACEHOLDER_LEAK")),
+        true
+      );
+    } finally {
+      console.error = original;
+    }
+  });
+
   test("fillAction does not call the model on a slipped first-person ACTION with no pronoun", async () => {
     let called = 0;
     const result = await fillAction(

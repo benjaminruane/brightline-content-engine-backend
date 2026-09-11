@@ -13,8 +13,12 @@ import {
   AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER,
   DEFAULT_AUTHORING_ORGANISATION,
   FIRST_PERSON_ACTOR_INSTRUCTION,
+  PLACEHOLDER_LEAK,
   isAuthoringOrganisationName,
   applyViewMarkerSubjectBounds,
+  assertNoUnresolvedAuthoringOrganisationPlaceholder,
+  authoringOrganisationWriteIsLicensed,
+  blankPlaceholderLeaksInPublicConcern,
   boundViewMarkerSubjectDirection,
   buildFirstPersonActorInstruction,
   droppedModalityHedges,
@@ -480,5 +484,119 @@ describe("isAuthoringOrganisationName", () => {
       assert.equal(isAuthoringOrganisationName("Meridian Capital", "Meridian Capital"), true);
       assert.equal(isAuthoringOrganisationName("Halden Group", "Meridian Capital"), false);
     });
+  });
+});
+
+const S0_PLACEHOLDER_DIRECTION =
+  "Replace 'We are writing' with 'The authoring organisation is writing'.";
+
+function withCapturedErrors(fn) {
+  const errors = [];
+  const original = console.error;
+  console.error = (...args) => {
+    errors.push(args.map(String).join(" "));
+  };
+  try {
+    const result = fn();
+    return { result, errors };
+  } finally {
+    console.error = original;
+  }
+}
+
+describe("unresolved authoring-organisation placeholder", () => {
+  test("assertNoUnresolvedAuthoringOrganisationPlaceholder catches the S0 direction byte-exactly", () => {
+    const { result, errors } = withCapturedErrors(() =>
+      assertNoUnresolvedAuthoringOrganisationPlaceholder(S0_PLACEHOLDER_DIRECTION)
+    );
+    assert.equal(result, true);
+    assert.equal(
+      errors.some((line) => line.includes(PLACEHOLDER_LEAK)),
+      true
+    );
+  });
+
+  test("a real organisation name present in the draft is not stripped", () => {
+    const { result, errors } = withCapturedErrors(() =>
+      assertNoUnresolvedAuthoringOrganisationPlaceholder("Replace 'We' with 'Halden Group'.")
+    );
+    assert.equal(result, false);
+    assert.deepEqual(errors, []);
+  });
+
+  test("a draft that legitimately contains the words the authoring organisation fails loudly rather than silently", () => {
+    const draft = "The memo refers to the authoring organisation as a defined term.";
+    const { result, errors } = withCapturedErrors(() =>
+      assertNoUnresolvedAuthoringOrganisationPlaceholder(draft)
+    );
+    assert.equal(result, true);
+    assert.equal(
+      errors.some((line) => line.includes(PLACEHOLDER_LEAK)),
+      true
+    );
+  });
+
+  test("identifyAuthoringOrganisation is required before any licensed house insert", () => {
+    assert.equal(
+      authoringOrganisationWriteIsLicensed("We are writing to confirm completion.", FICTIONAL_HOUSE),
+      false
+    );
+    assert.equal(
+      authoringOrganisationWriteIsLicensed(
+        `In June 2025, ${FICTIONAL_HOUSE} made a commitment.`,
+        FICTIONAL_HOUSE
+      ),
+      true
+    );
+    assert.equal(authoringOrganisationWriteIsLicensed("", FICTIONAL_HOUSE), false);
+  });
+
+  test("suggestedDirection containing the placeholder is blanked and logged PLACEHOLDER_LEAK", () => {
+    const note =
+      "The statement uses first-person plural 'We are writing' in an investor letter, but the authoring organisation is not identified in this draft.";
+    const { result, errors } = withCapturedErrors(() =>
+      blankPlaceholderLeaksInPublicConcern({
+        concernCode: "voice_consistency",
+        note,
+        suggestedDirection: S0_PLACEHOLDER_DIRECTION,
+        suggestedRewrite: "The authoring organisation is writing to confirm completion.",
+      })
+    );
+    assert.equal(result.suggestedDirection, undefined);
+    assert.equal(result.suggestedRewrite, undefined);
+    assert.equal(result.note, note);
+    assert.match(result.note, /not identified in this draft/);
+    assert.equal(
+      errors.some((line) => line.includes(PLACEHOLDER_LEAK)),
+      true
+    );
+  });
+
+  test("style prompt formatting may still use the placeholder in examples; public fields must not", () => {
+    const formatted = formatStyleGuideRulesForPrompt(
+      STYLE_GUIDE_LAYER_2_CLIENT.filter((r) => r.id === "first_person_plural")
+    );
+    assert.match(
+      formatted,
+      new RegExp(`${AUTHORING_ORGANISATION_EXAMPLE_PLACEHOLDER} was attracted to Meridian`)
+    );
+    const { result } = withCapturedErrors(() =>
+      assertNoUnresolvedAuthoringOrganisationPlaceholder(S0_PLACEHOLDER_DIRECTION)
+    );
+    assert.equal(result, true);
+  });
+
+  test("combined reviewer blanks placeholder leaks on public concern fields", () => {
+    const src = readFileSync(
+      fileURLToPath(new URL("../lib/qc/editorial-compliance-reviewer.mjs", import.meta.url)),
+      "utf8"
+    );
+    assert.match(src, /blankPlaceholderLeaksInPublicConcern/);
+    assert.match(src, /assertNoUnresolvedAuthoringOrganisationPlaceholder/);
+    const blockSrc = readFileSync(
+      fileURLToPath(new URL("../lib/qc/first-person-actor.mjs", import.meta.url)),
+      "utf8"
+    );
+    assert.match(blockSrc, /not identified in this draft/);
   });
 });
