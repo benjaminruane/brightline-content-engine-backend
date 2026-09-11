@@ -181,22 +181,57 @@ const ROWS = {
 };
 
 const PROPOSE = ["F18-S3", "F18-S4", "F18-S5", "F18-S8", "W2"];
-const DECLINE = [
+const SPECIFIC_DECLINE = {
+  "F13-S7": {
+    explainCode: "self_disagreement",
+    explanation: "The same source states 320 people elsewhere, so the figures cannot be reconciled from it.",
+  },
+  "F18-S7": {
+    explainCode: "dependents",
+    explanation:
+      "The source gives EUR 35 million, not the EUR 38 million in this sentence. The EUR 95 million target and the growth it implies are built on that figure, and no source covers them, so the projection needs reworking rather than one correction.",
+  },
+};
+const GENERIC_DECLINE = [
   "F05-S0",
   "F05-S5",
   "F08-S2",
   "F12-S0",
-  "F13-S7",
   "F14-S11",
   "F15-S2",
   "F15-S11",
   "F17-S9",
   "F18-S0",
   "F18-S2",
-  "F18-S7",
   "F19-S2",
   "F19-S13",
 ];
+const DECLINE = [...GENERIC_DECLINE, ...Object.keys(SPECIFIC_DECLINE)];
+
+const PROPOSE_EXPLANATION = {
+  "F18-S3": {
+    explainCode: "correction",
+    explanation: "The source gives 412 property management companies, not the 380 in this sentence.",
+  },
+  "F18-S4": {
+    explainCode: "correction",
+    explanation:
+      "The source gives EUR 35 million and April 2025, against the EUR 38 million and March 2025 in this sentence.",
+  },
+  "F18-S5": {
+    explainCode: "correction",
+    explanation: "The source gives 167 people, not the 142 in this sentence.",
+  },
+  "F18-S8": {
+    explainCode: "qualifier_silent",
+    explanation:
+      "The source gives 2.6x and 21%, against the 2.8x and 23% in this sentence. It does not say whether its 21% is gross or net, so the word gross is left as written.",
+  },
+  W2: {
+    explainCode: "correction",
+    explanation: "The source gives 11.2%, not the 18.4% in this sentence.",
+  },
+};
 
 describe("quantity-matching pinned table", () => {
   for (const id of PROPOSE) {
@@ -205,6 +240,9 @@ describe("quantity-matching pinned table", () => {
       const result = await filled(`${id}:evidence:conflicting:0`, fixture);
       assert.equal(result.disposition, "ACTION", id);
       assert.equal(result.resultingSentence, fixture.expected, id);
+      assert.equal(result.why, undefined, id);
+      assert.equal(result.explainCode, PROPOSE_EXPLANATION[id].explainCode, id);
+      assert.equal(result.explanation, PROPOSE_EXPLANATION[id].explanation, id);
       assert.equal(applyConflictProposal(conflictEntry(`${id}:evidence:conflicting:0`, fixture)).status, "replace");
     });
   }
@@ -220,7 +258,16 @@ describe("quantity-matching pinned table", () => {
       const result = await filled(`${id}:evidence:conflicting:0`, fixture);
       assert.equal(result.disposition, "ACKNOWLEDGE", id);
       assert.equal(result.sort?.reasonCode, "conflict_unaddressed", id);
-      assert.equal(result.noProposalReason, NO_PROPOSAL.conflict_unaddressed, id);
+      const specific = SPECIFIC_DECLINE[id];
+      if (specific) {
+        assert.equal(result.explainCode, specific.explainCode, id);
+        assert.equal(result.explanation, specific.explanation, id);
+        assert.equal(result.noProposalReason, specific.explanation, id);
+      } else {
+        assert.equal(result.explainCode, undefined, id);
+        assert.equal(result.explanation, undefined, id);
+        assert.equal(result.noProposalReason, NO_PROPOSAL.conflict_unaddressed, id);
+      }
       assert.equal(result.resultingSentence, undefined, id);
     });
   }
@@ -271,9 +318,15 @@ describe("quantity-matching guards", () => {
     };
     const outcome = applyConflictProposal(conflictEntry("S4:evidence:conflicting:0", fixture));
     assert.equal(outcome.status, "unaddressed");
+    assert.equal(outcome.explain?.code, "year_ambiguous");
     const result = await filled("S4:evidence:conflicting:0", fixture);
     assert.equal(result.disposition, "ACKNOWLEDGE");
     assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
+    assert.equal(result.explainCode, "year_ambiguous");
+    assert.equal(
+      result.explanation,
+      "The source states February without a year, and this sentence states March 2025. The year has to be settled before the figure can be."
+    );
     assert.equal(result.resultingSentence, undefined);
   });
 
@@ -296,9 +349,27 @@ describe("quantity-matching R1 uses card spans", () => {
     assert.equal(findCandidatePairs(fixture.statement, fixture.primaryExcerpt).length >= 1, true);
     const withSpans = applyConflictProposal(conflictEntry("S7:evidence:conflicting:0", fixture));
     assert.equal(withSpans.status, "unaddressed");
+    assert.equal(withSpans.explain?.code, "self_disagreement");
     const { card, ...noCard } = fixture;
     void card;
     const withoutSpans = applyConflictProposal(conflictEntry("S7:evidence:conflicting:0", noCard));
     assert.equal(withoutSpans.status, "replace");
+  });
+
+  test("an unnamed qualifier clash declines with qualifier_clash copy", async () => {
+    const fixture = {
+      statement: "The base case generates 23% gross IRR.",
+      primaryExcerpt: "The updated base case generates 21% IRR.",
+    };
+    const outcome = applyConflictProposal(conflictEntry("S8:evidence:conflicting:0", fixture));
+    assert.equal(outcome.status, "unaddressed");
+    assert.equal(outcome.explain?.code, "qualifier_clash");
+    const result = await filled("S8:evidence:conflicting:0", fixture);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.explainCode, "qualifier_clash");
+    assert.equal(
+      result.explanation,
+      "The source gives 21% IRR against the 23% gross IRR in this sentence, and does not name the 23%. The two are not necessarily the same measure."
+    );
   });
 });

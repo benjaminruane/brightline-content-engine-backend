@@ -94,7 +94,7 @@ describe("B149 silence does not read widened span conflicts", () => {
     assert.equal(sorted.sort?.reasonCode, "silence_no_edit");
     assert.equal(
       sorted.noProposalReason,
-      "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+      "No supplied source speaks to this claim, either way. The wording is yours."
     );
     assert.equal(sorted.noProposalReason, NO_PROPOSAL.silence_no_edit);
   });

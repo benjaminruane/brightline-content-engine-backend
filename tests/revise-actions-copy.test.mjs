@@ -63,7 +63,7 @@ describe("revise-actions user-facing copy", () => {
     assert.deepEqual(findBannedUserCopy(NO_PROPOSAL.first_person_unnamed), []);
     assert.equal(
       NO_PROPOSAL.first_person_unnamed,
-      "This sentence is written in the first person, which reporting commentary does not allow. Nothing is proposed. Rewrite it in the third person in the draft."
+      "This sentence is written in the first person, which reporting commentary does not allow. Rewrite it in the third person in the draft."
     );
   });
 
@@ -84,18 +84,18 @@ describe("revise-actions user-facing copy", () => {
     }
     assert.equal(
       NO_PROPOSAL.partial_no_edit,
-      "A source supports part of this statement, not all of it. Nothing is proposed and the wording is yours."
+      "A source supports part of this statement, not all of it. The wording is yours."
     );
     assert.equal(
       NO_PROPOSAL.partial_policy,
-      "This concern stands. Nothing is proposed. The wording is yours."
+      "This concern stands. The wording is yours."
     );
   });
 
   test("true-silence acknowledge strings are unchanged", () => {
     assert.equal(
       NO_PROPOSAL.silence_no_edit,
-      "No supplied source speaks to this claim, either way. Nothing is proposed and the wording is yours."
+      "No supplied source speaks to this claim, either way. The wording is yours."
     );
     assert.equal(
       NO_PROPOSAL.policy_forbids,
@@ -107,7 +107,17 @@ describe("revise-actions user-facing copy", () => {
     assert.deepEqual(findBannedUserCopy(NO_PROPOSAL.conflict_unaddressed), []);
     assert.equal(
       NO_PROPOSAL.conflict_unaddressed,
-      "A source contradicts this statement. Nothing is proposed. Decide whether the sentence should match the source."
+      "A source contradicts this statement. Decide whether the sentence should match the source."
     );
+  });
+
+  test("no acknowledge string narrates that nothing is proposed", () => {
+    for (const [key, text] of Object.entries(NO_PROPOSAL)) {
+      assert.equal(
+        /nothing is proposed/i.test(text),
+        false,
+        `${key} still narrates an absence: ${text}`
+      );
+    }
   });
 });

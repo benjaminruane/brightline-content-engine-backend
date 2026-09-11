@@ -112,7 +112,7 @@ describe("revise-actions sort (r10-review1)", () => {
     assert.ok(found, "S1 evidence finding must exist");
     assert.equal(
       found.noProposalReason,
-      "A source supports part of this statement, not all of it. Nothing is proposed and the wording is yours."
+      "A source supports part of this statement, not all of it. The wording is yours."
     );
     assert.equal(found.noProposalReason, NO_PROPOSAL.partial_no_edit);
   });
