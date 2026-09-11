@@ -166,17 +166,36 @@ describe("revise-actions conflict engagement (F18 pinned 4+3)", () => {
     assert.equal(result.resultingSentence, undefined);
   });
 
-  test("Brackenhill S1 18.4 percent to 11.2 percent is the exact-quote replace", async () => {
+  test("an excerpt stating a different same-kind figure with no negation produces no pair and acknowledges", async () => {
+    const fixture = {
+      statement: "The fund has delivered a net IRR of 18.4% since inception.",
+      primaryExcerpt: "The net IRR since inception is 11.2%.",
+    };
+    assert.equal(findCandidatePairs(fixture.statement, fixture.primaryExcerpt).length, 0);
+    const result = await fillAction(conflictEntry("S1:evidence:conflicting:0", fixture), {
+      callModel: throwingModel(),
+    });
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
+    assert.equal(result.noProposalReason, NO_PROPOSAL.conflict_unaddressed);
+    assert.equal(result.resultingSentence, undefined);
+  });
+
+  test("an unmarked same-kind figure for an unrelated quantity produces no pair", async () => {
+    const statement = "The Company employs 142 people across Stockholm, Oslo, and Helsinki.";
+    const excerpt = "The portfolio comprises 167 investments as of 28 May.";
+    const pairs = findCandidatePairs(statement, excerpt);
+    assert.equal(pairs.length, 0);
     const result = await fillAction(
-      conflictEntry("S1:evidence:conflicting:0", {
-        statement: "The fund has delivered a net IRR of 18.4% since inception.",
-        primaryExcerpt: "The net IRR since inception is 11.2%.",
-      }),
+      conflictEntry("S5:evidence:conflicting:0", { statement, primaryExcerpt: excerpt }),
       { callModel: throwingModel() }
     );
-    assert.equal(result.disposition, "ACTION");
-    assert.equal(result.proposedChange, "Replace '18.4%' with '11.2%'.");
-    assert.equal(result.resultingSentence, "The fund has delivered a net IRR of 11.2% since inception.");
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.resultingSentence, undefined);
+    assert.equal(
+      result.resultingSentence === "The Company employs 167 people across Stockholm, Oslo, and Helsinki.",
+      false
+    );
   });
 
   test("a draft figure the source never mentions is ignored, not a fail-closed", async () => {

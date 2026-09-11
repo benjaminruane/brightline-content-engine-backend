@@ -39,11 +39,8 @@ const VOICE_UNNAMED_IDS = [
   "S6:editorial:voice_consistency:0",
   "S9:editorial:voice_consistency:0",
 ];
-const KEEP_ACTION_IDS = [
-  "S0:editorial:currency_format:0",
-  "S1:evidence:conflicting:0",
-  "S2:evidence:conflicting:0",
-];
+const KEEP_ACTION_IDS = ["S0:editorial:currency_format:0"];
+const UNMARKED_CONFLICT_ACK_IDS = ["S1:evidence:conflicting:0", "S2:evidence:conflicting:0"];
 const KEEP_ACK_IDS = [
   "S4:evidence:partial:0",
   "S4:editorial:marketing_language_excess:0",
@@ -347,7 +344,7 @@ describe("revise-actions licensed change", () => {
 });
 
 describe("Brackenhill 2026-09-02 recorded sample", () => {
-  test("three identity rows and three unnamed-voice rows convert; three ACTION stay", async () => {
+  test("three identity rows and three unnamed-voice rows convert; unmarked conflicts acknowledge", async () => {
     const sample = loadSample();
     assert.equal(sample.entries.length, 15);
     const draftText = sample.entries.map((e) => e.statement).join("\n");
@@ -375,8 +372,8 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
     const mix = SAMPLE_ORDER.map((id) => `${id} ${byId[id]?.disposition}`);
     assert.deepEqual(mix, [
       "S0:editorial:currency_format:0 ACTION",
-      "S1:evidence:conflicting:0 ACTION",
-      "S2:evidence:conflicting:0 ACTION",
+      "S1:evidence:conflicting:0 ACKNOWLEDGE",
+      "S2:evidence:conflicting:0 ACKNOWLEDGE",
       "S4:evidence:partial:0 ACKNOWLEDGE",
       "S4:editorial:marketing_language_excess:0 ACKNOWLEDGE",
       "S4:editorial:voice_consistency:1 ACKNOWLEDGE",
@@ -390,8 +387,8 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
       "S9:evidence:not_supported:0 ACKNOWLEDGE",
       "S9:editorial:voice_consistency:0 ACKNOWLEDGE",
     ]);
-    assert.equal(replayed.filter((e) => e.disposition === "ACTION").length, 3);
-    assert.equal(replayed.filter((e) => e.disposition === "ACKNOWLEDGE").length, 12);
+    assert.equal(replayed.filter((e) => e.disposition === "ACTION").length, 1);
+    assert.equal(replayed.filter((e) => e.disposition === "ACKNOWLEDGE").length, 14);
     for (const id of CONVERT_IDS) {
       assert.equal(byId[id]?.disposition, "ACKNOWLEDGE", `${id} must convert`);
       assert.equal(byId[id]?.sort?.reasonCode, "visible_signal", `${id} reason`);
@@ -408,14 +405,11 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
       assert.ok(byId[id]?.resultingSentence, `${id} keeps the proposal`);
     }
     assert.equal(conflictingEvidenceModelCalls, 0);
-    assert.equal(
-      byId["S1:evidence:conflicting:0"]?.resultingSentence,
-      "The fund has delivered a net IRR of 11.2% since inception."
-    );
-    assert.equal(
-      byId["S2:evidence:conflicting:0"]?.resultingSentence,
-      "The fund is currently marked at 1.4 times gross MOIC."
-    );
+    for (const id of UNMARKED_CONFLICT_ACK_IDS) {
+      assert.equal(byId[id]?.disposition, "ACKNOWLEDGE", `${id} unmarked conflict must acknowledge`);
+      assert.equal(byId[id]?.sort?.reasonCode, "conflict_unaddressed", `${id} reason`);
+      assert.equal(byId[id]?.resultingSentence, undefined, `${id} proposes nothing`);
+    }
     for (const id of KEEP_ACK_IDS) {
       assert.equal(byId[id]?.disposition, "ACKNOWLEDGE", `${id} must stay ACKNOWLEDGE`);
     }
