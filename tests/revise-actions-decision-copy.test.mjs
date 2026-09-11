@@ -8,6 +8,7 @@ import {
   EXPLAIN_CODES,
   GENERIC_CONTRADICTION,
   TEMPLATE_IDS,
+  confirmedUnchangedLine,
   fillDecisionCopy,
 } from "../lib/revise-actions/decision-copy.mjs";
 import { findHedgedUserCopy, findUnshippableUserCopy } from "../lib/revise-actions/user-copy.mjs";
@@ -27,6 +28,9 @@ const PINNED = {
     "The source states February without a year, and this sentence states March 2025. The year has to be settled before the figure can be.",
   qualifier_clash:
     "The source gives 21% IRR against the 23% gross IRR in this sentence, and does not name the 23%. The two are not necessarily the same measure.",
+  confirmed_unchanged: "It confirms the residential unit count, which is left unchanged.",
+  correction_one_confirmed:
+    "The source gives 412 property management companies, not the 380 in this sentence. It confirms the residential unit count, which is left unchanged.",
 };
 
 const FILLED = {
@@ -75,6 +79,14 @@ const FILLED = {
       sourcePhrase: "21% IRR",
       draftPhrase: "23% gross IRR",
       unnamedRaw: "23%",
+    },
+  }),
+  confirmed_unchanged: confirmedUnchangedLine("residential unit count"),
+  correction_one_confirmed: fillDecisionCopy({
+    code: EXPLAIN_CODES.correction,
+    values: {
+      pairs: [{ fromRaw: "380", toRaw: "412", measurePhrase: "property management companies" }],
+      confirmedLabel: "residential unit count",
     },
   }),
 };
