@@ -83,24 +83,41 @@ function throwingModel() {
 }
 
 const PINNED_REPLACE = [
-  ["S3:evidence:conflicting:0", F18.s3, "380", "412"],
-  ["S4:evidence:conflicting:0", F18.s4, "EUR 38 million", "EUR 35 million"],
-  ["S5:evidence:conflicting:0", F18.s5, "142", "167"],
-  ["S7:evidence:conflicting:0", F18.s7, "EUR 38 million", "EUR 35 million"],
+  [
+    "S3:evidence:conflicting:0",
+    F18.s3,
+    "The Company currently serves 412 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+  ],
+  [
+    "S4:evidence:conflicting:0",
+    F18.s4,
+    "It generates annual recurring revenue (ARR) of EUR 35 million as of April 2025, representing strong growth from EUR 28 million the prior year.",
+  ],
+  [
+    "S5:evidence:conflicting:0",
+    F18.s5,
+    "The Company employs 167 people across Stockholm, Oslo, and Helsinki.",
+  ],
+  [
+    "S8:evidence:conflicting:0",
+    F18.s8,
+    "The base case generates 2.6x MOIC and 21% gross IRR.",
+  ],
 ];
 const PINNED_ACK = [
   ["S0:evidence:conflicting:0", F18.s0],
   ["S2:evidence:conflicting:0", F18.s2],
-  ["S8:evidence:conflicting:0", F18.s8],
+  ["S7:evidence:conflicting:0", F18.s7],
 ];
 
 describe("revise-actions conflict engagement (F18 pinned 4+3)", () => {
-  test("pinned split: four exact single-token replacements and three acknowledgements", async () => {
+  test("pinned split: four replacements and three acknowledgements", async () => {
     const replaced = [];
     const acknowledged = [];
-    for (const [id, fixture] of PINNED_REPLACE) {
+    for (const [id, fixture, sentence] of PINNED_REPLACE) {
       const result = await fillAction(conflictEntry(id, fixture), { callModel: throwingModel() });
       assert.equal(result.disposition, "ACTION", id);
+      assert.equal(result.resultingSentence, sentence, id);
       replaced.push(id);
     }
     for (const [id, fixture] of PINNED_ACK) {
@@ -156,29 +173,26 @@ describe("revise-actions conflict engagement (F18 pinned 4+3)", () => {
     assert.equal(pairs[0].to.raw, "412");
   });
 
-  test("two figure pairs fail closed", async () => {
+  test("two figure pairs replace both values and leave gross in place", async () => {
     const result = await fillAction(conflictEntry("S8:evidence:conflicting:0", F18.s8), {
       callModel: throwingModel(),
     });
     assert.equal(findCandidatePairs(F18.s8.statement, F18.s8.primaryExcerpt).length, 2);
-    assert.equal(result.disposition, "ACKNOWLEDGE");
-    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
-    assert.equal(result.resultingSentence, undefined);
+    assert.equal(result.disposition, "ACTION");
+    assert.equal(result.resultingSentence, "The base case generates 2.6x MOIC and 21% gross IRR.");
   });
 
-  test("an excerpt stating a different same-kind figure with no negation produces no pair and acknowledges", async () => {
+  test("an excerpt stating a different same-kind figure with no negation proposes the source value", async () => {
     const fixture = {
       statement: "The fund has delivered a net IRR of 18.4% since inception.",
       primaryExcerpt: "The net IRR since inception is 11.2%.",
     };
-    assert.equal(findCandidatePairs(fixture.statement, fixture.primaryExcerpt).length, 0);
+    assert.equal(findCandidatePairs(fixture.statement, fixture.primaryExcerpt).length, 1);
     const result = await fillAction(conflictEntry("S1:evidence:conflicting:0", fixture), {
       callModel: throwingModel(),
     });
-    assert.equal(result.disposition, "ACKNOWLEDGE");
-    assert.equal(result.sort?.reasonCode, "conflict_unaddressed");
-    assert.equal(result.noProposalReason, NO_PROPOSAL.conflict_unaddressed);
-    assert.equal(result.resultingSentence, undefined);
+    assert.equal(result.disposition, "ACTION");
+    assert.equal(result.resultingSentence, "The fund has delivered a net IRR of 11.2% since inception.");
   });
 
   test("an unmarked same-kind figure for an unrelated quantity produces no pair", async () => {
@@ -205,6 +219,8 @@ describe("revise-actions conflict engagement (F18 pinned 4+3)", () => {
     assert.equal(result.disposition, "ACTION");
     assert.match(result.resultingSentence, /EUR 28 million the prior year/);
     assert.match(result.resultingSentence, /EUR 35 million/);
+    assert.match(result.resultingSentence, /April 2025/);
+    assert.equal(result.resultingSentence.includes("March 2025"), false);
   });
 });
 
