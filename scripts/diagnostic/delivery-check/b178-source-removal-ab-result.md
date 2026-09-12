@@ -95,3 +95,51 @@ No other fixture produced a surviving concern on a compliant statement at HEAD. 
 ## What the product can no longer say
 
 Editorial can no longer observe that a draft is hedged where the source is clear, or that a causal claim lacks source support. Both are now Evidence matters. The reviewer judges `overreach_unsupported_causal` and `underreach_hedging` from the CURRENT STATEMENT and the surrounding draft only.
+
+## B180 confirmation run at HEAD
+
+HEAD only. Baseline is the recorded **b371929** table above. That arm was not re-run. No total is pinned (F3): a one-check movement is noise.
+
+Checks: **V** `firedOnViolation` · **C** `silentOnCompliant` · **2** `silentOnTwoItem` · **F** no source leaked into the prompt (foreign-source control) · **I** `noIdenticalDirection`. `SKIP` = no `foreignSource` field.
+
+| Rule | b371929 V C 2 F I | B180 HEAD V C 2 F I | b371929 | B180 HEAD |
+|---|---|---|---|---|
+| `currency_format` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `date_format` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `em_dash` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `english_variant` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `first_person_plural` | N Y Y SKIP Y | N Y Y SKIP Y | FAIL | FAIL |
+| `number_spelling` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `oxford_comma` | Y N Y N Y | Y Y Y Y Y | FAIL | PASS |
+| `percentage_notation` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `smart_quotes` | Y N Y Y Y | N Y Y Y Y | FAIL | FAIL |
+| `thousand_separator` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+
+| Check | b371929 | B180 HEAD |
+|---|---|---|
+| `firedOnViolation` | 9/10 | 8/10 |
+| `silentOnCompliant` | 8/10 | 10/10 |
+| `silentOnTwoItem` | 10/10 | 10/10 |
+| Foreign-source control | 8/9 (skipped=1) | 9/9 (skipped=1) |
+| `noIdenticalDirection` | 10/10 | 10/10 |
+| Rules passed | 7/10 | 8/10 |
+
+No `SURVIVED` lines. Cost meter on this harness printed `costUsd=0.0000 llmCalls=0` (usages not captured on this path).
+
+### Pinned checks (not moved after the run)
+
+> **F1 THE GATE.** Both concerns recorded as surviving at b371929 are gone: the `oxford_comma` "No change needed" raise on the compliant statement, and the `smart_quotes` raise on the straight-quote compliant statement.
+
+**MET.** `silentOnCompliant` 10/10. The oxford raise was dropped by `suppressNoChangeDirections` (`suggestedDirection changes nothing`, rule=`oxford_comma`). The smart_quotes compliant raise did not survive (straight-quote statement; character-presence referee). No other fixture produced a surviving concern on a compliant statement.
+
+> **F2** `firedOnViolation` does not fall below 9 of 10.
+
+**NOT MET.** 8/10. `first_person_plural` still misses, as at b371929. The new miss is `smart_quotes` on the **violation** statement: a concern was raised, then dropped by `suppressNoChangeDirections` (`suggestedDirection changes nothing`). After quote-character normalisation, Replace-curly-X-with-straight-X has identical inner text, so (b) treats it as a no-op.
+
+> **F3** Do not pin a total.
+
+Not pinned.
+
+### Concerns surviving at HEAD on a compliant statement
+
+None.
