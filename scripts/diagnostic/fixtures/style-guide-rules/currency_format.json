@@ -4,6 +4,7 @@
   "ruleId": "currency_format",
   "sources": ["style_guide_stub.txt"],
   "draft": "The transaction value was €445m.\n\nThe transaction value was EUR 445 million.",
+  "foreignSource": "The transaction value was €445m.",
   "config": {
     "outputType": "reporting_commentary",
     "requiredVersion": "complete",

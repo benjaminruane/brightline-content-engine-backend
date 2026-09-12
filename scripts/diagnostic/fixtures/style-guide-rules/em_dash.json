@@ -4,6 +4,7 @@
   "ruleId": "em_dash",
   "sources": ["style_guide_stub.txt"],
   "draft": "The Fund exited the position — ahead of plan.\n\nThe Fund exited the position - ahead of plan.",
+  "foreignSource": "The Fund exited the position — ahead of plan.",
   "config": {
     "outputType": "reporting_commentary",
     "requiredVersion": "complete",

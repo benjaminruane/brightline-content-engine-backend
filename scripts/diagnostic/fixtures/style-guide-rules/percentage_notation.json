@@ -4,6 +4,7 @@
   "ruleId": "percentage_notation",
   "sources": ["style_guide_stub.txt"],
   "draft": "Net initial yield is 5.4 percent.\n\nNet initial yield is 5.4%.",
+  "foreignSource": "Net initial yield is 5.4 percent.",
   "config": {
     "outputType": "investor_letter",
     "requiredVersion": "complete",

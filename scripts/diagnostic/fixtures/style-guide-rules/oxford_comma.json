@@ -4,6 +4,7 @@
   "ruleId": "oxford_comma",
   "sources": ["style_guide_stub.txt"],
   "draft": "The advisers included legal, tax and operations specialists.\n\nThe advisers included legal, tax, and operations specialists.\n\nThe team included legal and tax advisers.",
+  "foreignSource": "The advisers included legal, tax and operations specialists.",
   "config": {
     "outputType": "reporting_commentary",
     "requiredVersion": "complete",

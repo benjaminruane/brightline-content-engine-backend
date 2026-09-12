@@ -4,6 +4,7 @@
   "ruleId": "number_spelling",
   "sources": ["style_guide_stub.txt"],
   "draft": "The Fund made 7 new investments across the portfolio during the period.\n\nThe team has grown to twelve investment professionals and now operates across 14 sectors globally.",
+  "foreignSource": "The team has grown to 12 investment professionals and now operates across 14 sectors globally.",
   "config": {
     "outputType": "reporting_commentary",
     "requiredVersion": "complete",

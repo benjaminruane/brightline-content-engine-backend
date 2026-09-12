@@ -3,7 +3,8 @@
   "label": "date_format",
   "ruleId": "date_format",
   "sources": ["style_guide_stub.txt"],
-  "draft": "The closing occurred on 19 Jan 2026.\n\nThe closing occurred on 19 January 2026.",
+  "draft": "The closing occurred on 19 Jan 2026.\n\nThe transaction closed on 19 January 2026 at an enterprise value of SEK 18.4 billion, approximately EUR 1.62 billion.",
+  "foreignSource": "The transaction closed on 19 Jan 2026 at an enterprise value of SEK 18.4 billion, approximately EUR 1.62 billion.",
   "config": {
     "outputType": "reporting_commentary",
     "requiredVersion": "complete",
