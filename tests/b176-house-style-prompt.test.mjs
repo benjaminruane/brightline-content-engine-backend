@@ -20,7 +20,7 @@ const DIRECTION = "from a form the rules call Correct to a form they call Incorr
 const IDENTICAL = "whose replacement text is identical to the text it replaces";
 const OLD_LINE = "preserve the source's original formatting exactly";
 const QUOTE_KEEP = "Style rules do not apply to text inside quotation marks";
-const HOUSE_FRAGMENTS = [STANDARD, AUTHORITY, CORRECT_EX, DIRECTION, IDENTICAL];
+const HOUSE_FRAGMENTS = [STANDARD, CORRECT_EX, DIRECTION, IDENTICAL];
 
 const OUTPUT_TYPE_VALUE = OUTPUT_TYPE.REPORTING_COMMENTARY;
 const OUTPUT_SLUG = "reporting_commentary";
@@ -58,6 +58,7 @@ describe("B176 house-style prompt", () => {
     for (const fragment of HOUSE_FRAGMENTS) {
       assert.equal(prompt.includes(fragment), true, `missing: ${fragment}`);
     }
+    assert.equal(prompt.includes(AUTHORITY), false);
   });
 
   test("T2 split style prompt interpolates the same five fragments", () => {
@@ -65,6 +66,7 @@ describe("B176 house-style prompt", () => {
     for (const fragment of HOUSE_FRAGMENTS) {
       assert.equal(prompt.includes(fragment), true, `missing: ${fragment}`);
     }
+    assert.equal(prompt.includes(AUTHORITY), false);
   });
 
   test("T3 neither prompt preserves the old source-formatting line", () => {
@@ -77,7 +79,7 @@ describe("B176 house-style prompt", () => {
     assert.equal(splitSystemPrompt().includes(QUOTE_KEEP), true);
   });
 
-  test("T5 user payload says source formatting is not a standard", () => {
+  test("T5 user payload no longer carries source labels or the authority sentence", () => {
     const payload = buildEditorialStyleUserPayload({
       sentenceText: STATEMENT,
       outputTypeLabel: OUTPUT_LABEL,
@@ -89,8 +91,11 @@ describe("B176 house-style prompt", () => {
       evidenceBlock: "Source 0: The Company currently serves 412 property management companies.",
       authoringOrganisation: HOUSE_NAME,
     });
-    assert.equal(payload.includes("Its formatting is not a standard"), true);
-    assert.equal(payload.includes("do not restyle the CURRENT STATEMENT to match it"), true);
+    assert.equal(payload.includes("Its formatting is not a standard"), false);
+    assert.equal(payload.includes("do not restyle the CURRENT STATEMENT to match it"), false);
+    assert.equal(payload.includes("EVIDENCE EXCERPT"), false);
+    assert.equal(payload.includes("SOURCE EVIDENCE"), false);
+    assert.equal(payload.includes(AUTHORITY), false);
   });
 
   test("T6 house-style instruction precedes the style rulebook", () => {

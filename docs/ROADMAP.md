@@ -134,7 +134,7 @@ The Review card-and-proposal track after the 2026-09-08 accuracy judging close. 
 
 **Open on this track, priority order:**
 
-1. **House-style inversion (**B176**).** The product flags a house-correct thousands separator and offers the form the style guide forbids. Class, not one card. See **R6.2d** correction below. Prompt layer built 2026-09-12; filter fail-closed outstanding.
+1. **House-style inversion (**B176**).** The product flags a house-correct thousands separator and offers the form the style guide forbids. Class, not one card. See **R6.2d** correction below. Prompt layer built 2026-09-12; **B176 step 2 (filter fail-closed) superseded by B178** (source removed from the editorial payload). Residual still open until measured at HEAD; see **B178**.
 2. **Cross-document disagreement (**B173**).** Two sources disagree and neither supersedes. Acknowledge, propose nothing, and say so, naming both figures.
 3. **Unsupported dependents (**B172**).** A contradicted base leaves hanging figures; the product knows and currently says nothing beyond the confirming-passage clause where that passage exists. **Pr16** remains.
 4. **User-supplied authoring organisation (**B171**).** The house name should come from the user, not a server setting. **B95** / **B96** / **B124** / **B170** stay open.
@@ -1137,7 +1137,7 @@ Frontend-heavy for the minimum fix; backend work for the stretch. Belongs near R
 **Parked from EDITORIAL RULE BUG-FIX PASS (do not spec):**
 
 - **`structural_integrity`** — appositive false-positive not reproducible in post-fix verification; watch only.
-- **`thousand_separator`** — R6.5.5 statement-scoped backstop was believed to have closed source-style conflation. **Corrected 2026-09-11:** the filter fails open when it cannot locate the flagged text; diagnostic `626524d` counts 61 already-compliant flags on gitignored local batches. Live residue **B176**. Do not treat this watch item as clean. 2026-09-12: prompt layer built. Watch item stays open until the filter fails closed.
+- **`thousand_separator`** — R6.5.5 statement-scoped backstop was believed to have closed source-style conflation. **Corrected 2026-09-11:** the filter fails open when it cannot locate the flagged text; diagnostic `626524d` counts 61 already-compliant flags on gitignored local batches. Live residue **B176**. Do not treat this watch item as clean. 2026-09-12: prompt layer built. Watch item stays open until the filter fails closed. **2026-09-12 B178:** source text removed from the editorial+style payload rather than a fifth ignore-instruction or a fail-closed filter. Watch stays open with **B176** until the residual is measured at HEAD. See **B178**.
 
 ---
 

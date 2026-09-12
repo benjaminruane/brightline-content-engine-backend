@@ -40,13 +40,14 @@ const { calculateLlmCostUsd, flushObservability } = await import("../../lib/obse
 const { STAGE_MODELS } = await import("../../lib/qc/model-config.mjs");
 
 const STYLE_FIXTURES_DIR = path.join(FIXTURES_DIR, "style-guide-rules");
-const CHECKS = [
-  "firedOnViolation",
-  "silentOnCompliant",
-  "silentOnTwoItem",
-  "silentOnForeignSource",
-  "noIdenticalDirection",
-];
+const CHECK_LABELS = {
+  firedOnViolation: "firedOnViolation",
+  silentOnCompliant: "silentOnCompliant",
+  silentOnTwoItem: "silentOnTwoItem",
+  silentOnForeignSource: "no source leaked into the prompt (foreign-source control)",
+  noIdenticalDirection: "noIdenticalDirection",
+};
+const CHECKS = Object.keys(CHECK_LABELS);
 
 const CANONICAL_TO_RULEBOOK_OUTPUT = {
   REPORTING_COMMENTARY: "reporting_commentary",
@@ -285,11 +286,11 @@ async function runFixture(fixture) {
   }
 
   let detail = "";
-  if (!pass) detail = `failed: ${failedChecks.join(", ")}`;
+  if (!pass) detail = `failed: ${failedChecks.map((k) => CHECK_LABELS[k] || k).join(", ")}`;
   else if (foreignSourceSkipped) {
     detail = "violation flagged, compliant clean, foreign-source SKIPPED, no identical direction";
   } else {
-    detail = "violation flagged, compliant clean, silent on foreign source, no identical direction";
+    detail = "violation flagged, compliant clean, no source leaked into the prompt (foreign-source control), no identical direction";
   }
 
   return {
@@ -319,7 +320,10 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`[style-guide] running ${fixtures.length} rule fixtures (editorial+style v4 path)…\n`);
+  console.log(`[style-guide] running ${fixtures.length} rule fixtures (editorial+style v4 path)…`);
+  console.log(
+    "NOTE: from B178 the editorial+style payload carries no source. A pass on this check means the source never reached the model, NOT that the model resisted it.\n"
+  );
 
   const results = [];
   let passCount = 0;
@@ -345,7 +349,7 @@ async function main() {
     results.push(result);
     const status = result.pass ? "PASS" : "FAIL";
     if (result.pass) passCount += 1;
-    const marks = CHECKS.map((k) => `${k}=${checkMark(result, k)}`).join(" ");
+    const marks = CHECKS.map((k) => `${CHECK_LABELS[k]}=${checkMark(result, k)}`).join(" ");
     console.log(`${status}  ${result.ruleId}  — ${result.detail}`);
     console.log(`       ${marks}`);
     for (const s of result.survived ?? []) {
@@ -366,7 +370,7 @@ async function main() {
   for (const k of CHECKS) {
     const t = totals[k];
     const skipNote = t.skipped ? `  skipped=${t.skipped}` : "";
-    console.log(`[style-guide] ${k}  ${t.ok}/${t.n}${skipNote}`);
+    console.log(`[style-guide] ${CHECK_LABELS[k]}  ${t.ok}/${t.n}${skipNote}`);
   }
   const costUsd = meteredSpendUsd();
   console.log(`[style-guide] ${passCount}/${fixtures.length} rules passed`);
