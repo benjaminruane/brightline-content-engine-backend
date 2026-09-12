@@ -30,6 +30,8 @@ let createTraceId;
 let flushObservability;
 let startTrace;
 let updateTraceMetadata;
+let resetLlmSpend;
+let formatLlmSpend;
 let runPipelineV4;
 
 function parseArgs(argv) {
@@ -287,6 +289,8 @@ async function main() {
     flushObservability,
     startTrace,
     updateTraceMetadata,
+    resetLlmSpend,
+    formatLlmSpend,
   } = await import("../../lib/observability.js"));
   ({ runPipelineV4 } = await import("../../lib/qc/pipeline-v4/index.mjs"));
 
@@ -312,6 +316,7 @@ async function main() {
   const runStarted = new Date().toISOString();
   const entries = [];
   let aborted = false;
+  resetLlmSpend();
 
   for (let b = 0; b < batches.length; b++) {
     const batch = batches[b];
@@ -344,6 +349,7 @@ async function main() {
     aborted,
   }, entries);
 
+  console.log(formatLlmSpend());
   console.log(`RUN COMPLETE — output at runs/${timestamp}/`);
   if (aborted) {
     process.exit(2);
