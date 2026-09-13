@@ -1,0 +1,15 @@
+{
+  "id": "24",
+  "label": "synth_peer_sources",
+  "sources": [
+    "24a_synth_peer_factsheet.txt",
+    "24b_synth_peer_performance_report.txt"
+  ],
+  "draft": "Ostara European Mid-Market Fund II continued to compound in line with the manager's long-term underwriting through the first quarter.\n\nNet IRR since inception stood at 11.2 percent as at 31 March 2025.\n\nThe fund held 36 portfolio companies at quarter end.\n\nTotal commitments were EUR 1.3 billion.\n\nThe fund is a 2019 vintage.\n\nRealised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components.\n\nWe remain constructive on the remaining portfolio.",
+  "config": {
+    "outputType": "reporting_commentary",
+    "requiredVersion": "complete",
+    "eventType": "periodic_update"
+  },
+  "notes": "PEER pair for B173: a fund fact sheet and a quarterly performance report on the same fund at the same date (As at 31 March 2025). Neither document supersedes the other. Deliberately outside the frozen 01-20 accuracy pack. Plants five cases: P1 net IRR 11.2% vs 12.4% (draft follows the fact sheet); P2 portfolio companies 34 vs 36 (draft follows the performance report); P3 total commitments EUR 1.2bn vs 1.25bn (draft 1.3bn follows neither); P4 vintage 2019 (sources agree); P5 realised proceeds in the quarter (performance report only)."
+}
