@@ -2,9 +2,9 @@
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-09-12 (B180 style filters fail closed; B176 closed)
+Last updated: 2026-09-13 (B173 ask which source governs)
 
-Next work on the **delivery track**, in this order: house-style inversion closed by **B178** at the payload and **B180** at the filter (**B176**); cross-document disagreement (**B173**); unsupported dependents as a finding (**B172**); user-supplied authoring organisation (**B171**); a card-integrity instrument (not yet a backlog row: catch cards that contradict themselves); shorter model readings (not yet a backlog row). Frozen corpus stays at catch **9 of 11**, leave-alone **67 of 74** and is not re-run (**B162**). Do not tune judging against that pack. **B153** wording pass remains open and frozen. **B156** fifth display state remains scoped, not built. **Pr16** remains. **B158** second excerpt gap before the sources drawer. Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Every spec ends with `npm run verify:ship` in both repos.
+Next work on the **delivery track**, in this order: house-style inversion closed by **B178** at the payload and **B180** at the filter (**B176**); cross-document disagreement (**B173**, shipped: ask which source governs; outstanding: a permanent decision record); unsupported dependents as a finding (**B172**); user-supplied authoring organisation (**B171**); a card-integrity instrument (not yet a backlog row: catch cards that contradict themselves); shorter model readings (not yet a backlog row). Frozen corpus stays at catch **9 of 11**, leave-alone **67 of 74** and is not re-run (**B162**). Do not tune judging against that pack. **B153** wording pass remains open and frozen. **B156** fifth display state remains scoped, not built. **Pr16** remains. **B158** second excerpt gap before the sources drawer. Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Every spec ends with `npm run verify:ship` in both repos.
 
 ---
 
@@ -135,7 +135,7 @@ The Review card-and-proposal track after the 2026-09-08 accuracy judging close. 
 **Open on this track, priority order:**
 
 1. **House-style inversion (**B176**, closed).** The product flagged a house-correct thousands separator and offered the form the style guide forbids. Class, not one card. See **R6.2d** correction below. Prompt layer built 2026-09-12; **B176 step 2 (filter fail-closed) superseded by B178** (source removed from the editorial payload). **B180** then fails closed: statement-scoped DROP filters run without a span for `thousand_separator`, `currency_format`, `smart_quotes`, `em_dash`. Cross-statement drop was not built. F1 met. Residual: **B157** (still no RAISE), **B133**, **B166**. See **B178** and **B180**.
-2. **Cross-document disagreement (**B173**).** Two sources disagree and neither supersedes. Acknowledge, propose nothing, and say so, naming both figures.
+2. **Cross-document disagreement (**B173**, shipped 2026-09-13).** Two sources that disagree are asked which document governs before a proposal is offered. Copy names both figures and both labels (`sources_disagree` / `sources_disagree_neither` / `sources_agreed_kept`). Rulings are session-scoped in the request body. **Outstanding:** a permanent decision record. Do not close **B172** or **Pr16**.
 3. **Unsupported dependents (**B172**).** A contradicted base leaves hanging figures; the product knows and currently says nothing beyond the confirming-passage clause where that passage exists. **Pr16** remains.
 4. **User-supplied authoring organisation (**B171**).** The house name should come from the user, not a server setting. **B95** / **B96** / **B124** / **B170** stay open.
 5. **Card-integrity instrument.** Not yet a backlog row. Catch cards that contradict themselves (computed truth discarded; inverted copy; competing writes on one sentence) before the reviewer does.

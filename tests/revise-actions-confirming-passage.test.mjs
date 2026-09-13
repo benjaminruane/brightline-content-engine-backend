@@ -95,7 +95,12 @@ describe("confirming passage selection", () => {
         { sourceRefId: 0, classification: "confirmed", passage: OTHER_DOC },
       ],
     });
-    const outcome = applyConflictProposal(finding);
+    const asked = applyConflictProposal(finding);
+    assert.equal(asked.status, "unaddressed");
+    assert.equal(asked.explain?.code, "sources_disagree");
+    const outcome = applyConflictProposal(finding, null, {
+      sourceRulings: [{ a: 0, b: 1, governs: 1 }],
+    });
     assert.equal(outcome.status, "replace");
     assert.equal(outcome.confirming, null);
     assert.equal(

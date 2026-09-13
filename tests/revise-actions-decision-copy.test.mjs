@@ -31,6 +31,12 @@ const PINNED = {
   confirmed_unchanged: "It confirms the residential unit count, which is left unchanged.",
   correction_one_confirmed:
     "The source gives 412 property management companies, not the 380 in this sentence. It confirms the residential unit count, which is left unchanged.",
+  sources_disagree:
+    "Two of your sources disagree. 24a_synth_peer_factsheet.txt states 11.2%; 24b_synth_peer_performance_report.txt states 12.4%.",
+  sources_disagree_neither:
+    "Two of your sources disagree and neither supersedes the other. 24a_synth_peer_factsheet.txt states 11.2%; 24b_synth_peer_performance_report.txt states 12.4%.",
+  sources_agreed_kept:
+    "24a_synth_peer_factsheet.txt gives 11.2%, which is the figure in this sentence. 24b_synth_peer_performance_report.txt states 12.4%.",
 };
 
 const FILLED = {
@@ -89,6 +95,33 @@ const FILLED = {
       confirmedLabel: "residential unit count",
     },
   }),
+  sources_disagree: fillDecisionCopy({
+    code: EXPLAIN_CODES.sources_disagree,
+    values: {
+      docA: "24a_synth_peer_factsheet.txt",
+      figA: "11.2%",
+      docB: "24b_synth_peer_performance_report.txt",
+      figB: "12.4%",
+    },
+  }),
+  sources_disagree_neither: fillDecisionCopy({
+    code: EXPLAIN_CODES.sources_disagree_neither,
+    values: {
+      docA: "24a_synth_peer_factsheet.txt",
+      figA: "11.2%",
+      docB: "24b_synth_peer_performance_report.txt",
+      figB: "12.4%",
+    },
+  }),
+  sources_agreed_kept: fillDecisionCopy({
+    code: EXPLAIN_CODES.sources_agreed_kept,
+    values: {
+      docGov: "24a_synth_peer_factsheet.txt",
+      fig: "11.2%",
+      docOther: "24b_synth_peer_performance_report.txt",
+      figOther: "12.4%",
+    },
+  }),
 };
 
 const HEDGE_REFUSALS = [
@@ -129,6 +162,17 @@ describe("decision-copy templates", () => {
   test("every template is pinned", () => {
     assert.deepEqual([...TEMPLATE_IDS].sort(), [...Object.keys(PINNED)].sort());
     assert.deepEqual([...TEMPLATE_IDS].sort(), [...Object.keys(FILLED)].sort());
+  });
+
+  test("every EXPLAIN_CODES value joins TEMPLATE_IDS except the correction family", () => {
+    for (const code of Object.values(EXPLAIN_CODES)) {
+      if (code === "correction") {
+        assert.ok(TEMPLATE_IDS.includes("correction_one"));
+        assert.ok(TEMPLATE_IDS.includes("correction_multi"));
+        continue;
+      }
+      assert.ok(TEMPLATE_IDS.includes(code), code);
+    }
   });
 
   for (const id of TEMPLATE_IDS) {

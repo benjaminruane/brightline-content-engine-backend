@@ -135,6 +135,26 @@ const ROWS = {
       "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
     expected:
       "The Company currently serves 412 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+    card: {
+      stage2SourceFingerprints: [
+        { sourceIndex: 0, sourceLabel: "18a_synth_cross_source_pair_initial.txt" },
+        { sourceIndex: 1, sourceLabel: "18b_synth_cross_source_pair_update.txt" },
+      ],
+      supportSpans: [
+        {
+          sourceRefId: 1,
+          classification: "conflicting",
+          passage:
+            "The Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+        },
+        {
+          sourceRefId: 0,
+          classification: "confirmed",
+          passage:
+            "The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.",
+        },
+      ],
+    },
   },
   "F18-S4": {
     statement:
@@ -143,11 +163,50 @@ const ROWS = {
       "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
     expected:
       "It generates annual recurring revenue (ARR) of EUR 35 million as of April 2025, representing strong growth from EUR 28 million the prior year.",
+    card: {
+      stage2SourceFingerprints: [
+        { sourceIndex: 0, sourceLabel: "18a_synth_cross_source_pair_initial.txt" },
+        { sourceIndex: 1, sourceLabel: "18b_synth_cross_source_pair_update.txt" },
+      ],
+      supportSpans: [
+        {
+          sourceRefId: 1,
+          classification: "conflicting",
+          passage:
+            "Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo.",
+        },
+        {
+          sourceRefId: 0,
+          classification: "confirmed",
+          passage:
+            "Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year.",
+        },
+      ],
+    },
   },
   "F18-S5": {
     statement: "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
     primaryExcerpt: "The Company employs 167 people as of 28 May, not 142 as stated in our initial memo.",
     expected: "The Company employs 167 people across Stockholm, Oslo, and Helsinki.",
+    card: {
+      stage2SourceFingerprints: [
+        { sourceIndex: 0, sourceLabel: "18a_synth_cross_source_pair_initial.txt" },
+        { sourceIndex: 1, sourceLabel: "18b_synth_cross_source_pair_update.txt" },
+      ],
+      supportSpans: [
+        {
+          sourceRefId: 1,
+          classification: "conflicting",
+          passage: "The Company employs 167 people as of 28 May, not 142 as stated in our initial memo.",
+        },
+        {
+          sourceRefId: 0,
+          classification: "confirmed",
+          passage:
+            "The Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people).",
+        },
+      ],
+    },
   },
   "F18-S7": {
     statement:
@@ -160,6 +219,25 @@ const ROWS = {
     primaryExcerpt:
       "Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
     expected: "The base case generates 2.6x MOIC and 21% gross IRR.",
+    card: {
+      stage2SourceFingerprints: [
+        { sourceIndex: 0, sourceLabel: "18a_synth_cross_source_pair_initial.txt" },
+        { sourceIndex: 1, sourceLabel: "18b_synth_cross_source_pair_update.txt" },
+      ],
+      supportSpans: [
+        {
+          sourceRefId: 1,
+          classification: "conflicting",
+          passage:
+            "Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+        },
+        {
+          sourceRefId: 0,
+          classification: "confirmed",
+          passage: "The base case generates a 2.8x MOIC and 23% IRR.",
+        },
+      ],
+    },
   },
   "F19-S2": {
     statement:
@@ -180,7 +258,8 @@ const ROWS = {
   },
 };
 
-const PROPOSE = ["F18-S3", "F18-S4", "F18-S5", "F18-S8", "W2"];
+const PROPOSE = ["W2"];
+const ASK = ["F18-S3", "F18-S4", "F18-S5", "F18-S8"];
 const SPECIFIC_DECLINE = {
   "F13-S7": {
     explainCode: "self_disagreement",
@@ -209,27 +288,32 @@ const GENERIC_DECLINE = [
 const DECLINE = [...GENERIC_DECLINE, ...Object.keys(SPECIFIC_DECLINE)];
 
 const PROPOSE_EXPLANATION = {
-  "F18-S3": {
-    explainCode: "correction",
-    explanation: "The source gives 412 property management companies, not the 380 in this sentence.",
-  },
-  "F18-S4": {
-    explainCode: "correction",
-    explanation:
-      "The source gives EUR 35 million and April 2025, against the EUR 38 million and March 2025 in this sentence.",
-  },
-  "F18-S5": {
-    explainCode: "correction",
-    explanation: "The source gives 167 people, not the 142 in this sentence.",
-  },
-  "F18-S8": {
-    explainCode: "qualifier_silent",
-    explanation:
-      "The source gives 2.6x and 21%, against the 2.8x and 23% in this sentence. It does not say whether its 21% is gross or net, so the word gross is left as written.",
-  },
   W2: {
     explainCode: "correction",
     explanation: "The source gives 11.2%, not the 18.4% in this sentence.",
+  },
+};
+
+const ASK_EXPLANATION = {
+  "F18-S3": {
+    explainCode: "sources_disagree",
+    explanation:
+      "Two of your sources disagree. 18a_synth_cross_source_pair_initial.txt states 380; 18b_synth_cross_source_pair_update.txt states 412.",
+  },
+  "F18-S4": {
+    explainCode: "sources_disagree",
+    explanation:
+      "Two of your sources disagree. 18a_synth_cross_source_pair_initial.txt states EUR 38 million; 18b_synth_cross_source_pair_update.txt states EUR 35 million.",
+  },
+  "F18-S5": {
+    explainCode: "sources_disagree",
+    explanation:
+      "Two of your sources disagree. 18a_synth_cross_source_pair_initial.txt states 142; 18b_synth_cross_source_pair_update.txt states 167.",
+  },
+  "F18-S8": {
+    explainCode: "sources_disagree",
+    explanation:
+      "Two of your sources disagree. 18a_synth_cross_source_pair_initial.txt states 2.8x; 18b_synth_cross_source_pair_update.txt states 2.6x.",
   },
 };
 
@@ -244,6 +328,20 @@ describe("quantity-matching pinned table", () => {
       assert.equal(result.explainCode, PROPOSE_EXPLANATION[id].explainCode, id);
       assert.equal(result.explanation, PROPOSE_EXPLANATION[id].explanation, id);
       assert.equal(applyConflictProposal(conflictEntry(`${id}:evidence:conflicting:0`, fixture)).status, "replace");
+    });
+  }
+
+  for (const id of ASK) {
+    test(`${id} ASK which source governs before proposing`, async () => {
+      const fixture = ROWS[id];
+      const result = await filled(`${id}:evidence:conflicting:0`, fixture);
+      assert.equal(result.disposition, "ACKNOWLEDGE", id);
+      assert.equal(result.resultingSentence, undefined, id);
+      assert.equal(result.explainCode, ASK_EXPLANATION[id].explainCode, id);
+      assert.equal(result.explanation, ASK_EXPLANATION[id].explanation, id);
+      const outcome = applyConflictProposal(conflictEntry(`${id}:evidence:conflicting:0`, fixture));
+      assert.equal(outcome.status, "unaddressed", id);
+      assert.equal(outcome.explain?.code, "sources_disagree", id);
     });
   }
 
@@ -272,12 +370,13 @@ describe("quantity-matching pinned table", () => {
     });
   }
 
-  test("live F18 membership is replace S3 S4 S5 S8 and acknowledge S0 S2 S7", async () => {
-    const replace = ["F18-S3", "F18-S4", "F18-S5", "F18-S8"];
+  test("live F18 membership is ask S3 S4 S5 S8 and acknowledge S0 S2 S7", async () => {
+    const ask = ["F18-S3", "F18-S4", "F18-S5", "F18-S8"];
     const ack = ["F18-S0", "F18-S2", "F18-S7"];
-    for (const id of replace) {
+    for (const id of ask) {
       const result = await filled(`${id}:evidence:conflicting:0`, ROWS[id]);
-      assert.equal(result.disposition, "ACTION", id);
+      assert.equal(result.disposition, "ACKNOWLEDGE", id);
+      assert.equal(result.explainCode, "sources_disagree", id);
     }
     for (const id of ack) {
       const result = await filled(`${id}:evidence:conflicting:0`, ROWS[id]);

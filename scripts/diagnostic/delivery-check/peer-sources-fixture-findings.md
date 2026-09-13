@@ -99,3 +99,62 @@ On P1 and P3 the product proposes the figure from the painted conflicting excerp
 ## Fit for B173
 
 **This fixture is fit to build B173 against.** H1 met. The three disagreement cards exist, the two controls behave, supersession stayed quiet, and the proposal copy on P1/P3 is the one-source swap the backlog already named. Do not adjust thresholds. Do not add 24 to the frozen pack.
+
+## B173 build verification
+
+Product build on HEAD `f80890c` plus this change. One billed pipeline run of fixture 24, then `applyConflictProposal` in memory with no rulings. No second model call for the locator.
+
+### Part 0 (this spec)
+
+**C1 BLOCKING — MET.** Vetoes live in `applyConflictProposal`. `r1Vetoes` filters `supportSpans` to the pairing `sourceRefId` only (`lib/revise-actions/conflict-engagement.mjs`).
+
+**C2 BLOCKING — MET.** `decision-copy.mjs` carries `EXPLAIN_CODES` and `TEMPLATE_IDS`. `tests/revise-actions-decision-copy.test.mjs` fails if a template key has no pin, and now also if an explain code joins one list without the other (except the existing `correction` family). The three new codes join both.
+
+**C3 BLOCKING — MET.** `POST /api/revise-actions` is statements plus optional `authoringOrganisation`, `draftText`, and now `sourceRulings`. `runActionList` has no database access. Rulings arrive in the request body.
+
+**C4 CHECK — MET.** Display names are on `card.stage2SourceFingerprints`, joined by `sourceIndex`. `supportSpans` carry `sourceRefId` and no label. When a fingerprint label is missing, copy falls back to `Source ${index + 1}`, the same wording `getSourceFriendlyLabel` already uses for an unnamed source. This run's fingerprints were present (`24a_synth_peer_factsheet` / `24b_synth_peer_performance_report`).
+
+**C5 CHECK — MET.** Frontend source ids are client-generated, stable within a session, survive an append, and die on replace. The pipeline keys kept-array order, which shifts when a source is removed. Rulings are therefore keyed by frontend ids and translated to `sourceIndex` freshly on every request.
+
+**C6 CHECK — MET.** `REVIEW_STATE_SNAPSHOT_FIELDS` excludes `actionDecisions` (frontend snapshot test). `sourceRulings` is added to that allow-list deliberately.
+
+**C7 BLOCKING — MET, Ben 2026-09-13.** The pinned F18 table moved. Rows that proposed are now asked first: **F18-S3**, **F18-S4**, **F18-S5**, **F18-S8**. They propose only once the reviewer says the update governs. **W2** stays a single-source propose. Guard tests that build their own span-less fixtures still propose. Intended, not a regression.
+
+### Run
+
+| | |
+|---|---|
+| Command | `npm run qc:diag:run -- --only 24 --no-confirm` |
+| Run folder | `scripts/diagnostic/runs/2026-09-13-180137/` (gitignored) |
+| Trace | https://cloud.langfuse.com/trace/8f1291ef-ccd1-4f83-ac7c-5005f926edfb |
+| Printed spend line | `LLM SPEND calls=34 in=131174 cached=80256 out=1917 costUsd=0.2458` |
+| Wall clock | 6974 ms |
+| Stage 1/2 cache | hits=15 misses=0 |
+
+Locator: `applyConflictProposal` in memory, no `sourceRulings`. No further model call.
+
+### J1–J5 (pinned before the run)
+
+**J1 THE GATE.** On the net-IRR card, the product no longer proposes 12.4%. It is unaddressed with code `sources_disagree`.
+
+**MET.** S1 status `unaddressed`, code `sources_disagree`, proposal `null`. Copy: `Two of your sources disagree. 24a_synth_peer_factsheet states 11.2%; 24b_synth_peer_performance_report states 12.4%.`
+
+**J2** The copy on all three disagreement cards names BOTH figures and BOTH document labels.
+
+**MET.**
+
+- S1: 11.2% and 12.4%; both document labels.
+- S2: 34 and 36; both document labels. Status `unaddressed`, code `sources_disagree`. (No licensed pair: the painted excerpt also contains `31 March 2025`. Detection still fires because the other source confirms the draft's 36 and the pairing source does not.)
+- S3: EUR 1.2 billion and EUR 1.25 billion; both document labels. Status `unaddressed`, code `sources_disagree`. No longer proposes EUR 1.2 billion.
+
+**J3** The two controls are untouched: the agreeing figure and the single-source figure produce no evidence finding and no question.
+
+**MET.** S4 vintage 2019 `supported_full`, `hasConflict` false. S5 realised proceeds `supported_full`, `hasConflict` false.
+
+**J4** Report the printed spend line.
+
+**MET.** `LLM SPEND calls=34 in=131174 cached=80256 out=1917 costUsd=0.2458`
+
+**J5** Do not pin a card total. Verdicts flap by about one per run.
+
+**MET** as a pin: this section does not treat `conflicting=4` / `statements=7` as a gate.

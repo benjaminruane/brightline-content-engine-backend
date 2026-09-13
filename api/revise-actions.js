@@ -1,6 +1,6 @@
 /**
  * Per-finding action list. Off unless REVISE_ACTION_LIST is on.
- * POST { statements, draftText?, authoringOrganisation? }
+ * POST { statements, draftText?, authoringOrganisation?, sourceRulings? }
  * → { ok: true, entries } | 404 when the flag is off.
  *
  * Does not import or touch api/suggest-revision.js.
@@ -61,6 +61,7 @@ export default async function handler(req, res) {
     const result = await runActionList(statements, {
       authoringOrganisation: body?.options?.authoringOrganisation ?? body?.authoringOrganisation,
       draftText: typeof body?.draftText === "string" ? body.draftText : undefined,
+      sourceRulings: body?.sourceRulings,
     });
     return res.status(200).json(result);
   } catch (err) {
