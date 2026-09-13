@@ -140,3 +140,58 @@ describe("B180 suppressNoChangeDirections", () => {
     assert.equal(out.length, 1);
   });
 });
+
+describe("B181 character-content rules exempt from no-op replace detection", () => {
+  test("T13 REGRESSION GUARD. smart_quotes curly-to-straight replace is KEPT", () => {
+    const statement = "The CEO said \u201Cgrowth remains on track\u201D.";
+    const concern = spanless("smart_quotes", statement, {
+      suggestedDirection:
+        'Replace \u201Cgrowth remains on track\u201D with "growth remains on track".',
+    });
+    const filtered = applyDeterministicStyleFilters([concern], statement, statement);
+    const out = suppressNoChangeDirections(filtered);
+    assert.equal(out.length, 1);
+    assert.equal(out[0].concernCode, "smart_quotes");
+  });
+
+  test("T14 em_dash replace em dash with hyphen around identical text is KEPT", () => {
+    const statement = "The Company completed the acquisition \u2014 a second-quarter close.";
+    const out = suppressNoChangeDirections([
+      spanless("em_dash", statement, {
+        suggestedDirection:
+          "Replace 'acquisition \u2014 a second-quarter close' with 'acquisition - a second-quarter close'.",
+      }),
+    ]);
+    assert.equal(out.length, 1);
+    assert.equal(out[0].concernCode, "em_dash");
+  });
+
+  test("T15 thousand_separator replace 5,500 with 5'500 is KEPT against the exemption", () => {
+    const out = suppressNoChangeDirections([
+      spanless("thousand_separator", "", {
+        suggestedDirection: "Replace '5,500' with '5'500'.",
+      }),
+    ]);
+    assert.equal(out.length, 1);
+    assert.equal(out[0].concernCode, "thousand_separator");
+  });
+
+  test("T16 smart_quotes direction starting with No change needed is still DROPPED", () => {
+    const statement = "The CEO said \u201Cgrowth remains on track\u201D.";
+    const out = suppressNoChangeDirections([
+      spanless("smart_quotes", statement, {
+        suggestedDirection: "No change needed as the quotation marks are already correct.",
+      }),
+    ]);
+    assert.equal(out.length, 0);
+  });
+
+  test("T17 currency_format identical Replace pair is still DROPPED", () => {
+    const out = suppressNoChangeDirections([
+      spanless("currency_format", "", {
+        suggestedDirection: "Replace 'EUR 84 million' with 'EUR 84 million'.",
+      }),
+    ]);
+    assert.equal(out.length, 0);
+  });
+});

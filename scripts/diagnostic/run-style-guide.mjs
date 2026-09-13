@@ -12,21 +12,6 @@ import { FIXTURES_DIR } from "./lib/paths.mjs";
 loadLocalEnvFiles();
 process.env.BRIGHTLINE_EDITORIAL_REVIEW = process.env.BRIGHTLINE_EDITORIAL_REVIEW || "1";
 
-const capturedUsages = [];
-const origFetch = globalThis.fetch;
-if (typeof origFetch === "function") {
-  globalThis.fetch = async (...args) => {
-    const res = await origFetch(...args);
-    try {
-      const data = await res.clone().json();
-      if (data && typeof data === "object" && data.usage) capturedUsages.push(data.usage);
-    } catch {
-      /* non-JSON */
-    }
-    return res;
-  };
-}
-
 const { default: editorialRules } = await import("../../lib/rulebook/editorialRules.js");
 const {
   getOutputTypeLabel,
@@ -36,8 +21,9 @@ const {
 } = await import("../../lib/output-intent.js");
 const { normalizeEventType } = await import("../../lib/event-type.js");
 const { runEditorialStyleReview } = await import("../../lib/qc/editorial-compliance-reviewer.mjs");
-const { calculateLlmCostUsd, flushObservability } = await import("../../lib/observability.js");
-const { STAGE_MODELS } = await import("../../lib/qc/model-config.mjs");
+const { flushObservability, resetLlmSpend, formatLlmSpend, getLlmSpend } = await import(
+  "../../lib/observability.js"
+);
 
 const STYLE_FIXTURES_DIR = path.join(FIXTURES_DIR, "style-guide-rules");
 const CHECK_LABELS = {
@@ -129,15 +115,6 @@ function concernDump(c) {
     concernText: typeof c?.concernText === "string" ? c.concernText : null,
     suggestedDirection: typeof c?.suggestedDirection === "string" ? c.suggestedDirection : null,
   };
-}
-
-function meteredSpendUsd() {
-  const modelCfg = STAGE_MODELS["editorial-style-review"] ?? {};
-  let total = 0;
-  for (const usage of capturedUsages) {
-    total += Number(calculateLlmCostUsd(modelCfg.provider || "openai", modelCfg.model, usage)) || 0;
-  }
-  return total;
 }
 
 /**
@@ -325,6 +302,7 @@ async function main() {
     "NOTE: from B178 the editorial+style payload carries no source. A pass on this check means the source never reached the model, NOT that the model resisted it.\n"
   );
 
+  resetLlmSpend();
   const results = [];
   let passCount = 0;
   for (const fixture of fixtures) {
@@ -372,15 +350,15 @@ async function main() {
     const skipNote = t.skipped ? `  skipped=${t.skipped}` : "";
     console.log(`[style-guide] ${CHECK_LABELS[k]}  ${t.ok}/${t.n}${skipNote}`);
   }
-  const costUsd = meteredSpendUsd();
+  console.log(formatLlmSpend());
+  const spend = getLlmSpend();
   console.log(`[style-guide] ${passCount}/${fixtures.length} rules passed`);
-  console.log(`[style-guide] costUsd=${costUsd.toFixed(4)}  llmCalls=${capturedUsages.length}`);
   console.log(
     `[style-guide] RESULT_JSON ${JSON.stringify({
       passCount,
       fixtureCount: fixtures.length,
-      costUsd,
-      llmCalls: capturedUsages.length,
+      costUsd: spend.costUsd,
+      llmCalls: spend.calls,
       totals,
       results: results.map((r) => ({
         ruleId: r.ruleId,

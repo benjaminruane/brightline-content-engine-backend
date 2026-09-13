@@ -143,3 +143,63 @@ Not pinned.
 ### Concerns surviving at HEAD on a compliant statement
 
 None.
+
+## B181 confirmation run at HEAD
+
+HEAD only. Baseline is the recorded **B180 HEAD** table above. That arm was not re-run. No total is pinned (G5): a one-check movement is noise.
+
+Checks: **V** `firedOnViolation` · **C** `silentOnCompliant` · **2** `silentOnTwoItem` · **F** no source leaked into the prompt (foreign-source control) · **I** `noIdenticalDirection`. `SKIP` = no `foreignSource` field.
+
+| Rule | B180 HEAD V C 2 F I | B181 HEAD V C 2 F I | B180 | B181 HEAD |
+|---|---|---|---|---|
+| `currency_format` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `date_format` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `em_dash` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `english_variant` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `first_person_plural` | N Y Y SKIP Y | N Y Y SKIP Y | FAIL | FAIL |
+| `number_spelling` | Y Y Y Y Y | N Y Y Y Y | PASS | FAIL |
+| `oxford_comma` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `percentage_notation` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+| `smart_quotes` | N Y Y Y Y | Y Y Y Y Y | FAIL | PASS |
+| `thousand_separator` | Y Y Y Y Y | Y Y Y Y Y | PASS | PASS |
+
+| Check | B180 HEAD | B181 HEAD |
+|---|---|---|
+| `firedOnViolation` | 8/10 | 8/10 |
+| `silentOnCompliant` | 10/10 | 10/10 |
+| `silentOnTwoItem` | 10/10 | 10/10 |
+| Foreign-source control | 9/9 (skipped=1) | 9/9 (skipped=1) |
+| `noIdenticalDirection` | 10/10 | 10/10 |
+| Rules passed | 8/10 | 8/10 |
+
+Spend accumulator: `LLM SPEND calls=30 in=289074 cached=247552 out=2780 costUsd=0.4410`
+
+### Pinned checks (not moved after the run)
+
+> **G1 THE GATE.** `smart_quotes` fires on its violation statement again.
+
+**MET.** `smart_quotes` `firedOnViolation=Y`. PASS.
+
+> **G2** `silentOnCompliant` stays at 10 of 10. Nothing returns to a compliant card.
+
+**MET.** `silentOnCompliant` 10/10. No style-rule concern returned on a compliant statement. One editorial `materiality` concern was dumped on the `first_person_plural` compliant review (verbatim below). It is not a style-rule return and does not move this pin.
+
+> **G3** `firedOnViolation` is at least 9 of 10. The only accepted remaining miss is `first_person_plural`.
+
+**NOT MET on the raw count (8/10).** `first_person_plural` still misses (accepted). `number_spelling` also missed this run; it passed at B180. Per G5 that one-check movement is noise, not evidence that B181 caused a new miss.
+
+> **G4** The run prints a real call count from the spend accumulator, not zero.
+
+**MET.** `LLM SPEND calls=30` `costUsd=0.4410`.
+
+> **G5** No total is pinned.
+
+Not pinned.
+
+### Concerns surviving at HEAD on a compliant statement
+
+No style-rule concern. One editorial concern on the `first_person_plural` compliant review:
+
+- **rule id:** `materiality` (category `editorial`; `rule` field null)
+- **note:** The statement 'Halden Group completed the investment in Q2.' repeats the information already provided in the previous sentence without adding new information or advancing the argument.
+- **suggestedDirection:** Delete 'Halden Group completed the investment in Q2.' as it repeats information already given.
