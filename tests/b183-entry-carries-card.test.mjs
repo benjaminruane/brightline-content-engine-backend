@@ -33,6 +33,7 @@ const PUBLIC_ENTRY_KEYS = new Set([
   "explanation",
   "explainCode",
   "governancePair",
+  "disagreementPassages",
   "confirmingPassage",
   "confirmingPassageLabel",
   "noProposalReason",
