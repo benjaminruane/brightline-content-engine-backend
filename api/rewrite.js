@@ -790,7 +790,10 @@ Rules:
 - Use only information from the uploaded sources provided above.
 - You may paraphrase and synthesize uploaded content freely.
 `}
-${effectiveMaxWords != null ? `\nOutput constraints:\n- Keep output under ~${effectiveMaxWords} words where possible.\n` : ""}
+${effectiveMaxWords != null ? `\nOutput constraints:
+- Word limit: ${effectiveMaxWords} words maximum for the commentary, excluding any Methodology Note. Write to fit within it.
+- Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.
+` : ""}
 
 REWRITE REPORT (self-assessment, optional but requested):
 After producing the revised draft, provide a brief machine-readable report:

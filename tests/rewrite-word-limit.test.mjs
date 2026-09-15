@@ -87,4 +87,38 @@ describe("rewrite word limit", () => {
     keySpy.mockRestore();
     flushSpy.mockRestore();
   });
+
+  test("instruction rewrite prompt states the word limit as a firm ceiling, not a hedge", async () => {
+    vi.spyOn(observability, "hasProviderApiKey").mockReturnValue(true);
+    vi.spyOn(observability, "flushObservability").mockResolvedValue(undefined);
+    const llmSpy = vi.spyOn(observability, "callLLM").mockResolvedValue({
+      text: JSON.stringify({ draftText: "Rewritten draft." }),
+    });
+
+    const res = createRes();
+    await handler(
+      postReq({
+        text: "Original draft about the transaction.",
+        instructions: "Tighten the second paragraph",
+        maxWords: 80,
+        outputType: "reporting_commentary",
+        visibility: "complete",
+      }),
+      res
+    );
+
+    assert.equal(res.statusCode, 200);
+    const userPrompt = llmSpy.mock.calls[0][0].messages.find((m) => m.role === "user").content;
+    assert.equal(userPrompt.includes("where possible"), false);
+    assert.equal(userPrompt.includes("under ~"), false);
+    assert.equal(/try to/i.test(userPrompt), false);
+    assert.match(
+      userPrompt,
+      /Word limit: 80 words maximum for the commentary, excluding any Methodology Note\. Write to fit within it\./
+    );
+    assert.match(
+      userPrompt,
+      /Do not pad to reach the limit\. Do not truncate mid-sentence or drop the closing to meet it\./
+    );
+  });
 });
