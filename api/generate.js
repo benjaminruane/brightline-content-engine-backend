@@ -28,7 +28,7 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
-import { buildBasePrompt, enforcePgCommentaryWordLimit } from "../lib/prompt-library/index.js";
+import { buildBasePrompt, enforcePgCommentaryWordLimit, getPgCommentaryWordLimit } from "../lib/prompt-library/index.js";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
@@ -120,11 +120,6 @@ function normalizeBannedWords(input) {
         .filter(Boolean)
     )
   );
-}
-
-function countWords(text) {
-  if (typeof text !== "string" || !text.trim()) return 0;
-  return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
 function stripSourcesUsedBlock(text) {
@@ -627,7 +622,6 @@ export default async function handler(req, res) {
     } = body;
 
     const modelId = typeof model === "string" && model.trim() ? model.trim() : modelConfig.model;
-    const effectiveMaxWords = clampMaxWords(maxWords);
 
     const safeTitle = typeof title === "string" ? title : "";
     const safeNotes = typeof notes === "string" ? notes : "";
@@ -655,6 +649,8 @@ export default async function handler(req, res) {
       : (typeof versionType === "string" ? versionType : null);
     const outputType = normalizeOutputType(rawOutputType);
     const visibility = normalizeVisibility(rawVisibility);
+    const typedMaxWords = clampMaxWords(maxWords);
+    const effectiveMaxWords = typedMaxWords ?? getPgCommentaryWordLimit(eventType, visibility);
     const safeVersionType = visibility === "PUBLIC" ? "public" : "complete";
     const safePublicSearch = Boolean(publicSearch);
     const safeSources = Array.isArray(sources) ? sources : [];
@@ -765,8 +761,8 @@ Rules:
 Output constraints:
 ${
   effectiveMaxWords
-    ? `- Target ~${effectiveMaxWords} words (soft target). Acceptable range: roughly ${Math.round(0.9 * effectiveMaxWords)} to ${Math.round(1.1 * effectiveMaxWords)} words.
-- If you are trending long, rewrite tighter before finalising. Do not truncate mid-sentence; produce a coherent draft.`
+    ? `- Word limit: ${effectiveMaxWords} words maximum for the commentary, excluding any Methodology Note. Write to fit within it.
+- Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.`
     : "- No explicit word limit provided."
 }
 
@@ -818,6 +814,7 @@ Return ONLY JSON:
       eventType,
       visibility,
       requestId: req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null,
+      maxWords: effectiveMaxWords,
     });
     currentDraftText = pgWordLimit.draftText;
 
@@ -828,54 +825,6 @@ Return ONLY JSON:
         ok: false,
         error: "Draft could not be generated. Please try again, or provide more notes and/or sources.",
       });
-    }
-
-    // X2.4: Word-limit soft target — post-check and optional single correction pass (no truncation)
-    let wordLimitMiss = false;
-    if (effectiveMaxWords != null) {
-      const words = countWords(currentDraftText);
-      const highThreshold = 1.25 * effectiveMaxWords;
-      const lowThreshold = 0.75 * effectiveMaxWords;
-      if (words > highThreshold || words < lowThreshold) {
-        const targetMin = Math.round(0.9 * effectiveMaxWords);
-        const targetMax = Math.round(1.1 * effectiveMaxWords);
-        const correctionPrompt = `Rewrite the following draft to land within approximately ${targetMin} to ${targetMax} words (target ~${effectiveMaxWords} words).
-Do not invent facts; preserve all factual claims from the draft; remove lower-priority detail first.
-Do not truncate mid-sentence; produce a coherent final draft.
-
-DRAFT:
----
-${currentDraftText}
----
-
-Return ONLY JSON:
-{
-  "draftText": "string"
-}`.trim();
-        try {
-          const correctionCompletion = await callLLM({
-            provider: modelConfig.provider,
-            model: modelId,
-            temperature: 0.2,
-            messages: [{ role: "user", content: correctionPrompt }],
-            traceName: "writing-generate",
-            spanName: "writing-generate-word-limit-correction",
-            metadata: { route: "generate" },
-          });
-          const correctionRaw = correctionCompletion?.text || "";
-          const correctionParsed = safeJsonParse(correctionRaw) || {};
-          const correctedText = typeof correctionParsed.draftText === "string" ? correctionParsed.draftText.trim() : "";
-          if (correctedText) {
-            currentDraftText = correctedText;
-            const wordsAfter = countWords(currentDraftText);
-            if (wordsAfter > highThreshold || wordsAfter < lowThreshold) {
-              wordLimitMiss = true;
-            }
-          }
-        } catch {
-          wordLimitMiss = true;
-        }
-      }
     }
 
     // Extract citations and derive usedReferenceIds
@@ -906,9 +855,6 @@ Return ONLY JSON:
     };
     if (effectiveMaxWords != null) {
       metaOutputIntent.maxWords = effectiveMaxWords;
-    }
-    if (wordLimitMiss) {
-      metaOutputIntent.wordLimitMiss = true;
     }
 
     return res.status(200).json({

@@ -39,7 +39,10 @@ describe("pg-writing-prompts", () => {
     assert.match(text, /Do NOT substitute a different company or fund name/);
     assert.match(text, /exactly TWO paragraphs/);
     assert.match(text, /Paragraph 1 describes the asset/);
-    assert.match(text, /must not exceed 150 words/);
+    assert.doesNotMatch(text, /must not exceed \d+ words/);
+    assert.doesNotMatch(text, /\{WORD_LIMIT\}/);
+    assert.doesNotMatch(text, /Max \d+ words/);
+    assert.doesNotMatch(text, /cut to fit/);
     assert.match(text, /March 2026', not 'Mar 2026'/);
     assert.match(text, /USD 20 million/);
     assert.match(text, /---METHODOLOGY---/);

@@ -662,21 +662,10 @@ export default async function handler(req, res) {
     const rawEventType = typeof body.eventType === "string" ? body.eventType : (typeof body.scenario === "string" ? body.scenario : "");
     const eventType = normalizeEventType(rawEventType);
     const eventTypeLabel = getEventTypeLabel(eventType);
-    // X3.2.3: Rewrite authority — value flow: body.maxWords (rewrite target) → effectiveMaxWords → meta.outputIntent.maxWords → version store → UI + report.
-    // MUST NOT: clamp vs generate cap, fall back to generate, merge limits, or retain legacy cap. When rewrite sends a word target it fully replaces prior.
-    const rewriteOverrideMaxWords =
+    // X3.2.3: Rewrite authority — value flow: body.maxWords → effectiveMaxWords → meta.outputIntent.maxWords.
+    const effectiveMaxWords =
       typeof body.maxWords === "number" && Number.isFinite(body.maxWords) && body.maxWords >= 1
         ? Math.min(2000, Math.max(1, Math.floor(body.maxWords)))
-        : null;
-    const priorMaxWords =
-      typeof body.priorMaxWords === "number" && Number.isFinite(body.priorMaxWords) && body.priorMaxWords > 0
-        ? Math.floor(body.priorMaxWords)
-        : null;
-    const effectiveMaxWords =
-      Number.isFinite(rewriteOverrideMaxWords)
-        ? rewriteOverrideMaxWords
-        : Number.isFinite(priorMaxWords)
-        ? priorMaxWords
         : null;
 
     const hasInstructions = typeof rewriteInstructions === "string" && rewriteInstructions.length > 0;
@@ -721,7 +710,7 @@ export default async function handler(req, res) {
       "User rewrite instructions are authoritative and override base guidance if they conflict (advisory conflicts may be reported, but do not block).";
 
     const prompt = isLengthOnly
-      ? `LENGTH-ONLY REWRITE: Adjust the draft to approximately ${effectiveMaxWords} words (acceptable range: ${Math.round(0.9 * effectiveMaxWords)}–${Math.round(1.1 * effectiveMaxWords)} words). Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first; do not truncate mid-sentence.
+      ? `LENGTH-ONLY REWRITE: Adjust the draft to ${effectiveMaxWords} words maximum for the commentary, excluding any Methodology Note. Write to fit within it. Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can. Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first.
 
 ${rewriteWinsLine}
 

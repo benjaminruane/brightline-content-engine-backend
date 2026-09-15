@@ -57,12 +57,13 @@ describe("pg-word-limit", () => {
     assert.equal(result.draftText, text);
   });
 
-  test("fund commitment trims at sentence boundary when over limit after exclusion filter", () => {
+  test("fund commentary over the limit is never trimmed", () => {
     const sentences = [];
     for (let i = 0; i < 40; i += 1) {
       sentences.push(`Sentence ${i} adds neutral fund commentary about strategy and merits.`);
     }
-    const over = `${sentences.join(" ")}\n\n${sentences.slice(20).join(" ")}`;
+    const over = `${sentences.join(" ")} ${sentences.slice(20).join(" ")}`;
+    const beforeCount = over.trim().split(/\s+/).filter(Boolean).length;
     const warnings = [];
     const originalWarn = console.warn;
     console.warn = (...args) => warnings.push(args.join(" "));
@@ -73,9 +74,11 @@ describe("pg-word-limit", () => {
         visibility: VISIBILITY.COMPLETE,
         requestId: "trim-test",
       });
-      assert.equal(result.trimmed, true);
-      assert.ok(result.wordCount <= 150);
-      assert.ok(!warnings.some((w) => w.includes("pg_word_limit_exceeded")));
+      assert.equal(result.trimmed, false);
+      assert.equal(result.enforced, false);
+      assert.equal(result.limitExceeded, true);
+      assert.equal(result.wordCount, beforeCount);
+      assert.ok(warnings.some((w) => w.includes("pg_word_limit_exceeded")));
     } finally {
       console.warn = originalWarn;
     }
@@ -96,7 +99,34 @@ describe("pg-word-limit", () => {
       assert.equal(result.limitExceeded, true);
       assert.equal(result.trimmed, false);
       assert.ok(warnings.some((w) => w.includes("pg_word_limit_exceeded")));
-      assert.match(warnings.find((w) => w.includes("pg_word_limit_exceeded")) || "", /untrimmable":true/);
+    } finally {
+      console.warn = originalWarn;
+    }
+  });
+
+  test("a set limit overrides the house figure for the canary", () => {
+    const over = `${"token ".repeat(300)}End.`;
+    const warnings = [];
+    const originalWarn = console.warn;
+    console.warn = (...args) => warnings.push(args.join(" "));
+
+    try {
+      const withOverride = enforcePgCommentaryWordLimit(over, {
+        eventType: PG_WRITING_EVENT.NEW_DIRECT_INVESTMENT,
+        visibility: VISIBILITY.PUBLIC,
+        maxWords: 400,
+        requestId: "override-test",
+      });
+      assert.equal(withOverride.limitExceeded, false);
+      assert.ok(!warnings.some((w) => w.includes("pg_word_limit_exceeded")));
+
+      const withoutOverride = enforcePgCommentaryWordLimit(over, {
+        eventType: PG_WRITING_EVENT.NEW_DIRECT_INVESTMENT,
+        visibility: VISIBILITY.PUBLIC,
+        requestId: "house-test",
+      });
+      assert.equal(withoutOverride.limitExceeded, true);
+      assert.ok(warnings.some((w) => w.includes("pg_word_limit_exceeded")));
     } finally {
       console.warn = originalWarn;
     }

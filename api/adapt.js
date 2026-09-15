@@ -140,15 +140,15 @@ export default async function handler(req, res) {
     const modelId = typeof body.model === "string" && body.model.trim() ? body.model.trim() : modelConfig.model;
     const publicSearch = Boolean(body.publicSearch);
     // X2.2: Optional word-limit override for Adapt (per-output cap persistence)
-    const rawOverride = body.wordLimitOverride ?? body.word_limit_override ?? null;
+    const rawOverride = body.maxWords ?? body.max_words ?? null;
     const overrideNum = typeof rawOverride === "number" && Number.isFinite(rawOverride) ? rawOverride : (typeof rawOverride === "string" && rawOverride.trim() !== "" ? parseInt(rawOverride, 10) : null);
-    const MIN_WORDS = 20;
-    const MAX_WORDS = 5000;
-    let wordLimitOverride = null;
+    const MIN_WORDS = 1;
+    const MAX_WORDS = 2000;
+    let maxWords = null;
     if (overrideNum != null && !Number.isNaN(overrideNum)) {
       const clamped = Math.floor(Number(overrideNum));
       if (clamped >= MIN_WORDS && clamped <= MAX_WORDS) {
-        wordLimitOverride = clamped;
+        maxWords = clamped;
       }
       // If out of bounds: ignore and could record warning in meta (do not fail request)
     }
@@ -213,7 +213,7 @@ Rules:
 - Restructure and re-tone for the target type and visibility.
 - Do not add claims that are not in the base draft or sources.
 ${publicSearch && webReferences.length ? "- If you use web results, cite with [1], [2], etc." : ""}
-${wordLimitOverride != null ? `- Keep output under ~${wordLimitOverride} words where possible.` : ""}
+${maxWords != null ? `- Word limit: ${maxWords} words maximum. Write to fit within it. Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.` : ""}
 
 Return ONLY JSON:
 {
@@ -254,8 +254,8 @@ Return ONLY JSON:
       outputTypeLabel: outputIntent.outputTypeLabel,
       visibilityLabel: outputIntent.visibilityLabel,
     };
-    if (wordLimitOverride != null) {
-      responseOutputIntent.maxWords = wordLimitOverride;
+    if (maxWords != null) {
+      responseOutputIntent.maxWords = maxWords;
     }
 
     return res.status(200).json({
