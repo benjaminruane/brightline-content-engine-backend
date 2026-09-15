@@ -848,68 +848,14 @@ Return ONLY valid JSON with no markdown or extra text:
       return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
     }
 
-    // A5.12: Soft-target correction pass (single pass, no truncation) when word limit set
-    let wordLimitMiss = false;
-    if (effectiveMaxWords != null) {
-      const words = countWords(finalDraftText);
-      const highThreshold = 1.25 * effectiveMaxWords;
-      const lowThreshold = 0.75 * effectiveMaxWords;
-      if (words > highThreshold || words < lowThreshold) {
-        const targetMin = Math.round(0.9 * effectiveMaxWords);
-        const targetMax = Math.round(1.1 * effectiveMaxWords);
-        const correctionPrompt = `Rewrite the following draft to land within approximately ${targetMin} to ${targetMax} words (target ~${effectiveMaxWords} words).
-Do not invent facts; preserve all factual claims from the draft; remove lower-priority detail first.
-Do not truncate mid-sentence; produce a coherent final draft.
-
-DRAFT:
----
-${finalDraftText}
----
-
-Return ONLY JSON:
-{
-  "draftText": "string"
-}`.trim();
-        try {
-          const correctionCompletion = await callLLM({
-            provider: modelConfig.provider,
-            model: modelId,
-            temperature: 0.2,
-            messages: [{ role: "user", content: correctionPrompt }],
-            traceName: "writing-rewrite",
-            spanName: "writing-rewrite-word-limit-correction",
-            metadata: { route: "rewrite" },
-          });
-          const correctionRaw = correctionCompletion?.text || "";
-          const correctionParsed = safeJsonParse(correctionRaw) || {};
-          const correctedText = typeof correctionParsed.draftText === "string" ? correctionParsed.draftText.trim() : "";
-          if (correctedText) {
-            finalDraftText = correctedText;
-            const wordsAfterCorrection = countWords(finalDraftText);
-            if (wordsAfterCorrection > highThreshold || wordsAfterCorrection < lowThreshold) {
-              wordLimitMiss = true;
-            }
-          }
-        } catch {
-          wordLimitMiss = true;
-        }
-      }
-    }
-
-    if (!finalDraftText || typeof finalDraftText !== "string") {
-      return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
-    }
-
     // X3.1: Deterministic metrics (authoritative) — use final draft text
     const wordsBefore = countWords(text);
     const wordsAfter = countWords(finalDraftText);
     const charsBefore = countChars(text);
     const charsAfter = countChars(finalDraftText);
     const targetMaxWords = effectiveMaxWords;
-    const hitTarget =
-      targetMaxWords == null
-        ? null
-        : wordsAfter >= Math.round(0.9 * targetMaxWords) && wordsAfter <= Math.round(1.1 * targetMaxWords);
+    const wordsOverLimit =
+      targetMaxWords == null ? null : Math.max(0, wordsAfter - targetMaxWords);
 
     // X3.1: Parse optional rewriteReport from model (best-effort)
     const rawReport = parsed.rewriteReport;
@@ -988,7 +934,7 @@ Return ONLY JSON:
         charsBefore,
         charsAfter,
         targetMaxWords,
-        hitTarget,
+        wordsOverLimit,
       },
       wordTarget: effectiveMaxWords ?? null,
       isLengthOnly: isLengthOnly || undefined,
@@ -1028,9 +974,6 @@ Return ONLY JSON:
     // X3.2.3: Version meta from rewrite only — effectiveMaxWords (new target or preserved prior). Never from generate cap or previousVersion.
     if (effectiveMaxWords != null) {
       metaOutputIntent.maxWords = effectiveMaxWords;
-    }
-    if (wordLimitMiss) {
-      metaOutputIntent.wordLimitMiss = true;
     }
 
     return res.status(200).json({
