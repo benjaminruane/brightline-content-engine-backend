@@ -9,6 +9,9 @@
 import { flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { runActionList } from "../lib/revise-actions/run.mjs";
+import { isReviseActionListEnabled } from "./_lib/env-flags.js";
+
+export { isReviseActionListEnabled };
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -24,11 +27,6 @@ function safeJsonParse(s) {
   } catch {
     return null;
   }
-}
-
-export function isReviseActionListEnabled(env = process.env) {
-  const v = String(env?.REVISE_ACTION_LIST || "").trim().toLowerCase();
-  return v === "1" || v === "true" || v === "yes" || v === "on";
 }
 
 export default async function handler(req, res) {

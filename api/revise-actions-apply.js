@@ -4,11 +4,7 @@
  */
 
 import { applyDecisions } from "../lib/revise-actions/apply.mjs";
-
-function isReviseActionListEnabled(env = process.env) {
-  const v = String(env?.REVISE_ACTION_LIST || "").trim().toLowerCase();
-  return v === "1" || v === "true" || v === "yes" || v === "on";
-}
+import { isReviseActionListEnabled } from "./_lib/env-flags.js";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
