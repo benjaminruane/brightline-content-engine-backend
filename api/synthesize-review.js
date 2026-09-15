@@ -28,6 +28,8 @@ export default async function handler(req, res) {
   const draftText = typeof body.draftText === "string" ? body.draftText.trim() : "";
   const summary = body.qcSummary && typeof body.qcSummary === "object" ? body.qcSummary : {};
   const notSupportedStatements = Array.isArray(body.notSupportedStatements) ? body.notSupportedStatements : [];
+  const conflictingStatements = Array.isArray(body.conflictingStatements) ? body.conflictingStatements : [];
+  const partialStatements = Array.isArray(body.partialStatements) ? body.partialStatements : [];
   const editorialConcerns = Array.isArray(body.editorialConcerns) ? body.editorialConcerns : [];
   const complianceConcerns = Array.isArray(body.complianceConcerns) ? body.complianceConcerns : [];
   const reviewOptions = body.reviewOptions && typeof body.reviewOptions === "object" ? body.reviewOptions : {};
@@ -68,6 +70,7 @@ export default async function handler(req, res) {
                 "Assess what is working and what needs fixing with specific references to claims and issues.",
                 "Use direct, constructive editorial language in a senior FT-style voice.",
                 "Your assessment must only cover the review types that were run. Do not comment on editorial matters if editorial review was not run, and do not comment on evidence if evidence review was not run.",
+                "A conflicting statement HAS evidence: two or more sources address it and they disagree. Never describe a conflict as unsupported, unsubstantiated or lacking evidence. A partially confirmed statement is partly backed, not unbacked. Only statements with no source support are unsupported.",
                 `Conclude explicitly with one of these exact labels: ${signoffVerdict}.`,
                 ...(context === "writing"
                   ? ["Address the writer directly using language like 'your draft', 'you should', and 'this needs' where appropriate."]
@@ -77,6 +80,8 @@ export default async function handler(req, res) {
               activeReviewOptions,
               qcSummary: summary,
               notSupportedStatements,
+              conflictingStatements,
+              partialStatements,
               editorialConcerns,
               complianceConcerns,
             },
