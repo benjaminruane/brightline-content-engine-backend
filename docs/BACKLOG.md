@@ -191,6 +191,7 @@ The backlog is split into four tables by character of work:
 | B198 | **REWRITE PROMPT CEILING. SHIPPED 2026-09-15 `bf23217`.** The instruction rewrite prompt's only word-limit line was a hedge (`Keep output under ~N words where possible`). Replaced with the same firm ceiling as `api/generate.js` L764–765: "Word limit: N words maximum for the commentary, excluding any Methodology Note. Write to fit within it." plus the do-not-pad / do-not-truncate / best-complete-version lines. Length-only rewrite already stated a firm maximum and was left alone. Tag `b198-rewrite-ceiling`. Test: `tests/rewrite-word-limit.test.mjs`. | B188b leftover | S | MVP | One ceiling, no hedge. |
 | B199 | **The "Single paragraph" shape rule in the public templates now sits oddly against a writer-set word limit.** | B188 2026-09-15 | L | Post-MVP | Shape rule vs writer-set ceiling. |
 | B200 | **HEADER BUILD IDENTITY. SHIPPED 2026-09-15 `dd81461`.** The header shows the short build commit instead of a hand-typed version. Docs `e5f1f3e`: three wrong tag citations corrected, duplicate B169 merged, B185 recorded as the same work as B177. Frontend tag `b200-header-build-identity`. Tests `tests/version.test.mjs`. | header identity 2026-09-15 | H | MVP | Slot is the commit. |
+| B201 | **BUILD LABEL. SHIPPED 2026-09-16 `7fd0d1e`.** Header slot is `(Build: <commit>)` (or `(Build: dev)`). Dropped dead `VITE_APP_VERSION` / `VITE_APP_COMMIT` from the `build` script; nothing reads them. Frontend tag `b201-build-label`. | B200 2026-09-16 | H | MVP | Label on the commit. |
 
 ---
 
