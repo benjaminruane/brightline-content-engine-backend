@@ -3,6 +3,9 @@ import { afterEach, describe, test, vi } from "vitest";
 import * as observability from "../lib/observability.js";
 import handler from "../api/synthesize-review.js";
 
+const D2_OPENING =
+  "State this verdict in your first sentence, in these exact words: Needs significant work.";
+
 const D4_SENTENCE =
   "Describe a conflicting statement only as a disagreement between the sources, for example 'the two documents give different figures for X'. Never use any form of the word 'support' about a conflicting statement.";
 
@@ -44,7 +47,7 @@ afterEach(() => {
 });
 
 describe("B203 conflict wording in the assessment prompt", () => {
-  test("contains the D4 sentence, the B193 conflict line, and the exact-label line", async () => {
+  test("contains the D4 sentence, the B193 conflict line, and the D2 opening line", async () => {
     vi.spyOn(observability, "hasProviderApiKey").mockReturnValue(true);
     vi.spyOn(observability, "flushObservability").mockResolvedValue(undefined);
     const llmSpy = vi.spyOn(observability, "callLLM").mockResolvedValue({
@@ -67,11 +70,12 @@ describe("B203 conflict wording in the assessment prompt", () => {
     const user = JSON.parse(llmSpy.mock.calls[0][0].messages[1].content);
     const instructions = user.instructions;
     assert.equal(Array.isArray(instructions), true);
+    assert.equal(instructions.includes(D2_OPENING), true);
     assert.equal(instructions.includes(D4_SENTENCE), true);
     assert.equal(instructions.includes(B193_LINE), true);
     assert.equal(
-      instructions.includes("Conclude explicitly with one of these exact labels: Needs significant work."),
-      true
+      instructions.some((line) => String(line).includes("Conclude explicitly")),
+      false
     );
   });
 });
