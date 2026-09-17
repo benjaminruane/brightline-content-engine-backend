@@ -135,7 +135,7 @@ describe("T4 exported surface is append-only", () => {
     assert.equal(typeof reviewerDecisions.insertReviewerDecision, "function");
     assert.equal(typeof reviewerDecisions.listReviewerDecisions, "function");
     assert.equal(typeof reviewerDecisions.buildReviewerDecisionPayload, "function");
-    assert.deepEqual([...DECISION_KINDS], ["source_governance", "source_override"]);
+    assert.deepEqual([...DECISION_KINDS], ["source_governance", "source_override", "applied_fix"]);
   });
 });
 
