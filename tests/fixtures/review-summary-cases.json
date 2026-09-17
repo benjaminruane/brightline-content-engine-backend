@@ -302,6 +302,69 @@
         "needsAttention": 9,
         "readiness": "Needs significant work"
       }
+    },
+    {
+      "name": "compliance-null-on",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": null }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": "notChecked", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 1, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 1 },
+        "signalConcerns": 0,
+        "notChecked": 1,
+        "needsAttention": 0,
+        "readiness": "Not fully checked"
+      }
+    },
+    {
+      "name": "editorial-null-on",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": null, "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "notChecked", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 1, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 1 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 1,
+        "needsAttention": 0,
+        "readiness": "Not fully checked"
+      }
+    },
+    {
+      "name": "compliance-null-off",
+      "reviewOptions": { "complianceEnabled": false },
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": null }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": null, "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 1, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": null,
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 0,
+        "readiness": "Ready"
+      }
     }
   ]
 }

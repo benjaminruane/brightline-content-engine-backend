@@ -128,7 +128,7 @@ describe("category noise-floor scorer", () => {
     });
     assert.equal(run.counts.compliance, 0);
     assert.equal(run.counts.complianceNullOn, 1);
-    assert.equal(run.counts.notChecked, 0);
+    assert.equal(run.counts.notChecked, 1);
     assert.equal(run.cards[0].complianceVerdict, null);
   });
 

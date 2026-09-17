@@ -1,7 +1,7 @@
 /**
  * Pure scoring for B195 category noise floor.
  * Counts come from raw card fields. reviewSummary is recorded, not trusted
- * for the null-compliance column (classifyCard maps unrecognised to clean).
+ * for the null-compliance column.
  */
 
 import { classifyCard, summariseReview } from "../../../lib/qc/review-summary.mjs";
