@@ -1,0 +1,307 @@
+{
+  "cases": [
+    {
+      "name": "three-partials",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_partial", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "supported_partial", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "supported_partial", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "partial", "editorial": "clean", "compliance": "clean", "needsAttention": false },
+        { "counted": true, "evidence": "partial", "editorial": "clean", "compliance": "clean", "needsAttention": false },
+        { "counted": true, "evidence": "partial", "editorial": "clean", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 3,
+        "evidence": { "confirmed": 0, "partial": 3, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 0,
+        "readiness": "Minor points to address"
+      }
+    },
+    {
+      "name": "one-conflict",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "conflict", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "conflicting", "editorial": "clean", "compliance": "clean", "needsAttention": true }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 0, "partial": 0, "conflicting": 1, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 1,
+        "readiness": "Needs significant work"
+      }
+    },
+    {
+      "name": "failed-editorial-check",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "supported_full", "editorialVerdict": "not_reviewed", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": "clean", "needsAttention": false },
+        { "counted": true, "evidence": "confirmed", "editorial": "notChecked", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 2,
+        "evidence": { "confirmed": 2, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 1 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 1,
+        "needsAttention": 0,
+        "readiness": "Not fully checked"
+      }
+    },
+    {
+      "name": "failed-check-plus-partial",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_partial", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "supported_full", "editorialVerdict": "not_reviewed", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "partial", "editorial": "clean", "compliance": "clean", "needsAttention": false },
+        { "counted": true, "evidence": "confirmed", "editorial": "notChecked", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 2,
+        "evidence": { "confirmed": 1, "partial": 1, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 1 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 1,
+        "needsAttention": 0,
+        "readiness": "Minor points to address"
+      }
+    },
+    {
+      "name": "three-hard-editorial",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "hard_concern", "complianceVerdict": "clean" },
+        { "displayVerdict": "supported_full", "editorialVerdict": "hard_concern", "complianceVerdict": "clean" },
+        { "displayVerdict": "supported_full", "editorialVerdict": "hard_concern", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "hardConcern", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "confirmed", "editorial": "hardConcern", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "confirmed", "editorial": "hardConcern", "compliance": "clean", "needsAttention": true }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 3,
+        "evidence": { "confirmed": 3, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 3, "hardConcerns": 3, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 3,
+        "notChecked": 0,
+        "needsAttention": 3,
+        "readiness": "Needs significant work"
+      }
+    },
+    {
+      "name": "one-no-support",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "not_supported", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "notSupported", "editorial": "clean", "compliance": "clean", "needsAttention": true }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 0, "partial": 0, "conflicting": 0, "notSupported": 1 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 1,
+        "readiness": "Needs work"
+      }
+    },
+    {
+      "name": "all-confirmed-clean",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": "clean", "needsAttention": false },
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 2,
+        "evidence": { "confirmed": 2, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 0,
+        "readiness": "Ready"
+      }
+    },
+    {
+      "name": "suppressed-card",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "not_supported", "editorialVerdict": "clean", "complianceVerdict": "clean", "suppressInQcWorkbench": true },
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": false, "evidence": "notSupported", "editorial": "clean", "compliance": "clean", "needsAttention": false },
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 1, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 0,
+        "readiness": "Ready"
+      }
+    },
+    {
+      "name": "evidence-off",
+      "reviewOptions": { "evidenceEnabled": false },
+      "cards": [
+        { "displayVerdict": "not_supported", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": null, "editorial": "clean", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": null,
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 0,
+        "readiness": "Ready"
+      }
+    },
+    {
+      "name": "unknown-display-verdict",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "mystery_slug", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": null, "editorial": "clean", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 0, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 0,
+        "readiness": "Ready"
+      }
+    },
+    {
+      "name": "compliance-not-reviewed",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": "not_reviewed" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": "notChecked", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 1, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 1 },
+        "signalConcerns": 0,
+        "notChecked": 1,
+        "needsAttention": 0,
+        "readiness": "Not fully checked"
+      }
+    },
+    {
+      "name": "zero-statements",
+      "reviewOptions": {},
+      "cards": [],
+      "expectedSummaryClass": [],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 0,
+        "evidence": { "confirmed": 0, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 0,
+        "needsAttention": 0,
+        "readiness": null
+      }
+    },
+    {
+      "name": "f18-shaped",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "conflict", "editorialVerdict": "concern", "complianceVerdict": "clean" },
+        { "displayVerdict": "conflict", "editorialVerdict": "concern", "complianceVerdict": "clean" },
+        { "displayVerdict": "conflict", "editorialVerdict": "concern", "complianceVerdict": "clean" },
+        { "displayVerdict": "conflict", "editorialVerdict": "concern", "complianceVerdict": "clean" },
+        { "displayVerdict": "conflict", "editorialVerdict": "concern", "complianceVerdict": "clean" },
+        { "displayVerdict": "conflict", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "conflict", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "not_supported", "editorialVerdict": "clean", "complianceVerdict": "clean" },
+        { "displayVerdict": "not_supported", "editorialVerdict": "clean", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "clean", "compliance": "clean", "needsAttention": false },
+        { "counted": true, "evidence": "conflicting", "editorial": "concern", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "conflicting", "editorial": "concern", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "conflicting", "editorial": "concern", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "conflicting", "editorial": "concern", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "conflicting", "editorial": "concern", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "conflicting", "editorial": "clean", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "conflicting", "editorial": "clean", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "notSupported", "editorial": "clean", "compliance": "clean", "needsAttention": true },
+        { "counted": true, "evidence": "notSupported", "editorial": "clean", "compliance": "clean", "needsAttention": true }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 10,
+        "evidence": { "confirmed": 1, "partial": 0, "conflicting": 7, "notSupported": 2 },
+        "editorial": { "concerns": 5, "hardConcerns": 0, "notChecked": 0 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 5,
+        "notChecked": 0,
+        "needsAttention": 9,
+        "readiness": "Needs significant work"
+      }
+    }
+  ]
+}

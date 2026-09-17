@@ -13,7 +13,7 @@ import {
   selectConstructiveFeedbackBundles,
   splitCardFeedbackSections,
 } from "../lib/qc/constructive-feedback.mjs";
-import { computeSignoffVerdict, isReadyForSignoff } from "../lib/qc/signoff-verdict.mjs";
+import { summariseReview } from "../lib/qc/review-summary.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -135,9 +135,10 @@ export default async function handler(req, res) {
     complianceEnabled: reviewOptions.complianceEnabled !== false,
   };
   const rows = extractRows(body);
-
-  const signoffVerdict = computeSignoffVerdict(rows);
-  const isReady = isReadyForSignoff(signoffVerdict);
+  const cards = rows.map((row) => (row?.qcCard && typeof row.qcCard === "object" ? row.qcCard : row));
+  const reviewSummary = summariseReview(cards, activeReviewOptions);
+  const signoffVerdict = reviewSummary.readiness;
+  const isReady = reviewSummary.readiness === "Ready";
   const feedbackBundles = selectConstructiveFeedbackBundles(rows, activeReviewOptions);
 
   const craftInput = resolveCraftInput(body, draftText);

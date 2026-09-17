@@ -21,6 +21,7 @@ import { scanDraftForAiProvenance } from "../lib/provenance-scan.mjs";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
 import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
+import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -310,6 +311,16 @@ export default async function handler(req, res) {
       fingerprints: modelConfig.stage2Fingerprints,
     });
 
+    const effectiveReviewOptions = pipelineResult?.reviewOptions ?? reviewOptions;
+    for (const stmt of statements) {
+      if (stmt?.qcCard && typeof stmt.qcCard === "object") {
+        stmt.qcCard.summaryClass = classifyCard(stmt.qcCard, effectiveReviewOptions);
+      }
+    }
+    const summaryCards = statements
+      .map((stmt) => stmt?.qcCard)
+      .filter((card) => card && typeof card === "object");
+
     return res.status(200).json({
       ok: true,
       statements,
@@ -321,7 +332,8 @@ export default async function handler(req, res) {
         pipelineVersion: useV4 ? "v4" : "v3",
         stagesComplete: pipelineResult?._stagesComplete ?? null,
         traceId,
-        reviewOptions: pipelineResult?.reviewOptions ?? reviewOptions,
+        reviewOptions: effectiveReviewOptions,
+        reviewSummary: summariseReview(summaryCards, effectiveReviewOptions),
         modelConfig,
         ...(pipelineResult?.evidenceReviewSkipped === true ? { evidenceReviewSkipped: true } : {}),
         ...(nothingReviewed ? { nothingReviewed: true } : {}),

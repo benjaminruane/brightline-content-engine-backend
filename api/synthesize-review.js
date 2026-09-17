@@ -1,5 +1,6 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { READINESS_LABELS } from "../lib/qc/review-summary.mjs";
 
 /** R3.7: appended voice constraints — do not alter role/length/tone preamble above the two trailing paragraphs. */
 const SYNTHESIZE_REVIEW_SYSTEM_PROMPT = [
@@ -22,11 +23,15 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["synthesize-review"];
-  if (!hasProviderApiKey(modelConfig.provider)) return res.status(200).json({ ok: false, narrative: "" });
 
   const body = req.body && typeof req.body === "object" ? req.body : {};
   const draftText = typeof body.draftText === "string" ? body.draftText.trim() : "";
   const summary = body.qcSummary && typeof body.qcSummary === "object" ? body.qcSummary : {};
+  const readiness = summary.readiness;
+  if (!READINESS_LABELS.includes(readiness)) {
+    return res.status(200).json({ ok: false, narrative: "" });
+  }
+  if (!hasProviderApiKey(modelConfig.provider)) return res.status(200).json({ ok: false, narrative: "" });
   const notSupportedStatements = Array.isArray(body.notSupportedStatements) ? body.notSupportedStatements : [];
   const conflictingStatements = Array.isArray(body.conflictingStatements) ? body.conflictingStatements : [];
   const partialStatements = Array.isArray(body.partialStatements) ? body.partialStatements : [];
@@ -39,12 +44,6 @@ export default async function handler(req, res) {
     complianceEnabled: reviewOptions.complianceEnabled !== false,
   };
   const context = body.context === "writing" ? "writing" : "assess";
-  const signoffVerdict =
-    summary.signoffVerdict === "Ready for signoff" ||
-    summary.signoffVerdict === "Needs targeted revision" ||
-    summary.signoffVerdict === "Needs significant work"
-      ? summary.signoffVerdict
-      : "Needs targeted revision";
 
   const roleFraming =
     context === "writing"
@@ -71,7 +70,8 @@ export default async function handler(req, res) {
                 "Use direct, constructive editorial language in a senior FT-style voice.",
                 "Your assessment must only cover the review types that were run. Do not comment on editorial matters if editorial review was not run, and do not comment on evidence if evidence review was not run.",
                 "A conflicting statement HAS evidence: two or more sources address it and they disagree. Never describe a conflict as unsupported, unsubstantiated or lacking evidence. A partially confirmed statement is partly backed, not unbacked. Only statements with no source support are unsupported.",
-                `Conclude explicitly with one of these exact labels: ${signoffVerdict}.`,
+                `Conclude explicitly with one of these exact labels: ${readiness}.`,
+                "If the label is Not fully checked, say plainly that some statements could not be checked, and do not describe them as having problems.",
                 ...(context === "writing"
                   ? ["Address the writer directly using language like 'your draft', 'you should', and 'this needs' where appropriate."]
                   : []),

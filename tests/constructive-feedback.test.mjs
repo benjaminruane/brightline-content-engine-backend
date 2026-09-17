@@ -23,7 +23,7 @@ import {
   resolveConstructiveFeedbackCraftOutputType,
 } from "../lib/qc/constructive-feedback.mjs";
 import { OUTPUT_TYPE } from "../lib/output-intent.js";
-import { computeSignoffVerdict, isReadyForSignoff } from "../lib/qc/signoff-verdict.mjs";
+import { summariseReview } from "../lib/qc/review-summary.mjs";
 
 const cleanCard = {
   qcCard: {
@@ -149,12 +149,12 @@ describe("constructive-feedback", () => {
   });
 
   test("signoff verdict", () => {
-    const readyVerdict = computeSignoffVerdict([cleanCard]);
-    assert.equal(readyVerdict, "Ready for signoff");
-    assert.equal(isReadyForSignoff(readyVerdict), true);
+    const readyVerdict = summariseReview([cleanCard.qcCard]).readiness;
+    assert.equal(readyVerdict, "Ready");
+    assert.equal(readyVerdict === "Ready", true);
 
-    const notReady = computeSignoffVerdict([evidenceIssueCard]);
-    assert.equal(notReady, "Needs targeted revision");
+    const notReady = summariseReview([evidenceIssueCard.qcCard]).readiness;
+    assert.equal(notReady, "Minor points to address");
   });
 
   test("craft text normalization and editor register", () => {
@@ -229,7 +229,7 @@ describe("constructive-feedback", () => {
   test("buildConstructiveFeedbackUserPayload", () => {
     const cardPayload = buildConstructiveFeedbackUserPayload({
       draftText: "Draft text.",
-      signoffVerdict: "Needs targeted revision",
+      signoffVerdict: "Minor points to address",
       isReady: false,
       feedbackBundles: [{ cardIndex: 0, statementText: "Returns reached 15%.", compliance: [], editorial: [] }],
       craftHandledSeparately: true,
@@ -270,7 +270,7 @@ describe("constructive-feedback", () => {
 
     const nullTypePayload = buildConstructiveFeedbackCraftUserPayload({
       analysedDraftText: "Draft body.",
-      signoffVerdict: "Needs targeted revision",
+      signoffVerdict: "Minor points to address",
       isReady: false,
       includeOpeningClosing: false,
       outputType: null,
@@ -280,7 +280,7 @@ describe("constructive-feedback", () => {
 
     const investorLetterPayload = buildConstructiveFeedbackCraftUserPayload({
       analysedDraftText: "Dear Investors,\n\nWe are pleased to update you.",
-      signoffVerdict: "Needs targeted revision",
+      signoffVerdict: "Minor points to address",
       isReady: false,
       includeOpeningClosing: false,
       outputType: "investor_letter",

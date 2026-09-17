@@ -6,6 +6,7 @@ import {
   Paragraph,
   TextRun,
 } from "docx";
+import { classifyCard } from "../lib/qc/review-summary.mjs";
 
 function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
@@ -37,17 +38,8 @@ function normalizeVerdict(displayVerdict) {
   return "Unverifiable";
 }
 
-function isConcerned(verdict) {
-  return verdict === "soft_concern" || verdict === "hard_concern";
-}
-
-function isEditorialExportConcerned(verdict) {
-  return (
-    verdict === "soft_concern" ||
-    verdict === "hard_concern" ||
-    verdict === "concern" ||
-    verdict === "not_reviewed"
-  );
+function signalClassIsConcern(cls) {
+  return cls === "concern" || cls === "hardConcern";
 }
 
 function formatSourceFileType(rawType) {
@@ -123,16 +115,24 @@ function buildReviewData(qcResult) {
     const complianceConcerns = Array.isArray(qcCard.complianceConcerns) ? qcCard.complianceConcerns : [];
     const editorialFallback = editorialConcerns.map((c) => c?.note).filter((x) => typeof x === "string" && x.trim()).join(" ");
     const complianceFallback = complianceConcerns.map((c) => c?.note).filter((x) => typeof x === "string" && x.trim()).join(" ");
-    const editorialNote = typeof qcCard.editorialNote === "string" && qcCard.editorialNote !== ""
+    let editorialNote = typeof qcCard.editorialNote === "string" && qcCard.editorialNote !== ""
       ? qcCard.editorialNote
       : (editorialFallback || null);
-    const complianceNote = typeof qcCard.complianceNote === "string" && qcCard.complianceNote !== ""
+    let complianceNote = typeof qcCard.complianceNote === "string" && qcCard.complianceNote !== ""
       ? qcCard.complianceNote
       : (complianceFallback || null);
     const reviewerVerdict = qcCard.reviewerVerdict == null ? null : String(qcCard.reviewerVerdict).trim() || null;
+    const summaryClass = classifyCard(qcCard);
     const editorialFlag =
-      isEditorialExportConcerned(qcCard.editorialVerdict) || editorialNote != null;
-    const complianceFlag = isConcerned(qcCard.complianceVerdict) || complianceNote != null;
+      signalClassIsConcern(summaryClass.editorial) || editorialNote != null;
+    const complianceFlag =
+      signalClassIsConcern(summaryClass.compliance) || complianceNote != null;
+    if (summaryClass.editorial === "notChecked" && editorialNote == null) {
+      editorialNote = "Not checked.";
+    }
+    if (summaryClass.compliance === "notChecked" && complianceNote == null) {
+      complianceNote = "Not checked.";
+    }
     return {
       statementText,
       verdict,
