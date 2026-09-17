@@ -4,6 +4,7 @@
  * Prints one verdict line. Exits 1 on the first failure.
  */
 import { spawnSync } from "node:child_process";
+import { readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -26,6 +27,39 @@ function run(cmd, args, opts = {}) {
 
 function git(args) {
   return run("git", args);
+}
+
+function listCheckableFiles(dir) {
+  const out = [];
+  let entries = [];
+  try {
+    entries = readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      out.push(...listCheckableFiles(full));
+      continue;
+    }
+    if (/\.(?:js|mjs|cjs)$/.test(entry.name)) out.push(full);
+  }
+  return out;
+}
+
+function syntaxCheck() {
+  const files = [...listCheckableFiles(path.join(ROOT, "api")), ...listCheckableFiles(path.join(ROOT, "lib"))];
+  for (const file of files) {
+    const checked = run("node", ["--check", file]);
+    if (checked.status === 0) continue;
+    const output = `${checked.stdout || ""}${checked.stderr || ""}`;
+    if (output) {
+      process.stdout.write(output);
+      if (!output.endsWith("\n")) process.stdout.write("\n");
+    }
+    fail(`syntax check failed ${path.relative(ROOT, file)}`);
+  }
 }
 
 const fetchResult = git(["fetch"]);
@@ -54,6 +88,8 @@ if (headSha !== upstreamSha) {
   if (behind > 0) fail("local behind remote");
   fail("local ahead of remote");
 }
+
+syntaxCheck();
 
 const tests = run("npm", ["test"]);
 const testOutput = `${tests.stdout || ""}${tests.stderr || ""}`;
