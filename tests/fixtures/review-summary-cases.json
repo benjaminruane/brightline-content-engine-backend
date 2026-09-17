@@ -365,6 +365,27 @@
         "needsAttention": 0,
         "readiness": "Ready"
       }
+    },
+    {
+      "name": "unknown-editorial-verdict-on",
+      "reviewOptions": {},
+      "cards": [
+        { "displayVerdict": "supported_full", "editorialVerdict": "mystery", "complianceVerdict": "clean" }
+      ],
+      "expectedSummaryClass": [
+        { "counted": true, "evidence": "confirmed", "editorial": "notChecked", "compliance": "clean", "needsAttention": false }
+      ],
+      "expectedReviewSummary": {
+        "version": 1,
+        "statements": 1,
+        "evidence": { "confirmed": 1, "partial": 0, "conflicting": 0, "notSupported": 0 },
+        "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 1 },
+        "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
+        "signalConcerns": 0,
+        "notChecked": 1,
+        "needsAttention": 0,
+        "readiness": "Not fully checked"
+      }
     }
   ]
 }

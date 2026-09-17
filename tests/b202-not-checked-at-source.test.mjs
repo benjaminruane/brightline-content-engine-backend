@@ -170,4 +170,41 @@ describe("B202 a check that did not run is not_reviewed, never clean", () => {
       null
     );
   });
+
+  test("unrecognised verdict with the review ON is notChecked / not_reviewed; OFF is unchanged", async () => {
+    assert.equal(
+      classifyCard({ editorialVerdict: "mystery" }, { editorialEnabled: true }).editorial,
+      "notChecked"
+    );
+    const onCard = await assembleCard(
+      statementEntry({
+        editorialVerdict: "mystery",
+        editorialConcerns: [],
+        complianceVerdict: "clean",
+        complianceConcerns: [],
+      }),
+      0,
+      assemblyContext(REVIEWS_ON)
+    );
+    assert.equal(onCard.editorialVerdict, "not_reviewed");
+    assert.equal(classifyCard(onCard, REVIEWS_ON).editorial, "notChecked");
+
+    const editorialOff = { ...REVIEWS_ON, editorialEnabled: false };
+    assert.equal(
+      classifyCard({ editorialVerdict: "mystery" }, editorialOff).editorial,
+      null
+    );
+    const offCard = await assembleCard(
+      statementEntry({
+        editorialVerdict: "mystery",
+        editorialConcerns: [],
+        complianceVerdict: "clean",
+        complianceConcerns: [],
+      }),
+      0,
+      assemblyContext(editorialOff)
+    );
+    assert.equal(offCard.editorialVerdict, "mystery");
+    assert.equal(classifyCard(offCard, editorialOff).editorial, null);
+  });
 });
