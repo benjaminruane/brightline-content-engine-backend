@@ -12,6 +12,9 @@ const EDITORIAL_FAIL =
 const COMPLIANCE_FAIL =
   /\[EDITORIAL_COMPLIANCE_ERROR\] compliance parse failed/;
 
+const REVIEW_CRASH =
+  /stage6: editorial\/compliance review failed/;
+
 export function emptyLogCounts() {
   return {
     cacheHits: 0,
@@ -25,6 +28,7 @@ export function emptyLogCounts() {
     summaryLogged: false,
     editorialSchemaFailures: 0,
     complianceParseFailures: 0,
+    reviewCrashes: 0,
   };
 }
 
@@ -52,6 +56,7 @@ export function extractLogCounts(text) {
   for (const line of src.split(/\r?\n/)) {
     if (EDITORIAL_FAIL.test(line)) out.editorialSchemaFailures += 1;
     if (COMPLIANCE_FAIL.test(line)) out.complianceParseFailures += 1;
+    if (REVIEW_CRASH.test(line)) out.reviewCrashes += 1;
   }
   return out;
 }
