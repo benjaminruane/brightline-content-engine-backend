@@ -8,6 +8,7 @@ describe("readEnvironmentSummary", () => {
     const summary = readEnvironmentSummary({
       QC_PIPELINE_V4: "1",
       [AUTHORING_ORGANISATION_ENV]: "Brightline",
+      BRIGHTLINE_EDITORIAL_REVIEW: "1",
     });
     assert.equal(summary.pipelineRoute, "v4");
     assert.equal(summary.authoringOrganisation, "Brightline");
@@ -57,5 +58,30 @@ describe("readEnvironmentSummary", () => {
     assert.equal(isReviseActionListEnabled({ REVISE_ACTION_LIST: "0" }), false);
     assert.equal(isReviseActionListEnabled({ REVISE_ACTION_LIST: "" }), false);
     assert.equal(isReviseActionListEnabled({}), false);
+  });
+
+  test("editorialReview is true only when BRIGHTLINE_EDITORIAL_REVIEW is 1", () => {
+    const on = readEnvironmentSummary({
+      QC_PIPELINE_V4: "1",
+      [AUTHORING_ORGANISATION_ENV]: "Brightline",
+      BRIGHTLINE_EDITORIAL_REVIEW: "1",
+    });
+    assert.equal(on.editorialReview, true);
+    assert.equal(on.ok, true);
+
+    const off = readEnvironmentSummary({
+      QC_PIPELINE_V4: "1",
+      [AUTHORING_ORGANISATION_ENV]: "Brightline",
+      BRIGHTLINE_EDITORIAL_REVIEW: "0",
+    });
+    assert.equal(off.editorialReview, false);
+    assert.equal(off.ok, false);
+
+    const missing = readEnvironmentSummary({
+      QC_PIPELINE_V4: "1",
+      [AUTHORING_ORGANISATION_ENV]: "Brightline",
+    });
+    assert.equal(missing.editorialReview, false);
+    assert.equal(missing.ok, false);
   });
 });

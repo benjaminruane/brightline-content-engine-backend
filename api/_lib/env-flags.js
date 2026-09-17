@@ -5,13 +5,19 @@ export function isReviseActionListEnabled(env = process.env) {
   return v === "1" || v === "true" || v === "yes" || v === "on";
 }
 
+export function isEditorialReviewEnabled(env = process.env) {
+  return String(env?.BRIGHTLINE_EDITORIAL_REVIEW || "").trim() === "1";
+}
+
 export function readEnvironmentSummary(env = process.env) {
   const pipelineRoute = env.QC_PIPELINE_V4 === "1" ? "v4" : "v3";
   const authoringOrganisation = (env[AUTHORING_ORGANISATION_ENV] || "").trim() || null;
+  const editorialReview = isEditorialReviewEnabled(env);
   return {
     pipelineRoute,
     authoringOrganisation,
     reviseActionList: isReviseActionListEnabled(env),
-    ok: pipelineRoute === "v4" && authoringOrganisation !== null,
+    editorialReview,
+    ok: pipelineRoute === "v4" && authoringOrganisation !== null && editorialReview === true,
   };
 }
