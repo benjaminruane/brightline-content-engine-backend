@@ -1,0 +1,212 @@
+{
+  "fixtureId": "10",
+  "fixtureLabel": "synth_public_press_release",
+  "label": "cache-off",
+  "runIndex": 5,
+  "startedAt": "2026-09-17T04:25:29.798Z",
+  "endedAt": "2026-09-17T04:25:40.312Z",
+  "httpStatus": 200,
+  "requestBytes": 4828,
+  "logFile": "/tmp/b195-server.log",
+  "logByteRange": {
+    "startByte": 183215,
+    "endByte": 188175
+  },
+  "extracted": {
+    "statementCount": 7,
+    "cards": [
+      {
+        "text": "Meridian Capital today announced the completion of its acquisition of Lumen Specialty Chemicals (the \"Company\"), a leading European producer of high-purity specialty chemicals for the electronics, pharmaceutical, and advanced materials industries.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      {
+        "text": "Headquartered in Frankfurt, the Company operates three production facilities across Germany and Belgium and employs approximately 850 people.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      {
+        "text": "It supplies more than 600 customers worldwide, with particular strength in ultra-high-purity solvents used in semiconductor wafer fabrication and pharmaceutical active ingredient manufacturing.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      {
+        "text": "The Company will be led by its existing Chief Executive, Dr. Annika Brandt.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      {
+        "text": "Meridian intends to support an acceleration of the Company's expansion strategy, with a focus on the Asian electronics market and on selective acquisitions in adjacent specialty chemical categories.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      {
+        "text": "The transaction represents the eighth investment from Meridian's European Industrials strategy.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      {
+        "text": "Total invested capital from the Meridian platform in the specialty chemicals sector now exceeds EUR 2 billion across the firm's global investments.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      }
+    ],
+    "counts": {
+      "all": 7,
+      "confirmed": 7,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 0,
+      "editorial": 0,
+      "compliance": 0,
+      "notChecked": 0,
+      "complianceNullOn": 0,
+      "needsAttention": 0
+    },
+    "readiness": "Ready",
+    "reviewSummary": {
+      "version": 1,
+      "statements": 7,
+      "evidence": {
+        "confirmed": 7,
+        "partial": 0,
+        "conflicting": 0,
+        "notSupported": 0
+      },
+      "editorial": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "compliance": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "signalConcerns": 0,
+      "notChecked": 0,
+      "needsAttention": 0,
+      "readiness": "Ready"
+    },
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "modelConfig": {
+      "ranAt": "2026-09-17T04:25:30.174Z",
+      "stage2Fingerprints": [
+        "fp_828c5471ee"
+      ],
+      "stageModels": {
+        "stage1-splitting": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage1b-claim-spans": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage2-matching": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage5-commentary": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "compliance-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        }
+      }
+    },
+    "traceId": "7da876e0-6636-4cb4-93fd-e8967965e4b7",
+    "wallTimeMs": 10514,
+    "costUsd": null,
+    "costSource": "unreadable_via_http",
+    "log": {
+      "cacheHits": 0,
+      "cacheMisses": 0,
+      "stage1Hits": 0,
+      "stage1Total": 0,
+      "stage1bHits": 0,
+      "stage1bTotal": 0,
+      "stage2Hits": 0,
+      "stage2Total": 0,
+      "summaryLogged": false,
+      "editorialSchemaFailures": 0,
+      "complianceParseFailures": 0
+    }
+  },
+  "ok": true,
+  "error": null
+}

@@ -1,0 +1,252 @@
+{
+  "fixtureId": "18",
+  "fixtureLabel": "synth_cross_source_pair",
+  "label": "cache-off",
+  "runIndex": 6,
+  "startedAt": "2026-09-17T04:19:55.143Z",
+  "endedAt": "2026-09-17T04:20:13.467Z",
+  "httpStatus": 200,
+  "requestBytes": 9701,
+  "logFile": "/tmp/b195-server.log",
+  "logByteRange": {
+    "startByte": 59105,
+    "endByte": 69075
+  },
+  "extracted": {
+    "statementCount": 10,
+    "cards": [
+      {
+        "text": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      {
+        "text": "We have invested EUR 158 million for a 60% controlling stake.",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "The base case generates 2.8x MOIC and 23% gross IRR.",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      {
+        "text": "In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.",
+        "displayVerdict": "supported_partial",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "summaryClass": {
+          "counted": true,
+          "evidence": "partial",
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      }
+    ],
+    "counts": {
+      "all": 10,
+      "confirmed": 2,
+      "partial": 1,
+      "conflicting": 7,
+      "notSupported": 0,
+      "editorial": 5,
+      "compliance": 0,
+      "notChecked": 0,
+      "complianceNullOn": 0,
+      "needsAttention": 9
+    },
+    "readiness": "Needs significant work",
+    "reviewSummary": {
+      "version": 1,
+      "statements": 10,
+      "evidence": {
+        "confirmed": 2,
+        "partial": 1,
+        "conflicting": 7,
+        "notSupported": 0
+      },
+      "editorial": {
+        "concerns": 5,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "compliance": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "signalConcerns": 5,
+      "notChecked": 0,
+      "needsAttention": 9,
+      "readiness": "Needs significant work"
+    },
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "modelConfig": {
+      "ranAt": "2026-09-17T04:19:55.602Z",
+      "stage2Fingerprints": [
+        "fp_7dc88c4b17",
+        "fp_828c5471ee"
+      ],
+      "stageModels": {
+        "stage1-splitting": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage1b-claim-spans": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage2-matching": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage5-commentary": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "compliance-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        }
+      }
+    },
+    "traceId": "19868d59-c5ef-4f52-8e74-4c249cadd8ea",
+    "wallTimeMs": 18324,
+    "costUsd": 0.393382499995,
+    "costSource": "langfuse_trace",
+    "log": {
+      "cacheHits": 0,
+      "cacheMisses": 0,
+      "stage1Hits": 0,
+      "stage1Total": 0,
+      "stage1bHits": 0,
+      "stage1bTotal": 0,
+      "stage2Hits": 0,
+      "stage2Total": 0,
+      "summaryLogged": false,
+      "editorialSchemaFailures": 0,
+      "complianceParseFailures": 0
+    }
+  },
+  "ok": true,
+  "error": null
+}
