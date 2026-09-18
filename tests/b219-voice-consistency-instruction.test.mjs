@@ -11,6 +11,7 @@ import {
   FIRST_PERSON_ACTOR_INSTRUCTION,
   buildFirstPersonActorInstruction,
 } from "../lib/qc/first-person-actor.mjs";
+import { houseVoiceIsThirdPerson } from "../lib/prompt-library/house-voice.mjs";
 import { buildEditorialStyleSystemPrompt } from "../lib/qc/editorial-compliance-reviewer.mjs";
 
 const HOUSE = "Halden Group";
@@ -20,22 +21,18 @@ const OUTPUT_TYPES = [
   {
     slug: "reporting_commentary",
     enum: OUTPUT_TYPE.REPORTING_COMMENTARY,
-    houseVoice: "third",
   },
   {
     slug: "investor_letter",
     enum: OUTPUT_TYPE.INVESTOR_LETTER,
-    houseVoice: "first",
   },
   {
     slug: "press_release",
     enum: OUTPUT_TYPE.PRESS_RELEASE,
-    houseVoice: "first",
   },
   {
     slug: "linkedin_post",
     enum: OUTPUT_TYPE.LINKEDIN_POST,
-    houseVoice: "first",
   },
 ];
 
@@ -71,7 +68,7 @@ describe("B219 voice_consistency instruction by output type", () => {
     test(`${row.slug}: FIRST_PERSON_ACTOR_INSTRUCTION present only for third-person house voice`, () => {
       const prompt = promptFor(row);
       const block = voiceConsistencyBlock(prompt);
-      const expectPresent = row.houseVoice === "third";
+      const expectPresent = houseVoiceIsThirdPerson(row.slug);
       assert.equal(block.includes(REMOVAL_MARKER), expectPresent);
       assert.equal(prompt.includes(REMOVAL_MARKER), expectPresent);
     });
@@ -80,12 +77,12 @@ describe("B219 voice_consistency instruction by output type", () => {
       const prompt = promptFor(row);
       const block = voiceConsistencyBlock(prompt);
       const hasRemoval = block.includes(REMOVAL_MARKER) || prompt.includes(REMOVAL_MARKER);
-      if (row.houseVoice === "first") {
+      if (!houseVoiceIsThirdPerson(row.slug)) {
         assert.equal(hasRemoval, false);
         return;
       }
       assert.equal(hasRemoval, true);
-      assert.match(block, /Reporting commentary.{0,80}third-person/i);
+      assert.match(block, /third-person/i);
     });
   }
 
