@@ -10,6 +10,15 @@ import { describe, test } from "vitest";
 import { fillAction, runActionList } from "../lib/revise-actions/run.mjs";
 import { NO_PROPOSAL } from "../lib/revise-actions/sort.mjs";
 
+describe("visible_signal card copy", () => {
+  test("tells the reader why the card is there", () => {
+    assert.equal(
+      NO_PROPOSAL.visible_signal,
+      "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+    );
+  });
+});
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REVIEW2_PATH = path.join(
   __dirname,

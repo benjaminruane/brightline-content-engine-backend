@@ -60,11 +60,25 @@ function normalizeOptionalString(value) {
   return out === "" ? null : out;
 }
 
+function qualityReviewSummaryLines(data) {
+  const src = data?.qualityReviewSummary && typeof data.qualityReviewSummary === "object"
+    ? data.qualityReviewSummary
+    : null;
+  const readiness = typeof src?.readiness === "string" ? src.readiness.trim() : "";
+  const bullets = Array.isArray(src?.bullets)
+    ? src.bullets.map((row) => String(row ?? "").trim()).filter(Boolean)
+    : [];
+  if (readiness || bullets.length > 0) return { readiness, bullets };
+  const summary = data?.qcResult?.meta?.reviewSummary;
+  const fallback = typeof summary?.readiness === "string" ? summary.readiness.trim() : "";
+  return { readiness: fallback, bullets: [] };
+}
+
 function deriveDocumentTitle(meta, outputTypeName) {
   const subject = normalizeOptionalString(meta?.subject)?.trim() || null;
   const title = normalizeOptionalString(meta?.title)?.trim() || null;
   const resolvedSubject = subject || title || null;
-  return resolvedSubject ? `${resolvedSubject} — ${outputTypeName}` : outputTypeName;
+  return resolvedSubject ? `${resolvedSubject} - ${outputTypeName}` : outputTypeName;
 }
 
 /** A9.14: ISO YYYY-MM-DD or other non-empty string → DD/MM/YYYY for export when ISO */
@@ -202,6 +216,8 @@ async function renderPdf(payload) {
   doc.moveDown(0.25);
   labelValue("Output type", outputTypeName);
   labelValue("Required version", requiredVersionLabel);
+  const versionNamed = String(meta.versionLabel || "").trim();
+  if (versionNamed) labelValue("Version", versionNamed);
   doc.moveDown(0.15);
   doc
     .font("Helvetica")
@@ -253,7 +269,12 @@ async function renderPdf(payload) {
   if (includeReviewSummary) {
     sectionGap();
     sectionHeading("Quality review summary");
-    body(`Total statements reviewed: ${review.total}`);
+    const qrs = qualityReviewSummaryLines(data);
+    if (qrs.readiness) body(qrs.readiness);
+    for (const line of qrs.bullets) body(line);
+    if (!qrs.readiness && qrs.bullets.length === 0) {
+      body(`Total statements reviewed: ${review.total}`);
+    }
   }
 
   const reviewDisclaimerText =
@@ -342,6 +363,13 @@ function buildDocx(payload) {
     children: [new TextRun({ text: "Required version: ", bold: true }), new TextRun(requiredVersionLabel)],
     spacing: { after: 120 },
   }));
+  const versionNamed = String(meta.versionLabel || "").trim();
+  if (versionNamed) {
+    children.push(new Paragraph({
+      children: [new TextRun({ text: "Version: ", bold: true }), new TextRun(versionNamed)],
+      spacing: { after: 120 },
+    }));
+  }
   children.push(new Paragraph({
     text: `${meta.exportedAtLabel || ""}  |  ${String(meta.wordCount || 0)} words  |  ${String(meta.charCount || 0)} characters`,
     spacing: { after: 200 },
@@ -404,7 +432,12 @@ function buildDocx(payload) {
 
   if (includeReviewSummary) {
     children.push(heading("Quality review summary"));
-    children.push(new Paragraph({ text: `Total statements reviewed: ${review.total}` }));
+    const qrs = qualityReviewSummaryLines(data);
+    if (qrs.readiness) children.push(new Paragraph({ text: qrs.readiness }));
+    for (const line of qrs.bullets) children.push(new Paragraph({ text: line }));
+    if (!qrs.readiness && qrs.bullets.length === 0) {
+      children.push(new Paragraph({ text: `Total statements reviewed: ${review.total}` }));
+    }
     children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
   }
 
