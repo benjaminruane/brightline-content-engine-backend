@@ -21,7 +21,7 @@
     "qc:diag:prep": "node scripts/diagnostic/prep-extract.mjs",
     "qc:diag:run": "node scripts/diagnostic/run-batch.mjs",
     "diagnostic:style-guide": "node scripts/diagnostic/run-style-guide.mjs",
-    "mvp:summary": "node scripts/regen-mvp-summary.mjs",
+    "launch:summary": "node scripts/regen-launch-summary.mjs",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/db/migrate.mjs"
   },
   "dependencies": {

@@ -1,5 +1,19 @@
 # Brightline Content Engine — Master Roadmap
 
+## Launch plan (17 September 2026)
+
+The concept of MVP is retired. Work is now judged against a first client using the product.
+
+Decisions pending with Ben: the first client and what they do with it; which source types are in scope; hosted by Brightline or run in the client's environment; cost per review and price.
+
+Order once decided: real documents in (upload size, extraction time, tables detected), then real users (sign-in, saved reviews per person, house name per user, data retention), then a truthful core loop on that material, then a first client.
+
+Test material: synthetic but realistic PDFs built to exercise each document class, plus public reporting documents used verbatim. Client documents are not available to this project.
+
+The launch-relevant rows are marked LAUNCH in BACKLOG.md.
+
+Every "next work" list below this section is superseded by it.
+
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
 Last updated: 2026-09-15 (B188–B193; fixture 18 live in production `365d6a4`; B187 draft hash on each reviewer decision; B186 production migrated and verified 2026-09-14)
