@@ -222,7 +222,9 @@ describe("constructive-feedback", () => {
   test("craft register observations and quote discipline", () => {
     assert.ok(!CONSTRUCTIVE_FEEDBACK_CRAFT_REGISTER_OBSERVATIONS_ONLY.includes("Opening frames the read honestly"));
 
-    assert.ok(CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE.includes("~8–10 words"));
+    assert.ok(CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE.includes("~8-10 words"));
+    assert.equal(CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE.includes("\u2013"), false);
+    assert.equal(CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE.includes("\u2014"), false);
     assert.ok(CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT.includes(CONSTRUCTIVE_FEEDBACK_QUOTE_DISCIPLINE));
   });
 
