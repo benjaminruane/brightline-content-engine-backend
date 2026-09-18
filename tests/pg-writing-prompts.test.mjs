@@ -15,9 +15,10 @@ describe("pg-writing-prompts", () => {
       transactionDate: "Mar 2024",
       investment: "Meridian Capital Partners V,",
       sources: [],
+      authoringOrganisation: "Northwind Capital",
     });
     assert.match(text, /The investment is Meridian Capital Partners V\./);
-    assert.match(text, /Partners Group invested in Meridian Capital Partners V, a/);
+    assert.match(text, /Northwind Capital invested in Meridian Capital Partners V, a/);
   });
 
   test("buildPgWritingScaffold substitutes placeholders and verb", () => {
@@ -26,6 +27,7 @@ describe("pg-writing-prompts", () => {
       investment: "Gestcompost",
       specialInstructions: "Emphasise circular economy theme.",
       sources: [{ label: "IC memo", text: "Revenue EUR 120m." }],
+      authoringOrganisation: "Northwind Capital",
     });
     assert.ok(text);
     assert.match(text, /Mar 2024/);
@@ -87,6 +89,7 @@ describe("pg-writing-prompts", () => {
       transactionDate: "Apr 2024",
       investment: "Fund X",
       sources: [],
+      authoringOrganisation: "Northwind Capital",
     });
     assert.match(text, /Paragraph 1 describes the fund/);
     assert.match(text, /committed to' \/ 'completed a commitment to/);
