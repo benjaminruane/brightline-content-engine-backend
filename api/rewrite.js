@@ -25,7 +25,9 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
-import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index.js";
+import { buildBasePrompt, detectRewriteClash, splitPgDraftOutput } from "../lib/prompt-library/index.js";
+import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
+import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -702,7 +704,20 @@ export default async function handler(req, res) {
       : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
 
     const eventFraming = getEventTypeFraming(eventType);
-    const { basePromptText } = buildBasePrompt({ outputType, visibility, eventType });
+    const transactionDate =
+      typeof body.transactionDate === "string" && body.transactionDate.trim()
+        ? body.transactionDate.trim()
+        : "";
+    const investment =
+      typeof body.investment === "string" && body.investment.trim() ? body.investment.trim() : "";
+    const { basePromptText } = buildBasePrompt({
+      outputType,
+      visibility,
+      eventType,
+      transactionDate,
+      investment,
+      authoringOrganisation: resolveAuthoringOrganisationName(),
+    });
     const systemPrompt = [basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
     // A5.13 HARD RULE: Prompt must use normalized instructions only. Raw instructions must never reach the model.
@@ -849,6 +864,16 @@ Return ONLY valid JSON with no markdown or extra text:
 
     if (!finalDraftText || typeof finalDraftText !== "string") {
       return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
+    }
+
+    const commentaryForGuard = splitPgDraftOutput(finalDraftText).commentary || finalDraftText;
+    const guarded = applyPlaceholderGuard(commentaryForGuard, text);
+    if (!guarded.accepted) {
+      return res.status(422).json({
+        ok: false,
+        error: PLACEHOLDER_GUARD_MESSAGE,
+        code: "PLACEHOLDER_IN_OUTPUT",
+      });
     }
 
     // X3.1: Deterministic metrics (authoritative) — use final draft text

@@ -28,7 +28,8 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
-import { buildBasePrompt, enforcePgCommentaryWordLimit, getPgCommentaryWordLimit } from "../lib/prompt-library/index.js";
+import { buildBasePrompt, enforcePgCommentaryWordLimit, getPgCommentaryWordLimit, splitPgDraftOutput } from "../lib/prompt-library/index.js";
+import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 
@@ -54,7 +55,7 @@ General style:
 - Avoid unnecessary adjectives.
 - Use standard English commas (no weird formatting).
 - Avoid thousand separators for years.
-- Write in third-person voice by default (e.g., "the firm", "the company", "Partners Group", "it", "they").
+- Write in third-person voice by default (e.g., "the firm", "the company", "it", "they").
   Use third-person even if source documents use first or second person.
 `.trim();
 
@@ -824,6 +825,16 @@ Return ONLY JSON:
       return res.status(500).json({
         ok: false,
         error: "Draft could not be generated. Please try again, or provide more notes and/or sources.",
+      });
+    }
+
+    const commentaryForGuard = splitPgDraftOutput(currentDraftText).commentary || currentDraftText;
+    const guardedGenerate = applyPlaceholderGuard(commentaryForGuard, "");
+    if (!guardedGenerate.accepted) {
+      return res.status(422).json({
+        ok: false,
+        error: PLACEHOLDER_GUARD_MESSAGE,
+        code: "PLACEHOLDER_IN_OUTPUT",
       });
     }
 
