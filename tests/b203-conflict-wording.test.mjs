@@ -60,7 +60,7 @@ describe("B203 conflict wording in the assessment prompt", () => {
         conflictingStatements: [
           {
             statement: "The base case generates 2.8x MOIC and 23% gross IRR.",
-            evidenceFinding: "",
+            evidenceFinding: "The two documents give different figures for MOIC and IRR.",
           },
         ],
       }),
