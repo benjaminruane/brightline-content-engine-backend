@@ -6,7 +6,7 @@ import {
   Paragraph,
   TextRun,
 } from "docx";
-import { buildReviewData } from "../lib/qc/export-review-data.mjs";
+import { buildReviewData, evidenceConcernSuffix } from "../lib/qc/export-review-data.mjs";
 import { reviewSummaryFromResult } from "../lib/qc/review-summary.mjs";
 import { summaryBulletsFromReview } from "../lib/qc/summary-bullets.mjs";
 
@@ -218,9 +218,7 @@ async function renderPdf(payload) {
     for (const s of review.statements) {
       body(`"${s.statementText || ""}"`, { bold: true });
       doc.moveDown(0.2);
-      const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
-        ? ` (${s.concernLevel} concern)`
-        : "";
+      const concernSuffix = evidenceConcernSuffix(s.concernLevel);
       if (s.verdict) {
         doc.font("Helvetica-Bold").fontSize(11).fillColor("#0f172a").text("Verdict: ", { continued: true });
         doc.font("Helvetica").fontSize(11).fillColor("#0f172a").text(`${s.verdict}${concernSuffix}`);
@@ -377,9 +375,7 @@ function buildDocx(payload) {
     children.push(heading("Statement review"));
     for (const s of review.statements) {
       children.push(new Paragraph({ children: [new TextRun({ text: `"${s.statementText || ""}"`, bold: true })] }));
-      const concernSuffix = s.concernLevel && String(s.concernLevel).toLowerCase() !== "none"
-        ? ` (${s.concernLevel} concern)`
-        : "";
+      const concernSuffix = evidenceConcernSuffix(s.concernLevel);
       if (s.verdict) {
         children.push(new Paragraph({ children: [new TextRun({ text: "Verdict: ", bold: true }), new TextRun(String(s.verdict) + concernSuffix)] }));
       }
