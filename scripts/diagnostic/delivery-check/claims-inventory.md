@@ -243,6 +243,8 @@ Strict: a test that runs from real input (draft + sources, or a stored review pa
 
 **B244 / B245 (2026-09-19).** Stored live payload `tests/fixtures/b226/1-meridian-reporting-live-2026-09-18.json` through the same writers the results screen, canonical export, assessment payload, margin notes, and revise-action list use. Vitest node. React is not mounted. Count: **20 of 87**.
 
+**B233 / B234 / B235 (2026-09-19).** Same 20. The corruptions now fail when QRS names a check that was off, or when unknown slugs would have read Ready. Export verdict lines name evidence concern. No new inventory IDs moved to yes.
+
 | ID | e2e |
 |----|-----|
 | C1 | no |
