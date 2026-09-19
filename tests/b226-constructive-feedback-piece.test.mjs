@@ -14,10 +14,12 @@ import {
   assembleConstructiveFeedbackPiece,
   buildConstructiveFeedbackPieceUserPayload,
   checkConstructiveFeedbackPiece,
+  checkGrouping,
   collectMarginNotes,
   detectInternalFigureClashes,
   feedbackSkeleton,
   skeletonsCollide,
+  stripUnquotedCraft,
 } from "../lib/qc/constructive-feedback.mjs";
 import { summariseReview } from "../lib/qc/review-summary.mjs";
 
@@ -26,12 +28,21 @@ const EM = "\u2014";
 const root = path.dirname(fileURLToPath(import.meta.url));
 
 function loadFixture(name) {
-  return JSON.parse(readFileSync(path.join(root, "fixtures/b226", name), "utf8"));
+  const raw = JSON.parse(readFileSync(path.join(root, "fixtures/b226", name), "utf8"));
+  if (typeof raw.draftText === "string" && raw.reviewOptions && Array.isArray(raw.statements)) {
+    return raw;
+  }
+  const statements = Array.isArray(raw.statements) ? raw.statements : [];
+  return {
+    ...raw,
+    draftText: statements.map((row) => row.text).join(" "),
+    reviewOptions: raw.reviewOptions || raw.meta?.reviewOptions || {},
+  };
 }
 
 const FIXTURES = [
   {
-    file: "1-meridian-reporting.json",
+    file: "1-meridian-reporting-live-2026-09-18.json",
     outputType: "reporting_commentary",
     requiredFacts: ["June 2026", "Q3 2026"],
     readiness: "Needs work",
@@ -57,11 +68,13 @@ const FIXTURES = [
 ];
 
 const CANNED_PIECES = {
-  "1-meridian-reporting.json": `Needs work.
+  "1-meridian-reporting-live-2026-09-18.json": `Needs work.
 
-The opening date is the live problem. The draft says June 2026; the source says first close expected Q3 2026. Put the source's timing, or drop the month.
+The opening date and the equity check size are both off the source. The draft says June 2026; the source says first close expected Q3 2026. "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece" gives a check size the source does not. Put the sourced timing and drop or source the check size.
 
-The closer is two problems at once. "We recommend approval of the commitment" is first-person in a reporting commentary, and no source addresses a recommendation. Name Partners Group as the subject, and do not present a recommendation the file does not contain.`,
+"Partners Group was attracted to this investment given Meridian Capital's strong track record" assigns a motive the file does not state. "This relationship enabled deep insight during the diligence phase" has no source at all. Keep the relationship, drop the motive and the diligence claim.
+
+The closer is two problems at once. "We recommend approval of the commitment" is first-person, and no source addresses a recommendation. Do not present a recommendation the file does not contain.`,
   "2-linkedin-post.json": `Minor points to address.
 
 The hook and the first person are fine for a LinkedIn post. The live issue is "NorTech today operates across the Nordic region, Germany, France, the UK, and Poland, with international revenue having grown from a fifth of total revenue at entry to more than 40 percent at exit." The source does not give that 40 percent figure. Use the sourced share, or drop the percentage.`,
@@ -198,6 +211,19 @@ describe("B226 seven mechanical checks over the four fixtures", () => {
     assert.deepEqual(kinds, ["editorial", "evidence"]);
   });
 
+  test("live 18 Sep payload has more margin notes than the reconstruction", () => {
+    const live = loadFixture("1-meridian-reporting-live-2026-09-18.json");
+    const reconstruction = loadFixture("1-meridian-reporting.json");
+    const liveNotes = collectMarginNotes(live.statements, live.reviewOptions, live.draftText);
+    const reconNotes = collectMarginNotes(
+      reconstruction.statements,
+      reconstruction.reviewOptions,
+      reconstruction.draftText
+    );
+    assert.equal(reconNotes.length, 3);
+    assert.equal(liveNotes.length, 6);
+  });
+
   test("fixture 4 figure clash is a margin note from code", () => {
     const fixture = loadFixture("4-internal-inconsistency.json");
     const clashes = detectInternalFigureClashes(fixture.draftText);
@@ -221,5 +247,78 @@ describe("B226 seven mechanical checks over the four fixtures", () => {
     assert.equal(assembled.startsWith("Needs work."), true);
     assert.equal(assembled.includes("We recommend"), true);
     assert.equal(assembled.includes("First-person voice on We."), true);
+  });
+});
+
+const PRODUCTION_B226_PIECE = `Needs work.
+
+The timing of Partners Group's commitment to Meridian Capital Partners V needs verification. The draft states "June 2026," but the source indicates the first close is expected in Q3 2026. Confirm the timing and Partners Group's involvement or adjust the statement.
+
+The draft mentions equity checks of EUR 80-100 million, but the source does not confirm this detail. Verify the equity check size or revise the statement to reflect only the confirmed information about the number of investments.
+
+The phrase "highly regarded" lacks substantiation. Provide evidence or rephrase to maintain objectivity.
+
+The claim that the relationship enabled "deep insight during the diligence phase" is unsupported. Either add a source or remove the statement.
+
+Lastly, the recommendation for approval uses first-person plural, which is inconsistent with the required third-person voice. Remove or rephrase this recommendation to align with the house style.`;
+
+function loadProductionReviewNotes() {
+  const payload = JSON.parse(
+    readFileSync(
+      new URL("../scripts/diagnostic/delivery-check/b226-check-output/production-review.json", import.meta.url),
+      "utf8"
+    )
+  );
+  const draftText = payload.statements.map((row) => row.text).join(" ");
+  return collectMarginNotes(payload.statements, payload.meta.reviewOptions, draftText);
+}
+
+describe("B240 constructive feedback finish", () => {
+  test("prompt tells the model to say a fault once at the level it is true", () => {
+    assert.equal(
+      CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT.includes("Say it once, at the level it is true."),
+      true
+    );
+  });
+
+  test("API path does not assemble a coverage remainder", () => {
+    const src = readFileSync(new URL("../api/constructive-feedback.js", import.meta.url), "utf8");
+    assert.equal(src.includes("assembleConstructiveFeedbackPiece"), false);
+    assert.equal(src.includes("appendCoverageRemainder"), false);
+  });
+
+  test("grouping fails on the captured production piece", () => {
+    const notes = loadProductionReviewNotes();
+    assert.equal(notes.length, 6);
+    const grouping = checkGrouping(PRODUCTION_B226_PIECE, notes);
+    assert.equal(grouping.ok, false);
+    assert.equal(grouping.paragraphCount, 6);
+    assert.equal(grouping.findingCount, 6);
+  });
+
+  test("craft referee drops a LinkedIn credits paragraph that quotes no draft", () => {
+    const fixture = loadFixture("2-linkedin-post.json");
+    const notes = collectMarginNotes(fixture.statements, fixture.reviewOptions, fixture.draftText);
+    const dirty = `Minor points to address.
+
+The live issue is "NorTech today operates across the Nordic region, Germany, France, the UK, and Poland, with international revenue having grown from a fifth of total revenue at entry to more than 40 percent at exit." The source does not give that 40 percent figure.
+
+The narrative around the team's contributions is compelling, but consider tightening the section on individual credits to maintain focus and flow.`;
+    const stripped = stripUnquotedCraft(dirty, { draftText: fixture.draftText, notes });
+    assert.equal(stripped.includes("individual credits"), false);
+    assert.equal(stripped.includes("40 percent"), true);
+  });
+
+  test("craft referee drops a press-release quote request that quotes no draft", () => {
+    const fixture = loadFixture("3-press-release.json");
+    const notes = collectMarginNotes(fixture.statements, fixture.reviewOptions, fixture.draftText);
+    const dirty = `Needs work.
+
+The live issue is "Total invested capital from the Meridian platform in the specialty chemicals sector now exceeds EUR 2 billion across the firm's global investments." That total is not sourced.
+
+Consider adding a quote from Dr Annika Brandt to give the announcement a human voice.`;
+    const stripped = stripUnquotedCraft(dirty, { draftText: fixture.draftText, notes });
+    assert.equal(stripped.includes("Dr Annika Brandt"), false);
+    assert.equal(stripped.includes("EUR 2 billion"), true);
   });
 });

@@ -1,12 +1,16 @@
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { randomUUID } from "node:crypto";
+import { callLLM, flushObservability, hasProviderApiKey, logCanaryScore } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
-  assembleConstructiveFeedbackPiece,
   buildConstructiveFeedbackPieceUserPayload,
   CLEAN_DRAFT_FEEDBACK_TEXT,
   collectMarginNotes,
   CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
+  coverageRetryInstruction,
   normalizeConstructiveFeedbackPlainText,
+  prependReadiness,
+  stripUnquotedCraft,
+  unnamedFindings,
 } from "../lib/qc/constructive-feedback.mjs";
 import { READINESS_LABELS, summariseReview } from "../lib/qc/review-summary.mjs";
 
@@ -26,6 +30,11 @@ function extractRows(body) {
     return body.statements;
   }
   return [];
+}
+
+function finishPiece(bodyText, { readiness, draftText, notes }) {
+  const labelled = prependReadiness(readiness, bodyText);
+  return stripUnquotedCraft(labelled, { draftText, notes });
 }
 
 export default async function handler(req, res) {
@@ -55,14 +64,16 @@ export default async function handler(req, res) {
   }
   const isReady = signoffVerdict === "Ready";
   const notes = collectMarginNotes(rows, activeReviewOptions, draftText);
+  const cleanPiece = finishPiece(CLEAN_DRAFT_FEEDBACK_TEXT, {
+    readiness: signoffVerdict,
+    draftText,
+    notes,
+  });
 
   if (notes.length === 0) {
     return res.status(200).json({
       ok: true,
-      feedbackText: assembleConstructiveFeedbackPiece(CLEAN_DRAFT_FEEDBACK_TEXT, {
-        readiness: signoffVerdict,
-        notes,
-      }),
+      feedbackText: cleanPiece,
       isReady,
     });
   }
@@ -74,32 +85,56 @@ export default async function handler(req, res) {
     statements: rows,
     reviewOptions: activeReviewOptions,
   });
+  const traceId = randomUUID();
 
-  try {
+  async function generatePiece(extraInstruction, spanName) {
+    const messages = [
+      { role: "system", content: CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT },
+      { role: "user", content: JSON.stringify(payload, null, 2) },
+    ];
+    if (extraInstruction) {
+      messages.push({ role: "user", content: extraInstruction });
+    }
     const completion = await callLLM({
       provider: modelConfig.provider,
       model: modelConfig.model,
       temperature: 0,
-      messages: [
-        { role: "system", content: CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT },
-        { role: "user", content: JSON.stringify(payload, null, 2) },
-      ],
+      messages,
+      traceId,
       traceName: "constructive-feedback",
-      spanName: "constructive-feedback",
+      spanName,
       metadata: { route: "constructive-feedback", noteCount: notes.length },
     });
     const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
-    const bodyText = normalizeConstructiveFeedbackPlainText(raw);
-    const feedbackText = assembleConstructiveFeedbackPiece(bodyText, {
+    return finishPiece(normalizeConstructiveFeedbackPlainText(raw), {
       readiness: signoffVerdict,
+      draftText,
       notes,
     });
+  }
+
+  try {
+    let feedbackText = await generatePiece(null, "constructive-feedback");
+    let missed = unnamedFindings(feedbackText, notes);
+    if (missed.length > 0) {
+      feedbackText = await generatePiece(coverageRetryInstruction(missed), "constructive-feedback-coverage-retry");
+      missed = unnamedFindings(feedbackText, notes);
+      if (missed.length > 0) {
+        const comment = missed
+          .map((note) => `${note.kind}:${quoteFrag(note.statementText)}`)
+          .join("; ");
+        console.warn(`[constructive-feedback] coverage miss remaining=${missed.length} ${comment}`);
+        logCanaryScore({
+          traceId,
+          name: "constructive-feedback-coverage-miss",
+          value: missed.length,
+          comment,
+        });
+      }
+    }
     return res.status(200).json({
       ok: true,
-      feedbackText: feedbackText || assembleConstructiveFeedbackPiece(CLEAN_DRAFT_FEEDBACK_TEXT, {
-        readiness: signoffVerdict,
-        notes,
-      }),
+      feedbackText: feedbackText || cleanPiece,
       isReady,
     });
   } catch {
@@ -107,4 +142,12 @@ export default async function handler(req, res) {
   } finally {
     await flushObservability();
   }
+}
+
+function quoteFrag(statementText) {
+  return String(statementText || "")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 8)
+    .join(" ");
 }
