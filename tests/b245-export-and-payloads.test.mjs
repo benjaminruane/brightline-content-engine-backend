@@ -146,6 +146,23 @@ describe("B245 corruptions", () => {
     assert.equal(editorialLines.some((line) => /Editorial note: (?!Not checked\.).+/.test(line)), false);
   });
 
+  test("a commentary miss is Not checked, never a stand-in finding", () => {
+    const payload = cloneFixture();
+    const card = payload.statements[0].qcCard;
+    card.commentaryNotReviewed = true;
+    card.evidenceSummary = "";
+    card.reasoningParagraph = null;
+    const text = exportTextFrom(payload);
+    assert.equal(text.includes("Specific commentary is unavailable from the system"), false);
+    const card0Slice = text.split(`"${card.statement}"`)[1].slice(0, 500);
+    assert.equal(card0Slice.includes("Evidence finding: Not checked."), true);
+    assert.equal(card0Slice.includes("Evidence finding: Not recorded."), false);
+    const summary = reviewSummaryFromResult(payload, payload.meta.reviewOptions);
+    assert.equal(summary.notChecked >= 1, true);
+    const classified = payload.statements[0].qcCard;
+    assert.equal(classified.commentaryNotReviewed, true);
+  });
+
   test("iii empty editorial note is a blank finding the assessment guard refuses", () => {
     const payload = cloneFixture();
     payload.statements[6].qcCard.editorialConcerns[0].note = "";
