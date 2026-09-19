@@ -1,0 +1,74 @@
+{
+  "assessments": [
+    {
+      "label": "before_empty_findings",
+      "words": 112,
+      "ok": true,
+      "narrative": "Needs work. The draft has a few issues that need addressing before it's ready for signoff. The recommendation for approval lacks any supporting evidence, which is a significant gap. We can't endorse a commitment without clear justification or evidence backing that recommendation. Additionally, the statement about Partners Group's commitment to Meridian Capital Partners V is only partially confirmed. We need more robust evidence to fully substantiate this claim. On the editorial side, the recommendation statement also raises a flag. It's crucial to ensure that any recommendations are clearly justified within the text. Compliance is clean, so no issues there. Let's tighten up these areas to ensure the draft is solid and defensible."
+    },
+    {
+      "label": "after_filled_findings",
+      "words": 136,
+      "ok": true,
+      "narrative": "Needs work. The draft has a few issues that need addressing before it's ready for signoff. The recommendation to approve the commitment lacks source support, as no evidence backs this statement. You'll need to either provide a source or remove the recommendation. Additionally, the statement about Partners Group's commitment to Meridian Capital Partners V is only partially confirmed. While the fund's target size and strategy are verified, the specific commitment by Partners Group and the June 2026 date aren't supported by the sources. The source suggests a first close in Q3 2026, which conflicts with the June date. Please verify these details or adjust the statement. On the editorial side, the use of \"We recommend\" should be revised to maintain a third-person perspective, naming Partners Group as the subject. Compliance is clean, so no issues there."
+    }
+  ],
+  "feedback": [
+    {
+      "file": "tests/fixtures/b226/1-meridian-reporting.json",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "words": 127,
+          "ok": true,
+          "checksOk": true,
+          "failures": [],
+          "text": "Needs work.\n\nThe draft requires several adjustments for accuracy and consistency. First, the timing of Partners Group's commitment to Meridian Capital Partners V needs verification. The draft states \"June 2026,\" but the source indicates a first close expected in Q3 2026. Align these details with the source or clarify the discrepancy.\n\nThe recommendation to approve the commitment should be rephrased to maintain an objective tone. Replace \"We recommend approval of the commitment\" with a third-person construction, such as \"Approval of the commitment is recommended.\"\n\nAdditionally, ensure that the draft consistently uses third-person voice throughout, particularly in sections where first-person plural is currently used. For example, instead of \"We recommend,\" use \"Partners Group recommends.\"\n\nThese changes will enhance the draft's clarity and adherence to standard reporting commentary norms."
+        }
+      ]
+    },
+    {
+      "file": "tests/fixtures/b226/2-linkedin-post.json",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "words": 113,
+          "ok": true,
+          "checksOk": true,
+          "failures": [],
+          "text": "Minor points to address.\n\nThe draft captures the essence of NorTech's transformation well, but a few details need refining. The statement about international revenue should align with the source, which states it was 38 percent at exit, not \"more than 40 percent.\" Adjust this for accuracy. The narrative around the team's contributions is compelling, but consider tightening the section on individual credits to maintain focus and flow. Highlighting the broader team effort is effective, so ensure it complements the individual achievements without overshadowing them. Overall, the post is engaging and informative. Once these minor adjustments are made, it will effectively showcase the success of the NorTech investment. Looking forward to the final version."
+        }
+      ]
+    },
+    {
+      "file": "tests/fixtures/b226/3-press-release.json",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "words": 117,
+          "ok": true,
+          "checksOk": true,
+          "failures": [],
+          "text": "Minor points to address.\n\nEnsure the statement about the total invested capital in the specialty chemicals sector is accurate. The source confirms the eighth investment but does not verify that the invested capital exceeds EUR 2 billion. Clarify this figure or adjust it to align with verified data.\n\nThe draft effectively highlights the strategic focus on the Asian electronics market and potential acquisitions. Maintain this emphasis, as it clearly outlines Meridian's future direction.\n\nConsider adding a quote from Dr. Annika Brandt or a Meridian executive to provide a personal touch and reinforce the strategic vision. This will enhance the release's engagement and credibility. Keep the formal tone consistent throughout, as it suits the press release format well."
+        }
+      ]
+    },
+    {
+      "file": "tests/fixtures/b226/4-internal-inconsistency.json",
+      "passed": true,
+      "attempts": [
+        {
+          "attempt": 1,
+          "words": 206,
+          "ok": true,
+          "checksOk": true,
+          "failures": [],
+          "text": "Needs work.\n\nThe draft provides a comprehensive overview of CloudPivot Systems, but several areas need refinement. The use of first-person possessive and plural pronouns, such as \"Our\" and \"We,\" should be replaced with third-person voice to align with standard reporting commentary norms.\n\nThe ARR figures are inconsistent; the draft mentions EUR 84 million and EUR 81 million in different sections. Ensure the ARR figure is accurate and consistent throughout the piece.\n\nThe statement \"The Company has built strong fundamentals\" is vague. Specify which fundamentals are strong, such as revenue growth or customer retention, to provide clarity and depth.\n\nThe investment thesis is well-structured, but the transition from market analysis to financial projections could be smoother. Consider integrating the market opportunity with the financial outlook to create a cohesive narrative.\n\nFinally, the summary should focus on the investment's strategic fit and potential returns without reiterating earlier points. This will provide a concise conclusion that reinforces the investment's appeal.\n\nAlso: editorial on \"Our investment thesis rests on three pillars\": The statement uses first-person possessive 'Our' in a reporting commentary that requires third-person voice.\nAlso: editorial on \"We project ARR growth from EUR 81 million\": The statement uses first-person plural 'We' in a reporting commentary that requires third-person voice."
+        }
+      ]
+    }
+  ]
+}

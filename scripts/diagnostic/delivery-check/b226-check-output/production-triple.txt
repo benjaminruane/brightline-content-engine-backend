@@ -1,0 +1,65 @@
+{
+  "httpStatus": 200,
+  "ms": 20133,
+  "pipelineVersion": "v4",
+  "traceId": "e4eaefc7-2f53-45eb-9548-af8290cbb5d2",
+  "readiness": "Needs work",
+  "summary": {
+    "version": 1,
+    "statements": 7,
+    "evidence": {
+      "confirmed": 3,
+      "partial": 2,
+      "conflicting": 0,
+      "notSupported": 2
+    },
+    "editorial": {
+      "concerns": 2,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "compliance": {
+      "concerns": 0,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "signalConcerns": 2,
+    "notChecked": 0,
+    "needsAttention": 3,
+    "readiness": "Needs work"
+  },
+  "assessment": "Needs work. The draft has several unsupported claims and editorial issues that need addressing. The statement about the relationship enabling deep insight during the diligence phase lacks any source support, so either find a source or remove it. Similarly, the recommendation for approval isn't backed by any evidence; it should be substantiated or omitted. The timing of Partners Group's commitment to Meridian Capital Partners V is partially confirmed, but the June 2026 date doesn't align with the source's Q3 2026 first close expectation. Verify the timing and Partners Group's involvement. The equity check size also lacks confirmation; ensure this detail is accurate or adjust the statement. Editorially, the phrase 'highly regarded' needs substantiation, and the use of 'We recommend' should be revised to maintain a consistent third-person narrative. Compliance is clean, but these editorial and evidence issues must be resolved before signoff.",
+  "assessmentWords": 142,
+  "feedback": "Needs work.\n\nThe timing of Partners Group's commitment to Meridian Capital Partners V needs verification. The draft states \"June 2026,\" but the source indicates the first close is expected in Q3 2026. Confirm the timing and Partners Group's involvement or adjust the statement.\n\nThe draft mentions equity checks of EUR 80-100 million, but the source does not confirm this detail. Verify the equity check size or revise the statement to reflect only the confirmed information about the number of investments.\n\nThe phrase \"highly regarded\" lacks substantiation. Provide evidence or rephrase to maintain objectivity.\n\nThe claim that the relationship enabled \"deep insight during the diligence phase\" is unsupported. Either add a source or remove the statement.\n\nLastly, the recommendation for approval uses first-person plural, which is inconsistent with the required third-person voice. Remove or rephrase this recommendation to align with the house style.\n\nAlso: evidence on \"The fund intends to build a portfolio of\": The source confirms that the fund plans to make 10-14 platform investments, which aligns with the statement's claim about the number of control-oriented investments. However, the source does not mention the equity check size of EUR 80-100 million each. The reviewer should verify the equity check size or adjust the statement to reflect only the confirmed information.\nAlso: editorial on \"Partners Group was attracted to this investment given\": 'highly regarded' is a distinction-claim without substantiation in the immediate context.\nAlso: evidence on \"This relationship enabled deep insight during the diligence\": No source addresses the claim that the relationship enabled deep insight during the diligence phase. The reviewer should add a source that supports this claim or remove it.\nAlso: evidence on \"We recommend approval of the commitment\": No source addresses the recommendation for approval of the commitment. The source provides details about the fund's strategy, terms, track record, and risks, but does not include any recommendation. Please add a supporting source or remove the claim.\nAlso: editorial on \"We recommend approval of the commitment\": The statement uses first-person plural 'We recommend', which is inconsistent with the third-person voice required for reporting commentary.",
+  "feedbackWords": 345,
+  "editorialNotes": [
+    {
+      "statement": "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation.",
+      "concern": "'highly regarded' is a distinction-claim without substantiation in the immediate context."
+    },
+    {
+      "statement": "We recommend approval of the commitment.",
+      "concern": "The statement uses first-person plural 'We recommend', which is inconsistent with the third-person voice required for reporting commentary."
+    }
+  ],
+  "notSupportedStatements": [
+    {
+      "statement": "This relationship enabled deep insight during the diligence phase.",
+      "evidenceFinding": "No source addresses the claim that the relationship enabled deep insight during the diligence phase. The reviewer should add a source that supports this claim or remove it."
+    },
+    {
+      "statement": "We recommend approval of the commitment.",
+      "evidenceFinding": "No source addresses the recommendation for approval of the commitment. The source provides details about the fund's strategy, terms, track record, and risks, but does not include any recommendation. Please add a supporting source or remove the claim."
+    }
+  ],
+  "partialStatements": [
+    {
+      "statement": "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies.",
+      "evidenceFinding": "The source confirms the fund's target size of EUR 1.2 billion and its strategy of targeting lower-mid-market buyouts in European industrial technology and business services companies. However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing stated. Please verify the timing and Partners Group's involvement or adjust the statement accordingly."
+    },
+    {
+      "statement": "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece.",
+      "evidenceFinding": "The source confirms that the fund plans to make 10-14 platform investments, which aligns with the statement's claim about the number of control-oriented investments. However, the source does not mention the equity check size of EUR 80-100 million each. The reviewer should verify the equity check size or adjust the statement to reflect only the confirmed information."
+    }
+  ]
+}
