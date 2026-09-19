@@ -212,7 +212,7 @@
         { "displayVerdict": "mystery_slug", "editorialVerdict": "clean", "complianceVerdict": "clean" }
       ],
       "expectedSummaryClass": [
-        { "counted": true, "evidence": null, "editorial": "clean", "compliance": "clean", "needsAttention": false }
+        { "counted": true, "evidence": "notChecked", "editorial": "clean", "compliance": "clean", "needsAttention": false }
       ],
       "expectedReviewSummary": {
         "version": 1,
@@ -221,9 +221,9 @@
         "editorial": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
         "compliance": { "concerns": 0, "hardConcerns": 0, "notChecked": 0 },
         "signalConcerns": 0,
-        "notChecked": 0,
+        "notChecked": 1,
         "needsAttention": 0,
-        "readiness": "Ready"
+        "readiness": "Not fully checked"
       }
     },
     {

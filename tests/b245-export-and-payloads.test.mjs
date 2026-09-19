@@ -117,6 +117,17 @@ describe("B245 corruptions", () => {
     assert.equal(card0Slice.includes("Verdict: Confirmed"), false);
     assert.equal(card0Slice.includes("Verdict: Unverifiable"), true);
     assert.equal(text.includes("Verdict: Confirmed"), true);
+
+    const allUnknown = cloneFixture();
+    for (const row of allUnknown.statements) {
+      row.qcCard.displayVerdict = "not_a_real_slug";
+      row.qcCard.editorialVerdict = "clean";
+      row.qcCard.complianceVerdict = "clean";
+      row.qcCard.editorialConcerns = [];
+    }
+    const wiped = exportTextFrom(allUnknown);
+    assert.equal(wiped.startsWith("Ready"), false);
+    assert.equal(wiped.includes("All claims are backed by sources"), false);
   });
 
   test("ii editorialEnabled false does not describe editorial as checked", () => {
