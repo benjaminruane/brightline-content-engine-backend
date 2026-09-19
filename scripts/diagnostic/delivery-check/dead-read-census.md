@@ -225,3 +225,64 @@ This pass did not execute a Review and did not inspect a stored production card.
 | **P31** | Missing input must be loud at the point it goes missing | RECORD |
 
 Not re-filed: **B147** (`conflictValues` null), **B158** (conflict excerpt layout), **B204** (Needs attention vs accept).
+
+---
+
+## D5 postscript. assembleCard vacant values (2026-09-19)
+
+Read-only. Every key `assembleCard` assigns on the v4 `const card = { ... }` object plus the `...editorialOut` spread and the two optional claim-span / coverage blocks. "Ever non-empty" means a v4 live card can carry a useful value, not the constant empty/null/zero/false/"none" the assembler always writes. From `lib/qc/pipeline-v3/stage7-assemble-card.mjs` L779-839. Do not act on this table.
+
+| Key | Ever non-empty on a v4 card? |
+|---|---|
+| `index` | Yes (number, including 0) |
+| `statement` | Yes |
+| `charStart` / `charEnd` | Yes (numbers; 0 is a real offset) |
+| `supportState` | Yes (`supported` / `partial` / `conflicting` / `not_supported`) |
+| `hasConflict` | Yes (boolean; true on conflicts) |
+| `primaryExcerpt` | Sometimes. Null when there is no real passage |
+| `conflictExcerpt` | Sometimes. Object when Stage 4 selected a conflict passage |
+| `evidenceSummary` | Sometimes. Empty string when Stage 5 returned nothing |
+| `supportRefIds` / `supportRefTitles` | Sometimes. From confirming matches |
+| `primaryRefId` | **Never.** Always `null` |
+| `primaryRefTitle` | Sometimes. Source label when an excerpt exists |
+| `primarySourceOrigin` | **Never.** Always `null` |
+| `primaryExcerptText` | Sometimes. Same occupancy as `primaryExcerpt` |
+| `primaryExcerptStart` / `primaryExcerptEnd` | **Never.** Always `null` |
+| `secondarySupportCount` | **Never non-zero.** Always `0` |
+| `supportingReferenceIds` / `supportingReferenceTitles` | **Never.** Always `[]` |
+| `hasRealExcerpt` | Yes (boolean; true when the passage is non-empty) |
+| `conflictValues` | **Never.** Always `null` |
+| `reasoningHeadline` | **Never.** Always `null` |
+| `reasoningParagraph` | Sometimes. `evidenceSummary` or `null` |
+| `displayMode` | Yes. Copy of `supportState` |
+| `draftSpan` | Yes (object with offsets) |
+| `evidenceTrace` | **Never.** Always `[]` |
+| `selectedExcerptReason` | **Never.** Always `null` |
+| `excerptMatchType` | **Never a real match type.** Always `"none"` |
+| `suggestedImprovement` | **Never.** Always `null` |
+| `whyItMatters` | **Never.** Always `null` |
+| `displayVerdict` | Yes (`supported_full` / `supported_partial` / `conflict` / `not_supported`) |
+| `concernLevel` | Yes (`none` / `moderate` / `high`), evidence-only |
+| `sentenceSubclaimCount` | **Never.** Always `null` |
+| `qcClaimId` | **Never.** Always `null` |
+| `originalClaimText` | Yes. Copy of `statement` |
+| `citationHovers` | **Never.** Always `[]` |
+| `primaryExcerptTrusted` | **Never true.** Always `false` |
+| `conflictEvidence` | **Never.** Always `null` |
+| `pipelineVersion` | Yes |
+| `supportSpans` / `unsupportedSpans` | Sometimes `[]`, sometimes filled (R7) |
+| `stage2SourceFingerprints` | Sometimes |
+| `materiality` | Yes (object) |
+| `sourceRecencyConcerns` / `framingFidelityConcerns` | Sometimes `[]`, sometimes filled |
+| `supersededSourceNotes` | Sometimes `[]`, filled when supersession fires |
+| `editorialVerdict` / `complianceVerdict` | Yes (`clean` / `concern` / `soft_concern` / `hard_concern` / `not_reviewed`) |
+| `editorialConcerns` / `complianceConcerns` | Sometimes `[]`, filled when a rule fires |
+| `editorialNote` / `complianceNote` | Sometimes null, sometimes a string |
+| `editorialSuggestedDirection` / `complianceSuggestedDirection` | Sometimes |
+| `editorialSuggestedRewrite` / `complianceSuggestedRewrite` | Sometimes |
+| `suppressInQcWorkbench` | Yes as boolean; true is rare |
+| `decomposed` / `claimUpgrade` / `claims` | Only when `entry.claimSpans` is present |
+| `coverageUnion` | Only when `entry.coverageUnion` is present |
+| `summaryClass` | Yes. Stamped after assemble, in the handler |
+
+Vacant constants that consumers still read: `primaryRefId`, `primarySourceOrigin`, `primaryExcerptStart`/`End`, `secondarySupportCount`, `supportingReferenceIds`/`Titles`, `conflictValues`, `reasoningHeadline`, `evidenceTrace`, `selectedExcerptReason`, `excerptMatchType`, `suggestedImprovement`, `whyItMatters`, `sentenceSubclaimCount`, `qcClaimId`, `citationHovers`, `primaryExcerptTrusted`, `conflictEvidence`. Filed under **B231**. Do not delete in a drive-by.
