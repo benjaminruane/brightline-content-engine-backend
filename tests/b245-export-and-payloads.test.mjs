@@ -11,6 +11,8 @@ import { renderCanonicalExportText } from "../lib/qc/export-review-data.mjs";
 import { collectMarginNotes } from "../lib/qc/constructive-feedback.mjs";
 import { buildSortedEntries } from "../lib/revise-actions/sort.mjs";
 import { synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
+import { summaryBulletsFromReview } from "../lib/qc/summary-bullets.mjs";
+import { reviewSummaryFromResult } from "../lib/qc/review-summary.mjs";
 import {
   fixtureDraftText,
   loadMeridianLiveFixture,
@@ -24,23 +26,18 @@ const DISCLAIMER =
   "Compliance flags are based on commonly-observed principles and are not jurisdiction-specific or a substitute for legal counsel. Editorial and Evidence flags are guidance for the reviewer's judgment. All flags require human confirmation before publication.";
 const EDITORIAL_NOTE_FRAGMENT = "first-person plural";
 
-function qualityReviewSummary() {
-  return {
-    readiness: "Needs work",
-    bullets: [
-      "2 claims have no source behind them. Remove them or find supporting evidence before this draft is final.",
-      "3 claims have only partial support from the cited sources. Strengthen the evidence where you can.",
-      "1 claim has editorial notes. Work through the cards below before this draft is ready.",
-      "The draft is 9 words over the 150 word limit.",
-    ],
-  };
+function qualityReviewSummary(payload) {
+  const summary = reviewSummaryFromResult(payload, payload?.meta?.reviewOptions);
+  const bullets = [...summaryBulletsFromReview(summary)];
+  bullets.push("The draft is 9 words over the 150 word limit.");
+  return { readiness: summary?.readiness, bullets };
 }
 
 function exportTextFrom(payload) {
   const draft = fixtureDraftText(payload);
   return renderCanonicalExportText({
     qcResult: payload,
-    qualityReviewSummary: qualityReviewSummary(),
+    qualityReviewSummary: qualityReviewSummary(payload),
     sources: (payload.sources || []).map((row) => ({
       name: row.label || row.name,
       fileType: "txt",
@@ -126,6 +123,7 @@ describe("B245 corruptions", () => {
     const payload = cloneFixture();
     payload.meta.reviewOptions.editorialEnabled = false;
     const flipped = exportTextFrom(payload);
+    assert.equal(flipped.includes("editorial notes"), false);
     assert.equal(flipped.includes(EDITORIAL_NOTE_FRAGMENT), false);
     const editorialLines = flipped
       .split("\n")

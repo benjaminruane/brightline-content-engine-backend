@@ -7,6 +7,8 @@ import {
   TextRun,
 } from "docx";
 import { buildReviewData } from "../lib/qc/export-review-data.mjs";
+import { reviewSummaryFromResult } from "../lib/qc/review-summary.mjs";
+import { summaryBulletsFromReview } from "../lib/qc/summary-bullets.mjs";
 
 function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
@@ -48,15 +50,24 @@ function normalizeOptionalString(value) {
 }
 
 function qualityReviewSummaryLines(data) {
-  const src = data?.qualityReviewSummary && typeof data.qualityReviewSummary === "object"
+  const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
+  const recomputed = qcResult ? reviewSummaryFromResult(qcResult, qcResult?.meta?.reviewOptions) : null;
+  const client = data?.qualityReviewSummary && typeof data.qualityReviewSummary === "object"
     ? data.qualityReviewSummary
     : null;
-  const readiness = typeof src?.readiness === "string" ? src.readiness.trim() : "";
-  const bullets = Array.isArray(src?.bullets)
-    ? src.bullets.map((row) => String(row ?? "").trim()).filter(Boolean)
+  const wordOver = Array.isArray(client?.bullets)
+    ? client.bullets.map((row) => String(row ?? "").trim()).filter((line) => line.includes("words over the"))
+    : [];
+  if (recomputed && recomputed.version === 1) {
+    const bullets = [...summaryBulletsFromReview(recomputed), ...wordOver];
+    return { readiness: String(recomputed.readiness || "").trim(), bullets };
+  }
+  const readiness = typeof client?.readiness === "string" ? client.readiness.trim() : "";
+  const bullets = Array.isArray(client?.bullets)
+    ? client.bullets.map((row) => String(row ?? "").trim()).filter(Boolean)
     : [];
   if (readiness || bullets.length > 0) return { readiness, bullets };
-  const summary = data?.qcResult?.meta?.reviewSummary;
+  const summary = qcResult?.meta?.reviewSummary;
   const fallback = typeof summary?.readiness === "string" ? summary.readiness.trim() : "";
   return { readiness: fallback, bullets: [] };
 }
