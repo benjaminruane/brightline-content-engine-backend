@@ -10,10 +10,10 @@
 
 LAUNCH means needed before a first client uses the product. See the Launch plan in `docs/ROADMAP.md`.
 
-## LAUNCH rows (17 total)
+## LAUNCH rows (19 total)
 
 
-### 2. Backend / Pipeline (14)
+### 2. Backend / Pipeline (16)
 
 | ID | Item | Priority |
 |----|------|----------|
@@ -31,6 +31,8 @@ LAUNCH means needed before a first client uses the product. See the Launch plan 
 | B166 | **COMPETING PROPOSALS. OPEN. Filing only.** Evidence and editorial on one sentence can propose incompatible actions. Live F18 Review: **4** of 10 cards (S0, S2, S5, S7) are `conflict` plus a nonempty editorial `suggestedDirection`. S5 is update-the-figure versus delete-the-sentence. Apply already refuses a double write (`plannedWrites` drops the statement if `list.length !== 1`); bulk accept leaves colliding rows unset. Harm is confusion on the card, not a silent merge. Duplication judge keeps voice/delete as INDEPENDENT. **Annotation 2026-09-11:** later live F18-S3 now also has this shape (evidence 380→412 versus editorial 240'000→240,000). That second pair is **B176**; do not close this row into that one. Do not fold into Design A or B. | M |
 | B171 | **USER-SUPPLIED AUTHORING ORGANISATION. OPEN. Filing only.** Ben 2026-09-11: the house name should be supplied by the user, not by a server setting. Account settings (do not exist yet) or a pre-populated input field. The request-body path already exists and has never been exercised (**B95**). Environment value is one identity per deployment (**B124**). After `202b357` a wrong or missing value is no longer dangerous but silently does nothing. When built, draft-presence changes job from gate to sanity check: if the user states an organisation the draft never mentions, tell them rather than acting silently. Do not close **B95**, **B96**, **B124**, or **B170**. | M |
 | B196 | **THE FULL END-TO-END DEFECT SWEEP IN PRODUCTION. SWEPT 2026-09-18 `4b1f530`.** Production Assess, frontend HEAD `5c20a02` (Build: 5c20a02), backend HEAD `25e1ea6`. Report `scripts/diagnostic/delivery-check/live-2026-09-18-b196-sweep.md`; screenshots `scripts/diagnostic/delivery-check/b196-2026-09-18/`. Pins: P1 PASS, P2 PASS, P3 PASS, P4 PASS, P5 PASS, P6 FAIL. Findings by tag: BROKEN 4, INCONSISTENT 6, UNCLEAR WORDING 2. Filed as **B208** to **B217**. | H |
+| B234 | **OPEN. Filing only.** Export `buildReviewData` calls `classifyCard(qcCard)` with no `reviewOptions`. Defaults treat every check as on. A check the user turned off (`editorialVerdict` / `complianceVerdict` null) prints `Not checked.` in the file. The card prints `Not reviewed`. | H |
+| B235 | **OPEN. Filing only.** `classifyEvidence` returns null for any `displayVerdict` outside the four assembler slugs. After **B232** the badge for an unknown slug is Unverifiable. QRS still ignores the card, so a run of unknown cards can still read Ready / `All claims are backed by sources.` | H |
 
 ### 3. Process & governance (1)
 

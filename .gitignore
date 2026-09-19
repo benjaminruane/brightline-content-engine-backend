@@ -5,6 +5,7 @@ node_modules/
 # QC regression generated outputs
 tests/output/*.json
 tests/fixtures/b226/*-live-*.json
+!tests/fixtures/b226/1-meridian-reporting-live-2026-09-18.json
 
 # R1.2.5 eval generated outputs (regenerable)
 tests/r1_2_5_eval/*_outputs*.json
