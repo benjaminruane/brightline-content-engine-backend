@@ -95,7 +95,8 @@ Possible for evidence slugs (badge, export, summary counts). Not possible as one
 
 ## SHIP VERIFIED
 
-(printed after verify:ship)
+- frontend: `SHIP VERIFIED  7ff5716  main  32 files  194 tests`
+- backend: `SHIP VERIFIED  b63e7b7  main  94 files  1235 tests`
 
 ---
 
