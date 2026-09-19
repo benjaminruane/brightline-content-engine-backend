@@ -241,11 +241,99 @@ Shapes: S1 default toward reassurance. S2 invented when empty. S3 same fact, two
 
 Strict: a test that runs from real input (draft + sources, or a stored review payload through the live writers) to the string the user sees on screen or in the file. A unit test that hands a helper its input does not count.
 
+**B244 / B245 (2026-09-19).** Stored live payload `tests/fixtures/b226/1-meridian-reporting-live-2026-09-18.json` through the same writers the results screen, canonical export, assessment payload, margin notes, and revise-action list use. Vitest node. React is not mounted. Count: **20 of 87**.
+
 | ID | e2e |
 |----|-----|
-| C1-C87 | no |
+| C1 | no |
+| C2 | no |
+| C3 | yes |
+| C4 | yes |
+| C5 | no |
+| C6 | yes |
+| C7 | no |
+| C8 | no |
+| C9 | no |
+| C10 | no |
+| C11 | no |
+| C12 | yes |
+| C13 | yes |
+| C14 | yes |
+| C15 | no |
+| C16 | yes |
+| C17 | no |
+| C18 | no |
+| C19 | yes |
+| C20 | no |
+| C21 | yes |
+| C22 | no |
+| C23 | no |
+| C24 | no |
+| C25 | no |
+| C26 | no |
+| C27 | no |
+| C28 | no |
+| C29 | no |
+| C30 | yes |
+| C31 | yes |
+| C32 | yes |
+| C33 | yes |
+| C34 | no |
+| C35 | no |
+| C36 | yes |
+| C37 | no |
+| C38 | yes |
+| C39 | yes |
+| C40 | no |
+| C41 | no |
+| C42 | no |
+| C43 | yes |
+| C44 | no |
+| C45 | no |
+| C46 | no |
+| C47 | no |
+| C48 | no |
+| C49 | no |
+| C50 | no |
+| C51 | no |
+| C52 | no |
+| C53 | no |
+| C54 | no |
+| C55 | no |
+| C56 | no |
+| C57 | no |
+| C58 | no |
+| C59 | no |
+| C60 | no |
+| C61 | no |
+| C62 | no |
+| C63 | yes |
+| C64 | no |
+| C65 | no |
+| C66 | no |
+| C67 | yes |
+| C68 | no |
+| C69 | no |
+| C70 | no |
+| C71 | no |
+| C72 | no |
+| C73 | no |
+| C74 | no |
+| C75 | no |
+| C76 | no |
+| C77 | no |
+| C78 | no |
+| C79 | no |
+| C80 | no |
+| C81 | yes |
+| C82 | no |
+| C83 | no |
+| C84 | no |
+| C85 | no |
+| C86 | no |
+| C87 | no |
 
-Existing tests that do **not** count: `tests/review-summary.test.mjs` (hands `summariseReview` cards), `tests/b232-display-verdict-label.test.mjs` / `tests/b232-export-verdict-label.test.mjs` (hand a slug to a label function), `tests/b228-export-finding-hole.test.mjs` (hands `evidenceFindingForExport` a card), `tests/b213-export-summary.test.mjs` (hands `buildExportQualityReviewSummary` a result), frontend `tests/b214-no-proposal-card-copy.test.mjs` (string present in source). B196 was a live production walk, not a regression test.
+Existing tests that still do **not** count on their own: `tests/review-summary.test.mjs` (hands `summariseReview` cards), `tests/b232-display-verdict-label.test.mjs` / `tests/b232-export-verdict-label.test.mjs` (hand a slug to a label function), `tests/b228-export-finding-hole.test.mjs` (hands `evidenceFindingForExport` a card), `tests/b213-export-summary.test.mjs` (hands `buildExportQualityReviewSummary` a result), frontend `tests/b214-no-proposal-card-copy.test.mjs` (string present in source). B196 was a live production walk, not a regression test. B245 does count for the yes rows above because the input is the stored review payload and the writer is the same one the screen or file uses.
 
 ---
 
