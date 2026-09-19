@@ -1,0 +1,82 @@
+{
+  "id": "3-press-release",
+  "copiedFrom": "scripts/diagnostic/fixtures/10_synth_public_press_release.json. Cards are a frozen snapshot for B226, not a live Review.",
+  "outputType": "press_release",
+  "draftText": "Meridian Capital today announced the completion of its acquisition of Lumen Specialty Chemicals (the \"Company\"), a leading European producer of high-purity specialty chemicals for the electronics, pharmaceutical, and advanced materials industries.\n\nHeadquartered in Frankfurt, the Company operates three production facilities across Germany and Belgium and employs approximately 850 people. It supplies more than 600 customers worldwide, with particular strength in ultra-high-purity solvents used in semiconductor wafer fabrication and pharmaceutical active ingredient manufacturing.\n\nThe Company will be led by its existing Chief Executive, Dr. Annika Brandt. Meridian intends to support an acceleration of the Company's expansion strategy, with a focus on the Asian electronics market and on selective acquisitions in adjacent specialty chemical categories.\n\nThe transaction represents the eighth investment from Meridian's European Industrials strategy. Total invested capital from the Meridian platform in the specialty chemicals sector now exceeds EUR 2 billion across the firm's global investments.",
+  "reviewOptions": {
+    "evidenceEnabled": true,
+    "editorialEnabled": true,
+    "complianceEnabled": true
+  },
+  "expectedReadiness": "Minor points to address",
+  "requiredFacts": ["EUR 2 billion"],
+  "statements": [
+    {
+      "id": "0",
+      "text": "Meridian Capital today announced the completion of its acquisition of Lumen Specialty Chemicals (the \"Company\"), a leading European producer of high-purity specialty chemicals for the electronics, pharmaceutical, and advanced materials industries.",
+      "qcCard": {
+        "index": 0,
+        "statement": "Meridian Capital today announced the completion of its acquisition of Lumen Specialty Chemicals (the \"Company\"), a leading European producer of high-purity specialty chemicals for the electronics, pharmaceutical, and advanced materials industries.",
+        "displayVerdict": "supported_full",
+        "supportState": "supported",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "evidenceSummary": "The source confirms the Lumen acquisition.",
+        "editorialConcerns": [],
+        "complianceConcerns": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      }
+    },
+    {
+      "id": "1",
+      "text": "Headquartered in Frankfurt, the Company operates three production facilities across Germany and Belgium and employs approximately 850 people.",
+      "qcCard": {
+        "index": 1,
+        "statement": "Headquartered in Frankfurt, the Company operates three production facilities across Germany and Belgium and employs approximately 850 people.",
+        "displayVerdict": "supported_full",
+        "supportState": "supported",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "evidenceSummary": "The source confirms Frankfurt, three sites, and about 850 people.",
+        "editorialConcerns": [],
+        "complianceConcerns": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      }
+    },
+    {
+      "id": "2",
+      "text": "The transaction represents the eighth investment from Meridian's European Industrials strategy. Total invested capital from the Meridian platform in the specialty chemicals sector now exceeds EUR 2 billion across the firm's global investments.",
+      "qcCard": {
+        "index": 2,
+        "statement": "The transaction represents the eighth investment from Meridian's European Industrials strategy. Total invested capital from the Meridian platform in the specialty chemicals sector now exceeds EUR 2 billion across the firm's global investments.",
+        "displayVerdict": "supported_partial",
+        "supportState": "partial",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "evidenceSummary": "The source confirms this is the eighth European Industrials investment. It does not confirm that specialty-chemicals invested capital exceeds EUR 2 billion.",
+        "primaryExcerpt": "Specialty chemicals invested capital stands at EUR 1.8 billion",
+        "editorialConcerns": [],
+        "complianceConcerns": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "partial",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      }
+    }
+  ]
+}

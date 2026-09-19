@@ -786,7 +786,7 @@ ALLOWED WITHOUT CITATIONS (from uploaded sources):
   * "about/around/roughly ~25%" (rounded nearby, e.g., if source has 23%)
   * "more than 20%" (conservative inequality, e.g., if source has 23%)
   * "less than 25%"
-  * "approximately 20–25%" (range that INCLUDES the source number)
+  * "approximately 20-25%" (range that INCLUDES the source number)
   * NOT allowed: ranges that exclude the source value or overly wide ranges
 
 REQUIRE CITATIONS [n] when adding facts NOT in uploaded sources:
@@ -812,7 +812,7 @@ ${effectiveMaxWords != null ? `\nOutput constraints:
 
 REWRITE REPORT (self-assessment, optional but requested):
 After producing the revised draft, provide a brief machine-readable report:
-- summary: 1–2 sentences in plain language describing what you did.
+- summary: 1 to 2 sentences in plain language describing what you did.
 - instructionChecklist: for each distinct instruction from the user, one entry: { "instruction": "short phrase", "status": "done" | "partial" | "not_done", "notes": "string or null" }. If you could not fully comply, explain in notes (e.g., "instruction conflicts with evidence", "insufficient source support").
 - warnings: array of strings (or empty). Include if you could not add requested facts due to missing source support, or if any instruction was only partially applied.
 Do NOT claim that facts were added unless they are supported by the provided sources. If you could not comply with an instruction, say why in notes or warnings.

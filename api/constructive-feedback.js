@@ -1,19 +1,14 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
-  assembleCraftAndCardFeedback,
-  buildConstructiveFeedbackCraftSystemPrompt,
-  buildConstructiveFeedbackCraftUserPayload,
-  buildConstructiveFeedbackUserPayload,
+  assembleConstructiveFeedbackPiece,
+  buildConstructiveFeedbackPieceUserPayload,
   CLEAN_DRAFT_FEEDBACK_TEXT,
+  collectMarginNotes,
   CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
-  normalizeConstructiveFeedbackCraftText,
   normalizeConstructiveFeedbackPlainText,
-  resolveConstructiveFeedbackCraftOutputType,
-  selectConstructiveFeedbackBundles,
-  splitCardFeedbackSections,
 } from "../lib/qc/constructive-feedback.mjs";
-import { summariseReview } from "../lib/qc/review-summary.mjs";
+import { READINESS_LABELS, summariseReview } from "../lib/qc/review-summary.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -33,95 +28,12 @@ function extractRows(body) {
   return [];
 }
 
-function resolveCraftInput(body, draftText) {
-  const snapshot = typeof body.analysedDraftText === "string" ? body.analysedDraftText : "";
-  if (snapshot.trim()) return snapshot;
-  return draftText;
-}
-
-async function runCraftPass({
-  craftInput,
-  signoffVerdict,
-  isReady,
-  includeOpeningClosing,
-  outputType,
-  craftModelConfig,
-}) {
-  const completion = await callLLM({
-    provider: craftModelConfig.provider,
-    model: craftModelConfig.model,
-    temperature: 0,
-    messages: [
-      { role: "system", content: buildConstructiveFeedbackCraftSystemPrompt(includeOpeningClosing, outputType) },
-      {
-        role: "user",
-        content: JSON.stringify(
-          buildConstructiveFeedbackCraftUserPayload({
-            analysedDraftText: craftInput,
-            signoffVerdict,
-            isReady,
-            includeOpeningClosing,
-            outputType,
-          }),
-          null,
-          2
-        ),
-      },
-    ],
-    traceName: "constructive-feedback-craft",
-    spanName: "constructive-feedback-craft",
-    metadata: { route: "constructive-feedback-craft", ...(outputType ? { outputType } : {}) },
-  });
-  const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
-  return normalizeConstructiveFeedbackCraftText(raw);
-}
-
-async function runCardPass({
-  draftText,
-  signoffVerdict,
-  isReady,
-  feedbackBundles,
-  craftHandledSeparately,
-  craftSectionContext,
-  modelConfig,
-}) {
-  const completion = await callLLM({
-    provider: modelConfig.provider,
-    model: modelConfig.model,
-    temperature: 0,
-    messages: [
-      { role: "system", content: CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: JSON.stringify(
-          buildConstructiveFeedbackUserPayload({
-            draftText,
-            signoffVerdict,
-            isReady,
-            feedbackBundles,
-            craftHandledSeparately,
-            craftSectionContext,
-          }),
-          null,
-          2
-        ),
-      },
-    ],
-    traceName: "constructive-feedback",
-    spanName: "constructive-feedback",
-    metadata: { route: "constructive-feedback", bundleCount: feedbackBundles.length },
-  });
-  const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
-  return normalizeConstructiveFeedbackPlainText(raw);
-}
-
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["constructive-feedback"];
-  const craftModelConfig = STAGE_MODELS["constructive-feedback-craft"];
   if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json({ ok: false, feedbackText: "", isReady: false });
   }
@@ -138,81 +50,56 @@ export default async function handler(req, res) {
   const cards = rows.map((row) => (row?.qcCard && typeof row.qcCard === "object" ? row.qcCard : row));
   const reviewSummary = summariseReview(cards, activeReviewOptions);
   const signoffVerdict = reviewSummary.readiness;
-  const isReady = reviewSummary.readiness === "Ready";
-  const feedbackBundles = selectConstructiveFeedbackBundles(rows, activeReviewOptions);
+  if (!READINESS_LABELS.includes(signoffVerdict)) {
+    return res.status(200).json({ ok: false, feedbackText: "", isReady: false });
+  }
+  const isReady = signoffVerdict === "Ready";
+  const notes = collectMarginNotes(rows, activeReviewOptions, draftText);
 
-  const craftInput = resolveCraftInput(body, draftText);
-  const craftOutputType = resolveConstructiveFeedbackCraftOutputType(body.outputType);
-  const canRunCraft =
-    typeof craftInput === "string" &&
-    craftInput.trim().length > 0 &&
-    hasProviderApiKey(craftModelConfig.provider);
-
-  if (feedbackBundles.length === 0 && !canRunCraft) {
+  if (notes.length === 0) {
     return res.status(200).json({
       ok: true,
-      feedbackText: CLEAN_DRAFT_FEEDBACK_TEXT,
+      feedbackText: assembleConstructiveFeedbackPiece(CLEAN_DRAFT_FEEDBACK_TEXT, {
+        readiness: signoffVerdict,
+        notes,
+      }),
       isReady,
     });
   }
 
+  const payload = buildConstructiveFeedbackPieceUserPayload({
+    draftText,
+    readiness: signoffVerdict,
+    outputType: body.outputType,
+    statements: rows,
+    reviewOptions: activeReviewOptions,
+  });
+
   try {
-    const hasBundles = feedbackBundles.length > 0;
-    const craftIncludeOpeningClosing = !hasBundles;
-
-    let craftSection = "";
-    if (canRunCraft) {
-      craftSection = await runCraftPass({
-        craftInput,
-        signoffVerdict,
-        isReady,
-        includeOpeningClosing: craftIncludeOpeningClosing,
-        outputType: craftOutputType,
-        craftModelConfig,
-      });
-    }
-
-    let cardFeedback = "";
-    if (hasBundles) {
-      cardFeedback = await runCardPass({
-        draftText,
-        signoffVerdict,
-        isReady,
-        feedbackBundles,
-        craftHandledSeparately: canRunCraft,
-        craftSectionContext: canRunCraft ? craftSection : "",
-        modelConfig,
-      });
-    }
-
-    const hasCraft = !!craftSection;
-
-    if (!hasBundles && !hasCraft) {
-      return res.status(200).json({
-        ok: true,
-        feedbackText: CLEAN_DRAFT_FEEDBACK_TEXT,
-        isReady,
-      });
-    }
-
-    let feedbackText;
-    if (!hasBundles && hasCraft) {
-      feedbackText = craftSection;
-    } else if (hasBundles && !hasCraft) {
-      feedbackText = cardFeedback || CLEAN_DRAFT_FEEDBACK_TEXT;
-    } else {
-      const { opening, cardPoints, closing } = splitCardFeedbackSections(cardFeedback);
-      feedbackText = assembleCraftAndCardFeedback({
-        opening,
-        craftSection,
-        cardPoints,
-        closing,
-      });
-    }
-
+    const completion = await callLLM({
+      provider: modelConfig.provider,
+      model: modelConfig.model,
+      temperature: 0,
+      messages: [
+        { role: "system", content: CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(payload, null, 2) },
+      ],
+      traceName: "constructive-feedback",
+      spanName: "constructive-feedback",
+      metadata: { route: "constructive-feedback", noteCount: notes.length },
+    });
+    const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
+    const bodyText = normalizeConstructiveFeedbackPlainText(raw);
+    const feedbackText = assembleConstructiveFeedbackPiece(bodyText, {
+      readiness: signoffVerdict,
+      notes,
+    });
     return res.status(200).json({
       ok: true,
-      feedbackText: feedbackText || CLEAN_DRAFT_FEEDBACK_TEXT,
+      feedbackText: feedbackText || assembleConstructiveFeedbackPiece(CLEAN_DRAFT_FEEDBACK_TEXT, {
+        readiness: signoffVerdict,
+        notes,
+      }),
       isReady,
     });
   } catch {

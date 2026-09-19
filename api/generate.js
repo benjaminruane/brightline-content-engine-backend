@@ -739,7 +739,7 @@ ALLOWED WITHOUT CITATIONS (from uploaded sources):
   * "about/around/roughly ~25%" (rounded nearby, e.g., if source has 23%)
   * "more than 20%" (conservative inequality, e.g., if source has 23%)
   * "less than 25%"
-  * "approximately 20–25%" (range that INCLUDES the source number)
+  * "approximately 20-25%" (range that INCLUDES the source number)
   * NOT allowed: ranges that exclude the source value or overly wide ranges
 
 REQUIRE CITATIONS [n] when adding facts NOT in uploaded sources:
