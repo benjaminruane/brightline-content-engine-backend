@@ -6,9 +6,7 @@ import {
   Paragraph,
   TextRun,
 } from "docx";
-import { classifyCard } from "../lib/qc/review-summary.mjs";
-import { normalizeExportVerdict } from "../lib/qc/evidence-display-verdict.mjs";
-import { evidenceFindingForExport } from "../lib/qc/export-review-data.mjs";
+import { buildReviewData } from "../lib/qc/export-review-data.mjs";
 
 function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
@@ -29,14 +27,6 @@ function toParagraphs(text) {
   const raw = typeof text === "string" ? text : "";
   const parts = raw.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
   return parts.length > 0 ? parts : [raw.trim()].filter(Boolean);
-}
-
-function normalizeVerdict(displayVerdict) {
-  return normalizeExportVerdict(displayVerdict);
-}
-
-function signalClassIsConcern(cls) {
-  return cls === "concern" || cls === "hardConcern";
 }
 
 function formatSourceFileType(rawType) {
@@ -98,66 +88,6 @@ function hasAnyDealInfo(deal) {
   return !!(inv || prog || rd || td);
 }
 
-function buildReviewData(qcResult) {
-  const statements = Array.isArray(qcResult?.statements) ? qcResult.statements : [];
-  const normalizedStatements = statements.map((s) => {
-    const qcCard = s?.qcCard && typeof s.qcCard === "object" ? s.qcCard : {};
-    const statementText = typeof qcCard.statement === "string" ? qcCard.statement.trim() : "";
-    const evidenceSkipped =
-      qcCard.supportState === "skipped" ||
-      String(qcCard.displayVerdict || "").toLowerCase() === "not reviewed";
-    const verdict = evidenceSkipped ? null : normalizeVerdict(qcCard.displayVerdict);
-    const concernLevel = typeof qcCard.concernLevel === "string" && qcCard.concernLevel.trim()
-      ? qcCard.concernLevel.trim()
-      : null;
-    const evidenceFinding = evidenceFindingForExport(qcCard, evidenceSkipped);
-    const excerpt = evidenceSkipped
-      ? null
-      : (qcCard.hasRealExcerpt === true && typeof qcCard.primaryExcerptText === "string" && qcCard.primaryExcerptText.trim()
-        ? qcCard.primaryExcerptText.trim()
-        : null);
-    const editorialConcerns = Array.isArray(qcCard.editorialConcerns) ? qcCard.editorialConcerns : [];
-    const complianceConcerns = Array.isArray(qcCard.complianceConcerns) ? qcCard.complianceConcerns : [];
-    const editorialFallback = editorialConcerns.map((c) => c?.note).filter((x) => typeof x === "string" && x.trim()).join(" ");
-    const complianceFallback = complianceConcerns.map((c) => c?.note).filter((x) => typeof x === "string" && x.trim()).join(" ");
-    let editorialNote = typeof qcCard.editorialNote === "string" && qcCard.editorialNote !== ""
-      ? qcCard.editorialNote
-      : (editorialFallback || null);
-    let complianceNote = typeof qcCard.complianceNote === "string" && qcCard.complianceNote !== ""
-      ? qcCard.complianceNote
-      : (complianceFallback || null);
-    const reviewerVerdict = qcCard.reviewerVerdict == null ? null : String(qcCard.reviewerVerdict).trim() || null;
-    const summaryClass = classifyCard(qcCard);
-    const editorialFlag =
-      signalClassIsConcern(summaryClass.editorial) || editorialNote != null;
-    const complianceFlag =
-      signalClassIsConcern(summaryClass.compliance) || complianceNote != null;
-    if (summaryClass.editorial === "notChecked" && editorialNote == null) {
-      editorialNote = "Not checked.";
-    }
-    if (summaryClass.compliance === "notChecked" && complianceNote == null) {
-      complianceNote = "Not checked.";
-    }
-    return {
-      statementText,
-      verdict,
-      concernLevel,
-      evidenceFinding,
-      excerpt,
-      editorialNote,
-      complianceNote,
-      reviewerVerdict,
-      editorialFlag,
-      complianceFlag,
-    };
-  });
-
-  // Serialization break to prevent nested refs/prototypes reaching renderers.
-  const safeStatements = JSON.parse(JSON.stringify(normalizedStatements));
-  const total = safeStatements.length;
-  return { statements: safeStatements, total };
-}
-
 async function renderPdf(payload) {
   const { sections, data } = payload;
   const meta = data?.meta || {};
@@ -166,7 +96,7 @@ async function renderPdf(payload) {
   const reviewerAssessment = typeof data?.reviewerAssessment === "string" ? data.reviewerAssessment.trim() : "";
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
-  const review = buildReviewData(qcResult);
+  const review = buildReviewData(qcResult, qcResult?.meta?.reviewOptions);
   const includeReviewSummary = !!sections?.reviewSummary;
   const includeStatementReview = !!sections?.statementReview && review.total > 0;
   const includeSources = !!sections?.sources && sources.length > 0;
@@ -323,7 +253,7 @@ function buildDocx(payload) {
   const reviewerAssessment = typeof data?.reviewerAssessment === "string" ? data.reviewerAssessment.trim() : "";
   const sources = Array.isArray(data?.sources) ? data.sources : [];
   const qcResult = data?.qcResult && typeof data.qcResult === "object" ? data.qcResult : null;
-  const review = buildReviewData(qcResult);
+  const review = buildReviewData(qcResult, qcResult?.meta?.reviewOptions);
   const includeReviewSummary = !!sections?.reviewSummary;
   const includeStatementReview = !!sections?.statementReview && review.total > 0;
   const includeSources = !!sections?.sources && sources.length > 0;
