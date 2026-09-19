@@ -8,6 +8,7 @@ import {
 } from "docx";
 import { classifyCard } from "../lib/qc/review-summary.mjs";
 import { normalizeExportVerdict } from "../lib/qc/evidence-display-verdict.mjs";
+import { evidenceFindingForExport } from "../lib/qc/export-review-data.mjs";
 
 function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
@@ -109,13 +110,7 @@ function buildReviewData(qcResult) {
     const concernLevel = typeof qcCard.concernLevel === "string" && qcCard.concernLevel.trim()
       ? qcCard.concernLevel.trim()
       : null;
-    const evidenceFinding = evidenceSkipped
-      ? null
-      : (typeof qcCard.reasoningParagraph === "string" && qcCard.reasoningParagraph.trim()
-        ? qcCard.reasoningParagraph.trim()
-        : (typeof qcCard.reasoningHeadline === "string" && qcCard.reasoningHeadline.trim()
-          ? qcCard.reasoningHeadline.trim()
-          : "No evidence finding recorded."));
+    const evidenceFinding = evidenceFindingForExport(qcCard, evidenceSkipped);
     const excerpt = evidenceSkipped
       ? null
       : (qcCard.hasRealExcerpt === true && typeof qcCard.primaryExcerptText === "string" && qcCard.primaryExcerptText.trim()
