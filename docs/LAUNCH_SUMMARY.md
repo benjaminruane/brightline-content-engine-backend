@@ -6,14 +6,14 @@
 >
 > **To regenerate:** `npm run launch:summary`
 >
-> Last generated: 2026-09-18
+> Last generated: 2026-09-19
 
 LAUNCH means needed before a first client uses the product. See the Launch plan in `docs/ROADMAP.md`.
 
-## LAUNCH rows (17 total)
+## LAUNCH rows (20 total)
 
 
-### 2. Backend / Pipeline (14)
+### 2. Backend / Pipeline (17)
 
 | ID | Item | Priority |
 |----|------|----------|
@@ -31,6 +31,9 @@ LAUNCH means needed before a first client uses the product. See the Launch plan 
 | B166 | **COMPETING PROPOSALS. OPEN. Filing only.** Evidence and editorial on one sentence can propose incompatible actions. Live F18 Review: **4** of 10 cards (S0, S2, S5, S7) are `conflict` plus a nonempty editorial `suggestedDirection`. S5 is update-the-figure versus delete-the-sentence. Apply already refuses a double write (`plannedWrites` drops the statement if `list.length !== 1`); bulk accept leaves colliding rows unset. Harm is confusion on the card, not a silent merge. Duplication judge keeps voice/delete as INDEPENDENT. **Annotation 2026-09-11:** later live F18-S3 now also has this shape (evidence 380→412 versus editorial 240'000→240,000). That second pair is **B176**; do not close this row into that one. Do not fold into Design A or B. | M |
 | B171 | **USER-SUPPLIED AUTHORING ORGANISATION. OPEN. Filing only.** Ben 2026-09-11: the house name should be supplied by the user, not by a server setting. Account settings (do not exist yet) or a pre-populated input field. The request-body path already exists and has never been exercised (**B95**). Environment value is one identity per deployment (**B124**). After `202b357` a wrong or missing value is no longer dangerous but silently does nothing. When built, draft-presence changes job from gate to sanity check: if the user states an organisation the draft never mentions, tell them rather than acting silently. Do not close **B95**, **B96**, **B124**, or **B170**. | M |
 | B196 | **THE FULL END-TO-END DEFECT SWEEP IN PRODUCTION. SWEPT 2026-09-18 `4b1f530`.** Production Assess, frontend HEAD `5c20a02` (Build: 5c20a02), backend HEAD `25e1ea6`. Report `scripts/diagnostic/delivery-check/live-2026-09-18-b196-sweep.md`; screenshots `scripts/diagnostic/delivery-check/b196-2026-09-18/`. Pins: P1 PASS, P2 PASS, P3 PASS, P4 PASS, P5 PASS, P6 FAIL. Findings by tag: BROKEN 4, INCONSISTENT 6, UNCLEAR WORDING 2. Filed as **B208** to **B217**. | H |
+| B227 | **OPEN. Filing only.** Assessment still sends `{ concern: "" }` to the model when a card is classified concern and both `note` and `suggestedDirection` are blank. Same class as the missing-notes paragraph. `reviewerSynthesisPayload.js` `concernItemsFromRow`. Census `scripts/diagnostic/delivery-check/dead-read-census.md`. | H |
+| B228 | **OPEN. Filing only.** Export writes `"No evidence finding recorded."` when `reasoningParagraph` and `reasoningHeadline` are empty. A client file cannot tell a missing finding from a recorded one. `api/export.js` `buildReviewData`. | H |
+| B229 | **OPEN. Filing only.** Constructive feedback invents generic notes when card text is empty: `"Sources do not confirm this statement."`, `"Editorial concern on this sentence."`, `"Compliance concern on this sentence."` (`collectMarginNotes`, B226). Same class as the export invented evidence line. | H |
 
 ### 3. Process & governance (1)
 
