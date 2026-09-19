@@ -7,6 +7,7 @@ import {
   TextRun,
 } from "docx";
 import { classifyCard } from "../lib/qc/review-summary.mjs";
+import { normalizeExportVerdict } from "../lib/qc/evidence-display-verdict.mjs";
 
 function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
@@ -30,12 +31,7 @@ function toParagraphs(text) {
 }
 
 function normalizeVerdict(displayVerdict) {
-  if (String(displayVerdict || "").toLowerCase() === "not reviewed") return null;
-  if (displayVerdict === "supported_full") return "Confirmed";
-  if (displayVerdict === "supported_partial") return "Partially confirmed";
-  if (displayVerdict === "conflict") return "Conflicting";
-  if (displayVerdict === "not_supported" || displayVerdict === "no_clear_support") return "No support";
-  return "Unverifiable";
+  return normalizeExportVerdict(displayVerdict);
 }
 
 function signalClassIsConcern(cls) {
