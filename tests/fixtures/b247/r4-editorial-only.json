@@ -1,0 +1,226 @@
+{
+  "ok": true,
+  "statements": [
+    {
+      "id": "0",
+      "text": "We closed Fund III at EUR 400 million in March 2025.",
+      "qcCard": {
+        "statement": "We closed Fund III at EUR 400 million in March 2025.",
+        "supportState": "skipped",
+        "concernState": "none",
+        "displayVerdict": "Not reviewed",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": null,
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": null,
+        "primarySourceOrigin": null,
+        "primaryExcerpt": null,
+        "primaryExcerptText": null,
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": false,
+        "hasConflict": false,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": null,
+        "displayMode": "unsupported",
+        "draftSpan": {
+          "startChar": 0,
+          "endChar": 52
+        },
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "primaryExcerptTrusted": false,
+        "index": 0,
+        "charStart": 0,
+        "charEnd": 52,
+        "pipelineVersion": "v4",
+        "editorialConcerns": [
+          {
+            "concernCode": "voice_consistency",
+            "note": "The statement uses first-person plural 'We', which is not appropriate for reporting commentary. The authoring organisation is not identified in this draft.",
+            "category": "editorial"
+          }
+        ],
+        "editorialVerdict": "concern",
+        "editorialNote": null,
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceConcerns": [],
+        "complianceVerdict": "clean",
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "summaryClass": {
+          "counted": true,
+          "evidence": null,
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      "draftSpan": {
+        "startChar": 0,
+        "endChar": 52
+      }
+    },
+    {
+      "id": "1",
+      "text": "The fund invests in European manufacturing companies.",
+      "qcCard": {
+        "statement": "The fund invests in European manufacturing companies.",
+        "supportState": "skipped",
+        "concernState": "none",
+        "displayVerdict": "Not reviewed",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": null,
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": null,
+        "primarySourceOrigin": null,
+        "primaryExcerpt": null,
+        "primaryExcerptText": null,
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": false,
+        "hasConflict": false,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": null,
+        "displayMode": "unsupported",
+        "draftSpan": {
+          "startChar": 53,
+          "endChar": 106
+        },
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "primaryExcerptTrusted": false,
+        "index": 1,
+        "charStart": 53,
+        "charEnd": 106,
+        "pipelineVersion": "v4",
+        "editorialConcerns": [],
+        "editorialVerdict": "clean",
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceConcerns": [],
+        "complianceVerdict": "clean",
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "summaryClass": {
+          "counted": true,
+          "evidence": null,
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 53,
+        "endChar": 106
+      }
+    }
+  ],
+  "references": [],
+  "sources": [
+    {
+      "index": 0,
+      "id": null,
+      "label": "oakfield-close.txt",
+      "text": "Oakfield Partners closed Fund III at EUR 400 million in March 2025. The fund invests in European manufacturing companies. This note is for internal reporting only.",
+      "publicationState": "unknown"
+    }
+  ],
+  "excludedSources": [],
+  "meta": {
+    "pipelineVersion": "v4",
+    "stagesComplete": 6,
+    "traceId": "2177b928-fc8d-4682-9d34-2e38c3c03b92",
+    "reviewOptions": {
+      "evidenceEnabled": false,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "reviewSummary": {
+      "version": 1,
+      "statements": 2,
+      "evidence": null,
+      "editorial": {
+        "concerns": 1,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "compliance": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "signalConcerns": 1,
+      "notChecked": 0,
+      "needsAttention": 1,
+      "readiness": "Minor points to address"
+    },
+    "modelConfig": {
+      "ranAt": "2026-09-19T09:16:56.111Z",
+      "stage2Fingerprints": [],
+      "stageModels": {
+        "stage1-splitting": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage1b-claim-spans": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage2-matching": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage5-commentary": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "compliance-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        }
+      }
+    },
+    "evidenceReviewSkipped": true
+  },
+  "bannedWordHits": [],
+  "provenanceFlags": []
+}

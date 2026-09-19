@@ -245,6 +245,8 @@ Strict: a test that runs from real input (draft + sources, or a stored review pa
 
 **B233 / B234 / B235 (2026-09-19).** Same 20. The corruptions now fail when QRS names a check that was off, or when unknown slugs would have read Ready. Export verdict lines name evidence concern. No new inventory IDs moved to yes.
 
+**Claim disagreements (2026-09-19).** Recorded R1-R6 into `tests/fixtures/b247/`. Count stays **20 of 87**. Filed **B247** and **B248**. Report `scripts/diagnostic/delivery-check/claim-disagreements.md`.
+
 | ID | e2e |
 |----|-----|
 | C1 | no |

@@ -1,0 +1,331 @@
+{
+  "ok": true,
+  "statements": [
+    {
+      "id": "0",
+      "text": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+      "qcCard": {
+        "index": 0,
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "charStart": 0,
+        "charEnd": 67,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating that Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "oakfield-close.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating that Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 0,
+          "endChar": 67
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "0",
+            "passage": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+            "start": 0,
+            "end": 67
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-thin.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "monetary_figure",
+            "date_period_claim",
+            "named_person_entity_attribution"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 0,
+        "endChar": 67
+      }
+    },
+    {
+      "id": "1",
+      "text": "The fund invests in European manufacturing companies.",
+      "qcCard": {
+        "index": 1,
+        "statement": "The fund invests in European manufacturing companies.",
+        "charStart": 68,
+        "charEnd": 121,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "The fund invests in European manufacturing companies.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by directly stating that the fund invests in European manufacturing companies.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "oakfield-close.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "The fund invests in European manufacturing companies.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by directly stating that the fund invests in European manufacturing companies.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 68,
+          "endChar": 121
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The fund invests in European manufacturing companies.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "1",
+            "passage": "The fund invests in European manufacturing companies.",
+            "start": 68,
+            "end": 121
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-thin.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 68,
+        "endChar": 121
+      }
+    }
+  ],
+  "references": [],
+  "sources": [
+    {
+      "index": 0,
+      "id": null,
+      "label": "oakfield-close.txt",
+      "text": "Oakfield Partners closed Fund III at EUR 400 million in March 2025. The fund invests in European manufacturing companies. This note is for internal reporting only.",
+      "publicationState": "unknown"
+    },
+    {
+      "index": 1,
+      "id": null,
+      "label": "oakfield-thin.txt",
+      "text": "Oakfield Partners.",
+      "publicationState": "unknown"
+    }
+  ],
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "empty-memo.txt",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "meta": {
+    "pipelineVersion": "v4",
+    "stagesComplete": 7,
+    "traceId": "03143c5d-6f3d-44ae-b9f2-63c565c5c046",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "reviewSummary": {
+      "version": 1,
+      "statements": 2,
+      "evidence": {
+        "confirmed": 2,
+        "partial": 0,
+        "conflicting": 0,
+        "notSupported": 0
+      },
+      "editorial": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "compliance": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "signalConcerns": 0,
+      "notChecked": 0,
+      "needsAttention": 0,
+      "readiness": "Ready"
+    },
+    "modelConfig": {
+      "ranAt": "2026-09-19T09:16:58.571Z",
+      "stage2Fingerprints": [
+        "fp_087f6ae320"
+      ],
+      "stageModels": {
+        "stage1-splitting": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage1b-claim-spans": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage2-matching": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage5-commentary": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "compliance-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        }
+      }
+    }
+  },
+  "bannedWordHits": [],
+  "provenanceFlags": []
+}

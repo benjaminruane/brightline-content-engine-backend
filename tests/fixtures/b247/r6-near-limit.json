@@ -1,0 +1,1258 @@
+{
+  "ok": true,
+  "statements": [
+    {
+      "id": "0",
+      "text": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+      "qcCard": {
+        "index": 0,
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "charStart": 0,
+        "charEnd": 67,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by stating that Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "oakfield-close.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by stating that Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 0,
+          "endChar": 67
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "0",
+            "passage": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+            "start": 0,
+            "end": 67
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "monetary_figure",
+            "date_period_claim",
+            "named_person_entity_attribution"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 0,
+        "endChar": 67
+      }
+    },
+    {
+      "id": "1",
+      "text": "The fund invests in European manufacturing companies across Germany, France, and the Nordics.",
+      "qcCard": {
+        "index": 1,
+        "statement": "The fund invests in European manufacturing companies across Germany, France, and the Nordics.",
+        "charStart": 68,
+        "charEnd": 161,
+        "supportState": "partial",
+        "hasConflict": false,
+        "primaryExcerpt": "The fund invests in European manufacturing companies.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that the fund invests in European manufacturing companies. However, it does not specify the countries Germany, France, and the Nordics, which are mentioned in the statement. This is a material gap, as the geographic focus is not addressed. The reviewer should verify these specific country details or adjust the statement accordingly.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "The fund invests in European manufacturing companies.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that the fund invests in European manufacturing companies. However, it does not specify the countries Germany, France, and the Nordics, which are mentioned in the statement. This is a material gap, as the geographic focus is not addressed. The reviewer should verify these specific country details or adjust the statement accordingly.",
+        "displayMode": "partial",
+        "draftSpan": {
+          "startChar": 68,
+          "endChar": 161
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "evidenceConcernLevel": "moderate",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The fund invests in European manufacturing companies across Germany, France, and the Nordics.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "partially_confirmed",
+            "statementId": "1",
+            "passage": "The fund invests in European manufacturing companies.",
+            "start": 68,
+            "end": 121
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "1",
+            "classification": "partially_confirmed",
+            "text": "across Germany, France, and the Nordics.",
+            "start": 53,
+            "end": 93
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "partial",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 68,
+        "endChar": 161
+      }
+    },
+    {
+      "id": "2",
+      "text": "The investment committee approved the close after a six month fundraising period that began in September 2024.",
+      "qcCard": {
+        "index": 2,
+        "statement": "The investment committee approved the close after a six month fundraising period that began in September 2024.",
+        "charStart": 162,
+        "charEnd": 272,
+        "supportState": "partial",
+        "hasConflict": false,
+        "primaryExcerpt": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that Oakfield Partners closed Fund III in March 2025, which aligns with the statement's closing date. However, it does not address the six-month fundraising period starting in September 2024 or the investment committee's approval. The reviewer should verify these missing details or adjust the statement accordingly.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that Oakfield Partners closed Fund III in March 2025, which aligns with the statement's closing date. However, it does not address the six-month fundraising period starting in September 2024 or the investment committee's approval. The reviewer should verify these missing details or adjust the statement accordingly.",
+        "displayMode": "partial",
+        "draftSpan": {
+          "startChar": 162,
+          "endChar": 272
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "evidenceConcernLevel": "moderate",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The investment committee approved the close after a six month fundraising period that began in September 2024.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "partially_confirmed",
+            "statementId": "2",
+            "passage": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+            "start": 0,
+            "end": 67
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "2",
+            "classification": "partially_confirmed",
+            "text": "after a six month fundraising period that began in September 2024.",
+            "start": 44,
+            "end": 110
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "date_period_claim"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "date_format",
+            "note": "The date 'September 2024' uses the US order format. Dates in prose should use the DD FullMonthName YYYY format.",
+            "category": "style_guide",
+            "suggestedDirection": "Change 'September 2024' to '1 September 2024'.",
+            "rule": "date_format",
+            "span": [
+              {
+                "startChar": 95,
+                "endChar": 109,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Change 'September 2024' to '1 September 2024'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "partial",
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      "draftSpan": {
+        "startChar": 162,
+        "endChar": 272
+      }
+    },
+    {
+      "id": "3",
+      "text": "Existing limited partners accounted for most of the commitments recorded at close.",
+      "qcCard": {
+        "index": 3,
+        "statement": "Existing limited partners accounted for most of the commitments recorded at close.",
+        "charStart": 273,
+        "charEnd": 355,
+        "supportState": "not_supported",
+        "hasConflict": false,
+        "primaryExcerpt": null,
+        "conflictExcerpt": null,
+        "evidenceSummary": "No source addresses the claim that existing limited partners accounted for most of the commitments recorded at close. The reviewer should add a source that supports this claim or remove it from the document.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": null,
+        "primarySourceOrigin": null,
+        "primaryExcerptText": null,
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": false,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "No source addresses the claim that existing limited partners accounted for most of the commitments recorded at close. The reviewer should add a source that supports this claim or remove it from the document.",
+        "displayMode": "not_supported",
+        "draftSpan": {
+          "startChar": 273,
+          "endChar": 355
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "not_supported",
+        "concernLevel": "high",
+        "evidenceConcernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Existing limited partners accounted for most of the commitments recorded at close.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "notSupported",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      "draftSpan": {
+        "startChar": 273,
+        "endChar": 355
+      }
+    },
+    {
+      "id": "4",
+      "text": "The remaining capital came from two new European pension funds that completed diligence in February 2025.",
+      "qcCard": {
+        "index": 4,
+        "statement": "The remaining capital came from two new European pension funds that completed diligence in February 2025.",
+        "charStart": 356,
+        "charEnd": 461,
+        "supportState": "not_supported",
+        "hasConflict": false,
+        "primaryExcerpt": null,
+        "conflictExcerpt": null,
+        "evidenceSummary": "No source addresses the claim that the remaining capital came from two new European pension funds or that they completed diligence in February 2025. Please add a supporting source or remove the claim.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": null,
+        "primarySourceOrigin": null,
+        "primaryExcerptText": null,
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": false,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "No source addresses the claim that the remaining capital came from two new European pension funds or that they completed diligence in February 2025. Please add a supporting source or remove the claim.",
+        "displayMode": "not_supported",
+        "draftSpan": {
+          "startChar": 356,
+          "endChar": 461
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "not_supported",
+        "concernLevel": "high",
+        "evidenceConcernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The remaining capital came from two new European pension funds that completed diligence in February 2025.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "date_period_claim"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "notSupported",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      "draftSpan": {
+        "startChar": 356,
+        "endChar": 461
+      }
+    },
+    {
+      "id": "5",
+      "text": "Fund III will pursue control investments in lower mid market manufacturing businesses with export revenue.",
+      "qcCard": {
+        "index": 5,
+        "statement": "Fund III will pursue control investments in lower mid market manufacturing businesses with export revenue.",
+        "charStart": 462,
+        "charEnd": 568,
+        "supportState": "partial",
+        "hasConflict": false,
+        "primaryExcerpt": "The fund invests in European manufacturing companies.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that Fund III invests in European manufacturing companies. However, it does not specify that the fund will pursue control investments or focus on businesses with export revenue. These are additional claims not covered by the source. The reviewer should verify these specific aspects or adjust the statement to align with the source.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "The fund invests in European manufacturing companies.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that Fund III invests in European manufacturing companies. However, it does not specify that the fund will pursue control investments or focus on businesses with export revenue. These are additional claims not covered by the source. The reviewer should verify these specific aspects or adjust the statement to align with the source.",
+        "displayMode": "partial",
+        "draftSpan": {
+          "startChar": 462,
+          "endChar": 568
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "evidenceConcernLevel": "moderate",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Fund III will pursue control investments in lower mid market manufacturing businesses with export revenue.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "partially_confirmed",
+            "statementId": "5",
+            "passage": "The fund invests in European manufacturing companies.",
+            "start": 68,
+            "end": 121
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "5",
+            "classification": "partially_confirmed",
+            "text": "control investments in lower mid market manufacturing businesses with export revenue",
+            "start": 21,
+            "end": 105
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "forward_looking"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "number_spelling",
+            "note": "The phrase 'lower mid market' should use numerals for clarity in financial contexts.",
+            "category": "style_guide",
+            "suggestedDirection": "Change 'lower mid market' to 'lower mid-market'.",
+            "rule": "number_spelling",
+            "span": [
+              {
+                "startChar": 44,
+                "endChar": 60,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Change 'lower mid market' to 'lower mid-market'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "partial",
+          "editorial": "concern",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      "draftSpan": {
+        "startChar": 462,
+        "endChar": 568
+      }
+    },
+    {
+      "id": "6",
+      "text": "Hold periods are expected to run between four and six years depending on the exit route available.",
+      "qcCard": {
+        "index": 6,
+        "statement": "Hold periods are expected to run between four and six years depending on the exit route available.",
+        "charStart": 569,
+        "charEnd": 667,
+        "supportState": "partial",
+        "hasConflict": false,
+        "primaryExcerpt": "Hold periods run between four and six years.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that hold periods run between four and six years. However, it does not address the dependency on the exit route, which is a key part of the statement. The reviewer should either find a source that confirms the exit route dependency or adjust the statement to reflect only the confirmed duration.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-policy.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Hold periods run between four and six years.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that hold periods run between four and six years. However, it does not address the dependency on the exit route, which is a key part of the statement. The reviewer should either find a source that confirms the exit route dependency or adjust the statement to reflect only the confirmed duration.",
+        "displayMode": "partial",
+        "draftSpan": {
+          "startChar": 569,
+          "endChar": 667
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "evidenceConcernLevel": "moderate",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Hold periods are expected to run between four and six years depending on the exit route available.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 1,
+            "classification": "partially_confirmed",
+            "statementId": "6",
+            "passage": "Hold periods run between four and six years.",
+            "start": 0,
+            "end": 44
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 1,
+            "statementId": "6",
+            "classification": "partially_confirmed",
+            "text": "depending on the exit route available",
+            "start": 60,
+            "end": 97
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "forward_looking"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "partial",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 569,
+        "endChar": 667
+      }
+    },
+    {
+      "id": "7",
+      "text": "Oakfield will not invest more than twenty five percent of commitments in a single country.",
+      "qcCard": {
+        "index": 7,
+        "statement": "Oakfield will not invest more than twenty five percent of commitments in a single country.",
+        "charStart": 668,
+        "charEnd": 758,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Oakfield will not invest more than twenty five percent of commitments in a single country.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating that Oakfield will not invest more than twenty-five percent of commitments in a single country.",
+        "supportRefIds": [
+          1
+        ],
+        "supportRefTitles": [
+          "oakfield-policy.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-policy.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Oakfield will not invest more than twenty five percent of commitments in a single country.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating that Oakfield will not invest more than twenty-five percent of commitments in a single country.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 668,
+          "endChar": 758
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Oakfield will not invest more than twenty five percent of commitments in a single country.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 1,
+            "classification": "confirmed",
+            "statementId": "7",
+            "passage": "Oakfield will not invest more than twenty five percent of commitments in a single country.",
+            "start": 45,
+            "end": 135
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "percentage_metric",
+            "comparative_superlative",
+            "forward_looking"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 668,
+        "endChar": 758
+      }
+    },
+    {
+      "id": "8",
+      "text": "Reporting to limited partners will follow the quarterly cycle already used for Fund II.",
+      "qcCard": {
+        "index": 8,
+        "statement": "Reporting to limited partners will follow the quarterly cycle already used for Fund II.",
+        "charStart": 759,
+        "charEnd": 846,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Reporting follows the Fund II quarterly cycle.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating that reporting follows the Fund II quarterly cycle. This directly matches the claim about the reporting schedule.",
+        "supportRefIds": [
+          1
+        ],
+        "supportRefTitles": [
+          "oakfield-policy.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-policy.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Reporting follows the Fund II quarterly cycle.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating that reporting follows the Fund II quarterly cycle. This directly matches the claim about the reporting schedule.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 759,
+          "endChar": 846
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Reporting to limited partners will follow the quarterly cycle already used for Fund II.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 1,
+            "classification": "confirmed",
+            "statementId": "8",
+            "passage": "Reporting follows the Fund II quarterly cycle.",
+            "start": 136,
+            "end": 182
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "forward_looking"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "confirmed",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 759,
+        "endChar": 846
+      }
+    },
+    {
+      "id": "9",
+      "text": "The close completed in March 2025 after the last remaining commitment was signed in Zurich.",
+      "qcCard": {
+        "index": 9,
+        "statement": "The close completed in March 2025 after the last remaining commitment was signed in Zurich.",
+        "charStart": 847,
+        "charEnd": 938,
+        "supportState": "partial",
+        "hasConflict": false,
+        "primaryExcerpt": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that Oakfield Partners closed Fund III at EUR 400 million in March 2025. However, it does not mention the signing of the last remaining commitment in Zurich. The reviewer should verify the details about the commitment and its location or adjust the statement to reflect only the confirmed information.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that Oakfield Partners closed Fund III at EUR 400 million in March 2025. However, it does not mention the signing of the last remaining commitment in Zurich. The reviewer should verify the details about the commitment and its location or adjust the statement to reflect only the confirmed information.",
+        "displayMode": "partial",
+        "draftSpan": {
+          "startChar": 847,
+          "endChar": 938
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "evidenceConcernLevel": "moderate",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The close completed in March 2025 after the last remaining commitment was signed in Zurich.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "partially_confirmed",
+            "statementId": "9",
+            "passage": "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
+            "start": 0,
+            "end": 67
+          }
+        ],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "9",
+            "classification": "partially_confirmed",
+            "text": "after the last remaining commitment was signed in Zurich.",
+            "start": 34,
+            "end": 91
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          },
+          {
+            "sourceIndex": 1,
+            "sourceLabel": "oakfield-policy.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "date_period_claim"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "partial",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": false
+        }
+      },
+      "draftSpan": {
+        "startChar": 847,
+        "endChar": 938
+      }
+    }
+  ],
+  "references": [],
+  "sources": [
+    {
+      "index": 0,
+      "id": null,
+      "label": "oakfield-close.txt",
+      "text": "Oakfield Partners closed Fund III at EUR 400 million in March 2025. The fund invests in European manufacturing companies. This note is for internal reporting only.",
+      "publicationState": "unknown"
+    },
+    {
+      "index": 1,
+      "id": null,
+      "label": "oakfield-policy.txt",
+      "text": "Hold periods run between four and six years. Oakfield will not invest more than twenty five percent of commitments in a single country. Reporting follows the Fund II quarterly cycle.",
+      "publicationState": "unknown"
+    }
+  ],
+  "excludedSources": [],
+  "meta": {
+    "pipelineVersion": "v4",
+    "stagesComplete": 7,
+    "traceId": "359bb859-692d-4fba-ba00-fb77a44fa685",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "reviewSummary": {
+      "version": 1,
+      "statements": 10,
+      "evidence": {
+        "confirmed": 3,
+        "partial": 5,
+        "conflicting": 0,
+        "notSupported": 2
+      },
+      "editorial": {
+        "concerns": 2,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "compliance": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "signalConcerns": 2,
+      "notChecked": 0,
+      "needsAttention": 4,
+      "readiness": "Needs work"
+    },
+    "modelConfig": {
+      "ranAt": "2026-09-19T09:17:01.857Z",
+      "stage2Fingerprints": [
+        "fp_087f6ae320"
+      ],
+      "stageModels": {
+        "stage1-splitting": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage1b-claim-spans": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage2-matching": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage5-commentary": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "compliance-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        }
+      }
+    }
+  },
+  "bannedWordHits": [],
+  "provenanceFlags": []
+}

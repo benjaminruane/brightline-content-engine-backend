@@ -1,0 +1,331 @@
+[
+  {
+    "id": "r1-ready",
+    "file": "tests/fixtures/b247/r1-ready.json",
+    "used": "Two-sentence Oakfield close, source is the same text plus one internal-reporting line.",
+    "reachedGoal": "Ready with all checks on",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 8101,
+    "readiness": "Ready",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "statementCount": 2,
+    "excludedSources": [],
+    "sourceCount": 1,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025."
+      },
+      {
+        "id": "1",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The fund invests in European manufacturing companies."
+      }
+    ],
+    "draftWordCount": 19
+  },
+  {
+    "id": "r2-conflict-first",
+    "file": "tests/fixtures/b247/r2-conflict-first.json",
+    "used": "Draft EUR 400 million. Source A 400. Source B 450.",
+    "reachedGoal": "Two sources disagreeing on the close size",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 5213,
+    "readiness": "Needs significant work",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "statementCount": 1,
+    "excludedSources": [],
+    "sourceCount": 2,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025."
+      }
+    ],
+    "draftWordCount": 12
+  },
+  {
+    "id": "r3-evidence-only",
+    "file": "tests/fixtures/b247/r3-evidence-only.json",
+    "used": "Same Oakfield pair as R1 with editorialEnabled and complianceEnabled false.",
+    "reachedGoal": "Evidence on, editorial and compliance off",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 2325,
+    "readiness": "Ready",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": false,
+      "complianceEnabled": false
+    },
+    "statementCount": 2,
+    "excludedSources": [],
+    "sourceCount": 1,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025."
+      },
+      {
+        "id": "1",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The fund invests in European manufacturing companies."
+      }
+    ],
+    "draftWordCount": 19
+  },
+  {
+    "id": "r4-editorial-only",
+    "file": "tests/fixtures/b247/r4-editorial-only.json",
+    "used": "First-person 'We closed Fund III' so editorial has something to say. evidenceEnabled false.",
+    "reachedGoal": "Editorial on, evidence off",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 2219,
+    "readiness": "Minor points to address",
+    "reviewOptions": {
+      "evidenceEnabled": false,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "statementCount": 2,
+    "excludedSources": [],
+    "sourceCount": 1,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "Not reviewed",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "statement": "We closed Fund III at EUR 400 million in March 2025."
+      },
+      {
+        "id": "1",
+        "displayVerdict": "Not reviewed",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The fund invests in European manufacturing companies."
+      }
+    ],
+    "draftWordCount": 18
+  },
+  {
+    "id": "r5-excluded-source",
+    "file": "tests/fixtures/b247/r5-excluded-source.json",
+    "used": "Good Oakfield source plus empty-memo.txt with empty text. Thin fragment source oakfield-thin.txt with two words.",
+    "reachedGoal": "One excluded source beside a good one",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 3527,
+    "readiness": "Ready",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "statementCount": 2,
+    "excludedSources": [
+      {
+        "id": null,
+        "label": "empty-memo.txt",
+        "reason": "empty_after_extraction"
+      }
+    ],
+    "sourceCount": 2,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025."
+      },
+      {
+        "id": "1",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The fund invests in European manufacturing companies."
+      }
+    ],
+    "draftWordCount": 19
+  },
+  {
+    "id": "r6-near-limit",
+    "file": "tests/fixtures/b247/r6-near-limit.json",
+    "used": "Nine-sentence Oakfield draft (153 words). Two sources: close facts, and a second note on hold periods and country cap.",
+    "reachedGoal": "Long multi-source draft near the 150 word limit",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 8807,
+    "readiness": "Needs work",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "statementCount": 10,
+    "excludedSources": [],
+    "sourceCount": 2,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025."
+      },
+      {
+        "id": "1",
+        "displayVerdict": "supported_partial",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The fund invests in European manufacturing companies across Germany, France, and the Nordics."
+      },
+      {
+        "id": "2",
+        "displayVerdict": "supported_partial",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "statement": "The investment committee approved the close after a six month fundraising period that began in September 2024."
+      },
+      {
+        "id": "3",
+        "displayVerdict": "not_supported",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Existing limited partners accounted for most of the commitments recorded at close."
+      },
+      {
+        "id": "4",
+        "displayVerdict": "not_supported",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The remaining capital came from two new European pension funds that completed diligence in February 2025."
+      },
+      {
+        "id": "5",
+        "displayVerdict": "supported_partial",
+        "editorialVerdict": "concern",
+        "complianceVerdict": "clean",
+        "statement": "Fund III will pursue control investments in lower mid market manufacturing businesses with export revenue."
+      },
+      {
+        "id": "6",
+        "displayVerdict": "supported_partial",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Hold periods are expected to run between four and six years depending on the exit route available."
+      },
+      {
+        "id": "7",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Oakfield will not invest more than twenty five percent of commitments in a single country."
+      },
+      {
+        "id": "8",
+        "displayVerdict": "supported_full",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Reporting to limited partners will follow the quarterly cycle already used for Fund II."
+      },
+      {
+        "id": "9",
+        "displayVerdict": "supported_partial",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The close completed in March 2025 after the last remaining commitment was signed in Zurich."
+      }
+    ],
+    "draftWordCount": 153
+  },
+  {
+    "id": "r6-unsupported",
+    "file": "tests/fixtures/b247/r6-unsupported.json",
+    "used": "Northaven Logistics sale. Source is the Oakfield close note, which does not mention Northaven.",
+    "reachedGoal": "A draft where nothing is supported",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 6813,
+    "readiness": "Needs significant work",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "statementCount": 2,
+    "excludedSources": [],
+    "sourceCount": 1,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Northaven Logistics sold its Scandinavian depot network for EUR 90 million in January 2026."
+      },
+      {
+        "id": "1",
+        "displayVerdict": "not_supported",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "The buyer was a listed industrial group based in Milan."
+      }
+    ],
+    "draftWordCount": 24
+  },
+  {
+    "id": "r2-conflict-second",
+    "file": "tests/fixtures/b247/r2-conflict-second.json",
+    "used": "Same as r2-conflict-first, plus sourceRulings a=0 b=1 governs=0 on the request body. analyse-statements does not read that field.",
+    "reachedGoal": "Second Review after a governing ruling",
+    "httpStatus": 200,
+    "ok": true,
+    "ms": 4786,
+    "readiness": "Needs significant work",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "statementCount": 1,
+    "excludedSources": [],
+    "sourceCount": 2,
+    "cards": [
+      {
+        "id": "0",
+        "displayVerdict": "conflict",
+        "editorialVerdict": "clean",
+        "complianceVerdict": "clean",
+        "statement": "Oakfield Partners closed Fund III at EUR 400 million in March 2025."
+      }
+    ],
+    "firstReadiness": "Needs significant work",
+    "draftWordCount": 12
+  }
+]

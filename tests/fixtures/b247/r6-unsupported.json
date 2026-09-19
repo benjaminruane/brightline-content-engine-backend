@@ -1,0 +1,289 @@
+{
+  "ok": true,
+  "statements": [
+    {
+      "id": "0",
+      "text": "Northaven Logistics sold its Scandinavian depot network for EUR 90 million in January 2026.",
+      "qcCard": {
+        "index": 0,
+        "statement": "Northaven Logistics sold its Scandinavian depot network for EUR 90 million in January 2026.",
+        "charStart": 0,
+        "charEnd": 91,
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "primaryExcerpt": "Oakfield Partners closed Fund III at EUR 400 million in March 2025. The fund invests in European manufacturing companies. This note is for internal reporting only.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The statement claims that Northaven Logistics sold its Scandinavian depot network for EUR 90 million in January 2026, but the source does not mention this transaction or any related activity. Instead, it discusses Oakfield Partners closing Fund III at EUR 400 million in March 2025, which is unrelated to the claim. The reviewer should reconcile this discrepancy or remove the claim.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": "oakfield-close.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Oakfield Partners closed Fund III at EUR 400 million in March 2025. The fund invests in European manufacturing companies. This note is for internal reporting only.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The statement claims that Northaven Logistics sold its Scandinavian depot network for EUR 90 million in January 2026, but the source does not mention this transaction or any related activity. Instead, it discusses Oakfield Partners closing Fund III at EUR 400 million in March 2025, which is unrelated to the claim. The reviewer should reconcile this discrepancy or remove the claim.",
+        "displayMode": "conflicting",
+        "draftSpan": {
+          "startChar": 0,
+          "endChar": 91
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "evidenceConcernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Northaven Logistics sold its Scandinavian depot network for EUR 90 million in January 2026.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [],
+        "unsupportedSpans": [
+          {
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "conflicting",
+            "text": "Northaven Logistics sold its Scandinavian depot network for EUR 90 million in January 2026.",
+            "start": 0,
+            "end": 91
+          }
+        ],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure",
+            "date_period_claim",
+            "named_person_entity_attribution"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      "draftSpan": {
+        "startChar": 0,
+        "endChar": 91
+      }
+    },
+    {
+      "id": "1",
+      "text": "The buyer was a listed industrial group based in Milan.",
+      "qcCard": {
+        "index": 1,
+        "statement": "The buyer was a listed industrial group based in Milan.",
+        "charStart": 92,
+        "charEnd": 147,
+        "supportState": "not_supported",
+        "hasConflict": false,
+        "primaryExcerpt": null,
+        "conflictExcerpt": null,
+        "evidenceSummary": "No source addresses the claim that the buyer was a listed industrial group based in Milan. The available information only pertains to Oakfield Partners and their fund. Please add a source that supports this claim or consider removing it.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": null,
+        "primarySourceOrigin": null,
+        "primaryExcerptText": null,
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": false,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "No source addresses the claim that the buyer was a listed industrial group based in Milan. The available information only pertains to Oakfield Partners and their fund. Please add a source that supports this claim or consider removing it.",
+        "displayMode": "not_supported",
+        "draftSpan": {
+          "startChar": 92,
+          "endChar": 147
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "not_supported",
+        "concernLevel": "high",
+        "evidenceConcernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The buyer was a listed industrial group based in Milan.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "oakfield-close.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": [],
+        "summaryClass": {
+          "counted": true,
+          "evidence": "notSupported",
+          "editorial": "clean",
+          "compliance": "clean",
+          "needsAttention": true
+        }
+      },
+      "draftSpan": {
+        "startChar": 92,
+        "endChar": 147
+      }
+    }
+  ],
+  "references": [],
+  "sources": [
+    {
+      "index": 0,
+      "id": null,
+      "label": "oakfield-close.txt",
+      "text": "Oakfield Partners closed Fund III at EUR 400 million in March 2025. The fund invests in European manufacturing companies. This note is for internal reporting only.",
+      "publicationState": "unknown"
+    }
+  ],
+  "excludedSources": [],
+  "meta": {
+    "pipelineVersion": "v4",
+    "stagesComplete": 7,
+    "traceId": "e4b3fd7a-8965-4da2-b2d0-61363547873a",
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "reviewSummary": {
+      "version": 1,
+      "statements": 2,
+      "evidence": {
+        "confirmed": 0,
+        "partial": 0,
+        "conflicting": 1,
+        "notSupported": 1
+      },
+      "editorial": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "compliance": {
+        "concerns": 0,
+        "hardConcerns": 0,
+        "notChecked": 0
+      },
+      "signalConcerns": 0,
+      "notChecked": 0,
+      "needsAttention": 2,
+      "readiness": "Needs significant work"
+    },
+    "modelConfig": {
+      "ranAt": "2026-09-19T09:17:12.163Z",
+      "stage2Fingerprints": [
+        "fp_087f6ae320"
+      ],
+      "stageModels": {
+        "stage1-splitting": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage1b-claim-spans": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage2-matching": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "stage5-commentary": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "editorial-style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "compliance-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        },
+        "style-review": {
+          "provider": "openai",
+          "model": "gpt-4o-2024-08-06"
+        }
+      }
+    }
+  },
+  "bannedWordHits": [],
+  "provenanceFlags": []
+}
