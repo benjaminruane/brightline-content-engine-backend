@@ -1,0 +1,1896 @@
+{
+  "ok": true,
+  "_auditDraft": "Shopify — Long-form memo\nShopify\nTo: BVP Group\nFrom: Alex Ferrara, Trevor Oelschig\nDate: October 12, 2010\nRe: Shopify\nWe seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider\nof e-commerce software to SMBs. Shopify sells a simple SaaS solution that enables a business to\nquickly setup and run an online retail store. A typical customer signs up using their credit\ncard and is up and running in a few hours with no long-term contract. Shopify targets SMBs and\nat-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the\ngoal of servicing these customers as they scale to become larger customers with more\nsophisticated needs. Shopify has also managed to sign-up a number of large businesses like\nPixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at\nhigher price points.\nShopify was my first lead investment as a partner, so I was incredibly nervous. It took me\nthree roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet. Why?\nVery few VCs believed that software businesses targeting SMBs were good investments, let alone\nones that could deliver venture returns.\nShopify has grown at an impressive rate. With limited marketing, customers have increased from\n5,500 a year ago to nearly 10,000 today (+81% Y/Y). Over the same period, monthly recurring\nrevenue has grown from $164K to $438K (+151% Y/Y). Across all Shopify-powered stores, the\nannualized gross merchandise value transacted is roughly $132mm. The business is profitable and\nlargely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance\nsheet with no debt.\nShopify n s target focus on SMBs and the potential market size of online retail were seen as key\nrisks, but their organic growth and profitable business was hard to ignore. In 2010, $132mm in\nGMV would have put Shopify in the top 50 online retailers. That n s how small the online retail\nmarket was at that time!",
+  "_auditPdf": "scripts/diagnostic/r7-samples/Shopify_text_longform_messy.pdf",
+  "_auditSliceLines": "1-29 of extractor output",
+  "statements": [
+    {
+      "id": "0",
+      "text": "Date: October 12, 2010",
+      "qcCard": {
+        "index": 0,
+        "statement": "Date: October 12, 2010",
+        "charStart": 83,
+        "charEnd": 105,
+        "supportState": "not_supported",
+        "hasConflict": false,
+        "primaryExcerpt": null,
+        "conflictExcerpt": null,
+        "evidenceSummary": "No source addresses the claim about the date October 12, 2010. The source discusses a proposed investment in Shopify but does not confirm any completed action or investment on that date. Please add a supporting source or remove the claim.",
+        "supportRefIds": [],
+        "supportRefTitles": [],
+        "primaryRefId": null,
+        "primaryRefTitle": null,
+        "primarySourceOrigin": null,
+        "primaryExcerptText": null,
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": false,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "No source addresses the claim about the date October 12, 2010. The source discusses a proposed investment in Shopify but does not confirm any completed action or investment on that date. Please add a supporting source or remove the claim.",
+        "displayMode": "not_supported",
+        "draftSpan": {
+          "startChar": 83,
+          "endChar": 105
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "not_supported",
+        "concernLevel": "high",
+        "evidenceConcernLevel": "high",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Date: October 12, 2010",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "no_support",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "date_period_claim"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "date_format",
+            "note": "The date 'October 12, 2010' is in US order format. Dates in prose should use DD FullMonthName YYYY format.",
+            "category": "style_guide",
+            "suggestedDirection": "Change 'October 12, 2010' to '12 October 2010'.",
+            "rule": "date_format",
+            "span": [
+              {
+                "startChar": 6,
+                "endChar": 22,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Change 'October 12, 2010' to '12 October 2010'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 83,
+        "endChar": 105
+      }
+    },
+    {
+      "id": "1",
+      "text": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider\nof e-commerce software to SMBs.",
+      "qcCard": {
+        "index": 1,
+        "statement": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider\nof e-commerce software to SMBs.",
+        "charStart": 118,
+        "charEnd": 244,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating the intention to seek approval for BVP to invest up to $7 million in the Series A financing of Shopify, which is described as a provider of e-commerce software to small and medium-sized businesses.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating the intention to seek approval for BVP to invest up to $7 million in the Series A financing of Shopify, which is described as a provider of e-commerce software to small and medium-sized businesses.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 118,
+          "endChar": 244
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider\nof e-commerce software to SMBs.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "1",
+            "passage": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.",
+            "start": 118,
+            "end": 244
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": [
+            "monetary_figure"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "voice_consistency",
+            "category": "editorial",
+            "note": "(i) The statement uses first-person plural 'We seek approval' in a reporting commentary, which requires third-person voice. (ii) The statement uses first-person plural 'We seek approval' in a reporting commentary, which requires third-person voice.",
+            "suggestedDirection": "(i) Replace 'We seek approval' with 'Approval is sought'. (ii) Replace 'We seek approval' with 'Approval is sought'.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 16,
+                "source": "note_quote"
+              }
+            ],
+            "concernText": "(i) The statement uses first-person plural 'We seek approval' in a reporting commentary, which requires third-person voice. Replace 'We seek approval' with 'Approval is sought'. (ii) The statement uses first-person plural 'We seek approval' in a reporting commentary, which requires third-person voice. Replace 'We seek approval' with 'Approval is sought'."
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace 'We seek approval' with 'Approval is sought'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 118,
+        "endChar": 244
+      }
+    },
+    {
+      "id": "2",
+      "text": "Shopify sells a simple SaaS solution that enables a business to\nquickly setup and run an online retail store.",
+      "qcCard": {
+        "index": 2,
+        "statement": "Shopify sells a simple SaaS solution that enables a business to\nquickly setup and run an online retail store.",
+        "charStart": 245,
+        "charEnd": 354,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by directly stating that Shopify sells a simple SaaS solution that enables a business to quickly set up and run an online retail store.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by directly stating that Shopify sells a simple SaaS solution that enables a business to quickly set up and run an online retail store.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 245,
+          "endChar": 354
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Shopify sells a simple SaaS solution that enables a business to\nquickly setup and run an online retail store.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "2",
+            "passage": "Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store.",
+            "start": 245,
+            "end": 354
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "materiality",
+            "note": "The statement 'Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store' does not add new information or advance the argument, as it repeats the basic function of Shopify already implied in the context.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store' as it does not add new information."
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Delete 'Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store' as it does not add new information.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 245,
+        "endChar": 354
+      }
+    },
+    {
+      "id": "3",
+      "text": "A typical customer signs up using their credit\ncard and is up and running in a few hours with no long-term contract.",
+      "qcCard": {
+        "index": 3,
+        "statement": "A typical customer signs up using their credit\ncard and is up and running in a few hours with no long-term contract.",
+        "charStart": 355,
+        "charEnd": 471,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "A typical customer signs up using their credit card and is up and running in a few hours with no long-term contract.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by directly stating that a typical customer signs up using their credit card and is operational in a few hours without a long-term contract.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "A typical customer signs up using their credit card and is up and running in a few hours with no long-term contract.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by directly stating that a typical customer signs up using their credit card and is operational in a few hours without a long-term contract.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 355,
+          "endChar": 471
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "A typical customer signs up using their credit\ncard and is up and running in a few hours with no long-term contract.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "3",
+            "passage": "A typical customer signs up using their credit card and is up and running in a few hours with no long-term contract.",
+            "start": 355,
+            "end": 471
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 355,
+        "endChar": 471
+      }
+    },
+    {
+      "id": "4",
+      "text": "Shopify targets SMBs and\nat-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the\ngoal of servicing these customers as they scale to become larger customers with more\nsophisticated needs.",
+      "qcCard": {
+        "index": 4,
+        "statement": "Shopify targets SMBs and\nat-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the\ngoal of servicing these customers as they scale to become larger customers with more\nsophisticated needs.",
+        "charStart": 472,
+        "charEnd": 698,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Shopify targets SMBs and at-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the goal of servicing these customers as they scale to become larger customers with more sophisticated needs.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that Shopify targets small and medium-sized businesses (SMBs) and at-home capitalists, such as eBay and Etsy sellers, who pay an average of $45 per month. It also confirms Shopify's goal of servicing these customers as they grow into larger businesses with more sophisticated needs.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Shopify targets SMBs and at-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the goal of servicing these customers as they scale to become larger customers with more sophisticated needs.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that Shopify targets small and medium-sized businesses (SMBs) and at-home capitalists, such as eBay and Etsy sellers, who pay an average of $45 per month. It also confirms Shopify's goal of servicing these customers as they grow into larger businesses with more sophisticated needs.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 472,
+          "endChar": 698
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Shopify targets SMBs and\nat-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the\ngoal of servicing these customers as they scale to become larger customers with more\nsophisticated needs.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "4",
+            "passage": "Shopify targets SMBs and at-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the goal of servicing these customers as they scale to become larger customers with more sophisticated needs.",
+            "start": 472,
+            "end": 698
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure"
+          ]
+        },
+        "sourceRecencyConcerns": [
+          {
+            "concernCode": "source_recency",
+            "category": "source_recency",
+            "note": "This claim rests on a source dated 12 October 2010 (16 years old) and is presented as current — confirm it's still accurate or add the timeframe.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 226
+              }
+            ]
+          }
+        ],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 472,
+        "endChar": 698
+      }
+    },
+    {
+      "id": "5",
+      "text": "Shopify has also managed to sign-up a number of large businesses like\nPixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at\nhigher price points.",
+      "qcCard": {
+        "index": 5,
+        "statement": "Shopify has also managed to sign-up a number of large businesses like\nPixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at\nhigher price points.",
+        "charStart": 699,
+        "charEnd": 880,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Shopify has also managed to sign-up a number of large businesses like Pixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at higher price points.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms that Shopify has signed up large businesses such as Pixar, Amnesty International, and Tesla Motors (specifically for selling Tesla accessories, not cars) at higher price points, directly matching the statement.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Shopify has also managed to sign-up a number of large businesses like Pixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at higher price points.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms that Shopify has signed up large businesses such as Pixar, Amnesty International, and Tesla Motors (specifically for selling Tesla accessories, not cars) at higher price points, directly matching the statement.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 699,
+          "endChar": 880
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Shopify has also managed to sign-up a number of large businesses like\nPixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at\nhigher price points.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "5",
+            "passage": "Shopify has also managed to sign-up a number of large businesses like Pixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at higher price points.",
+            "start": 699,
+            "end": 880
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": [
+            "named_person_entity_attribution"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "narrative_coherence",
+            "note": "The statement about Shopify signing up large businesses like Pixar, Amnesty International, and Tesla Motors does not logically connect with the surrounding context, which focuses on Shopify's target market of SMBs and the author's personal investment experience.",
+            "category": "editorial",
+            "suggestedDirection": "Introduce a transition to explain how signing large businesses fits into Shopify's strategy or growth story."
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Introduce a transition to explain how signing large businesses fits into Shopify's strategy or growth story.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 699,
+        "endChar": 880
+      }
+    },
+    {
+      "id": "6",
+      "text": "Shopify was my first lead investment as a partner, so I was incredibly nervous.",
+      "qcCard": {
+        "index": 6,
+        "statement": "Shopify was my first lead investment as a partner, so I was incredibly nervous.",
+        "charStart": 881,
+        "charEnd": 960,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Shopify was my first lead investment as a partner, so I was incredibly nervous.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by directly stating that Shopify was the author's first lead investment as a partner and that they were incredibly nervous.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Shopify was my first lead investment as a partner, so I was incredibly nervous.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by directly stating that Shopify was the author's first lead investment as a partner and that they were incredibly nervous.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 881,
+          "endChar": 960
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Shopify was my first lead investment as a partner, so I was incredibly nervous.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "6",
+            "passage": "Shopify was my first lead investment as a partner, so I was incredibly nervous.",
+            "start": 881,
+            "end": 960
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "named_person_entity_attribution"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 881,
+        "endChar": 960
+      }
+    },
+    {
+      "id": "7",
+      "text": "It took me\nthree roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet.",
+      "qcCard": {
+        "index": 7,
+        "statement": "It took me\nthree roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet.",
+        "charStart": 961,
+        "charEnd": 1060,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "It took me three roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating that it took three roundtrip flights to Ottawa before deciding to present Tobi a term sheet.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "It took me three roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating that it took three roundtrip flights to Ottawa before deciding to present Tobi a term sheet.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 961,
+          "endChar": 1060
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "It took me\nthree roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "7",
+            "passage": "It took me three roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet.",
+            "start": 961,
+            "end": 1060
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 961,
+        "endChar": 1060
+      }
+    },
+    {
+      "id": "8",
+      "text": "Very few VCs believed that software businesses targeting SMBs were good investments, let alone\nones that could deliver venture returns.",
+      "qcCard": {
+        "index": 8,
+        "statement": "Very few VCs believed that software businesses targeting SMBs were good investments, let alone\nones that could deliver venture returns.",
+        "charStart": 1066,
+        "charEnd": 1201,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Very few VCs believed that software businesses targeting SMBs were good investments, let alone ones that could deliver venture returns.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating that very few venture capitalists believed software businesses targeting small and medium-sized businesses were good investments or capable of delivering venture returns.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Very few VCs believed that software businesses targeting SMBs were good investments, let alone ones that could deliver venture returns.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating that very few venture capitalists believed software businesses targeting small and medium-sized businesses were good investments or capable of delivering venture returns.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1066,
+          "endChar": 1201
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Very few VCs believed that software businesses targeting SMBs were good investments, let alone\nones that could deliver venture returns.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "8",
+            "passage": "Very few VCs believed that software businesses targeting SMBs were good investments, let alone ones that could deliver venture returns.",
+            "start": 1066,
+            "end": 1201
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "voice_consistency",
+            "note": "The statement uses first-person plural 'we' in a reporting commentary, which requires third-person voice.",
+            "category": "editorial",
+            "suggestedDirection": "Replace 'we seek approval' with 'BVP seeks approval'."
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace 'we seek approval' with 'BVP seeks approval'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1066,
+        "endChar": 1201
+      }
+    },
+    {
+      "id": "9",
+      "text": "Shopify has grown at an impressive rate.",
+      "qcCard": {
+        "index": 9,
+        "statement": "Shopify has grown at an impressive rate.",
+        "charStart": 1202,
+        "charEnd": 1242,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Shopify has grown at an impressive rate. With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today (+81% Y/Y). Over the same period, monthly recurring revenue has grown from $164K to $438K (+151% Y/Y).",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement that Shopify has grown at an impressive rate. It provides specific growth metrics, noting that the number of customers increased from 5,500 to nearly 10,000, an 81% year-over-year increase, and monthly recurring revenue grew from $164K to $438K, a 151% year-over-year increase.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Shopify has grown at an impressive rate. With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today (+81% Y/Y). Over the same period, monthly recurring revenue has grown from $164K to $438K (+151% Y/Y).",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement that Shopify has grown at an impressive rate. It provides specific growth metrics, noting that the number of customers increased from 5,500 to nearly 10,000, an 81% year-over-year increase, and monthly recurring revenue grew from $164K to $438K, a 151% year-over-year increase.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1202,
+          "endChar": 1242
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Shopify has grown at an impressive rate.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "9",
+            "passage": "Shopify has grown at an impressive rate. With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today (+81% Y/Y). Over the same period, monthly recurring revenue has grown from $164K to $438K (+151% Y/Y).",
+            "start": 1202,
+            "end": 1439
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "marketing_language_excess",
+            "note": "'impressive' is a hyperbolic claim without substantiation in the immediate context.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'impressive'. The phrase becomes 'Shopify has grown at a rate'.",
+            "span": [
+              {
+                "startChar": 24,
+                "endChar": 34,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Delete 'impressive'. The phrase becomes 'Shopify has grown at a rate'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1202,
+        "endChar": 1242
+      }
+    },
+    {
+      "id": "10",
+      "text": "With limited marketing, customers have increased from\n5,500 a year ago to nearly 10,000 today (+81% Y/Y).",
+      "qcCard": {
+        "index": 10,
+        "statement": "With limited marketing, customers have increased from\n5,500 a year ago to nearly 10,000 today (+81% Y/Y).",
+        "charStart": 1243,
+        "charEnd": 1348,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today (+81% Y/Y).",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by reporting that customer numbers have increased from 5,500 a year ago to nearly 10,000 today, representing an 81% year-over-year growth. This matches the statement's claim precisely.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today (+81% Y/Y).",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by reporting that customer numbers have increased from 5,500 a year ago to nearly 10,000 today, representing an 81% year-over-year growth. This matches the statement's claim precisely.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1243,
+          "endChar": 1348
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "With limited marketing, customers have increased from\n5,500 a year ago to nearly 10,000 today (+81% Y/Y).",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "10",
+            "passage": "With limited marketing, customers have increased from 5,500 a year ago to nearly 10,000 today (+81% Y/Y).",
+            "start": 1243,
+            "end": 1348
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "percentage_metric"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1243,
+        "endChar": 1348
+      }
+    },
+    {
+      "id": "11",
+      "text": "Over the same period, monthly recurring\nrevenue has grown from $164K to $438K (+151% Y/Y).",
+      "qcCard": {
+        "index": 11,
+        "statement": "Over the same period, monthly recurring\nrevenue has grown from $164K to $438K (+151% Y/Y).",
+        "charStart": 1349,
+        "charEnd": 1439,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Over the same period, monthly recurring revenue has grown from $164K to $438K (+151% Y/Y).",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by providing the same figures for monthly recurring revenue growth, indicating an increase from $164K to $438K, which represents a 151% year-over-year increase over the same period.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Over the same period, monthly recurring revenue has grown from $164K to $438K (+151% Y/Y).",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by providing the same figures for monthly recurring revenue growth, indicating an increase from $164K to $438K, which represents a 151% year-over-year increase over the same period.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1349,
+          "endChar": 1439
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Over the same period, monthly recurring\nrevenue has grown from $164K to $438K (+151% Y/Y).",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "11",
+            "passage": "Over the same period, monthly recurring revenue has grown from $164K to $438K (+151% Y/Y).",
+            "start": 1349,
+            "end": 1439
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "monetary_figure",
+            "percentage_metric"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "clean",
+        "editorialConcerns": [],
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "editorialSuggestedDirection": null,
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1349,
+        "endChar": 1439
+      }
+    },
+    {
+      "id": "12",
+      "text": "Across all Shopify-powered stores, the\nannualized gross merchandise value transacted is roughly $132mm.",
+      "qcCard": {
+        "index": 12,
+        "statement": "Across all Shopify-powered stores, the\nannualized gross merchandise value transacted is roughly $132mm.",
+        "charStart": 1440,
+        "charEnd": 1543,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Across all Shopify-powered stores, the annualized gross merchandise value transacted is roughly $132mm.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by directly stating that the annualized gross merchandise value transacted across all Shopify-powered stores is roughly $132 million, matching the statement exactly.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Across all Shopify-powered stores, the annualized gross merchandise value transacted is roughly $132mm.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by directly stating that the annualized gross merchandise value transacted across all Shopify-powered stores is roughly $132 million, matching the statement exactly.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1440,
+          "endChar": 1543
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Across all Shopify-powered stores, the\nannualized gross merchandise value transacted is roughly $132mm.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "12",
+            "passage": "Across all Shopify-powered stores, the annualized gross merchandise value transacted is roughly $132mm.",
+            "start": 1440,
+            "end": 1543
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure"
+          ]
+        },
+        "sourceRecencyConcerns": [
+          {
+            "concernCode": "source_recency",
+            "category": "source_recency",
+            "note": "This claim rests on a source dated 12 October 2010 (16 years old) and is presented as current — confirm it's still accurate or add the timeframe.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 103
+              }
+            ]
+          }
+        ],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "currency_format",
+            "note": "The statement uses '$132mm' — currency should be written as USD [number] million.",
+            "category": "style_guide",
+            "suggestedDirection": "Replace '$132mm' with 'USD 132 million'.",
+            "rule": "currency_format",
+            "span": [
+              {
+                "startChar": 96,
+                "endChar": 102,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace '$132mm' with 'USD 132 million'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1440,
+        "endChar": 1543
+      }
+    },
+    {
+      "id": "13",
+      "text": "The business is profitable and\nlargely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance\nsheet with no debt.",
+      "qcCard": {
+        "index": 13,
+        "statement": "The business is profitable and\nlargely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance\nsheet with no debt.",
+        "charStart": 1544,
+        "charEnd": 1688,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "The business is profitable and largely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance sheet with no debt.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating that the business is profitable, has raised $1 million, has $1.3 million in cash on its balance sheet, and carries no debt.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "The business is profitable and largely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance sheet with no debt.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating that the business is profitable, has raised $1 million, has $1.3 million in cash on its balance sheet, and carries no debt.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1544,
+          "endChar": 1688
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "The business is profitable and\nlargely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance\nsheet with no debt.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "13",
+            "passage": "The business is profitable and largely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance sheet with no debt.",
+            "start": 1544,
+            "end": 1688
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "monetary_figure"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "currency_format",
+            "note": "The statement uses '$1mm' and '$1.3m' — currency should be written as USD [number] million.",
+            "category": "style_guide",
+            "suggestedDirection": "Replace '$1mm' with 'USD 1 million' and '$1.3m' with 'USD 1.3 million'.",
+            "rule": "currency_format",
+            "span": [
+              {
+                "startChar": 72,
+                "endChar": 76,
+                "source": "note_quote"
+              },
+              {
+                "startChar": 96,
+                "endChar": 101,
+                "source": "note_quote"
+              }
+            ]
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace '$1mm' with 'USD 1 million' and '$1.3m' with 'USD 1.3 million'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1544,
+        "endChar": 1688
+      }
+    },
+    {
+      "id": "14",
+      "text": "Shopify n s target focus on SMBs and the potential market size of online retail were seen as key\nrisks, but their organic growth and profitable business was hard to ignore.",
+      "qcCard": {
+        "index": 14,
+        "statement": "Shopify n s target focus on SMBs and the potential market size of online retail were seen as key\nrisks, but their organic growth and profitable business was hard to ignore.",
+        "charStart": 1689,
+        "charEnd": 1861,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "Shopify n s target focus on SMBs and the potential market size of online retail were seen as key risks, but their organic growth and profitable business was hard to ignore.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by directly stating that Shopify's focus on small and medium-sized businesses (SMBs) and the potential market size of online retail were considered key risks. However, it also highlights Shopify's notable organic growth and profitability, aligning with the statement's assertion.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "Shopify n s target focus on SMBs and the potential market size of online retail were seen as key risks, but their organic growth and profitable business was hard to ignore.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by directly stating that Shopify's focus on small and medium-sized businesses (SMBs) and the potential market size of online retail were considered key risks. However, it also highlights Shopify's notable organic growth and profitability, aligning with the statement's assertion.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1689,
+          "endChar": 1861
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "Shopify n s target focus on SMBs and the potential market size of online retail were seen as key\nrisks, but their organic growth and profitable business was hard to ignore.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "14",
+            "passage": "Shopify n s target focus on SMBs and the potential market size of online retail were seen as key risks, but their organic growth and profitable business was hard to ignore.",
+            "start": 1689,
+            "end": 1861
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": [
+            "forward_looking"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "internal_plausibility",
+            "note": "The phrase 'Shopify n s target focus' appears to contain a typographical error, making the sentence unclear.",
+            "category": "editorial",
+            "suggestedDirection": "Correct 'Shopify n s target focus' to 'Shopify's target focus'.",
+            "span": [
+              {
+                "startChar": 0,
+                "endChar": 24,
+                "source": "note_quote"
+              },
+              {
+                "startChar": 0,
+                "endChar": 7,
+                "source": "direction_quote"
+              }
+            ]
+          },
+          {
+            "concernCode": "voice_consistency",
+            "note": "The phrase 'were seen as key risks' uses passive voice, which obscures who perceives these risks. An active voice construction would clarify the actor.",
+            "category": "editorial",
+            "suggestedDirection": "Change 'were seen as key risks' to 'are considered key risks by analysts' or similar active construction."
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Correct 'Shopify n s target focus' to 'Shopify's target focus'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1689,
+        "endChar": 1861
+      }
+    },
+    {
+      "id": "15",
+      "text": "In 2010, $132mm in\nGMV would have put Shopify in the top 50 online retailers.",
+      "qcCard": {
+        "index": 15,
+        "statement": "In 2010, $132mm in\nGMV would have put Shopify in the top 50 online retailers.",
+        "charStart": 1862,
+        "charEnd": 1939,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "In 2010, $132mm in GMV would have put Shopify in the top 50 online retailers.",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by explicitly stating that in 2010, $132 million in GMV would have placed Shopify in the top 50 online retailers.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "In 2010, $132mm in GMV would have put Shopify in the top 50 online retailers.",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by explicitly stating that in 2010, $132 million in GMV would have placed Shopify in the top 50 online retailers.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1862,
+          "endChar": 1939
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "In 2010, $132mm in\nGMV would have put Shopify in the top 50 online retailers.",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "15",
+            "passage": "In 2010, $132mm in GMV would have put Shopify in the top 50 online retailers.",
+            "start": 1862,
+            "end": 1939
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "monetary_figure",
+            "date_period_claim"
+          ]
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "currency_format",
+            "note": "The statement uses '$132mm' — currency should be written as USD [number] million.",
+            "category": "style_guide",
+            "suggestedDirection": "Replace '$132mm' with 'USD 132 million'.",
+            "rule": "currency_format",
+            "span": [
+              {
+                "startChar": 9,
+                "endChar": 15,
+                "source": "note_quote"
+              }
+            ]
+          },
+          {
+            "concernCode": "thousand_separator",
+            "note": "The statement uses a comma as a thousands separator instead of a high comma.",
+            "category": "style_guide",
+            "suggestedDirection": "Replace '5,500' with '5'500'.",
+            "rule": "thousand_separator"
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Replace '$132mm' with 'USD 132 million'.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1862,
+        "endChar": 1939
+      }
+    },
+    {
+      "id": "16",
+      "text": "That n s how small the online retail\nmarket was at that time!",
+      "qcCard": {
+        "index": 16,
+        "statement": "That n s how small the online retail\nmarket was at that time!",
+        "charStart": 1940,
+        "charEnd": 2001,
+        "supportState": "supported",
+        "hasConflict": false,
+        "primaryExcerpt": "In 2010, $132mm in GMV would have put Shopify in the top 50 online retailers. That n s how small the online retail market was at that time!",
+        "conflictExcerpt": null,
+        "evidenceSummary": "The source confirms the statement by indicating that in 2010, $132 million in GMV would have placed Shopify among the top 50 online retailers, highlighting the small size of the online retail market at that time.",
+        "supportRefIds": [
+          0
+        ],
+        "supportRefTitles": [
+          "shopify-messy-extracted.txt"
+        ],
+        "primaryRefId": null,
+        "primaryRefTitle": "shopify-messy-extracted.txt",
+        "primarySourceOrigin": null,
+        "primaryExcerptText": "In 2010, $132mm in GMV would have put Shopify in the top 50 online retailers. That n s how small the online retail market was at that time!",
+        "primaryExcerptStart": null,
+        "primaryExcerptEnd": null,
+        "secondarySupportCount": 0,
+        "supportingReferenceIds": [],
+        "supportingReferenceTitles": [],
+        "hasRealExcerpt": true,
+        "conflictValues": null,
+        "reasoningHeadline": null,
+        "reasoningParagraph": "The source confirms the statement by indicating that in 2010, $132 million in GMV would have placed Shopify among the top 50 online retailers, highlighting the small size of the online retail market at that time.",
+        "displayMode": "supported",
+        "draftSpan": {
+          "startChar": 1940,
+          "endChar": 2001
+        },
+        "evidenceTrace": [],
+        "selectedExcerptReason": null,
+        "excerptMatchType": "none",
+        "suggestedImprovement": null,
+        "whyItMatters": null,
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "evidenceConcernLevel": "none",
+        "sentenceSubclaimCount": null,
+        "qcClaimId": null,
+        "originalClaimText": "That n s how small the online retail\nmarket was at that time!",
+        "citationHovers": [],
+        "primaryExcerptTrusted": false,
+        "conflictEvidence": null,
+        "pipelineVersion": "v4",
+        "supportSpans": [
+          {
+            "sourceRefId": 0,
+            "classification": "confirmed",
+            "statementId": "16",
+            "passage": "In 2010, $132mm in GMV would have put Shopify in the top 50 online retailers. That n s how small the online retail market was at that time!",
+            "start": 1862,
+            "end": 2001
+          }
+        ],
+        "unsupportedSpans": [],
+        "stage2SourceFingerprints": [
+          {
+            "sourceIndex": 0,
+            "sourceLabel": "shopify-messy-extracted.txt",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_087f6ae320"
+          }
+        ],
+        "materiality": {
+          "level": "minor",
+          "features": []
+        },
+        "sourceRecencyConcerns": [],
+        "framingFidelityConcerns": [],
+        "supersededSourceNotes": [],
+        "editorialVerdict": "concern",
+        "editorialConcerns": [
+          {
+            "concernCode": "structural_integrity",
+            "note": "The phrase 'That n s how small the online retail market was at that time!' contains a typographical error ('n s') that disrupts the sentence structure.",
+            "category": "editorial",
+            "suggestedDirection": "Correct 'n s' to 'is' to fix the typographical error."
+          },
+          {
+            "concernCode": "narrative_coherence",
+            "note": "The statement 'That n s how small the online retail market was at that time!' is informal and does not logically connect with the preceding sentence. It disrupts the professional tone expected in reporting commentary.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'That n s how small the online retail market was at that time!' and rewrite the conclusion to maintain a professional tone."
+          },
+          {
+            "concernCode": "register_mismatch",
+            "note": "The phrase 'That n s how small the online retail market was at that time!' uses an informal tone that is not appropriate for reporting commentary.",
+            "category": "editorial",
+            "suggestedDirection": "Delete 'That n s how small the online retail market was at that time!' and replace it with a more formal conclusion."
+          }
+        ],
+        "editorialNote": null,
+        "editorialSuggestedDirection": "Correct 'n s' to 'is' to fix the typographical error.",
+        "editorialSuggestedRewrite": null,
+        "complianceVerdict": "clean",
+        "complianceConcerns": [],
+        "complianceNote": "No compliance concerns identified under the listed rules.",
+        "complianceSuggestedDirection": null,
+        "complianceSuggestedRewrite": null,
+        "suppressInQcWorkbench": false,
+        "decomposed": false,
+        "claimUpgrade": false,
+        "claims": []
+      },
+      "draftSpan": {
+        "startChar": 1940,
+        "endChar": 2001
+      }
+    }
+  ],
+  "sources": [
+    {
+      "index": 0,
+      "id": null,
+      "label": "shopify-messy-extracted.txt",
+      "text": "Shopify — Long-form memo\nShopify\nTo: BVP Group\nFrom: Alex Ferrara, Trevor Oelschig\nDate: October 12, 2010\nRe: Shopify\nWe seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider\nof e-commerce software to SMBs. Shopify sells a simple SaaS solution that enables a business to\nquickly setup and run an online retail store. A typical customer signs up using their credit\ncard and is up and running in a few hours with no long-term contract. Shopify targets SMBs and\nat-home capitalists (e.g., eBay and Etsy sellers) who pay an average of $45 per month, with the\ngoal of servicing these customers as they scale to become larger customers with more\nsophisticated needs. Shopify has also managed to sign-up a number of large businesses like\nPixar, Amnesty International and Tesla Motors (selling Tesla accessories, not the cars) at\nhigher price points.\nShopify was my first lead investment as a partner, so I was incredibly nervous. It took me\nthree roundtrip flights to Ottawa before I finally decided to present Tobi a term sheet. Why?\nVery few VCs believed that software businesses targeting SMBs were good investments, let alone\nones that could deliver venture returns.\nShopify has grown at an impressive rate. With limited marketing, customers have increased from\n5,500 a year ago to nearly 10,000 today (+81% Y/Y). Over the same period, monthly recurring\nrevenue has grown from $164K to $438K (+151% Y/Y). Across all Shopify-powered stores, the\nannualized gross merchandise value transacted is roughly $132mm. The business is profitable and\nlargely bootstrapped, having raised just $1mm to date and having $1.3m of cash on its balance\nsheet with no debt.\nShopify n s target focus on SMBs and the potential market size of online retail were seen as key\nrisks, but their organic growth and profitable business was hard to ignore. In 2010, $132mm in\nGMV would have put Shopify in the top 50 online retailers. That n s how small the online retail\nmarket was at that time!",
+      "publicationState": "unknown"
+    }
+  ],
+  "excludedSources": [],
+  "meta": {
+    "pipelineVersion": "v4",
+    "stagesComplete": 7,
+    "traceId": "3a7e6228-ae7e-4bb2-9e59-c71855734e20",
+    "wallMs": 11904,
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    }
+  }
+}
