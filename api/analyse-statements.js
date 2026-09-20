@@ -7,7 +7,7 @@
 
 import { runPipelineV3 } from "../lib/qc/pipeline-v3/qc-pipeline-v3.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
-import { createTraceId, flushObservability, startTrace, updateTraceMetadata } from "../lib/observability.js";
+import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { normalizePublicationState } from "../lib/source-publication-state.mjs";
@@ -23,6 +23,14 @@ import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
 import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
+import {
+  beginRequestBudget,
+  boundHitSnapshot,
+  FUNCTION_MAX_DURATION_MS,
+  lastWaitLog,
+  scheduleSnapshot,
+} from "../lib/qc/request-budget.mjs";
+import { logPreflightRefusal, preflightReview } from "../lib/qc/preflight-guard.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -154,6 +162,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    resetLlmSpend();
     const traceId = createTraceId();
     const body = typeof req?.body === "string" ? JSON.parse(req.body) : (req?.body || {});
     const draftText = typeof body?.draftText === "string" ? body.draftText : "";
@@ -250,6 +259,43 @@ export default async function handler(req, res) {
       updateTraceMetadata(traceId, { pipelineRoute: "v4" });
     }
 
+    const requestStartedAt = Date.now();
+    beginRequestBudget({
+      startedAt: requestStartedAt,
+      maxDurationMs: FUNCTION_MAX_DURATION_MS,
+      model: STAGE_MODELS["editorial-review"]?.model,
+    });
+
+    if (useV4) {
+      const gate = preflightReview({
+        draftText,
+        sources: v3Sources,
+        editorialSystemTokens: 9088,
+        complianceSystemTokens: 3000,
+        stage2SystemTokens: 4000,
+        stage5SystemTokens: 1600,
+      });
+      if (gate.refuse) {
+        logPreflightRefusal(gate);
+        return res.status(200).json({
+          ok: false,
+          error: gate.message,
+          statements: [],
+          references: [],
+          meta: {
+            pipelineVersion: "v4",
+            preflight: {
+              wordCount: gate.estimate.wordCount,
+              statementCount: gate.estimate.statementCount,
+              totalTokens: gate.estimate.totalTokens,
+              tpmFloorMs: gate.estimate.tpmFloorMs,
+              capMs: gate.capMs,
+            },
+          },
+        });
+      }
+    }
+
     if (outputType) {
       updateTraceMetadata(traceId, { outputType });
     } else {
@@ -313,6 +359,7 @@ export default async function handler(req, res) {
     });
 
     const effectiveReviewOptions = pipelineResult?.reviewOptions ?? reviewOptions;
+    const rateLimitBoundHits = pipelineResult?.rateLimitBoundHits ?? boundHitSnapshot();
     for (const stmt of statements) {
       if (stmt?.qcCard && typeof stmt.qcCard === "object") {
         stmt.qcCard.summaryClass = classifyCard(stmt.qcCard, effectiveReviewOptions);
@@ -321,6 +368,11 @@ export default async function handler(req, res) {
     const summaryCards = statements
       .map((stmt) => stmt?.qcCard)
       .filter((card) => card && typeof card === "object");
+    const reviewSummary = summariseReview(summaryCards, effectiveReviewOptions);
+    if (reviewSummary && typeof reviewSummary === "object") {
+      const fromCards = reviewSummary.rateLimitBoundHits;
+      reviewSummary.rateLimitBoundHits = fromCards && fromCards.statements > 0 ? fromCards : rateLimitBoundHits;
+    }
 
     const ingestionMeta = ingestionMetaFromPrep(prep);
     const sourceIngestionWarning = ingestionMeta.sourceIngestionWarning;
@@ -338,7 +390,11 @@ export default async function handler(req, res) {
         stagesComplete: pipelineResult?._stagesComplete ?? null,
         traceId,
         reviewOptions: effectiveReviewOptions,
-        reviewSummary: summariseReview(summaryCards, effectiveReviewOptions),
+        reviewSummary,
+        rateLimitBoundHits,
+        rateLimitLastWait: lastWaitLog(),
+        stageSchedules: scheduleSnapshot(),
+        llmSpend: getLlmSpend(),
         modelConfig,
         ...(typeof sourceIngestionWarning === "string" ? { sourceIngestionWarning } : {}),
         ...(totalTextLowWarning === true ? { totalTextLowWarning: true } : {}),

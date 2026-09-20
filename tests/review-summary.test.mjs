@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, test, vi } from "vitest";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
+import { summaryBulletsFromReview } from "../lib/qc/summary-bullets.mjs";
 import * as observability from "../lib/observability.js";
 import handler from "../api/synthesize-review.js";
 
@@ -75,5 +76,31 @@ describe("synthesize-review refuses a missing or unknown label", () => {
     await handler(postReq({ qcSummary: { readiness: "Needs targeted revision" } }), res);
     assert.equal(llmSpy.mock.calls.length, 0);
     assert.deepEqual(res.body, { ok: false, narrative: "" });
+  });
+});
+
+describe("B278 bound-hit disclosure", () => {
+  test("a rate_limit_window miss is notChecked with a why in the bullet", () => {
+    const summary = summariseReview(
+      [
+        {
+          editorialVerdict: "not_reviewed",
+          editorialNotReviewedReason: "rate_limit_window",
+          complianceVerdict: "not_reviewed",
+          complianceNotReviewedReason: "rate_limit_window",
+          displayVerdict: "supported_full",
+          suppressInQcWorkbench: false,
+        },
+      ],
+      { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true }
+    );
+    assert.equal(summary.notChecked, 1);
+    assert.equal(summary.rateLimitBoundHits.statements, 1);
+    assert.notEqual(summary.readiness, "Ready");
+    const bullets = summaryBulletsFromReview(summary);
+    assert.equal(
+      bullets.some((b) => b.includes("ran out of time waiting for capacity")),
+      true
+    );
   });
 });

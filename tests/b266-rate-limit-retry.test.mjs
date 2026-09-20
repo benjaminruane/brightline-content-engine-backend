@@ -1,17 +1,20 @@
 /**
- * B266: 429 retries use the server delay plus jitter, with a cap and a bound.
- * Spec named this file b264; B264 is already the wrong-excerpt filing, so this is B266.
+ * B266 was the 4-attempt / 2s cap. B278 removed both. This file now asserts
+ * the old constants are gone and the wait path is unbounded until the bound.
  */
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 import {
-  RATE_LIMIT_MAX_ATTEMPTS,
-  RATE_LIMIT_MAX_DELAY_MS,
   isRateLimitError,
   parseRetryAfterMs,
-  rateLimitDelayMs,
   withRateLimitRetry,
 } from "../lib/observability.js";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const SRC = readFileSync(path.join(ROOT, "lib/observability.js"), "utf8");
 
 function rateLimitError(message, headers = {}) {
   const err = new Error(message);
@@ -20,10 +23,10 @@ function rateLimitError(message, headers = {}) {
   return err;
 }
 
-describe("B266 retry on 429", () => {
-  test("the bound and cap are finite", () => {
-    assert.equal(RATE_LIMIT_MAX_ATTEMPTS, 4);
-    assert.equal(RATE_LIMIT_MAX_DELAY_MS, 2000);
+describe("B266 retry on 429 (superseded by B278)", () => {
+  test("the old attempt and delay caps are gone", () => {
+    assert.equal(SRC.includes("RATE_LIMIT_MAX_ATTEMPTS"), false);
+    assert.equal(SRC.includes("RATE_LIMIT_MAX_DELAY_MS"), false);
   });
 
   test("a 429 with try-again-in-42ms is a rate limit whose delay is 42ms", () => {
@@ -39,16 +42,7 @@ describe("B266 retry on 429", () => {
     assert.equal(parseRetryAfterMs(err), 80);
   });
 
-  test("delay is server delay plus jitter and never above the cap", () => {
-    const err = rateLimitError("Please try again in 42ms.");
-    const delay = rateLimitDelayMs(err, () => 1);
-    assert.equal(delay >= 42, true);
-    assert.equal(delay <= RATE_LIMIT_MAX_DELAY_MS, true);
-    const huge = rateLimitError("Please try again in 99999ms.");
-    assert.equal(rateLimitDelayMs(huge, () => 0) <= RATE_LIMIT_MAX_DELAY_MS, true);
-  });
-
-  test("a 429 is retried then succeeds, and a persistent 429 stops at the bound", async () => {
+  test("a 429 is retried then succeeds", async () => {
     const sleeps = [];
     const sleep = async (ms) => {
       sleeps.push(ms);
@@ -60,25 +54,11 @@ describe("B266 retry on 429", () => {
         if (hits < 3) throw rateLimitError("Please try again in 42ms.");
         return "ok";
       },
-      { sleep, random: () => 0 }
+      { sleep }
     );
     assert.equal(out, "ok");
     assert.equal(hits, 3);
-    assert.deepEqual(sleeps, [42, 42]);
-
-    let persistentHits = 0;
-    await assert.rejects(
-      () =>
-        withRateLimitRetry(
-          async () => {
-            persistentHits += 1;
-            throw rateLimitError("Please try again in 42ms.");
-          },
-          { sleep: async () => {}, random: () => 0 }
-        ),
-      (err) => err.status === 429
-    );
-    assert.equal(persistentHits, RATE_LIMIT_MAX_ATTEMPTS);
+    assert.equal(sleeps.length, 2);
   });
 
   test("a non-429 is not retried", async () => {

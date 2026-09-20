@@ -23,7 +23,6 @@ import {
 } from "../lib/qc/editorial-compliance-reviewer.mjs";
 import { OUTPUT_TYPE, VISIBILITY, getOutputTypeLabel } from "../lib/output-intent.js";
 import { resolveStyleGuide } from "../lib/qc/style-guide.mjs";
-import { STAGE6_CONCURRENCY } from "../lib/qc/pipeline-v4/index.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PLANTED = path.join(ROOT, "tests/fixtures/planted-document-finding.json");
@@ -51,10 +50,6 @@ describe("B275 document-level editorial review", () => {
     assert.equal(local.includes("materiality"), false);
     assert.equal(local.includes("voice_consistency"), false);
     assert.equal(documentLevelEditorialRules(editorialRules).map((r) => r.id).includes("narrative_coherence"), false);
-  });
-
-  test("D7 production Stage 6 pool stays 4 because this slice did not ship", () => {
-    assert.equal(STAGE6_CONCURRENCY, 4);
   });
 
   test("production Layer C payload still carries FULL DRAFT (B275 did not ship the drop)", () => {

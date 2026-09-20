@@ -1,6 +1,6 @@
 /**
- * B268: Stage 6 pool is 4 so a long memo can finish editorial and compliance.
- * Stage 2 and Stage 5 stay at 24. A miss is still not_reviewed, never clean.
+ * B268 / B277. A thrown Stage 6 call is not_reviewed, never clean.
+ * The pool size is planned at run time (B277); this file pins the miss stamp.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -9,10 +9,6 @@ import { afterEach, beforeEach, describe, test, vi } from "vitest";
 import { fileURLToPath } from "node:url";
 import * as observability from "../lib/observability.js";
 import { runEditorialComplianceReview } from "../lib/qc/editorial-compliance-reviewer.mjs";
-import {
-  STAGE5_CONCURRENCY,
-  STAGE6_CONCURRENCY,
-} from "../lib/qc/pipeline-v4/index.mjs";
 import { STAGE2_CONCURRENCY } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -52,18 +48,15 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("B268 Stage 6 pool is 4", () => {
-  test("Stage 6 is 4; Stage 2 and Stage 5 stay 24", () => {
-    assert.equal(STAGE6_CONCURRENCY, 4);
-    assert.equal(STAGE5_CONCURRENCY, 24);
+describe("B268 Stage 6 miss is not_reviewed", () => {
+  test("Stage 2 stays at 24; Stage 6 is planned, not a constant 4", () => {
     assert.equal(STAGE2_CONCURRENCY, 24);
+    assert.equal(PIPELINE_SRC.includes("export const STAGE6_CONCURRENCY"), false);
+    assert.equal(PIPELINE_SRC.includes("planAndLogStage"), true);
   });
 
-  test("the v4 pipeline still pools Stage 6 with mapPool", () => {
-    assert.equal(/stage2WithEditorial = await mapPool/.test(PIPELINE_SRC), true);
-    assert.equal(PIPELINE_SRC.includes("STAGE6_CONCURRENCY"), true);
-    assert.equal(PIPELINE_SRC.includes("export const STAGE6_CONCURRENCY = 4;"), true);
-    assert.equal(PIPELINE_SRC.includes("export const STAGE5_CONCURRENCY = 24;"), true);
+  test("the v4 pipeline still pools Stage 6", () => {
+    assert.equal(/stage2WithEditorial = await mapPoolPaced/.test(PIPELINE_SRC), true);
   });
 
   test("a thrown Stage 6 call is not_reviewed, never clean", async () => {

@@ -45,7 +45,7 @@ Full contract: `docs/ARCHITECTURE.md`. Do not cite it for sprint status.
 - One sentence, one card. Claim spans never add cards. They may upgrade a partial to confirmed. They may never downgrade, never flip `hasConflict`, never override a sentence-level conflict.
 - Stage 3 is conflict-wins, in code. Commentary cannot change a verdict.
 - Stage 6 evaluates the current statement. The editorial user payload still pastes the full marked draft as context. Those are different facts. Do not cite "current statement only" as a cost claim.
-- Stage 5 is pooled at 24. Stage 6 is pooled at 4, so peak in-flight is 8. Function cap is 300 seconds.
+- Stage 5 and Stage 6 concurrency is planned at run time from the actual statements, estimated tokens per call, and live remaining TPM. Stage 2 stays at 24. Function cap is 300 seconds. A 429 waits until it fits, inside that cap minus remaining work. Hitting the bound is `not_reviewed`, never clean.
 - A Stage 5 miss is empty prose plus `commentaryNotReviewed: true`, not a canned finding (**B254**).
 - When editorial or compliance is off, the payload stamps `clean` and the screen says `Not reviewed` (**B247**). Believe the screen, not the payload field.
 - `QC_LLM_CACHE` (default ON, memory only in production) covers Stages 1, 1b, and 2. Not 5. Not 6.

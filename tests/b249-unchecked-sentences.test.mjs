@@ -12,7 +12,6 @@ import {
   coverageIsWorthNaming,
   DROPPED_NOT_A_CLAIM_REASON,
 } from "../lib/qc/draft-coverage.mjs";
-import { STAGE6_CONCURRENCY } from "../lib/qc/pipeline-v4/index.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SHOPIFY = path.join(ROOT, "tests/fixtures/b247/shopify-messy-full.json");
@@ -22,11 +21,7 @@ function loadShopify() {
 }
 
 describe("B249 unchecked sentences (recorded Shopify memo)", () => {
-  test("D11 Stage 6 pool is still 4", () => {
-    assert.equal(STAGE6_CONCURRENCY, 4);
-  });
-
-  test("C2 every card carries positions that slice the draft", () => {
+  test("C2 coverage still slices the recorded Shopify memo", () => {
     const payload = loadShopify();
     const draft = payload._auditDraft;
     assert.equal(typeof draft, "string");

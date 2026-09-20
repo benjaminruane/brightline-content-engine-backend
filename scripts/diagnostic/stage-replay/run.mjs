@@ -213,8 +213,9 @@ if (succeededOnly) {
 }
 
 const { runEditorialComplianceReview } = await import("../../../lib/qc/editorial-compliance-reviewer.mjs");
-const { STAGE6_CONCURRENCY } = await import("../../../lib/qc/pipeline-v4/index.mjs");
-const { mapPool } = await import("../../../lib/qc/map-pool.mjs");
+const { mapPoolPaced } = await import("../../../lib/qc/map-pool.mjs");
+const { planFromLiveBudget, formatScheduleLog } = await import("../../../lib/qc/stage-schedule.mjs");
+const { beginRequestBudget } = await import("../../../lib/qc/request-budget.mjs");
 const {
   attachedByIndex,
   mergeDocumentLevelConcerns,
@@ -236,8 +237,12 @@ if (!hasProviderApiKey("openai")) {
 const n = indexes.length;
 const meanIn = stage === "editorial" ? 14813 : 3345;
 const estList = (n * meanIn * 2.5 + n * 150 * 10) / 1_000_000;
+beginRequestBudget({ model: "gpt-4o-2024-08-06" });
+const tokensPer = meanIn + 400;
+const plan = planFromLiveBudget({ statementCount: n, tokensPerStatement: tokensPer, stage: "stage-replay" });
+console.log(formatScheduleLog(plan, { stage: "stage-replay", remainingSource: plan.remainingSource }));
 console.log(
-  `stage-replay stage=${stage} statements=${n} pool=${STAGE6_CONCURRENCY} ` +
+  `stage-replay stage=${stage} statements=${n} pool=${plan.concurrency} ` +
     `documentLevel=${documentLevelSplit} estListUsd=${estList.toFixed(2)} (before calling)`
 );
 
@@ -269,7 +274,7 @@ if (stage === "editorial" && documentLevelSplit) {
   });
 }
 
-await mapPool(reviewStatements, STAGE6_CONCURRENCY, async (reviewStatement) => {
+await mapPoolPaced(reviewStatements, plan.concurrency, async (reviewStatement) => {
   const neighbours = neighbourTexts(all, reviewStatement.index);
   await runEditorialComplianceReview([reviewStatement], {
     pipelineRoute: "v4",

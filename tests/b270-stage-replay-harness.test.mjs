@@ -17,14 +17,18 @@ import {
   reconstructDraft,
   selectSubset,
 } from "../scripts/diagnostic/stage-replay/lib.mjs";
-import { STAGE6_CONCURRENCY } from "../lib/qc/pipeline-v4/index.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIXTURE = path.join(ROOT, "tests/fixtures/b247/shopify-messy-full-after.json");
 
 describe("B270 stage-replay harness", () => {
-  test("uses the pipeline Stage 6 pool (B268, still 4; B275 did not ship a new cap)", () => {
-    assert.equal(STAGE6_CONCURRENCY, 4);
+  test("the production pipeline plans Stage 6 instead of pinning pool 4", () => {
+    const src = readFileSync(
+      path.join(ROOT, "lib/qc/pipeline-v4/index.mjs"),
+      "utf8"
+    );
+    assert.equal(src.includes("export const STAGE6_CONCURRENCY"), false);
+    assert.equal(src.includes("planAndLogStage"), true);
   });
 
   test("reconstructs draft and neighbours from the recorded memo", () => {

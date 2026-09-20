@@ -1,0 +1,51 @@
+{
+  "alpIcMemoWords": 168,
+  "shopifyWords": 3558,
+  "messyDraftWords": 3698,
+  "fixtures": [
+    {
+      "id": "run1-150",
+      "targetWords": 150,
+      "draftWordCount": 150,
+      "draftCharCount": 881,
+      "sourceWordCount": 3408,
+      "sourceCharCount": 21128,
+      "draftOrigin": "tests/qc_corpus/Shopify (text).txt words 1-150",
+      "sourceOrigin": "tests/qc_corpus/Shopify (text).txt words 151-end",
+      "notes": "Realistic source prose, not the 83-character B1 stub. Repeatable slices of the committed Shopify extract."
+    },
+    {
+      "id": "run2-500",
+      "targetWords": 500,
+      "draftWordCount": 500,
+      "draftCharCount": 2952,
+      "sourceWordCount": 3058,
+      "sourceCharCount": 19057,
+      "draftOrigin": "tests/qc_corpus/Shopify (text).txt words 1-500",
+      "sourceOrigin": "tests/qc_corpus/Shopify (text).txt words 501-end",
+      "notes": "Realistic source prose, not the 83-character B1 stub. Repeatable slices of the committed Shopify extract."
+    },
+    {
+      "id": "run3-1500",
+      "targetWords": 1500,
+      "draftWordCount": 1500,
+      "draftCharCount": 9133,
+      "sourceWordCount": 2058,
+      "sourceCharCount": 12876,
+      "draftOrigin": "tests/qc_corpus/Shopify (text).txt words 1-1500",
+      "sourceOrigin": "tests/qc_corpus/Shopify (text).txt words 1501-end",
+      "notes": "Realistic source prose, not the 83-character B1 stub. Repeatable slices of the committed Shopify extract."
+    },
+    {
+      "id": "run4-memo",
+      "targetWords": 3698,
+      "draftWordCount": 3698,
+      "draftCharCount": 22163,
+      "sourceWordCount": 3558,
+      "sourceCharCount": 22022,
+      "draftOrigin": "tests/fixtures/b247/shopify-messy-full.json _auditDraft",
+      "sourceOrigin": "tests/qc_corpus/Shopify (text).txt full",
+      "notes": "Realistic source prose, not the 83-character B1 stub. Repeatable slices of the committed Shopify extract."
+    }
+  ]
+}
