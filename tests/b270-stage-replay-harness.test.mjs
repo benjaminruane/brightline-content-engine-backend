@@ -23,7 +23,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIXTURE = path.join(ROOT, "tests/fixtures/b247/shopify-messy-full-after.json");
 
 describe("B270 stage-replay harness", () => {
-  test("uses the pipeline Stage 6 pool (B268 lowered it to 4)", () => {
+  test("uses the pipeline Stage 6 pool (B268, still 4; B275 did not ship a new cap)", () => {
     assert.equal(STAGE6_CONCURRENCY, 4);
   });
 
@@ -114,5 +114,7 @@ describe("B270 stage-replay harness", () => {
     assert.equal(src.includes("stage2-match"), false);
     assert.equal(src.includes("stage5-generate"), false);
     assert.equal(src.includes("runEditorialComplianceReview"), true);
+    assert.equal(src.includes("runDocumentLevelReview"), true);
+    assert.equal(src.includes("document-level"), true);
   });
 });

@@ -1,0 +1,60 @@
+{
+  "id": "planted-document-finding",
+  "purpose": "B275 D4. A document-level problem lives in one known sentence. Quote-locate must attach there and nowhere else. Invented fixture (P16).",
+  "draft": "The memo argues that Shopify should raise a larger round. I am excited to back this company at that valuation. Revenue grew twelve percent in the second quarter. As already noted, Shopify should raise a larger round.",
+  "sentences": [
+    {
+      "index": 0,
+      "text": "The memo argues that Shopify should raise a larger round.",
+      "charStart": 0,
+      "charEnd": 57
+    },
+    {
+      "index": 1,
+      "text": "I am excited to back this company at that valuation.",
+      "charStart": 58,
+      "charEnd": 110
+    },
+    {
+      "index": 2,
+      "text": "Revenue grew twelve percent in the second quarter.",
+      "charStart": 111,
+      "charEnd": 161
+    },
+    {
+      "index": 3,
+      "text": "As already noted, Shopify should raise a larger round.",
+      "charStart": 162,
+      "charEnd": 216
+    }
+  ],
+  "findings": [
+    {
+      "id": "voice-on-sentence-1",
+      "ruleId": "voice_consistency",
+      "quote": "I am excited to back this company at that valuation",
+      "note": "First person appears in a third-person reporting commentary.",
+      "suggestedDirection": "Replace 'I am excited' with 'The firm is prepared'.",
+      "claimedIndex": 2,
+      "correctIndex": 1
+    },
+    {
+      "id": "materiality-on-sentence-3",
+      "ruleId": "materiality",
+      "quote": "As already noted, Shopify should raise a larger round.",
+      "note": "This restates the opening thesis without adding a fact.",
+      "suggestedDirection": "Cut the repeated thesis or add a new fact.",
+      "claimedIndex": 0,
+      "correctIndex": 3
+    },
+    {
+      "id": "unplaceable-quote",
+      "ruleId": "audience_calibration_jargon",
+      "quote": "xyzzy not in the draft at all",
+      "note": "A jargon finding whose quote does not exist.",
+      "suggestedDirection": "Define the term on first use.",
+      "claimedIndex": 2,
+      "correctIndex": null
+    }
+  ]
+}

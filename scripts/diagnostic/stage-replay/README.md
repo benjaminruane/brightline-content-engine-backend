@@ -4,6 +4,10 @@ Replay **one** QC stage from a recorded `analyse-statements` payload. It does no
 
 Built because every earlier A/B paid for splitting, matching, and commentary to test a Stage 6 prompt change. There is no existing generic stage-level harness. `marketing-language-harness.mjs` and `first-person-actor-harness.mjs` call `runEditorialStyleReview` on hand-written sentences, not on a recorded review.
 
+`compare-floor` compares two old runs and two new runs: wobble floor, mean old-versus-new, stable shifts, materiality recovery by index.
+
+`--document-level` runs Layer B (quote-locate) in addition to today's per-sentence call. It is the B275 experiment. That split did not ship. Default replay is today's payload.
+
 ## What a recorded payload must contain
 
 | Need | Where |

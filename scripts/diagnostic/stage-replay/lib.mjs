@@ -223,6 +223,40 @@ export function cacheHitRate(spend) {
   return input > 0 ? cached / input : 0;
 }
 
+export function stableShifts(oldA, oldB, newA, newB) {
+  const maps = [oldA, oldB, newA, newB].map(
+    (run) => new Map((run?.statements || []).map((s) => [s.index, s]))
+  );
+  const indexes = [...new Set(maps.flatMap((m) => [...m.keys()]))].sort((a, b) => a - b);
+  const rows = [];
+  for (const index of indexes) {
+    const [a, b, c, d] = maps.map((m) => m.get(index));
+    if (!a || !b || !c || !d) continue;
+    if (!(a.succeeded && b.succeeded && c.succeeded && d.succeeded)) continue;
+    const oldAgree = codesKey(a.codes) === codesKey(b.codes);
+    const newAgree = codesKey(c.codes) === codesKey(d.codes);
+    if (!oldAgree || !newAgree) continue;
+    if (codesKey(a.codes) === codesKey(c.codes)) continue;
+    rows.push({
+      index,
+      oldCodes: a.codes,
+      newCodes: c.codes,
+    });
+  }
+  return rows;
+}
+
+export function meanCodesDiffer(oldRuns, newRuns) {
+  const diffs = [];
+  for (const oldRun of oldRuns) {
+    for (const newRun of newRuns) {
+      diffs.push(diffRuns(oldRun, newRun).codesDiffer);
+    }
+  }
+  const mean = diffs.length ? diffs.reduce((s, n) => s + n, 0) / diffs.length : 0;
+  return { pairs: diffs, mean };
+}
+
 export function emptyEditorialCard() {
   return {
     suppressInQcWorkbench: false,

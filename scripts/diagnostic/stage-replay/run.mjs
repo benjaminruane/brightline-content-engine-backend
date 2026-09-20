@@ -26,11 +26,13 @@ import {
   honestyAgainstStored,
   listCostFromSpend,
   loadReviewStatements,
+  meanCodesDiffer,
   neighbourTexts,
   reconstructDraft,
   reconstructSources,
   selectSubset,
   signalVerdict,
+  stableShifts,
   editorialSucceeded,
   complianceSucceeded,
 } from "./lib.mjs";
@@ -94,6 +96,53 @@ if (command === "compare") {
   process.exit(0);
 }
 
+if (command === "compare-floor") {
+  const oldA = JSON.parse(readFileSync(args._[1], "utf8"));
+  const oldB = JSON.parse(readFileSync(args._[2], "utf8"));
+  const newA = JSON.parse(readFileSync(args._[3], "utf8"));
+  const newB = JSON.parse(readFileSync(args._[4], "utf8"));
+  const floor = diffRuns(oldA, oldB);
+  const newWobble = diffRuns(newA, newB);
+  const mean = meanCodesDiffer([oldA, oldB], [newA, newB]);
+  const stables = stableShifts(oldA, oldB, newA, newB);
+  const maps = [oldA, oldB, newA, newB].map(
+    (run) => new Map((run.statements || []).map((s) => [s.index, s]))
+  );
+  const materiality = [];
+  const indexes = [...new Set(maps.flatMap((m) => [...m.keys()]))].sort((a, b) => a - b);
+  for (const index of indexes) {
+    const [a, b, c, d] = maps.map((m) => m.get(index));
+    if (!a || !b || !c || !d) continue;
+    if (!(a.succeeded && b.succeeded && c.succeeded && d.succeeded)) continue;
+    const oldHas =
+      (a.codes || []).includes("materiality") && (b.codes || []).includes("materiality");
+    if (!oldHas) continue;
+    const newAHas = (c.codes || []).includes("materiality");
+    const newBHas = (d.codes || []).includes("materiality");
+    const fromDocA = (c.documentLevelCodes || []).includes("materiality");
+    const fromDocB = (d.documentLevelCodes || []).includes("materiality");
+    materiality.push({
+      index,
+      recovered: newAHas && newBHas,
+      fromDocumentLevel: fromDocA && fromDocB,
+      newAHas,
+      newBHas,
+    });
+  }
+  const result = {
+    floorCodesDiffer: floor.codesDiffer,
+    newWobbleCodesDiffer: newWobble.codesDiffer,
+    meanOldVsNew: mean.mean,
+    pairs: mean.pairs,
+    stableShifts: stables,
+    materiality,
+    materialityRecovered: materiality.filter((row) => row.recovered),
+    materialityLost: materiality.filter((row) => !row.recovered),
+  };
+  console.log(JSON.stringify(result, null, 2));
+  process.exit(0);
+}
+
 if (command === "honesty") {
   const fixturePath = args.fixture;
   const replayPath = args.replay;
@@ -147,6 +196,7 @@ const requiredVersion = String(args.requiredVersion || DEFAULT_REQUIRED_VERSION)
 const house = args.house === "" ? null : String(args.house || DEFAULT_HOUSE);
 const subsetN = args.subset != null && args.subset !== true ? Number(args.subset) : null;
 const succeededOnly = args["succeeded-only"] === true;
+const documentLevelSplit = args["document-level"] === true;
 
 let indexes;
 if (subsetN && Number.isFinite(subsetN)) {
@@ -166,6 +216,11 @@ const { runEditorialComplianceReview } = await import("../../../lib/qc/editorial
 const { STAGE6_CONCURRENCY } = await import("../../../lib/qc/pipeline-v4/index.mjs");
 const { mapPool } = await import("../../../lib/qc/map-pool.mjs");
 const {
+  attachedByIndex,
+  mergeDocumentLevelConcerns,
+  runDocumentLevelReview,
+} = await import("../../../lib/qc/document-level-review.mjs");
+const {
   flushObservability,
   getLlmPricingTable,
   getLlmSpend,
@@ -183,7 +238,7 @@ const meanIn = stage === "editorial" ? 14813 : 3345;
 const estList = (n * meanIn * 2.5 + n * 150 * 10) / 1_000_000;
 console.log(
   `stage-replay stage=${stage} statements=${n} pool=${STAGE6_CONCURRENCY} ` +
-    `estListUsd=${estList.toFixed(2)} (before calling)`
+    `documentLevel=${documentLevelSplit} estListUsd=${estList.toFixed(2)} (before calling)`
 );
 
 resetLlmSpend();
@@ -197,6 +252,22 @@ const reviewStatements = indexes.map((index) => {
     qcCard: emptyEditorialCard(),
   };
 });
+
+let documentLevel = null;
+if (stage === "editorial" && documentLevelSplit) {
+  documentLevel = await runDocumentLevelReview({
+    draftText,
+    sentences: all.map((s) => ({
+      index: s.index,
+      text: s.text,
+      charStart: s.qcCard?.charStart,
+      charEnd: s.qcCard?.charEnd,
+    })),
+    outputType,
+    requiredVersion,
+    authoringOrganisation: house,
+  });
+}
 
 await mapPool(reviewStatements, STAGE6_CONCURRENCY, async (reviewStatement) => {
   const neighbours = neighbourTexts(all, reviewStatement.index);
@@ -216,6 +287,13 @@ await mapPool(reviewStatements, STAGE6_CONCURRENCY, async (reviewStatement) => {
   });
 });
 
+if (documentLevel && documentLevel.status === "reviewed") {
+  const byIdx = attachedByIndex(documentLevel.attached);
+  for (const reviewStatement of reviewStatements) {
+    mergeDocumentLevelConcerns(reviewStatement.qcCard, byIdx.get(reviewStatement.index));
+  }
+}
+
 const wallMs = Date.now() - t0;
 const spendRaw = getLlmSpend();
 const pricing = getLlmPricingTable();
@@ -234,11 +312,17 @@ const spend = {
 const statementsOut = reviewStatements.map((s) => {
   const succeeded =
     stage === "compliance" ? complianceSucceeded(s.qcCard) : editorialSucceeded(s.qcCard);
+  const concerns = Array.isArray(s.qcCard?.editorialConcerns) ? s.qcCard.editorialConcerns : [];
   return {
     index: s.index,
     text: s.text,
     verdict: signalVerdict(s.qcCard, stage),
     codes: concernCodes(s.qcCard, stage),
+    documentLevelCodes: concerns
+      .filter((c) => c?.source === "document_level")
+      .map((c) => c.concernCode)
+      .filter(Boolean)
+      .sort(),
     succeeded,
   };
 });
@@ -251,7 +335,22 @@ const result = {
   requiredVersion,
   subset: subsetN,
   succeededOnly,
+  documentLevelSplit,
   indexes,
+  documentLevel: documentLevel
+    ? {
+        status: documentLevel.status,
+        attachedCount: documentLevel.attachedCount,
+        unplacedCount: documentLevel.unplacedCount,
+        cardsWithFindings: documentLevel.cardsWithFindings,
+        unplaced: documentLevel.unplaced,
+        attached: (documentLevel.attached || []).map((row) => ({
+          index: row.index,
+          ruleId: row.concern?.concernCode || null,
+          quote: typeof row.concern?.quote === "string" ? row.concern.quote.slice(0, 80) : "",
+        })),
+      }
+    : null,
   wallMs,
   spend,
   statements: statementsOut,
