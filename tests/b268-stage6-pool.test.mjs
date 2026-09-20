@@ -1,5 +1,5 @@
 /**
- * B268: Stage 6 pool is 8 so a long memo can finish editorial and compliance.
+ * B268: Stage 6 pool is 4 so a long memo can finish editorial and compliance.
  * Stage 2 and Stage 5 stay at 24. A miss is still not_reviewed, never clean.
  */
 import assert from "node:assert/strict";
@@ -52,9 +52,9 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("B268 Stage 6 pool is 8", () => {
-  test("Stage 6 is 8; Stage 2 and Stage 5 stay 24", () => {
-    assert.equal(STAGE6_CONCURRENCY, 8);
+describe("B268 Stage 6 pool is 4", () => {
+  test("Stage 6 is 4; Stage 2 and Stage 5 stay 24", () => {
+    assert.equal(STAGE6_CONCURRENCY, 4);
     assert.equal(STAGE5_CONCURRENCY, 24);
     assert.equal(STAGE2_CONCURRENCY, 24);
   });
@@ -62,7 +62,7 @@ describe("B268 Stage 6 pool is 8", () => {
   test("the v4 pipeline still pools Stage 6 with mapPool", () => {
     assert.equal(/stage2WithEditorial = await mapPool/.test(PIPELINE_SRC), true);
     assert.equal(PIPELINE_SRC.includes("STAGE6_CONCURRENCY"), true);
-    assert.equal(PIPELINE_SRC.includes("export const STAGE6_CONCURRENCY = 8;"), true);
+    assert.equal(PIPELINE_SRC.includes("export const STAGE6_CONCURRENCY = 4;"), true);
     assert.equal(PIPELINE_SRC.includes("export const STAGE5_CONCURRENCY = 24;"), true);
   });
 
