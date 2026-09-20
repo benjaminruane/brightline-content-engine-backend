@@ -40,3 +40,7 @@ Outputs land under gitignored `scripts/diagnostic/runs/`. Each file has per-stat
 ## Honesty
 
 Replay unchanged code against the stored cards whose check succeeded. Exact code match can still fail because editorial concerns wobble at temperature 0 (`docs/ARCHITECTURE.md` L58, `docs/ROADMAP.md` item 9). Report match count, then use old-versus-old as the wobble floor.
+
+## B271 (not shipped)
+
+Dropping `FULL DRAFT` from the v4 editorial user payload was measured on this harness and not shipped. On the 40-statement Shopify subset, old-versus-new moved more than old-versus-old (`materiality` going clean). The 17-statement prefix control did not. Neighbours are not a substitute for document-level rules. Do not retry that deletion without a new instrument.
