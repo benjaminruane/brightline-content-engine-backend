@@ -175,6 +175,7 @@ Parked, Findings log, Standing rules, Closed, and Rejected follow, in that order
 | B266 | **SHIPPED 2026-09-19 `0ffce91`.** `callLLM` retries 429 with the server delay plus jitter. 4 attempts, 2000 ms cap. OpenAI SDK `maxRetries: 0`. Tests `tests/b266-rate-limit-retry.test.mjs`. | this spec | H | RECORD | Belt behind the pool. Stage 5 no longer 429d. Stage 6 still can. |
 | B267 | **SHIPPED 2026-09-19 `6c20b67`.** `EXTRACTION_TIMEOUT_MS` 60_000 to 300_000, tracking the Function cap. Tests `tests/b267-extraction-timeout.test.mjs`. Not exercised by the Shopify proof (text already extracted). | this spec | H | RECORD | Copy of the cap, on purpose. |
 | B268 | **OPEN. Filing only.** Stage 6 still 429s at document scale after the pool and the retry. Comparable run: editorial `not_reviewed` 64/186, compliance 34/186. Langfuse 64 editorial ERROR + 34 compliance ERROR, unpriced. Sample: 429 TPM, Requested about 17288, try again in 77 ms. Four retries cannot buy a new minute. Honest `not_reviewed`, not a fake finding. Stage 5 at the same cap is clean. | async-review-build 2026-09-19 `de18131c-507f-4111-85ec-ffc15be7de8c` | H | LAUNCH | Tighten Stage 6, not async the Review. |
+| B270 | **SHIPPED.** Stage-replay harness: one QC stage from a recorded review payload, no Stage 1/2/5. `scripts/diagnostic/stage-replay/`. Tests `tests/b270-stage-replay-harness.test.mjs`. Does not change the Stage 6 pool. | this spec | H | RECORD | Cheap A/B instrument. |
 
 ---
 
