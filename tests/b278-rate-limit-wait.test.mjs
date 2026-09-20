@@ -23,6 +23,7 @@ import {
   computeWaitMarginMs,
   isRateLimitBoundError,
   recordWaitedMs,
+  runWithFallbackBudget,
   runWithoutRequestBudget,
   setRemainingWorkTokens,
 } from "../lib/qc/request-budget.mjs";
@@ -123,32 +124,32 @@ describe("B285 no-budget fallback and a bound that cannot re-base", () => {
   });
 
   test("without a budget, the bound is the fallback and the log fires once", async () => {
-    await runWithoutRequestBudget(async () => {
-      const lines = [];
-      const orig = console.warn;
-      console.warn = (...args) => {
-        lines.push(args.map(String).join(" "));
-      };
-      try {
+    const lines = [];
+    const orig = console.warn;
+    console.warn = (...args) => {
+      lines.push(args.map(String).join(" "));
+    };
+    try {
+      await runWithFallbackBudget(async () => {
         const frozen = 1_700_000_000_000;
         const first = computeWaitBoundMs(frozen);
         const second = computeWaitBoundMs(frozen);
         assert.equal(first, NO_BUDGET_FALLBACK_BOUND_MS);
         assert.equal(second, NO_BUDGET_FALLBACK_BOUND_MS);
-        const fallbackLines = lines.filter((line) =>
-          line.includes(
-            `[REQUEST_BUDGET] no budget context; falling back to ${NO_BUDGET_FALLBACK_BOUND_MS}ms total wait`
-          )
-        );
-        assert.equal(fallbackLines.length, 1);
-      } finally {
-        console.warn = orig;
-      }
-    });
+      }, 1_700_000_000_000);
+      const fallbackLines = lines.filter((line) =>
+        line.includes(
+          `[REQUEST_BUDGET] no budget context; falling back to ${NO_BUDGET_FALLBACK_BOUND_MS}ms total wait`
+        )
+      );
+      assert.equal(fallbackLines.length, 1);
+    } finally {
+      console.warn = orig;
+    }
   });
 
   test("a second attempt cannot get a later deadline than the first", async () => {
-    await runWithoutRequestBudget(async () => {
+    await runWithFallbackBudget(async () => {
       const frozen = 1_700_000_000_000;
       const first = computeWaitBoundMs(frozen);
       recordWaitedMs(2_000);
@@ -156,7 +157,7 @@ describe("B285 no-budget fallback and a bound that cannot re-base", () => {
       assert.equal(first, NO_BUDGET_FALLBACK_BOUND_MS);
       assert.equal(second, NO_BUDGET_FALLBACK_BOUND_MS - 2_000);
       assert.equal(second < first, true);
-    });
+    }, 1_700_000_000_000);
   });
 
   test("without a budget, a refused loop dies in a few attempts instead of hanging", async () => {

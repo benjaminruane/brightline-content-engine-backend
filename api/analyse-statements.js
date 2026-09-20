@@ -26,6 +26,7 @@ import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
 import {
   beginRequestBudget,
   boundHitSnapshot,
+  capacityWaitSnapshot,
   FUNCTION_MAX_DURATION_MS,
   lastWaitLog,
   scheduleSnapshot,
@@ -392,6 +393,7 @@ export default async function handler(req, res) {
         reviewOptions: effectiveReviewOptions,
         reviewSummary,
         rateLimitBoundHits,
+        capacityWait: capacityWaitSnapshot(),
         rateLimitLastWait: lastWaitLog(),
         stageSchedules: scheduleSnapshot(),
         llmSpend: getLlmSpend(),
@@ -416,6 +418,8 @@ export default async function handler(req, res) {
         fatalStage: "route_exception",
         extractionQuality: "failed",
         extractionQualityReasons: ["route_exception"],
+        rateLimitBoundHits: boundHitSnapshot(),
+        capacityWait: capacityWaitSnapshot(),
       },
     };
     res.status(200).json(safeInternalErrorPayload);

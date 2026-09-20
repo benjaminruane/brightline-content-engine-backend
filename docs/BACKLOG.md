@@ -530,6 +530,7 @@ Rows moved whole from the former open tables. Launch is RECORD. Item / Source / 
 | B287 | **COUNTER ON EVERY REVIEW. SHIPPED 2026-09-20.** Ben's ruling 20 September, superseding B279's ten-second rule. Caption `N of M statements reviewed`. Never reaches M before the result lands. Tests `tests/review-progress-estimate.test.mjs`. | this spec; B279 | H | RECORD | Estimate. |
 | B288 | **CANCEL A RUNNING REVIEW. SHIPPED 2026-09-20.** AbortController on `apiAnalyseStatements`. Restores pre-review draft and sources. Saves nothing. The Function still finishes and is still paid. Tests `tests/b288-b289-cancel-and-dead-buttons.test.mjs`. | this spec | H | RECORD | Control. |
 | B289 | **DEAD BUTTONS GO FLAT. SHIPPED 2026-09-20.** With no proposed changes, bulk accept, bulk reject, discard, and save are disabled. Save label is `Save` when the count is zero. Same frontend test file as B288. | this spec | H | RECORD | Honesty. |
+| B290 | **SAY WHEN THE REVIEW IS WAITING FOR CAPACITY. SHIPPED 2026-09-20.** The 13:40Z hang was `analyse-statements` itself on 429 retries (~280 s), not synthesize-review and not the B285 fallback. `meta.capacityWait` counts prelaunch holds and 429 sleeps. A stalled counter gains a second line after 8 s. After landing, one fact names the wait. `requireStore` no longer `enterWith`s the 6 s fallback. Tests `tests/b290-capacity-wait.test.mjs`. Report `scripts/diagnostic/delivery-check/b290-what-hung.md`. | this spec; B285 | H | RECORD | Honesty. Time is an input. |
 
 ---
 
