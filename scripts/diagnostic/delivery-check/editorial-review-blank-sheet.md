@@ -263,3 +263,131 @@ No model calls in this pass. A 40-subset two-plus-two would be about USD 6 list.
 | Discounted USD | 0 |
 | Measurement declined | A Layer B plus Layer C A/B on the 40 would be about USD 6 list, over the USD 2 budget. B271 and B273 already priced the two halves. |
 | Ledger row | None. Nothing billed. |
+
+---
+
+## Follow-up: ceiling, clock, progressive delivery
+
+P4 weighed a two-month launch. That criterion is withdrawn here. This section is design merit only.
+
+Every claim is **CONFIRMED** (file and line, or a named URL) or **HYPOTHESIS**. Arithmetic is HYPOTHESIS built from confirmed unit costs, except the 3,700-word today column, which is measured.
+
+### Scoreboard
+
+| | |
+|--|--|
+| Is the blank-sheet design better than today's, on merit? | **Yes.** Today is O(N squared) in Stage 6 tokens. This design is O(N). The 3,700-word memo hid that. |
+| Does it hit 10 s useful / 60 s done on that memo? | **No.** Stage 1 alone was 35.2 s. Whole-review TPM floor on this design is still about 101 s. |
+| Can a reviewer see evidence cards while style is running? | **Not under this design as written, and not under today.** Both wait for one `POST` to finish. |
+| First shippable slice | Layer B plus drop `FULL DRAFT` from the per-sentence craft call, with quote-locate. Prove it on the 40 against the 13/40 floor. |
+
+---
+
+### 1. The ceiling
+
+Today every editorial call carries the whole draft, so Stage 6 editorial tokens are `N * (local + draft)`. `N` and `draft` both grow with the document. That is quadratic. CONFIRMED B268: the shipped design "Stops working at about twice this memo" when sentence count and `FULL DRAFT` both double. CONFIRMED `docs/BACKLOG.md` B268.
+
+This design pays the draft once (Layer B) and pays a local call per sentence (Layer C). Stage 6 editorial tokens are `N * local + draft`. Linear in N, plus one copy of the draft.
+
+Unit costs, all CONFIRMED at the 3,698-word / 186-statement memo (`shopify-messy-full.md` L5, B268):
+
+- Local editorial call without `FULL DRAFT`: mean **10,039** input. B271 (592,509 to 401,572 on 40).
+- Draft adder on today's call: **4,774** input. Same subtraction.
+- Compliance per sentence, no draft: mean **3,325** input. `review-cost-proposal.md` L46 (505,449 / 152).
+- Other stages (Stage 1, 2, 5, small): about **0.867 M** input. L45-53.
+- OpenAI TPM on this org: **2,000,000 / min**. `async-review-proposal.md` L101.
+- Function cap: **300 s**. `vercel.json` `api/*.js` `maxDuration`.
+- List rate: USD 2.50 / 1e6 input. `lib/observability.js` L49.
+
+Scaling assumption, HYPOTHESIS: average sentence length holds, so N and draft length both scale with word count; Stage 2/5 scale with N; the B1 stub source does not grow. A same-length source would add Stage 2 tokens on top of every column. CONFIRMED that this memo's source was 83 characters (`shopify-messy-full.md` L9), so the table is optimistic on Stage 2.
+
+| | 3,700 words / 186 statements | 7,400 words / 372 statements | 15,000 words / 754 statements |
+|--|--:|--:|--:|
+| Today Stage 6 input | 3.37 M | 8.53 M | 24.7 M |
+| Today Stage 6 TPM floor | **101 s** | **256 s** | **740 s** |
+| Today all-LLM TPM floor | **127 s** | **308 s** | **846 s** |
+| Today wall | **123 s measured** (B268) | HYPOTHESIS ~300 s, then the cap | HYPOTHESIS ~14 min |
+| Today list USD | **11.19 measured** | HYPOTHESIS ~27 | HYPOTHESIS ~73 |
+| Today completes inside 300 s? | **Yes.** Measured. | **No.** All-LLM TPM 308 s. Matches B268's "about twice". | **No.** |
+| This design Stage 6 input | 2.49 M | 4.98 M | 10.1 M |
+| This design Stage 6 TPM floor | **75 s** | **150 s** | **303 s** |
+| This design all-LLM TPM floor | **101 s** | **202 s** | **409 s** |
+| This design wall | HYPOTHESIS ~100 s | HYPOTHESIS ~200 s | HYPOTHESIS ~7 min |
+| This design list USD | HYPOTHESIS ~8.9 | HYPOTHESIS ~18 | HYPOTHESIS ~36 |
+| This design completes inside 300 s? | **Yes.** | **Yes.** | **No.** |
+
+Where today stops: just under **7,400 words / ~370 statements**, on this host and this TPM, with a short source. CONFIRMED as B268's hypothesis; the arithmetic above is the same shape (308 s of tokens, cap 300 s).
+
+Where this design stops: about **11,000 words / ~550 statements** on the same host and TPM (all-LLM TPM floor hits 300 s). HYPOTHESIS. Soft: Stage 1 is one completion whose wall was 35.2 s at 3,700 words (`shopify-messy-full.md` L43). At 11,000 words that completion emits three times the sentence list. Its wall will grow. The 11,000-word stop may be earlier if Stage 1, not Stage 6, is then the cliff.
+
+A worker does not move these stops. TPM is an org budget, not a Function budget. CONFIRMED `async-review-proposal.md` L121. Splitting Stage 6 across two minutes would finish a 15,000-word memo on this design and would miss the clock in section 2.
+
+The 3,700-word comparison in P2 (about USD 2.2 list, 26 s of Stage 6 TPM) is real and small. The 7,400-word comparison is the one that matters: today likely returns `not_reviewed` or a 504; this design likely returns a finished review in about 200 s.
+
+---
+
+### 2. The clock
+
+Target, at 186 statements: something useful on screen in about **10 s**, everything finished in about **60 s**. Today the same memo is a blank wait for **123 s**. CONFIRMED B268.
+
+**This design does not hit either number.**
+
+Everything finished in 60 s: all tokens in a 60 s review count toward one TPM window. Cap about **2.0 M tokens**. CONFIRMED the 429 text, `async-review-proposal.md` L101. This design's whole-review input is about **3.36 M**. Floor **101 s**. Raising the Stage 6 pool does not cut tokens. Cached tokens still count. CONFIRMED OpenAI prompt-caching FAQ.
+
+Something useful in 10 s: Stage 1 on this memo was **35.2 s** before Stage 2 started. CONFIRMED `shopify-messy-full.md` L43. Stage 2 was about **10 s**. CONFIRMED L44. Evidence verdicts exist only after Stage 3. CONFIRMED `docs/ARCHITECTURE.md` L24. This design does not touch Stage 1 or Stage 2. Evidence is not ready at 10 s, internally or on screen.
+
+What would hit the target, and what it costs:
+
+1. **Stage 1 has to get faster**, or the screen has to show a deterministic split before the LLM split returns. Otherwise 10 s useful is impossible on this memo. Cost: B248 / B249 (dropped non-claim text, uncovered draft bytes). A new split is a findings risk of its own, not an editorial-payload A/B. Not priced here.
+
+2. **The 9,088-token system prompt cannot be sent 186 times** if 60 s done is required. That prefix is 1.69 M input by itself. CONFIRMED `review-cost-proposal.md` L24. Layer C as written still sends it once per sentence. The move that cuts it, without a proprietary handle, is **batching sentences behind quote-locate**: B sentences share one prefix. HYPOTHESIS at a batch of 8: Stage 6 craft plus compliance fall on the order of 0.5 M, whole-review input on the order of 1.4 M, TPM floor on the order of 40 s. Soft: batch size, compliance system size, output length. **Constraint 4's observation is why this was not the P1 default.** It is also the only portable way to make the prefix cheap. Findings cost: the wobble floor, plus a planted B99 fixture that must not attach to the wrong sentence.
+
+3. Even with (2), **35 s of Stage 1 plus 10 s of Stage 2 is already 45 s** before style starts. 60 s done still fails unless (1) lands. Style-side work cannot recover a 45 s evidence block.
+
+A higher OpenAI TPM would move the 60 s line and would violate the spirit of constraint 7 if the product required it. A client org may have a different ceiling. Do not design as if 2.0 M is a law of nature. Do not design as if it is 10.0 M either. CONFIRMED only for this org, this snapshot.
+
+---
+
+### 3. Progressive delivery
+
+Evidence is settled before style runs. CONFIRMED `docs/ARCHITECTURE.md` L24: Stage 1, 1b, 2, 3, then Stage 6, then Stage 5, then 7. Stage 3 is deterministic aggregation. CONFIRMED L18.
+
+Under this design as written: **no**. The reviewer cannot see evidence cards while style is running. The handler returns one JSON body. CONFIRMED `api/analyse-statements.js` L324. The browser waits for that body. CONFIRMED frontend `src/utils/api.js` L206-218. There is no stream and no job poll on this path. CONFIRMED `async-review-proposal.md` L159-161 (v1: the POST returns; no websocket).
+
+Today is the same. The ordering inside the pipeline does not reach the screen.
+
+What it would take:
+
+The backend would have to emit an evidence-only card set at the end of Stage 3, then patch editorial, compliance, and commentary as they finish. The card shape already has a hole for "style not done": `editorialVerdict: "not_reviewed"` is honest, and the screen already knows `Not reviewed` when a check did not run (B247, B254). Do not stamp `clean`. Constraint 2.
+
+Three ways to get that onto the screen. All of them mean **results leave the server before the review is finished.** That is the choice. There is no fourth way in which the client paints evidence while the only copy of those cards is still inside one unreturned `POST`.
+
+| Way | What leaves, when | Request still open? | Portability |
+|-----|-------------------|---------------------|-------------|
+| Two POSTs (evidence, then style) | Evidence JSON on the first response. Style is a second request. | First request completes. Review does not. | Ordinary HTTP. Fine. |
+| One POST, chunked / SSE | Evidence events on the wire before the last event. | Yes, until style finishes. | Host-specific. Vercel serverless streaming is not the client-container shape. |
+| 202 plus poll (job row) | Evidence written to a store, then read by GET, while the worker still runs style. | The kickoff request completes early. | Portable. This is v2 in `async-review-proposal.md` L151-161. |
+
+Constraint 5 still holds: the backend authors the partial cards. The frontend does not re-derive a verdict. A partial board is a backend contract with `not_reviewed` on the signals that have not run, never a client-side "assume clean".
+
+If Ben wants 10 s useful, this choice is required **and** Stage 1 still has to get under 10 s, or the first useful thing is not an evidence card. Progressive delivery without a faster Stage 1 would paint evidence at about 45 s on this memo, then fill style after. That kills the blank wait. It does not hit 10 s.
+
+---
+
+### Re-answer, on merit alone
+
+**Yes. The design is better than today's.**
+
+Today's Stage 6 grows with N times the draft. That is why it dies at about twice this memo. This design pays the draft once. At 7,400 words that is the difference between a finished review and a cap miss. At 15,000 words both miss a 300 s Function, but this one is about half the tokens and half the bill, and it can finish if the work is allowed to span more than one TPM minute. P2's "USD 2.2 on the tested memo" was the wrong headline for that reason.
+
+It is not a complete answer to the clock. Linear per-sentence calls still send a 9,088-token prefix 186 times, and Stage 1 is already 35 s. Hitting 10 / 60 needs a faster Stage 1, quote-bound batching, and a progressive evidence channel. Those are additional decisions. They do not make today's quadratic Stage 6 a better Stage 6.
+
+**First shippable slice.** Layer B (document-level rules, whole draft, quote-locate onto a sentence) plus Layer C without `FULL DRAFT`. One stable system prompt for B, one for C. Compliance unchanged. No batching yet. No streaming yet.
+
+What it proves: the document-level findings B271 lost can be recovered without pasting the draft onto every sentence. Local craft holds. Quote-locate does not attach to the wrong sentence.
+
+How it is measured: `scripts/diagnostic/stage-replay/` (B270), Shopify 40-subset, two old, two new, against old-versus-old **13/40**. Same 17-card control. Planted B99 fixture: a first-person problem in sentence i-1 must not land on i.
+
+Kill: mean old-versus-new codesDiffer greater than the floor; `materiality` stables of the B271 shape not recovered as Layer B findings on those indexes; the 17-card control moves past its own floor; the planted case attaches to the wrong sentence.
+
+If that slice lives, batching is the next slice (clock), and progressive evidence is a separate architecture slice (blank wait), not a Stage 6 payload change.
