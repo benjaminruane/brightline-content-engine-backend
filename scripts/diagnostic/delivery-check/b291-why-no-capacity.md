@@ -169,7 +169,25 @@ B290 capacity hint is suppressed once overtime, so a hung estimate does not also
 
 ## TOTAL COST OF THIS SPEC IN USD
 
-Part 1 probes: two 1-token chat completions, both 429 `credit_balance_exhausted`, **USD 0.00 billed**. Unpriced in the sense of no usage object; they did not consume tokens.
+**0.00**. Two Part 1 1-token probes, both 429, not billed. One production Review POST after the change, 429 in 2 s, not billed. Unpriced calls: 3, all `gpt-4o-2024-08-06` refusals with no usage object.
 
-Production Review after the change: recorded below.
+---
+
+## Production Review after the change
+
+POST `https://brightline-content-engine-backend.vercel.app/api/analyse-statements` with a one-sentence draft and a matching one-sentence source, `pipelineRoute: v4`. Wall **2064 ms**. HTTP 200, `ok: false`, `error: The review did not run.`, `meta.reviewDidNotRun: true`. Zero cards. `llmSpend` null.
+
+`meta.providerRefusal` quoted:
+
+```
+status 429
+code credit_balance_exhausted
+type insufficient_quota
+message 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+headers {}
+missingHeaders x-ratelimit-limit-requests, x-ratelimit-remaining-requests, x-ratelimit-reset-requests, x-ratelimit-limit-tokens, x-ratelimit-remaining-tokens, x-ratelimit-reset-tokens, retry-after, retry-after-ms
+```
+
+A normal completed review **could not be confirmed**. The account has no credits. The same POST on the previous build waited until abort at 20 s. This build failed in two seconds with the honest copy.
+
 
