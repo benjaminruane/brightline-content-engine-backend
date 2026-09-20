@@ -8,18 +8,22 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 import {
+  RATE_LIMIT_MAX_ATTEMPTS,
   isRateLimitError,
   parseRetryAfterMs,
   rateLimitDelayMs,
   withRateLimitRetry,
 } from "../lib/observability.js";
 import {
+  NO_BUDGET_FALLBACK_BOUND_MS,
   RATE_LIMIT_MIN_WAIT_MS,
   RateLimitBoundError,
   beginRequestBudget,
   computeWaitBoundMs,
   computeWaitMarginMs,
   isRateLimitBoundError,
+  recordWaitedMs,
+  runWithoutRequestBudget,
   setRemainingWorkTokens,
 } from "../lib/qc/request-budget.mjs";
 
@@ -31,13 +35,14 @@ function rateLimitError(message, headers = {}) {
 }
 
 describe("B278 wait until a refused call fits", () => {
-  test("there is no retry count cap and no 2s delay cap", () => {
+  test("the 2s delay cap is gone; attempt ceiling is a backstop only", () => {
     const observabilitySrc = readFileSync(
       path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../lib/observability.js"),
       "utf8"
     );
-    assert.equal(observabilitySrc.includes("RATE_LIMIT_MAX_ATTEMPTS"), false);
     assert.equal(observabilitySrc.includes("RATE_LIMIT_MAX_DELAY_MS"), false);
+    assert.equal(observabilitySrc.includes("RATE_LIMIT_MAX_ATTEMPTS"), true);
+    assert.equal(observabilitySrc.includes("while (true)"), false);
   });
 
   test("a 429 with try-again-in-42ms is a rate limit whose delay is at least one second", () => {
@@ -105,5 +110,72 @@ describe("B278 wait until a refused call fits", () => {
     const bound = computeWaitBoundMs();
     assert.equal(margin, 60_000);
     assert.equal(bound <= 240_000, true);
+  });
+});
+
+describe("B285 no-budget fallback and a bound that cannot re-base", () => {
+  test("NO_BUDGET_FALLBACK_BOUND_MS is 6 seconds, matching the pre-B278 3x2s cap", () => {
+    assert.equal(NO_BUDGET_FALLBACK_BOUND_MS, 6_000);
+  });
+
+  test("attempt ceiling is 1000, above a 1s retry filling a 300s review", () => {
+    assert.equal(RATE_LIMIT_MAX_ATTEMPTS, 1000);
+  });
+
+  test("without a budget, the bound is the fallback and the log fires once", async () => {
+    await runWithoutRequestBudget(async () => {
+      const lines = [];
+      const orig = console.warn;
+      console.warn = (...args) => {
+        lines.push(args.map(String).join(" "));
+      };
+      try {
+        const frozen = 1_700_000_000_000;
+        const first = computeWaitBoundMs(frozen);
+        const second = computeWaitBoundMs(frozen);
+        assert.equal(first, NO_BUDGET_FALLBACK_BOUND_MS);
+        assert.equal(second, NO_BUDGET_FALLBACK_BOUND_MS);
+        const fallbackLines = lines.filter((line) =>
+          line.includes(
+            `[REQUEST_BUDGET] no budget context; falling back to ${NO_BUDGET_FALLBACK_BOUND_MS}ms total wait`
+          )
+        );
+        assert.equal(fallbackLines.length, 1);
+      } finally {
+        console.warn = orig;
+      }
+    });
+  });
+
+  test("a second attempt cannot get a later deadline than the first", async () => {
+    await runWithoutRequestBudget(async () => {
+      const frozen = 1_700_000_000_000;
+      const first = computeWaitBoundMs(frozen);
+      recordWaitedMs(2_000);
+      const second = computeWaitBoundMs(frozen);
+      assert.equal(first, NO_BUDGET_FALLBACK_BOUND_MS);
+      assert.equal(second, NO_BUDGET_FALLBACK_BOUND_MS - 2_000);
+      assert.equal(second < first, true);
+    });
+  });
+
+  test("without a budget, a refused loop dies in a few attempts instead of hanging", async () => {
+    await runWithoutRequestBudget(async () => {
+      const frozen = 1_700_000_000_000;
+      let hits = 0;
+      await assert.rejects(
+        () =>
+          withRateLimitRetry(
+            async () => {
+              hits += 1;
+              throw rateLimitError("Please try again in 42ms.");
+            },
+            { sleep: async () => {}, now: () => frozen }
+          ),
+        (err) => isRateLimitBoundError(err)
+      );
+      assert.equal(hits <= 8, true);
+      assert.equal(hits >= 2, true);
+    });
   });
 });

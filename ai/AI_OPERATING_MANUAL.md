@@ -22,6 +22,12 @@ This file is rules and facts. It is not a narrative for Ben.
 
 ---
 
+## Change Surface Discipline
+
+When a spec changes a shared helper, the spec must enumerate every caller of that helper and state what the change does to each one. A helper that is safe for one caller is not automatically safe for the rest. B278 changed the rate-limit retry wrapper having considered exactly one of its twelve callers (`analyse-statements`). The other eleven inherited an unbounded wait that hung the product in production on 20 September 2026. After this, a shared-helper spec that cannot list its callers is not ready to implement.
+
+---
+
 ## How work actually runs
 
 1. Spec is written in the form in `ai/SPEC_TEMPLATE.md`. Part 0 can stop the build.

@@ -28,6 +28,7 @@ import {
   logReviewVocabularyAttempt,
   REVIEW_VOCABULARY_WARNING,
 } from "../lib/pr9-marker-honesty.mjs";
+import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -109,6 +110,11 @@ export default async function handler(req, res) {
   }
 
   const modelConfig = STAGE_MODELS["writing-rewrite"];
+  beginRequestBudget({
+    startedAt: Date.now(),
+    maxDurationMs: FUNCTION_MAX_DURATION_MS,
+    model: modelConfig.model,
+  });
   if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(500).json({
       ok: false,

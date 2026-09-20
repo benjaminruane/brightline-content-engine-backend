@@ -21,6 +21,7 @@ import {
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -124,6 +125,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS.adapt;
+  beginRequestBudget({
+    startedAt: Date.now(),
+    maxDurationMs: FUNCTION_MAX_DURATION_MS,
+    model: modelConfig.model,
+  });
   if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(500).json({ ok: false, error: "Server is missing provider API key for adapt" });
   }

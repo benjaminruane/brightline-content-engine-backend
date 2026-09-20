@@ -2,6 +2,7 @@ import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observabi
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
 import { READINESS_LABELS } from "../lib/qc/review-summary.mjs";
+import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 /** R3.7: appended voice constraints — do not alter role/length/tone preamble above the two trailing paragraphs. */
 const SYNTHESIZE_REVIEW_SYSTEM_PROMPT = [
@@ -24,6 +25,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["synthesize-review"];
+  beginRequestBudget({
+    startedAt: Date.now(),
+    maxDurationMs: FUNCTION_MAX_DURATION_MS,
+    model: modelConfig.model,
+  });
 
   const body = req.body && typeof req.body === "object" ? req.body : {};
   const draftText = typeof body.draftText === "string" ? body.draftText.trim() : "";

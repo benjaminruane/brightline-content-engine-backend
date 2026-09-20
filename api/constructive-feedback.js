@@ -13,6 +13,7 @@ import {
   unnamedFindings,
 } from "../lib/qc/constructive-feedback.mjs";
 import { READINESS_LABELS, summariseReview } from "../lib/qc/review-summary.mjs";
+import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -43,6 +44,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["constructive-feedback"];
+  beginRequestBudget({
+    startedAt: Date.now(),
+    maxDurationMs: FUNCTION_MAX_DURATION_MS,
+    model: modelConfig.model,
+  });
   if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json({ ok: false, feedbackText: "", isReady: false });
   }

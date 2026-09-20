@@ -1,6 +1,7 @@
 // A8.2: Short LLM summary of rewrite instructions (fire-and-forget from client; non-blocking for save).
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -28,6 +29,11 @@ export default async function handler(req, res) {
   }
 
   const modelConfig = STAGE_MODELS["summarize-rewrite-label"];
+  beginRequestBudget({
+    startedAt: Date.now(),
+    maxDurationMs: FUNCTION_MAX_DURATION_MS,
+    model: modelConfig.model,
+  });
   if (!hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json({ ok: true, label: "" });
   }

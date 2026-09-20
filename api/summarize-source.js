@@ -2,6 +2,7 @@ import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-sour
 import { normalizePublicationState } from "../lib/source-publication-state.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 const EMPTY_RESPONSE = { ok: true, description: "", publicationState: "unknown" };
 
@@ -89,6 +90,12 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(200).json(EMPTY_RESPONSE);
+
+  beginRequestBudget({
+    startedAt: Date.now(),
+    maxDurationMs: FUNCTION_MAX_DURATION_MS,
+    model: STAGE_MODELS["summarize-source"].model,
+  });
 
   const source = req.body && typeof req.body === "object" ? req.body : {};
   const mimeType = typeof source?.mimeType === "string" ? source.mimeType.trim() : "";

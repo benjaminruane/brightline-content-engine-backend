@@ -1,6 +1,6 @@
 /**
- * B266 was the 4-attempt / 2s cap. B278 removed both. This file now asserts
- * the old constants are gone and the wait path is unbounded until the bound.
+ * B266 was the 4-attempt / 2s cap. B278 removed both. B285 restored an
+ * attempt ceiling as a backstop only. The 2s delay cap stays gone.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -24,8 +24,7 @@ function rateLimitError(message, headers = {}) {
 }
 
 describe("B266 retry on 429 (superseded by B278)", () => {
-  test("the old attempt and delay caps are gone", () => {
-    assert.equal(SRC.includes("RATE_LIMIT_MAX_ATTEMPTS"), false);
+  test("the old 2s delay cap is gone", () => {
     assert.equal(SRC.includes("RATE_LIMIT_MAX_DELAY_MS"), false);
   });
 

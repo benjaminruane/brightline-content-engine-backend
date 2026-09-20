@@ -1,5 +1,6 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -41,6 +42,11 @@ export default async function handler(req, res) {
   const draftText = typeof body?.draftText === "string" ? body.draftText.trim().slice(0, 1000) : "";
 
   const modelConfig = STAGE_MODELS["summarize-source-usage"];
+  beginRequestBudget({
+    startedAt: Date.now(),
+    maxDurationMs: FUNCTION_MAX_DURATION_MS,
+    model: modelConfig.model,
+  });
   if (!sourceName || !snippet || !draftText || !hasProviderApiKey(modelConfig.provider)) {
     return res.status(200).json({ ok: true, usedFor: "" });
   }
