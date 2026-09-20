@@ -1,0 +1,282 @@
+{
+  "http": 200,
+  "wallMs": 140174,
+  "traceId": "9c073219-5b96-4f1c-8ba2-84dd60289f21",
+  "pipelineVersion": "v4",
+  "cards": 185,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 185,
+    "evidence": {
+      "confirmed": 1,
+      "partial": 0,
+      "conflicting": 17,
+      "notSupported": 96
+    },
+    "editorial": {
+      "concerns": 92,
+      "hardConcerns": 0,
+      "notChecked": 58
+    },
+    "compliance": {
+      "concerns": 0,
+      "hardConcerns": 0,
+      "notChecked": 44
+    },
+    "signalConcerns": 92,
+    "notChecked": 118,
+    "needsAttention": 148,
+    "readiness": "Needs significant work"
+  },
+  "notChecked": 118,
+  "draftCoverage": {
+    "dropped": [
+      {
+        "text": "Shopify — Long-form memo",
+        "charStart": 0,
+        "charEnd": 24,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Shopify",
+        "charStart": 25,
+        "charEnd": 32,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "To: BVP Group",
+        "charStart": 33,
+        "charEnd": 46,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "From: Alex Ferrara, Trevor Oelschig",
+        "charStart": 47,
+        "charEnd": 82,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Date: October 12, 2010",
+        "charStart": 83,
+        "charEnd": 105,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Re: Shopify",
+        "charStart": 106,
+        "charEnd": 117,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Market Opportunity",
+        "charStart": 5213,
+        "charEnd": 5231,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Shopify plays into two themes:",
+        "charStart": 5232,
+        "charEnd": 5262,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Customers & Pricing",
+        "charStart": 6465,
+        "charEnd": 6484,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Product",
+        "charStart": 7682,
+        "charEnd": 7689,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Customize storefront n s look & feel.",
+        "charStart": 7968,
+        "charEnd": 8007,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Organize and manage products.",
+        "charStart": 8289,
+        "charEnd": 8320,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Perform basic inventory management.",
+        "charStart": 8446,
+        "charEnd": 8483,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Accept credit card payments through payment gateways.",
+        "charStart": 8484,
+        "charEnd": 8539,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Track and respond to orders.",
+        "charStart": 8540,
+        "charEnd": 8570,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Some examples:",
+        "charStart": 10158,
+        "charEnd": 10172,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Customer Acquisition & Retention",
+        "charStart": 10491,
+        "charEnd": 10523,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Market Opportunity",
+        "charStart": 12227,
+        "charEnd": 12245,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Competition",
+        "charStart": 14026,
+        "charEnd": 14037,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Team",
+        "charStart": 16367,
+        "charEnd": 16371,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Summary Financials",
+        "charStart": 17790,
+        "charEnd": 17808,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Summary P&L",
+        "charStart": 18338,
+        "charEnd": 18349,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Deal",
+        "charStart": 18350,
+        "charEnd": 18354,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Outcomes Analysis",
+        "charStart": 19021,
+        "charEnd": 19038,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Conclusion",
+        "charStart": 19786,
+        "charEnd": 19796,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Appendix",
+        "charStart": 20181,
+        "charEnd": 20189,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Consumerization of Enterprise Software Roadmap",
+        "charStart": 20190,
+        "charEnd": 20236,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "Because barriers-to-entry are low and customer churn can be high, we believe that breakout\ncompanies will have the following characteristics:",
+        "charStart": 21388,
+        "charEnd": 21529,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Product categories with well-known and well-defined pain points and a natural stickiness",
+        "charStart": 21530,
+        "charEnd": 21620,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Companies achieving strong growth with limited marketing spend",
+        "charStart": 21621,
+        "charEnd": 21685,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Companies with good customer acquisition economics, even if still early",
+        "charStart": 21686,
+        "charEnd": 21759,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Companies beginning to build a brand and scale relative to competitors",
+        "charStart": 21760,
+        "charEnd": 21832,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      },
+      {
+        "text": "* Teams with a strong product design sense and consumer Internet DNA",
+        "charStart": 21833,
+        "charEnd": 21901,
+        "reason": "not_a_claim",
+        "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+      }
+    ],
+    "uncovered": [
+      {
+        "text": " Why?\n",
+        "charStart": 1060,
+        "charEnd": 1066
+      }
+    ],
+    "droppedCount": 33,
+    "uncoveredCount": 1,
+    "uncoveredChars": 6,
+    "draftChars": 22163
+  },
+  "sourceIngestionWarning": null,
+  "dateCard": null,
+  "b1QuoteCards": 6,
+  "locatableHoles": 20
+}
