@@ -1,0 +1,119 @@
+{
+  "id": "run4-memo",
+  "http": 200,
+  "ok": true,
+  "error": null,
+  "wallMs": 266680,
+  "traceId": "01b100c3-e1c9-496e-ab19-c31fcb21025d",
+  "pipelineVersion": "v4",
+  "fixture": {
+    "id": "run4-memo",
+    "targetWords": 3698,
+    "draftWordCount": 3698,
+    "draftCharCount": 22163,
+    "sourceWordCount": 3558,
+    "sourceCharCount": 22022,
+    "draftOrigin": "tests/fixtures/b247/shopify-messy-full.json _auditDraft",
+    "sourceOrigin": "tests/qc_corpus/Shopify (text).txt full",
+    "notes": "Realistic source prose, not the 83-character B1 stub. Repeatable slices of the committed Shopify extract."
+  },
+  "cards": 187,
+  "editorialCompleted": 187,
+  "editorialNotReviewed": 0,
+  "complianceCompleted": 186,
+  "complianceNotReviewed": 1,
+  "commentaryNotReviewed": 0,
+  "notChecked": 1,
+  "rateLimitBoundHits": {
+    "editorial": 0,
+    "compliance": 1,
+    "commentary": 0,
+    "other": 0,
+    "statements": 1
+  },
+  "rateLimitLastWait": "[RATE_LIMIT] waitMs=119762 boundMs=121610 marginMs=38887 requested=17329 attempt=2",
+  "stageSchedules": [
+    {
+      "statementCount": 187,
+      "tokensPerStatement": 18454,
+      "totalTokens": 3450898,
+      "remainingTokens": 1000558,
+      "tpmLimit": 2000000,
+      "concurrency": 54,
+      "waves": 4,
+      "why": "burst_inside_remaining_window",
+      "remainingSource": "header",
+      "stage": "stage6"
+    },
+    {
+      "statementCount": 187,
+      "tokensPerStatement": 1800,
+      "totalTokens": 336600,
+      "remainingTokens": 1982671,
+      "tpmLimit": 2000000,
+      "concurrency": 187,
+      "waves": 1,
+      "why": "fits_remaining_one_wave",
+      "remainingSource": "header",
+      "stage": "stage5"
+    }
+  ],
+  "llmSpend": {
+    "calls": 957,
+    "inputTokens": 6283089,
+    "cachedInputTokens": 2728960,
+    "outputTokens": 74562,
+    "costUsd": 13.032512200000015,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 951,
+        "inputTokens": 6280063,
+        "cachedInputTokens": 2728960,
+        "outputTokens": 74294,
+        "costUsd": 13.031897500000015,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 6,
+        "inputTokens": 3026,
+        "cachedInputTokens": 0,
+        "outputTokens": 268,
+        "costUsd": 0.0006146999999999999,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "reviewSummary": {
+    "version": 1,
+    "statements": 187,
+    "evidence": {
+      "confirmed": 178,
+      "partial": 5,
+      "conflicting": 2,
+      "notSupported": 2
+    },
+    "editorial": {
+      "concerns": 139,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "compliance": {
+      "concerns": 0,
+      "hardConcerns": 0,
+      "notChecked": 1
+    },
+    "signalConcerns": 139,
+    "notChecked": 1,
+    "needsAttention": 141,
+    "readiness": "Needs significant work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 1,
+      "commentary": 0,
+      "statements": 1
+    }
+  },
+  "preflight": null
+}

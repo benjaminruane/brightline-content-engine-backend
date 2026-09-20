@@ -49,7 +49,18 @@ CONFIRMED `tests/b277-stage-schedule.test.mjs`.
 
 A header remaining of 40,000 with 18k/call yields concurrency 2. Same inputs produce the same plan. The v4 pipeline logs one `[SCHEDULE]` line per stage before it runs and no longer exports `STAGE6_CONCURRENCY = 4`.
 
-Live production choices for the four sized drafts are in Part D / Runs 1-4 (`meta.stageSchedules`).
+### What production actually chose
+
+Logged on `meta.stageSchedules`. Remaining came from live headers, not `assumed_full`.
+
+| Run | N | tokens/statement | remaining (header) | Predicted at 2M full | Actual concurrency | Actual waves | Match? |
+|-----|--:|--:|--:|--|--:|--:|--|
+| 1 (150 words) | 6 | 13134 | 1,992,252 | 4 on a 4-statement draft; here N=6 so 6 | **6** | 1 | Yes. Not paced. |
+| 2 (500 words) | 25 | 13651 | 1,985,610 | **25**, 1 wave | **25** | 1 | Yes. Today would have been 7. |
+| 3 (1500 words) | 74 | 15197 | 1,828,036 | one wave if remaining holds | **74** | 1 | Yes. Fits remaining. |
+| 4 (3698 words) | 187 | 18454 | **1,000,558** | 111 if remaining were 2M | **54** | 4 | Yes, the busy-minute branch. Runs 1-3 had just spent the window. Design said remaining is the header, not a second constant. |
+
+The design was not wrong. Run 4 did not see a full 2M remaining because this spec's own earlier runs were still in the minute. Concurrency 54 is floor(1000558/18454). No constant was tuned.
 
 ---
 
@@ -61,7 +72,7 @@ The 4-attempt cap and the 2000 ms delay cap are gone. CONFIRMED `lib/observabili
 
 **Bound.** `computeWaitBoundMs` = `startedAt + maxDurationMs - marginMs - now`. Remaining Stage 5/6 work is decremented as each statement finishes, so the margin shrinks as the stage proceeds.
 
-**Honest wait.** `fitWaitMs` is `max(serverDelay, tpmFloor(requested, tpm), resetTokensMs, 1000)`. The server delay is a floor. A refused 17k call waits at least one second, not 77 ms. Attempt n multiplies that wait. CONFIRMED unit: 42 ms server delay becomes waitMs=1000 then 2000.
+**Honest wait.** `fitWaitMs` is `max(serverDelay, tpmFloor(requested, tpm), resetTokensMs, 1000)`. The server delay is a floor. A refused 17k call waits at least one second, not 77 ms. Attempt n multiplies that wait.
 
 **If the bound is reached.** `RateLimitBoundError`. The statement is `not_reviewed` with reason `rate_limit_window`. Never clean. QRS: "N claims could not be fully checked in this pass. The review ran out of time waiting for capacity."
 
@@ -71,7 +82,13 @@ The 4-attempt cap and the 2000 ms delay cap are gone. CONFIRMED `lib/observabili
 [RATE_LIMIT] waitMs=1000 boundMs=399 marginMs=0 requested=0 attempt=1
 ```
 
-Production refused-call lines, when a run actually 429s, are copied under the matching Run below from `meta.rateLimitLastWait`.
+**Verbatim log line from production Run 4 (the 17k-class call, attempt 2):**
+
+```
+[RATE_LIMIT] waitMs=119762 boundMs=121610 marginMs=38887 requested=17329 attempt=2
+```
+
+That wait is **119.8 seconds**. The old path waited tens of milliseconds and gave up after about two seconds. Margin at that moment was **38.9 seconds** (TPM floor of remaining work). Bound was **121.6 seconds**. The wait fitted inside the bound on that attempt; a later compliance call on statement 63 then hit the bound and was stamped `not_reviewed` with reason `rate_limit_window`. Editorial on that statement was `clean`. The miss is not a silent clean.
 
 ---
 
@@ -81,7 +98,7 @@ Production refused-call lines, when a run actually 429s, are copied under the ma
 
 **Where it came from.** `estimateReviewWork` sums Stage 1, 1b, 2, 6 editorial, 6 compliance, and 5 from `ceil(chars/4)` on the actual draft and sources plus the measured system-prefix sizes (editorial 9088, compliance 3000, Stage 2 4000, Stage 5 1600). `tpmFloorMs = ceil(totalTokens / tpm * 60000)`. Cap is `FUNCTION_MAX_DURATION_MS` (300000).
 
-A 3698-word draft plus a 3558-word source does **not** refuse. An 80,000-word synthetic with an 80,000-word source does. CONFIRMED `tests/b277-preflight-guard.test.mjs`. Part D states the honest word-count ceiling after the four production points.
+Part D did not produce a run that failed this guard. The 3698-word memo with a 3558-word source was not refused and finished in 267 s. An 80,000-word synthetic with an 80,000-word source does refuse. CONFIRMED `tests/b277-preflight-guard.test.mjs`. The guard stays far out on purpose. The honest operational ceiling (below) is tighter than this refuse-line, because wall clock is slower than the TPM floor when the window is already partly spent.
 
 **Refusal text (verbatim, user-facing):**
 
@@ -104,9 +121,41 @@ Fixtures are committed under `tests/fixtures/b277/`. All four use real Shopify m
 | 3 | words 1-1500 (1500 words, 9133 chars) | words 1501-end (2058 words, 12876 chars) |
 | 4 | `shopify-messy-full.json` `_auditDraft` (3698 words, 22163 chars) | `Shopify (text).txt` full (3558 words, 22022 chars) |
 
-Runner: `node scripts/diagnostic/delivery-check/b277-production-review.mjs <id>`.
+Runner: `node scripts/diagnostic/delivery-check/b277-production-review.mjs <id>`. Production after tag `b277-b278-scheduler-and-wait` (`8f15563`). Header pill v4 on every run (`pipelineVersion: "v4"`).
 
-The four data points are in the Run sections. The honest ceiling is stated after Run 4.
+### Four data points
+
+| | Run 1 | Run 2 | Run 3 | Run 4 |
+|--|------:|------:|------:|------:|
+| Draft words | 150 | 500 | 1500 | 3698 |
+| Source words | 3408 | 3058 | 2058 | 3558 |
+| Wall-clock ms | 16798 | 20365 | 35799 | 266680 |
+| Statements | 6 | 25 | 74 | 187 |
+| Editorial completed | 6/6 | 25/25 | 74/74 | 187/187 |
+| Compliance completed | 6/6 | 25/25 | 74/74 | 186/187 |
+| Commentary not_reviewed | 0 | 0 | 0 | 0 |
+| Checks marked `not_reviewed` | 0 | 0 | 0 | 1 compliance |
+| Bound-hit statements | 0 | 0 | 0 | 1 |
+| Calls refused and retried | none logged | none logged | none logged | yes; last wait 119762 ms |
+| Total input tokens (gpt-4o) | 158175 | 649414 | 1804152 | 6280063 |
+| Cached input tokens | 25728 | 314496 | 820864 | 2728960 |
+| Output tokens (gpt-4o) | 2630 | 10221 | 29189 | 74294 |
+| Calls | 32 | 133 | 360 | 957 |
+| List USD | 0.4218 | 1.7259 | 4.8026 | 16.4437 |
+| Discounted USD | 0.3897 | 1.3328 | 3.7765 | 13.0325 |
+| Trace | `297a5ef6-c0e7-40a7-82a0-28af965a265c` | `0140724b-6254-41f8-9894-f751648f3ce3` | `5be70638-6088-45a5-9e77-5b8cb867a5da` | `01b100c3-e1c9-496e-ab19-c31fcb21025d` |
+
+Extracts: `scripts/diagnostic/delivery-check/b277-runs/*-extract.json`. Spend from `meta.llmSpend` (same arithmetic as the ledger).
+
+### Honest ceiling
+
+The stub-derived **~7,400-word** figure is withdrawn. It was computed against an 83-character source and a constant pool of 4.
+
+With a realistic ~3,500-word source, a **3,698-word** draft finished inside one 300 s request (267 s) on a partly spent TPM window, with **1** compliance check honestly marked `not_reviewed`. That is the largest size measured. It is near the Function bound. Real product drafts (150 / 500 / 1500) finished in 17 s / 20 s / 36 s with every check completed.
+
+**Stated ceiling: about 3,700 words with a realistic source.** Above that, do not assume one pass. The pre-flight still refuses only when the TPM floor itself exceeds 300 s, so a slightly longer real memo is not turned away before it is tried. The 7,400-word stop was a hypothesis about doubling this memo against a stub. Measurement at the right size replaces it.
+
+Part B recovered the missing checks. Kill condition not fired. No constant was tuned.
 
 ---
 
@@ -114,51 +163,75 @@ The four data points are in the Run sections. The honest ceiling is stated after
 
 **Rule that decides whether the counter is shown.** `shouldShowReviewProgress(wordCount)` is true only when `estimateReviewSeconds(wordCount) > 10`, where `estimateReviewSeconds = 8 + wordCount/25`. Under ten seconds, no status display at all. CONFIRMED `src/modules/drafting/reviewProgressEstimate.js` and `tests/review-progress-estimate.test.mjs`. 19 words: hidden. 3698 words: shown.
 
+On these four sizes: 150 words estimates 14 s (shown), 500 words 28 s (shown), 1500 words 68 s (shown), 3698 words 156 s (shown). A draft under ~50 words stays hidden.
+
 **The total cannot appear before the result lands.** Statement count is `round(wordCount / 20)`. Checked count is `min(total - 1, floor(progressPercent/100 * total))`. Progress percent itself caps at 97. The caption is `About N of M statements checked`. "About" is in the string. A counter of `M of M` cannot be produced while the request is open. CONFIRMED the same test file. No progressive delivery of results.
 
 This is a frontend estimate. It does not drive or gate the backend.
+
+Browser: local `localhost:5173/assess` was open. I did not click Review (layout check must not run a Review). The counter is therefore confirmed by unit tests and by the caption function, not by a live in-progress screenshot.
 
 ---
 
 ## Run 1. 150-word draft, realistic source
 
-Pending production deploy of this commit. Extract will be `scripts/diagnostic/delivery-check/b277-runs/run1-150-extract.json`.
-
-Expected from the design: no Stage 6 pacing (concurrency = N). Counter shown only if `8 + 150/25 = 14` seconds, which is over ten, so the counter **is** shown on this size. (The "no counter under ten seconds" rule still holds; this draft is not under ten.)
+- Wall 16798 ms. 6 statements. Editorial 6/6, compliance 6/6, commentary 6/6. Cost list USD 0.4218 / discounted 0.3897.
+- Stage 6 plan: concurrency **6**, 1 wave, `fits_remaining_one_wave`, remainingSource=header. Not paced.
+- Counter rule: 8 + 150/25 = 14 s, so the counter **is** shown. (The "no counter under ten seconds" rule still holds; this draft is not under ten.)
+- Trace `297a5ef6-c0e7-40a7-82a0-28af965a265c`. HTTP 200, v4.
 
 ---
 
 ## Run 2. 500-word draft, realistic source
 
-Pending production deploy. Extract: `run2-500-extract.json`. Design: 25-statement-scale, one wave if remaining holds ~300k tokens.
+- Wall 20365 ms. 25 statements. All checks completed. Cost list USD 1.7259 / discounted 1.3328.
+- Stage 6 plan: concurrency **25**, 1 wave. Today would have been 7 passes. Logged before the stage ran.
+- Counter shown (estimate 28 s). Never reaches 25 of 25 before the result.
+- Trace `0140724b-6254-41f8-9894-f751648f3ce3`. HTTP 200, v4.
 
 ---
 
 ## Run 3. 1,500-word draft, realistic source
 
-Pending production deploy. Extract: `run3-1500-extract.json`. Any `not_reviewed` must carry `rate_limit_window` (or another honest reason) and appear in the disclosure.
+- Wall 35799 ms. 74 statements. All checks completed. Zero `not_reviewed`. Cost list USD 4.8026 / discounted 3.7765.
+- Stage 6 plan: concurrency **74**, 1 wave, remaining 1,828,036 from header.
+- Counter shown (estimate 68 s).
+- Trace `5be70638-6088-45a5-9e77-5b8cb867a5da`. HTTP 200, v4.
 
 ---
 
 ## Run 4. 3,698-word memo, realistic source
 
-Pending production deploy. Extract: `run4-memo-extract.json`. This is the run that decides whether Part B recovered the 102 previously lost editorial and compliance checks, or marked them `not_reviewed` with a reason.
+This is the run that decides whether Part B worked.
 
----
+- Wall 266680 ms (267 s of 300). 187 statements.
+- Editorial **187/187**. Compliance **186/187**. Commentary **187/187**.
+- Previously lost: 102 editorial+compliance checks on the stub-source honesty run (`de18131c`, editorial 64 not_reviewed + compliance 34). Those checks came back, except **1** compliance check.
+- That one miss: statement 63, `Over time, the average revenue per customer has increased.`, `complianceVerdict=not_reviewed`, `complianceNotReviewedReason=rate_limit_window`. Editorial on the same card is `clean`. Not a silent clean. QRS `notChecked=1` with bound-hit why-copy.
+- Stage 6 plan: remaining **1,000,558** (header; this spec's Runs 1-3 had just used the window), concurrency **54**, 4 waves. Not the 47 waves of pool-4, and not the 111 of a full 2M window.
+- Verbatim wait: `[RATE_LIMIT] waitMs=119762 boundMs=121610 marginMs=38887 requested=17329 attempt=2`.
+- Cost list USD 16.4437 / discounted 13.0325.
+- Trace `01b100c3-e1c9-496e-ab19-c31fcb21025d`. HTTP 200, v4.
 
-## Honest ceiling
-
-Pending Run 1-4. The stub-derived ~7,400-word figure is withdrawn. The replacement is the largest draft that finished inside one 300s request with a realistic source, or the pre-flight refusal threshold if a run is refused first.
+Part B worked. Kill condition not fired. Do not tune.
 
 ---
 
 ## TOTAL COST OF THIS SPEC IN USD
 
-Pending the four production runs. Unit tests made no model calls. B276 header probe (USD 0.0002) is prior work, not this spec.
+Four production Reviews. No other model calls on this spec (unit tests are zero). B276 header probe (USD 0.0002) is prior work and is not included.
 
-Per-run breakdown will be listed here from `meta.llmSpend`.
+| Pass | List USD | Discounted USD | Calls |
+|------|--------:|---------------:|------:|
+| Run 1 150-word | 0.4218 | 0.3897 | 32 |
+| Run 2 500-word | 1.7259 | 1.3328 | 133 |
+| Run 3 1500-word | 4.8026 | 3.7765 | 360 |
+| Run 4 3698-word memo | 16.4437 | 13.0325 | 957 |
+| **TOTAL** | **23.3940** | **18.5315** | **1482** |
+
+Source: `meta.llmSpend` on each extract. List is gpt-4o input at 2.50 / million plus output at 10.00 / million, plus the priced mini duplication-judge. Discounted applies cached input at 1.25 / million.
 
 ---
 
 Ids: **B277** scheduler and pre-flight, **B278** wait, **B279** frontend count.
-Tags: backend `b277-b278-scheduler-and-wait`, frontend `b279-progress-count`.
+Tags: backend `b277-b278-scheduler-and-wait` (`8f15563`), frontend `b279-progress-count` (`6df12bd`).
