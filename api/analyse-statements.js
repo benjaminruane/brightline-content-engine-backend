@@ -22,6 +22,7 @@ import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
 import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
+import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -321,6 +322,10 @@ export default async function handler(req, res) {
       .map((stmt) => stmt?.qcCard)
       .filter((card) => card && typeof card === "object");
 
+    const ingestionMeta = ingestionMetaFromPrep(prep);
+    const sourceIngestionWarning = ingestionMeta.sourceIngestionWarning;
+    const totalTextLowWarning = ingestionMeta.totalTextLowWarning;
+
     return res.status(200).json({
       ok: true,
       statements,
@@ -335,6 +340,9 @@ export default async function handler(req, res) {
         reviewOptions: effectiveReviewOptions,
         reviewSummary: summariseReview(summaryCards, effectiveReviewOptions),
         modelConfig,
+        ...(typeof sourceIngestionWarning === "string" ? { sourceIngestionWarning } : {}),
+        ...(totalTextLowWarning === true ? { totalTextLowWarning: true } : {}),
+        ...(pipelineResult?.draftCoverage ? { draftCoverage: pipelineResult.draftCoverage } : {}),
         ...(pipelineResult?.evidenceReviewSkipped === true ? { evidenceReviewSkipped: true } : {}),
         ...(nothingReviewed ? { nothingReviewed: true } : {}),
       },

@@ -146,7 +146,7 @@ describe("B202 a check that did not run is not_reviewed, never clean", () => {
     const cls = classifyCard(card, COMPLIANCE_OFF);
     const summary = summariseReview([card], COMPLIANCE_OFF);
     assert.equal(card.editorialVerdict, "clean");
-    assert.equal(card.complianceVerdict, "clean");
+    assert.equal(card.complianceVerdict, "not_reviewed");
     assert.equal(cls.compliance, null);
     assert.equal(summary.compliance, null);
     assert.equal(summary.readiness, "Ready");
@@ -204,7 +204,7 @@ describe("B202 a check that did not run is not_reviewed, never clean", () => {
       0,
       assemblyContext(editorialOff)
     );
-    assert.equal(offCard.editorialVerdict, "mystery");
+    assert.equal(offCard.editorialVerdict, "not_reviewed");
     assert.equal(classifyCard(offCard, editorialOff).editorial, null);
   });
 });

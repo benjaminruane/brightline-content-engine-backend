@@ -8,6 +8,8 @@ import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
 
 function entryWithExcerpts({ primaryExcerpt, conflictExcerpt = null, verdict = "confirmed" }) {
   const statement = "Revenue reached EUR 92 million.";
+  const primaryPassage =
+    primaryExcerpt && typeof primaryExcerpt.passage === "string" ? primaryExcerpt.passage : "";
   return {
     statementText: statement,
     startChar: 0,
@@ -20,6 +22,9 @@ function entryWithExcerpts({ primaryExcerpt, conflictExcerpt = null, verdict = "
       contributingSourceIndices: [0],
     },
     excerptResult: { primaryExcerpt, conflictExcerpt },
+    supportSpans: primaryPassage
+      ? [{ passage: primaryPassage, classification: verdict === "conflicting" ? "conflicting" : "confirmed" }]
+      : [],
     editorialResult: {
       editorialVerdict: "clean",
       editorialConcerns: [],
