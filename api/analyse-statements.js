@@ -7,7 +7,7 @@
 
 import { runPipelineV3 } from "../lib/qc/pipeline-v3/qc-pipeline-v3.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
-import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata } from "../lib/observability.js";
+import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata, REVIEW_DID_NOT_RUN } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { normalizePublicationState } from "../lib/source-publication-state.mjs";
@@ -29,6 +29,7 @@ import {
   capacityWaitSnapshot,
   FUNCTION_MAX_DURATION_MS,
   lastWaitLog,
+  providerRefusalSnapshot,
   scheduleSnapshot,
 } from "../lib/qc/request-budget.mjs";
 import { logPreflightRefusal, preflightReview } from "../lib/qc/preflight-guard.mjs";
@@ -394,6 +395,7 @@ export default async function handler(req, res) {
         reviewSummary,
         rateLimitBoundHits,
         capacityWait: capacityWaitSnapshot(),
+        providerRefusal: providerRefusalSnapshot(),
         rateLimitLastWait: lastWaitLog(),
         stageSchedules: scheduleSnapshot(),
         llmSpend: getLlmSpend(),
@@ -411,6 +413,7 @@ export default async function handler(req, res) {
     console.error("[QC_V3_HANDLER_ERROR]", err?.message || String(err));
     const safeInternalErrorPayload = {
       ok: false,
+      error: REVIEW_DID_NOT_RUN,
       statements: [],
       references: [],
       meta: {
@@ -420,6 +423,8 @@ export default async function handler(req, res) {
         extractionQualityReasons: ["route_exception"],
         rateLimitBoundHits: boundHitSnapshot(),
         capacityWait: capacityWaitSnapshot(),
+        providerRefusal: providerRefusalSnapshot(),
+        reviewDidNotRun: true,
       },
     };
     res.status(200).json(safeInternalErrorPayload);

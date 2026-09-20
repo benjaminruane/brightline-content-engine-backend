@@ -10,6 +10,7 @@ import { describe, test } from "vitest";
 import {
   RATE_LIMIT_MAX_ATTEMPTS,
   isRateLimitError,
+  isReviewDidNotStartError,
   parseRetryAfterMs,
   rateLimitDelayMs,
   withRateLimitRetry,
@@ -22,6 +23,7 @@ import {
   computeWaitBoundMs,
   computeWaitMarginMs,
   isRateLimitBoundError,
+  recordLlmSuccess,
   recordWaitedMs,
   runWithFallbackBudget,
   runWithoutRequestBudget,
@@ -89,6 +91,7 @@ describe("B278 wait until a refused call fits", () => {
   test("when the wait exceeds the remaining bound, the error is RateLimitBoundError", async () => {
     let hits = 0;
     await beginRequestBudget({ startedAt: Date.now(), maxDurationMs: 400 }, async () => {
+      recordLlmSuccess();
       await assert.rejects(
         () =>
           withRateLimitRetry(
@@ -173,7 +176,7 @@ describe("B285 no-budget fallback and a bound that cannot re-base", () => {
             },
             { sleep: async () => {}, now: () => frozen }
           ),
-        (err) => isRateLimitBoundError(err)
+        (err) => isReviewDidNotStartError(err)
       );
       assert.equal(hits <= 8, true);
       assert.equal(hits >= 2, true);
