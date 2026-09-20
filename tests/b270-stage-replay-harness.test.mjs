@@ -23,8 +23,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIXTURE = path.join(ROOT, "tests/fixtures/b247/shopify-messy-full-after.json");
 
 describe("B270 stage-replay harness", () => {
-  test("does not change the Stage 6 pool", () => {
-    assert.equal(STAGE6_CONCURRENCY, 24);
+  test("uses the pipeline Stage 6 pool (B268 lowered it to 8)", () => {
+    assert.equal(STAGE6_CONCURRENCY, 8);
   });
 
   test("reconstructs draft and neighbours from the recorded memo", () => {

@@ -17,10 +17,10 @@ import { STAGE2_CONCURRENCY } from "../lib/qc/pipeline-v4/stage2-match-sources.m
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 describe("B265 Stages 5 and 6 are pooled", () => {
-  test("the cap matches Stage 2", () => {
+  test("Stage 5 matches Stage 2 at 24; Stage 6 is no longer this cap (B268)", () => {
     assert.equal(STAGE2_CONCURRENCY, 24);
     assert.equal(STAGE5_CONCURRENCY, 24);
-    assert.equal(STAGE6_CONCURRENCY, 24);
+    assert.notEqual(STAGE6_CONCURRENCY, STAGE2_CONCURRENCY);
   });
 
   test("mapPool never runs more than the cap at once and keeps order", async () => {
