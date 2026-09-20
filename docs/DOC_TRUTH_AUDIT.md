@@ -92,7 +92,7 @@ Omitted from architecture entirely, and now load-bearing:
 | M15 | Diagnostic discipline (L157-191) | TRUE as a rule | Standing rules P19, P22, P24, P26 say the same thing more sharply. |
 | M16 | Spec sequencing, R5 and R3.1 examples (L193-204) | TRUE as a rule, STALE as examples | Split when surfaces differ. The examples are 2026-05 history. |
 | M17 | Principle-based signal suppression, R6.3 (L206-217) | TRUE | Matches A23. |
-| M18 | Doc-sync: draft a prompt at the moment of decision (L219-242) | WRONG as a working pattern | Cursor should edit `docs/BACKLOG.md` when a decision lands. Drafting a later prompt is how this manual itself went 72 days without an update. |
+| M18 | Doc-sync: draft a prompt at the moment of decision (L219-242) | WRONG as a working pattern | Cursor should edit `docs/BACKLOG.md` when a decision lands. Drafting a later prompt is how this manual itself went untouched since 2026-07-09. |
 | M19 | File is for "how Claude/Cursor work" (`docs/BACKLOG.md` L8) | STALE | Claude is a sounding board outside this tree. This file is for Cursor. |
 
 Standing rules in `docs/BACKLOG.md` L282-305 (18 rows) do not appear in this manual. Only **B222** appears in `.cursorrules`. That is the failure this spec exists to close.

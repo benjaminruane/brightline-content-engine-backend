@@ -3,9 +3,10 @@ description: Brightline Content Engine core rule
 alwaysApply: true
 ---
 
-Before making implementation changes, read:
+Before starting any spec, and before making implementation changes, read:
 - ai/AI_OPERATING_MANUAL.md
-- docs/ARCHITECTURE.md
+- ai/SPEC_TEMPLATE.md
+- docs/ARCHITECTURE.md (when the work touches Review, the pipeline, or qcCard)
 
 Follow these rules:
 - Keep diffs minimal
@@ -13,3 +14,4 @@ Follow these rules:
 - Backend is authoritative
 - Be concrete and operational
 - Do not add vague generative fallback behaviour
+- A missing input must be loud at the point it goes missing (P31)

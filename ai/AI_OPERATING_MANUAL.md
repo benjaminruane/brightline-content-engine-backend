@@ -1,242 +1,116 @@
-# Brightline Content Engine — AI Operating Manual
+# Operating manual for Cursor
+
+Read this before every spec. Then follow `ai/SPEC_TEMPLATE.md`. If the spec touches the QC pipeline, also read `docs/ARCHITECTURE.md` (audited 2026-09-20). Do not treat ROADMAP as the live pipeline contract.
+
+This file is rules and facts. It is not a narrative for Ben.
+
+---
+
+## Bind at every action
+
+- Backend is authoritative. The frontend renders the contract. It does not re-derive evidence verdicts.
+- Minimal diffs. Do not redesign stable plumbing unless the spec says so.
+- No generative fallback fluff. A miss is a miss. It is not a finding.
+- Run to completion. Ask only when a decision changes user-facing behaviour, the data contract, verdict logic, or is hard to reverse.
+- **B222.** A change that only removes a contradiction, fixes plainly wrong copy, adds a test for shipped behaviour, or removes duplication, and that changes no verdict logic, no data contract, and no user-facing behaviour beyond the copy, may ship without a spec. Log it in `docs/BACKLOG.md` in the same commit. Everything else needs a spec.
+- **P31.** A missing input must be loud at the point it goes missing. Refuse, or log, at the writer. Do not silently default.
+- **P33.** Anything a future test or spec depends on is committed in git. Never paste a live payload into a conversation and treat the paste as the fixture. See the case study below.
+- No em dashes or en dashes in specs, reports, or user-facing copy. ASCII hyphen and period only.
+- Every claim is CONFIRMED (file and line, or a named committed artefact) or HYPOTHESIS.
+- Open with the scoreboard.
+- Dual summary at the end of implementation work: technical, then plain-language user impact. `.cursor/rules/summary-contract.mdc`.
 
-## Product
-Brightline Content Engine is an evidence-first, deterministic, audit-safe reviewer-assist platform for written outputs.
+---
 
-## Core Principles
-- Evidence first
-- Deterministic behaviour
-- Backend is authoritative
-- No generative fallback fluff
-- Conclusions must be traceable to source evidence
-- Minimal diffs preferred
-- Do not redesign stable plumbing unless explicitly required
+## How work actually runs
 
-## Working Model
-1. Spec is written
-2. Cursor implements
-3. Ben commits immediately
-4. Vercel deploys
-5. Ben tests in live environment
-6. Evidence is reviewed
-7. Next spec is written only after evidence review
+1. Spec is written in the form in `ai/SPEC_TEMPLATE.md`. Part 0 can stop the build.
+2. Cursor implements. No model calls unless the spec says so.
+3. Cursor commits when asked. Ship is `npm run verify:ship` in both repos. That gate requires a clean tree and HEAD on the remote.
+4. Docs-only commits under `docs/` and `scripts/diagnostic/` skip the backend deploy (`vercel.json` `ignoreCommand`). Changes under `ai/` or `.cursorrules` do not skip it.
+5. Layout, controls, and copy are checked on local `localhost:5173`. Anything downstream of a Review is checked on production, with the header pill `v4`.
+6. Cost is a named Langfuse USD figure, or zero. Unpriced calls are an undercount, never a silent zero. Ledger: `docs/SPEND_LEDGER.md`.
 
-## Response Rules
-- Be concise
-- No drip-feeding
-- No teasing future ideas
-- Give the full recommendation directly
-- Do not repeatedly restate known context
-- Use plain language
+Ids come from `docs/BACKLOG.md`. Next free number in that prefix. Gaps are fine. Specs this year use B/P/F/Pr. The old R-series is history. One BACKLOG row plus the commit is the invariant.
 
-## Spec Expectations
-- Include a plain-language summary outside the spec block
-- Include a one-line commit message
-- Put only the spec inside the spec block
-- Keep diffs minimal
-- Be operational and concrete
+---
 
-## Editorial review audit signals
+## Pipeline facts specs keep getting wrong
 
-On the v4 combined editorial+style path, **`editorialVerdict: "not_reviewed"`** (formerly fingerprinted by empty `editorialNote: ""` on fallback) marks a statement whose editorial review failed schema validation twice and was **not** actually checked. Do not treat it as clean.
+Full contract: `docs/ARCHITECTURE.md`. Do not cite it for sprint status.
 
-A **genuine clean** pass always carries the canonical note: *"No editorial or style concerns identified under the listed rules."*
+- Production is v4 (`QC_PIPELINE_V4=1` or `options.pipelineRoute === "v4"`). Unset env still falls back to v3. v3 is still imported on every request.
+- Models are pinned snapshots in `lib/qc/model-config.mjs` (`gpt-4o-2024-08-06` for QC stages). Never write a floating alias into a spec.
+- Temperature 0 on QC LLM stages. `seed=1` on Stage 2. That does not pin `hasConflict` (**B61**).
+- One sentence, one card. Claim spans never add cards. They may upgrade a partial to confirmed. They may never downgrade, never flip `hasConflict`, never override a sentence-level conflict.
+- Stage 3 is conflict-wins, in code. Commentary cannot change a verdict.
+- Stage 6 evaluates the current statement. The editorial user payload still pastes the full marked draft as context. Those are different facts. Do not cite "current statement only" as a cost claim.
+- Stage 5 and Stage 6 are pooled at 24. Peak Stage 6 in-flight is 48. Function cap is 300 seconds.
+- A Stage 5 miss is empty prose plus `commentaryNotReviewed: true`, not a canned finding (**B254**).
+- When editorial or compliance is off, the payload stamps `clean` and the screen says `Not reviewed` (**B247**). Believe the screen, not the payload field.
+- `QC_LLM_CACHE` (default ON, memory only in production) covers Stages 1, 1b, and 2. Not 5. Not 6.
+- `review_state` is an overwrite autosave blob. `reviewer_decisions` is the append-only start of B9, governance kinds only.
+- Four-statement ~$2/run is not a real-document cost. A 3700-word memo billed USD 8.4497. Read the ledger.
 
-Use `not_reviewed` as the audit signal for unreviewed statements when scanning JSON, exports, or diagnostic batches.
+---
 
-## Editorial combined-review — first-person category routing (gpt-4o)
+## Lessons that must not be relearned
 
-At temp 0, gpt-4o routes first-person-voice concerns three ways for the same surface issue: `first_person_plural` as `style_guide` (correct), `first_person_plural` as `editorial` (mis-tag — reclassified by R6.11a), and `voice_consistency` as `editorial` (valid — passes through). All are handled at the normalizer/salvage layer. Category discipline is enforced downstream (salvage + reclassification), not via prompt constraint — a prompt fix would be whack-a-mole against non-deterministic category routing (**B14** pattern). Evidenced **B21-diag** + **B21-diag-confirm**.
+Standing rules live in `docs/BACKLOG.md`. They bind here so a spec does not have to paste them.
 
-## Spec, commit, and tag naming convention
+- **P13.** Dependency commits include the lockfile. Backend install is `npm ci`.
+- **P14.** Payload-size behaviour cannot be tested locally. Production only.
+- **P15.** The Pr9 marker harness measures honesty, not correctness. Read the quoted output.
+- **P16.** Planted faults belong only in invented fixtures. Real sources stay verbatim.
+- **P18.** Telling a model what not to put in a gap makes it fill the gap. Write a check.
+- **P19 / P22.** A harness score is not verification. Confirm on the deployed path.
+- **P20.** If deterministic code consumes model prose, the model is the specification. Ask what happens when that prose is wrong.
+- **P21.** A model asked to reason about a hypothetical post-transform state reasons about the actual state. Compute the future state in code.
+- **P23.** Judge on the trend in defect severity, with a falsifiable stopping rule set before the run.
+- **P24.** If local config will not load, run the test where the config already works.
+- **P25.** If a question cannot be answered from the output, that is the finding.
+- **P26.** After two failed hypotheses about the same behaviour, instrument it.
+- **P27.** A tag landing is not a row closing.
+- **P28.** Check whether the data already records that the mechanism fired.
+- **P30.** The Meridian fixture contradicts itself on purpose. Do not quietly fix it.
+- **P31.** Missing input is loud at the writer. See above.
+- **B222.** Standing authority. See above.
+- **P33.** Commit the artefact. See above.
 
-Every unit of work has ONE reference (the "ref") identical everywhere it appears.
+Also keep:
 
-### REF FORMAT
+- Trace the live path before iterating a prompt. If a change has no observable effect, the path is probably not running.
+- After two specs on the same symptom miss, stop speccing and diagnose. Diagnosis is read-only.
+- Split when surfaces differ. A small sprint that ships cleanly beats a bundle you cannot bisect.
+- Signal suppression is per-instance, not per-rule-id. Default is keep. R6.3 is the pattern.
+- Style rules with a structurally checkable property get a deterministic backstop in `STYLE_RULE_DETERMINISTIC_FILTERS`. Semantic rules do not.
+- QC output to the user is plain language. No system vocabulary (`entity`, `corpus`, `canonical claim`).
+- `editorialVerdict: "not_reviewed"` means the check did not complete. Do not treat it as clean. A genuine clean note is `No editorial or style concerns identified under the listed rules.`
+- Category routing is enforced in salvage, not by prompting the model to be tidy (**B14**).
+- Reproducibility: any eval at temperature above 0, or any reasoning model, is run 2-3 times and reported as a range, not a single cell (**P2**).
+- Edit `docs/BACKLOG.md` when a decision lands. Do not draft a later sync prompt and forget.
 
-R-series for post-rebuild work: **R<major>.<minor>[.<patch>][<letter>]** (e.g. R6.2, R6.2e, R2.7.2). Assigned when the spec is written; never changes.
+---
 
-### WHERE THE REF APPEARS (must match exactly)
+## P33 case study
 
-1. **SPEC ID** — `SPEC ID: R6.2e`
-2. **Commit** — `R6.2e — <lower-case description>`
-3. **Backend tag** — `r6.2e-<descriptor>` (lower-case ref, hyphenated, no spaces)
-4. **Frontend tag** — `v8.NN.N-r6.2e-<descriptor>` (frontend keeps the v8.x version series with the ref appended)
-5. **docs/ROADMAP.md** — status line
-6. **docs/BACKLOG.md** — row
+B226 reconstructed Meridian fixture 1 from a conversation. The 18 Sep live payload was not in the repo. Card 0 wording differed (`month of June 2026` vs live `timing as June 2026`). Live had six margin notes. The reconstruction had three. Grouping, covering-note checks, and D7 of B240 all had to rediscover that the fixture was not the run. The live dump was committed later as `tests/fixtures/b226/1-meridian-reporting-live-2026-09-18.json`. If a test or a later spec will need it, commit it in the same pass that first depends on it.
 
-### TAG RULES
+---
 
-- Backend and frontend tag in their own repos.
-- Backend tags the spec ref; frontend tags a v8.x version bump plus the ref.
-- v8.x version tags are legacy from the qc-rebuild sprint (originally `v8.x-qc-rebuild-[descriptor]`); continued only on the frontend as the version series.
-- One tag per shipped spec. Split specs (e.g. R6.2e / R6.2f) tag separately for regression isolation.
+## Cost
 
-### NON-R WORK
+No invented USD. Named source, or zero.
 
-Named work-streams without a ref (e.g. `commentary-calibration`) tag by their name, lower-case, hyphenated. Use sparingly; prefer assigning a ref.
+- Interactive Review on a short synthetic draft is not the unit of planning. Read `docs/SPEND_LEDGER.md`.
+- Flag before a full diagnostic batch. Prefer `--only` subsets.
+- `verify:ship` is not a billed pass.
+- A spec that says "no model calls" reports USD 0 and does not call.
 
-### RELEASE VERSIONING
+---
 
-GitHub releases use a continuous v<major>.<minor> product version, independent of spec tags. Backend release history continues in sequence (… v7.1 Reviewer Assist Foundations, v7.2 Review-output hardening); do not restart numbering. The legacy v8.x SPEC/sprint tags are a SEPARATE series from release versions despite the shared "v" prefix — they do not sort against release versions and must not be conflated. Pre-1.0 milestone (first external user) still to come.
+## What this file used to contain, and why it is gone
 
-### THE INVARIANT
+Cut: Ben-and-Claude working-model story; R-series tag ritual; R6.4a incident novel; R5/R3.1 sequencing examples; first-person routing essay; $2/run presented as the cost; legacy commentary field names; "draft a doc-update prompt" procedure; D1.3.2 grep novella.
 
-Any tag leads back through commit → SPEC ID → ROADMAP/BACKLOG to exactly what changed and why.
-
-## Verification-by-grep discipline
-
-When a previous spec produced incorrect output that was reported as correct by the implementer, the follow-up spec must require explicit verification with verbatim output of the verification results.
-
-Verification mechanisms include:
-
-- **Positive-anchor greps** — text that MUST be present after the operation
-- **Negative-contamination greps** — text that MUST NOT be present after the operation
-
-The verification output must be included verbatim in the implementer's summary so Ben can audit. Do not claim success without grep evidence when the spec requires it.
-
-**Canonical example:** **D1.3.2** — v2 drafts loaded into eight fixture JSONs; each fixture had unique v2 anchor strings (must match) and v1 contaminant strings (must not match); Cursor summary included one PASS/FAIL line per check plus verbatim `grep` output.
-
-**Trace the live execution path before iterating on prompt content.** R6.4a's classifier prompt was iterated twice (R6.4a then R6.4a.1) because the LLM was returning "unknown" on a press release with clear public-distribution markers. The actual root cause was that the classifier was never being called — the Assess module's upload handler did not invoke apiSummarizeSource. Spent two iteration cycles chasing prompt calibration for behaviour that wasn't being exercised. The signal that should have caught it earlier: the source object in frontend state was missing the long-stable "description" field alongside the new "publicationState" field, which indicated the summariser wasn't running at all.
-
-Discipline: when a feature shows no observable effect after a code change, **first verify the code path is being exercised end-to-end**, then iterate on what happens inside it. An "orient" task for an upcoming spec should ask "trace the live execution path from user action to outcome" rather than "show me the relevant code." The architectural fact that broke this for R6.4a (Assess module replaces Draft module's state hook) was not surfaced by show-me-the-code framings.
-
-## Testing Expectations
-- Usually max 3 runs per batch
-- **Interactive Review production cost (baseline):** ~$2/run at ~4 statements / 1 source (~16 LLM calls). This is per live Review run, not per diagnostic fixture.
-- **Full diagnostic batch cost:** ~20 fixtures ≈ **$25–30** total (~$1.25–1.50 per fixture). **Flag before full-batch runs**; prefer targeted `--only` subsets in `scripts/diagnostic/run-batch.mjs` when scoping a change.
-- Reuse existing source files unless new ones are strictly necessary
-- Evidence should include Cursor summary, JSON responses, screenshots, and Vercel logs when relevant
-
-## Product Constraint
-- QC output must be practically useful, not only technically correct
-
-## QC Output Language Standard
-
-All QC output shown to users — verdicts, commentary, explanations, hover text, and popups — must be written in plain language as an experienced reviewer or editor would write to a writer. Requirements:
-
-- No system language (e.g. "entity", "relation", "canonical claim", "corpus")
-- No generic filler (e.g. "the source discusses related subject matter")
-- No technical jargon
-- Always specific and concrete — reference the actual claim and the actual source content
-- Always actionable — tell the writer what the issue is and what to do about it
-- Tone: direct, professional, constructive
-
-This standard applies to all commentary fields: `commentaryPayload`, `whatThisShows`, `whatIsNotShown`, `whyItMattersText`, `evidenceSummary`, and any other user-facing text fields in the QC output.
-
-## Deterministic Backstops for Style Rules
-
-Where a style rule depends on a structurally-checkable property (e.g. comma counts for Oxford comma, regex patterns for thousand separator), the LLM rule wording is the primary instruction but a deterministic filter is the final arbiter. This protects against the LLM firing concerns on correctly-formatted text — a failure mode observed across multiple rules in R6.5 testing.
-
-Backstops live in `STYLE_RULE_DETERMINISTIC_FILTERS` in `lib/qc/editorial-compliance-reviewer.mjs`. Each predicate receives `(citedSpan, statementText, fullDraftText)` and returns TRUE to keep the concern, FALSE to drop. Predicates can be span-local (most rules), statement-scoped (`thousand_separator`, `currency_format`), or draft-aware (`defined_term_capitalisation`).
-
-Add a backstop when:
-- The rule has a structurally-checkable property (regex, character count, presence/absence of a pattern)
-- The LLM has demonstrated false-positive firing on correct text
-- The deterministic check is cheap and safe (errs toward keeping concerns rather than dropping them in ambiguous cases)
-
-Don't add a backstop when:
-- The rule requires semantic judgment (e.g. "promotional language")
-- The structural property is hard to define deterministically
-- The cost of a false-negative suppression is high
-
-When in doubt, write the rule wording first, observe behaviour, and add a backstop only if the LLM proves unreliable on a structurally-checkable case.
-
-## Change Surface Discipline
-
-When proposing development specs:
-
-1. First identify the smallest viable change surface in the existing codebase.
-2. Prefer modifying the narrowest module that directly affects the desired behaviour.
-3. Avoid proposing changes across multiple pipeline stages unless absolutely necessary.
-4. Do not introduce new architectural layers when a local modification would achieve the goal.
-5. Do not modify upstream extraction, canonical claims, or evidence binding unless the problem specifically originates there.
-
-Specs should aim for the smallest safe intervention that materially improves the user-visible outcome.
-
-## Diagnostic Discipline
-
-When a recurring issue persists across two or more spec iterations targeting the same symptom without resolution, stop writing specs and diagnose instead — the issue isn't where the specs assume it is. Apply diagnostic discipline before any behavioural change to existing modules: read the current code, confirm assumptions, inspect actual prompts and outputs, before speccing.
-
-Instead of another fix attempt, run a diagnostic:
-
-1. Ask Cursor to inspect the deployed code and confirm it matches
-   the spec that was supposedly implemented.
-2. Add temporary logging to capture what the runtime is actually
-   doing — what prompts are sent, what outputs are returned, what
-   state flows between stages.
-3. Run one representative test case through the instrumented code
-   and capture the evidence.
-4. Produce a short diagnostic report identifying the real root
-   cause.
-5. Only then write the fix spec.
-
-This avoids the common failure mode of repeatedly patching around
-a symptom because the real cause sits somewhere the specs haven't
-looked. Diagnosis is cheap, specs that keep missing are expensive.
-
-Early diagnosis is preferred over blind speccing. If a spec's
-testing reveals unexpected behaviour, prefer a diagnostic pass
-before the next spec.
-
-Do not rely on memory or assumptions about the codebase state when the cost of being wrong is a wasted sprint. A read-only diagnostic is always cheaper than a wrong spec.
-
-Diagnostics are also the right tool when assumptions about prior work need confirming — e.g. "is X already wired through?", "did Y ship as I remember?". Cursor's diagnostic report becomes the source of truth, not conversation memory.
-
-The diagnostic itself should be:
-
-- Explicitly read-only
-- Scoped to specific questions
-- Structured so answers can be checked against the spec
-- Free of speculation or recommendations (those happen after the report lands)
-
-## Spec Sequencing
-
-Prefer multiple small sequenced sprints over one large bundled sprint when changes touch different surfaces (backend → frontend, multiple modules, different risk profiles).
-
-Bundling two architectural changes into one sprint means losing the ability to isolate which change caused any regression. Sequencing also produces natural checkpoints for evidence review and reduces test burden per sprint.
-
-When in doubt, split. A small sprint that ships cleanly is more valuable than a large sprint that ships with uncertainty about which component broke what.
-
-Concrete examples of correct sequencing:
-
-- **R5** split into R5.1 (backend spans), R5.2 (merge), R5.3a (frontend surface), R5.3b (colour-coding), R5.4 (click-to-locate). Five sprints, each independently testable.
-- **R3.1** merged Style + Editorial only. **R3.2** (Stage 5 into Stage 2) explicitly deferred as a separate sprint because Stage 2 restructure is a different change surface.
-
-## Principle-Based Signal Suppression
-
-Signal-suppression decisions should be principle-based and per-instance, not rule-ID-based and per-class.
-
-When the system needs to suppress a signal in some contexts (e.g. drop Editorial concerns that duplicate an Evidence-conflict finding), the suppression mechanism should:
-- Judge per-instance, not per-rule. Two concerns from the same rule code on different statements may differ in whether they warrant suppression.
-- Default to keeping the signal when the judgment is uncertain. False positives (keeping a redundant concern) are lower cost than false negatives (suppressing legitimate signal).
-- Use deterministic logic for verdict aggregation (Stage 3), but LLM judgment for language-level "is this the same as that?" decisions. Consistent with the LLM-last architecture principle.
-
-Rule-ID suppression sets are brittle: they require maintenance as new rules are added, they suppress at the wrong granularity, and they encode the suppression policy in two places (rulebook + suppression list) that drift apart over time.
-
-**Canonical example:** R6.3 (closed 2026-05-31). Replaced R3.4's two-rule-ID set with a per-statement gpt-4o-mini judgment that reads the Evidence-conflict explanation and decides which Editorial concerns materially restate it. Per-instance accuracy preserved; rulebook maintenance burden eliminated.
-
-## Doc-Sync Working Pattern
-
-When backlog items emerge, evolve, or close during a session, sync `docs/ROADMAP.md` and other governance documents (`docs/ARCHITECTURE.md`, this manual) accordingly. Default behaviour: sync immediately when items are settled and the moment is a natural pause.
-
-**Always draft the doc-update prompt at the moment of decision** — when deferring, queuing, closing, or logging a follow-up item in conversation. Do not wait to be asked. The prompt can be held for a batched sync, but drafting it when the decision is fresh ensures nothing is lost to chat history.
-
-**Defer the batched sync** (applying updates to governance docs) when:
-- **Convergence test:** items are still actively evolving in the same session (e.g. specs reshaping each other through ongoing work). Sync after they settle.
-- **Cognitive-cost test:** syncing would interrupt a substantive workflow (mid-spec, mid-diagnosis). Sync at the next natural pause.
-
-When deferring the batched sync, surface the choice explicitly so Ben can override if preferred. End-of-session batched syncs are acceptable when both tests above are satisfied.
-
-`docs/ROADMAP.md` and other governance documents (`docs/ARCHITECTURE.md`, this manual) are kept in sync with conversational decisions — not retroactively. The cost of writing the doc-update prompt at the moment of decision is small; the cost of reconstructing decisions from chat history later is large.
-
-Triggers that should generate a doc-update prompt:
-
-- "Add to backlog"
-- "Defer"
-- "Queue as later spec"
-- "Closed"
-- "Log as cleanup"
-- "Bundle into [other sprint]"
-- Any architectural decision (e.g. "Path Y locked")
-- Any working-pattern decision (e.g. additions to this manual)
+Kept the rule each of those was trying to teach, in one or two lines. This file is read before every spec. If it is longer than the spec, it loses.

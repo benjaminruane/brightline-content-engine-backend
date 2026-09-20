@@ -1,33 +1,33 @@
 # Architecture
 
-Reference for how the Brightline Content Engine QC pipeline is designed after the v4 rebuild (R2–R5). Written for new contributors and new chat sessions — not a file-by-file map. For sprint status and backlog, see `docs/ROADMAP.md`.
+How the QC pipeline runs after the v4 rebuild, as of 2026-09-20. Cursor reads this before a spec that touches Review. It is the pipeline contract, not the sprint board. For status and backlog see `docs/ROADMAP.md` and `docs/BACKLOG.md`. Last audit: `docs/DOC_TRUTH_AUDIT.md`.
 
-**High-level flow:** uploaded sources + draft text → pipeline stages → one **qcCard** per sentence-level statement → frontend QC Workbench (no re-interpretation of verdicts on the client).
+High-level flow: uploaded sources plus draft text go through pipeline stages to one qcCard per sentence-level statement. The frontend renders that contract. It does not re-derive evidence verdicts.
 
 ---
 
 ## 1. Pipeline stages (v4)
 
-The v4 route (`lib/qc/pipeline-v4/`) runs seven logical stages. Unless noted, LLM stages use **gpt-4o** at **temperature 0** (`lib/qc/model-config.mjs`).
+The v4 route (`lib/qc/pipeline-v4/`) runs seven logical stages. QC LLM stages use the pinned snapshot in `lib/qc/model-config.mjs` (`gpt-4o-2024-08-06`) at temperature 0. Do not spec a floating `gpt-4o` alias.
 
-| Stage | Purpose | LLM or deterministic | Frequency | Output shape (informal) |
-|-------|---------|----------------------|-----------|-------------------------|
-| **1 — Statement extraction** | Split the draft into sentence-level statements reviewers can work with, with character offsets into the draft. | **LLM** (deterministic fallback if extraction fails validation) | **Once per QC run** | List of `{ text, charStart, charEnd, index }` plus metadata (`source`: llm \| fallback, `errors`). |
-| **1b — Claim-span extraction (B53a)** | For sentences that pass a deterministic compound pre-filter, extract internal claim spans (verbatim contiguous substrings of the parent). Failed validation reverts the sentence to the undecomposed path. Flag `QC_CLAIM_SPANS` (default ON). | **Deterministic pre-filter + batched LLM**; all-or-nothing code validation | **Once per QC run** (one batched call covering up to 12 candidate sentences) | Per decomposed sentence: 2–3 `{ text, localStart, localEnd, draftStart, draftEnd }`. Caps: **3 claims per sentence**, **12 decomposed sentences per run**. |
-| **2 — Source matching** | For each statement (and, when decomposed, each claim), ask each uploaded source whether the text is supported, partially supported, contradicted, or not addressed. | **LLM** | **Once per statement × source pair** (plus claim × source when 1b decomposed) | Per pair: `{ statementIndex, sourceIndex, classification, passage, explanation, systemFingerprint }`. Classifications: `confirmed`, `partially_confirmed`, `conflicting`, `no_support`. Concurrency cap `STAGE2_CONCURRENCY` (24); each request sends fixed `seed=1`. |
-| **3 — Verdict aggregation** | Combine all source-level classifications for one statement into a single evidence verdict, then optionally apply the B53a upgrade-only rollup. Each source pair is first reduced to the most serious of its single-pick classification and every locatable widened `supportSpan` for that same pair (conflicting, then partially_confirmed, then confirmed, then not_supported). Widened passages are not added as extra Stage 3 voters. | **Deterministic** | **Once per statement** | `{ verdict, hasConflict, contributingSourceIndices }`. Base precedence: any `conflicting` → conflicting; else any `confirmed` → confirmed; else any `partially_confirmed` → partial; else `not_supported`. `hasConflict` is true if any reduced pair is `conflicting`. **Upgrade-only rollup** (flag ON): if (a) base verdict is `partially_confirmed`, (b) every claim verdict is `confirmed`, (c) no unclaimed verifiable anchor remains in the parent, (d) no whole-sentence source returned `conflicting`, then verdict becomes `confirmed`. Claim spans may never downgrade a verdict, alter `hasConflict`, or override a sentence-level conflict. |
-| **4 — Excerpt selection** | Pick which source passages appear on the QC card for the reviewer. | **Deterministic** | **Once per statement** | `{ primaryExcerpt, conflictExcerpt }` — each excerpt has `passage`, `sourceLabel`, etc. Conflict excerpts are retained even when another source confirms the statement. |
-| **5 — Commentary generation** | Produce reviewer-facing prose explaining the evidence finding (not the verdict itself). | **LLM** | **Once per statement** | `{ commentary }` — plain-language summary stored on the card as `evidenceSummary` / `reasoningParagraph`. |
-| **6 — Editorial+Style and Compliance review** | Apply rulebook-driven craft and regulatory concerns to the **current statement only**. | **LLM** (two parallel calls per statement on v4) | **Once per statement** (Editorial+Style **one** combined call; Compliance **separate**) | Partial qcCard fields: `editorialVerdict`, `editorialConcerns[]`, `complianceVerdict`, `complianceConcerns[]`, notes, suggested direction/rewrite. Each concern: `{ concernCode, note, category, … }`; v4 may add optional `span` (R5.1). |
-| **7 — Card assembly** | Merge evidence, commentary, and review results into the stable **qcCard** contract the frontend already expects. | **Deterministic** | **Once per statement** | Full qcCard object (index, statement, spans, evidence fields, editorial/compliance fields, display mappings). |
+| Stage | Purpose | LLM or deterministic | Frequency | Output shape |
+|-------|---------|----------------------|-----------|--------------|
+| **1 Statement extraction** | Split the draft into sentence-level statements with character offsets. | LLM, deterministic fallback if validation fails | Once per QC run | `{ text, charStart, charEnd, index }` plus `source` (llm or fallback) and `errors`. Stage 1 can drop non-claim text without a user-visible report (**B248**, **B249**). |
+| **1b Claim-span extraction (B53a)** | For sentences that pass a deterministic compound pre-filter, extract internal claim spans (verbatim contiguous substrings of the parent). Failed validation reverts undecomposed. Flag `QC_CLAIM_SPANS` (default ON). | Deterministic pre-filter plus batched LLM; all-or-nothing code validation | Once per QC run, one batched call, up to 12 candidate sentences | Per decomposed sentence: 2-3 `{ text, localStart, localEnd, draftStart, draftEnd }`. Caps: 3 claims per sentence, 12 decomposed sentences per run (`claim-spans.mjs`). |
+| **2 Source matching** | For each statement (and, when decomposed, each claim), ask each uploaded source whether the text is supported, partially supported, contradicted, or not addressed. | LLM | Once per statement x source pair (plus claim x source when 1b decomposed) | `{ statementIndex, sourceIndex, classification, passage, explanation, systemFingerprint }`. Classifications: `confirmed`, `partially_confirmed`, `conflicting`, `no_support`. Cap `STAGE2_CONCURRENCY` (24). Every request sends `seed=1`. A schema fail defaults the pair to `no_support` and continues (**B250**). |
+| **3 Verdict aggregation** | Combine pair classifications into one evidence verdict, then optional B53a upgrade-only rollup. Each pair is first reduced to the most serious of its single-pick classification and every locatable widened `supportSpan` (conflicting, then partially_confirmed, then confirmed, then not_supported). Widened passages are not extra Stage 3 voters. | Deterministic | Once per statement | `{ verdict, hasConflict, contributingSourceIndices }`. Precedence: any `conflicting` then conflicting; else any `confirmed` then confirmed; else any `partially_confirmed` then partial; else `not_supported`. `hasConflict` is true if any reduced pair is `conflicting`. Upgrade-only rollup (flag ON): if base is `partially_confirmed`, every claim is `confirmed`, no unclaimed verifiable anchor remains, and no whole-sentence source returned `conflicting`, verdict becomes `confirmed`. Claim spans may never downgrade a verdict, alter `hasConflict`, or override a sentence-level conflict. Supersession can demote a pair before this step. Coverage-union can promote a partial to confirmed only when `QC_MULTISOURCE_COVERAGE` is on (default OFF). |
+| **4 Excerpt selection** | Pick which source passages appear on the QC card. | Deterministic | Once per statement | Stage 4 still builds excerpt objects with `passage` and `sourceLabel`. Assembly writes `primaryExcerpt` as a passage string or null. `conflictExcerpt` is still an object. Residual: some conflict cards carry the quote only in `primaryExcerpt` with `conflictExcerpt` empty (**B158**). |
+| **5 Commentary generation** | Reviewer-facing prose explaining the evidence finding, not the verdict. | LLM | Once per statement | Success: prose on `evidenceSummary` / `reasoningParagraph`. Miss: empty strings plus `commentaryNotReviewed: true`. A miss is not a finding (**B254**). Pooled at `STAGE5_CONCURRENCY` 24. |
+| **6 Editorial+Style and Compliance** | Apply rulebook-driven craft and regulatory concerns. Evaluation scope is the current statement. The editorial user payload still includes CONTEXT BEFORE / AFTER and the full draft marked `[REVIEW THIS]`. Those are different facts. Do not cite "current statement only" as a cost claim. | LLM, two calls per statement (combined Editorial+Style, Compliance separate) | Once per statement | `editorialVerdict`, `editorialConcerns[]`, `complianceVerdict`, `complianceConcerns[]`, notes, direction/rewrite. Optional `span` (R5.1). Pooled at `STAGE6_CONCURRENCY` 24, so peak in-flight is 48. A 429 exhausts retries and stamps honest `not_reviewed` (**B268**). |
+| **7 Card assembly** | Merge evidence, commentary, and review results into the qcCard contract. | Deterministic | Once per statement | Shared assembler `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. When editorial or compliance is off, the payload stamps `clean` and the screen says `Not reviewed` (**B247**). Believe the screen. |
 
-**Execution note:** In `runPipelineV4`, Stage 1b (when the flag is on) runs after Stage 1 and before Stage 2 claim matching. The widened multi-passage matcher is awaited before Stage 3 so the intra-source reducer can read locatable spans. Stage 6 (editorial/compliance) runs before Stage 5 (commentary) for each statement, then Stage 7 assembles everything. Stage numbers follow the architecture spec (evidence block first, then human-facing commentary, then craft/compliance).
+Execution in `runPipelineV4`: Stage 1, then 1b when the flag is on, then Stage 2, then the widened matcher, then Stage 3 (and supersession / coverage-union), then Stage 6, then Stage 5, then Stage 7. Stage numbers follow the architecture spec (evidence block first, then commentary, then craft/compliance), not wall-clock order.
 
-**Stage 1b pre-filter (all required):** two or more verifiable anchors (number, date, or Title-Case name); an additive coordinating boundary (`, and `, `, with `, `, while `, `, including `, `; `, ` as well as `); no relational connective (`driven by`, `because`, `up from`, … — word-boundary match). The batched LLM must return verbatim contiguous substrings; validation uses the same substring / Levenshtein-≤2 locate standard as Stage 1. Each claim must also contain a verifiable anchor (B64): digits, dates, two-word Title Case, spelled-out numbers, all-caps acronyms of two or more letters, or a capitalised token that is not the first token of the parent sentence. The pre-filter still uses the narrower digit/date/two-word test so conflict detection and materiality do not change. Any failure reverts that sentence undecomposed.
+Stage 1b pre-filter (all required): two or more verifiable anchors (number, date, or Title-Case name); an additive coordinating boundary (`, and `, `, with `, `, while `, `, including `, `; `, ` as well as `); no relational connective (`driven by`, `because`, `up from`, and the rest, word-boundary match). The batched LLM must return verbatim contiguous substrings. Validation uses the same substring / Levenshtein-<=2 locate standard as Stage 1. Each claim must also contain a verifiable anchor (B64). Any failure reverts that sentence undecomposed.
 
-**Why the Stage 3 rollup is upgrade-only:** decomposition is lossy. A sentence can assert a relation that lives in the connective rather than in either claim (implied causation, shared scope or period, exhaustive lists, arithmetic, event ordering). The whole-sentence Stage 2/3 assessment therefore stays authoritative; claim spans may only fill a gap (partial → confirmed), never override a conflict or a confirmed/not-supported card.
+Why the Stage 3 rollup is upgrade-only: decomposition is lossy. A sentence can assert a relation that lives in the connective. Whole-sentence Stage 2/3 stays authoritative.
 
-**Example (one statement):** Draft sentence *"Revenue grew 12% year on year."* Stage 2 might return `partially_confirmed` from an annual report (growth mentioned but period unclear) and `no_support` from a second source. Stage 3 yields `partially_confirmed`. Stage 5 explains the gap in plain language. Stage 6 might flag a style rule on phrasing and a compliance rule on missing gross/net qualifier — independent of the evidence verdict.
+Function cap: `vercel.json` `api/*.js` `maxDuration` 300 (**B263**). Extraction timeout tracks that cap (**B267**). `callLLM` retries 429 with the server delay, 4 attempts, 2000 ms cap (**B266**).
 
 ---
 
@@ -35,143 +35,128 @@ The v4 route (`lib/qc/pipeline-v4/`) runs seven logical stages. Unless noted, LL
 
 ### LLM-last
 
-Deterministic code is the **referee**; the LLM is the **commentator** (and, in Stages 2 and 6, the **classifier** within fixed rubrics).
+Deterministic code is the referee. The LLM is the commentator, and in Stages 2 and 6 the classifier inside a fixed rubric.
 
-- **Evidence verdict** (Stage 3) and **display fields** (`supportState`, `displayVerdict`, `concernLevel`) are computed in code from Stage 2 classifications. Commentary (Stage 5) cannot change the verdict.
-- A failed or empty commentary generation does **not** downgrade a correct `confirmed` or upgrade a `not_supported`.
-- For Editorial and Compliance, the model flags concerns and quotes phrases in prose; it does **not** return character offsets. **Spans** (where in the sentence a concern applies) are derived in code from those quotes — see [§4 Span derivation](#4-span-derivation-r51).
+- Evidence verdict (Stage 3) and display fields (`supportState`, `displayVerdict`, `concernLevel`) are computed in code from Stage 2 classifications. Commentary cannot change the verdict.
+- A failed commentary call does not downgrade a `confirmed` or upgrade a `not_supported`.
+- For Editorial and Compliance, the model flags concerns and quotes phrases. It does not return character offsets. Spans are derived in code. See section 4.
 
 ### Three-signal separation
 
-**Evidence**, **Editorial+Style**, and **Compliance** are separate LLM calls with separate prompts and rulebooks.
+Evidence, Editorial+Style, and Compliance are separate LLM calls with separate prompts and rulebooks.
 
-- Different cognitive frames (source risk vs writing craft vs regulatory risk) do not share a single prompt.
-- Marginal cost saving from merging Compliance into Editorial was judged **not worth signal dilution** (~$0.02/run in planning estimates).
-- **R3.1** merged **Style + Editorial** on v4 into one call (`runEditorialStyleReview`) because both are writing-craft judgments. **Compliance stayed separate.**
+- Different cognitive frames do not share a prompt. R3.1 merged Style into Editorial on v4 because both are craft. Compliance stayed separate.
+- Do not merge Compliance to save money. B99 already shows sibling draft text misattributes concerns. The 2026-05 "~$0.02/run" figure is not the live cost. On a real memo, Stage 6 was most of the Langfuse bill. The product rule is still: keep Compliance separate.
 
 ### Conflicts always surface
 
-Stage 3 is conflict-wins (`9f8fc41`). If any reduced pair is `conflicting`, the card verdict is `conflicting` and `hasConflict` is true. A confirming source does not outrank a contradicting one. Conflict excerpts are selected when a conflicting passage is available. Residual: some conflict cards still carry the quote only in `primaryExcerpt` with `conflictExcerpt` empty (**B158**).
+Stage 3 is conflict-wins. If any reduced pair is `conflicting`, the card verdict is `conflicting` and `hasConflict` is true. A confirming source does not outrank a contradicting one. Residual excerpt layout: **B158**.
 
 ### Deterministic verdicts
 
-Same draft + same sources → same aggregated evidence verdict on repeated runs. Temperature **0** on all QC LLM stages. (Run-to-run variance on Editorial concerns at temp 0 is a known LLM API property; evidence aggregation itself is deterministic given fixed Stage 2 outputs.) Flag `QC_LLM_CACHE` (default ON; set `0`/`false`/`off` to disable) can replay Stages 1, 1b, and 2 from a process-local LRU. Production does not set `QC_LLM_CACHE_DISK`, so the store is memory only and does not survive a cold start. Local diagnostics may point that env var at a gitignored file. Neither mode closes residual `hasConflict` drift (**B61**).
+Same draft plus same sources should yield the same aggregated evidence verdict given fixed Stage 2 outputs. Temperature 0 on QC LLM stages. Run-to-run variance on Editorial concerns at temp 0 is a known API property. Flag `QC_LLM_CACHE` (default ON; set `0`/`false`/`off` to disable) replays Stages 1, 1b, and 2 from a process-local LRU. Production does not set `QC_LLM_CACHE_DISK`, so the store is memory only and dies on cold start. Neither mode closes residual `hasConflict` drift (**B61**). Stage 5 and Stage 6 are not in that cache.
 
 ### No extra cards from decomposition
 
-**One sentence = one QC card, always.** The legacy pipeline split sentences into subclaims and produced multiple cards per sentence. v4 does not. Stage 2 classifies the **whole sentence** against each source. Each pair is then reduced with locatable widened spans (most serious wins). Stage 3 is **conflict-wins** over those reduced pair classifications: any `conflicting` → conflicting; else any `confirmed` → confirmed; else any `partially_confirmed` → partial; else `not_supported`. `hasConflict` is independent — true if any reduced pair is `conflicting`.
-
-Sentences that pass the Stage 1b compound pre-filter are additionally split into **internal claim spans**: verbatim contiguous substrings of the parent, located to the same substring and edit-distance standard as Stage 1. Claim spans never create additional cards. Behind flag `QC_CLAIM_SPANS` (default ON; set `0`/`false`/`off` to disable), per-claim Stage 2 matching may **upgrade only** a whole-sentence `partially_confirmed` to `confirmed` when every claim is confirmed, coverage is complete, and no whole-sentence source returned `conflicting`. Claim spans never downgrade a verdict, alter `hasConflict`, or override a sentence-level conflict.
+One sentence is one QC card. The legacy pipeline split sentences into subclaims and produced multiple cards. v4 does not. Claim spans never create additional cards.
 
 ### Backend authority
 
-The backend produces the **qcCard** JSON contract. The frontend renders badges, borders, and copy from those fields — it does not re-derive evidence verdicts, re-run rules, or reinterpret concern severity.
+The backend produces the qcCard JSON contract. The frontend renders badges, borders, and copy from those fields. It does not re-derive evidence verdicts, re-run rules, or reinterpret concern severity.
 
 ---
 
 ## 3. Three-signal framework
 
-### Evidence (Stages 1–5 + assembly)
+### Evidence (Stages 1-5 plus assembly)
 
 | | |
 |---|---|
-| **Evaluates** | Whether each statement is supported, partially supported, contradicted, or not addressed by uploaded sources. |
-| **Does not evaluate** | Writing quality, regulatory framing, or marketing register — delegated to Editorial+Style and Compliance. |
-| **qcCard fields** | `supportState`, `displayVerdict`, `concernLevel`, `hasConflict`, `statement`, `charStart` / `charEnd`, `draftSpan`, `primaryExcerpt`, `conflictExcerpt`, `evidenceSummary`, `reasoningParagraph`, `supportRefIds`, `supportRefTitles`, `hasRealExcerpt`, and related excerpt metadata. When claim spans ran: additive `decomposed`, `claimUpgrade`, `claims[]` (frontend does not read these; verdict still flows through `displayVerdict` / `supportState`). |
-| **Interaction with other signals** | **R6.3 (v4 only):** When evidence verdict is `conflicting`, editorial concerns that duplicate the Evidence-conflict finding are dropped at card assembly via a gpt-4o-mini judgment call (`lib/qc/editorial-duplication-judge.mjs`). The judge runs only when Evidence verdict is `conflicting`. Errs toward keeping concerns when duplication is unclear. Tracked via Langfuse canary `editorial_concern_suppressed_by_judgment`. Editorial and Compliance concerns on the same promotional phrase may both appear — intentional (craft vs regulatory). |
+| Evaluates | Whether each statement is supported, partially supported, contradicted, or not addressed by uploaded sources. |
+| Does not evaluate | Writing quality, regulatory framing, or marketing register. |
+| qcCard fields | `supportState`, `displayVerdict`, `concernLevel`, `hasConflict`, `statement`, `charStart` / `charEnd`, `draftSpan`, `primaryExcerpt` (string or null), `conflictExcerpt` (object or null), `evidenceSummary`, `reasoningParagraph`, `commentaryNotReviewed`, `supportRefIds`, `supportRefTitles`, `hasRealExcerpt`, `supportSpans`. When claim spans ran: additive `decomposed`, `claimUpgrade`, `claims[]` (frontend does not read these; verdict still flows through `displayVerdict` / `supportState`). |
+| Interaction | R6.3 (v4 only): when evidence verdict is `conflicting`, editorial concerns that duplicate the Evidence-conflict finding are dropped at card assembly via a gpt-4o-mini judgment (`lib/qc/editorial-duplication-judge.mjs`). The judge runs only on `conflicting`. Errs toward keeping. Canary: `editorial_concern_suppressed_by_judgment`. Editorial and Compliance on the same promotional phrase may both appear. Intentional. |
 
 ### Editorial+Style (Stage 6, combined on v4)
 
 | | |
 |---|---|
-| **Evaluates** | Craft: clarity, structure, register, overreach relative to evidence shown, narrative coherence (with adjacent context), style-guide mechanics, marketing language, audience-appropriate jargon — per rules in `lib/rulebook/editorialRules.js` and `lib/rulebook/styleGuide.js`. |
-| **Does not evaluate** | Source-by-source factual matching (Evidence) or fund-marketing regulatory rules (Compliance). |
-| **qcCard fields** | `editorialVerdict`, `editorialConcerns[]`, `editorialNote`, `editorialSuggestedDirection`, `editorialSuggestedRewrite`. |
-| **Interaction** | Subject to R6.3 principle-based suppression on conflicting evidence (above). Otherwise independent of Compliance; overlap on promotional language is accepted unless product feedback says otherwise. |
+| Evaluates | Craft, per `lib/rulebook/editorialRules.js` and `lib/rulebook/styleGuide.js`. House voice is one table: `lib/prompt-library/house-voice.mjs`. |
+| Does not evaluate | Source-by-source factual matching, or fund-marketing regulatory rules. |
+| qcCard fields | `editorialVerdict`, `editorialConcerns[]`, `editorialNote`, `editorialSuggestedDirection`, `editorialSuggestedRewrite`. |
+| Interaction | Subject to R6.3 on conflicting evidence. Otherwise independent of Compliance. |
+
+A requested editorial check that does not complete is `editorialVerdict: "not_reviewed"`. A genuine clean note is `No editorial or style concerns identified under the listed rules.` Style rules with a structurally checkable property have a deterministic backstop in `STYLE_RULE_DETERMINISTIC_FILTERS`.
 
 ### Compliance (Stage 6, separate call)
 
 | | |
 |---|---|
-| **Evaluates** | Regulatory and disclosure risk: promissory language, forward-looking qualifiers, gross/net on returns, material omission, selective presentation, public-version confidential detail, missing disclosure language — per `lib/rulebook/complianceRules.js`, filtered by output type and visibility. |
-| **Does not evaluate** | Whether a source passage confirms a number (Evidence) or whether a sentence is clumsy (Editorial+Style). |
-| **qcCard fields** | `complianceVerdict`, `complianceConcerns[]`, `complianceNote`, `complianceSuggestedDirection`, `complianceSuggestedRewrite`. |
-| **Interaction** | Independent of Editorial except shared sentence text. Visibility (R4.3) changes which rules are in the prompt — see [§5](#5-visibility-calibration-r43). |
+| Evaluates | Regulatory and disclosure risk, per `lib/rulebook/complianceRules.js`, filtered by output type and visibility. |
+| Does not evaluate | Whether a source confirms a number, or whether a sentence is clumsy. |
+| qcCard fields | `complianceVerdict`, `complianceConcerns[]`, `complianceNote`, `complianceSuggestedDirection`, `complianceSuggestedRewrite`. |
+| Interaction | Independent of Editorial except shared sentence text. Visibility (section 5) changes which rules are in the prompt. |
 
-**Concern list shape (Editorial and Compliance):** Each item includes at least `concernCode`, `note`, and `category`. Optional: `suggestedDirection`, `suggestedRewrite`, `concernText`. On v4, optional `span: { startChar, endChar, source }` when R5.1 derivation succeeds.
-
-**2026-06-01 diagnostic + comments review:** Rule bugs (wrong or un-actionable style outputs) and commentary-register issues (Stage 5 / concern prose meta-phrasing) were addressed in the editorial cluster — **B21**, **B22**, **B23**, **R6.6** (shipped; see **BACKLOG** Closed and **ROADMAP** Near-term — Review output). Current near-term work-streams: see `docs/ROADMAP.md` (**CONSTRUCTIVE FEEDBACK OUTPUT**, R6.12, R7). These are prompt/rulebook calibration items, not changes to the three-signal contract above.
+Concern list shape: `concernCode`, `note`, `category`. Optional: `suggestedDirection`, `suggestedRewrite`, `concernText`, `span: { startChar, endChar, source }`.
 
 ---
 
 ## 4. Span derivation (R5.1)
 
-Spans tell the UI **which phrase** in the statement a concern refers to, without asking the model for character positions.
+Spans tell the UI which phrase in the statement a concern refers to, without asking the model for character positions.
 
-1. The LLM writes concerns with **quoted phrases** in `note` and/or `suggestedDirection` (existing prompt habit).
-2. Code runs `extractQuotedSnippets` (same parser as the compliance **fidelity gate**) on those fields.
-3. For each quoted phrase (length ≥ 4 characters), code searches `statementText` case-insensitively and takes the **earliest** match.
+1. The LLM writes concerns with quoted phrases in `note` and/or `suggestedDirection`.
+2. Code runs `extractQuotedSnippets` (same parser as the compliance fidelity gate) on those fields.
+3. For each quoted phrase (length >= 4), code searches `statementText` case-insensitively and takes the earliest match.
 4. On success, the concern gains `span: { startChar, endChar, source }` where `source` is `note_quote` or `direction_quote`.
 
-**The LLM is never asked for offsets.** Offset reliability from models is poor; quoting prose is reliable enough to locate text deterministically.
-
-**Valid without a span:** Statement-level concerns, or concerns where the model did not quote the triggering phrase. Downstream work (R5.2 merge, R5.4 highlight) must handle missing `span` gracefully.
-
-**Reserved:** `source: "code_match"` (map concern codes to canonical phrases) — not implemented; future follow-up.
-
-**Coverage (early dogfooding):** Editorial ~96%, Compliance ~56% of concerns receive a span; Langfuse canaries `editorial_concern_span_coverage` and `compliance_concern_span_coverage` track this per run. R5.1.1 may tighten Compliance prompts to encourage quoting.
-
-**v3 path:** Spans are **not** attached on the legacy v3 editorial/compliance path.
+The LLM is never asked for offsets. Statement-level concerns, and concerns with no quote, are valid without a span. Reserved `source: "code_match"` is not implemented. v3 path does not attach spans. Coverage figures from early dogfooding are not current; canaries `editorial_concern_span_coverage` and `compliance_concern_span_coverage` still fire.
 
 ---
 
 ## 5. Visibility calibration (R4.3)
 
-QC runs carry **required version** (visibility): **Complete** or **Public**. This drives which rules appear in Stage 6 prompts and how strict the model is asked to be — not just UI metadata.
+QC runs carry required version: Complete or Public. This drives which rules appear in Stage 6 prompts.
 
 ### Complete (NDA-bound, existing-investor audience)
 
 - Standard threshold on existing rules.
-- **Compliance rules omitted** from the run (not in prompt) because they only apply to Public:
+- Compliance rules omitted because they only apply to Public:
   - `precise_confidential_detail_in_public_version`
   - `named_individual_attribution_in_public_content`
-- Editorial+Style system prompt: borderline promotional or hedging language may be allowed when substance is accurate.
+- Editorial+Style: borderline promotional or hedging language may be allowed when substance is accurate.
 
 ### Public (wider, non-NDA audience)
 
-- Stricter calibration in Editorial+Style and Compliance system prompts: forward-looking claims without qualifiers, comparatives without basis, selective hedging, marketing superlatives.
-- **Additional Compliance rules engaged:**
-  - `precise_confidential_detail_in_public_version` — flags content with the *shape* of confidential detail (specific LP names, fund-level return metrics, valuation multiples, deal terms, etc.) for human confirmation. Example watch case: *"3.2x net of fees"* without an explicit *"MOIC"* label.
-  - `expected_disclosure_language_absent_on_public` — investor letter / press release performance or forward-looking content without expected disclaimer language nearby.
-- **Editorial rule with version-aware calibration:** `jargon_outside_audience_competence` — on Complete, only deep-insider terms; on Public, any term an outside professional reader might not know.
+- Stricter calibration in Editorial+Style and Compliance system prompts.
+- Additional Compliance rules engaged: `precise_confidential_detail_in_public_version`, `expected_disclosure_language_absent_on_public`.
+- Editorial rule with version-aware calibration: `jargon_outside_audience_competence`.
 
-Rule filtering is implemented via `appliesToVersion` on rulebook entries and `filterRulesForRun` in `lib/qc/editorial-compliance-reviewer.mjs`. Visibility calibration paragraphs are injected into Editorial+Style and Compliance system prompts.
+Implemented via `appliesToVersion` on rulebook entries and `filterRulesForRun` in `lib/qc/editorial-compliance-reviewer.mjs`.
 
 ---
 
-## 6. What is removed (legacy v2 pipeline)
+## 6. What v2 dropped
 
-The v4 rebuild deliberately dropped mechanisms that added complexity without improving reviewer trust:
+- Subclaim atomisation (multiple QC cards per sentence). Internal claim spans exist. They do not create extra cards.
+- Component-level deterministic matching as primary evidence logic.
+- Role compatibility gates.
+- Numeric tuple authorisation.
+- Excerpt quality gates as verdict drivers.
+- Binding diagnostics.
+- Multi-candidate classification with opaque precedence.
 
-- **Subclaim atomisation** — multiple QC cards per sentence. (Internal claim spans exist; they do not create extra cards.)
-- **Component-level deterministic matching** — brittle pattern matching as primary evidence logic.
-- **Role compatibility gates** — blocking verdicts based on entity roles.
-- **Numeric tuple authorisation** — pre-authorising number pairs outside LLM rubric.
-- **Excerpt quality gates as verdict drivers** — downgrading verdicts when excerpt retrieval failed.
-- **Binding diagnostics** — internal coupling between extraction and binding layers.
-- **Multi-candidate classification with precedence rules** — opaque winner selection among competing classifiers.
-
-Evidence quality now flows: Stage 2 LLM rubric → Stage 3 aggregation → Stage 4 excerpt pick → Stage 5 explanation.
+Evidence quality now flows: Stage 2 LLM rubric, Stage 3 aggregation, Stage 4 excerpt pick, Stage 5 explanation.
 
 ---
 
-## 7. What is kept (v3 → v4 rebuild)
+## 7. What v4 kept from v3
 
-- **LLM-based statement splitting** with deterministic validation fallback (Stage 1).
-- **Three-signal review framework** (Evidence + Editorial + Compliance), with Style merged into Editorial on v4 only.
-- **qcCard contract** — stable shape for frontend; rebuild did not require qcCard field changes for existing UI.
-- **Regression suite** (`scripts/run_qc_regression.mjs`, `npm run qc:test`).
-- **Product plumbing:** version history, export (PDF/DOCX), banned words (prevention + QC detection).
+- LLM-based statement splitting with deterministic validation fallback (Stage 1).
+- Three-signal review framework, with Style merged into Editorial on v4 only.
+- qcCard as the frontend contract. The shape has grown. New fields are additive.
+- Regression suite (`scripts/run_qc_regression.mjs`, `npm run qc:test`).
+- Product plumbing: version history, export (PDF/DOCX), banned words.
 
 ---
 
@@ -179,29 +164,27 @@ Evidence quality now flows: Stage 2 LLM rubric → Stage 3 aggregation → Stage
 
 | Mechanism | Behaviour |
 |-----------|-----------|
-| **`QC_PIPELINE_V4=1`** | Selects v4 rebuild (`runPipelineV4` in `lib/qc/pipeline-v4/index.mjs`). |
-| **Unset or other** | Falls back to legacy v3 pipeline (`lib/qc/pipeline-v3/`). |
-| **Request body** | `options.pipelineRoute === "v4"` also selects v4 (used by API clients). |
+| `QC_PIPELINE_V4=1` | Selects v4 (`runPipelineV4` in `lib/qc/pipeline-v4/index.mjs`). |
+| Unset or other | Falls back to legacy v3 (`lib/qc/pipeline-v3/`). |
+| Request body | `options.pipelineRoute === "v4"` also selects v4. |
 
-**As of 2026-05-17:** Production and development are configured to run **v4**. v3 remains in the codebase as a fallback during dogfooding.
+Production is configured to run v4. v3 remains in the tree as the unset-env fallback and is still statically imported on every Review request. `qcCard.pipelineVersion` is stamped from the route `assembleCard` runs under.
 
-**qcCard.pipelineVersion:** Stamped from the route `assembleCard` runs under (`assemblyContext.pipelineRoute` → `"v3"` or `"v4"` in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`), so it matches handler `meta.pipelineVersion` on the same response. Fixed 2026-05-31 (`fix-pipelineversion-label`); v3 Stage 7 assembler is still shared by both routes.
-
-**Planned retirement:** **R4.2** — remove v3 route and dual-path editorial code after 15–25 production traces with no canary fires (see `docs/ROADMAP.md`).
-
-**Operational gap:** Route selection should log the resolved env var on every request so a missing `QC_PIPELINE_V4` in local `vercel dev` is obvious (roadmap item).
+R4.2 (remove v3) is parked. Handler logs `[handler] route selected: v4|v3` and does not print the env var.
 
 ---
 
 ## 9. Persistence
 
-Durable server-side storage exists. The database is **Neon Postgres 18** in AWS Europe Central 1 (Frankfurt), matching the Vercel function region `fra1`.
+Neon Postgres in AWS Europe Central 1 (Frankfurt), matching Vercel `fra1`. Repo docs say Postgres 18.
 
-`review_state` is an **autosave buffer**, not an audit record. One row per `review_id` holds an opaque JSON `state` blob plus an `owner_key`. Overwriting the row is correct. The table does not store finding decisions, accept or reject markers, or any other reviewer decision. Those arrive later with B9 as append-only event rows in their own table, because the history is the point.
+`review_state` is an autosave buffer, not an audit record. One row per `review_id`, opaque JSON `state`, plus `owner_key`. Overwriting the row is correct. API: GET / POST / DELETE `/api/review-state`.
 
-`owner_key` (`x-owner-key` header) is an opaque browser-generated key that stops one browser accidentally reading another browser's row. It is not authentication. Real identity arrives with user accounts.
+`reviewer_decisions` is append-only (**B186**). First kinds: `source_governance` and `source_override`. Changing a ruling appends a new row. There is no update or delete path. POST / GET `/api/reviewer-decisions`. Missing database returns 503 and Review continues. Per-finding accept/reject is still not recorded. That is still B9.
 
-API: `GET` / `POST` / `DELETE` `/api/review-state`. Route module `api/review-state.js`; access helpers in `lib/db/review-state.mjs`. Pooled `DATABASE_URL` for the route; unpooled `DATABASE_URL_UNPOOLED` for migrations only (`npm run db:migrate`).
+`owner_key` (`x-owner-key` header) stops one browser reading another browser's row. It is not authentication.
+
+Pooled `DATABASE_URL` for routes. Unpooled `DATABASE_URL_UNPOOLED` for migrations (`npm run db:migrate`).
 
 ---
 
@@ -209,13 +192,9 @@ API: `GET` / `POST` / `DELETE` `/api/review-state`. Route module `api/review-sta
 
 | Document | Role |
 |----------|------|
-| `docs/ROADMAP.md` | Sprint status, R5 sequence, watches, backlog |
-| `docs/BACKLOG.md` | Deferred bugs and polish rows |
-| `docs/ROADMAP.md` → Review Correctness Principles | Non-negotiable evidence invariants |
-| `ai/AI_OPERATING_MANUAL.md` | How agents should work on this codebase |
-
----
-
-## Review correctness principles (summary)
-
-Full list lives at the end of `docs/ROADMAP.md`. In short: never claim “not mentioned” without corpus search; never say no sources when sources exist; contradictions are statement-vs-sources only; explain, don’t rewrite in Review; normalise numeric anchors before mismatch.
+| `docs/ROADMAP.md` | Sprint status, watches, backlog of sequencing. Not the pipeline contract. |
+| `docs/BACKLOG.md` | Open work, standing rules, closed rows. |
+| `docs/ROADMAP.md` Review Correctness Principles | Evidence invariants. Principle 6 (draft-vs-draft out of scope) is current code and sits next to **Pr16**, which is not built. Principle 7 (explain, do not rewrite) does not describe Implement Changes or `suggestedRewrite`. |
+| `docs/SPEND_LEDGER.md` | Named USD. Use this, not a baseline paragraph. |
+| `ai/AI_OPERATING_MANUAL.md` | How Cursor works on this codebase. |
+| `ai/SPEC_TEMPLATE.md` | Spec form in use. |
