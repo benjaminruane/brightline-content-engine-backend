@@ -25,7 +25,7 @@ Rows marked **CITED** were used as authority in a September 2026 spec report.
 | A9 | Stage 5 commentary stored as `evidenceSummary` / `reasoningParagraph` (L20) | STALE | True when the call succeeds. A miss now stamps empty strings plus `commentaryNotReviewed: true` (`stage7-assemble-card.mjs` L745-749, L796). The four canned "Specific commentary is unavailable" strings are gone (**B254**). |
 | A10 | Stage 6: current statement only; two parallel LLM calls per statement (L21) **CITED** `scripts/diagnostic/delivery-check/review-cost-proposal.md` L26, L126 | TRUE as evaluation scope. STALE as a description of the prompt. | `EDITORIAL_EVALUATION_SCOPE` (`editorial-compliance-reviewer.mjs` L76). The same payload then pastes the full marked draft (`L1354-1357`, `L1404-1407`). Cited this month as the reason not to batch sentences. Evaluation rule is still that. Token cost is the full draft every time. |
 | A11 | Stage 7 assembles the qcCard the frontend already expects (L22) | STALE | Assembler is still shared (`pipeline-v3/stage7-assemble-card.mjs`). Additive fields since the rebuild: `commentaryNotReviewed`, `supportSpans`, `disagreementPassages`, and others. Frontend still does not re-derive the evidence verdict. |
-| A12 | Execution: 1b after 1, widened matcher before 3, Stage 6 before Stage 5 (L24) | TRUE | `index.mjs` L575-656. Missing: Stage 5 and Stage 6 are pooled at 24 (`STAGE5_CONCURRENCY` / `STAGE6_CONCURRENCY` L44-45). |
+| A12 | Execution: 1b after 1, widened matcher before 3, Stage 6 before Stage 5 (L24) | TRUE | `index.mjs` L575-656. Stage 5 pooled at 24. Stage 6 pooled at 4 (**B268**). |
 | A13 | Stage 1b pre-filter and B64 anchors (L26) | TRUE | `claim-spans.mjs` additive boundaries L13-20; relational connectives L27 onward. |
 | A14 | Upgrade-only rationale (L28) | TRUE | Comment in `claim-spans.mjs` L1-4. |
 | A15 | LLM-last: Stage 3 and display fields are code; commentary cannot change the verdict (L38-42) | TRUE | Stage 5 writes prose only. `commentaryNotReviewed` does not change `displayVerdict`. |
@@ -60,7 +60,7 @@ Omitted from architecture entirely, and now load-bearing:
 | Missing | Why it matters |
 |---------|----------------|
 | Model snapshots, not aliases | Specs that say "gpt-4o" are already wrong against `model-config.mjs`. |
-| Stage 5/6 pool at 24 | **B265**. Peak Stage 6 in-flight is 48. |
+| Stage 5 pool at 24; Stage 6 pool at 4 | **B265** then **B268**. Peak Stage 6 in-flight is 8. |
 | Function `maxDuration` 300 | **B263**. `vercel.json`. |
 | `commentaryNotReviewed` | **B254**. A Stage 5 miss is not a finding. |
 | Editorial/compliance off stamps `clean` in the payload, `Not reviewed` on screen | **B247**. `stage7-assemble-card.mjs` L515. |

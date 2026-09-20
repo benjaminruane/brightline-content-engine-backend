@@ -45,12 +45,12 @@ Full contract: `docs/ARCHITECTURE.md`. Do not cite it for sprint status.
 - One sentence, one card. Claim spans never add cards. They may upgrade a partial to confirmed. They may never downgrade, never flip `hasConflict`, never override a sentence-level conflict.
 - Stage 3 is conflict-wins, in code. Commentary cannot change a verdict.
 - Stage 6 evaluates the current statement. The editorial user payload still pastes the full marked draft as context. Those are different facts. Do not cite "current statement only" as a cost claim.
-- Stage 5 and Stage 6 are pooled at 24. Peak Stage 6 in-flight is 48. Function cap is 300 seconds.
+- Stage 5 is pooled at 24. Stage 6 is pooled at 4, so peak in-flight is 8. Function cap is 300 seconds.
 - A Stage 5 miss is empty prose plus `commentaryNotReviewed: true`, not a canned finding (**B254**).
 - When editorial or compliance is off, the payload stamps `clean` and the screen says `Not reviewed` (**B247**). Believe the screen, not the payload field.
 - `QC_LLM_CACHE` (default ON, memory only in production) covers Stages 1, 1b, and 2. Not 5. Not 6.
 - `review_state` is an overwrite autosave blob. `reviewer_decisions` is the append-only start of B9, governance kinds only.
-- Four-statement ~$2/run is not a real-document cost. A 3700-word memo billed USD 8.4497. Read the ledger.
+- Four-statement ~$2/run is not a real-document cost. A 3700-word memo with every Stage 6 check completed billed USD 11.1897 list. Read the ledger.
 
 ---
 
