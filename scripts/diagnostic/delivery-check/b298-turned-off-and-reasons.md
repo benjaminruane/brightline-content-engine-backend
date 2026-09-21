@@ -169,6 +169,8 @@ These decide how the Review modal and session persistence look *before* a run, n
 - explicit `false` is quiet
 - non-boolean (`"true"`, `1`, `null`) is loud and not requested
 
+Existing tests that passed `{}` meaning "all checks on" (`tests/constructive-feedback.test.mjs`, frontend `tests/action-list-display.test.mjs`) now send the three booleans. Empty object is off, not on.
+
 ---
 
 ## Part 4. A failed check records why. B300. Backend.
@@ -238,9 +240,13 @@ A run with everything on was not re-photographed. The line is omitted when every
 
 ## Production Review
 
-Posted after this change deployed. Evidence-only Meridian fixture. Same draft as B294.
+Two evidence-only Meridian POSTs to `https://brightline-content-engine-backend.vercel.app/api/analyse-statements`. Same draft as B294. Evidence on, editorial off, compliance off.
 
-Recorded in `scripts/diagnostic/delivery-check/b298-runs/production-extract.json` when the POST returns.
+**First POST**, before `6bc97cf` reached production. Trace `1c47c5df-fff4-4d2a-8b59-0c443321bdab`. HTTP 200, wall 15160 ms, v4, 7 cards. `cardTone` already green. `turnedOffLine` absent. Extract `scripts/diagnostic/delivery-check/b298-runs/production-extract-before.json`.
+
+**Second POST**, after deploy. Trace `1d62d0cb-b2ae-4bd3-a2ff-80a31c2e9ee8`. HTTP 200, wall 13551 ms, v4, 7 cards. Furthermore (`supported_full`): `summaryClass.cardTone` green, `editorial` null, `compliance` null, `turnedOffLine` `Turned off for this run: Editorial review, Compliance review.` `editorialNotReviewedReason` and `complianceNotReviewedReason` are null (off is not a hole). QRS Needs work. Extract `scripts/diagnostic/delivery-check/b298-runs/production-extract.json`. Full payload `production-review.json`.
+
+The screenshot of the card is the local assess pass above. Production confirms the stamp on the payload. Frontend production was not re-photographed; the local screen is the eyes-on-screen proof this spec required.
 
 ---
 
@@ -250,9 +256,10 @@ Recorded in `scripts/diagnostic/delivery-check/b298-runs/production-extract.json
 |------|---------:|-------|
 | Local screenshot (stamped replay) | 0.0000 | No LLM. |
 | Targeted tests | 0.0000 | |
-| Production evidence-only Meridian | see spend ledger after POST | |
+| Production evidence-only Meridian, before deploy | 0.1226 | Trace `1c47c5df`. No `turnedOffLine`. |
+| Production evidence-only Meridian, after deploy | 0.1058 | Trace `1d62d0cb`. Line present on every card. |
 
-TOTAL COST OF THIS SPEC IN USD: 0.00 before the production POST. The production row is added to `docs/SPEND_LEDGER.md` when it lands.
+TOTAL COST OF THIS SPEC IN USD: **0.23** list (0.13 discounted). Two 7-card evidence-only POSTs, 58 calls, 0 unpriced. Discounted uses gpt-4o cachedInputTokens 31,360 + 44,672 at 1.25/1e6.
 
 ---
 

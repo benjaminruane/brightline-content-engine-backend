@@ -1,0 +1,83 @@
+{
+  "http": 200,
+  "ms": 13551,
+  "ok": true,
+  "pipelineVersion": "v4",
+  "traceId": "1d62d0cb-b2ae-4bd3-a2ff-80a31c2e9ee8",
+  "reviewOptions": {
+    "evidenceEnabled": true,
+    "editorialEnabled": false,
+    "complianceEnabled": false
+  },
+  "reviewSummary": {
+    "version": 1,
+    "statements": 7,
+    "evidence": {
+      "confirmed": 2,
+      "partial": 3,
+      "conflicting": 0,
+      "notSupported": 2
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 2,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "statementCount": 7,
+  "turnedOffLines": [
+    "Turned off for this run: Editorial review, Compliance review."
+  ],
+  "furthermore": {
+    "displayVerdict": "supported_full",
+    "summaryClass": {
+      "counted": true,
+      "evidence": "confirmed",
+      "editorial": null,
+      "compliance": null,
+      "needsAttention": false,
+      "cardTone": "green",
+      "turnedOffLine": "Turned off for this run: Editorial review, Compliance review."
+    },
+    "editorialVerdict": "not_reviewed",
+    "complianceVerdict": "not_reviewed",
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null
+  },
+  "llmSpend": {
+    "calls": 29,
+    "inputTokens": 56636,
+    "cachedInputTokens": 44672,
+    "outputTokens": 2461,
+    "costUsd": 0.10576809999999999,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 27,
+        "inputTokens": 55338,
+        "cachedInputTokens": 44672,
+        "outputTokens": 2297,
+        "costUsd": 0.10547499999999999,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 2,
+        "inputTokens": 1298,
+        "cachedInputTokens": 0,
+        "outputTokens": 164,
+        "costUsd": 0.0002931,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "error": null
+}
