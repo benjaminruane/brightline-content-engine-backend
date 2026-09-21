@@ -222,12 +222,51 @@ Test: `tests/b302-absent-options-not-clean.test.mjs`. With all three flags on, a
 
 ## Production Review after the change
 
-Recorded after deploy. See the section below this line once the production pass lands.
+CONFIRMED. Production POST after deploy, 2026-09-21T02:48Z. Script `scripts/diagnostic/delivery-check/b301-production-review.mjs`. Artefacts `scripts/diagnostic/delivery-check/b301-runs/`.
+
+### Analyse-statements
+
+HTTP 200. Wall 14134 ms. `ok: true`. `pipelineVersion` v4. Header pill on the later UI pass also said v4. Trace `a1ae2f01-6bf4-4950-8d2d-fcc65c206a33`.
+
+Review options: evidence true, editorial false, compliance false. Seven statements. QRS Needs work: confirmed 2, partial 3, conflicting 0, notSupported 2, notChecked 0.
+
+`meta.llmSpend`: 29 calls, list USD 0.10959445, cachedInputTokens 41600, unpricedCalls 0. gpt-4o 0.109315, mini 0.000279. Discounted USD 0.0576 (`list - 41600 * 1.25 / 1e6`).
+
+Guard: 0 blank findings. Same 2+3 pattern as the B298 screenshot payload.
+
+### Synthesize-review
+
+HTTP 200. Wall 2887 ms. `ok: true`. `reason: "written"`. Narrative 924 characters. Guard did not trip. Starts:
+
+`Needs work. The draft has several unsupported claims that need addressing. The statement about gaining deep insight during the diligence phase lacks any source backing, as does the recommendation for approval of the commitment.`
+
+Full text in `production-synthesize.json`. That response has no `llmSpend`. Unpriced: 1. Never silent zero.
+
+This is the run that decides whether Ben sees an empty assessment on a real evidence-only Meridian Review. He does not. The call was made and it wrote.
+
+### Screenshot of the assessment area
+
+File: `scripts/diagnostic/delivery-check/b301-runs/assessment-area.png`.
+
+What it shows: REVIEWER ASSESSMENT with a written narrative, not the B285 sentence. QRS below it: Needs significant work, 7 claims have no source, draft 9 words over the 150 word limit.
+
+What that run was: a live Review in the local UI on `localhost:5173` (build c846d84, older than B303) against a dummy `Meridian test source.txt`. Replay was set in localStorage. The flag is sessionStorage, so this was not a replay skip. All seven claims came back no-support because the dummy file is not the real sources. Header pill v4.
+
+What it is not: the production 2+3 Meridian POST above. That POST has no browser. The production proof of `reason: written` is `production-synthesize.json`. The PNG proves the assessment area prints a real narrative when synthesis succeeds, instead of `The assessment could not be written this time.`
+
+B303 copy for (a) and (b) is not in that PNG (old build). It is in `tests/b303-assessment-states.test.mjs` and frontend HEAD `d128ac5`.
 
 ---
 
 ## Total cost of this spec in USD
 
-Part 1 unpriced synthesize-review: 1. HYPOTHESIS ~USD 0.01.
+| Pass | List USD | Discounted USD | Calls | Unpriced | Source |
+|------|---------:|---------------:|------:|---------:|--------|
+| Part 1 production synthesize-review (B298 payload) | unknown | unknown | 1 | 1 | no `llmSpend` on the response. HYPOTHESIS ~0.01 from wall 4.8 s and 993 characters |
+| Production evidence-only Meridian analyse-statements after deploy | 0.1096 | 0.0576 | 29 | 0 | `meta.llmSpend` on `b301-runs/production-extract.json` |
+| Production synthesize-review after deploy | unknown | unknown | 1 | 1 | no `llmSpend`. HYPOTHESIS ~0.01 from wall 2.9 s and 924 characters |
+| Local UI dummy-source Review on 5173 | unknown | unknown | unknown | 1 | live `analyse-statements` against a dummy file. Spend not extracted |
 
-Production evidence-only Meridian Review after the change: pending deploy. List USD to be filled from `meta.llmSpend` plus the synthesize-review call.
+Captured list USD: **0.1096**. Captured discounted USD: **0.0576**. Unpriced calls: **3** (two synthesize-review, one local UI analyse). Never silent zero.
+
+HYPOTHESIS band for the unpriced synthesizes plus the dummy-source analyse: on the order of USD 0.13 on top of the captured 0.11, so this spec is about **USD 0.24 list** if those three behave like the captured Meridian analyse. The named figure from a spend object is 0.1096.
