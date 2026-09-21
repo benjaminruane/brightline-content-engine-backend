@@ -1,0 +1,69 @@
+{
+  "elapsedMs": 4287,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "473cf431-b52f-4ce2-a671-489bff666303",
+  "cards": 1,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 4,
+    "inputTokens": 19616,
+    "cachedInputTokens": 1920,
+    "outputTokens": 265,
+    "costUsd": 0.04929,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 4,
+        "inputTokens": 19616,
+        "cachedInputTokens": 1920,
+        "outputTokens": 265,
+        "costUsd": 0.04929,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.04929,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 1,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 0,
+    "readiness": "Ready",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+    "statement": "On October 11, 1987, I first came across the saying “this time it’s different."
+  },
+  "draftChars": 117,
+  "draftText": "This Time It Really Might Be Different On October 11, 1987, I first came across the saying “this time it’s different."
+}

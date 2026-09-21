@@ -1,0 +1,62 @@
+{
+  "elapsedMs": 2044,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "622cd954-cba3-4237-8ff3-911e3148a32b",
+  "cards": 1,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 2,
+    "inputTokens": 6529,
+    "cachedInputTokens": 1920,
+    "outputTokens": 131,
+    "costUsd": 0.015232499999999998,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 2,
+        "inputTokens": 6529,
+        "cachedInputTokens": 1920,
+        "outputTokens": 131,
+        "costUsd": 0.015232499999999998,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.015232499999999998,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 1
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 89,
+  "draftText": "Press release Baar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuant to Art."
+}

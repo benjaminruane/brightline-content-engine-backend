@@ -1,0 +1,21 @@
+id,filename,bytes,pages,producer,localMs,prodMs,prodHttp,prodChars,words,g7pass,g7verdict,g7usd,over3700
+d01,3i-press-release-fy2025.pdf,388819,56,"Wdesk Fidelity Content Translations Version 011.007.015",203723,207727,200,156041,24473,true,supported_full,0.5960764000000001,true
+d02,3i-press-release-fy25-highlights.pdf,137825,3,"Microsoft® Word for Microsoft 365",45377,48371,200,6777,1087,true,supported_full,0.057843799999999994,false
+d03,3i-overview-and-strategy-2025.pdf,1075726,17,"Wdesk Fidelity Content Translations Version 011.006.048",161070,174747,200,53610,8044,true,supported_full,0.0723425,true
+d04,hpif-report-march-2026.pdf,403362,10,"Adobe PDF Library 26.1.158",70710,74596,200,29129,4306,true,conflict,0.051065,true
+d05,3i-q1-fy25-performance-update.pdf,182527,4,"Microsoft® Word for Microsoft 365",51410,54720,200,12298,2026,true,supported_full,0.0317375,false
+d06,3i-hy25-highlights.pdf,66508,2,"",8157,10598,200,7486,1180,true,supported_full,0.06976369999999998,false
+d07,pg-annual-results-2025-press-release.pdf,348219,4,"Microsoft® Word for Microsoft 365",64478,66804,200,9743,1537,false,,0.015232499999999998,false
+d08,berkshire-2024-shareholder-letter.pdf,64860,15,"Acrobat Distiller 8.1.0 (Windows)",38370,41405,200,40118,8933,true,supported_full,0.0697425,true
+d09,berkshire-2023-shareholder-letter.pdf,122415,16,"Acrobat Distiller 8.1.0 (Windows)",44474,47882,200,50117,11423,true,supported_full,0.08495,true
+d10,berkshire-2022-shareholder-letter.pdf,55589,10,"Acrobat Distiller 8.1.0 (Windows)",29293,32041,200,30964,8089,true,supported_full,0.0677475,true
+d11,berkshire-2021-shareholder-letter.pdf,64117,11,"Acrobat Distiller 8.1.0 (Windows)",31416,32234,200,40913,9855,true,supported_full,0.0632975,true
+d12,berkshire-2020-shareholder-letter.pdf,78896,14,"Acrobat Distiller 8.1.0 (Windows)",38442,41045,200,53357,11860,true,supported_full,0.078325,true
+d13,jpm-ceo-letter-2024.pdf,900121,58,"Adobe PDF Library 17.0",342563,301388,,0,36853,true,conflict,0.2775775,true
+d14,oaktree-on-bubble-watch.pdf,319067,10,"Adobe PDF Library 24.4.19",53720,57956,200,30698,5200,true,supported_full,0.049429999999999995,true
+d15,oaktree-nobody-knows-yet-again.pdf,273317,9,"Adobe PDF Library 25.1.208",48643,53111,200,29977,5031,true,supported_full,0.0468325,true
+d16,oaktree-gimme-credit.pdf,275824,8,"Adobe PDF Library 24.5.175",54612,58924,200,25380,4245,true,supported_full,0.044387499999999996,true
+d17,oaktree-the-calculus-of-value.pdf,293909,11,"Adobe PDF Library 25.1.51",60711,64555,200,37068,6196,true,conflict,0.056467500000000004,true
+d18,oaktree-mr-market-miscalculates.pdf,1605262,9,"Adobe PDF Library 24.2.23",51863,57683,200,22981,3815,true,supported_full,0.08268500000000001,true
+d19,oaktree-2024-in-review.pdf,966662,9,"Adobe PDF Library 24.5.96",42615,46714,200,31988,5105,true,supported_full,0.05244249999999999,true
+d20,oaktree-further-thoughts-on-sea-change.pdf,995419,9,"Adobe PDF Library 23.1.206",67747,72388,200,30537,5077,true,supported_full,0.04929,true

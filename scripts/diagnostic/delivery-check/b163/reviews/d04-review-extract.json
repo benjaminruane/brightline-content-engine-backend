@@ -1,0 +1,69 @@
+{
+  "elapsedMs": 4993,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "9d03a8ba-04be-46bf-9c69-9a6be9008e42",
+  "cards": 1,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 4,
+    "inputTokens": 19498,
+    "cachedInputTokens": 1024,
+    "outputTokens": 360,
+    "costUsd": 0.051065,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 4,
+        "inputTokens": 19498,
+        "cachedInputTokens": 1024,
+        "outputTokens": 360,
+        "costUsd": 0.051065,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.051065,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 1,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs significant work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "conflict",
+    "supportState": "conflicting",
+    "displayVerdict": "conflict",
+    "hasRealExcerpt": false,
+    "quote": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653.0M 57 40+ Fund NAV Companies 2 General Partners 2",
+    "statement": "rd-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653."
+  },
+  "draftChars": 224,
+  "draftText": "rd-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653."
+}

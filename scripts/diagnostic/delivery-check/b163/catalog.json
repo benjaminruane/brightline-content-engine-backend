@@ -1,0 +1,247 @@
+{
+  "spec": "B163",
+  "assembledAt": "2026-09-21",
+  "inScopeRule": "press releases, memos, letters, board papers, IR narrative. No scanned documents, no fact sheets, no tables-first documents (Ben ruling 19 September 2026).",
+  "originalElevenNote": "The 7 September binaries were still on disk under scripts/diagnostic/extraction-check/inputs/ and are gitignored. They were never committed. Copied to b163/original-eleven/ for this pass.",
+  "documents": [
+    {
+      "id": "d01",
+      "filename": "3i-press-release-fy2025.pdf",
+      "genre": "press_release",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public 3i Group FY2025 full results press release. URL recorded 2026-09-07 in scripts/diagnostic/extraction-check/REPORT.md. Local copy from that pass, still on disk, gitignored.",
+      "url": "https://www.3i.com/media/o13kcz40/3i-group-press-release-fy2025.pdf"
+    },
+    {
+      "id": "d02",
+      "filename": "3i-press-release-fy25-highlights.pdf",
+      "genre": "press_release",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public 3i Group FY2025 highlights press release. Same 7 September local copy.",
+      "url": "https://www.3i.com/media/trxnuzha/3i-group-press-release-fy25-highlights.pdf"
+    },
+    {
+      "id": "d03",
+      "filename": "3i-overview-and-strategy-2025.pdf",
+      "genre": "ir_narrative",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public 3i Group 2025 Overview and Strategy chapter. Same 7 September local copy. Two-column annual-report narrative.",
+      "url": "https://www.3i.com/media/kvkhybyl/3i-group-2025-overview-and-strategy.pdf"
+    },
+    {
+      "id": "d04",
+      "filename": "hpif-report-march-2026.pdf",
+      "genre": "ir_narrative",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public HarbourVest Private Investments Fund March 2026 shareholder report. Same 7 September local copy. Prose report, not the fact sheet.",
+      "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF%20Report%20-%20March%202026.pdf"
+    },
+    {
+      "id": "d05",
+      "filename": "3i-q1-fy25-performance-update.pdf",
+      "genre": "press_release",
+      "sourceKind": "public_filing",
+      "origin": "Public 3i Group Q1 FY2025 performance update press release, downloaded 2026-09-21.",
+      "url": "https://www.3i.com/media/pjccpo5d/q1-fy25-performance-update.pdf"
+    },
+    {
+      "id": "d06",
+      "filename": "3i-hy25-highlights.pdf",
+      "genre": "press_release",
+      "sourceKind": "public_filing",
+      "origin": "Public 3i Group HY to 30 September 2025 highlights press release, downloaded 2026-09-21.",
+      "url": "https://www.3i.com/media/xcgpmxcd/3i-group-hy-report-25_highlights-pdf.pdf"
+    },
+    {
+      "id": "d07",
+      "filename": "pg-annual-results-2025-press-release.pdf",
+      "genre": "press_release",
+      "sourceKind": "public_filing",
+      "origin": "Partners Group ad-hoc annual results 2025 press release (Art. 53 LR), downloaded 2026-09-21 from EQS mailing.",
+      "url": "https://mailing-ircockpit.eqs.com/crm-mailing/5bc764eb-ea7c-11e8-902f-2c44fd856d8c/1bda015e-a3fb-4d4a-b131-5a99c284ccdd/fa15585e-baf7-468f-88e2-7e1ebcd9ca99/PGHN+Annual+Results+2025_Press+Release.pdf"
+    },
+    {
+      "id": "d08",
+      "filename": "berkshire-2024-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2024 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2024ltr.pdf"
+    },
+    {
+      "id": "d09",
+      "filename": "berkshire-2023-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2023 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2023ltr.pdf"
+    },
+    {
+      "id": "d10",
+      "filename": "berkshire-2022-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2022 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2022ltr.pdf"
+    },
+    {
+      "id": "d11",
+      "filename": "berkshire-2021-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2021 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2021ltr.pdf"
+    },
+    {
+      "id": "d12",
+      "filename": "berkshire-2020-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2020 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2020ltr.pdf"
+    },
+    {
+      "id": "d13",
+      "filename": "jpm-ceo-letter-2024.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "JPMorgan Chase Chairman and CEO letter to shareholders, Annual Report 2024, downloaded 2026-09-21 from jpmorganchase.com.",
+      "url": "https://www.jpmorganchase.com/content/dam/jpmc/jpmorgan-chase-and-co/investor-relations/documents/ceo-letter-to-shareholders-2024.pdf"
+    },
+    {
+      "id": "d14",
+      "filename": "oaktree-on-bubble-watch.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo On Bubble Watch, 2 January 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/on-bubble-watch.pdf"
+    },
+    {
+      "id": "d15",
+      "filename": "oaktree-nobody-knows-yet-again.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Nobody Knows (Yet Again), 9 April 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/nobody-knows-yet-again.pdf"
+    },
+    {
+      "id": "d16",
+      "filename": "oaktree-gimme-credit.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Gimme Credit, 6 March 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/gimme-credit.pdf"
+    },
+    {
+      "id": "d17",
+      "filename": "oaktree-the-calculus-of-value.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo The Calculus of Value, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/the-calculus-of-value.pdf"
+    },
+    {
+      "id": "d18",
+      "filename": "oaktree-mr-market-miscalculates.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Mr. Market Miscalculates, 22 August 2024, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/mr-market-miscalculates.pdf"
+    },
+    {
+      "id": "d19",
+      "filename": "oaktree-2024-in-review.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo 2024 in Review, 19 February 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/2024-in-review.pdf"
+    },
+    {
+      "id": "d20",
+      "filename": "oaktree-further-thoughts-on-sea-change.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Further Thoughts on Sea Change, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/further-thoughts-on-sea-change.pdf"
+    }
+  ],
+  "originalElevenAll": [
+    {
+      "filename": "3i-ar-2025.pdf",
+      "found": true,
+      "inScopeForTwenty": false,
+      "outOfScopeReason": "Full annual report, tables-first / mixed AR. Excluded from the 20 by the 19 September ruling.",
+      "url": "https://www.3i.com/media/cxwbwcdw/3i-group-annual-report-2025-interactive.pdf"
+    },
+    {
+      "filename": "3i-audited-fs-2025.pdf",
+      "found": true,
+      "inScopeForTwenty": false,
+      "outOfScopeReason": "Audited financial statements, tables-first.",
+      "url": "https://www.3i.com/media/u3ojrc3a/3i-group-2025-audited-financial-statements.pdf"
+    },
+    {
+      "filename": "3i-fy25-presentation.pdf",
+      "found": true,
+      "inScopeForTwenty": false,
+      "outOfScopeReason": "Results presentation deck, not press release / memo / letter / board paper / IR narrative.",
+      "url": "https://www.3i.com/media/vl1d3svk/3igroupfy25-presentation.pdf"
+    },
+    {
+      "filename": "3i-overview-and-strategy-2025.pdf",
+      "found": true,
+      "inScopeForTwenty": true,
+      "url": "https://www.3i.com/media/kvkhybyl/3i-group-2025-overview-and-strategy.pdf"
+    },
+    {
+      "filename": "hpif-factsheet-march-2026.pdf",
+      "found": true,
+      "inScopeForTwenty": false,
+      "outOfScopeReason": "Fund fact sheet. Excluded by the 19 September ruling.",
+      "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF-Factsheet-March-2026.pdf"
+    },
+    {
+      "filename": "hpif-report-march-2026.pdf",
+      "found": true,
+      "inScopeForTwenty": true,
+      "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF%20Report%20-%20March%202026.pdf"
+    },
+    {
+      "filename": "hpif-annual-fs-2026.pdf",
+      "found": true,
+      "inScopeForTwenty": false,
+      "outOfScopeReason": "Fund financial statements, tables-first.",
+      "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF-Annual-Financial-Statements-March-31-2026.pdf"
+    },
+    {
+      "filename": "3i-press-release-fy2025.pdf",
+      "found": true,
+      "inScopeForTwenty": true,
+      "url": "https://www.3i.com/media/o13kcz40/3i-group-press-release-fy2025.pdf"
+    },
+    {
+      "filename": "3i-press-release-fy25-highlights.pdf",
+      "found": true,
+      "inScopeForTwenty": true,
+      "url": "https://www.3i.com/media/trxnuzha/3i-group-press-release-fy25-highlights.pdf"
+    },
+    {
+      "filename": "pg-annual-results-2024.pdf",
+      "found": true,
+      "inScopeForTwenty": false,
+      "outOfScopeReason": "Listed PE results deck, not IR narrative prose.",
+      "url": "https://www.partnersgroup.com/~/media/Files/P/Partnersgroup/Universal/shareholders/reports-and-presentations/2025/annual-results-2024-presentation.pdf"
+    },
+    {
+      "filename": "pg-ir-july-2025.pdf",
+      "found": true,
+      "inScopeForTwenty": false,
+      "outOfScopeReason": "IR presentation pack, not IR narrative prose.",
+      "url": "https://www.partnersgroup.com/~/media/Files/P/Partnersgroup/Universal/shareholders/reports-and-presentations/2025/partners-group-ir-presentation-july-2025.pdf"
+    }
+  ],
+  "benOwnWork": {
+    "searched": "Workspace GitHub trees only. Did not search personal Downloads.",
+    "found": "No Ben-authored real source PDF. scripts/diagnostic/delivery-check/b196-2026-09-18/Investor_letter_InvestorLetter_V1_20260918.pdf is a product export of a reviewed synthetic Nordic SaaS draft, not a real source document."
+  }
+}

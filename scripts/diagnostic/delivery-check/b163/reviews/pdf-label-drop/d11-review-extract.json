@@ -1,0 +1,68 @@
+{
+  "elapsedMs": 1195,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "c56b7029-75a3-4610-be17-fbb3d79a9b8a",
+  "cards": 1,
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "berkshire-2021-shareholder-letter.pdf",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 1,
+    "inputTokens": 1201,
+    "cachedInputTokens": 0,
+    "outputTokens": 57,
+    "costUsd": 0.0035725,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 1,
+        "inputTokens": 1201,
+        "cachedInputTokens": 0,
+        "outputTokens": 57,
+        "costUsd": 0.0035725,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": null,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 1
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 140,
+  "draftText": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+}

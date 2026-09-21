@@ -1,0 +1,68 @@
+{
+  "elapsedMs": 5459,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "7ba7ae82-8f4b-48c1-9fa6-d59723e70160",
+  "cards": 3,
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "3i-press-release-fy2025.pdf",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 4,
+    "inputTokens": 3932,
+    "cachedInputTokens": 0,
+    "outputTokens": 274,
+    "costUsd": 0.012569999999999998,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 4,
+        "inputTokens": 3932,
+        "cachedInputTokens": 0,
+        "outputTokens": 274,
+        "costUsd": 0.012569999999999998,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": null,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 3,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 3
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 3,
+    "readiness": "Needs significant work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 271,
+  "draftText": "15 May 2025 3i Group plc announces results for the year to 31 March 2025 A year of consistently strong growth • Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per share of 2,542 pence (31 March 2024: 2,085 pence)."
+}

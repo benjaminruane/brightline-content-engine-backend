@@ -1,0 +1,69 @@
+{
+  "elapsedMs": 10295,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "d92b170f-3169-45d6-aa4f-32eeb92bc587",
+  "cards": 1,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 4,
+    "inputTokens": 109659,
+    "cachedInputTokens": 0,
+    "outputTokens": 343,
+    "costUsd": 0.2775775,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 4,
+        "inputTokens": 109659,
+        "cachedInputTokens": 0,
+        "outputTokens": 343,
+        "costUsd": 0.2775775,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.2775775,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 1,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs significant work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "conflict",
+    "supportState": "conflicting",
+    "displayVerdict": "conflict",
+    "hasRealExcerpt": false,
+    "quote": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% 2 , reflecting strong underlying performance across our businesses.",
+    "statement": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58."
+  },
+  "draftChars": 68,
+  "draftText": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58."
+}

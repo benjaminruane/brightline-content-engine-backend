@@ -1,0 +1,68 @@
+{
+  "elapsedMs": 2348,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "e26302c6-6504-44f8-861a-4c7ce2baaa58",
+  "cards": 1,
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "3i-overview-and-strategy-2025.pdf",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 2,
+    "inputTokens": 1495,
+    "cachedInputTokens": 0,
+    "outputTokens": 86,
+    "costUsd": 0.004597500000000001,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 2,
+        "inputTokens": 1495,
+        "cachedInputTokens": 0,
+        "outputTokens": 86,
+        "costUsd": 0.004597500000000001,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": null,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 1
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 116,
+  "draftText": "com For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216."
+}

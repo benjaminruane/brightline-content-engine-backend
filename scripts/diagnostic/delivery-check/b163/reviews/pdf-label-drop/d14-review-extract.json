@@ -1,0 +1,68 @@
+{
+  "elapsedMs": 2009,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "86a1f3da-7cc9-46e0-8ff0-99085c67a8f4",
+  "cards": 1,
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "oaktree-on-bubble-watch.pdf",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 2,
+    "inputTokens": 1540,
+    "cachedInputTokens": 0,
+    "outputTokens": 122,
+    "costUsd": 0.00507,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 2,
+        "inputTokens": 1540,
+        "cachedInputTokens": 0,
+        "outputTokens": 122,
+        "costUsd": 0.00507,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": null,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 1
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 229,
+  "draftText": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it."
+}

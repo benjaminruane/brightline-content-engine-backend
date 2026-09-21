@@ -1,0 +1,77 @@
+{
+  "elapsedMs": 8628,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "d54b10f3-fadf-4c49-abaa-fb6b545f1e60",
+  "cards": 3,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 10,
+    "inputTokens": 235962,
+    "cachedInputTokens": 0,
+    "outputTokens": 776,
+    "costUsd": 0.5960764000000001,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 9,
+        "inputTokens": 235486,
+        "cachedInputTokens": 0,
+        "outputTokens": 726,
+        "costUsd": 0.595975,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 1,
+        "inputTokens": 476,
+        "cachedInputTokens": 0,
+        "outputTokens": 50,
+        "costUsd": 0.0001014,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.5960764000000001,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 3,
+    "evidence": {
+      "confirmed": 3,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 0,
+    "readiness": "Ready",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "3i Group plc announces results for the year to 31 March 2025",
+    "statement": "3i Group plc announces results for the year to 31 March 2025"
+  },
+  "draftChars": 271,
+  "draftText": "15 May 2025 3i Group plc announces results for the year to 31 March 2025 A year of consistently strong growth • Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per share of 2,542 pence (31 March 2024: 2,085 pence)."
+}

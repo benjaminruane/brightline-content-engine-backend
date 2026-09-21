@@ -1,0 +1,2232 @@
+{
+  "catalog": {
+    "spec": "B163",
+    "assembledAt": "2026-09-21",
+    "inScopeRule": "press releases, memos, letters, board papers, IR narrative. No scanned documents, no fact sheets, no tables-first documents (Ben ruling 19 September 2026).",
+    "originalElevenNote": "The 7 September binaries were still on disk under scripts/diagnostic/extraction-check/inputs/ and are gitignored. They were never committed. Copied to b163/original-eleven/ for this pass.",
+    "documents": [
+      {
+        "id": "d01",
+        "filename": "3i-press-release-fy2025.pdf",
+        "genre": "press_release",
+        "sourceKind": "original_eleven_7_sep",
+        "origin": "Public 3i Group FY2025 full results press release. URL recorded 2026-09-07 in scripts/diagnostic/extraction-check/REPORT.md. Local copy from that pass, still on disk, gitignored.",
+        "url": "https://www.3i.com/media/o13kcz40/3i-group-press-release-fy2025.pdf"
+      },
+      {
+        "id": "d02",
+        "filename": "3i-press-release-fy25-highlights.pdf",
+        "genre": "press_release",
+        "sourceKind": "original_eleven_7_sep",
+        "origin": "Public 3i Group FY2025 highlights press release. Same 7 September local copy.",
+        "url": "https://www.3i.com/media/trxnuzha/3i-group-press-release-fy25-highlights.pdf"
+      },
+      {
+        "id": "d03",
+        "filename": "3i-overview-and-strategy-2025.pdf",
+        "genre": "ir_narrative",
+        "sourceKind": "original_eleven_7_sep",
+        "origin": "Public 3i Group 2025 Overview and Strategy chapter. Same 7 September local copy. Two-column annual-report narrative.",
+        "url": "https://www.3i.com/media/kvkhybyl/3i-group-2025-overview-and-strategy.pdf"
+      },
+      {
+        "id": "d04",
+        "filename": "hpif-report-march-2026.pdf",
+        "genre": "ir_narrative",
+        "sourceKind": "original_eleven_7_sep",
+        "origin": "Public HarbourVest Private Investments Fund March 2026 shareholder report. Same 7 September local copy. Prose report, not the fact sheet.",
+        "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF%20Report%20-%20March%202026.pdf"
+      },
+      {
+        "id": "d05",
+        "filename": "3i-q1-fy25-performance-update.pdf",
+        "genre": "press_release",
+        "sourceKind": "public_filing",
+        "origin": "Public 3i Group Q1 FY2025 performance update press release, downloaded 2026-09-21.",
+        "url": "https://www.3i.com/media/pjccpo5d/q1-fy25-performance-update.pdf"
+      },
+      {
+        "id": "d06",
+        "filename": "3i-hy25-highlights.pdf",
+        "genre": "press_release",
+        "sourceKind": "public_filing",
+        "origin": "Public 3i Group HY to 30 September 2025 highlights press release, downloaded 2026-09-21.",
+        "url": "https://www.3i.com/media/xcgpmxcd/3i-group-hy-report-25_highlights-pdf.pdf"
+      },
+      {
+        "id": "d07",
+        "filename": "pg-annual-results-2025-press-release.pdf",
+        "genre": "press_release",
+        "sourceKind": "public_filing",
+        "origin": "Partners Group ad-hoc annual results 2025 press release (Art. 53 LR), downloaded 2026-09-21 from EQS mailing.",
+        "url": "https://mailing-ircockpit.eqs.com/crm-mailing/5bc764eb-ea7c-11e8-902f-2c44fd856d8c/1bda015e-a3fb-4d4a-b131-5a99c284ccdd/fa15585e-baf7-468f-88e2-7e1ebcd9ca99/PGHN+Annual+Results+2025_Press+Release.pdf"
+      },
+      {
+        "id": "d08",
+        "filename": "berkshire-2024-shareholder-letter.pdf",
+        "genre": "letter",
+        "sourceKind": "public_filing",
+        "origin": "Berkshire Hathaway 2024 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+        "url": "https://www.berkshirehathaway.com/letters/2024ltr.pdf"
+      },
+      {
+        "id": "d09",
+        "filename": "berkshire-2023-shareholder-letter.pdf",
+        "genre": "letter",
+        "sourceKind": "public_filing",
+        "origin": "Berkshire Hathaway 2023 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+        "url": "https://www.berkshirehathaway.com/letters/2023ltr.pdf"
+      },
+      {
+        "id": "d10",
+        "filename": "berkshire-2022-shareholder-letter.pdf",
+        "genre": "letter",
+        "sourceKind": "public_filing",
+        "origin": "Berkshire Hathaway 2022 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+        "url": "https://www.berkshirehathaway.com/letters/2022ltr.pdf"
+      },
+      {
+        "id": "d11",
+        "filename": "berkshire-2021-shareholder-letter.pdf",
+        "genre": "letter",
+        "sourceKind": "public_filing",
+        "origin": "Berkshire Hathaway 2021 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+        "url": "https://www.berkshirehathaway.com/letters/2021ltr.pdf"
+      },
+      {
+        "id": "d12",
+        "filename": "berkshire-2020-shareholder-letter.pdf",
+        "genre": "letter",
+        "sourceKind": "public_filing",
+        "origin": "Berkshire Hathaway 2020 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+        "url": "https://www.berkshirehathaway.com/letters/2020ltr.pdf"
+      },
+      {
+        "id": "d13",
+        "filename": "jpm-ceo-letter-2024.pdf",
+        "genre": "letter",
+        "sourceKind": "public_filing",
+        "origin": "JPMorgan Chase Chairman and CEO letter to shareholders, Annual Report 2024, downloaded 2026-09-21 from jpmorganchase.com.",
+        "url": "https://www.jpmorganchase.com/content/dam/jpmc/jpmorgan-chase-and-co/investor-relations/documents/ceo-letter-to-shareholders-2024.pdf"
+      },
+      {
+        "id": "d14",
+        "filename": "oaktree-on-bubble-watch.pdf",
+        "genre": "memo",
+        "sourceKind": "public_filing",
+        "origin": "Howard Marks / Oaktree client memo On Bubble Watch, 2 January 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+        "url": "https://www.oaktreecapital.com/docs/default-source/memos/on-bubble-watch.pdf"
+      },
+      {
+        "id": "d15",
+        "filename": "oaktree-nobody-knows-yet-again.pdf",
+        "genre": "memo",
+        "sourceKind": "public_filing",
+        "origin": "Howard Marks / Oaktree client memo Nobody Knows (Yet Again), 9 April 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+        "url": "https://www.oaktreecapital.com/docs/default-source/memos/nobody-knows-yet-again.pdf"
+      },
+      {
+        "id": "d16",
+        "filename": "oaktree-gimme-credit.pdf",
+        "genre": "memo",
+        "sourceKind": "public_filing",
+        "origin": "Howard Marks / Oaktree client memo Gimme Credit, 6 March 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+        "url": "https://www.oaktreecapital.com/docs/default-source/memos/gimme-credit.pdf"
+      },
+      {
+        "id": "d17",
+        "filename": "oaktree-the-calculus-of-value.pdf",
+        "genre": "memo",
+        "sourceKind": "public_filing",
+        "origin": "Howard Marks / Oaktree client memo The Calculus of Value, downloaded 2026-09-21 from oaktreecapital.com.",
+        "url": "https://www.oaktreecapital.com/docs/default-source/memos/the-calculus-of-value.pdf"
+      },
+      {
+        "id": "d18",
+        "filename": "oaktree-mr-market-miscalculates.pdf",
+        "genre": "memo",
+        "sourceKind": "public_filing",
+        "origin": "Howard Marks / Oaktree client memo Mr. Market Miscalculates, 22 August 2024, downloaded 2026-09-21 from oaktreecapital.com.",
+        "url": "https://www.oaktreecapital.com/docs/default-source/memos/mr-market-miscalculates.pdf"
+      },
+      {
+        "id": "d19",
+        "filename": "oaktree-2024-in-review.pdf",
+        "genre": "memo",
+        "sourceKind": "public_filing",
+        "origin": "Howard Marks / Oaktree client memo 2024 in Review, 19 February 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+        "url": "https://www.oaktreecapital.com/docs/default-source/memos/2024-in-review.pdf"
+      },
+      {
+        "id": "d20",
+        "filename": "oaktree-further-thoughts-on-sea-change.pdf",
+        "genre": "memo",
+        "sourceKind": "public_filing",
+        "origin": "Howard Marks / Oaktree client memo Further Thoughts on Sea Change, downloaded 2026-09-21 from oaktreecapital.com.",
+        "url": "https://www.oaktreecapital.com/docs/default-source/memos/further-thoughts-on-sea-change.pdf"
+      }
+    ],
+    "originalElevenAll": [
+      {
+        "filename": "3i-ar-2025.pdf",
+        "found": true,
+        "inScopeForTwenty": false,
+        "outOfScopeReason": "Full annual report, tables-first / mixed AR. Excluded from the 20 by the 19 September ruling.",
+        "url": "https://www.3i.com/media/cxwbwcdw/3i-group-annual-report-2025-interactive.pdf"
+      },
+      {
+        "filename": "3i-audited-fs-2025.pdf",
+        "found": true,
+        "inScopeForTwenty": false,
+        "outOfScopeReason": "Audited financial statements, tables-first.",
+        "url": "https://www.3i.com/media/u3ojrc3a/3i-group-2025-audited-financial-statements.pdf"
+      },
+      {
+        "filename": "3i-fy25-presentation.pdf",
+        "found": true,
+        "inScopeForTwenty": false,
+        "outOfScopeReason": "Results presentation deck, not press release / memo / letter / board paper / IR narrative.",
+        "url": "https://www.3i.com/media/vl1d3svk/3igroupfy25-presentation.pdf"
+      },
+      {
+        "filename": "3i-overview-and-strategy-2025.pdf",
+        "found": true,
+        "inScopeForTwenty": true,
+        "url": "https://www.3i.com/media/kvkhybyl/3i-group-2025-overview-and-strategy.pdf"
+      },
+      {
+        "filename": "hpif-factsheet-march-2026.pdf",
+        "found": true,
+        "inScopeForTwenty": false,
+        "outOfScopeReason": "Fund fact sheet. Excluded by the 19 September ruling.",
+        "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF-Factsheet-March-2026.pdf"
+      },
+      {
+        "filename": "hpif-report-march-2026.pdf",
+        "found": true,
+        "inScopeForTwenty": true,
+        "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF%20Report%20-%20March%202026.pdf"
+      },
+      {
+        "filename": "hpif-annual-fs-2026.pdf",
+        "found": true,
+        "inScopeForTwenty": false,
+        "outOfScopeReason": "Fund financial statements, tables-first.",
+        "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF-Annual-Financial-Statements-March-31-2026.pdf"
+      },
+      {
+        "filename": "3i-press-release-fy2025.pdf",
+        "found": true,
+        "inScopeForTwenty": true,
+        "url": "https://www.3i.com/media/o13kcz40/3i-group-press-release-fy2025.pdf"
+      },
+      {
+        "filename": "3i-press-release-fy25-highlights.pdf",
+        "found": true,
+        "inScopeForTwenty": true,
+        "url": "https://www.3i.com/media/trxnuzha/3i-group-press-release-fy25-highlights.pdf"
+      },
+      {
+        "filename": "pg-annual-results-2024.pdf",
+        "found": true,
+        "inScopeForTwenty": false,
+        "outOfScopeReason": "Listed PE results deck, not IR narrative prose.",
+        "url": "https://www.partnersgroup.com/~/media/Files/P/Partnersgroup/Universal/shareholders/reports-and-presentations/2025/annual-results-2024-presentation.pdf"
+      },
+      {
+        "filename": "pg-ir-july-2025.pdf",
+        "found": true,
+        "inScopeForTwenty": false,
+        "outOfScopeReason": "IR presentation pack, not IR narrative prose.",
+        "url": "https://www.partnersgroup.com/~/media/Files/P/Partnersgroup/Universal/shareholders/reports-and-presentations/2025/partners-group-ir-presentation-july-2025.pdf"
+      }
+    ],
+    "benOwnWork": {
+      "searched": "Workspace GitHub trees only. Did not search personal Downloads.",
+      "found": "No Ben-authored real source PDF. scripts/diagnostic/delivery-check/b196-2026-09-18/Investor_letter_InvestorLetter_V1_20260918.pdf is a product export of a reviewed synthetic Nordic SaaS draft, not a real source document."
+    }
+  },
+  "rows": [
+    {
+      "id": "d01",
+      "filename": "3i-press-release-fy2025.pdf",
+      "genre": "press_release",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public 3i Group FY2025 full results press release. URL recorded 2026-09-07 in scripts/diagnostic/extraction-check/REPORT.md. Local copy from that pass, still on disk, gitignored.",
+      "url": "https://www.3i.com/media/o13kcz40/3i-group-press-release-fy2025.pdf",
+      "sha256": "9947f154b7857ba8b63a159fc35758b124cccb5454e2d73479c191fcad3c90dd",
+      "rawBytes": 388819,
+      "encodedBase64Bytes": 518428,
+      "estimatedRequestBytes": 526620,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 56,
+        "pagesInspected": 40,
+        "producer": "Wdesk Fidelity Content Translations Version 011.007.015",
+        "creator": "Workiva",
+        "title": "3i Group Press Release FY25",
+        "pdfVersion": "1.4",
+        "creationDate": "D:20250514182619+00'00'",
+        "fonts": [
+          "sans-serif"
+        ],
+        "fontCount": 1,
+        "inspectTextChars": 108966,
+        "imagePaintOps": 2,
+        "columnPages": 26,
+        "tableishPages": 6,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 203723,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 156041,
+        "wordCount": 24473,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 155984
+      },
+      "draftProbe": "bmp] 15 May 2025 3i Group plc announces results for the year to 31 March 2025 [Image: pdf_image_p1_2.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 235,
+          "straightQuotes": 6,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 674,
+          "examples": [
+            " Group plc announces results for the year\\nto 31 March 2025\\n[Image: pdf_image_p1_2.b",
+            "s (2024: £3,839 million, 23%) and NAV per\\nshare of 2,542 pence (31 March 2024: 2,08",
+            " pence per share loss on foreign exchange\\ntranslation.\\n• Our Private Equity busines"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 149,
+          "examples": [
+            "\"2025 2024\" x20",
+            "\"Earnings\" x10",
+            "\"for the year to 31 March\" x8"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 56,
+          "examples": [
+            "oss the portfolio in the years to come.”\\n1\\nFinancial highlights\\nYear to/as at Year ",
+            "debt as a percentage of net assets.\\nENDS\\n2\\nFor further information, please contact:",
+            "dend date will be Thursday 19 June 2025.\\n3\\nChair’s statement\\n“I am pleased to repor"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 154,
+          "examples": [
+            "• Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per",
+            "share of 2,542 pence (31 March 2024: 2,085 pence). This includes a 27 pence per share loss on foreign exchange",
+            "22%, like-for-like (“LFL”) sales growth of 10.3% and EBITDA growth of 29% in 2024. The business has started 2025"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d02",
+      "filename": "3i-press-release-fy25-highlights.pdf",
+      "genre": "press_release",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public 3i Group FY2025 highlights press release. Same 7 September local copy.",
+      "url": "https://www.3i.com/media/trxnuzha/3i-group-press-release-fy25-highlights.pdf",
+      "sha256": "ed90bafe09eccdb064d0a5689caf3c2981b6ac0060a4ddcb7a6f913f69e5f569",
+      "rawBytes": 137825,
+      "encodedBase64Bytes": 183768,
+      "estimatedRequestBytes": 191960,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 3,
+        "pagesInspected": 3,
+        "producer": "Microsoft® Word for Microsoft 365",
+        "creator": "Microsoft® Word for Microsoft 365",
+        "title": "3i Group Press Release FY25",
+        "pdfVersion": "1.7",
+        "creationDate": "D:20250514204251+01'00'",
+        "fonts": [
+          "sans-serif"
+        ],
+        "fontCount": 1,
+        "inspectTextChars": 6619,
+        "imagePaintOps": 2,
+        "columnPages": 1,
+        "tableishPages": 0,
+        "hasColumns": true,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 45377,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 6777,
+        "wordCount": 1087,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 6721
+      },
+      "draftProbe": "bmp] 15 May 2025 3i Group plc announces results for the year to 31 March 2025 [Image: pdf_image_p1_2.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 17,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 26,
+          "examples": [
+            " Group plc announces results for the year\\nto 31 March 2025\\n[Image: pdf_image_p1_2.b",
+            "s (2024: £3,839 million, 23%) and NAV per\\nshare of 2,542 pence (31 March 2024: 2,08",
+            " pence per share loss on foreign exchange\\ntranslation.\\n• Our Private Equity busines"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 0,
+          "examples": []
+        },
+        "pageNumbersInFlow": {
+          "count": 3,
+          "examples": [
+            "oss the portfolio in the years to come.”\\n1\\nFinancial highlights\\nYear to/as at Year ",
+            "debt as a percentage of net assets.\\nENDS\\n2\\nFor further information, please contact:",
+            "dend date will be Thursday 19 June 2025.\\n3"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 7,
+          "examples": [
+            "• Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per",
+            "share of 2,542 pence (31 March 2024: 2,085 pence). This includes a 27 pence per share loss on foreign exchange",
+            "22%, like-for-like (“LFL”) sales growth of 10.3% and EBITDA growth of 29% in 2024. The business has started 2025"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d03",
+      "filename": "3i-overview-and-strategy-2025.pdf",
+      "genre": "ir_narrative",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public 3i Group 2025 Overview and Strategy chapter. Same 7 September local copy. Two-column annual-report narrative.",
+      "url": "https://www.3i.com/media/kvkhybyl/3i-group-2025-overview-and-strategy.pdf",
+      "sha256": "7da4c0aa2b6a41a17707c0800ca71b91457b6cdf9e033ae8cad7f224854fa7ba",
+      "rawBytes": 1075726,
+      "encodedBase64Bytes": 1434304,
+      "estimatedRequestBytes": 1442496,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 17,
+        "pagesInspected": 17,
+        "producer": "Wdesk Fidelity Content Translations Version 011.006.048",
+        "creator": "Workiva",
+        "title": "3i Group AR25",
+        "pdfVersion": "1.6",
+        "creationDate": "D:20250521192040+01'00'",
+        "fonts": [
+          "sans-serif"
+        ],
+        "fontCount": 1,
+        "inspectTextChars": 51662,
+        "imagePaintOps": 27,
+        "columnPages": 7,
+        "tableishPages": 2,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 161070,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 53610,
+        "wordCount": 8044,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 52840
+      },
+      "draftProbe": "com For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 98,
+          "straightQuotes": 5,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 366,
+          "examples": [
+            "urpose\\nWe generate attractive returns for\\nour shareholders and co-investors\\nby inve",
+            "rns for\\nour shareholders and co-investors\\nby investing in private equity and\\ninfras",
+            "estors\\nby investing in private equity and\\ninfrastructure assets.\\nAs proprietary cap"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 32,
+          "examples": [
+            "\"Overview and strategy Contents Previouschapter N extchapter\" x8",
+            "\"Overview and strategy Contents Previous chapter Next chapter\" x8",
+            "\"Chief Executive’s statement continued\" x5"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 4,
+          "examples": [
+            "23 2024 2025\\nl Dividends\\nl l Share price\\n2\\n1\\n3\\nFurther information on how these KPI",
+            "024 2025\\nl Dividends\\nl l Share price\\n2\\n1\\n3\\nFurther information on how these KPIs ar",
+            "uded in our Financial review on page 79.\\n4 \\nCash operating expenses includes lease p"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 23,
+          "examples": [
+            "3i Group and 3i Infrastructure plc (“3iN”) having set approved sciencebased targets as at 31 March 2025, including most notably Action.",
+            "3i Group investment portfolio value as at 31 March 2025 Total assets under management as at 31 March 2025",
+            "£23.6bn £1.5bn £0.5bn £31.9bn £6.3bn £0.5bn"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d04",
+      "filename": "hpif-report-march-2026.pdf",
+      "genre": "ir_narrative",
+      "sourceKind": "original_eleven_7_sep",
+      "origin": "Public HarbourVest Private Investments Fund March 2026 shareholder report. Same 7 September local copy. Prose report, not the fact sheet.",
+      "url": "https://harbourvest.com/content/dam/hv/web/files/en/funds/hpif/HPIF%20Report%20-%20March%202026.pdf",
+      "sha256": "0ad94968038f7d9dfe3a9a9c1faff88fbe9199643577a710c7fb7fe258de6233",
+      "rawBytes": 403362,
+      "encodedBase64Bytes": 537816,
+      "estimatedRequestBytes": 546008,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 10,
+        "pagesInspected": 10,
+        "producer": "Adobe PDF Library 26.1.158",
+        "creator": "Acrobat PDFMaker 26 for PowerPoint",
+        "title": "PowerPoint Presentation",
+        "pdfVersion": "1.6",
+        "creationDate": "D:20260623172308-04'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 28535,
+        "imagePaintOps": 4,
+        "columnPages": 5,
+        "tableishPages": 1,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 70710,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 29129,
+        "wordCount": 4306,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 29013
+      },
+      "draftProbe": "ng, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 1,
+          "remainingCurlyQuotes": 33,
+          "straightQuotes": 12,
+          "examples": [
+            "ionals partner relationships\\nIn ve s tm e n t o b je c tive : S e e k to g e n e ra t"
+          ]
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 133,
+          "examples": [
+            "iety of private market cycles, seeking to\\nleverage its deep network of relationship",
+            "ch, proactive deal sourcing, and rigorous\\ndue diligence process to best serve our c",
+            "tment direct deals sourced active general\\nstrategies professionals partner relation"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 21,
+          "examples": [
+            "\"For the period ended March 31, 2026\" x8",
+            "\"HarbourVest Private Investments Fund\" x7",
+            "\"2025 N/A N/A N/A 1.03% 2.83% 1.95% -0.31% 0.75% -0.17% -0.98% 0.92% -0.17% 5.95%\" x3"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 8,
+          "examples": [
+            "-diversified registered closed-end fund.\\n1\\n[Image: pdf_image_p2_1.bmp]\\nHarbourVest ",
+            "ash equivalents, and money market funds.\\n2\\nDiversification does not ensure a profit",
+            "rth America, 25% Europe, 5% Asia-Pacific\\n3 \\n4 \\n% of HPIF Portfolio excluding short t"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 13,
+          "examples": [
+            " Direct 88%  Application Software 15%  North America 70%  2025 26%",
+            "A Apr 2025 10.15 -1.09% -2.45% -2.45% 3.35% 3.35%",
+            "D Apr 2025 10.17 -1.03% -2.27% -2.27% 3.54% 3.54%"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d05",
+      "filename": "3i-q1-fy25-performance-update.pdf",
+      "genre": "press_release",
+      "sourceKind": "public_filing",
+      "origin": "Public 3i Group Q1 FY2025 performance update press release, downloaded 2026-09-21.",
+      "url": "https://www.3i.com/media/pjccpo5d/q1-fy25-performance-update.pdf",
+      "sha256": "3f4cc04697540966de79a4369a2c44bdfb4db78c53b76f01e27abb9e2d7b1f80",
+      "rawBytes": 182527,
+      "encodedBase64Bytes": 243372,
+      "estimatedRequestBytes": 251564,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 4,
+        "pagesInspected": 4,
+        "producer": "Microsoft® Word for Microsoft 365",
+        "creator": "Microsoft® Word for Microsoft 365",
+        "title": "Q1 FY25 Performance Update",
+        "pdfVersion": "1.7",
+        "creationDate": "D:20240717201750+01'00'",
+        "fonts": [
+          "sans-serif"
+        ],
+        "fontCount": 1,
+        "inspectTextChars": 12069,
+        "imagePaintOps": 2,
+        "columnPages": 2,
+        "tableishPages": 0,
+        "hasColumns": true,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 51410,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 12298,
+        "wordCount": 2026,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 12242
+      },
+      "draftProbe": "bmp] 18 July 2024 3i Group plc FY2025 Q1 performance update [Image: pdf_image_p1_2.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 23,
+          "straightQuotes": 1,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 46,
+          "examples": [
+            "aising €2.1 billion, as well as a capital\\nrestructuring with a pro-rata redemption ",
+            "lion of the €1,374 million gross proceeds\\nreceived to acquire further shares in Act",
+            "lio overall, including some of the assets\\nthat saw weaker trading in 2023.\\n• We agr"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 0,
+          "examples": []
+        },
+        "pageNumbersInFlow": {
+          "count": 4,
+          "examples": [
+            "€821 million of the €1,374 million gross\\n1\\nproceeds from the share redemption to ac",
+            "ion to\\ncomplete by the end of July 2024.\\n2\\nInfrastructure\\n3iN ’s share price decrea",
+            "ch\\n2024: c.3%) of Action’s GIR.\\n- ENDS -\\n3\\nNotes\\n1. Balance sheet values are stated"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 14,
+          "examples": [
+            "• Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to",
+            "€446 million (P4-P6 2023: €2,701 million and €374 million).",
+            "21.8%. Action added 119 new stores to the end of P6 (YTD P6 2023: 90) and remains on track to meet its target of"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d06",
+      "filename": "3i-hy25-highlights.pdf",
+      "genre": "press_release",
+      "sourceKind": "public_filing",
+      "origin": "Public 3i Group HY to 30 September 2025 highlights press release, downloaded 2026-09-21.",
+      "url": "https://www.3i.com/media/xcgpmxcd/3i-group-hy-report-25_highlights-pdf.pdf",
+      "sha256": "78999e6c616fa55723af0d9b7b3963188ff51a36176d891a6e71e3b9ac6811c6",
+      "rawBytes": 66508,
+      "encodedBase64Bytes": 88680,
+      "estimatedRequestBytes": 96872,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 2,
+        "pagesInspected": 2,
+        "producer": null,
+        "creator": null,
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": null,
+        "fonts": [
+          "sans-serif"
+        ],
+        "fontCount": 1,
+        "inspectTextChars": 7332,
+        "imagePaintOps": 2,
+        "columnPages": 1,
+        "tableishPages": 1,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 8157,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 7486,
+        "wordCount": 1180,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 7429
+      },
+      "draftProbe": "bmp] 13 November 2025 3i Group plc announces results for the six months to 30 September 2025 [Image: pdf_image_p1_2.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 28,
+          "straightQuotes": 3,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 31,
+          "examples": [
+            " plc announces results for the six months\\nto 30 September 2025\\n[Image: pdf_image_p1",
+            "ding a 78 pence per share gain on foreign\\nexchange translation (September 2024: 48 ",
+            "d after the payment of the 42.5 pence per\\nshare second FY2025 dividend in July 2025"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 0,
+          "examples": []
+        },
+        "pageNumbersInFlow": {
+          "count": 2,
+          "examples": [
+            "the second half of our financial year.” \\n1\\nSummary financial highlights under the I",
+            "ease\\nvisit www.3i.com/investor-relations\\n2"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 4,
+          "examples": [
+            "• Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+            "NAV per share of 2,857 pence (31 March 2025: 2,542 pence), including a 78 pence per share gain on foreign",
+            "36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026."
+          ]
+        }
+      }
+    },
+    {
+      "id": "d07",
+      "filename": "pg-annual-results-2025-press-release.pdf",
+      "genre": "press_release",
+      "sourceKind": "public_filing",
+      "origin": "Partners Group ad-hoc annual results 2025 press release (Art. 53 LR), downloaded 2026-09-21 from EQS mailing.",
+      "url": "https://mailing-ircockpit.eqs.com/crm-mailing/5bc764eb-ea7c-11e8-902f-2c44fd856d8c/1bda015e-a3fb-4d4a-b131-5a99c284ccdd/fa15585e-baf7-468f-88e2-7e1ebcd9ca99/PGHN+Annual+Results+2025_Press+Release.pdf",
+      "sha256": "a9800bb42f00572f41ef3d8c8c5ffac312f77a71f0b8fbba863f5f6e78cd061b",
+      "rawBytes": 348219,
+      "encodedBase64Bytes": 464292,
+      "estimatedRequestBytes": 472484,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 4,
+        "pagesInspected": 4,
+        "producer": "Microsoft® Word for Microsoft 365",
+        "creator": "Microsoft® Word for Microsoft 365",
+        "title": "Letter to",
+        "pdfVersion": "1.7",
+        "creationDate": "D:20260310062342+00'00'",
+        "fonts": [
+          "sans-serif"
+        ],
+        "fontCount": 1,
+        "inspectTextChars": 9529,
+        "imagePaintOps": 1,
+        "columnPages": 2,
+        "tableishPages": 1,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 64478,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 9743,
+        "wordCount": 1537,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 9707
+      },
+      "draftProbe": "bmp] Press release Baar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuant to Art.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 26,
+          "straightQuotes": 9,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 47,
+          "examples": [
+            "9% to CHF 1.61 billion, also supported by\\nstronger performance fees; proposed divid",
+            "of total revenues; improved exit activity\\ndrove results; guidance on performance in",
+            "her with investment income as performance\\nincome. The guidance will therefore be fo"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 0,
+          "examples": []
+        },
+        "pageNumbersInFlow": {
+          "count": 6,
+          "examples": [
+            "e to represent 25-40% of total revenues.\\n2 \\n3 \\nRevenues include management fees, net",
+            "nt fees, net, and performance fees, net.\\n4 \\nManagement fees and other revenues, net,",
+            "venues, net, and other operating income.\\n5 \\nFor full-year 2024 onwards total operati"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 14,
+          "examples": [
+            "Revenues 2 2’563 2’136 20%",
+            "Management fees 3 1 ’ 744 1’625 7%",
+            "EBITDA 5 1’611 1’357 19%"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d08",
+      "filename": "berkshire-2024-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2024 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2024ltr.pdf",
+      "sha256": "ff21ab9407dec219757587b6ce6a1bf30e59cfff15bb21e81d1faaec7f97a8a7",
+      "rawBytes": 64860,
+      "encodedBase64Bytes": 86480,
+      "estimatedRequestBytes": 94672,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 15,
+        "pagesInspected": 15,
+        "producer": "Acrobat Distiller 8.1.0 (Windows)",
+        "creator": null,
+        "title": "printmgr file",
+        "pdfVersion": "1.7",
+        "creationDate": "D:20250222071418-06'00'",
+        "fonts": [
+          "serif"
+        ],
+        "fontCount": 1,
+        "inspectTextChars": 39579,
+        "imagePaintOps": 0,
+        "columnPages": 5,
+        "tableishPages": 0,
+        "hasColumns": true,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 38370,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 40118,
+        "wordCount": 8933,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 40118
+      },
+      "draftProbe": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 111,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 249,
+          "examples": [
+            "s annual report . As a public company, we\\nare required to periodically tell you man",
+            "ity. In addition to the mandated data, we\\nbelieve we owe you additional commentary ",
+            "hat you own and how we think. Our goal is\\nto communicate with you in a manner that "
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 16,
+          "examples": [
+            "\"* * * * * * * * * * * *\" x16"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 15,
+          "examples": [
+            " generally been happy talk and pictures.\\n1\\nI have also been a director of large pub",
+            "hose vague terms never caused a problem.\\n2\\nThe four of us then went to dinner at Om",
+            "mping nurture.\\nPete Liegl was a natural.\\n3\\nLast Year’s Performance\\nIn 2024, Berkshi"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 2,
+          "examples": [
+            "Note: Data are for calendar years with these exceptions: 1965 and 1966, year ended 9/30; 1967, 15 months ended 12/31.",
+            "Overall Gain – 1964-2024 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5,502,284% 39,054%"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d09",
+      "filename": "berkshire-2023-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2023 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2023ltr.pdf",
+      "sha256": "829169be21f4ce05202720fe5645cc1b9a5b1ae20bf5e6ebaff987349766eafd",
+      "rawBytes": 122415,
+      "encodedBase64Bytes": 163220,
+      "estimatedRequestBytes": 171412,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 16,
+        "pagesInspected": 16,
+        "producer": "Acrobat Distiller 8.1.0 (Windows)",
+        "creator": null,
+        "title": "printmgr file",
+        "pdfVersion": "1.6",
+        "creationDate": "D:20240223170620-06'00'",
+        "fonts": [
+          "monospace",
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 3,
+        "inspectTextChars": 49521,
+        "imagePaintOps": 0,
+        "columnPages": 9,
+        "tableishPages": 0,
+        "hasColumns": true,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 44474,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 50117,
+        "wordCount": 11423,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 50117
+      },
+      "draftProbe": "Charlie Munger – The Architect of Berkshire Hathaway Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 152,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 297,
+          "examples": [
+            "Omaha, he spent 80% of his life domiciled\\nelsewhere. Consequently, it was not until",
+            "tly! – that I had made a dumb decision in\\nbuying control of Berkshire. But , he ass",
+            "ed me, since I had already made the move,\\nhe would tell me how to correct my mistak"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 10,
+          "examples": [
+            "\"* * * * * * * * * * * *\" x10"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 16,
+          "examples": [
+            "er be credited with being the architect.\\n2\\nBERKSHIRE HATHAWAY INC.\\nTo the Sharehold",
+            "r questions and give her honest answers.\\n3\\nBertie, like most of you, understands ma",
+            "ion for 2022 and\\n$37.4 billion for 2023.\\n4\\nThe primary difference between the manda"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 3,
+          "examples": [
+            "numbers read $90 billion for 2021, ($23 billion) for 2022 and $96 billion for 2023.",
+            "Overall Gain – 1964-2023 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4,384,748% 31,223%",
+            "Note: Data are for calendar years with these exceptions: 1965 and 1966, year ended 9/30; 1967, 15 months ended 12/31."
+          ]
+        }
+      }
+    },
+    {
+      "id": "d10",
+      "filename": "berkshire-2022-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2022 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2022ltr.pdf",
+      "sha256": "a99f263003295b177e8c50ec34f2307093857a357276527e98d5a6205e21a908",
+      "rawBytes": 55589,
+      "encodedBase64Bytes": 74120,
+      "estimatedRequestBytes": 82312,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 10,
+        "pagesInspected": 10,
+        "producer": "Acrobat Distiller 8.1.0 (Windows)",
+        "creator": null,
+        "title": "printmgr file",
+        "pdfVersion": "1.6",
+        "creationDate": "D:20230224153111-06'00'",
+        "fonts": [
+          "monospace",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 30592,
+        "imagePaintOps": 0,
+        "columnPages": 4,
+        "tableishPages": 0,
+        "hasColumns": true,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 29293,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 30964,
+        "wordCount": 8089,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 30964
+      },
+      "draftProbe": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 .",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 76,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 146,
+          "examples": [
+            " vs. the S&P 500\\nAnnual Percentage Change\\nin Per-Share in S&P 500\\nMarket Value of w",
+            "have the job of managing the savings of a\\ngreat number of individuals . We are grat",
+            "ng trust, a relationship that often spans\\nmuch of their adult lifetime. It is those"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 7,
+          "examples": [
+            "\"* * * * * * * * * * * *\" x7"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 10,
+          "examples": [
+            "ended 9/30; 1967, 15 months ended 12/31.\\n2\\nBERKSHIRE HATHAWAY INC.\\nTo the Sharehold",
+            "vestments, we have no say in management.\\n3\\nOur goal in both forms of ownership is t",
+            " those checks\\nare highly likely to grow.\\n4\\nAmerican Express is much the same story."
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 4,
+          "examples": [
+            "Overall Gain – 1964-2022 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3,787,464% 24,708%",
+            "Note: Data are for calendar years with these exceptions: 1965 and 1966, year ended 9/30; 1967, 15 months ended 12/31.",
+            "(48%), social security and related receipts (34 1 ⁄ 2%), corporate income tax payments (8 1 ⁄ 2%) and a"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d11",
+      "filename": "berkshire-2021-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2021 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2021ltr.pdf",
+      "sha256": "fd5687aec746816b08113e9ccf8c4826eaa258906e66f7b4abe90c8b4f8b30ba",
+      "rawBytes": 64117,
+      "encodedBase64Bytes": 85492,
+      "estimatedRequestBytes": 93684,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 11,
+        "pagesInspected": 11,
+        "producer": "Acrobat Distiller 8.1.0 (Windows)",
+        "creator": "PDFL 15.0.4",
+        "title": "printmgr file",
+        "pdfVersion": "1.6",
+        "creationDate": "D:20220225141359-06'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 40477,
+        "imagePaintOps": 0,
+        "columnPages": 5,
+        "tableishPages": 1,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 31416,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 40913,
+        "wordCount": 9855,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 40913
+      },
+      "draftProbe": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 .",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 131,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 185,
+          "examples": [
+            " vs. the S&P 500\\nAnnual Percentage Change\\nin Per-Share in S&P 500\\nMarket Value of w",
+            "anaging a portion of your savings. We are\\nhonored by your trust.\\nOur position carri",
+            "what we would like to know if we were the\\nabsentee owner and you were the manager. "
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 0,
+          "examples": []
+        },
+        "pageNumbersInFlow": {
+          "count": 11,
+          "examples": [
+            "ended 9/30; 1967, 15 months ended 12/31.\\n2\\nBERKSHIRE HATHAWAY INC.\\nTo the Sharehold",
+            "t has been made in the\\nmarketable arena.\\n3\\nSurprise, Surprise\\nHere are a few items ",
+            "oughly $9 million daily to the Treasury.\\n4\\nIn fairness to our governmental partner,"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 17,
+          "examples": [
+            "Overall Gain – 1964-2021 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3,641,613% 30,209%",
+            "Note: Data are for calendar years with these exceptions: 1965 and 1966, year ended 9/30; 1967, 15 months ended 12/31.",
+            "151,610,700 American Express Company . . . . . . . . . . . . . . . . . . . . 19.9 1,287 24,804"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d12",
+      "filename": "berkshire-2020-shareholder-letter.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "Berkshire Hathaway 2020 letter to shareholders, downloaded 2026-09-21 from berkshirehathaway.com.",
+      "url": "https://www.berkshirehathaway.com/letters/2020ltr.pdf",
+      "sha256": "e556a52b8d4dc490d04c5f34bab98708d414cf1f632d9f68671d5a5c645afca5",
+      "rawBytes": 78896,
+      "encodedBase64Bytes": 105196,
+      "estimatedRequestBytes": 113388,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 14,
+        "pagesInspected": 14,
+        "producer": "Acrobat Distiller 8.1.0 (Windows)",
+        "creator": null,
+        "title": "printmgr file",
+        "pdfVersion": "1.6",
+        "creationDate": "D:20210226212817-06'00'",
+        "fonts": [
+          "monospace",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 52784,
+        "imagePaintOps": 0,
+        "columnPages": 4,
+        "tableishPages": 1,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 38442,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 53357,
+        "wordCount": 11860,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 53357
+      },
+      "draftProbe": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 .",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 190,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 252,
+          "examples": [
+            " vs. the S&P 500\\nAnnual Percentage Change\\nin Per-Share in S&P 500\\nMarket Value of w",
+            " accepted accounting principles (commonly\\ncalled “GAAP”). The four components of th",
+            "rating earnings, $4.9 billion of realized\\ncapital gains, a $26.7 billion gain from "
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 8,
+          "examples": [
+            "\"* * * * * * * * * * * *\" x8"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 14,
+          "examples": [
+            "ended 9/30; 1967, 15 months ended 12/31.\\n2\\nBERKSHIRE HATHAWAY INC.\\nTo the Sharehold",
+            "r tenure, that expectation has been\\nmet.\\n3\\nThe final component in our GAAP figure –",
+            "the “proof” that an illusion is reality.\\n4\\nEventually, of course, the party ends, a"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 18,
+          "examples": [
+            "Overall Gain – 1964-2020 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2,810,526% 23,454%",
+            "Note: Data are for calendar years with these exceptions: 1965 and 1966, year ended 9/30; 1967, 15 months ended 12/31.",
+            "25,533,082 AbbVie Inc. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1.4 $ 2,333 $ 2,736"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d13",
+      "filename": "jpm-ceo-letter-2024.pdf",
+      "genre": "letter",
+      "sourceKind": "public_filing",
+      "origin": "JPMorgan Chase Chairman and CEO letter to shareholders, Annual Report 2024, downloaded 2026-09-21 from jpmorganchase.com.",
+      "url": "https://www.jpmorganchase.com/content/dam/jpmc/jpmorgan-chase-and-co/investor-relations/documents/ceo-letter-to-shareholders-2024.pdf",
+      "sha256": "a351a258f6a63d7c6f6780a98a55ae082a628d0c4fd5b28bcd2d283beb9ae092",
+      "rawBytes": 900121,
+      "encodedBase64Bytes": 1200164,
+      "estimatedRequestBytes": 1208356,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 58,
+        "pagesInspected": 40,
+        "producer": "Adobe PDF Library 17.0",
+        "creator": "Adobe InDesign 19.5 (Macintosh)",
+        "title": null,
+        "pdfVersion": "1.6",
+        "creationDate": "D:20250407024401-04'00'",
+        "fonts": [
+          "monospace",
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 3,
+        "inspectTextChars": 139886,
+        "imagePaintOps": 1,
+        "columnPages": 29,
+        "tableishPages": 6,
+        "hasColumns": true,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 342563,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 220611,
+        "wordCount": 36853,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 220524
+      },
+      "draftProbe": "Dear Fellow Shareholders, Jamie Dimon, Chairman and Chief Executive Officer [Image: pdf_image_p1_1.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 86,
+          "remainingCurlyQuotes": 591,
+          "straightQuotes": 1,
+          "examples": [
+            "ain (net of\\ncontribution) 3\\n$53.0\\n$48.3\\n\u001e\\n$49.6\\nNet income\\n$16.23 \\n$19.75\\nexcludi",
+            "19.75\\nexcluding reserve\\nrelease/build 2\\n\u001e\\n$38.4\\n$39.1\\n\u001e\\n$37.7\\n$36.4\\nNet income\\nex",
+            "g reserve\\nrelease/build 2\\n\u001e\\n$38.4\\n$39.1\\n\u001e\\n$37.7\\n$36.4\\nNet income\\nexcluding TCJA 1"
+          ]
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 1433,
+          "examples": [
+            "ther year of significant challenges, from\\nthe terrible ongoing war and violence in ",
+            " Ukraine and conflicts in the Middle East\\nto ongoing terrorist activity and growing",
+            "se lives are profoundly affected by these\\nevents.\\nJPMorganChase, a company that his"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 16,
+          "examples": [
+            "\"4/6/25_r1 Footnote pg #s added 11:15 pm\" x4",
+            "\"4/6/25_r1 2:40 pm\" x3",
+            "\"Market share 16\" x3"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 12,
+          "examples": [
+            "l -\\nlence to ensure its ongoing success.\\n5\\nDRAFT 2/19/25, TYPESET: 3/10/25 REV. 4/5",
+            "Generally accepted accounting principles\\n6\\n25_JD_TBVPS_04\\nDRAFT 1/30/25, TYPESET: 3",
+            "Financials Index (S&P Financials Index).\\n7\\n4/6/25_r1 2:40 pm\\n25_JD_client franchise"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 112,
+          "examples": [
+            "DRAFT 2/19/25, TYPESET: 3/10/25 REV. 4/5/25r1 v.25_JD_earnings_diluted_07",
+            "10% 15% 15% \u001e 11% \u001e \u001e \u001e \u001e 17% \u001e",
+            "$8.5 $4.00 $4.33 6% $3.96"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d14",
+      "filename": "oaktree-on-bubble-watch.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo On Bubble Watch, 2 January 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/on-bubble-watch.pdf",
+      "sha256": "f32bcd71ffbff2dad6d30c1ff92d0236104e8c7f22e4b7526d8955766941b3a6",
+      "rawBytes": 319067,
+      "encodedBase64Bytes": 425424,
+      "estimatedRequestBytes": 433616,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 10,
+        "pagesInspected": 10,
+        "producer": "Adobe PDF Library 24.4.19",
+        "creator": "Acrobat PDFMaker 24 for Word",
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": "D:20250107162659-05'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 30007,
+        "imagePaintOps": 11,
+        "columnPages": 1,
+        "tableishPages": 0,
+        "hasColumns": true,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 53720,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 30698,
+        "wordCount": 5200,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 30389
+      },
+      "draftProbe": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 219,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 186,
+          "examples": [
+            "ght a response from readers (after having\\nwritten for almost ten years without rece",
+            "o was called bubble.com , and the subject\\nwas the irrational behavior I thought was",
+            "respect to tech, internet, and e-commerce\\nstocks. The memo had two things going for"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 20,
+          "examples": [
+            "\"© 2025 Oaktree Capital Management, L.P. All Rights Reserved\" x10",
+            "\"Follow us:\" x10"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 9,
+          "examples": [
+            "that things can only get better forever.\\n2\\n© 2025 Oaktree Capital Management, L.P. ",
+            "t over that party or sit out that dance?\\n3\\n© 2025 Oaktree Capital Management, L.P. ",
+            "ors who by definition lack experience in\\n4\\n© 2025 Oaktree Capital Management, L.P. "
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 2,
+          "examples": [
+            "and the S&P 500 declined in 2000, 2001, and 2002 for the first three-year decline since 1939, during the",
+            "In the last two years, it’s happened for the fifth time. The S&P 500 was up 26% in 2023 and 25% in 2024,"
+          ]
+        }
+      }
+    },
+    {
+      "id": "d15",
+      "filename": "oaktree-nobody-knows-yet-again.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Nobody Knows (Yet Again), 9 April 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/nobody-knows-yet-again.pdf",
+      "sha256": "8bea1f0ea97f52c2a8d3ad9991c9d5534916aa00104bb1c18429662e972adda4",
+      "rawBytes": 273317,
+      "encodedBase64Bytes": 364424,
+      "estimatedRequestBytes": 372616,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 9,
+        "pagesInspected": 9,
+        "producer": "Adobe PDF Library 25.1.208",
+        "creator": "Acrobat PDFMaker 25 for Word",
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": "D:20250414085449-04'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 29354,
+        "imagePaintOps": 9,
+        "columnPages": 0,
+        "tableishPages": 0,
+        "hasColumns": false,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 48643,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 29977,
+        "wordCount": 5031,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 29725
+      },
+      "draftProbe": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 159,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 205,
+          "examples": [
+            "cluded that the U.S. financial sector was\\nlikely to melt down. It was now patently ",
+            "days earlier) that financial institutions\\nmight fall like dominoes due to the combi",
+            "nto thousands of tranched securities that\\nwere rated too high, (e) investment in th"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 18,
+          "examples": [
+            "\"© 2025 Oaktree Capital Management, L.P. All Rights Reserved\" x9",
+            "\"Follow us:\" x9"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 8,
+          "examples": [
+            ". I love the title of a book by a market\\n2\\n© 2025 Oaktree Capital Management, L.P. ",
+            "es\\n• a massive change in the world order\\n3\\n© 2025 Oaktree Capital Management, L.P. ",
+            " the imports Americans have been buying.\\n4\\n© 2025 Oaktree Capital Management, L.P. "
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 0,
+          "examples": []
+        }
+      }
+    },
+    {
+      "id": "d16",
+      "filename": "oaktree-gimme-credit.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Gimme Credit, 6 March 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/gimme-credit.pdf",
+      "sha256": "133db9f226359a94989e7582fde16a2af011c6b0eee5078cedcf0755e5086a2b",
+      "rawBytes": 275824,
+      "encodedBase64Bytes": 367768,
+      "estimatedRequestBytes": 375960,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 8,
+        "pagesInspected": 8,
+        "producer": "Adobe PDF Library 24.5.175",
+        "creator": "Acrobat PDFMaker 24 for Word",
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": "D:20250306093915-05'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 24879,
+        "imagePaintOps": 7,
+        "columnPages": 0,
+        "tableishPages": 1,
+        "hasColumns": false,
+        "hasTables": true,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 54612,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 25380,
+        "wordCount": 4245,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 25184
+      },
+      "draftProbe": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 155,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 175,
+          "examples": [
+            "al time what’s on their minds. At various\\npoints in the last ten years, the most fr",
+            "two, it’s been “can we talk about private\\ncredit?” And in the last few months, it’s",
+            " increased interest in credit, and that’s\\nwhy I’m devoting this memo to it. It’ll c"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 14,
+          "examples": [
+            "\"© 2025 Oaktree Capital Management, L.P. All Rights Reserved\" x7",
+            "\"Follow us:\" x7"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 7,
+          "examples": [
+            "hey ask me, “can we\\ntalk about spreads?”\\n2\\n© 2025 Oaktree Capital Management, L.P. ",
+            ".7\\nCCC and below 12.7 13.7\\nData from ICE\\n3\\n© 2025 Oaktree Capital Management, L.P. ",
+            "r performance in the medium-tolong term.\\n4\\n© 2025 Oaktree Capital Management, L.P. "
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 0,
+          "examples": []
+        }
+      }
+    },
+    {
+      "id": "d17",
+      "filename": "oaktree-the-calculus-of-value.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo The Calculus of Value, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/the-calculus-of-value.pdf",
+      "sha256": "42d6b1484a0f7959129f21e9155adda19f9b376a48bc01e431d8db1dc2ee2f20",
+      "rawBytes": 293909,
+      "encodedBase64Bytes": 391880,
+      "estimatedRequestBytes": 400072,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 11,
+        "pagesInspected": 11,
+        "producer": "Adobe PDF Library 25.1.51",
+        "creator": "Acrobat PDFMaker 25 for Word",
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": "D:20250813144617-04'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 36310,
+        "imagePaintOps": 11,
+        "columnPages": 0,
+        "tableishPages": 0,
+        "hasColumns": false,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 60711,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 37068,
+        "wordCount": 6196,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 36758
+      },
+      "draftProbe": "All Rights Reserved Follow us: [Image: pdf_image_p1_1.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 239,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 265,
+          "examples": [
+            " I wrote during that flight turned out to\\nbe the answers to many of the questions I",
+            "s after I landed, so writing what follows\\nserved me well. I hope it’ll do the same ",
+            "bble.com , the one that put my writing on\\nthe map, and I marked the occasion by pub"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 22,
+          "examples": [
+            "\"© 2025 Oaktree Capital Management, L.P. All Rights Reserved\" x11",
+            "\"Follow us:\" x11"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 10,
+          "examples": [
+            " from earnings that value is derived. In\\n2\\n© 2025 Oaktree Capital Management, L.P. ",
+            "at relationship the asset’s “valuation.”\\n3\\n© 2025 Oaktree Capital Management, L.P. ",
+            " just\\nquantitative valuation parameters.\\n4\\n© 2025 Oaktree Capital Management, L.P. "
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 0,
+          "examples": []
+        }
+      }
+    },
+    {
+      "id": "d18",
+      "filename": "oaktree-mr-market-miscalculates.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Mr. Market Miscalculates, 22 August 2024, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/mr-market-miscalculates.pdf",
+      "sha256": "6d8981274d1170fe404e0063bdab294fcb29443524add3b4a75361275cc287b7",
+      "rawBytes": 1605262,
+      "encodedBase64Bytes": 2140352,
+      "estimatedRequestBytes": 2148544,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 9,
+        "pagesInspected": 9,
+        "producer": "Adobe PDF Library 24.2.23",
+        "creator": "Acrobat PDFMaker 24 for Word",
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": "D:20240822154209-04'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 22282,
+        "imagePaintOps": 14,
+        "columnPages": 0,
+        "tableishPages": 0,
+        "hasColumns": false,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 51863,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 22981,
+        "wordCount": 3815,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 22589
+      },
+      "draftProbe": "Market: Imagine that in some private business you own a small share that cost you $1,000. One of your partners, named Mr.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 114,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 149,
+          "examples": [
+            "Benjamin Graham, who was Warren Buffett’s\\nteacher at Columbia Business School, intr",
+            "n a small share that cost you $1,000. One\\nof your partners, named Mr. Market, is ve",
+            "iging indeed. Every day he tells you what\\nhe thinks your interest is worth and furt"
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 31,
+          "examples": [
+            "\"© 2024 Oaktree Capital Management, L.P. All Rights Reserved\" x9",
+            "\"Follow us:\" x9",
+            "\"ALL RIGHTS RESERVED\" x8"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 8,
+          "examples": [
+            " way that fits the prevailing narrative.\\n2\\n© 2024 Oaktree Capital Management, L.P. ",
+            "ge_p3_1.bmp]\\n[Image: pdf_image_p3_2.bmp]\\n3\\n© 2024 Oaktree Capital Management, L.P. ",
+            "HTS RESERVED\\n[Image: pdf_image_p4_1.bmp]\\n4\\n© 2024 Oaktree Capital Management, L.P. "
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 0,
+          "examples": []
+        }
+      }
+    },
+    {
+      "id": "d19",
+      "filename": "oaktree-2024-in-review.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo 2024 in Review, 19 February 2025, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/2024-in-review.pdf",
+      "sha256": "48f3969e8b6ff8bb7f6178f2ab82ea3afdb31210f7bd6ae9e7a2d87f0f47535b",
+      "rawBytes": 966662,
+      "encodedBase64Bytes": 1288884,
+      "estimatedRequestBytes": 1297076,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 9,
+        "pagesInspected": 9,
+        "producer": "Adobe PDF Library 24.5.96",
+        "creator": "Acrobat PDFMaker 24 for Word",
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": "D:20250219114827-05'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 31597,
+        "imagePaintOps": 1,
+        "columnPages": 0,
+        "tableishPages": 0,
+        "hasColumns": false,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 42615,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 31988,
+        "wordCount": 5105,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 31960
+      },
+      "draftProbe": "Memo to: Oaktree Clients Only From: Howard Marks Re: 2024 in Review Last year was an unusual one.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 103,
+          "straightQuotes": 2,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 209,
+          "examples": [
+            " the onset of the pandemic five years ago\\nhas seemed unusual. In 2024, externalitie",
+            "specially those in the U.S., were able to\\nshrug them off. U.S. Federal Reserve watc",
+            " be a major preoccupation, with investors\\nhanging on its every word or action. The "
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 11,
+          "examples": [
+            "\"© 2025 OAKTREE CAPITAL MANAGEMENT, L.P.\" x6",
+            "\"ALL RIGHTS RESERVED\" x5"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 8,
+          "examples": [
+            "e\\nembarked on after Oaktree’s formation.\\n2\\nMezzanine debt is one of the grandaddies",
+            " included in the favorable results shown\\n3\\nabove. It’s net IRR is 7.2%. While the l",
+            "ince 2002, 2007, and 2006, respectively.\\n4\\nAs the transition was first announced in"
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 0,
+          "examples": []
+        }
+      }
+    },
+    {
+      "id": "d20",
+      "filename": "oaktree-further-thoughts-on-sea-change.pdf",
+      "genre": "memo",
+      "sourceKind": "public_filing",
+      "origin": "Howard Marks / Oaktree client memo Further Thoughts on Sea Change, downloaded 2026-09-21 from oaktreecapital.com.",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/further-thoughts-on-sea-change.pdf",
+      "sha256": "1f7c7d02dfd883a1879730a1c1533ff192d44e68ef91082365b5103713e91194",
+      "rawBytes": 995419,
+      "encodedBase64Bytes": 1327228,
+      "estimatedRequestBytes": 1335420,
+      "vercelEdgeBodyBytes": 4500000,
+      "clientGuardBytes": 4200000,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "exceedsMaxPdfMb": false,
+      "inspect": {
+        "pageCount": 9,
+        "pagesInspected": 9,
+        "producer": "Adobe PDF Library 23.1.206",
+        "creator": "Acrobat PDFMaker 23 for Word",
+        "title": null,
+        "pdfVersion": "1.7",
+        "creationDate": "D:20230530164651-04'00'",
+        "fonts": [
+          "sans-serif",
+          "serif"
+        ],
+        "fontCount": 2,
+        "inspectTextChars": 30152,
+        "imagePaintOps": 0,
+        "columnPages": 0,
+        "tableishPages": 0,
+        "hasColumns": false,
+        "hasTables": false,
+        "textLayer": "real_text_layer"
+      },
+      "extract": {
+        "elapsedMs": 67747,
+        "status": "ok",
+        "errorCode": null,
+        "errorMessage": null,
+        "charCount": 30537,
+        "wordCount": 5077,
+        "extractionStatus": "ok",
+        "extractionWarnings": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "meaningfulTextLength": 30537
+      },
+      "draftProbe": "This Time It Really Might Be Different On October 11, 1987, I first came across the saying “this time it’s different.",
+      "defects": {
+        "curlyOrMangledQuotes": {
+          "controlOrReplacementOrNsMangle": 0,
+          "remainingCurlyQuotes": 151,
+          "straightQuotes": 0,
+          "examples": []
+        },
+        "ligatures": {
+          "count": 0,
+          "examples": []
+        },
+        "hardLineBreaksInsideSentence": {
+          "count": 208,
+          "examples": [
+            "o, meaning I’ve had many opportunities to\\nthink about it and discuss it with client",
+            ". As a result, I have much more to say on\\nthe subject. I wrote this memo to collect",
+            "s in one place. I have no desire to share\\nthese insights beyond Oaktree’s clients, "
+          ]
+        },
+        "hyphenatedAcrossLineEnding": {
+          "count": 0,
+          "examples": []
+        },
+        "repeatedHeadersFooters": {
+          "count": 26,
+          "examples": [
+            "\"© 2023 Oaktree Capital Management, L.P. All Rights Reserved\" x9",
+            "\"Follow us:\" x9",
+            "\"ALL RIGHTS RESERVED\" x4"
+          ]
+        },
+        "pageNumbersInFlow": {
+          "count": 8,
+          "examples": [
+            " market conditions made it tough to find\\n2\\n© 2023 Oaktree Capital Management, L.P. ",
+            "rately describes the period in question.\\n3\\n© 2023 Oaktree Capital Management, L.P. ",
+            "f levered investment strategies has been\\n4\\n© 2023 Oaktree Capital Management, L.P. "
+          ]
+        },
+        "tableFlattenedIntoProse": {
+          "count": 0,
+          "examples": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "elapsedMs": 2072,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "113ad742-e662-4d21-9c2e-d4ad55a06d42",
+  "cards": 1,
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "berkshire-2024-shareholder-letter.pdf",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 2,
+    "inputTokens": 1520,
+    "cachedInputTokens": 0,
+    "outputTokens": 98,
+    "costUsd": 0.0047799999999999995,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 2,
+        "inputTokens": 1520,
+        "cachedInputTokens": 0,
+        "outputTokens": 98,
+        "costUsd": 0.0047799999999999995,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": null,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 1
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 167,
+  "draftText": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category."
+}

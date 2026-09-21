@@ -1,0 +1,1565 @@
+{
+  "spec": "B163",
+  "rows": [
+    {
+      "id": "d01",
+      "filename": "3i-press-release-fy2025.pdf",
+      "genre": "press_release",
+      "rawBytes": 388819,
+      "pageCount": 56,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Wdesk Fidelity Content Translations Version 011.007.015",
+      "creator": "Workiva",
+      "encodedBase64Bytes": 518428,
+      "estimatedRequestBytes": 526620,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 24473,
+      "extractCharCount": 156041,
+      "localExtractMs": 203723,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 207727,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 207727,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 207727,
+        "localElapsedMs": 203723,
+        "verbatim": "production extract-draft-text HTTP 200 chars=156041 elapsedMs=207727"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 207727,
+        "charCount": 156041,
+        "verbatim": "156041 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 8628,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 3,
+        "costUsd": 0.5960764000000001,
+        "traceId": "d54b10f3-fadf-4c49-abaa-fb6b545f1e60",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 3,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "3i Group plc announces results for the year to 31 March 2025",
+        "statement": "3i Group plc announces results for the year to 31 March 2025",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"3i Group plc announces results for the year to 31 March 2025\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d02",
+      "filename": "3i-press-release-fy25-highlights.pdf",
+      "genre": "press_release",
+      "rawBytes": 137825,
+      "pageCount": 3,
+      "hasColumns": true,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Microsoft® Word for Microsoft 365",
+      "creator": "Microsoft® Word for Microsoft 365",
+      "encodedBase64Bytes": 183768,
+      "estimatedRequestBytes": 191960,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 1087,
+      "extractCharCount": 6777,
+      "localExtractMs": 45377,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 48371,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 48371,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 48371,
+        "localElapsedMs": 45377,
+        "verbatim": "production extract-draft-text HTTP 200 chars=6777 elapsedMs=48371"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 48371,
+        "charCount": 6777,
+        "verbatim": "6777 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4953,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 3,
+        "costUsd": 0.057843799999999994,
+        "traceId": "b43b4619-1bb3-4a36-8088-61ff8049231e",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 3,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "3i Group plc announces results for the year to 31 March 2025",
+        "statement": "3i Group plc announces results for the year to 31 March 2025",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"3i Group plc announces results for the year to 31 March 2025\""
+      },
+      "over3700WordCeiling": false,
+      "b277FullReviewCost": {
+        "band": "500-1500",
+        "discountedUsd": 2.7681,
+        "listUsd": 3.5321,
+        "note": "interpolated B277 run2-run3"
+      }
+    },
+    {
+      "id": "d03",
+      "filename": "3i-overview-and-strategy-2025.pdf",
+      "genre": "ir_narrative",
+      "rawBytes": 1075726,
+      "pageCount": 17,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Wdesk Fidelity Content Translations Version 011.006.048",
+      "creator": "Workiva",
+      "encodedBase64Bytes": 1434304,
+      "estimatedRequestBytes": 1442496,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 8044,
+      "extractCharCount": 53610,
+      "localExtractMs": 161070,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 174747,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 174747,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 174747,
+        "localElapsedMs": 161070,
+        "verbatim": "production extract-draft-text HTTP 200 chars=53610 elapsedMs=174747"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 174747,
+        "charCount": 53610,
+        "verbatim": "53610 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 3983,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.0723425,
+        "traceId": "072c2001-751b-4fcb-93f0-e2c1ac681224",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+        "statement": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d04",
+      "filename": "hpif-report-march-2026.pdf",
+      "genre": "ir_narrative",
+      "rawBytes": 403362,
+      "pageCount": 10,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 26.1.158",
+      "creator": "Acrobat PDFMaker 26 for PowerPoint",
+      "encodedBase64Bytes": 537816,
+      "estimatedRequestBytes": 546008,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 4306,
+      "extractCharCount": 29129,
+      "localExtractMs": 70710,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 74596,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 74596,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 74596,
+        "localElapsedMs": 70710,
+        "verbatim": "production extract-draft-text HTTP 200 chars=29129 elapsedMs=74596"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 74596,
+        "charCount": 29129,
+        "verbatim": "29129 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4993,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.051065,
+        "traceId": "9d03a8ba-04be-46bf-9c69-9a6be9008e42",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 0,
+          "partial": 0,
+          "conflicting": 1,
+          "notSupported": 0
+        },
+        "quote": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653.0M 57 40+ Fund NAV Companies 2 General Partners 2",
+        "statement": "rd-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653.",
+        "verdict": "conflict",
+        "verbatim": "HTTP 200 ok=true conflict quote=\"Seeking cost-effective private Exposure to fast growing, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term re"
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d05",
+      "filename": "3i-q1-fy25-performance-update.pdf",
+      "genre": "press_release",
+      "rawBytes": 182527,
+      "pageCount": 4,
+      "hasColumns": true,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Microsoft® Word for Microsoft 365",
+      "creator": "Microsoft® Word for Microsoft 365",
+      "encodedBase64Bytes": 243372,
+      "estimatedRequestBytes": 251564,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 2026,
+      "extractCharCount": 12298,
+      "localExtractMs": 51410,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 54720,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 54720,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 54720,
+        "localElapsedMs": 51410,
+        "verbatim": "production extract-draft-text HTTP 200 chars=12298 elapsedMs=54720"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 54720,
+        "charCount": 12298,
+        "verbatim": "12298 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 3888,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.0317375,
+        "traceId": "cfb6ed60-020f-4e9d-954a-32d24000465d",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+        "statement": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation im"
+      },
+      "over3700WordCeiling": false,
+      "b277FullReviewCost": {
+        "band": "1500-3700",
+        "discountedUsd": 5.9936,
+        "listUsd": 7.5856,
+        "note": "interpolated B277 run3-run4"
+      }
+    },
+    {
+      "id": "d06",
+      "filename": "3i-hy25-highlights.pdf",
+      "genre": "press_release",
+      "rawBytes": 66508,
+      "pageCount": 2,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": null,
+      "creator": null,
+      "encodedBase64Bytes": 88680,
+      "estimatedRequestBytes": 96872,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 1180,
+      "extractCharCount": 7486,
+      "localExtractMs": 8157,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 10598,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 10598,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 10598,
+        "localElapsedMs": 8157,
+        "verbatim": "production extract-draft-text HTTP 200 chars=7486 elapsedMs=10598"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 10598,
+        "charCount": 7486,
+        "verbatim": "7486 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4507,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 3,
+        "costUsd": 0.06976369999999998,
+        "traceId": "46c0ce60-d671-447e-b2af-069803916373",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 3,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "3i Group plc announces results for the six months to 30 September 2025",
+        "statement": "3i Group plc announces results for the six months to 30 September 2025",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"3i Group plc announces results for the six months to 30 September 2025\""
+      },
+      "over3700WordCeiling": false,
+      "b277FullReviewCost": {
+        "band": "500-1500",
+        "discountedUsd": 2.996,
+        "listUsd": 3.8176,
+        "note": "interpolated B277 run2-run3"
+      }
+    },
+    {
+      "id": "d07",
+      "filename": "pg-annual-results-2025-press-release.pdf",
+      "genre": "press_release",
+      "rawBytes": 348219,
+      "pageCount": 4,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Microsoft® Word for Microsoft 365",
+      "creator": "Microsoft® Word for Microsoft 365",
+      "encodedBase64Bytes": 464292,
+      "estimatedRequestBytes": 472484,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 1537,
+      "extractCharCount": 9743,
+      "localExtractMs": 64478,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 66804,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 66804,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 66804,
+        "localElapsedMs": 64478,
+        "verbatim": "production extract-draft-text HTTP 200 chars=9743 elapsedMs=66804"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 66804,
+        "charCount": 9743,
+        "verbatim": "9743 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": false,
+        "elapsedMs": 2044,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.015232499999999998,
+        "traceId": "622cd954-cba3-4237-8ff3-911e3148a32b",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 0,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 1
+        },
+        "quote": null,
+        "statement": null,
+        "verdict": null,
+        "verbatim": "HTTP 200 ok=true no quoted verdict. evidence={\"confirmed\":0,\"partial\":0,\"conflicting\":0,\"notSupported\":1} draft=\"Press release Baar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuan\""
+      },
+      "over3700WordCeiling": false,
+      "b277FullReviewCost": {
+        "band": "1500-3700",
+        "discountedUsd": 3.9357,
+        "listUsd": 4.9959,
+        "note": "interpolated B277 run3-run4"
+      }
+    },
+    {
+      "id": "d08",
+      "filename": "berkshire-2024-shareholder-letter.pdf",
+      "genre": "letter",
+      "rawBytes": 64860,
+      "pageCount": 15,
+      "hasColumns": true,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Acrobat Distiller 8.1.0 (Windows)",
+      "creator": null,
+      "encodedBase64Bytes": 86480,
+      "estimatedRequestBytes": 94672,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 8933,
+      "extractCharCount": 40118,
+      "localExtractMs": 38370,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 41405,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 41405,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 41405,
+        "localElapsedMs": 38370,
+        "verbatim": "production extract-draft-text HTTP 200 chars=40118 elapsedMs=41405"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 41405,
+        "charCount": 40118,
+        "verbatim": "40118 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4234,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.0697425,
+        "traceId": "beee8630-2599-4b1c-b2c1-d3c2d3788427",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.”",
+        "statement": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.”\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d09",
+      "filename": "berkshire-2023-shareholder-letter.pdf",
+      "genre": "letter",
+      "rawBytes": 122415,
+      "pageCount": 16,
+      "hasColumns": true,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Acrobat Distiller 8.1.0 (Windows)",
+      "creator": null,
+      "encodedBase64Bytes": 163220,
+      "estimatedRequestBytes": 171412,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 11423,
+      "extractCharCount": 50117,
+      "localExtractMs": 44474,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 47882,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 47882,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 47882,
+        "localElapsedMs": 44474,
+        "verbatim": "production extract-draft-text HTTP 200 chars=50117 elapsedMs=47882"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 47882,
+        "charCount": 50117,
+        "verbatim": "50117 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4168,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.08495,
+        "traceId": "8c3c3169-32d4-4408-91a5-f1193f3cc24a",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+        "statement": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Charlie Munger died on November 28, just 33 days before his 100th birthday.\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d10",
+      "filename": "berkshire-2022-shareholder-letter.pdf",
+      "genre": "letter",
+      "rawBytes": 55589,
+      "pageCount": 10,
+      "hasColumns": true,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Acrobat Distiller 8.1.0 (Windows)",
+      "creator": null,
+      "encodedBase64Bytes": 74120,
+      "estimatedRequestBytes": 82312,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 8089,
+      "extractCharCount": 30964,
+      "localExtractMs": 29293,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 32041,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 32041,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 32041,
+        "localElapsedMs": 29293,
+        "verbatim": "production extract-draft-text HTTP 200 chars=30964 elapsedMs=32041"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 32041,
+        "charCount": 30964,
+        "verbatim": "30964 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4862,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.0677475,
+        "traceId": "530949f8-c513-4a44-b19a-f8228113574e",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+        "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . .",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . "
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d11",
+      "filename": "berkshire-2021-shareholder-letter.pdf",
+      "genre": "letter",
+      "rawBytes": 64117,
+      "pageCount": 11,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Acrobat Distiller 8.1.0 (Windows)",
+      "creator": "PDFL 15.0.4",
+      "encodedBase64Bytes": 85492,
+      "estimatedRequestBytes": 93684,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 9855,
+      "extractCharCount": 40913,
+      "localExtractMs": 31416,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 32234,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 32234,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 32234,
+        "localElapsedMs": 31416,
+        "verbatim": "production extract-draft-text HTTP 200 chars=40913 elapsedMs=32234"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 32234,
+        "charCount": 40913,
+        "verbatim": "40913 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4822,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.0632975,
+        "traceId": "faa3db5b-d9f6-4e65-9786-0915aa46d0be",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+        "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . .",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . "
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d12",
+      "filename": "berkshire-2020-shareholder-letter.pdf",
+      "genre": "letter",
+      "rawBytes": 78896,
+      "pageCount": 14,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Acrobat Distiller 8.1.0 (Windows)",
+      "creator": null,
+      "encodedBase64Bytes": 105196,
+      "estimatedRequestBytes": 113388,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 11860,
+      "extractCharCount": 53357,
+      "localExtractMs": 38442,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 41045,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 41045,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 41045,
+        "localElapsedMs": 38442,
+        "verbatim": "production extract-draft-text HTTP 200 chars=53357 elapsedMs=41045"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 41045,
+        "charCount": 53357,
+        "verbatim": "53357 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 5098,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.078325,
+        "traceId": "287f668b-a8e9-4a73-9c80-a7ba015c8565",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+        "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . .",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . "
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d13",
+      "filename": "jpm-ceo-letter-2024.pdf",
+      "genre": "letter",
+      "rawBytes": 900121,
+      "pageCount": 58,
+      "hasColumns": true,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 17.0",
+      "creator": "Adobe InDesign 19.5 (Macintosh)",
+      "encodedBase64Bytes": 1200164,
+      "estimatedRequestBytes": 1208356,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 36853,
+      "extractCharCount": 220611,
+      "localExtractMs": 342563,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 301388,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "fetch failed"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 301388,
+        "verbatim": "production fetch failed after 301388 ms"
+      },
+      "gate4": {
+        "pass": false,
+        "elapsedMs": 301388,
+        "localElapsedMs": 342563,
+        "verbatim": "production verbatim: fetch failed elapsedMs=301388"
+      },
+      "gate5": {
+        "pass": false,
+        "elapsedMs": 301388,
+        "charCount": 0,
+        "verbatim": "empty"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 10295,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.2775775,
+        "traceId": "d92b170f-3169-45d6-aa4f-32eeb92bc587",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 0,
+          "partial": 0,
+          "conflicting": 1,
+          "notSupported": 0
+        },
+        "quote": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% 2 , reflecting strong underlying performance across our businesses.",
+        "statement": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58.",
+        "verdict": "conflict",
+        "verbatim": "HTTP 200 ok=true conflict quote=\"We earned revenue in 2024 of $180.6 billion 1 and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% 2 , reflecting strong underlying performance ac"
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d14",
+      "filename": "oaktree-on-bubble-watch.pdf",
+      "genre": "memo",
+      "rawBytes": 319067,
+      "pageCount": 10,
+      "hasColumns": true,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 24.4.19",
+      "creator": "Acrobat PDFMaker 24 for Word",
+      "encodedBase64Bytes": 425424,
+      "estimatedRequestBytes": 433616,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 5200,
+      "extractCharCount": 30698,
+      "localExtractMs": 53720,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 57956,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 57956,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 57956,
+        "localElapsedMs": 53720,
+        "verbatim": "production extract-draft-text HTTP 200 chars=30698 elapsedMs=57956"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 57956,
+        "charCount": 30698,
+        "verbatim": "30698 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 3760,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.049429999999999995,
+        "traceId": "1d16c8e8-9957-4423-a030-fb0d74dce4b3",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+        "statement": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 an"
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d15",
+      "filename": "oaktree-nobody-knows-yet-again.pdf",
+      "genre": "memo",
+      "rawBytes": 273317,
+      "pageCount": 9,
+      "hasColumns": false,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 25.1.208",
+      "creator": "Acrobat PDFMaker 25 for Word",
+      "encodedBase64Bytes": 364424,
+      "estimatedRequestBytes": 372616,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 5031,
+      "extractCharCount": 29977,
+      "localExtractMs": 48643,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 53111,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 53111,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 53111,
+        "localElapsedMs": 48643,
+        "verbatim": "production extract-draft-text HTTP 200 chars=29977 elapsedMs=53111"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 53111,
+        "charCount": 29977,
+        "verbatim": "29977 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 3591,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.0468325,
+        "traceId": "0a359458-c8e9-4c8c-be97-9b9035e2de90",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+        "statement": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d16",
+      "filename": "oaktree-gimme-credit.pdf",
+      "genre": "memo",
+      "rawBytes": 275824,
+      "pageCount": 8,
+      "hasColumns": false,
+      "hasTables": true,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 24.5.175",
+      "creator": "Acrobat PDFMaker 24 for Word",
+      "encodedBase64Bytes": 367768,
+      "estimatedRequestBytes": 375960,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 4245,
+      "extractCharCount": 25380,
+      "localExtractMs": 54612,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 58924,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 58924,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 58924,
+        "localElapsedMs": 54612,
+        "verbatim": "production extract-draft-text HTTP 200 chars=25380 elapsedMs=58924"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 58924,
+        "charCount": 25380,
+        "verbatim": "25380 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4036,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.044387499999999996,
+        "traceId": "b6f12d06-8b64-42fa-8098-5cd47a24b76a",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+        "statement": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d17",
+      "filename": "oaktree-the-calculus-of-value.pdf",
+      "genre": "memo",
+      "rawBytes": 293909,
+      "pageCount": 11,
+      "hasColumns": false,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 25.1.51",
+      "creator": "Acrobat PDFMaker 25 for Word",
+      "encodedBase64Bytes": 391880,
+      "estimatedRequestBytes": 400072,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 6196,
+      "extractCharCount": 37068,
+      "localExtractMs": 60711,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 64555,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 64555,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 64555,
+        "localElapsedMs": 60711,
+        "verbatim": "production extract-draft-text HTTP 200 chars=37068 elapsedMs=64555"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 64555,
+        "charCount": 37068,
+        "verbatim": "37068 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4525,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.056467500000000004,
+        "traceId": "4f5ecd62-7e8c-47ef-a3ac-d9fcbe3d6db6",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 0,
+          "partial": 0,
+          "conflicting": 1,
+          "notSupported": 0
+        },
+        "quote": "January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch .",
+        "statement": "January 2 of this year was the 25 th anniversary of my memo bubble.",
+        "verdict": "conflict",
+        "verbatim": "HTTP 200 ok=true conflict quote=\"January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bu"
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d18",
+      "filename": "oaktree-mr-market-miscalculates.pdf",
+      "genre": "memo",
+      "rawBytes": 1605262,
+      "pageCount": 9,
+      "hasColumns": false,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 24.2.23",
+      "creator": "Acrobat PDFMaker 24 for Word",
+      "encodedBase64Bytes": 2140352,
+      "estimatedRequestBytes": 2148544,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 3815,
+      "extractCharCount": 22981,
+      "localExtractMs": 51863,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 57683,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 57683,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 57683,
+        "localElapsedMs": 51863,
+        "verbatim": "production extract-draft-text HTTP 200 chars=22981 elapsedMs=57683"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 57683,
+        "charCount": 22981,
+        "verbatim": "22981 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4664,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 2,
+        "costUsd": 0.08268500000000001,
+        "traceId": "2f6f6f64-a769-49f0-a611-a10337ea9fec",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 2,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Imagine that in some private business you own a small share that cost you $1,000.",
+        "statement": "Market: Imagine that in some private business you own a small share that cost you $1,000.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Imagine that in some private business you own a small share that cost you $1,000.\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d19",
+      "filename": "oaktree-2024-in-review.pdf",
+      "genre": "memo",
+      "rawBytes": 966662,
+      "pageCount": 9,
+      "hasColumns": false,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 24.5.96",
+      "creator": "Acrobat PDFMaker 24 for Word",
+      "encodedBase64Bytes": 1288884,
+      "estimatedRequestBytes": 1297076,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 5105,
+      "extractCharCount": 31988,
+      "localExtractMs": 42615,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 46714,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 46714,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 46714,
+        "localElapsedMs": 42615,
+        "verbatim": "production extract-draft-text HTTP 200 chars=31988 elapsedMs=46714"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 46714,
+        "charCount": 31988,
+        "verbatim": "31988 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4580,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.05244249999999999,
+        "traceId": "438ac45d-15d0-4bdc-887a-cc7381e4a4b2",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.",
+        "statement": "Last year was an unusual one.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    },
+    {
+      "id": "d20",
+      "filename": "oaktree-further-thoughts-on-sea-change.pdf",
+      "genre": "memo",
+      "rawBytes": 995419,
+      "pageCount": 9,
+      "hasColumns": false,
+      "hasTables": false,
+      "textLayer": "real_text_layer",
+      "producer": "Adobe PDF Library 23.1.206",
+      "creator": "Acrobat PDFMaker 23 for Word",
+      "encodedBase64Bytes": 1327228,
+      "estimatedRequestBytes": 1335420,
+      "overVercelBy": 0,
+      "overClientBy": 0,
+      "extractWordCount": 5077,
+      "extractCharCount": 30537,
+      "localExtractMs": 67747,
+      "localExtractStatus": "ok",
+      "localExtractError": null,
+      "gate1": {
+        "pass": true,
+        "elapsedMs": 0,
+        "verbatim": "Source file input has no accept filter (FocusLeftRail.jsx L185-192; AssessModule.jsx L455). PDF is an office binary (officeSourceFormat.js). Browser accepts the file."
+      },
+      "gate2": {
+        "pass": true,
+        "elapsedMs": 72388,
+        "exceedsVercel45mb": false,
+        "exceedsClient42mb": false,
+        "verbatim": "HTTP 200"
+      },
+      "gate3": {
+        "pass": true,
+        "elapsedMs": 72388,
+        "verbatim": "HTTP 200 extract-draft-text; extractor invoked (prepareUploadedSourcesForPipeline)"
+      },
+      "gate4": {
+        "pass": true,
+        "elapsedMs": 72388,
+        "localElapsedMs": 67747,
+        "verbatim": "production extract-draft-text HTTP 200 chars=30537 elapsedMs=72388"
+      },
+      "gate5": {
+        "pass": true,
+        "elapsedMs": 72388,
+        "charCount": 30537,
+        "verbatim": "30537 chars"
+      },
+      "gate6": null,
+      "gate7": {
+        "pass": true,
+        "elapsedMs": 4287,
+        "httpStatus": 200,
+        "ok": true,
+        "cards": 1,
+        "costUsd": 0.04929,
+        "traceId": "473cf431-b52f-4ce2-a671-489bff666303",
+        "pipelineVersion": "v4",
+        "evidence": {
+          "confirmed": 1,
+          "partial": 0,
+          "conflicting": 0,
+          "notSupported": 0
+        },
+        "quote": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+        "statement": "On October 11, 1987, I first came across the saying “this time it’s different.",
+        "verdict": "supported_full",
+        "verbatim": "HTTP 200 ok=true supported_full quote=\"On October 11, 1987, I first came across the saying “this time it’s different.”\""
+      },
+      "over3700WordCeiling": true,
+      "b277FullReviewCost": {
+        "band": "above_3700_ceiling",
+        "discountedUsd": null,
+        "listUsd": null,
+        "note": "above B277 measured honest ceiling of about 3700 words. Run4 3698w was USD 13.0325 disc / 16.4437 list and lost 1 compliance check."
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "elapsedMs": 4580,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "438ac45d-15d0-4bdc-887a-cc7381e4a4b2",
+  "cards": 1,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 4,
+    "inputTokens": 20061,
+    "cachedInputTokens": 0,
+    "outputTokens": 229,
+    "costUsd": 0.05244249999999999,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 4,
+        "inputTokens": 20061,
+        "cachedInputTokens": 0,
+        "outputTokens": 229,
+        "costUsd": 0.05244249999999999,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.05244249999999999,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 1,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 0,
+    "readiness": "Ready",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.",
+    "statement": "Last year was an unusual one."
+  },
+  "draftChars": 97,
+  "draftText": "Memo to: Oaktree Clients Only From: Howard Marks Re: 2024 in Review Last year was an unusual one."
+}

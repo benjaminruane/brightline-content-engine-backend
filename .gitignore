@@ -39,6 +39,13 @@ scripts/diagnostic/extractor-survey/
 scripts/diagnostic/extraction-check/outputs/
 scripts/diagnostic/extraction-check/inputs/*.pdf
 
+# B163 real-PDF corpus (binaries gitignored; manifest and report are committed)
+scripts/diagnostic/delivery-check/b163/corpus/
+scripts/diagnostic/delivery-check/b163/original-eleven/
+scripts/diagnostic/delivery-check/b163/extracts/
+scripts/diagnostic/delivery-check/b163/reviews/**/*.json
+!scripts/diagnostic/delivery-check/b163/reviews/**/*-extract.json
+
 # Bake-off run artefacts (REPORT.md is kept)
 scripts/diagnostic/bakeoff/runs/
 

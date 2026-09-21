@@ -1,0 +1,69 @@
+{
+  "elapsedMs": 3888,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "cfb6ed60-020f-4e9d-954a-32d24000465d",
+  "cards": 1,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 3,
+    "inputTokens": 12575,
+    "cachedInputTokens": 2944,
+    "outputTokens": 398,
+    "costUsd": 0.0317375,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 3,
+        "inputTokens": 12575,
+        "cachedInputTokens": 2944,
+        "outputTokens": 398,
+        "costUsd": 0.0317375,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.0317375,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 1,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 0,
+    "readiness": "Ready",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+    "statement": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence."
+  },
+  "draftChars": 244,
+  "draftText": "n encouraging start to FY2025 • Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence."
+}

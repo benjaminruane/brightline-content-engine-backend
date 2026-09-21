@@ -1,0 +1,574 @@
+{
+  "ranAt": "2026-09-21T03:52:40.433Z",
+  "productionUrl": "https://brightline-content-engine-backend.vercel.app",
+  "mode": "extract",
+  "docs": [
+    {
+      "id": "d01",
+      "filename": "3i-press-release-fy2025.pdf",
+      "rawBytes": 388819,
+      "encodedBase64Bytes": 518428,
+      "estimatedRequestBytes": 526620,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 207727,
+        "bodyBytesSent": 518514,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 207727,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 156041,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"[Image: pdf_image_p1_1.bmp]\\n15 May 2025\\n3i Group plc announces results for the year\\nto 31 March 2025\\n[Image: pdf_image_p1_2.bmp]\\nA year of consistently strong growth\\n• Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per\\nshare of 2,542 pence (31 March 2024: 2,085 pence). This includes a 27 pence per share loss on for"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d02",
+      "filename": "3i-press-release-fy25-highlights.pdf",
+      "rawBytes": 137825,
+      "encodedBase64Bytes": 183768,
+      "estimatedRequestBytes": 191960,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 48371,
+        "bodyBytesSent": 183863,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 48371,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 6777,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"[Image: pdf_image_p1_1.bmp]\\n15 May 2025\\n3i Group plc announces results for the year\\nto 31 March 2025\\n[Image: pdf_image_p1_2.bmp]\\nA year of consistently strong growth\\n• Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per\\nshare of 2,542 pence (31 March 2024: 2,085 pence). This includes a 27 pence per share loss on for"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d03",
+      "filename": "3i-overview-and-strategy-2025.pdf",
+      "rawBytes": 1075726,
+      "encodedBase64Bytes": 1434304,
+      "estimatedRequestBytes": 1442496,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 174747,
+        "bodyBytesSent": 1434396,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 174747,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 53610,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Overview and strategy\\nOur purpose\\nWe generate attractive returns for\\nour shareholders and co-investors\\nby investing in private equity and\\ninfrastructure assets.\\nAs proprietary capital investors,\\nwe have a long-term, responsible\\napproach.\\nWe aim to compound value through\\nthoughtful origination, disciplined\\ninvestment and active management\\nof our assets, driving sustai"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d04",
+      "filename": "hpif-report-march-2026.pdf",
+      "rawBytes": 403362,
+      "encodedBase64Bytes": 537816,
+      "estimatedRequestBytes": 546008,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 74596,
+        "bodyBytesSent": 537901,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 74596,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 29129,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"[Image: pdf_image_p1_1.bmp]\\n[Image: pdf_image_p1_2.bmp]\\nHarbourVest Private Investments Fund\\n(\\\"HPIF\\\")\\nMarch 2026 Report\\nUnless otherwise stated, data is as of March 31, 2026\\nAbout HarbourVest 1\\nHarbourVest has a 40+ year track record of investing in private equity through a variety of private market cycles, seeking to\\nleverage its deep network of relationships, integra"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d05",
+      "filename": "3i-q1-fy25-performance-update.pdf",
+      "rawBytes": 182527,
+      "encodedBase64Bytes": 243372,
+      "estimatedRequestBytes": 251564,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 54720,
+        "bodyBytesSent": 243464,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 54720,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 12298,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"[Image: pdf_image_p1_1.bmp]\\n18 July 2024\\n3i Group plc\\nFY2025 Q1 performance update\\n[Image: pdf_image_p1_2.bmp]\\nAn encouraging start to FY2025\\n• Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to\\n30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.\\n• Strong perform"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d06",
+      "filename": "3i-hy25-highlights.pdf",
+      "rawBytes": 66508,
+      "encodedBase64Bytes": 88680,
+      "estimatedRequestBytes": 96872,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 10598,
+        "bodyBytesSent": 88761,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 10598,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 7486,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"[Image: pdf_image_p1_1.bmp]\\n13 November 2025\\n3i Group plc announces results for the six months\\nto 30 September 2025\\n[Image: pdf_image_p1_2.bmp]\\n3i Group delivered strong performance in the first half of FY2026\\n• Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).\\nNAV per share of 2,857 pence (31 March 2025: 2,542 pen"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d07",
+      "filename": "pg-annual-results-2025-press-release.pdf",
+      "rawBytes": 348219,
+      "encodedBase64Bytes": 464292,
+      "estimatedRequestBytes": 472484,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 66804,
+        "bodyBytesSent": 464391,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 66804,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 9743,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"[Image: pdf_image_p1_1.bmp]\\nPress release\\nBaar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuant to Art. 53 Listing Rules (LR)\\nPartners Group's operating profit (EBITDA) increases 19% to CHF 1.61 billion, also supported by\\nstronger performance fees; proposed dividend of CHF 46.00 per share\\n• Revenues increased by 20% to CHF 2 ’ 563 million\\n• Management fees am"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d08",
+      "filename": "berkshire-2024-shareholder-letter.pdf",
+      "rawBytes": 64860,
+      "encodedBase64Bytes": 86480,
+      "estimatedRequestBytes": 94672,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 41405,
+        "bodyBytesSent": 86576,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 41405,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 40118,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"BERKSHIRE HATHAWAY INC.\\nTo the Shareholders of Berkshire Hathaway Inc.:\\nThis letter comes to you as part of Berkshire’s annual report . As a public company, we\\nare required to periodically tell you many specific facts and figures.\\n“Report,” however, implies a greater responsibility. In addition to the mandated data, we\\nbelieve we owe you additional commentary about what you"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d09",
+      "filename": "berkshire-2023-shareholder-letter.pdf",
+      "rawBytes": 122415,
+      "encodedBase64Bytes": 163220,
+      "estimatedRequestBytes": 171412,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 47882,
+        "bodyBytesSent": 163316,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 47882,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 50117,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Charlie Munger – The Architect of Berkshire Hathaway\\nCharlie Munger died on November 28, just 33 days before his 100th birthday.\\nThough born and raised in Omaha, he spent 80% of his life domiciled\\nelsewhere. Consequently, it was not until 1959 when he was 35 that I first met him.\\nIn 1962, he decided that he should take up money management.\\nThree years later he told me – cor"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d10",
+      "filename": "berkshire-2022-shareholder-letter.pdf",
+      "rawBytes": 55589,
+      "encodedBase64Bytes": 74120,
+      "estimatedRequestBytes": 82312,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 32041,
+        "bodyBytesSent": 74216,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 32041,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 30964,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Berkshire’s Performance vs. the S&P 500\\nAnnual Percentage Change\\nin Per-Share in S&P 500\\nMarket Value of with Dividends\\nYear Berkshire Included\\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0\\n1966 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."
+      },
+      "gate7": null
+    },
+    {
+      "id": "d11",
+      "filename": "berkshire-2021-shareholder-letter.pdf",
+      "rawBytes": 64117,
+      "encodedBase64Bytes": 85492,
+      "estimatedRequestBytes": 93684,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 32234,
+        "bodyBytesSent": 85588,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 32234,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 40913,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Berkshire’s Performance vs. the S&P 500\\nAnnual Percentage Change\\nin Per-Share in S&P 500\\nMarket Value of with Dividends\\nYear Berkshire Included\\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0\\n1966 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."
+      },
+      "gate7": null
+    },
+    {
+      "id": "d12",
+      "filename": "berkshire-2020-shareholder-letter.pdf",
+      "rawBytes": 78896,
+      "encodedBase64Bytes": 105196,
+      "estimatedRequestBytes": 113388,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 41045,
+        "bodyBytesSent": 105292,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 41045,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 53357,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Berkshire’s Performance vs. the S&P 500\\nAnnual Percentage Change\\nin Per-Share in S&P 500\\nMarket Value of with Dividends\\nYear Berkshire Included\\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0\\n1966 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."
+      },
+      "gate7": null
+    },
+    {
+      "id": "d13",
+      "filename": "jpm-ceo-letter-2024.pdf",
+      "rawBytes": 900121,
+      "encodedBase64Bytes": 1200164,
+      "estimatedRequestBytes": 1208356,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": false,
+        "httpStatus": null,
+        "networkError": {
+          "name": "TypeError",
+          "message": "fetch failed"
+        },
+        "elapsedMs": 301388,
+        "bodyBytesSent": 1200246,
+        "verbatim": "fetch failed"
+      },
+      "gate3to5": {
+        "elapsedMs": 301388,
+        "httpStatus": null,
+        "networkError": {
+          "name": "TypeError",
+          "message": "fetch failed"
+        },
+        "ok": null,
+        "error": null,
+        "charCount": 0,
+        "empty": true,
+        "bodyPreview": ""
+      },
+      "gate7": null
+    },
+    {
+      "id": "d14",
+      "filename": "oaktree-on-bubble-watch.pdf",
+      "rawBytes": 319067,
+      "encodedBase64Bytes": 425424,
+      "estimatedRequestBytes": 433616,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 57956,
+        "bodyBytesSent": 425510,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 57956,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 30698,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Memo to: Oaktree Clients\\nFrom: Howard Marks\\nRe: On Bubble Watch\\nExactly 25 years ago today, I published the first memo that brought a response from readers (after having\\nwritten for almost ten years without receiving any). The memo was called bubble.com , and the subject\\nwas the irrational behavior I thought was taking place with respect to tech, internet, and e-commerce\\ns"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d15",
+      "filename": "oaktree-nobody-knows-yet-again.pdf",
+      "rawBytes": 273317,
+      "encodedBase64Bytes": 364424,
+      "estimatedRequestBytes": 372616,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 53111,
+        "bodyBytesSent": 364517,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 53111,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 29977,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Memo to: Oaktree Clients\\nFrom: Howard Marks\\nRe: Nobody Knows (Yet Again)\\nOn Monday, September 15, 2008, shortly after the close of the New York Stock Exchange, Lehman\\nBrothers surprised the world by filing for bankruptcy. This came on the heels of rescues/bankruptcies of\\nBear Stearns and Merrill Lynch and was followed quite soon by more of the same at Wachovia,\\nWashington "
+      },
+      "gate7": null
+    },
+    {
+      "id": "d16",
+      "filename": "oaktree-gimme-credit.pdf",
+      "rawBytes": 275824,
+      "encodedBase64Bytes": 367768,
+      "estimatedRequestBytes": 375960,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 58924,
+        "bodyBytesSent": 367851,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 58924,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 25380,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Memo to: Oaktree Clients\\nFrom: Howard Marks\\nRe: Gimme Credit\\nThe questions I get from clients enable me to understand in real time what’s on their minds. At various\\npoints in the last ten years, the most frequently asked question was “when will the Fed raise/cut rates?”\\nDuring crises, it’s usually “what inning are we in?” For a year or two, it’s been “can we talk about priv"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d17",
+      "filename": "oaktree-the-calculus-of-value.pdf",
+      "rawBytes": 293909,
+      "encodedBase64Bytes": 391880,
+      "estimatedRequestBytes": 400072,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 64555,
+        "bodyBytesSent": 391972,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 64555,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 37068,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Memo to: Oaktree Clients\\nFrom: Howard Marks\\nRe: The Calculus of Value\\nOn July 28, I flew to South America on a plane without Wi-Fi, leaving me without email or entertainment.\\nWhat was I to do but start in on a memo? Interestingly, the things I wrote during that flight turned out to\\nbe the answers to many of the questions I received from clients after I landed, so writing wh"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d18",
+      "filename": "oaktree-mr-market-miscalculates.pdf",
+      "rawBytes": 1605262,
+      "encodedBase64Bytes": 2140352,
+      "estimatedRequestBytes": 2148544,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 57683,
+        "bodyBytesSent": 2140446,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 57683,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 22981,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Memo to: Oaktree Clients\\nFrom: Howard Marks\\nRe: Mr. Market Miscalculates\\nIn his book The Intelligent Investor , first published in 1949, Benjamin Graham, who was Warren Buffett’s\\nteacher at Columbia Business School, introduced a fellow he called Mr. Market:\\nImagine that in some private business you own a small share that cost you $1,000. One\\nof your partners, named Mr. Mar"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d19",
+      "filename": "oaktree-2024-in-review.pdf",
+      "rawBytes": 966662,
+      "encodedBase64Bytes": 1288884,
+      "estimatedRequestBytes": 1297076,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 46714,
+        "bodyBytesSent": 1288969,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 46714,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 31988,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Memo to: Oaktree Clients Only\\nFrom: Howard Marks\\nRe: 2024 in Review\\nLast year was an unusual one. But then again, every year since the onset of the pandemic five years ago\\nhas seemed unusual. In 2024, externalities – mostly politics and geopolitics, but also climate events –\\nwere worrisome in many regards. However, most markets, and especially those in the U.S., were able t"
+      },
+      "gate7": null
+    },
+    {
+      "id": "d20",
+      "filename": "oaktree-further-thoughts-on-sea-change.pdf",
+      "rawBytes": 995419,
+      "encodedBase64Bytes": 1327228,
+      "estimatedRequestBytes": 1335420,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "reachedServer": true,
+        "httpStatus": 200,
+        "networkError": null,
+        "elapsedMs": 72388,
+        "bodyBytesSent": 1327329,
+        "verbatim": "HTTP 200"
+      },
+      "gate3to5": {
+        "elapsedMs": 72388,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "charCount": 30537,
+        "empty": false,
+        "bodyPreview": "{\"ok\":true,\"text\":\"Memo to: Oaktree Clients\\nFrom: Howard Marks\\nRe: Further Thoughts on Sea Change\\nMy memo Sea Change was published roughly six months ago, meaning I’ve had many opportunities to\\nthink about it and discuss it with clients, leading to new insights. As a result, I have much more to say on\\nthe subject. I wrote this memo to collect all of my new thoughts in one place. I have no des"
+      },
+      "gate7": null
+    }
+  ],
+  "bodyProbes": []
+}

@@ -1,0 +1,69 @@
+{
+  "elapsedMs": 4036,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "b6f12d06-8b64-42fa-8098-5cd47a24b76a",
+  "cards": 1,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 3,
+    "inputTokens": 17683,
+    "cachedInputTokens": 1920,
+    "outputTokens": 258,
+    "costUsd": 0.044387499999999996,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 3,
+        "inputTokens": 17683,
+        "cachedInputTokens": 1920,
+        "outputTokens": 258,
+        "costUsd": 0.044387499999999996,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.044387499999999996,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 1,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 0,
+    "readiness": "Ready",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+    "statement": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index."
+  },
+  "draftChars": 110,
+  "draftText": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index."
+}

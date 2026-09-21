@@ -1,0 +1,68 @@
+{
+  "elapsedMs": 2061,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "4b97039d-0120-40b0-be38-35e4eb836e11",
+  "cards": 1,
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "oaktree-gimme-credit.pdf",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 2,
+    "inputTokens": 1506,
+    "cachedInputTokens": 0,
+    "outputTokens": 103,
+    "costUsd": 0.004795000000000001,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 2,
+        "inputTokens": 1506,
+        "cachedInputTokens": 0,
+        "outputTokens": 103,
+        "costUsd": 0.004795000000000001,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": null,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 1
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 110,
+  "draftText": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index."
+}

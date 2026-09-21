@@ -1,0 +1,81 @@
+[
+  {
+    "filename": "pg-annual-results-2024.pdf",
+    "rawBytes": 3271467,
+    "encodedBase64Bytes": 4361956,
+    "estimatedRequestBytes": 4370148,
+    "overVercelBy": 0,
+    "overClientBy": 170148,
+    "exceedsVercel45mb": false,
+    "exceedsClient42mb": true,
+    "post": {
+      "elapsedMs": 30011,
+      "httpStatus": null,
+      "okHeader": null,
+      "bodyBytesSent": 4362041,
+      "bodyPreview": "",
+      "json": null,
+      "networkError": {
+        "name": "AbortError",
+        "message": "This operation was aborted"
+      }
+    }
+  },
+  {
+    "filename": "3i-fy25-presentation.pdf",
+    "rawBytes": 3823221,
+    "encodedBase64Bytes": 5097628,
+    "estimatedRequestBytes": 5105820,
+    "overVercelBy": 605820,
+    "overClientBy": 905820,
+    "exceedsVercel45mb": true,
+    "exceedsClient42mb": true,
+    "post": {
+      "elapsedMs": 547,
+      "httpStatus": 413,
+      "okHeader": false,
+      "bodyBytesSent": 5097711,
+      "bodyPreview": "Request Entity Too Large\n\nFUNCTION_PAYLOAD_TOO_LARGE\n\nsin1::6qlmc-1789962670944-2ef77fc32d04\n",
+      "json": null,
+      "networkError": null
+    }
+  },
+  {
+    "filename": "pg-ir-july-2025.pdf",
+    "rawBytes": 5264862,
+    "encodedBase64Bytes": 7019816,
+    "estimatedRequestBytes": 7028008,
+    "overVercelBy": 2528008,
+    "overClientBy": 2828008,
+    "exceedsVercel45mb": true,
+    "exceedsClient42mb": true,
+    "post": {
+      "elapsedMs": 611,
+      "httpStatus": 413,
+      "okHeader": false,
+      "bodyBytesSent": 7019894,
+      "bodyPreview": "Request Entity Too Large\n\nFUNCTION_PAYLOAD_TOO_LARGE\n\nsin1::gr9b2-1789962671505-55c6d4e923dc\n",
+      "json": null,
+      "networkError": null
+    }
+  },
+  {
+    "filename": "3i-ar-2025.pdf",
+    "rawBytes": 13340091,
+    "encodedBase64Bytes": 17786788,
+    "estimatedRequestBytes": 17794980,
+    "overVercelBy": 13294980,
+    "overClientBy": 13594980,
+    "exceedsVercel45mb": true,
+    "exceedsClient42mb": true,
+    "post": {
+      "elapsedMs": 822,
+      "httpStatus": 413,
+      "okHeader": false,
+      "bodyBytesSent": 17786861,
+      "bodyPreview": "Request Entity Too Large\n\nFUNCTION_PAYLOAD_TOO_LARGE\n\nsin1::pbkh6-1789962672109-ac995f9c2a74\n",
+      "json": null,
+      "networkError": null
+    }
+  }
+]

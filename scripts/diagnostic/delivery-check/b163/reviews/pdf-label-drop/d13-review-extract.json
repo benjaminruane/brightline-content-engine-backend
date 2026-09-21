@@ -1,0 +1,68 @@
+{
+  "elapsedMs": 2527,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "051a9cd4-0e3c-41b0-8b5b-9d847bd6872c",
+  "cards": 1,
+  "excludedSources": [
+    {
+      "id": null,
+      "label": "jpm-ceo-letter-2024.pdf",
+      "reason": "empty_after_extraction"
+    }
+  ],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 2,
+    "inputTokens": 1490,
+    "cachedInputTokens": 0,
+    "outputTokens": 88,
+    "costUsd": 0.004605,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 2,
+        "inputTokens": 1490,
+        "cachedInputTokens": 0,
+        "outputTokens": 88,
+        "costUsd": 0.004605,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": null,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 1,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 1
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 1,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": null,
+  "draftChars": 68,
+  "draftText": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58."
+}

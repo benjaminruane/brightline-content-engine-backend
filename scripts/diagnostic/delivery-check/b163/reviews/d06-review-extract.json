@@ -1,0 +1,77 @@
+{
+  "elapsedMs": 4507,
+  "httpStatus": 200,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "fatal": null,
+  "pipelineVersion": "v4",
+  "traceId": "46c0ce60-d671-447e-b2af-069803916373",
+  "cards": 3,
+  "excludedSources": [],
+  "sourceIngestionWarning": null,
+  "totalTextLowWarning": false,
+  "llmSpend": {
+    "calls": 10,
+    "inputTokens": 30140,
+    "cachedInputTokens": 9472,
+    "outputTokens": 780,
+    "costUsd": 0.06976369999999998,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 9,
+        "inputTokens": 29658,
+        "cachedInputTokens": 9472,
+        "outputTokens": 736,
+        "costUsd": 0.06966499999999999,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 1,
+        "inputTokens": 482,
+        "cachedInputTokens": 0,
+        "outputTokens": 44,
+        "costUsd": 0.00009869999999999999,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "listUsd": 0.06976369999999998,
+  "discountedUsd": null,
+  "reviewSummary": {
+    "version": 1,
+    "statements": 3,
+    "evidence": {
+      "confirmed": 3,
+      "partial": 0,
+      "conflicting": 0,
+      "notSupported": 0
+    },
+    "editorial": null,
+    "compliance": null,
+    "signalConcerns": 0,
+    "notChecked": 0,
+    "needsAttention": 0,
+    "readiness": "Ready",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "preflight": null,
+  "verdictWithQuote": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "3i Group plc announces results for the six months to 30 September 2025",
+    "statement": "3i Group plc announces results for the six months to 30 September 2025"
+  },
+  "draftChars": 263,
+  "draftText": "13 November 2025 3i Group plc announces results for the six months to 30 September 2025 3i Group delivered strong performance in the first half of FY2026 • Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+}

@@ -1,0 +1,1765 @@
+{
+  "ranAt": "2026-09-21T03:53:37.670Z",
+  "productionUrl": "https://brightline-content-engine-backend.vercel.app",
+  "mode": "review-only",
+  "docs": [
+    {
+      "id": "d01",
+      "filename": "3i-press-release-fy2025.pdf",
+      "rawBytes": 388819,
+      "encodedBase64Bytes": 518428,
+      "estimatedRequestBytes": 526620,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 156041
+      },
+      "gate7": {
+        "elapsedMs": 8628,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "d54b10f3-fadf-4c49-abaa-fb6b545f1e60",
+        "cards": 3,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 10,
+          "inputTokens": 235962,
+          "cachedInputTokens": 0,
+          "outputTokens": 776,
+          "costUsd": 0.5960764000000001,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 9,
+              "inputTokens": 235486,
+              "cachedInputTokens": 0,
+              "outputTokens": 726,
+              "costUsd": 0.595975,
+              "unpricedCalls": 0
+            },
+            "openai/gpt-4o-mini-2024-07-18": {
+              "calls": 1,
+              "inputTokens": 476,
+              "cachedInputTokens": 0,
+              "outputTokens": 50,
+              "costUsd": 0.0001014,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.5960764000000001,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 3,
+          "evidence": {
+            "confirmed": 3,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "3i Group plc announces results for the year to 31 March 2025",
+          "statement": "3i Group plc announces results for the year to 31 March 2025"
+        },
+        "draftChars": 271,
+        "draftText": "15 May 2025 3i Group plc announces results for the year to 31 March 2025 A year of consistently strong growth • Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per share of 2,542 pence (31 March 2024: 2,085 pence)."
+      }
+    },
+    {
+      "id": "d02",
+      "filename": "3i-press-release-fy25-highlights.pdf",
+      "rawBytes": 137825,
+      "encodedBase64Bytes": 183768,
+      "estimatedRequestBytes": 191960,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 6777
+      },
+      "gate7": {
+        "elapsedMs": 4953,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "b43b4619-1bb3-4a36-8088-61ff8049231e",
+        "cards": 3,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 10,
+          "inputTokens": 29193,
+          "cachedInputTokens": 16640,
+          "outputTokens": 717,
+          "costUsd": 0.057843799999999994,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 9,
+              "inputTokens": 28731,
+              "cachedInputTokens": 16640,
+              "outputTokens": 672,
+              "costUsd": 0.05774749999999999,
+              "unpricedCalls": 0
+            },
+            "openai/gpt-4o-mini-2024-07-18": {
+              "calls": 1,
+              "inputTokens": 462,
+              "cachedInputTokens": 0,
+              "outputTokens": 45,
+              "costUsd": 0.00009630000000000001,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.057843799999999994,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 3,
+          "evidence": {
+            "confirmed": 3,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "3i Group plc announces results for the year to 31 March 2025",
+          "statement": "3i Group plc announces results for the year to 31 March 2025"
+        },
+        "draftChars": 271,
+        "draftText": "15 May 2025 3i Group plc announces results for the year to 31 March 2025 A year of consistently strong growth • Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per share of 2,542 pence (31 March 2024: 2,085 pence)."
+      }
+    },
+    {
+      "id": "d03",
+      "filename": "3i-overview-and-strategy-2025.pdf",
+      "rawBytes": 1075726,
+      "encodedBase64Bytes": 1434304,
+      "estimatedRequestBytes": 1442496,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 53610
+      },
+      "gate7": {
+        "elapsedMs": 3983,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "072c2001-751b-4fcb-93f0-e2c1ac681224",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 29265,
+          "cachedInputTokens": 1920,
+          "outputTokens": 158,
+          "costUsd": 0.0723425,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 29265,
+              "cachedInputTokens": 1920,
+              "outputTokens": 158,
+              "costUsd": 0.0723425,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.0723425,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": true,
+          "quote": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+          "statement": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216."
+        },
+        "draftChars": 116,
+        "draftText": "com For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216."
+      }
+    },
+    {
+      "id": "d04",
+      "filename": "hpif-report-march-2026.pdf",
+      "rawBytes": 403362,
+      "encodedBase64Bytes": 537816,
+      "estimatedRequestBytes": 546008,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 29129
+      },
+      "gate7": {
+        "elapsedMs": 4993,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "9d03a8ba-04be-46bf-9c69-9a6be9008e42",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 4,
+          "inputTokens": 19498,
+          "cachedInputTokens": 1024,
+          "outputTokens": 360,
+          "costUsd": 0.051065,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 4,
+              "inputTokens": 19498,
+              "cachedInputTokens": 1024,
+              "outputTokens": 360,
+              "costUsd": 0.051065,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.051065,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 0,
+            "partial": 0,
+            "conflicting": 1,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 1,
+          "readiness": "Needs significant work",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "conflict",
+          "supportState": "conflicting",
+          "displayVerdict": "conflict",
+          "hasRealExcerpt": false,
+          "quote": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653.0M 57 40+ Fund NAV Companies 2 General Partners 2",
+          "statement": "rd-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653."
+        },
+        "draftChars": 224,
+        "draftText": "rd-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653."
+      }
+    },
+    {
+      "id": "d05",
+      "filename": "3i-q1-fy25-performance-update.pdf",
+      "rawBytes": 182527,
+      "encodedBase64Bytes": 243372,
+      "estimatedRequestBytes": 251564,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 12298
+      },
+      "gate7": {
+        "elapsedMs": 3888,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "cfb6ed60-020f-4e9d-954a-32d24000465d",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 12575,
+          "cachedInputTokens": 2944,
+          "outputTokens": 398,
+          "costUsd": 0.0317375,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 12575,
+              "cachedInputTokens": 2944,
+              "outputTokens": 398,
+              "costUsd": 0.0317375,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.0317375,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+          "statement": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence."
+        },
+        "draftChars": 244,
+        "draftText": "n encouraging start to FY2025 • Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence."
+      }
+    },
+    {
+      "id": "d06",
+      "filename": "3i-hy25-highlights.pdf",
+      "rawBytes": 66508,
+      "encodedBase64Bytes": 88680,
+      "estimatedRequestBytes": 96872,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 7486
+      },
+      "gate7": {
+        "elapsedMs": 4507,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "46c0ce60-d671-447e-b2af-069803916373",
+        "cards": 3,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 10,
+          "inputTokens": 30140,
+          "cachedInputTokens": 9472,
+          "outputTokens": 780,
+          "costUsd": 0.06976369999999998,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 9,
+              "inputTokens": 29658,
+              "cachedInputTokens": 9472,
+              "outputTokens": 736,
+              "costUsd": 0.06966499999999999,
+              "unpricedCalls": 0
+            },
+            "openai/gpt-4o-mini-2024-07-18": {
+              "calls": 1,
+              "inputTokens": 482,
+              "cachedInputTokens": 0,
+              "outputTokens": 44,
+              "costUsd": 0.00009869999999999999,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.06976369999999998,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 3,
+          "evidence": {
+            "confirmed": 3,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "3i Group plc announces results for the six months to 30 September 2025",
+          "statement": "3i Group plc announces results for the six months to 30 September 2025"
+        },
+        "draftChars": 263,
+        "draftText": "13 November 2025 3i Group plc announces results for the six months to 30 September 2025 3i Group delivered strong performance in the first half of FY2026 • Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+      }
+    },
+    {
+      "id": "d07",
+      "filename": "pg-annual-results-2025-press-release.pdf",
+      "rawBytes": 348219,
+      "encodedBase64Bytes": 464292,
+      "estimatedRequestBytes": 472484,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 9743
+      },
+      "gate7": {
+        "elapsedMs": 2044,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "622cd954-cba3-4237-8ff3-911e3148a32b",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 2,
+          "inputTokens": 6529,
+          "cachedInputTokens": 1920,
+          "outputTokens": 131,
+          "costUsd": 0.015232499999999998,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 2,
+              "inputTokens": 6529,
+              "cachedInputTokens": 1920,
+              "outputTokens": 131,
+              "costUsd": 0.015232499999999998,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.015232499999999998,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 0,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 1
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 1,
+          "readiness": "Needs work",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": null,
+        "draftChars": 89,
+        "draftText": "Press release Baar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuant to Art."
+      }
+    },
+    {
+      "id": "d08",
+      "filename": "berkshire-2024-shareholder-letter.pdf",
+      "rawBytes": 64860,
+      "encodedBase64Bytes": 86480,
+      "estimatedRequestBytes": 94672,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 40118
+      },
+      "gate7": {
+        "elapsedMs": 4234,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "beee8630-2599-4b1c-b2c1-d3c2d3788427",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 28617,
+          "cachedInputTokens": 2944,
+          "outputTokens": 188,
+          "costUsd": 0.0697425,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 28617,
+              "cachedInputTokens": 2944,
+              "outputTokens": 188,
+              "costUsd": 0.0697425,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.0697425,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.”",
+          "statement": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category."
+        },
+        "draftChars": 167,
+        "draftText": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category."
+      }
+    },
+    {
+      "id": "d09",
+      "filename": "berkshire-2023-shareholder-letter.pdf",
+      "rawBytes": 122415,
+      "encodedBase64Bytes": 163220,
+      "estimatedRequestBytes": 171412,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 50117
+      },
+      "gate7": {
+        "elapsedMs": 4168,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "8c3c3169-32d4-4408-91a5-f1193f3cc24a",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 34320,
+          "cachedInputTokens": 1920,
+          "outputTokens": 155,
+          "costUsd": 0.08495,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 34320,
+              "cachedInputTokens": 1920,
+              "outputTokens": 155,
+              "costUsd": 0.08495,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.08495,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": true,
+          "quote": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+          "statement": "Charlie Munger died on November 28, just 33 days before his 100th birthday."
+        },
+        "draftChars": 128,
+        "draftText": "Charlie Munger – The Architect of Berkshire Hathaway Charlie Munger died on November 28, just 33 days before his 100th birthday."
+      }
+    },
+    {
+      "id": "d10",
+      "filename": "berkshire-2022-shareholder-letter.pdf",
+      "rawBytes": 55589,
+      "encodedBase64Bytes": 74120,
+      "estimatedRequestBytes": 82312,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 30964
+      },
+      "gate7": {
+        "elapsedMs": 4862,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "530949f8-c513-4a44-b19a-f8228113574e",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 25915,
+          "cachedInputTokens": 1024,
+          "outputTokens": 424,
+          "costUsd": 0.0677475,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 25915,
+              "cachedInputTokens": 1024,
+              "outputTokens": 424,
+              "costUsd": 0.0677475,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.0677475,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+          "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+        },
+        "draftChars": 140,
+        "draftText": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+      }
+    },
+    {
+      "id": "d11",
+      "filename": "berkshire-2021-shareholder-letter.pdf",
+      "rawBytes": 64117,
+      "encodedBase64Bytes": 85492,
+      "estimatedRequestBytes": 93684,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 40913
+      },
+      "gate7": {
+        "elapsedMs": 4822,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "faa3db5b-d9f6-4e65-9786-0915aa46d0be",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 30727,
+          "cachedInputTokens": 14208,
+          "outputTokens": 424,
+          "costUsd": 0.0632975,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 30727,
+              "cachedInputTokens": 14208,
+              "outputTokens": 424,
+              "costUsd": 0.0632975,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.0632975,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+          "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+        },
+        "draftChars": 140,
+        "draftText": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+      }
+    },
+    {
+      "id": "d12",
+      "filename": "berkshire-2020-shareholder-letter.pdf",
+      "rawBytes": 78896,
+      "encodedBase64Bytes": 105196,
+      "estimatedRequestBytes": 113388,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 53357
+      },
+      "gate7": {
+        "elapsedMs": 5098,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "287f668b-a8e9-4a73-9c80-a7ba015c8565",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 36210,
+          "cachedInputTokens": 13056,
+          "outputTokens": 412,
+          "costUsd": 0.078325,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 36210,
+              "cachedInputTokens": 13056,
+              "outputTokens": 412,
+              "costUsd": 0.078325,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.078325,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+          "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+        },
+        "draftChars": 140,
+        "draftText": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+      }
+    },
+    {
+      "id": "d13",
+      "filename": "jpm-ceo-letter-2024.pdf",
+      "rawBytes": 900121,
+      "encodedBase64Bytes": 1200164,
+      "estimatedRequestBytes": 1208356,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 220611
+      },
+      "gate7": {
+        "elapsedMs": 10295,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "d92b170f-3169-45d6-aa4f-32eeb92bc587",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 4,
+          "inputTokens": 109659,
+          "cachedInputTokens": 0,
+          "outputTokens": 343,
+          "costUsd": 0.2775775,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 4,
+              "inputTokens": 109659,
+              "cachedInputTokens": 0,
+              "outputTokens": 343,
+              "costUsd": 0.2775775,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.2775775,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 0,
+            "partial": 0,
+            "conflicting": 1,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 1,
+          "readiness": "Needs significant work",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "conflict",
+          "supportState": "conflicting",
+          "displayVerdict": "conflict",
+          "hasRealExcerpt": false,
+          "quote": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% 2 , reflecting strong underlying performance across our businesses.",
+          "statement": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58."
+        },
+        "draftChars": 68,
+        "draftText": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58."
+      }
+    },
+    {
+      "id": "d14",
+      "filename": "oaktree-on-bubble-watch.pdf",
+      "rawBytes": 319067,
+      "encodedBase64Bytes": 425424,
+      "estimatedRequestBytes": 433616,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 30698
+      },
+      "gate7": {
+        "elapsedMs": 3760,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "1d16c8e8-9957-4423-a030-fb0d74dce4b3",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 20304,
+          "cachedInputTokens": 2944,
+          "outputTokens": 235,
+          "costUsd": 0.049429999999999995,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 20304,
+              "cachedInputTokens": 2944,
+              "outputTokens": 235,
+              "costUsd": 0.049429999999999995,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.049429999999999995,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+          "statement": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it."
+        },
+        "draftChars": 229,
+        "draftText": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it."
+      }
+    },
+    {
+      "id": "d15",
+      "filename": "oaktree-nobody-knows-yet-again.pdf",
+      "rawBytes": 273317,
+      "encodedBase64Bytes": 364424,
+      "estimatedRequestBytes": 372616,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 29977
+      },
+      "gate7": {
+        "elapsedMs": 3591,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "0a359458-c8e9-4c8c-be97-9b9035e2de90",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 19461,
+          "cachedInputTokens": 2944,
+          "outputTokens": 186,
+          "costUsd": 0.0468325,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 19461,
+              "cachedInputTokens": 2944,
+              "outputTokens": 186,
+              "costUsd": 0.0468325,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.0468325,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+          "statement": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb."
+        },
+        "draftChars": 152,
+        "draftText": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb."
+      }
+    },
+    {
+      "id": "d16",
+      "filename": "oaktree-gimme-credit.pdf",
+      "rawBytes": 275824,
+      "encodedBase64Bytes": 367768,
+      "estimatedRequestBytes": 375960,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 25380
+      },
+      "gate7": {
+        "elapsedMs": 4036,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "b6f12d06-8b64-42fa-8098-5cd47a24b76a",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 17683,
+          "cachedInputTokens": 1920,
+          "outputTokens": 258,
+          "costUsd": 0.044387499999999996,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 17683,
+              "cachedInputTokens": 1920,
+              "outputTokens": 258,
+              "costUsd": 0.044387499999999996,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.044387499999999996,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+          "statement": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index."
+        },
+        "draftChars": 110,
+        "draftText": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index."
+      }
+    },
+    {
+      "id": "d17",
+      "filename": "oaktree-the-calculus-of-value.pdf",
+      "rawBytes": 293909,
+      "encodedBase64Bytes": 391880,
+      "estimatedRequestBytes": 400072,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 37068
+      },
+      "gate7": {
+        "elapsedMs": 4525,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "4f5ecd62-7e8c-47ef-a3ac-d9fcbe3d6db6",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 3,
+          "inputTokens": 22295,
+          "cachedInputTokens": 1920,
+          "outputTokens": 313,
+          "costUsd": 0.056467500000000004,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 3,
+              "inputTokens": 22295,
+              "cachedInputTokens": 1920,
+              "outputTokens": 313,
+              "costUsd": 0.056467500000000004,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.056467500000000004,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 0,
+            "partial": 0,
+            "conflicting": 1,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 1,
+          "readiness": "Needs significant work",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "conflict",
+          "supportState": "conflicting",
+          "displayVerdict": "conflict",
+          "hasRealExcerpt": false,
+          "quote": "January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch .",
+          "statement": "January 2 of this year was the 25 th anniversary of my memo bubble."
+        },
+        "draftChars": 73,
+        "draftText": "* * * January 2 of this year was the 25 th anniversary of my memo bubble."
+      }
+    },
+    {
+      "id": "d18",
+      "filename": "oaktree-mr-market-miscalculates.pdf",
+      "rawBytes": 1605262,
+      "encodedBase64Bytes": 2140352,
+      "estimatedRequestBytes": 2148544,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 22981
+      },
+      "gate7": {
+        "elapsedMs": 4664,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "2f6f6f64-a769-49f0-a611-a10337ea9fec",
+        "cards": 2,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 7,
+          "inputTokens": 33234,
+          "cachedInputTokens": 3840,
+          "outputTokens": 440,
+          "costUsd": 0.08268500000000001,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 7,
+              "inputTokens": 33234,
+              "cachedInputTokens": 3840,
+              "outputTokens": 440,
+              "costUsd": 0.08268500000000001,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.08268500000000001,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 2,
+          "evidence": {
+            "confirmed": 2,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": true,
+          "quote": "Imagine that in some private business you own a small share that cost you $1,000.",
+          "statement": "Market: Imagine that in some private business you own a small share that cost you $1,000."
+        },
+        "draftChars": 154,
+        "draftText": "Market: Imagine that in some private business you own a small share that cost you $1,000. One of your partners, named Mr. Market, is very obliging indeed."
+      }
+    },
+    {
+      "id": "d19",
+      "filename": "oaktree-2024-in-review.pdf",
+      "rawBytes": 966662,
+      "encodedBase64Bytes": 1288884,
+      "estimatedRequestBytes": 1297076,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 31988
+      },
+      "gate7": {
+        "elapsedMs": 4580,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "438ac45d-15d0-4bdc-887a-cc7381e4a4b2",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 4,
+          "inputTokens": 20061,
+          "cachedInputTokens": 0,
+          "outputTokens": 229,
+          "costUsd": 0.05244249999999999,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 4,
+              "inputTokens": 20061,
+              "cachedInputTokens": 0,
+              "outputTokens": 229,
+              "costUsd": 0.05244249999999999,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.05244249999999999,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.",
+          "statement": "Last year was an unusual one."
+        },
+        "draftChars": 97,
+        "draftText": "Memo to: Oaktree Clients Only From: Howard Marks Re: 2024 in Review Last year was an unusual one."
+      }
+    },
+    {
+      "id": "d20",
+      "filename": "oaktree-further-thoughts-on-sea-change.pdf",
+      "rawBytes": 995419,
+      "encodedBase64Bytes": 1327228,
+      "estimatedRequestBytes": 1335420,
+      "exceedsVercel45mb": false,
+      "exceedsClient42mb": false,
+      "gate2": {
+        "skipped": true,
+        "reason": "review-only"
+      },
+      "gate3to5": {
+        "skipped": true,
+        "reason": "review-only",
+        "charCount": 30537
+      },
+      "gate7": {
+        "elapsedMs": 4287,
+        "httpStatus": 200,
+        "networkError": null,
+        "ok": true,
+        "error": null,
+        "fatal": null,
+        "pipelineVersion": "v4",
+        "traceId": "473cf431-b52f-4ce2-a671-489bff666303",
+        "cards": 1,
+        "excludedSources": [],
+        "sourceIngestionWarning": null,
+        "totalTextLowWarning": false,
+        "llmSpend": {
+          "calls": 4,
+          "inputTokens": 19616,
+          "cachedInputTokens": 1920,
+          "outputTokens": 265,
+          "costUsd": 0.04929,
+          "unpricedCalls": 0,
+          "unpricedModels": [],
+          "byModel": {
+            "openai/gpt-4o-2024-08-06": {
+              "calls": 4,
+              "inputTokens": 19616,
+              "cachedInputTokens": 1920,
+              "outputTokens": 265,
+              "costUsd": 0.04929,
+              "unpricedCalls": 0
+            }
+          }
+        },
+        "listUsd": 0.04929,
+        "discountedUsd": null,
+        "reviewSummary": {
+          "version": 1,
+          "statements": 1,
+          "evidence": {
+            "confirmed": 1,
+            "partial": 0,
+            "conflicting": 0,
+            "notSupported": 0
+          },
+          "editorial": null,
+          "compliance": null,
+          "signalConcerns": 0,
+          "notChecked": 0,
+          "needsAttention": 0,
+          "readiness": "Ready",
+          "rateLimitBoundHits": {
+            "editorial": 0,
+            "compliance": 0,
+            "commentary": 0,
+            "other": 0,
+            "statements": 0
+          }
+        },
+        "preflight": null,
+        "verdictWithQuote": {
+          "evidenceVerdict": "supported_full",
+          "supportState": "supported",
+          "displayVerdict": "supported_full",
+          "hasRealExcerpt": false,
+          "quote": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+          "statement": "On October 11, 1987, I first came across the saying “this time it’s different."
+        },
+        "draftChars": 117,
+        "draftText": "This Time It Really Might Be Different On October 11, 1987, I first came across the saying “this time it’s different."
+      }
+    }
+  ],
+  "bodyProbes": []
+}
