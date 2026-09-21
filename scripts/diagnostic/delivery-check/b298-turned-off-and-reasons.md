@@ -268,3 +268,86 @@ TOTAL COST OF THIS SPEC IN USD: **0.23** list (0.13 discounted). Two 7-card evid
 Backend: `lib/qc/review-options.mjs`, `lib/qc/not-reviewed-reason.mjs`, `lib/qc/review-summary.mjs`, `lib/qc/editorial-compliance-reviewer.mjs`, `lib/qc/pipeline-v3/stage7-assemble-card.mjs`, `lib/qc/pipeline-v4/index.mjs`, `lib/qc/export-review-data.mjs`, `lib/qc/evidence-skipped-fast-path.mjs`, `lib/qc/constructive-feedback.mjs`, `lib/observability.js`, `api/analyse-statements.js`, `api/export.js`, `api/synthesize-review.js`, `api/constructive-feedback.js`, `tests/b299-absent-setting.test.mjs`, `tests/b300-not-reviewed-reasons.test.mjs`.
 
 Frontend: `src/modules/drafting/checkStateDisplay.js`, `src/modules/drafting/StatementReviewCard.jsx`, `src/utils/resultsScreenClaims.js`, `src/utils/summariseReview.js`, `src/utils/reviewerSynthesisPayload.js`, `src/modules/drafting/actionListDisplay.js`, `src/modules/drafting/StatementAnalysisPanel.jsx`, `tests/b298-turned-off-line.test.mjs`.
+
+---
+
+## B304. One rule for listing check names
+
+Date: 2026-09-21. Amends B298 Part 1.3. No production Review. No model calls.
+
+### Joiner rule
+
+`joinCheckNames` in `lib/qc/review-summary.mjs` and `src/modules/drafting/checkStateDisplay.js`. Same function, two repos. Callers: `turnedOffLineFromNames` and `cleanLineFromNames` only. Neither footer line joins names itself.
+
+| Count | Form |
+|------:|------|
+| 1 | A |
+| 2 | A and B |
+| 3 | A, B and C |
+| 4 | A, B, C and D |
+
+No comma before "and".
+
+### Fixed order
+
+Evidence, Editorial, Compliance, Source recency, Framing. Constant `CHECK_LIST_ORDER`. Turned-off collects `evidence`, `editorial`, `compliance` in that key order. Clean membership is unchanged (Evidence never sits on the clean line) and the card passes Editorial, Compliance, Source recency, Framing.
+
+### Both lines at every length
+
+Turned-off. Noun on the last name only. Singular `review` for one, `reviews` for more than one.
+
+| Off | Line |
+|-----|------|
+| 1 | Turned off for this run: Editorial review. |
+| 2 | Turned off for this run: Editorial and Compliance reviews. |
+| 3 | Turned off for this run: Evidence, Editorial and Compliance reviews. |
+
+Clean. No `review`. Same joiner.
+
+| Names | Line |
+|-------|------|
+| 1 | Clean: Source recency. |
+| 2 | Clean: Source recency and Framing. |
+| 3 | Clean: Editorial, Source recency and Framing. |
+| 4 | Clean: Editorial, Compliance, Source recency and Framing. |
+
+### Trailing period
+
+Period on both. Why: B298 already shipped the turned-off line as a sentence with a trailing period, and Ben's 2.1 / 2.2 examples keep it. 3.3 forbids the two lines differing on the terminator, so the clean line gains the same period. The 3.1 examples illustrated the joiner, not a new terminator.
+
+### Part 4. All three off. Confirm, do not build.
+
+The Review modal is the only enforcement. CONFIRMED `src/components/modals/ReviewOptionsPopup.jsx`:
+
+```
+const anyOn = evidenceOn || editorialOn || complianceOn;
+```
+
+Enter only confirms when `anyOn` (L61). The confirm button is `disabled={!anyOn || isRunningAnalysis}` (L137). Copy when none are on: `Select at least one check.` (L127-130).
+
+The endpoint would accept the request. CONFIRMED `lib/qc/review-options.mjs` `resolveReviewOptionsFromBody` returns three booleans and does not refuse all-false. `api/analyse-statements.js` L94 / L223 passes that object through. Finding for later, not this spec.
+
+### Part 5. Sweep
+
+| Surface | Lists check names? | Uses `joinCheckNames`? |
+|---------|--------------------|------------------------|
+| Card turned-off line | yes | yes, via stamp / `turnedOffLineFromClass` |
+| Card clean line | yes | yes, via `cleanLineFromNames` |
+| Results-screen helper | yes, the turned-off sentence | yes. Reads the stamp (`turnedOffLineOf`) |
+| Export text and DOCX | yes, the turned-off sentence | yes. Reads the stamp |
+| QRS bullets | no list of check names | no. "editorial and compliance notes" is concern copy, not a name list. Spec: do not touch QRS bullet content. "Evidence review was not run for this output." is one name, not a list. |
+| Review modal | labels, not a joined list | no. Each check is its own row. |
+| Environment pill | `Editorial review: on` | no. One check, a status, not a list. |
+| Deal-fields phrase | Oxford-comma labels | no. Not check names. |
+
+Card, results screen, and export share the turned-off sentence from the backend stamp. B194.
+
+### Tests
+
+`tests/b304-name-list.test.mjs` (both repos). Joiner one/two/three/four. Turned-off one/two/three in product order, singular and plural. Clean one/two/three/four, no `review`. `tests/b299-absent-setting.test.mjs` and `tests/b298-turned-off-line.test.mjs` updated for the two-off and three-off wording. `tests/b245-export-and-payloads.test.mjs` one-off line is unchanged.
+
+Browser skipped. Copy only. Membership, icons, colour, and placement unchanged.
+
+### Cost of B304
+
+TOTAL COST OF THIS SPEC IN USD: **0**. No model calls. Unpriced: 0.
