@@ -43,6 +43,12 @@ const REQUEST_JSON_OVERHEAD_BYTES = 8_192;
 const VERCEL_EDGE_BODY_BYTES = 4_500_000;
 const EFFECTIVE_RAW_BYTES_CEILING = 3 * Math.floor((MAX_REQUEST_BYTES - REQUEST_JSON_OVERHEAD_BYTES) / 4);
 
+function wordCountOf(text) {
+  const t = typeof text === "string" ? text.trim() : "";
+  if (!t) return 0;
+  return t.split(/\s+/).length;
+}
+
 function stemOf(filename) {
   return path.basename(filename, path.extname(filename));
 }
@@ -121,6 +127,10 @@ async function runOne(filename) {
       filename,
       bytes: buf.length,
       elapsedMs,
+      wallMs: elapsedMs,
+      wordCount: 0,
+      textConvertMs: Number.isFinite(prep.error.textConvertMs) ? prep.error.textConvertMs : 0,
+      chunkConvertMs: Number.isFinite(prep.error.chunkConvertMs) ? prep.error.chunkConvertMs : 0,
       status: prep.error.code === "extraction_timeout" ? "timeout" : "error",
       errorCode: prep.error.code,
       errorMessage: prep.error.message,
@@ -155,6 +165,10 @@ async function runOne(filename) {
     filename,
     bytes: buf.length,
     elapsedMs,
+    wallMs: elapsedMs,
+    wordCount: wordCountOf(text),
+    textConvertMs: Number.isFinite(extraction.textConvertMs) ? extraction.textConvertMs : 0,
+    chunkConvertMs: Number.isFinite(extraction.chunkConvertMs) ? extraction.chunkConvertMs : 0,
     status: "ok",
     errorCode: null,
     errorMessage: null,
@@ -187,6 +201,10 @@ function formatRow(row) {
     `- wouldReachExtractor in production: ${c.wouldReachExtractor}`,
     `- status: ${row.status}${row.errorCode ? ` (${row.errorCode})` : ""}`,
     `- elapsedMs: ${row.elapsedMs}`,
+    `- wallMs: ${row.wallMs}`,
+    `- textConvertMs: ${row.textConvertMs}`,
+    `- chunkConvertMs: ${row.chunkConvertMs}`,
+    `- wordCount: ${row.wordCount}`,
     `- charCount: ${row.charCount}`,
     `- extraction.status: ${row.extractionStatus}`,
     `- extraction.warnings: ${(row.extractionWarnings || []).join(", ") || "none"}`,
