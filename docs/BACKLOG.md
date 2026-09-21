@@ -47,6 +47,7 @@ Parked, Findings log, Standing rules, Closed, and Rejected follow, in that order
 
 | ID  | Item | Source / context | Priority | Launch | Notes |
 |-----|------|------------------|----------|--------|-------|
+| B303 | **THE ASSESSMENT AREA DISTINGUISHES NOTHING-TO-SAY FROM COULD-NOT-BE-WRITTEN. OPEN.** Screenshot 21 Sep printed B285 failure copy on a replay that never called synthesis. Frontend prints the backend reason. | B301 Part 1 | H | LAUNCH | Pair with B302. |
 | F5  | UI display labels misaligned with architecture rubric | R2.3 user observation | M | AFTER | "Supported" should be "Confirmed". Align all four labels: confirmed / partially confirmed / conflicting / no support. Decision: more definitive language preferred for an audit-safe product. |
 | F6  | "1 claim have" grammar bug in Reviewer Assessment | userMemories | L | AFTER | Pre-existing item from product backlog. |
 | F10 | Single-concern Editorial cards may render the lone concern as a bullet — check rendering consistency across single-concern Editorial cards (bulleted vs inline). | R2.7.2 Run 1 testing | L | AFTER | |
@@ -61,6 +62,8 @@ Parked, Findings log, Standing rules, Closed, and Rejected follow, in that order
 
 | ID  | Item | Source / context | Priority | Launch | Notes |
 |-----|------|------------------|----------|--------|-------|
+| B301 | **ONE BLANK FINDING DOES NOT SILENCE THE ASSESSMENT. OPEN then KILLED in Part 1.** Guard never fires on recorded reviews. Screenshot was replay. Do not change the guard. | B301 Part 1 2026-09-21 | H | RECORD | Kill. B227 stands. |
+| B302 | **THE ASSESSMENT SAYS WHICH OF THE THREE THINGS HAPPENED. OPEN.** Empty narrative is not one state. Also close v3 assembleCard writing `clean` when `reviewOptions` is absent. | B301 Part 1; B298 leftover | H | LAUNCH | Pair with B303. |
 | B1  | Stage 2 prompt nuance: "all X, therefore not Y" patterns | R1.2.5.3 reproducibility findings (P02, P25) | L | AFTER | When source says "all employees in Ottawa" and draft claims "offices in Berlin," current rubric drifts between `no_support` and `conflicting` at temp 1. Worth a prompt-tightening spec eventually, but not blocking. |
 | B2  | "Excerpt could not be retrieved" on conflict cards | R1.2.3, R2.3 testing | L | AFTER | v3 Stage 4 artifact. Architecture says Stage 2 should already return the passage; v3's separate retrieval step is unnecessary. Should resolve when R2.5 (Stage 4 in v4) lands. Substantially mitigated by r2.5.3 for bracket-abridgement cases. Residual placeholder appears only on silent-splice cases — see new backlog item B-next on splice handling. |
 | B4  | LLM call consolidation: merge editorial + compliance + style | userMemories | M | AFTER | Architecture-level optimisation. Three review calls per statement could potentially become one. Cost model projects ~19% saving on production runs. Defer until v4 is fully live. |
