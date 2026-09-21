@@ -1,6 +1,6 @@
 # Operating manual for Cursor
 
-Read this before every spec. Then follow `ai/SPEC_TEMPLATE.md`. If the spec touches the QC pipeline, also read `docs/ARCHITECTURE.md` (audited 2026-09-20). Do not treat ROADMAP as the live pipeline contract.
+Read this before every spec. Then follow `ai/SPEC_TEMPLATE.md`. If the spec touches the QC pipeline, also read `docs/ARCHITECTURE.md` (audited 2026-09-21). Do not treat ROADMAP as the live pipeline contract.
 
 This file is rules and facts. It is not a narrative for Ben.
 
@@ -24,7 +24,7 @@ This file is rules and facts. It is not a narrative for Ben.
 
 ## Change Surface Discipline
 
-When a spec changes a shared helper, the spec must enumerate every caller of that helper and state what the change does to each one. A helper that is safe for one caller is not automatically safe for the rest. B278 changed the rate-limit retry wrapper having considered exactly one of its twelve callers (`analyse-statements`). The other eleven inherited an unbounded wait that hung the product in production on 20 September 2026. After this, a shared-helper spec that cannot list its callers is not ready to implement.
+When a spec changes a shared helper, the spec must enumerate every caller of that helper and state what the change does to each one. A helper that is safe for one caller is not automatically safe for the rest. **P34.** B278 changed the rate-limit retry wrapper having considered exactly one of its twelve callers (`analyse-statements`). The other eleven inherited an unbounded wait that hung the product in production on 20 September 2026. After this, a shared-helper spec that cannot list its callers is not ready to implement.
 
 ---
 
@@ -56,7 +56,7 @@ Full contract: `docs/ARCHITECTURE.md`. Do not cite it for sprint status.
 - When editorial or compliance is off, the payload stamps `not_reviewed` and `summaryClass` for that signal is `null` (**B247**, **B294**). The screen names those checks on a footer line, `Turned off for this run`, below Clean (**B298**). A requested miss is `notChecked` / Not checked, never clean. Off does not vote on card colour.
 - `QC_LLM_CACHE` (default ON, memory only in production) covers Stages 1, 1b, and 2. Not 5. Not 6.
 - `review_state` is an overwrite autosave blob. `reviewer_decisions` is the append-only start of B9, governance kinds only.
-- Four-statement ~$2/run is not a real-document cost. A 3700-word memo with every Stage 6 check completed billed USD 11.1897 list. Read the ledger.
+- Four-statement ~$2/run is not a real-document cost. A 3700-word memo with every Stage 6 check completed billed USD 11.1897 list. That 3700-word figure is a floor on the ceiling: it was measured on a half-spent token window (**B309**). One clean re-run is owed when the number matters. Read the ledger.
 
 ---
 
@@ -82,6 +82,9 @@ Standing rules live in `docs/BACKLOG.md`. They bind here so a spec does not have
 - **P31.** Missing input is loud at the writer. See above.
 - **B222.** Standing authority. See above.
 - **P33.** Commit the artefact. See above.
+- **P34.** A spec that changes a shared helper must enumerate every caller. See Change Surface Discipline.
+- **P35.** A spec that claims to fix an observed symptom must name the log line that will prove it, before the fix is written. B285 named none and fixed a real bug that was not the reported symptom.
+- **P36.** A default that treats a missing answer as yes is a lie waiting to happen. Prefer `=== true` for any flag that answers "did this happen". B299.
 
 Also keep:
 
