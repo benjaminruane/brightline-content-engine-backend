@@ -53,6 +53,6 @@ describe("B227 assessment blank finding", () => {
       res
     );
     assert.equal(llmSpy.mock.calls.length, 0);
-    assert.deepEqual(res.body, { ok: false, narrative: "" });
+    assert.deepEqual(res.body, { ok: false, narrative: "", reason: "nothing_to_say" });
   });
 });

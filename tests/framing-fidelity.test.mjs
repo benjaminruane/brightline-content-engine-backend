@@ -138,6 +138,11 @@ describe("stage7 framing-fidelity emit", () => {
       0,
       {
         pipelineRoute: "v4",
+        reviewOptions: {
+          evidenceEnabled: true,
+          editorialEnabled: true,
+          complianceEnabled: true,
+        },
         framingFidelityJudge: async () => ({
           fire: true,
           evaluativePhrase: "dominant in the Nordics",
@@ -191,7 +196,15 @@ describe("stage7 framing-fidelity emit", () => {
           editorialConcerns: [],
         },
       },
-      { pipelineRoute: "v4" }
+      0,
+      {
+        pipelineRoute: "v4",
+        reviewOptions: {
+          evidenceEnabled: true,
+          editorialEnabled: true,
+          complianceEnabled: true,
+        },
+      }
     );
     assert.equal(card.supportState, "supported");
     assert.equal(card.hasConflict, false);

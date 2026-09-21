@@ -101,6 +101,11 @@ describe("stage7 source-recency emit", () => {
       pipelineRoute: "v4",
       sources: [{ text: STALE_SOURCE_TEXT, label: "stale" }],
       today: TODAY,
+      reviewOptions: {
+        evidenceEnabled: true,
+        editorialEnabled: true,
+        complianceEnabled: true,
+      },
     });
     assert.equal(card.supportState, "supported");
     assert.equal(card.displayVerdict, "supported_full");

@@ -1,8 +1,9 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
-import { synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
+import { synthesisFindingCensus, synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
 import { READINESS_LABELS } from "../lib/qc/review-summary.mjs";
 import { asReviewOptions } from "../lib/qc/review-options.mjs";
+import { ASSESSMENT_REASONS, requireAssessmentReason } from "../lib/qc/assessment-reason.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 /** R3.7: appended voice constraints — do not alter role/length/tone preamble above the two trailing paragraphs. */
@@ -36,25 +37,36 @@ export default async function handler(req, res) {
   const draftText = typeof body.draftText === "string" ? body.draftText.trim() : "";
   const summary = body.qcSummary && typeof body.qcSummary === "object" ? body.qcSummary : {};
   const readiness = summary.readiness;
-  if (!READINESS_LABELS.includes(readiness)) {
-    return res.status(200).json({ ok: false, narrative: "" });
+  function emptyAssessment(reason) {
+    return res.status(200).json({
+      ok: false,
+      narrative: "",
+      reason: requireAssessmentReason(reason),
+    });
   }
-  if (!hasProviderApiKey(modelConfig.provider)) return res.status(200).json({ ok: false, narrative: "" });
+  if (!READINESS_LABELS.includes(readiness)) {
+    return emptyAssessment(ASSESSMENT_REASONS.INVALID_READINESS);
+  }
+  if (!hasProviderApiKey(modelConfig.provider)) {
+    return emptyAssessment(ASSESSMENT_REASONS.MISSING_PROVIDER_KEY);
+  }
   const notSupportedStatements = Array.isArray(body.notSupportedStatements) ? body.notSupportedStatements : [];
   const conflictingStatements = Array.isArray(body.conflictingStatements) ? body.conflictingStatements : [];
   const partialStatements = Array.isArray(body.partialStatements) ? body.partialStatements : [];
   const editorialConcerns = Array.isArray(body.editorialConcerns) ? body.editorialConcerns : [];
   const complianceConcerns = Array.isArray(body.complianceConcerns) ? body.complianceConcerns : [];
-  if (
-    synthesisPayloadHasBlankFinding({
-      editorialConcerns,
-      complianceConcerns,
-      notSupportedStatements,
-      conflictingStatements,
-      partialStatements,
-    })
-  ) {
-    return res.status(200).json({ ok: false, narrative: "" });
+  const findingBody = {
+    editorialConcerns,
+    complianceConcerns,
+    notSupportedStatements,
+    conflictingStatements,
+    partialStatements,
+  };
+  if (synthesisPayloadHasBlankFinding(findingBody)) {
+    const census = synthesisFindingCensus(findingBody);
+    const reason =
+      census.usable === 0 ? ASSESSMENT_REASONS.NOTHING_TO_SAY : ASSESSMENT_REASONS.BLANK_FINDING;
+    return emptyAssessment(reason);
   }
   const reviewOptions = body.reviewOptions && typeof body.reviewOptions === "object" ? body.reviewOptions : {};
   const activeReviewOptions = asReviewOptions(reviewOptions);
@@ -111,9 +123,24 @@ export default async function handler(req, res) {
       metadata: { route: "synthesize-review" },
     });
     const narrative = typeof completion?.text === "string" ? completion.text.trim() : "";
-    return res.status(200).json({ ok: true, narrative });
+    if (!narrative) {
+      return res.status(200).json({
+        ok: false,
+        narrative: "",
+        reason: ASSESSMENT_REASONS.EMPTY_COMPLETION,
+      });
+    }
+    return res.status(200).json({
+      ok: true,
+      narrative,
+      reason: ASSESSMENT_REASONS.WRITTEN,
+    });
   } catch {
-    return res.status(200).json({ ok: false, narrative: "" });
+    return res.status(200).json({
+      ok: false,
+      narrative: "",
+      reason: ASSESSMENT_REASONS.CALL_FAILED,
+    });
   } finally {
     await flushObservability();
   }

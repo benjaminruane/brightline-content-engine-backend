@@ -77,7 +77,7 @@ describe("synthesize-review refuses a missing or unknown label", () => {
     const res = createRes();
     await handler(postReq({ qcSummary: {} }), res);
     assert.equal(llmSpy.mock.calls.length, 0);
-    assert.deepEqual(res.body, { ok: false, narrative: "" });
+    assert.deepEqual(res.body, { ok: false, narrative: "", reason: "invalid_readiness" });
   });
 
   test("unknown readiness does not call the model", async () => {
@@ -85,7 +85,7 @@ describe("synthesize-review refuses a missing or unknown label", () => {
     const res = createRes();
     await handler(postReq({ qcSummary: { readiness: "Needs targeted revision" } }), res);
     assert.equal(llmSpy.mock.calls.length, 0);
-    assert.deepEqual(res.body, { ok: false, narrative: "" });
+    assert.deepEqual(res.body, { ok: false, narrative: "", reason: "invalid_readiness" });
   });
 });
 

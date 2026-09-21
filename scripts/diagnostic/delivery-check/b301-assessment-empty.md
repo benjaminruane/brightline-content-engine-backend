@@ -149,6 +149,85 @@ One production `synthesize-review` call. Response has no `llmSpend`. Unpriced: 1
 
 ---
 
-## Next
+## Part 2. B301. One blank finding does not silence the assessment
 
-Part 3: three states, backend reason, frontend copy. Part 4: absent `reviewOptions` object cannot write `clean`. Part 2 skipped except the existing "blank never reaches the model" test.
+**Killed.** The guard still refuses the whole call when any finding is blank. It does not drop the blank item and write from the rest. CONFIRMED `api/synthesize-review.js` still calls `synthesisPayloadHasBlankFinding` before `callLLM`. Tests `tests/b301-assessment-states.test.mjs` and `tests/b227-assessment-blank-finding.test.mjs`: mixed usable-plus-blank never reaches the model.
+
+`synthesisFindingCensus` in `lib/qc/blank-finding-guard.mjs` only chooses the reason: all-blank is `nothing_to_say`, mixed is `blank_finding`. That is Part 3, not a weakening of B227.
+
+No dropped-count field. There is nothing to drop.
+
+---
+
+## Part 3. B302 backend, B303 frontend. Three states, three answers
+
+### 3.1 Backend reason
+
+New sibling of `lib/qc/not-reviewed-reason.mjs`: `lib/qc/assessment-reason.mjs`.
+
+| reason | User-facing group (`assessmentStateOf`) |
+|--------|-----------------------------------------|
+| `written` | written |
+| `nothing_to_say` | (a) nothing to say |
+| `not_requested` | (b) not asked for |
+| `call_failed` | (c) could not be written |
+| `invalid_readiness` | (c) |
+| `missing_provider_key` | (c) |
+| `empty_completion` | (c) |
+| `blank_finding` | (c) |
+
+Every empty return from `synthesize-review` is `{ ok: false, narrative: "", reason }`. Success is `{ ok: true, narrative, reason: "written" }`. Empty completion is no longer `ok: true` with a blank string.
+
+`not_requested` is not returned by the endpoint. Replay never hits the backend. The frontend stamps `not_requested` at the skip writer (`useAssessState.jsx` when `analysisBlocksPersistence` is true). P31.
+
+### 3.2 Proposed wording, and why
+
+| State | Line | Why |
+|-------|------|-----|
+| (a) nothing to say | `Nothing for the assessment to add.` | The review ran. There was no finding prose to draw on. Must not read as a failure. "Add" is quieter than "written" or "could not". |
+| (b) not asked for | `The assessment was not written for this run.` | Replay, or the call was never made. Distinct from B292 `The review did not run.` because the review did run. "for this run" matches `Turned off for this run`. |
+| (c) could not be written | `The assessment could not be written this time.` | B285, kept. The only sentence that means the call was made and failed, or the payload was refused as unsafe. |
+
+Vocabulary check: does not reuse Ready / Needs work / Not checked / Turned off / The review did not run. (a) and (b) are new assessment-only lines. (c) is unchanged.
+
+### 3.3 (a) is not an error
+
+`assessmentCopyIsQuiet` is true for (a) and (b). The panel uses `text-slate-600`. Written narrative and (c) stay `text-slate-800`. No warning colour. No alarm.
+
+### 3.4 Routes that did not fit the three, added rather than forced
+
+Q1 routes 1, 2, 3 (mixed blank), 4, 5, 8 map to (c) with their own `reason` slugs. The screen prints the B285 sentence. The payload still says which.
+
+Q1 route 3 all-blank maps to (a), not (c).
+
+Q1 route 6 replay maps to (b), stamped in the frontend.
+
+Q1 route 7 builder-null uses `synthesisSkipReason`: no summary is (b); all classified findings blank is (a); mixed blank is (c) `blank_finding`.
+
+Q1 routes 11 and 12 (size-block, initial empty, analyse error) stamp (b) `not_requested` on the assessment field. The review-blocked copy already sits on the error surface (`The review did not run.` / the size-block message). A fourth assessment line would duplicate that surface. Documented, not a new sentence.
+
+Frontend never infers the state from an empty string. `assessmentCopyForReason(reason, narrative)` is the only mapper. Fallback to (c) if a writer still leaves the string empty (last resort, not the replay path).
+
+---
+
+## Part 4. B302. Absent options cannot write clean
+
+`reviewEnabled` in `stage7-assemble-card.mjs`: if `assemblyContext.reviewOptions` is missing, it logs `[ASSEMBLE_CARD] reviewOptions missing; ${key} treated as not requested` and returns false. `resolveAssembledVerdict` then writes `not_reviewed`. `safeEditorialDefaults` is `not_reviewed` on both editorial and compliance, never `clean`.
+
+v3 `runPipelineV3` now passes `reviewOptions: asReviewOptions(options)` so the production v3 path always has an object. Direct `assembleCard` callers without the object hit the loud missing path.
+
+Test: `tests/b302-absent-options-not-clean.test.mjs`. With all three flags on, a clean editorial result still stays clean.
+
+---
+
+## Production Review after the change
+
+Recorded after deploy. See the section below this line once the production pass lands.
+
+---
+
+## Total cost of this spec in USD
+
+Part 1 unpriced synthesize-review: 1. HYPOTHESIS ~USD 0.01.
+
+Production evidence-only Meridian Review after the change: pending deploy. List USD to be filled from `meta.llmSpend` plus the synthesize-review call.

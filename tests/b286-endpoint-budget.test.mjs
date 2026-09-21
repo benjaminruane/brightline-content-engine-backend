@@ -68,7 +68,8 @@ describe("B286 every model-calling endpoint opens a request budget", () => {
 
   test("synthesize-review still returns an honest empty narrative on throw", () => {
     const src = readFileSync(path.join(API_DIR, "synthesize-review.js"), "utf8");
-    assert.equal(src.includes('return res.status(200).json({ ok: false, narrative: "" });'), true);
+    assert.equal(src.includes("ASSESSMENT_REASONS.CALL_FAILED"), true);
+    assert.equal(src.includes('narrative: ""'), true);
     assert.equal(/narrative:\s*["'][^"']{8,}/.test(src), false);
   });
 });
