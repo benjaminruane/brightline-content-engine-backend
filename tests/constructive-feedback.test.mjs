@@ -25,6 +25,12 @@ import {
 import { OUTPUT_TYPE } from "../lib/output-intent.js";
 import { summariseReview } from "../lib/qc/review-summary.mjs";
 
+const ALL_ON = {
+  evidenceEnabled: true,
+  editorialEnabled: true,
+  complianceEnabled: true,
+};
+
 const cleanCard = {
   qcCard: {
     index: 0,
@@ -104,10 +110,10 @@ const duplicateTextCardB = {
 
 describe("constructive-feedback", () => {
   test("isCardFullyClean and bundle selection", () => {
-    assert.equal(isCardFullyClean(cleanCard.qcCard, {}), true);
-    assert.equal(isCardFullyClean(evidenceIssueCard.qcCard, {}), false);
+    assert.equal(isCardFullyClean(cleanCard.qcCard, ALL_ON), true);
+    assert.equal(isCardFullyClean(evidenceIssueCard.qcCard, ALL_ON), false);
 
-    const bundles = selectConstructiveFeedbackBundles([cleanCard, evidenceIssueCard], {});
+    const bundles = selectConstructiveFeedbackBundles([cleanCard, evidenceIssueCard], ALL_ON);
     assert.equal(bundles.length, 1);
     assert.equal(bundles[0].cardIndex, 1);
     assert.equal(bundles[0].statementText, "Returns reached 15%.");
@@ -119,7 +125,7 @@ describe("constructive-feedback", () => {
   test("mixed bundle ordering", () => {
     const mixedBundles = selectConstructiveFeedbackBundles(
       [evidenceIssueCard, complianceCard, conflictCard],
-      {}
+      ALL_ON
     );
     assert.equal(mixedBundles.length, 3);
     assert.equal(mixedBundles[0].cardIndex, 3);
@@ -130,7 +136,7 @@ describe("constructive-feedback", () => {
   test("duplicate statement text bundles", () => {
     const duplicateTextBundles = selectConstructiveFeedbackBundles(
       [duplicateTextCardA, duplicateTextCardB],
-      {}
+      ALL_ON
     );
     assert.equal(duplicateTextBundles.length, 2);
     assert.equal(duplicateTextBundles[0].cardIndex, 10);
@@ -149,11 +155,11 @@ describe("constructive-feedback", () => {
   });
 
   test("signoff verdict", () => {
-    const readyVerdict = summariseReview([cleanCard.qcCard]).readiness;
+    const readyVerdict = summariseReview([cleanCard.qcCard], ALL_ON).readiness;
     assert.equal(readyVerdict, "Ready");
     assert.equal(readyVerdict === "Ready", true);
 
-    const notReady = summariseReview([evidenceIssueCard.qcCard]).readiness;
+    const notReady = summariseReview([evidenceIssueCard.qcCard], ALL_ON).readiness;
     assert.equal(notReady, "Minor points to address");
   });
 
