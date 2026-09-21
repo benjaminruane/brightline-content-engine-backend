@@ -53,7 +53,7 @@ Full contract: `docs/ARCHITECTURE.md`. Do not cite it for sprint status.
 - Stage 6 evaluates the current statement. The editorial user payload still pastes the full marked draft as context. Those are different facts. Do not cite "current statement only" as a cost claim.
 - Stage 5 and Stage 6 concurrency is planned at run time from the actual statements, estimated tokens per call, and live remaining TPM. Stage 2 stays at 24. Function cap is 300 seconds. A 429 waits until it fits, inside that cap minus remaining work. Hitting the bound is `not_reviewed`, never clean.
 - A Stage 5 miss is empty prose plus `commentaryNotReviewed: true`, not a canned finding (**B254**).
-- When editorial or compliance is off, the payload stamps `clean` and the screen says `Not reviewed` (**B247**). Believe the screen, not the payload field.
+- When editorial or compliance is off, the payload stamps `not_reviewed` and `summaryClass` for that signal is `null` (**B247**, **B294**). The screen omits the row. A requested miss is `notChecked` / Not checked, never clean.
 - `QC_LLM_CACHE` (default ON, memory only in production) covers Stages 1, 1b, and 2. Not 5. Not 6.
 - `review_state` is an overwrite autosave blob. `reviewer_decisions` is the append-only start of B9, governance kinds only.
 - Four-statement ~$2/run is not a real-document cost. A 3700-word memo with every Stage 6 check completed billed USD 11.1897 list. Read the ledger.

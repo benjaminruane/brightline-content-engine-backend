@@ -193,42 +193,212 @@ Changing `null` to a new slug `"not_requested"` would be a data-contract change 
 
 ---
 
-## Part 2. Not requested is its own state. B294. (not yet built)
+## Part 2. Not requested is its own state. B294. SHIPPED
 
-Will stamp `cardTone` next to the existing `summaryClass` classes at the same `classifyCard` call. Footer and counts will ignore `null` (not requested). `notChecked` stays not clean. Confirm B202 still holds.
+`classifyCard` is still the one calculation. Additive key `summaryClass.cardTone`. Off remains `null` on that signal. QRS already dropped off checks from counts. CONFIRMED `summariseReview` with editorial and compliance off: `editorial: null`, `notChecked: 0`, `readiness: Ready` (`tests/b294-not-requested.test.mjs`).
 
-## Part 3. One vocabulary. B295. (not yet built)
+A requested miss is still `notChecked`, never clean. CONFIRMED B202 tests still pass. B294 requested-miss case: editorial `notChecked`, `cardTone` amber, readiness `Not fully checked`.
 
-Proposed three phrasings, checked against B194. Blank sheet. Not copied from the spec prompt.
+Assemble still stamps `not_reviewed` when the check is off (B247). Display no longer treats that slug as a finding.
 
-| State | Phrase | Why |
-|-------|--------|-----|
-| Requested and clean | **Clean** | Already on the footer and on completed rows. B194 did not rename it. |
-| Requested and did not complete | **Not checked** | B194 and B202 already use this for a schema miss. QRS and the filter already say Not checked. "Needs manual review" and "Not reviewed" for the same hole go. Expanded body can still say the check could not be completed. |
-| Not requested | **(no row, not in the footer)** | A grey "Not reviewed" row looks like a hole. A Clean tick looks like work. Omitting is the only wording that is neither alarm nor credit. |
+Footer: Clean names only `summaryClass === "clean"`. Source recency and Framing only if evidence was requested and completed. Card D can no longer name Compliance, Source recency, or Framing.
 
-**3.3 Greyed row vs omit.**
+## Part 3. One vocabulary. B295. SHIPPED
 
-Greyed row: the reader sees that Editorial exists as a check. Cost: A and B look unfinished after the reviewer switched those checks off. That is the photo.
+Phrasings as proposed in Part 1. Shipped:
 
-Omit: switched-off checks disappear. Cost: a reader who forgot they turned a check off will not be reminded on the card. The review-options control already holds that choice. QRS already drops off-check counts (`editorial: null` when off).
+| State | Phrase | Surfaces |
+|-------|--------|----------|
+| Requested and clean | Clean | Footer. Not a row. |
+| Requested and did not complete | Not checked | Card row, results-screen claim, QRS, filter. Expanded body unchanged in substance. |
+| Not requested | omit | No row. Not in the footer. Not in Not checked. |
 
-Pick: **omit**. The reader must never think a switched-off check ran, and must never be alarmed by one they turned off.
+Greyed-row vs omit: **omit**, as argued above. F24's extra `displayVerdict === "not reviewed"` match is gone so switched-off evidence is not in Not checked. Annotation on the F24 BACKLOG row.
 
-## Part 4. Colour. B296. (not yet built)
+## Part 4. Colour. B296. SHIPPED
 
-Border reads `summaryClass.cardTone`. `deriveTintClass` becomes a display map of that stamp, not a severity walk of raw verdicts.
+`classifyCard` writes `cardTone`. `StatementReviewCard` reads `cardBorderTone(qcCard)` from that stamp. `deriveTintClass` maps `summaryClass.cardTone` only.
 
-A/B: evidence `confirmed`, editorial `null`, compliance `null` -> green.
+Photo mapping after the fix:
 
-D, recovered: evidence `null`, editorial `clean`, compliance `null` -> green. Spec 4.4 said D must not be green on the premise that the only performed check did not run. The payload says editorial *did* run and was clean. 4.2 and 4.3 win: a card is as green as the requested checks that completed, and never green when a requested check is `notChecked`. **AMEND 4.4.** D's real bugs are the Compliance/Source recency/Framing Clean names, not the green from a clean editorial check. After the footer fix D names only Editorial (and nothing unrun).
+| Card | Classes | cardTone |
+|------|---------|----------|
+| A/B evidence-only confirmed | evidence confirmed, editorial null, compliance null | green |
+| C partial + editorial miss + compliance clean | partial, notChecked, clean | amber |
+| D editorial-only clean | evidence null, editorial clean, compliance null | green (AMEND 4.4; editorial ran) |
 
-C: evidence `partial`, editorial `notChecked`, compliance `clean` -> amber.
+Rule 4.2 holds on the grid: a requested miss is never green. Rule 4.3 holds: `clean | off | off` is green.
 
-## Part 5. Retry. B297. (not yet built)
+### 4.5 Colour grid (150 cells, 0 FAIL)
 
-"The review did not run." gains Retry. Same draft and sources. No clear. No loop.
+States: evidence `off/miss/clean/concern/hard/conflict`. Editorial and compliance `off/miss/clean/concern/hard`. Expected is the 4.2/4.3 rule in the test file, not a copy of `cardToneFromClass`.
 
-## Cost so far
+| evidence | editorial | compliance | expected | actual | result |
+|----------|-----------|------------|----------|--------|--------|
+| off | off | off | neutral | neutral | PASS |
+| off | off | miss | amber | amber | PASS |
+| off | off | clean | green | green | PASS |
+| off | off | concern | amber | amber | PASS |
+| off | off | hard | red | red | PASS |
+| off | miss | off | amber | amber | PASS |
+| off | miss | miss | amber | amber | PASS |
+| off | miss | clean | amber | amber | PASS |
+| off | miss | concern | amber | amber | PASS |
+| off | miss | hard | red | red | PASS |
+| off | clean | off | green | green | PASS |
+| off | clean | miss | amber | amber | PASS |
+| off | clean | clean | green | green | PASS |
+| off | clean | concern | amber | amber | PASS |
+| off | clean | hard | red | red | PASS |
+| off | concern | off | amber | amber | PASS |
+| off | concern | miss | amber | amber | PASS |
+| off | concern | clean | amber | amber | PASS |
+| off | concern | concern | amber | amber | PASS |
+| off | concern | hard | red | red | PASS |
+| off | hard | off | red | red | PASS |
+| off | hard | miss | red | red | PASS |
+| off | hard | clean | red | red | PASS |
+| off | hard | concern | red | red | PASS |
+| off | hard | hard | red | red | PASS |
+| miss | off | off | amber | amber | PASS |
+| miss | off | miss | amber | amber | PASS |
+| miss | off | clean | amber | amber | PASS |
+| miss | off | concern | amber | amber | PASS |
+| miss | off | hard | red | red | PASS |
+| miss | miss | off | amber | amber | PASS |
+| miss | miss | miss | amber | amber | PASS |
+| miss | miss | clean | amber | amber | PASS |
+| miss | miss | concern | amber | amber | PASS |
+| miss | miss | hard | red | red | PASS |
+| miss | clean | off | amber | amber | PASS |
+| miss | clean | miss | amber | amber | PASS |
+| miss | clean | clean | amber | amber | PASS |
+| miss | clean | concern | amber | amber | PASS |
+| miss | clean | hard | red | red | PASS |
+| miss | concern | off | amber | amber | PASS |
+| miss | concern | miss | amber | amber | PASS |
+| miss | concern | clean | amber | amber | PASS |
+| miss | concern | concern | amber | amber | PASS |
+| miss | concern | hard | red | red | PASS |
+| miss | hard | off | red | red | PASS |
+| miss | hard | miss | red | red | PASS |
+| miss | hard | clean | red | red | PASS |
+| miss | hard | concern | red | red | PASS |
+| miss | hard | hard | red | red | PASS |
+| clean | off | off | green | green | PASS |
+| clean | off | miss | amber | amber | PASS |
+| clean | off | clean | green | green | PASS |
+| clean | off | concern | amber | amber | PASS |
+| clean | off | hard | red | red | PASS |
+| clean | miss | off | amber | amber | PASS |
+| clean | miss | miss | amber | amber | PASS |
+| clean | miss | clean | amber | amber | PASS |
+| clean | miss | concern | amber | amber | PASS |
+| clean | miss | hard | red | red | PASS |
+| clean | clean | off | green | green | PASS |
+| clean | clean | miss | amber | amber | PASS |
+| clean | clean | clean | green | green | PASS |
+| clean | clean | concern | amber | amber | PASS |
+| clean | clean | hard | red | red | PASS |
+| clean | concern | off | amber | amber | PASS |
+| clean | concern | miss | amber | amber | PASS |
+| clean | concern | clean | amber | amber | PASS |
+| clean | concern | concern | amber | amber | PASS |
+| clean | concern | hard | red | red | PASS |
+| clean | hard | off | red | red | PASS |
+| clean | hard | miss | red | red | PASS |
+| clean | hard | clean | red | red | PASS |
+| clean | hard | concern | red | red | PASS |
+| clean | hard | hard | red | red | PASS |
+| concern | off | off | amber | amber | PASS |
+| concern | off | miss | amber | amber | PASS |
+| concern | off | clean | amber | amber | PASS |
+| concern | off | concern | amber | amber | PASS |
+| concern | off | hard | red | red | PASS |
+| concern | miss | off | amber | amber | PASS |
+| concern | miss | miss | amber | amber | PASS |
+| concern | miss | clean | amber | amber | PASS |
+| concern | miss | concern | amber | amber | PASS |
+| concern | miss | hard | red | red | PASS |
+| concern | clean | off | amber | amber | PASS |
+| concern | clean | miss | amber | amber | PASS |
+| concern | clean | clean | amber | amber | PASS |
+| concern | clean | concern | amber | amber | PASS |
+| concern | clean | hard | red | red | PASS |
+| concern | concern | off | amber | amber | PASS |
+| concern | concern | miss | amber | amber | PASS |
+| concern | concern | clean | amber | amber | PASS |
+| concern | concern | concern | amber | amber | PASS |
+| concern | concern | hard | red | red | PASS |
+| concern | hard | off | red | red | PASS |
+| concern | hard | miss | red | red | PASS |
+| concern | hard | clean | red | red | PASS |
+| concern | hard | concern | red | red | PASS |
+| concern | hard | hard | red | red | PASS |
+| hard | off | off | red | red | PASS |
+| hard | off | miss | red | red | PASS |
+| hard | off | clean | red | red | PASS |
+| hard | off | concern | red | red | PASS |
+| hard | off | hard | red | red | PASS |
+| hard | miss | off | red | red | PASS |
+| hard | miss | miss | red | red | PASS |
+| hard | miss | clean | red | red | PASS |
+| hard | miss | concern | red | red | PASS |
+| hard | miss | hard | red | red | PASS |
+| hard | clean | off | red | red | PASS |
+| hard | clean | miss | red | red | PASS |
+| hard | clean | clean | red | red | PASS |
+| hard | clean | concern | red | red | PASS |
+| hard | clean | hard | red | red | PASS |
+| hard | concern | off | red | red | PASS |
+| hard | concern | miss | red | red | PASS |
+| hard | concern | clean | red | red | PASS |
+| hard | concern | concern | red | red | PASS |
+| hard | concern | hard | red | red | PASS |
+| hard | hard | off | red | red | PASS |
+| hard | hard | miss | red | red | PASS |
+| hard | hard | clean | red | red | PASS |
+| hard | hard | concern | red | red | PASS |
+| hard | hard | hard | red | red | PASS |
+| conflict | off | off | red | red | PASS |
+| conflict | off | miss | red | red | PASS |
+| conflict | off | clean | red | red | PASS |
+| conflict | off | concern | red | red | PASS |
+| conflict | off | hard | red | red | PASS |
+| conflict | miss | off | red | red | PASS |
+| conflict | miss | miss | red | red | PASS |
+| conflict | miss | clean | red | red | PASS |
+| conflict | miss | concern | red | red | PASS |
+| conflict | miss | hard | red | red | PASS |
+| conflict | clean | off | red | red | PASS |
+| conflict | clean | miss | red | red | PASS |
+| conflict | clean | clean | red | red | PASS |
+| conflict | clean | concern | red | red | PASS |
+| conflict | clean | hard | red | red | PASS |
+| conflict | concern | off | red | red | PASS |
+| conflict | concern | miss | red | red | PASS |
+| conflict | concern | clean | red | red | PASS |
+| conflict | concern | concern | red | red | PASS |
+| conflict | concern | hard | red | red | PASS |
+| conflict | hard | off | red | red | PASS |
+| conflict | hard | miss | red | red | PASS |
+| conflict | hard | clean | red | red | PASS |
+| conflict | hard | concern | red | red | PASS |
+| conflict | hard | hard | red | red | PASS |
 
-Part 1: no Review. Langfuse read only. USD 0.0000.
+## Part 5. Retry. B297. SHIPPED
+
+`The review did not run.` has a Retry control beside it. Click calls `confirmReviewOptionsModal`, which runs `runStatementAnalysis` on the current version and draft. Sources stay on the request payload. The catch path keeps `ok: false` and the same copy, so Retry remains. No timer. Tests `tests/b296-card-colour-retry.test.mjs`.
+
+Local browser: Retry is a failed-review surface. I did not run a live Review to force `ok: false`. Verified from the panel source and the test. Production Review below is the normal path.
+
+## Production Review
+
+Run after push. Cost filled in after the POST.
+
+## Cost
+
+Part 1 Langfuse read: USD 0.0000.
+Parts 2-5 implementation: USD 0.0000 (no model calls).
+Production Review: pending deploy.
+Total so far: USD 0.0000.
