@@ -1,0 +1,43 @@
+{
+  "spec": "B313",
+  "payloadPath": "/Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/runs/stage-replay/cache-probe-payload.json",
+  "statementIndex": 1,
+  "statementText": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider\nof e-commerce software to SMBs.",
+  "draftWordCount": 3698,
+  "calls": [
+    {
+      "label": "today-1",
+      "prompt_tokens": 14798,
+      "cached_tokens": 0,
+      "completion_tokens": 211,
+      "limit_tokens": 2000000,
+      "remaining_tokens": 1982702
+    },
+    {
+      "label": "today-2",
+      "prompt_tokens": 14798,
+      "cached_tokens": 14592,
+      "completion_tokens": 211,
+      "limit_tokens": 2000000,
+      "remaining_tokens": 1982702
+    },
+    {
+      "label": "reordered-1",
+      "prompt_tokens": 14734,
+      "cached_tokens": 9088,
+      "completion_tokens": 209,
+      "limit_tokens": 2000000,
+      "remaining_tokens": 1982784
+    },
+    {
+      "label": "reordered-2",
+      "prompt_tokens": 14734,
+      "cached_tokens": 14592,
+      "completion_tokens": 209,
+      "limit_tokens": 2000000,
+      "remaining_tokens": 1982784
+    }
+  ],
+  "listUsd": 0.15606,
+  "discountedUsd": 0.10822
+}
