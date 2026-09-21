@@ -1,0 +1,170 @@
+{
+  "http": 200,
+  "ok": true,
+  "error": null,
+  "wallMs": 18179,
+  "traceId": "c42fa1b6-6f59-44cc-905c-05bef62ae7b4",
+  "pipelineVersion": "v4",
+  "reviewOptions": {
+    "evidenceEnabled": true,
+    "editorialEnabled": true,
+    "complianceEnabled": true
+  },
+  "llmSpend": {
+    "calls": 43,
+    "inputTokens": 151331,
+    "cachedInputTokens": 84224,
+    "outputTokens": 2827,
+    "costUsd": 0.29761389999999993,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 41,
+        "inputTokens": 150063,
+        "cachedInputTokens": 84224,
+        "outputTokens": 2750,
+        "costUsd": 0.29737749999999996,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 2,
+        "inputTokens": 1268,
+        "cachedInputTokens": 0,
+        "outputTokens": 77,
+        "costUsd": 0.0002364,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "reviewSummary": {
+    "version": 1,
+    "statements": 7,
+    "evidence": {
+      "confirmed": 3,
+      "partial": 2,
+      "conflicting": 0,
+      "notSupported": 2
+    },
+    "editorial": {
+      "concerns": 3,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "compliance": {
+      "concerns": 0,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "signalConcerns": 3,
+    "notChecked": 0,
+    "needsAttention": 3,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "cards": 7,
+  "interesting": [
+    {
+      "index": 1,
+      "text": "The fund intends to build a portfolio of 10-14 control-oriented investments, wit",
+      "displayVerdict": "supported_partial",
+      "editorialVerdict": "clean",
+      "complianceVerdict": "clean",
+      "editorialNotReviewedReason": null,
+      "summaryClass": {
+        "counted": true,
+        "evidence": "partial",
+        "editorial": "clean",
+        "compliance": "clean",
+        "needsAttention": false
+      }
+    },
+    {
+      "index": 2,
+      "text": "Target companies are expected to have enterprise valuations in the range of EUR ",
+      "displayVerdict": "supported_full",
+      "editorialVerdict": "clean",
+      "complianceVerdict": "clean",
+      "editorialNotReviewedReason": null,
+      "summaryClass": {
+        "counted": true,
+        "evidence": "confirmed",
+        "editorial": "clean",
+        "compliance": "clean",
+        "needsAttention": false
+      }
+    },
+    {
+      "index": 4,
+      "text": "Furthermore, Partners Group has a long-established relationship with the manager",
+      "displayVerdict": "supported_full",
+      "editorialVerdict": "clean",
+      "complianceVerdict": "clean",
+      "editorialNotReviewedReason": null,
+      "summaryClass": {
+        "counted": true,
+        "evidence": "confirmed",
+        "editorial": "clean",
+        "compliance": "clean",
+        "needsAttention": false
+      }
+    }
+  ],
+  "tones": [
+    {
+      "index": 0,
+      "cardTone": null,
+      "evidence": "partial",
+      "editorial": "clean",
+      "compliance": "clean"
+    },
+    {
+      "index": 1,
+      "cardTone": null,
+      "evidence": "partial",
+      "editorial": "clean",
+      "compliance": "clean"
+    },
+    {
+      "index": 2,
+      "cardTone": null,
+      "evidence": "confirmed",
+      "editorial": "clean",
+      "compliance": "clean"
+    },
+    {
+      "index": 3,
+      "cardTone": null,
+      "evidence": "confirmed",
+      "editorial": "concern",
+      "compliance": "clean"
+    },
+    {
+      "index": 4,
+      "cardTone": null,
+      "evidence": "confirmed",
+      "editorial": "clean",
+      "compliance": "clean"
+    },
+    {
+      "index": 5,
+      "cardTone": null,
+      "evidence": "notSupported",
+      "editorial": "concern",
+      "compliance": "clean"
+    },
+    {
+      "index": 6,
+      "cardTone": null,
+      "evidence": "notSupported",
+      "editorial": "concern",
+      "compliance": "clean"
+    }
+  ]
+}

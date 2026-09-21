@@ -394,11 +394,31 @@ Local browser: Retry is a failed-review surface. I did not run a live Review to 
 
 ## Production Review
 
-Run after push. Cost filled in after the POST.
+Two POSTs to production `analyse-statements`, Meridian 7-statement draft, all checks on, source `meridian_production_source.txt`.
+
+1. Trace `c42fa1b6-6f59-44cc-905c-05bef62ae7b4`, wall 18179 ms, HTTP 200. Landed before the `74e75c9` deploy. `summaryClass.cardTone` absent. Extract `scripts/diagnostic/delivery-check/b294-runs/production-extract.json`.
+2. Trace `b9543423-8b3d-4466-8b2f-5e2238701784`, wall 14331 ms, HTTP 200. After deploy. `cardTone` stamped on every card. Extract `scripts/diagnostic/delivery-check/b294-runs/production-extract-2.json`.
+
+After deploy, the photographed sentences:
+
+| Index | Sentence | Classes | cardTone |
+|------:|----------|---------|----------|
+| 1 | fund intends 10-14 (photo C) | partial, clean, clean | amber |
+| 2 | Target companies (photo B/D) | confirmed, clean, clean | green |
+| 4 | Furthermore (photo A) | confirmed, clean, clean | green |
+
+This run had all checks on, so it is not the evidence-only photo of A/B. The A and B sentences are green when the requested checks completed clean. Evidence-only green is the grid cell `clean | off | off`. Photo C's editorial miss did not recur; editorial completed clean. 0 `notChecked`.
+
+Local `localhost:5173` was not running (connection refused). Retry was not clicked in a browser. Card colour on the live UI was not walked with this payload. Proof is the stamped `cardTone` plus the 150-cell grid.
 
 ## Cost
 
-Part 1 Langfuse read: USD 0.0000.
-Parts 2-5 implementation: USD 0.0000 (no model calls).
-Production Review: pending deploy.
-Total so far: USD 0.0000.
+| Pass | List USD | Discounted USD | Calls | Unpriced |
+|------|--------:|---------------:|------:|---------:|
+| Part 1 Langfuse read | 0.0000 | 0.0000 | 0 | 0 |
+| Implementation | 0.0000 | 0.0000 | 0 | 0 |
+| Production POST 1 (pre-deploy) | 0.2976 | 0.1923 | 43 | 0 |
+| Production POST 2 (cardTone live) | 0.2288 | 0.0552 | 42 | 0 |
+| **Total this spec** | **0.5265** | **0.2476** | **85** | **0** |
+
+List from `meta.llmSpend.costUsd`. Discounted = list minus gpt-4o `cachedInputTokens * 1.25 / 1e6` (run 1 cached 84,224; run 2 cached 138,880). Mini cache 0. Unpriced 0.

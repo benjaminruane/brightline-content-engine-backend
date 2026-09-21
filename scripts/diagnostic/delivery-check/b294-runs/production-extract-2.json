@@ -1,0 +1,129 @@
+{
+  "http": 200,
+  "ok": true,
+  "wallMs": 14331,
+  "traceId": "b9543423-8b3d-4466-8b2f-5e2238701784",
+  "llmSpend": {
+    "calls": 42,
+    "inputTokens": 151159,
+    "cachedInputTokens": 138880,
+    "outputTokens": 2828,
+    "costUsd": 0.22883864999999998,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 40,
+        "inputTokens": 149896,
+        "cachedInputTokens": 138880,
+        "outputTokens": 2746,
+        "costUsd": 0.22859999999999997,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 2,
+        "inputTokens": 1263,
+        "cachedInputTokens": 0,
+        "outputTokens": 82,
+        "costUsd": 0.00023865,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "reviewSummary": {
+    "version": 1,
+    "statements": 7,
+    "evidence": {
+      "confirmed": 3,
+      "partial": 2,
+      "conflicting": 0,
+      "notSupported": 2
+    },
+    "editorial": {
+      "concerns": 3,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "compliance": {
+      "concerns": 0,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "signalConcerns": 3,
+    "notChecked": 0,
+    "needsAttention": 3,
+    "readiness": "Needs work",
+    "rateLimitBoundHits": {
+      "editorial": 0,
+      "compliance": 0,
+      "commentary": 0,
+      "other": 0,
+      "statements": 0
+    }
+  },
+  "tones": [
+    {
+      "index": 0,
+      "text": "In June 2026, Partners Group committed to Meridian Capital P",
+      "evidence": "partial",
+      "editorial": "clean",
+      "compliance": "clean",
+      "stampedTone": "amber",
+      "localTone": "amber"
+    },
+    {
+      "index": 1,
+      "text": "The fund intends to build a portfolio of 10-14 control-orien",
+      "evidence": "partial",
+      "editorial": "clean",
+      "compliance": "clean",
+      "stampedTone": "amber",
+      "localTone": "amber"
+    },
+    {
+      "index": 2,
+      "text": "Target companies are expected to have enterprise valuations ",
+      "evidence": "confirmed",
+      "editorial": "clean",
+      "compliance": "clean",
+      "stampedTone": "green",
+      "localTone": "green"
+    },
+    {
+      "index": 3,
+      "text": "Partners Group was attracted to this investment given Meridi",
+      "evidence": "confirmed",
+      "editorial": "concern",
+      "compliance": "clean",
+      "stampedTone": "amber",
+      "localTone": "amber"
+    },
+    {
+      "index": 4,
+      "text": "Furthermore, Partners Group has a long-established relations",
+      "evidence": "confirmed",
+      "editorial": "clean",
+      "compliance": "clean",
+      "stampedTone": "green",
+      "localTone": "green"
+    },
+    {
+      "index": 5,
+      "text": "This relationship enabled deep insight during the diligence ",
+      "evidence": "notSupported",
+      "editorial": "concern",
+      "compliance": "clean",
+      "stampedTone": "red",
+      "localTone": "red"
+    },
+    {
+      "index": 6,
+      "text": "We recommend approval of the commitment.",
+      "evidence": "notSupported",
+      "editorial": "concern",
+      "compliance": "clean",
+      "stampedTone": "red",
+      "localTone": "red"
+    }
+  ]
+}
