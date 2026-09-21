@@ -2,6 +2,7 @@ import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observabi
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
 import { READINESS_LABELS } from "../lib/qc/review-summary.mjs";
+import { asReviewOptions } from "../lib/qc/review-options.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 /** R3.7: appended voice constraints — do not alter role/length/tone preamble above the two trailing paragraphs. */
@@ -56,11 +57,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: false, narrative: "" });
   }
   const reviewOptions = body.reviewOptions && typeof body.reviewOptions === "object" ? body.reviewOptions : {};
-  const activeReviewOptions = {
-    evidenceEnabled: reviewOptions.evidenceEnabled !== false,
-    editorialEnabled: reviewOptions.editorialEnabled !== false,
-    complianceEnabled: reviewOptions.complianceEnabled !== false,
-  };
+  const activeReviewOptions = asReviewOptions(reviewOptions);
   const context = body.context === "writing" ? "writing" : "assess";
 
   const roleFraming =

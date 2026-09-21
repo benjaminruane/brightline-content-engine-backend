@@ -227,6 +227,7 @@ async function renderPdf(payload) {
       if (s.excerpt) labelValue("Excerpt", `"${s.excerpt}"`);
       if (s.editorialNote) labelValue("Editorial note", s.editorialNote);
       if (s.complianceNote) labelValue("Compliance note", s.complianceNote);
+      if (s.turnedOffLine) body(s.turnedOffLine);
       if (s.reviewerVerdict) labelValue("Reviewer verdict", s.reviewerVerdict);
       doc.moveDown(0.45);
       doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).strokeColor("#e2e8f0").lineWidth(1).stroke();
@@ -387,6 +388,7 @@ function buildDocx(payload) {
       }));
       if (s.editorialNote) children.push(new Paragraph({ children: [new TextRun({ text: "Editorial note: ", bold: true }), new TextRun(String(s.editorialNote))] }));
       if (s.complianceNote) children.push(new Paragraph({ children: [new TextRun({ text: "Compliance note: ", bold: true }), new TextRun(String(s.complianceNote))] }));
+      if (s.turnedOffLine) children.push(new Paragraph({ children: [new TextRun(String(s.turnedOffLine))] }));
       if (s.reviewerVerdict) children.push(new Paragraph({ children: [new TextRun({ text: "Reviewer verdict: ", bold: true }), new TextRun(String(s.reviewerVerdict))] }));
       children.push(new Paragraph({ text: "", spacing: { after: 320 } }));
     }

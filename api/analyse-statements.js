@@ -22,6 +22,7 @@ import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
 import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
+import { resolveReviewOptionsFromBody } from "../lib/qc/review-options.mjs";
 import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
 import {
   beginRequestBudget,
@@ -88,15 +89,9 @@ function resolveAuthoringOrganisationSource(body) {
   return null;
 }
 
-/** B29: Review toggles from request body root or options; default true when absent. */
+/** B299: Review toggles from request body. Absent is not requested. Loud at this writer. */
 function resolveReviewOptions(body) {
-  const opts = body?.options && typeof body.options === "object" ? body.options : {};
-  const flag = (rootKey, optKey) => !(body?.[rootKey] === false || opts[optKey] === false);
-  return {
-    evidenceEnabled: flag("evidenceEnabled", "evidenceEnabled"),
-    editorialEnabled: flag("editorialEnabled", "editorialEnabled"),
-    complianceEnabled: flag("complianceEnabled", "complianceEnabled"),
-  };
+  return resolveReviewOptionsFromBody(body);
 }
 
 function escapeRegex(value) {

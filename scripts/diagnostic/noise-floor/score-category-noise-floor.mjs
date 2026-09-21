@@ -5,6 +5,7 @@
  */
 
 import { classifyCard, summariseReview } from "../../../lib/qc/review-summary.mjs";
+import { asReviewOptions } from "../../../lib/qc/review-options.mjs";
 
 export const CATEGORY_KEYS = [
   "all",
@@ -34,13 +35,8 @@ export const CATEGORY_LABELS = {
   readiness: "readiness label",
 };
 
-function asReviewOptions(meta) {
-  const src = meta?.reviewOptions && typeof meta.reviewOptions === "object" ? meta.reviewOptions : {};
-  return {
-    evidenceEnabled: src.evidenceEnabled !== false,
-    editorialEnabled: src.editorialEnabled !== false,
-    complianceEnabled: src.complianceEnabled !== false,
-  };
+function reviewFlags(meta) {
+  return asReviewOptions(meta?.reviewOptions);
 }
 
 function statementText(stmt) {
@@ -66,7 +62,7 @@ function emptyCounts() {
 }
 
 export function countsFromCards(cards, reviewOptions) {
-  const opts = asReviewOptions({ reviewOptions });
+  const opts = asReviewOptions(reviewOptions);
   const counts = emptyCounts();
   const list = Array.isArray(cards) ? cards : [];
   for (const card of list) {
@@ -95,7 +91,7 @@ export function extractRunFromResponse(payload, extras = {}) {
   const data = payload && typeof payload === "object" ? payload : {};
   const statements = Array.isArray(data.statements) ? data.statements : [];
   const meta = data.meta && typeof data.meta === "object" ? data.meta : {};
-  const reviewOptions = asReviewOptions(meta);
+  const reviewOptions = reviewFlags(meta);
   const cards = [];
   for (const stmt of statements) {
     const qcCard = stmt?.qcCard && typeof stmt.qcCard === "object" ? stmt.qcCard : {};

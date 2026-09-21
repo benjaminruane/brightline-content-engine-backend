@@ -144,6 +144,7 @@ describe("B245 corruptions", () => {
       true
     );
     assert.equal(editorialLines.some((line) => /Editorial note: (?!Not checked\.).+/.test(line)), false);
+    assert.equal(flipped.includes("Turned off for this run: Editorial review."), true);
   });
 
   test("a commentary miss is Not checked, never a stand-in finding", () => {

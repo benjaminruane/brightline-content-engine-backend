@@ -13,6 +13,7 @@ import {
   unnamedFindings,
 } from "../lib/qc/constructive-feedback.mjs";
 import { READINESS_LABELS, summariseReview } from "../lib/qc/review-summary.mjs";
+import { asReviewOptions } from "../lib/qc/review-options.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 function setCorsHeaders(req, res) {
@@ -56,11 +57,7 @@ export default async function handler(req, res) {
   const body = req.body && typeof req.body === "object" ? req.body : {};
   const draftText = typeof body.draftText === "string" ? body.draftText.trim() : "";
   const reviewOptions = body.reviewOptions && typeof body.reviewOptions === "object" ? body.reviewOptions : {};
-  const activeReviewOptions = {
-    evidenceEnabled: reviewOptions.evidenceEnabled !== false,
-    editorialEnabled: reviewOptions.editorialEnabled !== false,
-    complianceEnabled: reviewOptions.complianceEnabled !== false,
-  };
+  const activeReviewOptions = asReviewOptions(reviewOptions);
   const rows = extractRows(body);
   const cards = rows.map((row) => (row?.qcCard && typeof row.qcCard === "object" ? row.qcCard : row));
   const reviewSummary = summariseReview(cards, activeReviewOptions);

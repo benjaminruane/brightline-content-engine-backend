@@ -3,7 +3,12 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, test, vi } from "vitest";
-import { cardToneFromClass, classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
+import {
+  cardToneFromClass,
+  classifyCard,
+  summariseReview,
+  turnedOffLineFromClass,
+} from "../lib/qc/review-summary.mjs";
 import { summaryBulletsFromReview } from "../lib/qc/summary-bullets.mjs";
 import * as observability from "../lib/observability.js";
 import handler from "../api/synthesize-review.js";
@@ -24,6 +29,7 @@ describe("review-summary cases", () => {
         assert.deepEqual(classifyCard(cards[i], opts), {
           ...expected,
           cardTone: cardToneFromClass(expected),
+          turnedOffLine: turnedOffLineFromClass(expected),
         });
       }
       assert.deepEqual(summariseReview(cards, opts), testCase.expectedReviewSummary);
