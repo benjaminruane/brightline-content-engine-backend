@@ -96,8 +96,11 @@ async function listInputFiles() {
   } catch {
     return [];
   }
+  const wanted = process.argv.slice(2).filter((a) => typeof a === "string" && !a.startsWith("-"));
+  const wantedSet = new Set(wanted);
   return names
     .filter((n) => EXT_OK.has(path.extname(n).toLowerCase()))
+    .filter((n) => wantedSet.size === 0 || wantedSet.has(n))
     .sort();
 }
 
@@ -281,7 +284,9 @@ async function main() {
   );
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
