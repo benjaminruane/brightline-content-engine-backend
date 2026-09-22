@@ -5,3 +5,30 @@ Standing authority (B222). Cursor may make a change WITHOUT a spec when the chan
 Before starting any spec, read ai/AI_OPERATING_MANUAL.md and follow it. Use ai/SPEC_TEMPLATE.md for the spec form.
 
 P31. A missing input must be loud at the point it goes missing. Refuse, or log, at the writer. Do not silently default.
+
+## Shipping is not done until it is on the remote
+
+A spec is NOT complete while any of these is true in a repo it touched:
+- `git status --porcelain` prints anything
+- `git log origin/main..HEAD` prints anything
+- `npm run verify:ship` has not printed SHIP VERIFIED
+
+At the end of every spec, in EVERY repo it touched, run these on SEPARATE lines,
+never chained with `&&`:
+
+    git add -A
+    git commit -m "<the spec's commit message>"
+    git push origin main
+    npm run verify:ship
+
+`git commit` exits non-zero on a clean tree. Chaining it to the push with `&&`
+stops the push from running. That is how work has been left on the local machine
+three times while the report said the spec was done.
+
+Machine output from a measured or billed run is COMMITTED, not ignored, unless it
+is a binary or over 1 MB. Leaving it untracked loses the evidence the report cites.
+
+The report's FIRST line states, per repo touched, the pushed sha and the verbatim
+verify:ship verdict. If anything is unpushed or the tree is dirty, say that in the
+first line instead. Never describe a spec as done, shipped or deployed on the basis
+of a local commit.
