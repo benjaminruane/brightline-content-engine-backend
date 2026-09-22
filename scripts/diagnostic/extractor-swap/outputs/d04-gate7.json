@@ -1,0 +1,29 @@
+{
+  "id": "d04",
+  "filename": "hpif-report-march-2026.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 9395,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.05006594999999999,
+  "committedVerdict": {
+    "evidenceVerdict": "conflict",
+    "supportState": "conflicting",
+    "displayVerdict": "conflict",
+    "hasRealExcerpt": false,
+    "quote": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653.0M 57 40+ Fund NAV Companies 2 General Partners 2",
+    "statement": "rd-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "partial",
+    "displayVerdict": "supported_partial",
+    "quote": "Exposure to fast growing, hard-to-access companies of seasoned investments across multiple vintages seeded by long-term relationships and with, in our view, strong institutional anchor client outperformance potential allocated on a pro-rata basis",
+    "statement": "rd-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "a46eb4c9-554e-40f2-9331-5fa64f70f8b8"
+}

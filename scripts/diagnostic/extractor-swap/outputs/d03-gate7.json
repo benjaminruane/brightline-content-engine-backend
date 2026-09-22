@@ -1,0 +1,29 @@
+{
+  "id": "d03",
+  "filename": "3i-overview-and-strategy-2025.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 6883,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.0731325,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": true,
+    "quote": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+    "statement": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+    "statement": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "ddd7b87e-6518-4059-ae0a-42f8a5d08d86"
+}

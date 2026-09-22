@@ -1,0 +1,29 @@
+{
+  "id": "d08",
+  "filename": "berkshire-2024-shareholder-letter.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 7491,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.0724075,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.”",
+    "statement": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.”",
+    "statement": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "16036e64-f06e-4123-930b-412bd8c26c3d"
+}

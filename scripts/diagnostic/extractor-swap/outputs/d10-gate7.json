@@ -1,0 +1,29 @@
+{
+  "id": "d10",
+  "filename": "berkshire-2022-shareholder-letter.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 7965,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.067815,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+    "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . ."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "Annual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nBerkshire Included\nYear\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+    "statement": "the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 ."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "6fa0d76c-0239-4138-b3d0-151701e4ea39"
+}

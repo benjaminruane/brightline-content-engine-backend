@@ -1,0 +1,29 @@
+{
+  "id": "d06",
+  "filename": "3i-hy25-highlights.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 8684,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 3,
+  "listUsd": 0.072621,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "3i Group plc announces results for the six months to 30 September 2025",
+    "statement": "3i Group plc announces results for the six months to 30 September 2025"
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "3i Group plc announces results for the six months to 30 September 2025",
+    "statement": "3i Group plc announces results for the six months to 30 September 2025"
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "ccd49cb0-ce6f-466a-ad1a-1f99f188b3fb"
+}

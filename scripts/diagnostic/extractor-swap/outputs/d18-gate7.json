@@ -1,0 +1,29 @@
+{
+  "id": "d18",
+  "filename": "oaktree-mr-market-miscalculates.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 6938,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 2,
+  "listUsd": 0.082595,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": true,
+    "quote": "Imagine that in some private business you own a small share that cost you $1,000.",
+    "statement": "Market: Imagine that in some private business you own a small share that cost you $1,000."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "Imagine that in some private business you own a small share that cost you $1,000.",
+    "statement": "Market: Imagine that in some private business you own a small share that cost you $1,000."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "4f81a01f-d715-43cc-8dbd-7c96b581ba37"
+}

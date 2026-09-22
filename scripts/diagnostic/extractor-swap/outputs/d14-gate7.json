@@ -1,0 +1,29 @@
+{
+  "id": "d14",
+  "filename": "oaktree-on-bubble-watch.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 8882,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.0515875,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+    "statement": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+    "statement": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "9508f5de-eaba-4297-83bf-e005413a374f"
+}

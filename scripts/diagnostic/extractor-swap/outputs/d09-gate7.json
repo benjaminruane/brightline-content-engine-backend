@@ -1,0 +1,29 @@
+{
+  "id": "d09",
+  "filename": "berkshire-2023-shareholder-letter.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 6441,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.08631,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": true,
+    "quote": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+    "statement": "Charlie Munger died on November 28, just 33 days before his 100th birthday."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+    "statement": "Charlie Munger died on November 28, just 33 days before his 100th birthday."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "7edbd7e6-96d7-4563-bb0c-dbb8629f5b4f"
+}

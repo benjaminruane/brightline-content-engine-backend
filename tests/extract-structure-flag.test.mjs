@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { afterEach, describe, test } from "vitest";
+import { afterEach, beforeEach, describe, test } from "vitest";
 import {
   SUPPORTED_MIME_TYPES,
   extractTextFromSource,
@@ -19,14 +19,26 @@ const MULTIPAGE = path.join(CORPUS, "multipage.pdf");
 const SCANNED = path.join(CORPUS, "image_only.pdf");
 
 const FLAG = "QC_EXTRACT_STRUCTURE";
+const ENGINE = "PDF_ENGINE";
 
 function setFlag(value) {
   if (value == null) delete process.env[FLAG];
   else process.env[FLAG] = value;
 }
 
+function setEngine(value) {
+  if (value == null) delete process.env[ENGINE];
+  else process.env[ENGINE] = value;
+}
+
+beforeEach(() => {
+  // B317 measures the officeparser chunks convert. Direct path fills pages without it.
+  setEngine("officeparser");
+});
+
 afterEach(() => {
   delete process.env[FLAG];
+  delete process.env[ENGINE];
 });
 
 describe("B317 QC_EXTRACT_STRUCTURE", () => {

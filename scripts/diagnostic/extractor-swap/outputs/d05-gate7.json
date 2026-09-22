@@ -1,0 +1,29 @@
+{
+  "id": "d05",
+  "filename": "3i-q1-fy25-performance-update.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 7464,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.034805,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+    "statement": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+    "statement": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "888c44f5-6ef8-488d-8a34-6b6ded418dce"
+}

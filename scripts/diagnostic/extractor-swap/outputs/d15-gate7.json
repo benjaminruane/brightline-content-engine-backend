@@ -1,0 +1,29 @@
+{
+  "id": "d15",
+  "filename": "oaktree-nobody-knows-yet-again.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 7169,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.053207500000000005,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+    "statement": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+    "statement": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "c55050c1-6b3a-4439-b91e-04a25688b42a"
+}

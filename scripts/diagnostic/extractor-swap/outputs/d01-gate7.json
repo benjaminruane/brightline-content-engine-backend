@@ -1,0 +1,29 @@
+{
+  "id": "d01",
+  "filename": "3i-press-release-fy2025.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 25495,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 3,
+  "listUsd": 0.5979895500000001,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "3i Group plc announces results for the year to 31 March 2025",
+    "statement": "3i Group plc announces results for the year to 31 March 2025"
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "3i Group plc announces results for the year to 31 March 2025",
+    "statement": "3i Group plc announces results for the year to 31 March 2025"
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "bd863cd9-6655-4340-a351-f2b23a3af2c7"
+}

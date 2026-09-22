@@ -1,0 +1,22 @@
+{
+  "id": "d07",
+  "filename": "pg-annual-results-2025-press-release.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 7041,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.029522500000000004,
+  "committedVerdict": null,
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "partial",
+    "displayVerdict": "supported_partial",
+    "quote": "Press release\nBaar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuant to Art. 53 Listing Rules (LR)",
+    "statement": "Press release Baar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuant to Art."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "b4be2032-efd7-4cc2-b827-4f61f048a7de"
+}

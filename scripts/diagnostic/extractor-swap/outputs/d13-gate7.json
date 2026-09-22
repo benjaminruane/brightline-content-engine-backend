@@ -1,0 +1,29 @@
+{
+  "id": "d13",
+  "filename": "jpm-ceo-letter-2024.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 15971,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.2817175,
+  "committedVerdict": {
+    "evidenceVerdict": "conflict",
+    "supportState": "conflicting",
+    "displayVerdict": "conflict",
+    "hasRealExcerpt": false,
+    "quote": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% 2 , reflecting strong underlying performance across our businesses.",
+    "statement": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "partial",
+    "displayVerdict": "supported_partial",
+    "quote": "We earned revenue in 2024 of $180.6 billion and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% , reflecting strong underlying performance across our businesses.",
+    "statement": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "374e7f02-76b4-4a43-a11b-2d39115461a8"
+}

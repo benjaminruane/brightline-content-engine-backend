@@ -1,0 +1,29 @@
+{
+  "id": "d16",
+  "filename": "oaktree-gimme-credit.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 7509,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.0453225,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+    "statement": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+    "statement": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "77e3ab5d-10e4-4a02-b066-b60a43d24b93"
+}

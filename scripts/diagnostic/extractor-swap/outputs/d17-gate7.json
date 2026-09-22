@@ -1,0 +1,39 @@
+{
+  "id": "d17",
+  "filename": "oaktree-the-calculus-of-value.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 7030,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.0562425,
+  "committedVerdict": {
+    "evidenceVerdict": "conflict",
+    "supportState": "conflicting",
+    "displayVerdict": "conflict",
+    "hasRealExcerpt": false,
+    "quote": "January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch .",
+    "statement": "January 2 of this year was the 25 th anniversary of my memo bubble."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "January 2 of this year was the 25 anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch.",
+    "statement": "January 2 of this year was the 25 th anniversary of my memo bubble."
+  },
+  "verdictMoved": true,
+  "killCards": [
+    {
+      "kill": true,
+      "statement": "January 2 of this year was the 25 th anniversary of my memo bubble.",
+      "evidenceVerdict": null,
+      "supportState": "supported",
+      "displayVerdict": "supported_full",
+      "quote": "January 2 of this year was the 25 anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch.",
+      "locatedInNewSource": false
+    }
+  ],
+  "traceId": "e8f35214-778b-45ec-952d-831832b860cb"
+}

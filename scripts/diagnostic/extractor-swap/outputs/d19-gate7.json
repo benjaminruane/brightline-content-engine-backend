@@ -1,0 +1,29 @@
+{
+  "id": "d19",
+  "filename": "oaktree-2024-in-review.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 5581,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.0500225,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.",
+    "statement": "Last year was an unusual one."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.",
+    "statement": "Last year was an unusual one."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "3e861cff-a004-4108-b825-19c9eaeb420c"
+}

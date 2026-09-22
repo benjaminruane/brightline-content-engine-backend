@@ -1,0 +1,29 @@
+{
+  "id": "d20",
+  "filename": "oaktree-further-thoughts-on-sea-change.pdf",
+  "httpStatus": 200,
+  "elapsedMs": 5898,
+  "networkError": null,
+  "ok": true,
+  "error": null,
+  "cards": 1,
+  "listUsd": 0.0498975,
+  "committedVerdict": {
+    "evidenceVerdict": "supported_full",
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "hasRealExcerpt": false,
+    "quote": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+    "statement": "On October 11, 1987, I first came across the saying “this time it’s different."
+  },
+  "newVerdict": {
+    "evidenceVerdict": null,
+    "supportState": "supported",
+    "displayVerdict": "supported_full",
+    "quote": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+    "statement": "On October 11, 1987, I first came across the saying “this time it’s different."
+  },
+  "verdictMoved": true,
+  "killCards": [],
+  "traceId": "d8c8fcc5-d2e1-4400-96a4-531102893ae7"
+}
