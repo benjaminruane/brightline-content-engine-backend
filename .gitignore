@@ -48,6 +48,8 @@ scripts/diagnostic/delivery-check/b163/reviews/**/*.json
 
 # Bake-off run artefacts (REPORT.md is kept)
 scripts/diagnostic/bakeoff/runs/
+scripts/diagnostic/extractor-bakeoff/outputs/*.txt
+scripts/diagnostic/extractor-bakeoff/outputs/*.json
 
 # B277 production payloads are large; keep extracts
 scripts/diagnostic/delivery-check/b277-runs/*.json
