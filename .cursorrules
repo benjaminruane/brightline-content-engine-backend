@@ -28,7 +28,7 @@ three times while the report said the spec was done.
 Machine output from a measured or billed run is COMMITTED, not ignored, unless it
 is a binary or over 1 MB. Leaving it untracked loses the evidence the report cites.
 
-The report's FIRST line states, per repo touched, the pushed sha and the verbatim
-verify:ship verdict. If anything is unpushed or the tree is dirty, say that in the
-first line instead. Never describe a spec as done, shipped or deployed on the basis
-of a local commit.
+The scoreboard that opens every report carries a SHIPPED row: per repo touched,
+the pushed sha and the verbatim verify:ship verdict. If anything is unpushed or
+the tree is dirty, that row says so, and it is the first row. Never describe a
+spec as done, shipped or deployed on the basis of a local commit.
