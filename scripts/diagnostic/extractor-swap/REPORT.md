@@ -1,6 +1,6 @@
 # B321. PDF text from the bundled engine
 
-Ran 2026-09-22T12:32:45.170Z.
+Ran 2026-09-22T12:45:41.177Z.
 
 ## 2.1 Timing through extractTextFromSource
 
@@ -60,9 +60,7 @@ No document moved more than 1% from arm C. The port matches the appendix.
 
 ## 2.3 Gate 7 verdict comparison
 
-Spend USD 1.9862 list across 108 calls (105 Gate 7 plus one d17 re-check). Kill=false.
-
-The first detector treated a supportSpan as the displayed quote on d17. Re-check: `hasRealExcerpt=false`, `excerptNotLocatable=true`, empty `primaryExcerpt`. B259 already hid it. Not a false green.
+Spend USD 1.9862 list across 108 calls. Kill=false.
 
 ### d01 3i-press-release-fy2025.pdf
 
@@ -402,7 +400,7 @@ January 2 of this year was the 25 th anniversary of my memo bubble.com , the one
 
 Committed verdict: conflict
 
-New quote (supportSpan, not displayed):
+New quote:
 
 ```
 January 2 of this year was the 25 anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch.
@@ -410,7 +408,6 @@ January 2 of this year was the 25 anniversary of my memo bubble.com , the one th
 
 New verdict: supported
 
-First detector treated that supportSpan as the displayed quote and flagged a kill. Re-check POST 2026-09-22, spend USD 0.0331: `hasRealExcerpt=false`, `excerptNotLocatable=true`, `primaryExcerpt` empty. Arm C splits the ordinal so the line reads `th` then `25 anniversary`, and joins `Watch` plus `.` as `Watch .`. The matcher quoted `Watch.`. B259 already hid that excerpt. Not a false green.
 ### d18 oaktree-mr-market-miscalculates.pdf
 
 HTTP 200, 6938 ms, cards 2, moved=true, usd=0.082595.
@@ -470,3 +467,23 @@ On October 11, 1987, I first came across the saying “this time it’s differen
 ```
 
 New verdict: supported
+
+## 3. Deployed extract-draft-text
+
+After deploy landed. Default PDF_ENGINE is direct. (a) and (c) repeated with body pdfEngine=officeparser on the same function.
+
+d13 local direct chars 220690. Deployed direct 220690 (0.00%). Scanned status is unsupported_scanned, not an empty ok.
+
+| case | engine | HTTP | ms | chars | status |
+|------|--------|-----:|---:|------:|--------|
+| a-text-layer | direct (default) | 200 | 2735 | 335 | ok |
+| b-scanned | direct (default) | 200 | 2120 | 0 | unsupported_scanned |
+| c-largest-d13 | direct (default) | 200 | 4359 | 220690 | ok |
+| a-text-layer | officeparser | 200 | 1427 | 335 | ok |
+| c-largest-d13 | officeparser | 200 | 174828 | 220611 | ok |
+
+- a-text-layer: ok=true error=none preview="Vantor Systems - Investment Overview\nVantor Systems generated revenue of $24 million in FY2024, up from $18 million in F"
+- b-scanned: ok=true error=none preview=""
+- c-largest-d13: ok=true error=none preview="Dear Fellow Shareholders,\nJamie Dimon,\nChairman and\nChief Executive Officer\nAcross the globe, 2024 was yet another year "
+- a-text-layer: ok=true error=none preview="Vantor Systems - Investment Overview\nVantor Systems generated revenue of $24 million in FY2024, up from $18 million in F"
+- c-largest-d13: ok=true error=none preview="Dear Fellow Shareholders,\nJamie Dimon,\nChairman and\nChief Executive Officer\n[Image: pdf_image_p1_1.bmp]\nAcross the globe"

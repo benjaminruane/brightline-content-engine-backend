@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-09-22T12:32:45.162Z",
+  "ranAt": "2026-09-22T12:45:41.169Z",
   "timing": {
     "officeparser": {
       "totalMs": 755629,
@@ -1223,5 +1223,71 @@
         "traceId": "d8c8fcc5-d2e1-4400-96a4-531102893ae7"
       }
     ]
+  },
+  "deployedProof": {
+    "rows": [
+      {
+        "label": "a-text-layer",
+        "httpStatus": 200,
+        "elapsedMs": 2735,
+        "characters": 335,
+        "status": "ok",
+        "ok": true,
+        "error": null,
+        "networkError": null,
+        "preview": "Vantor Systems - Investment Overview\nVantor Systems generated revenue of $24 million in FY2024, up from $18 million in F",
+        "engine": "direct (default)"
+      },
+      {
+        "label": "b-scanned",
+        "httpStatus": 200,
+        "elapsedMs": 2120,
+        "characters": 0,
+        "status": "unsupported_scanned",
+        "ok": true,
+        "error": null,
+        "networkError": null,
+        "preview": "",
+        "engine": "direct (default)"
+      },
+      {
+        "label": "c-largest-d13",
+        "httpStatus": 200,
+        "elapsedMs": 4359,
+        "characters": 220690,
+        "status": "ok",
+        "ok": true,
+        "error": null,
+        "networkError": null,
+        "preview": "Dear Fellow Shareholders,\nJamie Dimon,\nChairman and\nChief Executive Officer\nAcross the globe, 2024 was yet another year ",
+        "engine": "direct (default)"
+      },
+      {
+        "label": "a-text-layer",
+        "httpStatus": 200,
+        "elapsedMs": 1427,
+        "characters": 335,
+        "status": "ok",
+        "ok": true,
+        "error": null,
+        "networkError": null,
+        "preview": "Vantor Systems - Investment Overview\nVantor Systems generated revenue of $24 million in FY2024, up from $18 million in F",
+        "engine": "officeparser"
+      },
+      {
+        "label": "c-largest-d13",
+        "httpStatus": 200,
+        "elapsedMs": 174828,
+        "characters": 220611,
+        "status": "ok",
+        "ok": true,
+        "error": null,
+        "networkError": null,
+        "preview": "Dear Fellow Shareholders,\nJamie Dimon,\nChairman and\nChief Executive Officer\n[Image: pdf_image_p1_1.bmp]\nAcross the globe",
+        "engine": "officeparser"
+      }
+    ],
+    "biggestId": "d13",
+    "localDirectChars": 220690
   }
 }
