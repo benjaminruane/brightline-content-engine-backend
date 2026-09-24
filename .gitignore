@@ -51,6 +51,10 @@ scripts/diagnostic/bakeoff/runs/
 scripts/diagnostic/extractor-bakeoff/outputs/*.txt
 scripts/diagnostic/extractor-bakeoff/outputs/*.json
 
+# B326 figure-fidelity extracts and inventories (REPORT.md is kept)
+scripts/diagnostic/figure-fidelity/outputs/*.txt
+scripts/diagnostic/figure-fidelity/outputs/*.json
+
 # B277 production payloads are large; keep extracts
 scripts/diagnostic/delivery-check/b277-runs/*.json
 !scripts/diagnostic/delivery-check/b277-runs/*-extract.json
