@@ -20,4 +20,8 @@ describe("B232 export verdict label", () => {
   test("supported_full still reads Confirmed after trim", () => {
     assert.equal(normalizeExportVerdict(" supported_full "), "Confirmed");
   });
+
+  test("an allowlisted unverifiable slug is Unverifiable", () => {
+    assert.equal(normalizeExportVerdict("unverifiable"), "Unverifiable");
+  });
 });

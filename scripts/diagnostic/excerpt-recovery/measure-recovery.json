@@ -1,0 +1,606 @@
+{
+  "floor": 0.85,
+  "cases": 56,
+  "skippedEmptySource": 0,
+  "misquotes": 37,
+  "exactSubstringOfSource": 19,
+  "chosen": {
+    "floor": 0.85,
+    "byStep": {
+      "exact": 19,
+      "normalised": 33,
+      "window": 3,
+      "miss": 1
+    },
+    "recovered": 55,
+    "miss": 1,
+    "figuresGuardRejected": 0
+  },
+  "looser": {
+    "floor": 0.75,
+    "byStep": {
+      "exact": 19,
+      "normalised": 33,
+      "window": 3,
+      "miss": 1
+    },
+    "recovered": 55,
+    "miss": 1
+  },
+  "stricter": {
+    "floor": 0.9,
+    "byStep": {
+      "exact": 19,
+      "normalised": 33,
+      "window": 3,
+      "miss": 1
+    },
+    "recovered": 55,
+    "miss": 1
+  },
+  "recoveries": [
+    {
+      "origin": "extractor-swap/d01-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "3i Group plc announces results for the year to 31 March 2025",
+      "recovered": "3i Group plc announces results for the year\nto 31 March 2025",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d02-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "3i Group plc announces results for the year to 31 March 2025",
+      "recovered": "3i Group plc announces results for the year\nto 31 March 2025",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d03-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+      "recovered": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d05-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+      "recovered": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to\n30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d06-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "3i Group plc announces results for the six months to 30 September 2025",
+      "recovered": "3i Group plc announces results for the six months\nto 30 September 2025",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d07-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Press release\nBaar-Zug, Switzerland; 10 March 2026 | Ad hoc announcement pursuant to Art. 53 Listing Rules (LR)",
+      "recovered": "Press release\nBaar-Zug, Switzerland; 10 March 2026 |   Ad hoc announcement pursuant to Art. 53 Listing Rules (LR)",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d08-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.”",
+      "recovered": "When discussing problems\nat specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60\nyears ago: “praise by name, criticize by category.”",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d09-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+      "recovered": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d10-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Annual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nBerkshire Included\nYear\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "recovered": "Annual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nBerkshire Included\nYear\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   49.5   10.0",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d11-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Berkshire Included Year 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "recovered": "Annual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nBerkshire Included\nYear\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   49.5   10.0",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d12-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Berkshire Included Year 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "recovered": "Annual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nBerkshire Included\nYear\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   49.5   10.0",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d13-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "We earned revenue in 2024 of $180.6 billion and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% , reflecting strong underlying performance across our businesses.",
+      "recovered": "We earned revenue in 2024 of\n1  \n$180.6 billion and net income of $58.5 billion, with return on tangible common\n2\nequity (ROTCE) of 20% , reflecting strong underlying performance across our\nbusinesses.",
+      "step": "window",
+      "reason": null,
+      "similarity": 0.9798994974874372,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d14-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+      "recovered": "As a result of those experiences, many people these days are on heightened alert for\nbubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the\nhandful of stocks that have been leading it.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d15-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+      "recovered": "But I saw no logical choice other\nthan to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities\nFund VIIb.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d16-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+      "recovered": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond\nIndex.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d17-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "January 2 of this year was the 25 anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch.",
+      "recovered": "January 2 of this year was the 25 anniversary of my memo   bubble.com , the one that put my writing on\nthe map, and I marked the occasion by publishing another memo, called   On Bubble Watch ",
+      "step": "window",
+      "reason": null,
+      "similarity": 0.9946524064171123,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d18-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Imagine that in some private business you own a small share that cost you $1,000.",
+      "recovered": "Imagine that in some private business you own a small share that cost you $1,000.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d19-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.",
+      "recovered": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago\nhas seemed unusual.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "extractor-swap/d20-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+      "recovered": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d01-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "3i Group plc announces results for the year to 31 March 2025",
+      "recovered": "3i Group plc announces results for the year\nto 31 March 2025",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d01-review.json#1",
+      "kind": "primaryExcerpt",
+      "pointer": "A year of consistently strong growth",
+      "recovered": "A year of consistently strong growth",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d01-review.json#1",
+      "kind": "supportSpan[0]",
+      "pointer": "A year of consistently strong growth",
+      "recovered": "A year of consistently strong growth",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d01-review.json#2",
+      "kind": "supportSpan[0]",
+      "pointer": "Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per share of 2,542 pence (31 March 2024: 2,085 pence).",
+      "recovered": "Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per\nshare of 2,542 pence (31 March 2024: 2,085 pence).",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d02-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "3i Group plc announces results for the year to 31 March 2025",
+      "recovered": "3i Group plc announces results for the year\nto 31 March 2025",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d02-review.json#1",
+      "kind": "primaryExcerpt",
+      "pointer": "A year of consistently strong growth",
+      "recovered": "A year of consistently strong growth",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d02-review.json#1",
+      "kind": "supportSpan[0]",
+      "pointer": "A year of consistently strong growth",
+      "recovered": "A year of consistently strong growth",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d02-review.json#2",
+      "kind": "supportSpan[0]",
+      "pointer": "Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per share of 2,542 pence (31 March 2024: 2,085 pence).",
+      "recovered": "Total return of £5,049 million or 25% on opening shareholders’ funds (2024: £3,839 million, 23%) and NAV per\nshare of 2,542 pence (31 March 2024: 2,085 pence).",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d03-review.json#0",
+      "kind": "primaryExcerpt",
+      "pointer": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+      "recovered": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d03-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+      "recovered": "For definitions of our financial terms used throughout this report, please see our Glossary on pages 214 to 216.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d04-review.json#0",
+      "kind": "conflictExcerpt",
+      "pointer": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potent...",
+      "recovered": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio\ninvestments sourced through hard-to-access companies of seasoned investments across\nlong-term relationships and with, in our view, strong multiple vintages seeded by\nallocated on a pro-rata basis outperformance potential",
+      "step": "window",
+      "reason": null,
+      "similarity": 0.9900990099009901,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d04-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio investments sourced through hard-to-access companies of seasoned investments across long-term relationships and with, in our view, strong multiple vintages seeded by allocated on a pro-rata basis outperformance potential institutional anchor client $653.0M 57 40+ Fund NAV Companies 2 General Partners 2",
+      "recovered": "Seeking cost-effective private Exposure to fast growing, Private markets portfolio\ninvestments sourced through hard-to-access companies of seasoned investments across\nlong-term relationships and with, in our view, strong multiple vintages seeded by\nallocated on a pro-rata basis outperformance potential institutional anchor client\n$653.0M 57 40+\nFund NAV Companies 2 General Partners 2",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d05-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to 30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+      "recovered": "Increase in NAV per share to 2,167 pence (31 March 2024: 2,085 pence) and total return of 4% for the three months to\n30 June 2024, after a negative foreign exchange translation impact of £113 million or 12 pence.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d06-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "3i Group plc announces results for the six months to 30 September 2025",
+      "recovered": "3i Group plc announces results for the six months\nto 30 September 2025",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d06-review.json#1",
+      "kind": "primaryExcerpt",
+      "pointer": "3i Group delivered strong performance in the first half of FY2026",
+      "recovered": "3i Group delivered strong performance in the first half of FY2026",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d06-review.json#1",
+      "kind": "supportSpan[0]",
+      "pointer": "3i Group delivered strong performance in the first half of FY2026",
+      "recovered": "3i Group delivered strong performance in the first half of FY2026",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d06-review.json#2",
+      "kind": "primaryExcerpt",
+      "pointer": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+      "recovered": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d06-review.json#2",
+      "kind": "supportSpan[0]",
+      "pointer": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+      "recovered": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d08-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "When discussing problems at specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60 years ago: “praise by name, criticize by category.”",
+      "recovered": "When discussing problems\nat specific subsidiaries, we do, however, try to follow the advice Tom Murphy gave to me 60\nyears ago: “praise by name, criticize by category.”",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d09-review.json#0",
+      "kind": "primaryExcerpt",
+      "pointer": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+      "recovered": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d09-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+      "recovered": "Charlie Munger died on November 28, just 33 days before his 100th birthday.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d10-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "recovered": "Berkshire’s Performance vs. the S&P 500\nAnnual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nYear Berkshire Included\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d11-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "recovered": "Berkshire’s Performance vs. the S&P 500\nAnnual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nYear Berkshire Included\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d12-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Berkshire’s Performance vs. the S&P 500 Annual Percentage Change in Per-Share in S&P 500 Market Value of with Dividends Year Berkshire Included 1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "recovered": "Berkshire’s Performance vs. the S&P 500\nAnnual Percentage Change\nin Per-Share in S&P 500\nMarket Value of with Dividends\nYear Berkshire Included\n1965 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49.5 10.0",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d13-review.json#0",
+      "kind": "conflictExcerpt",
+      "pointer": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% 2 , reflecting strong underlying performance across our businesses.",
+      "recovered": "We earned revenue in 2024 of\n$180.6 billion 1 and net income of $58.5 billion, with return on tangible common\nequity (ROTCE) of 20% 2 , reflecting strong underlying performance across our\nbusinesses.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d13-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "We earned revenue in 2024 of $180.6 billion 1 and net income of $58.5 billion, with return on tangible common equity (ROTCE) of 20% 2 , reflecting strong underlying performance across our businesses.",
+      "recovered": "We earned revenue in 2024 of\n$180.6 billion 1 and net income of $58.5 billion, with return on tangible common\nequity (ROTCE) of 20% 2 , reflecting strong underlying performance across our\nbusinesses.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d14-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "As a result of those experiences, many people these days are on heightened alert for bubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the handful of stocks that have been leading it.",
+      "recovered": "As a result of those experiences, many people these days are on heightened alert for\nbubbles, and I’m often asked whether there’s a bubble surrounding the Standard & Poor’s 500 and the\nhandful of stocks that have been leading it.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d15-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "But I saw no logical choice other than to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities Fund VIIb.",
+      "recovered": "But I saw no logical choice other\nthan to start putting money to work, including the $10 billion that was sitting uninvested in Opportunities\nFund VIIb.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d16-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond Index.",
+      "recovered": "Last year was a great one for credit, illustrated by the 8.2% return on the ICE BofA US High Yield Bond\nIndex.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d17-review.json#0",
+      "kind": "conflictExcerpt",
+      "pointer": "January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch .",
+      "recovered": "January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on\nthe map, and I marked the occasion by publishing another memo, called On Bubble Watch .",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d17-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on the map, and I marked the occasion by publishing another memo, called On Bubble Watch .",
+      "recovered": "January 2 of this year was the 25 th anniversary of my memo bubble.com , the one that put my writing on\nthe map, and I marked the occasion by publishing another memo, called On Bubble Watch .",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d18-review.json#0",
+      "kind": "primaryExcerpt",
+      "pointer": "Imagine that in some private business you own a small share that cost you $1,000.",
+      "recovered": "Imagine that in some private business you own a small share that cost you $1,000.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d18-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Imagine that in some private business you own a small share that cost you $1,000.",
+      "recovered": "Imagine that in some private business you own a small share that cost you $1,000.",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d18-review.json#1",
+      "kind": "supportSpan[0]",
+      "pointer": "One of your partners, named Mr. Market, is very obliging indeed.",
+      "recovered": "One\nof your partners, named Mr. Market, is very obliging indeed.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d19-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago has seemed unusual.",
+      "recovered": "Last year was an unusual one. But then again, every year since the onset of the pandemic five years ago\nhas seemed unusual.",
+      "step": "normalised",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    },
+    {
+      "origin": "b163/d20-review.json#0",
+      "kind": "supportSpan[0]",
+      "pointer": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+      "recovered": "On October 11, 1987, I first came across the saying “this time it’s different.”",
+      "step": "exact",
+      "reason": null,
+      "similarity": 1,
+      "rejectedPassage": null
+    }
+  ],
+  "figuresGuardRejected": [],
+  "misses": [
+    {
+      "origin": "extractor-swap/d04-gate7.json",
+      "kind": "gate7.quote",
+      "pointer": "Exposure to fast growing, hard-to-access companies of seasoned investments across multiple vintages seeded by long-term relationships and with, in our view, strong institutional anchor client outperformance potential allocated on a pro-rata basis",
+      "recovered": null,
+      "step": "miss",
+      "reason": "ambiguous_tie",
+      "similarity": null,
+      "rejectedPassage": null
+    }
+  ]
+}

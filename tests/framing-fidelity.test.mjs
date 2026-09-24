@@ -143,6 +143,12 @@ describe("stage7 framing-fidelity emit", () => {
           editorialEnabled: true,
           complianceEnabled: true,
         },
+        sources: [
+          {
+            text: "The company is strong in Sweden and under-represented elsewhere.",
+            label: "source",
+          },
+        ],
         framingFidelityJudge: async () => ({
           fire: true,
           evaluativePhrase: "dominant in the Nordics",
@@ -204,6 +210,7 @@ describe("stage7 framing-fidelity emit", () => {
           editorialEnabled: true,
           complianceEnabled: true,
         },
+        sources: [{ text: "Utilisation has reached 88 per cent.", label: "source" }],
       }
     );
     assert.equal(card.supportState, "supported");

@@ -42,7 +42,11 @@ describe("assembleCard primaryExcerpt wire type", () => {
         primaryExcerpt: { passage, sourceLabel: "FY memo" },
       }),
       0,
-      { pipelineRoute: "v4", skipEditorialDuplicationJudge: true }
+      {
+        pipelineRoute: "v4",
+        skipEditorialDuplicationJudge: true,
+        sources: [{ text: passage, label: "FY memo" }],
+      }
     );
     assert.equal(typeof card.primaryExcerpt === "object" && card.primaryExcerpt !== null, false);
     assert.equal(typeof card.primaryExcerpt, "string");
@@ -76,9 +80,17 @@ describe("assembleCard primaryExcerpt wire type", () => {
         verdict: "conflicting",
       }),
       0,
-      { pipelineRoute: "v4", skipEditorialDuplicationJudge: true }
+      {
+        pipelineRoute: "v4",
+        skipEditorialDuplicationJudge: true,
+        sources: [
+          { text: "Revenue reached EUR 92 million in the year.", label: "FY memo" },
+          { text: "The other source reports EUR 71 million.", label: "update" },
+        ],
+      }
     );
-    assert.equal(card.conflictExcerpt, conflictExcerpt);
+    assert.deepEqual(card.conflictExcerpt, conflictExcerpt);
+    assert.equal(card.conflictExcerpt.passage, "The other source reports EUR 71 million.");
     assert.equal(typeof card.primaryExcerpt, "string");
     assert.equal(card.displayVerdict, "conflict");
     assert.equal(card.hasConflict, true);

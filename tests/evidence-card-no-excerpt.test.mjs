@@ -196,15 +196,17 @@ describe("B322 evidence card with no excerpt", () => {
     assert.equal(card.supportState, "supported");
     assert.equal(card.hasRealExcerpt, false);
     assert.equal(card.excerptNotLocatable, true);
-    assert.equal(card.displayVerdict, "not reviewed");
+    assert.equal(card.displayVerdict, "unverifiable");
     assert.equal(card.evidenceNotReviewedReason, NOT_REVIEWED_REASONS.EXCERPT_NOT_LOCATABLE);
     const view = screenView(card);
     assert.notEqual(view.badgeText, "Confirmed");
     assert.notEqual(view.evidenceRow, "Confirmed");
-    assert.equal(view.evidenceRow, CHECK_NOT_CHECKED_LABEL);
-    assert.equal(view.exportLine, `Verdict: ${CHECK_NOT_CHECKED_LABEL}`);
+    assert.equal(view.badgeText, "Unverifiable");
+    assert.equal(view.evidenceRow, "Unverifiable");
+    assert.equal(view.exportLine, "Verdict: Unverifiable");
     assert.equal(view.evidenceRow, view.exportLine.replace(/^Verdict: /, ""));
     assert.equal(view.exportText.includes("Verdict: Confirmed"), false);
+    assert.notEqual(view.evidenceRow, CHECK_NOT_CHECKED_LABEL);
   });
 
   test("the recorded d17 card through the live display path is the false green B322 closes", () => {

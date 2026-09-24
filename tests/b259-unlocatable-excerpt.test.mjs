@@ -39,7 +39,7 @@ describe("B259 unlocatable excerpt (recorded r6-unsupported)", () => {
     );
   });
 
-  test("gateExcerpt refuses that recorded passage", () => {
+  test("gateExcerpt recovers that recorded passage because it is in the named source", () => {
     const payload = loadR6();
     const card = payload.statements[0].qcCard;
     const gated = gateExcerpt({
@@ -48,10 +48,12 @@ describe("B259 unlocatable excerpt (recorded r6-unsupported)", () => {
       sources: payload.sources,
       supportSpans: card.supportSpans,
     });
-    assert.equal(gated, null);
+    assert.ok(gated);
+    assert.equal(gated.passage, payload.sources[0].text);
+    assert.equal(payload.sources[0].text.slice(gated.start, gated.end), gated.passage);
   });
 
-  test("assembleCard does not store that passage", async () => {
+  test("assembleCard stores the source slice when the pointer is the named source", async () => {
     const payload = loadR6();
     const card = payload.statements[0].qcCard;
     const sourceText = payload.sources[0].text;
@@ -92,10 +94,10 @@ describe("B259 unlocatable excerpt (recorded r6-unsupported)", () => {
         skipEditorialDuplicationJudge: true,
       }
     );
-    assert.equal(assembled.primaryExcerpt, null);
-    assert.equal(assembled.primaryExcerptText, null);
-    assert.equal(assembled.hasRealExcerpt, false);
-    assert.equal(assembled.excerptNotLocatable, true);
+    assert.equal(assembled.primaryExcerpt, sourceText);
+    assert.equal(assembled.primaryExcerptText, sourceText);
+    assert.equal(assembled.hasRealExcerpt, true);
+    assert.equal(assembled.excerptNotLocatable, false);
   });
 
   test("D9: a rejected passage stores no quote and does not read as Confirmed", async () => {
@@ -135,7 +137,7 @@ describe("B259 unlocatable excerpt (recorded r6-unsupported)", () => {
         skipEditorialDuplicationJudge: true,
       }
     );
-    assert.equal(assembled.displayVerdict, "not reviewed");
+    assert.equal(assembled.displayVerdict, "unverifiable");
     assert.equal(assembled.supportState, "supported");
     assert.equal(assembled.evidenceNotReviewedReason, "excerpt_not_locatable");
     assert.equal(assembled.primaryExcerpt, null);
