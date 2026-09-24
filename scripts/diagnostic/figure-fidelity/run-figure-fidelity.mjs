@@ -13,6 +13,7 @@ import {
   SUPPORTED_MIME_TYPES,
   extractTextFromSource,
 } from "../../../lib/extract-text-from-source.mjs";
+import { extractPdfDirect } from "../../../lib/extract-pdf-direct.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)));
 const B163 = path.resolve(ROOT, "../delivery-check/b163");
@@ -160,7 +161,11 @@ function ordinalPair(a, b) {
 }
 
 function sameFigure(a, b) {
-  return collapse(a.raw) === collapse(b.raw) && a.digits === b.digits;
+  if (collapse(a.raw) === collapse(b.raw) && a.digits === b.digits) return true;
+  const na = collapse(a.raw).replace(/\s+/g, "");
+  const nb = collapse(b.raw).replace(/\s+/g, "");
+  if (na === nb && a.digits && a.digits === b.digits && /(?:st|nd|rd|th)/i.test(na)) return true;
+  return false;
 }
 
 function classifyPair(a, b) {
@@ -347,6 +352,9 @@ function emptyCounts() {
   return { SAME: 0, VALUE_CHANGED: 0, DIGIT_GAINED: 0, ORDINAL_LOST: 0, PRESENT_ABSENT: 0 };
 }
 
+const REUSE_OFFICEPARSER = process.env.FIGURE_FIDELITY_REUSE_OFFICEPARSER === "1";
+const AFTER_MODE = process.env.FIGURE_FIDELITY_AFTER === "1";
+
 async function extractEngine(buf, engine) {
   const t0 = Date.now();
   const extracted = await extractTextFromSource(buf, SUPPORTED_MIME_TYPES.PDF, { pdfEngine: engine });
@@ -366,6 +374,7 @@ async function main() {
   const passages = await loadRecordedPassages();
   const perDoc = [];
   const s3 = [];
+  const t2All = [];
   let oldOrdinals = 0;
   let newOrdinals = 0;
   let oldMs = 0;
@@ -382,8 +391,33 @@ async function main() {
       throw new Error(`missing corpus PDF ${pdfPath}. Re-fetch from catalog. Do not substitute.`);
     }
     process.stderr.write(`extract officeparser ${doc.id} ${doc.filename}\n`);
-    const oldEx = await extractEngine(buf, "officeparser");
-    process.stderr.write(`  officeparser ${oldEx.wallMs}ms chars=${oldEx.charCount} method=${oldEx.method}\n`);
+    let oldEx;
+    const oldPath = path.join(OUT, `${doc.id}-officeparser.txt`);
+    if (REUSE_OFFICEPARSER) {
+      try {
+        const text = await readFile(oldPath, "utf8");
+        oldEx = { text, wallMs: 0, method: "officeparser-reuse", charCount: text.length };
+        process.stderr.write(`  officeparser reuse chars=${oldEx.charCount}\n`);
+      } catch {
+        oldEx = null;
+      }
+    }
+    if (!oldEx) {
+      oldEx = await extractEngine(buf, "officeparser");
+      process.stderr.write(`  officeparser ${oldEx.wallMs}ms chars=${oldEx.charCount} method=${oldEx.method}\n`);
+    }
+    const prevDirectPath = path.join(OUT, `${doc.id}-direct.txt`);
+    let prevDirectText = null;
+    if (AFTER_MODE) {
+      const baseline = await extractPdfDirect(buf, { raisedCharacters: false });
+      prevDirectText = typeof baseline?.text === "string" ? baseline.text : "";
+    } else {
+      try {
+        prevDirectText = await readFile(prevDirectPath, "utf8");
+      } catch {
+        prevDirectText = null;
+      }
+    }
     process.stderr.write(`extract direct ${doc.id}\n`);
     const newEx = await extractEngine(buf, "direct");
     process.stderr.write(`  direct ${newEx.wallMs}ms chars=${newEx.charCount} method=${newEx.method}\n`);
@@ -400,6 +434,48 @@ async function main() {
     oldOrdinals += oldFigs.filter((f) => f.kind === "ordinal" || f.kind === "ordinal_split").length;
     newOrdinals += newFigs.filter((f) => f.kind === "ordinal" || f.kind === "ordinal_split").length;
     const paired = pairInventories(oldFigs, newFigs);
+    const t2Changed = [];
+    if (prevDirectText != null) {
+      const prevFigs = inventory(prevDirectText);
+      const beforePaired = pairInventories(oldFigs, prevFigs);
+      const afterByStart = new Map();
+      for (const row of paired) {
+        if (row.officeparser) afterByStart.set(row.officeparser.start, row);
+      }
+      for (const row of beforePaired) {
+        if (row.cls !== "SAME" || !row.officeparser) continue;
+        const after = afterByStart.get(row.officeparser.start);
+        const afterDigits = after?.direct?.digits || "";
+        const beforeDigits = row.officeparser.digits || "";
+        if (beforeDigits && afterDigits && beforeDigits !== afterDigits) {
+          const raw = row.direct?.raw || row.officeparser.raw;
+          t2Changed.push({
+            id: doc.id,
+            filename: doc.filename,
+            reason: "value",
+            stillInNewText: raw ? newEx.text.includes(String(raw)) : false,
+            officeparser: {
+              raw: row.officeparser.raw,
+              left: row.officeparser.left,
+              right: row.officeparser.right,
+              digits: row.officeparser.digits,
+            },
+            prevDirect: row.direct
+              ? { raw: row.direct.raw, left: row.direct.left, right: row.direct.right }
+              : null,
+            newDirect: after?.direct
+              ? { raw: after.direct.raw, left: after.direct.left, right: after.direct.right, digits: after.direct.digits }
+              : null,
+            rawItems: nearbyItems(
+              pages,
+              afterDigits || beforeDigits,
+              row.officeparser.left,
+              row.officeparser.right
+            ),
+          });
+        }
+      }
+    }
     const counts = emptyCounts();
     const docPassages = passages.get(doc.id) || [];
     for (const row of paired) {
@@ -448,12 +524,19 @@ async function main() {
       newMs: newEx.wallMs,
       oldChars: oldEx.charCount,
       newChars: newEx.charCount,
+      prevDirectChars: prevDirectText != null ? prevDirectText.length : null,
+      charDeltaPct:
+        prevDirectText != null && prevDirectText.length
+          ? (newEx.charCount - prevDirectText.length) / prevDirectText.length
+          : null,
       oldMethod: oldEx.method,
       newMethod: newEx.method,
       oldFigures: oldFigs.length,
       newFigures: newFigs.length,
       counts,
+      t2Changed: t2Changed.length,
     });
+    for (const row of t2Changed) t2All.push(row);
   }
 
   const totals = emptyCounts();
@@ -461,7 +544,7 @@ async function main() {
     for (const k of Object.keys(totals)) totals[k] += row.counts[k] || 0;
   }
   const payload = {
-    id: "B326",
+    id: AFTER_MODE ? "B327" : "B326",
     ranAt: new Date().toISOString(),
     oldMs,
     newMs,
@@ -472,6 +555,7 @@ async function main() {
     verdictTally,
     perDoc,
     s3,
+    t2Changed: t2All,
   };
   await writeFile(path.join(OUT, "summary.json"), `${JSON.stringify(payload, null, 2)}\n`, "utf8");
   process.stdout.write(
@@ -488,6 +572,11 @@ async function main() {
         digitGained: s3.filter((r) => r.cls === "DIGIT_GAINED").length,
         inPassage: s3.filter((r) => r.inRecordedPassage).length,
         verdictTally,
+        t2Changed: t2All.length,
+        maxAbsCharDeltaPct: Math.max(
+          0,
+          ...perDoc.map((d) => (d.charDeltaPct == null ? 0 : Math.abs(d.charDeltaPct)))
+        ),
       },
       null,
       2
