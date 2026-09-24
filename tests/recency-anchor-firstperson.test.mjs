@@ -18,6 +18,7 @@ const RECENT_SOURCE = `FACT SHEET
 As at 30 June 2026
 
 Employees: 720
+The company employs 720 people.
 `;
 
 function makeEntry(statement, sourceMatches, contributingSourceIndices) {
@@ -37,6 +38,7 @@ function makeEntry(statement, sourceMatches, contributingSourceIndices) {
     excerptResult: {
       primaryExcerpt: { passage: "720 people", sourceLabel: "fact sheet" },
     },
+    supportSpans: [{ passage: "720 people", classification: "confirmed" }],
     editorialResult: {
       editorialVerdict: "clean",
       editorialConcerns: [],

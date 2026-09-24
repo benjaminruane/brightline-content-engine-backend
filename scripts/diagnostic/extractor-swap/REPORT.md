@@ -60,7 +60,31 @@ No document moved more than 1% from arm C. The port matches the appendix.
 
 ## 2.3 Gate 7 verdict comparison
 
+Corrected 2026-09-24 in B322. See `B321-CORRECTION.md`.
+
+The original write-up compared a populated B163 `evidenceVerdict` against a null field twenty times. Every new record stored `evidenceVerdict: null` because `verify-swap.mjs` read `card.evidenceVerdict` and the assembled qcCard never writes that field. Nineteen of twenty committed B163 records carry a value; d07's committed record is also null. The claim that twenty of twenty verdicts moved is an artefact of that comparison.
+
+On `displayVerdict`, 16 of 20 are identical. 13 of 20 keep the same quote.
+
+The extractor swap moved four verdicts, not twenty.
+
+| id | file | committed displayVerdict | new displayVerdict | better or worse |
+|----|------|--------------------------|--------------------|-----------------|
+| d04 | hpif-report-march-2026.pdf | conflict | supported_partial | Better. The old quote was table-cell soup; the new quote is the actual sentence. |
+| d07 | pg-annual-results-2025-press-release.pdf | (none) | supported_partial | Better. The old path stored no verdict at all. |
+| d13 | jpm-ceo-letter-2024.pdf | conflict | supported_partial | Better. The old quote kept footnote numerals (`180.6 billion 1`, `20% 2`) that read as a second figure; the new quote is the sentence without those marks. |
+| d17 | oaktree-the-calculus-of-value.pdf | conflict | supported_full | Mixed, then a false green. The new extract is closer to the page (`25 anniversary` vs `25 th anniversary`) but the card stored Confirmed with no locatable excerpt. B322 stops that card reading as Confirmed. |
+
+Three documents kept their verdict and changed their quote: d10, d11, d12 (Berkshire performance table line wrapping). Same `supported_full`.
+
 Spend USD 1.9862 list across 108 calls. Kill=false.
+
+## 2.3 (superseded) Artefact comparison on evidenceVerdict
+
+This section is the original B321 2.3. It compared a populated field against a null one. The per-document `moved=true` flags and the "New verdict: supported" lines are not a `displayVerdict` comparison. Kept in place so the wrong numbers are not deleted. The live numbers are in 2.3 above.
+
+Spend USD 1.9862 list across 108 calls. Kill=false.
+
 
 ### d01 3i-press-release-fy2025.pdf
 

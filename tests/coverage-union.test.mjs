@@ -254,6 +254,7 @@ describe("coverageUnion on the QC card", () => {
           contributingSourceIndices: [0, 1],
         },
         excerptResult: { primaryExcerpt: { passage: "Alpha supported", sourceLabel: "A" } },
+        supportSpans: [{ passage: "Alpha supported", classification: "confirmed" }],
         coverageUnion,
         editorialResult: {
           editorialVerdict: "clean",
@@ -263,7 +264,7 @@ describe("coverageUnion on the QC card", () => {
         },
       },
       0,
-      { pipelineRoute: "v4" }
+      { pipelineRoute: "v4", sources: [{ text: statement, label: "A" }] }
     );
     assert.equal(card.displayVerdict, "supported_full");
     assert.deepEqual(card.coverageUnion, coverageUnion);

@@ -12,6 +12,7 @@ const STALE_SOURCE_TEXT = `INVESTMENT MEMO
 Date: 15 October 2010
 
 Company overview.
+The company has 24 employees.
 `;
 
 const RECENT_SOURCE_TEXT = `INVESTMENT MEMO
@@ -86,8 +87,9 @@ describe("stage7 source-recency emit", () => {
       contributingSourceIndices: [0],
     },
     excerptResult: {
-      primaryExcerpt: { passage: "24 employees", sourceLabel: "stale" },
+      primaryExcerpt: { passage: "The company has 24 employees.", sourceLabel: "stale" },
     },
+    supportSpans: [{ passage: "The company has 24 employees.", classification: "confirmed" }],
     editorialResult: {
       editorialVerdict: "clean",
       editorialConcerns: [],
@@ -126,6 +128,7 @@ describe("stage7 source-recency emit", () => {
     const card = await assembleCard(entry, 0, { pipelineRoute: "v4", today: TODAY });
     assert.equal(card.supportState, "supported");
     assert.equal(card.displayVerdict, "supported_full");
+    assert.equal(card.hasRealExcerpt, true);
     assert.deepEqual(card.sourceRecencyConcerns, []);
   });
 });

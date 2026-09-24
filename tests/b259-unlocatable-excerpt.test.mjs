@@ -98,7 +98,7 @@ describe("B259 unlocatable excerpt (recorded r6-unsupported)", () => {
     assert.equal(assembled.excerptNotLocatable, true);
   });
 
-  test("D9: a rejected passage keeps the classification and stores no quote", async () => {
+  test("D9: a rejected passage stores no quote and does not read as Confirmed", async () => {
     const assembled = await assembleCard(
       {
         statementText: "Oakfield Partners closed Fund III at EUR 400 million in March 2025.",
@@ -135,7 +135,9 @@ describe("B259 unlocatable excerpt (recorded r6-unsupported)", () => {
         skipEditorialDuplicationJudge: true,
       }
     );
-    assert.equal(assembled.displayVerdict, "supported_full");
+    assert.equal(assembled.displayVerdict, "not reviewed");
+    assert.equal(assembled.supportState, "supported");
+    assert.equal(assembled.evidenceNotReviewedReason, "excerpt_not_locatable");
     assert.equal(assembled.primaryExcerpt, null);
     assert.equal(assembled.hasRealExcerpt, false);
     assert.equal(assembled.excerptNotLocatable, true);

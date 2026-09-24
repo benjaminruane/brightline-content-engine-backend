@@ -25,17 +25,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const requestedEngine =
-      typeof body.pdfEngine === "string" ? body.pdfEngine.trim() : "";
-    let pdfEngine;
-    if (requestedEngine === "officeparser" || requestedEngine === "direct") {
-      pdfEngine = requestedEngine;
-    } else if (requestedEngine) {
-      console.warn(
-        `[extract-draft-text] unrecognized pdfEngine=${JSON.stringify(requestedEngine)}; using env default`
-      );
-    }
-
+    // B322. Ordinary requests cannot select a PDF engine. Env PDF_ENGINE stays the switch.
     const prepared = await prepareUploadedSourcesForPipeline(
       [
         {
@@ -46,8 +36,7 @@ export default async function handler(req, res) {
           mimeType,
           contentBase64,
         },
-      ],
-      pdfEngine ? { pdfEngine } : {}
+      ]
     );
     const row = Array.isArray(prepared?.sources) ? prepared.sources[0] : null;
     const extractedText = typeof row?.text === "string" ? row.text : "";

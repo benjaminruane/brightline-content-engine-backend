@@ -58,6 +58,7 @@ function statementEntry(editorialResult) {
     excerptResult: {
       primaryExcerpt: { passage: STATEMENT, sourceLabel: "memo" },
     },
+    supportSpans: [{ passage: STATEMENT, classification: "confirmed" }],
     editorialResult,
   };
 }
@@ -67,6 +68,7 @@ function assemblyContext(reviewOptions) {
     pipelineRoute: "v4",
     skipEditorialDuplicationJudge: true,
     reviewOptions,
+    sources: [{ text: STATEMENT, label: "memo" }],
   };
 }
 

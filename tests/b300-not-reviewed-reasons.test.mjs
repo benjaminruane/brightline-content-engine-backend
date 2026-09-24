@@ -58,6 +58,7 @@ function statementEntry(editorialResult) {
     excerptResult: {
       primaryExcerpt: { passage: STATEMENT, sourceLabel: "memo" },
     },
+    supportSpans: [{ passage: STATEMENT, classification: "confirmed" }],
     editorialResult,
   };
 }
@@ -85,6 +86,7 @@ async function reviewThenAssemble(stubCallLLM) {
     pipelineRoute: "v4",
     skipEditorialDuplicationJudge: true,
     reviewOptions: REVIEWS_ON,
+    sources: [{ text: STATEMENT, label: "memo" }],
   });
   return { qcCard: reviewStatement.qcCard, card };
 }
@@ -110,6 +112,7 @@ describe("B300 not-reviewed reasons", () => {
     assert.equal(NOT_REVIEWED_REASONS.ZERO_TOKEN_FAILURE, "zero_token_failure");
     assert.equal(NOT_REVIEWED_REASONS.EMPTY_RESULT, "empty_result");
     assert.equal(NOT_REVIEWED_REASONS.MISSING_PROVIDER_KEY, "missing_provider_key");
+    assert.equal(NOT_REVIEWED_REASONS.EXCERPT_NOT_LOCATABLE, "excerpt_not_locatable");
   });
 
   test("a zero-token sub-second throw is zero_token_failure, not schema_invalid", () => {

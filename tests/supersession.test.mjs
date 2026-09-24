@@ -222,6 +222,7 @@ describe("assembleCard supersededSourceNotes", () => {
           contributingSourceIndices: [2],
         },
         excerptResult: { primaryExcerpt: { passage: "Revenue for FY2025 was EUR 200 million.", sourceLabel: "update" } },
+        supportSpans: [{ passage: "Revenue for FY2025 was EUR 200 million.", classification: "confirmed" }],
         supersededSourceNotes: notes,
         editorialResult: {
           editorialVerdict: "clean",
@@ -231,7 +232,7 @@ describe("assembleCard supersededSourceNotes", () => {
         },
       },
       0,
-      { pipelineRoute: "v4", today: TODAY }
+      { pipelineRoute: "v4", today: TODAY, sources: [{ text: "Revenue for FY2025 was EUR 200 million.", label: "update" }] }
     );
     assert.equal(card.supportState, "supported");
     assert.equal(card.hasConflict, false);
