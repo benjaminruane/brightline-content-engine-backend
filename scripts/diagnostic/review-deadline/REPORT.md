@@ -34,7 +34,7 @@ B1 AGREE. Complete with `not_reviewed` gaps is untouched.
 B2 AGREE. Incomplete means `statements: []`.
 B3 AGREE. Cause slugs in `INCOMPLETE_CAUSES`. How-far in product words (sentences), not stages.
 B4 AGREE. Named pin from B277 Run 4 / B328. Fail-safe AND. Measured cell never refused.
-B5 AGREE. Copy in `REVIEW_COPY` in `lib/qc/review-deadline.mjs`, `REVIEW_COPY_AWAITING_BEN = true`.
+B5 AGREE. Copy in `REVIEW_COPY` and `REVIEW_NEXT_STEP` in `lib/qc/review-deadline.mjs`. Ben ruled the wording 2026-09-25.
 B6 AGREE. Not built: progressive delivery, re-review, cache-for-retry, estimator internals, completed-review behaviour.
 
 P34. `preflightReview` callers: `api/analyse-statements.js` (new refuse rule), `tests/b277-preflight-guard.test.mjs` (still passes on 3698 x 3558 and 80k), `scripts/diagnostic/source-length/model-source-length.mjs` (diagnostic only; re-run would show the new line). `throwIfReviewDeadlineExceeded` callers: `lib/qc/pipeline-v4/index.mjs` after Stage 1 only.
@@ -150,7 +150,7 @@ From `scripts/diagnostic/review-deadline/four-responses.json`, produced by `node
 ```json
 {
   "ok": false,
-  "error": "The review ran out of time before every sentence could be checked. Nothing is shown because a partial review would be misleading. The draft was split into 2 sentences. 1 of 2 had been checked when the review stopped. Try a shorter draft, or run again when the service is less busy.",
+  "error": "The review could not be completed within the time limit for a single review. Of the 2 sentences in your draft, 1 had been checked when it stopped. Please try again. If it keeps happening, try a shorter draft.",
   "statements": [],
   "references": [],
   "meta": {
@@ -158,9 +158,9 @@ From `scripts/diagnostic/review-deadline/four-responses.json`, produced by `node
     "incomplete": {
       "complete": false,
       "cause": "deadline",
-      "howFar": "The draft was split into 2 sentences. 1 of 2 had been checked when the review stopped.",
-      "nextStep": "Try a shorter draft, or run again when the service is less busy.",
-      "account": "The review ran out of time before every sentence could be checked. Nothing is shown because a partial review would be misleading.",
+      "howFar": "Of the 2 sentences in your draft, 1 had been checked when it stopped.",
+      "nextStep": "Please try again. If it keeps happening, try a shorter draft.",
+      "account": "deadline",
       "expectedSentences": 2,
       "reachedSentences": 1
     }
@@ -173,7 +173,7 @@ From `scripts/diagnostic/review-deadline/four-responses.json`, produced by `node
 ```json
 {
   "ok": false,
-  "error": "This document is larger than the product can check in one pass. The review did not start. Shorten the draft, or split the work across smaller documents.",
+  "error": "This draft and its sources exceed the size limit for a single review. Of the 4000 sentences in your draft, 0 had been checked when it stopped. Try reviewing the draft in sections, or with fewer sources at a time.",
   "statements": [],
   "references": [],
   "meta": {
@@ -181,9 +181,9 @@ From `scripts/diagnostic/review-deadline/four-responses.json`, produced by `node
     "incomplete": {
       "complete": false,
       "cause": "too_large",
-      "howFar": "The review did not start.",
-      "nextStep": "Shorten the draft, or split the work across smaller documents.",
-      "account": "This document is larger than the product can check in one pass.",
+      "howFar": "Of the 4000 sentences in your draft, 0 had been checked when it stopped.",
+      "nextStep": "Try reviewing the draft in sections, or with fewer sources at a time.",
+      "account": "too_large",
       "expectedSentences": 4000,
       "reachedSentences": 0
     },
@@ -199,7 +199,7 @@ From `scripts/diagnostic/review-deadline/four-responses.json`, produced by `node
 }
 ```
 
-AWAITING BEN'S RULING on `REVIEW_COPY` in `lib/qc/review-deadline.mjs`. Changeable in that one object.
+Ben ruled the wording 2026-09-25. Screen copy is `REVIEW_COPY` plus how-far plus `REVIEW_NEXT_STEP`. The recorded `cause` and `account` are the slug. Display wording does not go into the stored account.
 
 ## 2.2 The new guard line
 

@@ -9,7 +9,7 @@ import { preflightReview, PREFLIGHT_REFUSAL_TEXT } from "../lib/qc/preflight-gua
 import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
 import {
   REVIEW_COPY,
-  REVIEW_COPY_AWAITING_BEN,
+  REVIEW_NEXT_STEP,
   REVIEW_RESPONSE_MARGIN_MS,
   buildIncompleteReviewResponse,
   causeClassFromHandlerError,
@@ -96,33 +96,95 @@ describe("B329 incomplete review returns no cards", () => {
     assert.equal(Array.isArray(body.statements) && body.statements.some((row) => row?.qcCard), false);
   });
 
-  test("the honest account names the real cause", () => {
+  test("the assembled message is cause, how-far, and next step for each cause", () => {
+    const howFarOne = "Of the 1 sentence in your draft, 0 had been checked when it stopped.";
+
+    const tooLarge = buildIncompleteReviewResponse({
+      cause: INCOMPLETE_CAUSES.TOO_LARGE,
+      expectedSentences: 2,
+      reachedSentences: 1,
+    });
+    assert.equal(
+      tooLarge.error,
+      "This draft and its sources exceed the size limit for a single review. Of the 2 sentences in your draft, 1 had been checked when it stopped. Try reviewing the draft in sections, or with fewer sources at a time."
+    );
+    assert.equal(tooLarge.meta.incomplete.cause, "too_large");
+    assert.equal(/try again/i.test(REVIEW_NEXT_STEP.TOO_LARGE), false);
+    assert.equal(/try again/i.test(tooLarge.meta.incomplete.nextStep), false);
+
     const deadline = buildIncompleteReviewResponse({
       cause: INCOMPLETE_CAUSES.DEADLINE,
-      expectedSentences: 12,
-      reachedSentences: 0,
+      expectedSentences: 2,
+      reachedSentences: 1,
     });
+    assert.equal(
+      deadline.error,
+      "The review could not be completed within the time limit for a single review. Of the 2 sentences in your draft, 1 had been checked when it stopped. Please try again. If it keeps happening, try a shorter draft."
+    );
     assert.equal(deadline.meta.incomplete.cause, "deadline");
-    assert.match(deadline.error, /ran out of time/i);
-    assert.match(deadline.error, /12 sentence/);
-    assert.equal(deadline.error.includes("token"), false);
-    assert.equal(deadline.error.includes("Stage"), false);
 
-    const tooLarge = buildIncompleteReviewResponse({ cause: INCOMPLETE_CAUSES.TOO_LARGE });
-    assert.equal(tooLarge.meta.incomplete.cause, "too_large");
-    assert.equal(tooLarge.meta.incomplete.account, REVIEW_COPY.TOO_LARGE);
-
-    const billing = buildIncompleteReviewResponse({ cause: INCOMPLETE_CAUSES.BILLING });
-    assert.equal(billing.meta.incomplete.cause, "billing");
-    assert.match(billing.error, /billed/);
-    assert.match(billing.error, /not a fault in the product/);
-
-    const capacity = buildIncompleteReviewResponse({ cause: INCOMPLETE_CAUSES.CAPACITY });
+    const capacity = buildIncompleteReviewResponse({
+      cause: INCOMPLETE_CAUSES.CAPACITY,
+      expectedSentences: 2,
+      reachedSentences: 1,
+    });
+    assert.equal(
+      capacity.error,
+      "The review could not finish because the service was busy. Of the 2 sentences in your draft, 1 had been checked when it stopped. Please try again in a few minutes."
+    );
     assert.equal(capacity.meta.incomplete.cause, "capacity");
 
-    const err = buildIncompleteReviewResponse({ cause: INCOMPLETE_CAUSES.ERROR });
-    assert.equal(err.meta.incomplete.cause, "error");
-    assert.match(err.error, /Something went wrong/);
+    const billing = buildIncompleteReviewResponse({
+      cause: INCOMPLETE_CAUSES.BILLING,
+      expectedSentences: 2,
+      reachedSentences: 1,
+    });
+    assert.equal(
+      billing.error,
+      "The review could not run because of a problem with the account. Of the 2 sentences in your draft, 1 had been checked when it stopped. Please contact the administrator of this service."
+    );
+    assert.equal(billing.meta.incomplete.cause, "billing");
+    assert.equal(/billing/i.test(billing.error), false);
+    assert.equal(/could not be billed/i.test(billing.error), false);
+    assert.equal(/not a fault/i.test(billing.error), false);
+
+    const unknown = buildIncompleteReviewResponse({
+      cause: INCOMPLETE_CAUSES.ERROR,
+      expectedSentences: 2,
+      reachedSentences: 1,
+    });
+    assert.equal(
+      unknown.error,
+      "The review failed to complete due to a technical error. Of the 2 sentences in your draft, 1 had been checked when it stopped. Please try again."
+    );
+    assert.equal(unknown.meta.incomplete.cause, "error");
+    assert.equal(unknown.meta.incomplete.account, "error");
+    assert.notEqual(unknown.meta.incomplete.cause, REVIEW_COPY.ERROR);
+    assert.notEqual(unknown.meta.incomplete.account, REVIEW_COPY.ERROR);
+    assert.equal(String(unknown.meta.incomplete.cause).includes("technical"), false);
+    assert.equal(String(unknown.meta.incomplete.account).includes("technical"), false);
+
+    const unclassed = buildIncompleteReviewResponse({
+      cause: "unknown",
+      expectedSentences: 2,
+      reachedSentences: 1,
+    });
+    assert.equal(unclassed.meta.incomplete.cause, "unknown");
+    assert.equal(unclassed.meta.incomplete.account, "unknown");
+    assert.equal(unclassed.error.startsWith(REVIEW_COPY.ERROR), true);
+    assert.notEqual(unclassed.meta.incomplete.cause, REVIEW_COPY.ERROR);
+
+    const singular = buildIncompleteReviewResponse({
+      cause: INCOMPLETE_CAUSES.DEADLINE,
+      expectedSentences: 1,
+      reachedSentences: 0,
+    });
+    assert.equal(singular.meta.incomplete.howFar, howFarOne);
+    assert.match(singular.error, /1 sentence /);
+    assert.equal(/sentences/.test(singular.meta.incomplete.howFar), false);
+
+    assert.equal(tooLarge.error.includes("Nothing is shown"), false);
+    assert.equal(deadline.error.includes("partial review"), false);
   });
 
   test("causeClassFromHandlerError maps deadline, capacity, and billing to the real slug", () => {
@@ -200,7 +262,6 @@ describe("B329 incomplete review returns no cards", () => {
     assert.deepEqual(surfaces.screen, surfaces.export);
     assert.equal(surfaces.screen.cards, 0);
     assert.equal(surfaces.export.cards, 0);
-    assert.equal(surfaces.screen.account, REVIEW_COPY.DEADLINE);
     assert.equal(surfaces.screen.error, cutOff.error);
 
     const complete = {
@@ -217,9 +278,10 @@ describe("B329 incomplete review returns no cards", () => {
     assert.equal(completeSurfaces.screen.cards, 2);
   });
 
-  test("user-facing copy is flagged as awaiting Ben and lives in one object", () => {
-    assert.equal(REVIEW_COPY_AWAITING_BEN, true);
+  test("user-facing copy lives in REVIEW_COPY and REVIEW_NEXT_STEP", () => {
     assert.equal(typeof REVIEW_COPY.TOO_LARGE, "string");
     assert.equal(typeof REVIEW_COPY.DEADLINE, "string");
+    assert.equal(typeof REVIEW_NEXT_STEP.TOO_LARGE, "string");
+    assert.equal(/try again/i.test(REVIEW_NEXT_STEP.TOO_LARGE), false);
   });
 });

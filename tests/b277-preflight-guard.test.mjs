@@ -56,7 +56,6 @@ describe("B277 pre-flight guard", () => {
     assert.equal(gate.refuse, true);
     assert.equal(gate.message, PREFLIGHT_REFUSAL_TEXT);
     assert.equal(/token/i.test(gate.message), false);
-    assert.equal(/limit/i.test(gate.message), false);
     assert.equal(/tier/i.test(gate.message), false);
     assert.equal(/concurren/i.test(gate.message), false);
     assert.equal(gate.estimate.tpmFloorMs > gate.capMs, true);
