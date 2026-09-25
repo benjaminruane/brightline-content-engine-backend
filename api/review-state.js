@@ -1,4 +1,4 @@
-import { getSql } from "../lib/db/client.mjs";
+import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
 import {
   MAX_STATE_BYTES,
   deleteReviewState,
@@ -88,50 +88,53 @@ export default async function handler(req, res) {
   try {
     sql = getSql();
   } catch (err) {
-    if (err?.code === "DB_NOT_CONFIGURED") {
-      return res.status(503).json({ error: "db_not_configured" });
-    }
+    if (respondIfDbFailure(res, err)) return;
     throw err;
   }
 
-  if (req.method === "GET") {
-    const result = await loadReviewState(sql, { reviewId, ownerKey });
-    if (!result) return res.status(404).json({ error: "not_found" });
-    if (result.ok === false && result.reason === "owner_mismatch") {
-      return res.status(403).json({ error: "owner_mismatch" });
-    }
-    return res.status(200).json({
-      reviewId: result.reviewId,
-      state: result.state,
-      updatedAt: toIso(result.updatedAt),
-    });
-  }
-
-  if (req.method === "POST") {
-    const result = await saveReviewState(sql, {
-      reviewId,
-      ownerKey,
-      state: body.state,
-    });
-    if (result.ok === false && result.reason === "too_large") {
-      return res.status(413).json({
-        error: "state_too_large",
-        bytes: result.bytes,
-        limit: MAX_STATE_BYTES,
+  try {
+    if (req.method === "GET") {
+      const result = await loadReviewState(sql, { reviewId, ownerKey });
+      if (!result) return res.status(404).json({ error: "not_found" });
+      if (result.ok === false && result.reason === "owner_mismatch") {
+        return res.status(403).json({ error: "owner_mismatch" });
+      }
+      return res.status(200).json({
+        reviewId: result.reviewId,
+        state: result.state,
+        updatedAt: toIso(result.updatedAt),
       });
     }
+
+    if (req.method === "POST") {
+      const result = await saveReviewState(sql, {
+        reviewId,
+        ownerKey,
+        state: body.state,
+      });
+      if (result.ok === false && result.reason === "too_large") {
+        return res.status(413).json({
+          error: "state_too_large",
+          bytes: result.bytes,
+          limit: MAX_STATE_BYTES,
+        });
+      }
+      if (result.ok === false && result.reason === "owner_mismatch") {
+        return res.status(403).json({ error: "owner_mismatch" });
+      }
+      return res.status(200).json({
+        reviewId: result.reviewId,
+        updatedAt: toIso(result.updatedAt),
+      });
+    }
+
+    const result = await deleteReviewState(sql, { reviewId, ownerKey });
     if (result.ok === false && result.reason === "owner_mismatch") {
       return res.status(403).json({ error: "owner_mismatch" });
     }
-    return res.status(200).json({
-      reviewId: result.reviewId,
-      updatedAt: toIso(result.updatedAt),
-    });
+    return res.status(204).end();
+  } catch (err) {
+    if (respondIfDbFailure(res, err)) return;
+    throw err;
   }
-
-  const result = await deleteReviewState(sql, { reviewId, ownerKey });
-  if (result.ok === false && result.reason === "owner_mismatch") {
-    return res.status(403).json({ error: "owner_mismatch" });
-  }
-  return res.status(204).end();
 }

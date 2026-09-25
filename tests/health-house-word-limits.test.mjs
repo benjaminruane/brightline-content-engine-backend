@@ -1,11 +1,17 @@
-import { describe, test } from "vitest";
+import { describe, test, afterEach } from "vitest";
 import assert from "node:assert/strict";
 import handler from "../api/health.js";
 import { getPgCommentaryWordLimit } from "../lib/prompt-library/index.js";
 import { PG_WRITING_EVENT } from "../lib/prompt-library/pg-writing-prompts.mjs";
 import { VISIBILITY } from "../lib/output-intent.js";
+import { resetSqlCache, setSqlOverrideForTests } from "../lib/db/client.mjs";
 
 function invokeHealth() {
+  setSqlOverrideForTests({
+    async query() {
+      return [{ "?column?": 1 }];
+    },
+  });
   const headers = {};
   let status = null;
   let json = null;
@@ -28,6 +34,11 @@ function invokeHealth() {
   };
   return handler(req, res).then(() => ({ status, json, headers }));
 }
+
+afterEach(() => {
+  setSqlOverrideForTests(null);
+  resetSqlCache();
+});
 
 describe("health houseWordLimits", () => {
   test("houseWordLimits matches getPgCommentaryWordLimit for each event key and visibility", async () => {

@@ -1,4 +1,4 @@
-import { getSql } from "../lib/db/client.mjs";
+import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
 import { validateOwnerKey, validateReviewId } from "../lib/db/review-state.mjs";
 import {
   insertReviewerDecision,
@@ -97,24 +97,27 @@ export default async function handler(req, res) {
   try {
     sql = getSql();
   } catch (err) {
-    if (err?.code === "DB_NOT_CONFIGURED") {
-      return res.status(503).json({ error: "db_not_configured" });
-    }
+    if (respondIfDbFailure(res, err)) return;
     throw err;
   }
 
-  if (req.method === "GET") {
-    const rows = await listReviewerDecisions(sql, { reviewId, ownerKey });
-    return res.status(200).json({ rows: rows.map(toPublicRow) });
-  }
+  try {
+    if (req.method === "GET") {
+      const rows = await listReviewerDecisions(sql, { reviewId, ownerKey });
+      return res.status(200).json({ rows: rows.map(toPublicRow) });
+    }
 
-  const result = await insertReviewerDecision(sql, {
-    ownerKey,
-    reviewId,
-    kind: body.kind,
-    draftHash: body.draftHash,
-    statement: body.statement,
-    payload: body.payload,
-  });
-  return res.status(200).json({ ok: true, id: result.id });
+    const result = await insertReviewerDecision(sql, {
+      ownerKey,
+      reviewId,
+      kind: body.kind,
+      draftHash: body.draftHash,
+      statement: body.statement,
+      payload: body.payload,
+    });
+    return res.status(200).json({ ok: true, id: result.id });
+  } catch (err) {
+    if (respondIfDbFailure(res, err)) return;
+    throw err;
+  }
 }

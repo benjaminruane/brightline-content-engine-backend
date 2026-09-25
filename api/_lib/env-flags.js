@@ -21,3 +21,13 @@ export function readEnvironmentSummary(env = process.env) {
     ok: pipelineRoute === "v4" && authoringOrganisation !== null && editorialReview === true,
   };
 }
+
+export function withDatabaseStatus(environment, database) {
+  const state =
+    database && typeof database.state === "string" ? database.state : "not_configured";
+  return {
+    ...environment,
+    database: state,
+    ok: environment.ok === true && state !== "unreachable",
+  };
+}
