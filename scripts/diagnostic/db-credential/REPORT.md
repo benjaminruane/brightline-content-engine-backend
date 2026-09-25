@@ -56,7 +56,7 @@ B2 AMEND. `getSql` and its callers distinguish three named errors (`DB_NOT_CONFI
 
 B3 AGREE, with this bound: the pill goes amber when unreachable. It does not go amber when the URL is unset. That is local-dev normal, not off-nominal for a client's reviewer.
 
-B4 AGREE. Wording in `src/modules/drafting/decisionSaveCopy.js`: "That decision was not saved. Please try again." AWAITING BEN'S RULING. Persist first, then apply local state. If persist fails, the settled "you set / you left" line is not shown.
+B4 AGREE. Wording in `src/modules/drafting/decisionSaveCopy.js`. Ben ruled 2026-09-25 (B331): "That decision was not recorded. Please try again." Persist first, then apply local state. If persist fails, the settled "you set / you left" line is not shown.
 
 B5 AGREE. Dated note `MODEL_DRIFT_BLIND_PERIOD` from 2026-09-21 in `lib/qc/model-drift-reporter.mjs`, this report, and BACKLOG. After rotation the next written row is a new baseline.
 
@@ -92,11 +92,11 @@ Toast: "Draft saved to version history." Warn: `[reviewer-decisions] applied fix
 
 AFTER, same three actions:
 
-Copy (awaiting Ben): "That decision was not saved. Please try again."
+Copy (Ben 2026-09-25): "That decision was not recorded. Please try again."
 
 Source governance: persist first. On failure the settled line is not shown. The copy appears on the card in rose. On success the settled line appears as before.
 
-Accepted fix: toast "Draft saved to version history. That decision was not saved. Please try again." The draft version is still saved. The decision is not presented as recorded.
+Accepted fix: toast "Draft saved to version history, but the decision was not recorded. Please try again." The draft version is still saved. The decision is not presented as recorded.
 
 ## 2.2 The three states, exact health response
 
