@@ -29,11 +29,19 @@ import {
   boundHitSnapshot,
   capacityWaitSnapshot,
   FUNCTION_MAX_DURATION_MS,
+  isRateLimitBoundError,
   lastWaitLog,
   providerRefusalSnapshot,
   scheduleSnapshot,
 } from "../lib/qc/request-budget.mjs";
 import { logPreflightRefusal, preflightReview } from "../lib/qc/preflight-guard.mjs";
+import {
+  buildIncompleteReviewResponse,
+  causeClassFromHandlerError,
+  isReviewDeadlineError,
+  reviewOutcomeFromPipeline,
+} from "../lib/qc/review-deadline.mjs";
+import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -274,22 +282,24 @@ export default async function handler(req, res) {
       });
       if (gate.refuse) {
         logPreflightRefusal(gate);
-        return res.status(200).json({
-          ok: false,
-          error: gate.message,
-          statements: [],
-          references: [],
-          meta: {
+        return res.status(200).json(
+          buildIncompleteReviewResponse({
+            cause: INCOMPLETE_CAUSES.TOO_LARGE,
+            expectedSentences: gate.estimate.statementCount,
+            reachedSentences: 0,
             pipelineVersion: "v4",
-            preflight: {
-              wordCount: gate.estimate.wordCount,
-              statementCount: gate.estimate.statementCount,
-              totalTokens: gate.estimate.totalTokens,
-              tpmFloorMs: gate.estimate.tpmFloorMs,
-              capMs: gate.capMs,
+            extraMeta: {
+              preflight: {
+                wordCount: gate.estimate.wordCount,
+                statementCount: gate.estimate.statementCount,
+                totalTokens: gate.estimate.totalTokens,
+                tpmFloorMs: gate.estimate.tpmFloorMs,
+                idleWallMs: gate.estimate.idleWallMs,
+                capMs: gate.capMs,
+              },
             },
-          },
-        });
+          })
+        );
       }
     }
 
@@ -307,6 +317,17 @@ export default async function handler(req, res) {
       ? await runPipelineV4(draftText, v3Sources, pipelineOptions)
       : await runPipelineV3(draftText, v3Sources, pipelineOptions);
     const nothingReviewed = pipelineResult?.nothingReviewed === true;
+    const outcome = reviewOutcomeFromPipeline(pipelineResult);
+    if (!nothingReviewed && !outcome.complete) {
+      return res.status(200).json(
+        buildIncompleteReviewResponse({
+          cause: INCOMPLETE_CAUSES.ERROR,
+          expectedSentences: outcome.expectedSentences,
+          reachedSentences: outcome.reachedSentences,
+          pipelineVersion: useV4 ? "v4" : "v3",
+        })
+      );
+    }
     const qcCards = Array.isArray(pipelineResult?.qcCards) ? pipelineResult.qcCards : [];
     if (qcCards.length === 0 && !nothingReviewed) {
       throw new Error("QC pipeline returned empty qcCards");
@@ -406,6 +427,27 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error("[QC_V3_HANDLER_ERROR]", err?.message || String(err));
+    const cause = causeClassFromHandlerError(err);
+    if (isReviewDeadlineError(err) || isRateLimitBoundError(err) || err?.name === "ReviewDidNotStartError") {
+      const body = buildIncompleteReviewResponse({
+        cause,
+        expectedSentences: Number(err?.expectedSentences) || 0,
+        reachedSentences: Number(err?.reachedSentences) || 0,
+        pipelineVersion: "v4",
+        extraMeta: {
+          fatal: err?.message ? String(err.message).slice(0, 300) : "Internal error",
+          fatalStage: isReviewDeadlineError(err) ? "review_deadline" : "route_exception",
+          extractionQuality: "failed",
+          extractionQualityReasons: ["route_exception"],
+          rateLimitBoundHits: boundHitSnapshot(),
+          capacityWait: capacityWaitSnapshot(),
+          providerRefusal: providerRefusalSnapshot(),
+          reviewDidNotRun: cause !== INCOMPLETE_CAUSES.DEADLINE,
+        },
+      });
+      res.status(200).json(body);
+      return;
+    }
     const safeInternalErrorPayload = {
       ok: false,
       error: REVIEW_DID_NOT_RUN,

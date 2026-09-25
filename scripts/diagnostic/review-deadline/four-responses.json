@@ -1,0 +1,120 @@
+{
+  "complete": {
+    "ok": true,
+    "error": null,
+    "statements": [
+      {
+        "id": "0",
+        "text": "Revenue grew to EUR 92 million.",
+        "qcCard": {
+          "index": 0,
+          "statement": "Revenue grew to EUR 92 million.",
+          "editorialVerdict": "clean",
+          "complianceVerdict": "clean",
+          "displayVerdict": "supported_full"
+        }
+      },
+      {
+        "id": "1",
+        "text": "Costs fell year on year.",
+        "qcCard": {
+          "index": 1,
+          "statement": "Costs fell year on year.",
+          "editorialVerdict": "clean",
+          "complianceVerdict": "clean",
+          "displayVerdict": "supported_full"
+        }
+      }
+    ],
+    "references": [],
+    "meta": {
+      "pipelineVersion": "v4",
+      "reviewSummary": {
+        "version": 1,
+        "statements": 2,
+        "notChecked": 0
+      }
+    }
+  },
+  "completeWithGaps": {
+    "ok": true,
+    "error": null,
+    "statements": [
+      {
+        "id": "0",
+        "text": "Revenue grew to EUR 92 million.",
+        "qcCard": {
+          "index": 0,
+          "statement": "Revenue grew to EUR 92 million.",
+          "editorialVerdict": "not_reviewed",
+          "complianceVerdict": "clean",
+          "displayVerdict": "supported_full"
+        }
+      },
+      {
+        "id": "1",
+        "text": "Costs fell year on year.",
+        "qcCard": {
+          "index": 1,
+          "statement": "Costs fell year on year.",
+          "editorialVerdict": "clean",
+          "complianceVerdict": "clean",
+          "displayVerdict": "supported_full"
+        }
+      }
+    ],
+    "references": [],
+    "meta": {
+      "pipelineVersion": "v4",
+      "reviewSummary": {
+        "version": 1,
+        "statements": 2,
+        "notChecked": 1
+      }
+    }
+  },
+  "cutOff": {
+    "ok": false,
+    "error": "The review ran out of time before every sentence could be checked. Nothing is shown because a partial review would be misleading. The draft was split into 2 sentences. 1 of 2 had been checked when the review stopped. Try a shorter draft, or run again when the service is less busy.",
+    "statements": [],
+    "references": [],
+    "meta": {
+      "pipelineVersion": "v4",
+      "incomplete": {
+        "complete": false,
+        "cause": "deadline",
+        "howFar": "The draft was split into 2 sentences. 1 of 2 had been checked when the review stopped.",
+        "nextStep": "Try a shorter draft, or run again when the service is less busy.",
+        "account": "The review ran out of time before every sentence could be checked. Nothing is shown because a partial review would be misleading.",
+        "expectedSentences": 2,
+        "reachedSentences": 1
+      }
+    }
+  },
+  "refused": {
+    "ok": false,
+    "error": "This document is larger than the product can check in one pass. The review did not start. Shorten the draft, or split the work across smaller documents.",
+    "statements": [],
+    "references": [],
+    "meta": {
+      "pipelineVersion": "v4",
+      "incomplete": {
+        "complete": false,
+        "cause": "too_large",
+        "howFar": "The review did not start.",
+        "nextStep": "Shorten the draft, or split the work across smaller documents.",
+        "account": "This document is larger than the product can check in one pass.",
+        "expectedSentences": 4000,
+        "reachedSentences": 0
+      },
+      "preflight": {
+        "wordCount": 80000,
+        "statementCount": 4000,
+        "totalTokens": 1172198723,
+        "tpmFloorMs": 35165962,
+        "idleWallMs": 31543516,
+        "capMs": 300000
+      }
+    }
+  }
+}
