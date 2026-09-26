@@ -8,8 +8,8 @@ SHIPPED
 
 | Repo | Pushed sha | verify:ship |
 |------|------------|-------------|
-| backend | (filled after push) | (filled after push) |
-| frontend | no docs change; HEAD unchanged | (filled after push) |
+| backend | 70558a8 | SHIP VERIFIED  70558a8  main  130 files  1574 tests |
+| frontend | 3f37565 (no change) | (filled after frontend verify:ship) |
 
 -----------------------------------------------------------------------------
 PART 0A
