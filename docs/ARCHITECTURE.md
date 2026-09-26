@@ -64,6 +64,16 @@ One sentence is one QC card. The legacy pipeline split sentences into subclaims 
 
 The backend produces the qcCard JSON contract. The frontend renders badges, borders, and copy from those fields. It does not re-derive evidence verdicts, re-run rules, or reinterpret concern severity.
 
+### Complete or nothing
+
+A review is whole or it is nothing. If a run cannot finish, the payload carries no cards
+and an honest account of what happened instead (**B329**). Three checkpoints: a pre-flight
+fail-safe size pin, a deadline check after Stage 1, and a provider refusal mid-run. Five
+causes: `too_large`, `deadline`, `capacity`, `billing`, `error`. `lib/qc/review-deadline.mjs`
+owns the causes, the screen copy (`REVIEW_COPY`) and the next step (`REVIEW_NEXT_STEP`).
+The recorded cause stays the machine slug, including `error`; the screen never prints it.
+Partial results are not shown, not cached and not exported.
+
 ---
 
 ## 3. Three-signal framework
@@ -185,6 +195,15 @@ Neon Postgres in AWS Europe Central 1 (Frankfurt), matching Vercel `fra1`. Repo 
 `owner_key` (`x-owner-key` header) stops one browser reading another browser's row. It is not authentication.
 
 Pooled `DATABASE_URL` for routes. Unpooled `DATABASE_URL_UNPOOLED` for migrations (`npm run db:migrate`).
+
+`getSql` names three states, not two (**B330**). `DB_NOT_CONFIGURED` is an absent
+`DATABASE_URL`. `DB_UNREACHABLE` is a present URL that refuses, which previously surfaced
+as an unhandled rejection that killed the function process. Reachable is the third.
+Review-state and reviewer-decisions return 503 `db_unreachable`. The model-drift watchdog
+degrades to in-process memory on any failure, not only on an absent URL. `/api/health`
+reports reachability and the environment pill goes amber when the database is unreachable.
+A reviewer decision that cannot be persisted is told to the reviewer (**B331**) rather than
+dropped silently.
 
 ---
 

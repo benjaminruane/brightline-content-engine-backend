@@ -18,11 +18,45 @@ Every "next work" list below this section is superseded by it.
 
 > **Vision:** Enable investment writers to produce, review, and govern institutional-grade content with speed, auditability, and confidence.
 
-Last updated: 2026-09-21 (B305. Repair-plan tier 1 closed. Ingestion is the active block. Ben 19 September: prose-only sources; hosted by Ben.)
+Last updated: 2026-09-26 (B332. Record brought current to the 25 September ships: review completeness, Ben's incomplete-review copy, three database states. Ingestion is no longer the active block.)
 
 > **Superseded 2026-09-21.** The 2026-09-15 next-work paragraph ended on **B194** to **B197** as the open front. Those four are closed or answered (B194 shipped 17 September; B195 measured 17 September; B196 swept 18 September; B197 answered 18 September). Kept below for history.
 >
 > Next work on the **delivery track**, in this order: house-style inversion closed by **B178** at the payload and **B180** at the filter (**B176**); cross-document disagreement (**B173**, shipped: ask which source governs; **B186** append-only store of those rulings and overrides, production migrated and verified 2026-09-14 by reading a stored row back; **B187** sends the draft hash with each decision); unsupported dependents as a finding (**B172**); user-supplied authoring organisation (**B171**); a card-integrity instrument (not yet a backlog row: catch cards that contradict themselves); shorter model readings (not yet a backlog row). Frozen corpus stays at catch **9 of 11**, leave-alone **67 of 74** and is not re-run (**B162**). Do not tune judging against that pack. **B153** wording pass remains open and frozen. **B156** fifth display state remains scoped, not built. **Pr16** remains. **B158** second excerpt gap before the sources drawer. Implement Changes is on main behind `REVISE_ACTION_LIST` and `VITE_REVISE_ACTION_LIST` (**Pr17**; residual **B151**; **B152**). Every spec ends with `npm run verify:ship` in both repos. **B183 (2026-09-13):** three shipped proposal-layer protections were inert in production until this fix — `sortedRecord` discarded `card`, so R1, the confirming passage, and **B173** never read `supportSpans`. Fourth instance of a check that silently did nothing (coverage-union UNEXERCISED; **B176** filter failed open; **B178** ignore-source instructions while the source remained in the payload). **2026-09-15:** fixture 18 run live in production (`365d6a4`) — first time since B183. The cross-document question appeared, the ruling applied across the review, and all five contradicted figures came back corrected. This had blocked all other work since 14 September. Pinned F18 table ruling: not wrong, HALF (before-the-ruling acknowledge / sources disagree / no proposal); after the ruling those statements carry proposals matching the other table. Detail `scripts/diagnostic/delivery-check/live-2026-09-15-f18-run.md`. **B188**–**B193** shipped (one word limit; rewrite path aligned; environment pill; revise-flag drift; Word limit label; Results overflow; summary four-way mix). Next open: **B194** (four summaries, BLOCKING any further summary work); **B195** (category-count noise floor, BLOCKS “does Revise improve a draft”); **B196** (full production e2e defect sweep); **B197** (B182 recheck).
+
+**Position as of 2026-09-25.**
+
+INGESTION IS NO LONGER THE ACTIVE BLOCK. PDF text is extracted in about a second
+(**B321**, **B327**). The displayed excerpt is sliced from the named source and a passage
+that cannot be located reads Unverifiable, never Confirmed (**B325**). An incomplete
+review returns no cards and an honest account of what happened, in Ben's wording rather
+than the mechanism's (**B329**, copy 2026-09-25). A database that is present and refusing
+connections is a named state, the drift watchdog degrades instead of switching off, and
+`/api/health` shows reachability in a browser (**B330**, **B331**). The production
+credential was rotated on 25 September.
+
+WHAT INGESTION DID NOT CLOSE: the 4.5 MB upload body limit (**B79**), and tables, which
+Ben's 19 September ruling requires to be detected and marked not checked. The position
+data for that detection is now on every text item and nothing reads it.
+
+SOURCE LENGTH IS MODELLED, NOT SOLVED, AND SMALLER THAN IT WAS CALLED. **B328** is a
+paper model with no model calls. Against a 3,698-word draft the function budget on a busy
+provider window refuses first, the per-minute allowance refuses at about 18,500 source
+words, and cost never refuses. Ten of the twenty **B163** documents are at or under 5,105
+words. The corpus maximum is d13 at 36,853 words, not the 24,473 quoted in earlier
+sections of this file.
+
+THE NEXT MOVE IS NOT A SPEC. Every open row was inferred from instruments, not reported
+by someone using the product on their own writing. That is the missing sequencing input.
+
+Still open and not part of any closed front: **B153** wording pass (frozen); **B156**
+fifth display state; **Pr16** internal consistency; **B158** second excerpt gap; **B171**;
+**B172**; Implement Changes residuals **B151** / **B152**; **B310** / **B311** (the
+product cannot see its own spending); **B314** / **B315** / **B316**; **B323**. Frozen
+corpus stays at catch 9 of 11, leave-alone 67 of 74 (**B162**). Every spec still ends with
+`npm run verify:ship` in both repos.
+
+> **Superseded 2026-09-26 by the position above. Kept for history.**
 
 **Position as of 2026-09-21.**
 
@@ -127,6 +161,97 @@ Still open from the superseded paragraph and not part of that closed front: **B1
 ---
 
 ## Recently shipped (closed specs)
+
+### Review completeness and incomplete-review copy (2026-09-25)
+
+- **B329** (`cb0c70b`). A review is whole or it is nothing. Ben's ruling: a partial review
+  is not an acceptable outcome. Three checkpoints (pre-flight fail-safe pin from B277
+  Run 4 / **B328**, a deadline check after Stage 1, and a provider refusal mid-run), five
+  causes, no cards on any of them. The recorded cause stays a machine slug, including
+  `error`. Module `lib/qc/review-deadline.mjs`. Tests `tests/review-deadline.test.mjs`.
+  Report `scripts/diagnostic/review-deadline/REPORT.md`.
+- **Copy** (`b3343f9`). `REVIEW_COPY` and `REVIEW_NEXT_STEP` carry Ben's wording, not the
+  mechanism's. The screen reads cause, then how far it got, then the next step. The word
+  billing is never printed. **B311** stays open because an operator's unpaid account still
+  reads to a user as the product being broken.
+
+### Database states (2026-09-25)
+
+- **B330** (`2ca0479`). Three named states: `DB_NOT_CONFIGURED`, `DB_UNREACHABLE`,
+  reachable. A present-and-refusing credential used to fall through to an unhandled
+  rejection, and the drift watchdog's fallback fired only on an ABSENT URL, so a rejected
+  password switched the watchdog off rather than degrading it. Drift now degrades to
+  in-process memory on any failure. `/api/health` reports reachability; the environment
+  pill goes amber. A decision that cannot persist is told to the reviewer. Tests
+  `tests/db-unreachable.test.mjs`. Report `scripts/diagnostic/db-credential/REPORT.md`.
+- **B331** (`ad942a5`). The B330 strings said saved and not saved in consecutive
+  sentences. Standalone `That decision was not recorded. Please try again.` Accepted-fix
+  toast `Draft saved to version history, but the decision was not recorded. Please try
+  again.` Frontend `decisionSaveCopy.js`.
+- **Operational, Ben, 2026-09-25.** Production `DATABASE_URL` rotated after failing since
+  21 September. An environment variable change takes effect only at the next deploy, so
+  health read unreachable until the redeploy. The Neon Dev branch had been expiring, not
+  disappearing: the console default "automatically delete branch after 1 day" was ticked,
+  now unticked. The Neon integration is installed; an environment variable created by hand
+  cannot be adopted by it, and a leftover `vercel-dev` branch blocked the first attempt.
+  Closes the production half of **B103**.
+
+### Evidence display (2026-09-24)
+
+- **B322** then **B325** (`950c9ca`, `1087f75`). A Confirmed card with no locatable
+  excerpt was a false green. Cursor had ruled it safe on 22 September and overturned
+  itself when asked to look at what the reviewer sees rather than reason about it. The
+  displayed excerpt is now sliced from the named source and the model's passage is only a
+  pointer. Two thirds of the model's quotes were never literally in the source, almost all
+  whitespace; 55 of 56 recover and the one miss refuses rather than guesses. A figures
+  guard rejects any recovery that loses a number, date or name. A miss reads Unverifiable
+  (`displayVerdict` `unverifiable`, reason `excerpt_not_locatable`), never Confirmed and
+  never Not checked. Module `lib/qc/excerpt-from-source.mjs`. Tests
+  `tests/evidence-card-no-excerpt.test.mjs`. Report
+  `scripts/diagnostic/excerpt-recovery/REPORT.md`.
+- **B321's verdict comparison was wrong in the record and is corrected in place.** It
+  compared a populated B163 field against one the assembled card never writes and reported
+  twenty of twenty verdicts moved. On `displayVerdict`, sixteen of twenty were identical.
+  `scripts/diagnostic/extractor-swap/B321-CORRECTION.md`. The field gap itself is
+  **B323**, open.
+
+### Extraction rebuild (2026-09-21 to 24)
+
+- **B321** (`72f913a`; deployed proof recorded at `b7b3155`). PDF text reads `pdfjs-dist`
+  directly, assembled by position on the page (page, then y band, then x). officeparser
+  stays for Word, PowerPoint and Excel. `PDF_ENGINE=officeparser` reverts it with no
+  deploy. Twenty real documents: 755,629 ms through officeparser against 1,260 ms direct,
+  about 600x. Proven in the deployed function, not only locally. A scanned PDF still
+  stamps `unsupported_scanned`.
+- **B327** (`6792f7f`). Raised characters join the body line they sit on. Ordinals
+  concatenate (`the 25th anniversary`): ordinals lost went 4 to 0 and figures agreeing
+  6,761 to 6,913, with nothing worse. Footnote markers are spaced:
+  `RAISED_MARKER_TREATMENT = "space"`, Ben's ruling, settled 2026-09-25. Off with
+  `PDF_RAISED_CHARACTERS=0`. Tests `tests/extract-raised-characters.test.mjs`.
+- **Killed by the finding, not built.** Extract-at-upload (**B318** groundwork), the
+  extract-plus-review time budget, and B163 Part 3's "page count predicts which documents
+  fail", which was page count predicting the converter's own cost. **B317**
+  (`QC_EXTRACT_STRUCTURE` default off) stays, worth about half the old extract wall.
+- **Measurement.** Bake-off **B319**, figure fidelity **B326**, paper ceiling **B328**.
+  Whole arc under USD 2.50, because extraction needs no model calls.
+
+### Honesty repair and the scheduler (2026-09-17 to 21)
+
+- **Repair-plan tier 1 closed.** A check that did not run says so; a check switched off
+  says so and is named on the card (**B298**); the card's border colour comes from the one
+  readiness calculation and agrees with the card (**B294**); an absent setting can no
+  longer mean a check ran (**B299**, **B302**); a provider refusal records what the
+  provider actually said; a terminal refusal fails in seconds instead of retrying a bill
+  for four and a half minutes. Summaries speak one backend-owned vocabulary (**B194**).
+- **The scheduler** (**B277**). Concurrency derived per stage from live rate-limit headers,
+  with a real wait. Recovered 102 lost checks and measured the product's real sizes for
+  the first time. Report `scripts/diagnostic/delivery-check/b277-scheduler-and-wait.md`.
+- **B163.** Twenty real PDFs end to end; thirteen produced a review a reader could trust.
+  This is the corpus every later size and cost number uses. Report
+  `scripts/diagnostic/delivery-check/b163-ingestion-reality.md`.
+- **Sending less failed twice** (**B271**, **B275**) and taught why: the judgement is
+  relational and fires only when a specific sentence is the subject of the question.
+  Report `scripts/diagnostic/delivery-check/b275-document-level-editorial.md`.
 
 ### Word limit, environment, and summary mix (2026-09-15)
 
