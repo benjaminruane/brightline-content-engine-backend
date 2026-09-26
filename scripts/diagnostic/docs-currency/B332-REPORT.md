@@ -86,3 +86,77 @@ COST
 -----------------------------------------------------------------------------
 
 USD 0. No model calls. No production Review.
+
+-----------------------------------------------------------------------------
+B334. Finish the backlog housekeeping B332 left behind
+-----------------------------------------------------------------------------
+
+Documentation only. No product code. No behaviour change. No test changes.
+
+SHIPPED
+
+| Repo | Pushed sha | verify:ship |
+|------|------------|-------------|
+| backend | (filled after push) | (filled after push) |
+
+PART 0A
+
+A1 TRUE. All six were in `## 2. Backend / Pipeline` under Open work, Launch RECORD, and finished. None is an open task.
+
+- B312 MEASURED 2026-09-21. Time measurement.
+- B313 MEASURED 2026-09-21. Cache probe.
+- B318 FILED 2026-09-22. Groundwork, no product code.
+- B319 MEASURED 2026-09-22. Bake-off.
+- B320 B222 ship of the `.cursorrules` contradiction.
+- B331 B222 copy, recorded not saved.
+
+None of the six describes outstanding work as a task. B319 Notes says "Fast path is not yet honest" and B312 Notes says "PRODUCT-BLOCKING": those are measurement-time snapshots. B321 shipped the path. B318 Notes "Facts for the next spec" is what a filed groundwork row is.
+
+A2 TRUE. Before this pass, each of these five IDs appeared on two table rows:
+
+- B222 Standing rules L310; Closed moved L503
+- B271 Findings log L279; Closed moved L564
+- B273 Findings log L280; Closed moved L522
+- B275 Findings log L281; Closed moved L523
+- B276 Findings log L283; Closed moved L565
+
+A3 TRUE. B271 / B273 / B275: same measurement on both rows, neither shipped. B276 shipped as B278. B222: Standing rule plus the ship row for deploying the rule.
+
+A4 TRUE. ARCHITECTURE L3 opened "as of 2026-09-21". B163 still described extract wall as 300 s / page count. Both were B333.
+
+PART 0B
+
+B1 AGREE. Moved B312, B313, B318, B319, B320, B331 verbatim into Closed moved, appended in that ID order after B330. Launch unchanged.
+
+B2 AGREE. Findings log kept. Closed rows deleted after merge.
+
+B271 merged from Closed: Keep CONTEXT BEFORE / AFTER; named FULL DRAFT; 40 cards mixed 29 concern / 11 clean; eight of twelve stable shifts were materiality going clean; control draft 2001 chars; instrument is right; do not drop the draft; Stage 6 pool tighten is the B268 fallback not this cost save; Notes "Document-level rules need the draft."
+
+B273 merged from Closed: "Line left alone." Source "this spec 2026-09-20".
+
+B275 merged from Closed: title DOCUMENT-LEVEL EDITORIAL SLICE and date 2026-09-20. Measurement numbers were already in Findings.
+
+B3 AGREE. Closed kept. Findings B276 deleted after merge: recording commit b702249; 2M TPM is this org's gpt-4o Tier 4 not a law; limits per model family; live headers 2026-09-20 gpt-4o 2M / gpt-4o-mini 10M / gpt-5.1 4M; source this spec 2026-09-20; Notes "Wait slice shipped."
+
+B4 AGREE. B222 unchanged.
+
+B5 AGREE. One sentence under How to update this file, after the close-item paragraph: "A measurement that never shipped is owned by the Findings log; Closed is for work that shipped."
+
+B6 AGREE. ARCHITECTURE L3 is "as of 2026-09-25". B163 annotated 2026-09-26 (B334): extract time solved by B321 and B327; remains B79 and tables. Launch still LAUNCH. Status still OPEN. B333 row shipped as B334 and moved to Closed.
+
+B7 AGREE. Check:
+
+```
+python3 count of markdown table IDs matching ^\| ([A-Za-z][A-Za-z0-9]*) +\| excluding header ID
+duplicate IDs: {'B222': 2}
+B222 occurrences: [303, 496]
+unique IDs: 415 row count: 416
+ASSERT PASS: no ID appears on two rows except B222
+```
+
+B8 AGREE. `npm run launch:summary`. LAUNCH row count unchanged at 21. The regenerated B163 Item cell now carries the B334 annotation. Date 2026-09-26.
+
+STILL WRONG AFTER THIS PASS
+
+B314 / B315 / B316 still describe the officeparser extract wall as current. Filed as **B335**. Not fixed here. B272 SHIPPED RECORD remains in Open Process (named on B335).
+

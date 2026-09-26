@@ -1,6 +1,6 @@
 # Architecture
 
-How the QC pipeline runs after the v4 rebuild, as of 2026-09-21. Cursor reads this before a spec that touches Review. It is the pipeline contract, not the sprint board. For status and backlog see `docs/ROADMAP.md` and `docs/BACKLOG.md`. Last audit: `docs/DOC_TRUTH_AUDIT.md` (B305 drift check 2026-09-21).
+How the QC pipeline runs after the v4 rebuild, as of 2026-09-25. Cursor reads this before a spec that touches Review. It is the pipeline contract, not the sprint board. For status and backlog see `docs/ROADMAP.md` and `docs/BACKLOG.md`. Last audit: `docs/DOC_TRUTH_AUDIT.md` (B305 drift check 2026-09-21).
 
 High-level flow: uploaded sources plus draft text go through pipeline stages to one qcCard per sentence-level statement. The frontend renders that contract. It does not re-derive evidence verdicts.
 
