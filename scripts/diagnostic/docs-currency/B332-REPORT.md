@@ -8,8 +8,8 @@ SHIPPED
 
 | Repo | Pushed sha | verify:ship |
 |------|------------|-------------|
-| backend | 70558a8 | SHIP VERIFIED  70558a8  main  130 files  1574 tests |
-| frontend | 3f37565 (no change) | (filled after frontend verify:ship) |
+| backend | 70558a8 (docs); 629bcd5 (this report's first scoreboard fill) | SHIP VERIFIED  629bcd5  main  130 files  1574 tests |
+| frontend | 3f37565 (no change) | SHIP VERIFIED  3f37565  main  44 files  250 tests |
 
 -----------------------------------------------------------------------------
 PART 0A
