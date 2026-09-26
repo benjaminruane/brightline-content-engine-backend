@@ -97,7 +97,7 @@ SHIPPED
 
 | Repo | Pushed sha | verify:ship |
 |------|------------|-------------|
-| backend | (filled after push) | (filled after push) |
+| backend | da4c260 | SHIP VERIFIED  da4c260  main  130 files  1574 tests |
 
 PART 0A
 
