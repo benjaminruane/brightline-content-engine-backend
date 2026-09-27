@@ -41,6 +41,7 @@ const PUBLIC_ENTRY_KEYS = new Set([
   "resultingSentence",
   "why",
   "verification",
+  "provenance",
 ]);
 
 function statementRow(id, statement, cardExtras = {}) {

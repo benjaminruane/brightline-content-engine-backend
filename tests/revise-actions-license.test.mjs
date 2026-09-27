@@ -48,7 +48,7 @@ const VOICE_UNNAMED_IDS = [
   "S6:editorial:voice_consistency:0",
   "S9:editorial:voice_consistency:0",
 ];
-const KEEP_ACTION_IDS = ["S0:editorial:currency_format:0"];
+const KEEP_ACTION_IDS = [];
 const MARKED_CONFLICT_ACTION_IDS = ["S1:evidence:conflicting:0", "S2:evidence:conflicting:0"];
 const CONFLICT_EXCERPTS = {
   "S1:evidence:conflicting:0": "The net IRR since inception is 11.2%.",
@@ -153,7 +153,7 @@ describe("revise-actions licensed change", () => {
         };
       },
     });
-    assert.equal(called, 1);
+    assert.equal(called, 0);
     assert.equal(result.disposition, "ACKNOWLEDGE");
     assert.equal(result.sort?.reasonCode, "visible_signal");
     assert.equal(result.noProposalReason, NO_PROPOSAL.visible_signal);
@@ -245,7 +245,7 @@ describe("revise-actions licensed change", () => {
         },
       }
     );
-    assert.equal(called, 1);
+    assert.equal(called, 0);
     assert.equal(result.disposition, "ACKNOWLEDGE");
     assert.equal(result.sort?.reasonCode, "visible_signal");
     assert.equal(result.noProposalReason, NO_PROPOSAL.visible_signal);
@@ -323,7 +323,7 @@ describe("revise-actions licensed change", () => {
       assert.equal(/the authoring organisation/i.test(JSON.stringify(result)), false);
       assert.equal(
         errors.some((line) => line.includes("PLACEHOLDER_LEAK")),
-        true
+        false
       );
     } finally {
       console.error = original;
@@ -401,7 +401,7 @@ describe("revise-actions licensed change", () => {
     assert.equal(result.resultingSentence, undefined);
   });
 
-  test("fillAction still proposes when this statement names the configured house", async () => {
+  test("fillAction does not propose a composed first-person rewrite when this statement names the house", async () => {
     let called = 0;
     const statement = "We were attracted to Meridian after Halden Group completed the screening.";
     const resultingSentence =
@@ -433,12 +433,14 @@ describe("revise-actions licensed change", () => {
         },
       }
     );
-    assert.equal(called, 1);
-    assert.equal(result.disposition, "ACTION");
-    assert.equal(result.resultingSentence, resultingSentence);
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.proposedChange, undefined);
+    assert.equal(result.resultingSentence, undefined);
+    assert.equal(result.noProposalReason, NO_PROPOSAL.visible_signal);
   });
 
-  test("fillAction still proposes when another sentence in the draft names the house", async () => {
+  test("fillAction does not propose a composed first-person rewrite when another sentence names the house", async () => {
     let called = 0;
     const statement = "On balance, we are supportive of the commitment.";
     const resultingSentence = "On balance, Halden Group is supportive of the commitment.";
@@ -471,9 +473,11 @@ describe("revise-actions licensed change", () => {
         },
       }
     );
-    assert.equal(called, 1);
-    assert.equal(result.disposition, "ACTION");
-    assert.equal(result.resultingSentence, resultingSentence);
+    assert.equal(called, 0);
+    assert.equal(result.disposition, "ACKNOWLEDGE");
+    assert.equal(result.proposedChange, undefined);
+    assert.equal(result.resultingSentence, undefined);
+    assert.equal(result.noProposalReason, NO_PROPOSAL.visible_signal);
   });
 });
 
@@ -511,7 +515,7 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
     const byId = Object.fromEntries(replayed.map((e) => [e.id, e]));
     const mix = SAMPLE_ORDER.map((id) => `${id} ${byId[id]?.disposition}`);
     assert.deepEqual(mix, [
-      "S0:editorial:currency_format:0 ACTION",
+      "S0:editorial:currency_format:0 ACKNOWLEDGE",
       "S1:evidence:conflicting:0 ACTION",
       "S2:evidence:conflicting:0 ACTION",
       "S4:evidence:partial:0 ACKNOWLEDGE",
@@ -527,8 +531,8 @@ describe("Brackenhill 2026-09-02 recorded sample", () => {
       "S9:evidence:not_supported:0 ACKNOWLEDGE",
       "S9:editorial:voice_consistency:0 ACKNOWLEDGE",
     ]);
-    assert.equal(replayed.filter((e) => e.disposition === "ACTION").length, 3);
-    assert.equal(replayed.filter((e) => e.disposition === "ACKNOWLEDGE").length, 12);
+    assert.equal(replayed.filter((e) => e.disposition === "ACTION").length, 2);
+    assert.equal(replayed.filter((e) => e.disposition === "ACKNOWLEDGE").length, 13);
     for (const id of CONVERT_IDS) {
       assert.equal(byId[id]?.disposition, "ACKNOWLEDGE", `${id} must convert`);
       assert.equal(byId[id]?.sort?.reasonCode, "visible_signal", `${id} reason`);
