@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | not yet run |
+| backend | f692876 | SHIP VERIFIED  f692876  main  132 files  1585 tests |
 | frontend | not touched | -- |
 
 Ids used: B339 (this census), B340, B341.
