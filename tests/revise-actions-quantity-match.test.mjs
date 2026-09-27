@@ -278,14 +278,13 @@ const GENERIC_DECLINE = [
   "F12-S0",
   "F14-S11",
   "F15-S2",
-  "F15-S11",
   "F17-S9",
   "F18-S0",
   "F18-S2",
-  "F19-S2",
   "F19-S13",
 ];
-const DECLINE = [...GENERIC_DECLINE, ...Object.keys(SPECIFIC_DECLINE)];
+const AGREEMENT_DECLINE = ["F15-S11", "F19-S2"];
+const DECLINE = [...GENERIC_DECLINE, ...AGREEMENT_DECLINE, ...Object.keys(SPECIFIC_DECLINE)];
 
 const PROPOSE_EXPLANATION = {
   W2: {
@@ -361,6 +360,10 @@ describe("quantity-matching pinned table", () => {
         assert.equal(result.explainCode, specific.explainCode, id);
         assert.equal(result.explanation, specific.explanation, id);
         assert.equal(result.noProposalReason, specific.explanation, id);
+      } else if (AGREEMENT_DECLINE.includes(id)) {
+        assert.equal(result.explainCode, "conflict_suppressed_figure_agrees", id);
+        assert.equal(result.explanation, undefined, id);
+        assert.equal(result.noProposalReason, NO_PROPOSAL.conflict_unaddressed, id);
       } else {
         assert.equal(result.explainCode, undefined, id);
         assert.equal(result.explanation, undefined, id);
