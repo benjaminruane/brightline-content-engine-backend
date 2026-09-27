@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | not yet run |
+| backend | 17ede44 | SHIP VERIFIED  17ede44  main  132 files  1585 tests |
 | frontend | not touched | -- |
 
 Ids used: B338.
