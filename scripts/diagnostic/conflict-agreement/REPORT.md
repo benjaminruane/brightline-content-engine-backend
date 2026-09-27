@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | not yet run |
+| backend | 11ee94f | SHIP VERIFIED  11ee94f  main  131 files  1578 tests |
 | frontend | not touched | -- |
 
 Ids used: B336.
