@@ -4,8 +4,8 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending first push | pending |
-| frontend | pending first push | pending |
+| backend | 0883627 | SHIP VERIFIED  0883627  main  133 files  1592 tests |
+| frontend | a83be83 | SHIP VERIFIED  a83be83  main  44 files  252 tests |
 
 Ids used: B340.
 
