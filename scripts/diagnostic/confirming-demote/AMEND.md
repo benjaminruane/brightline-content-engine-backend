@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending first push | pending |
+| backend | 41b406d | SHIP VERIFIED  41b406d  main  135 files  1606 tests |
 | frontend | not touched | -- |
 
 Ids used: B346.
