@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | pending |
+| backend | a22e894 | SHIP VERIFIED  a22e894  main  139 files  1630 tests |
 | frontend | not touched | -- |
 
 Ids used: B348.
