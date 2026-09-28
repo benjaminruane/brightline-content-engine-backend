@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending first push | pending |
+| backend | c20b858 | SHIP VERIFIED  c20b858  main  137 files  1618 tests |
 | frontend | not touched | -- |
 
 Ids used: B347.
