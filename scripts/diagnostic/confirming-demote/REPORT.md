@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending first push | pending |
+| backend | 152eeeb | SHIP VERIFIED  152eeeb  main  134 files  1599 tests |
 | frontend | not touched | -- |
 
 Ids used: B345.
