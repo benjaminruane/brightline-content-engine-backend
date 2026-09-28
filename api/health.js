@@ -4,7 +4,7 @@ import { VISIBILITY } from "../lib/output-intent.js";
 import { getPgCommentaryWordLimit } from "../lib/prompt-library/index.js";
 import { PG_WRITING_EVENT } from "../lib/prompt-library/pg-writing-prompts.mjs";
 import { readDatabaseStatus } from "../lib/db/client.mjs";
-import { readEnvironmentSummary, withDatabaseStatus } from "./_lib/env-flags.js";
+import { readBuildIdentity, readEnvironmentSummary, withDatabaseStatus } from "./_lib/env-flags.js";
 
 function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
@@ -35,6 +35,7 @@ export default async function handler(req, res) {
 
   const database = await readDatabaseStatus();
   const environment = withDatabaseStatus(readEnvironmentSummary(), database);
+  const build = readBuildIdentity();
   return res.status(200).json({
     ok: true,
     service: "backend",
@@ -42,5 +43,6 @@ export default async function handler(req, res) {
     houseWordLimits: buildHouseWordLimits(),
     environment,
     database,
+    build,
   });
 }

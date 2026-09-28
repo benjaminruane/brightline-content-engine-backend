@@ -42,6 +42,7 @@ import {
   reviewOutcomeFromPipeline,
 } from "../lib/qc/review-deadline.mjs";
 import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
+import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
 
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
@@ -416,6 +417,7 @@ export default async function handler(req, res) {
         stageSchedules: scheduleSnapshot(),
         llmSpend: getLlmSpend(),
         modelConfig,
+        build: readBuildIdentity(),
         ...(typeof sourceIngestionWarning === "string" ? { sourceIngestionWarning } : {}),
         ...(totalTextLowWarning === true ? { totalTextLowWarning: true } : {}),
         ...(pipelineResult?.draftCoverage ? { draftCoverage: pipelineResult.draftCoverage } : {}),
@@ -462,6 +464,7 @@ export default async function handler(req, res) {
         capacityWait: capacityWaitSnapshot(),
         providerRefusal: providerRefusalSnapshot(),
         reviewDidNotRun: true,
+        build: readBuildIdentity(),
       },
     };
     res.status(200).json(safeInternalErrorPayload);
