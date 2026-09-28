@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending first push | pending |
+| backend | 0a4a87f | SHIP VERIFIED  0a4a87f  main  133 files  1592 tests |
 | frontend | not touched | -- |
 
 Ids used: B342 (this diagnostic), B343 (first-person standing ruling), B344 (flag-parse unification).
