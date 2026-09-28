@@ -83,7 +83,7 @@ describe("B275 document-level editorial review", () => {
     assert.equal(/\n\d+\. materiality:/.test(prompt), false);
     assert.equal(/\n\d+\. audience_calibration_jargon:/.test(prompt), false);
     assert.equal(/\n\d+\. voice_consistency:/.test(prompt), false);
-    assert.equal(/\n\d+\. narrative_coherence:/.test(prompt), true);
+    assert.equal(/\n\d+\. narrative_coherence:/.test(prompt), false);
   });
 
   test("a failed document-level call is not_reviewed, never a silent clean", async () => {

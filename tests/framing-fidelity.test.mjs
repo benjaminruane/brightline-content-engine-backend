@@ -159,8 +159,9 @@ describe("stage7 framing-fidelity emit", () => {
       }
     );
     assert.equal(card.supportState, "supported");
-    assert.equal(card.displayVerdict, "supported_full");
-    assert.equal(card.concernLevel, "none");
+    assert.equal(card.displayVerdict, "supported_partial");
+    assert.equal(card.concernLevel, "moderate");
+    assert.equal(card.displayVerdictReason, "framing_fidelity");
     assert.equal(card.editorialVerdict, "clean");
     assert.deepEqual(card.editorialConcerns, []);
     assert.deepEqual(card.complianceConcerns, []);
@@ -215,6 +216,9 @@ describe("stage7 framing-fidelity emit", () => {
     );
     assert.equal(card.supportState, "supported");
     assert.equal(card.hasConflict, false);
+    assert.equal(card.displayVerdict, "supported_partial");
+    assert.equal(card.concernLevel, "moderate");
+    assert.equal(card.displayVerdictReason, "framing_fidelity");
     assert.equal(card.editorialVerdict, "clean");
     assert.equal(card.framingFidelityConcerns.length, 1);
     assert.match(card.framingFidelityConcerns[0].note, /record/);

@@ -7,7 +7,7 @@ const SPAN_PASSAGE = "The total team of 285 people is split across offices.";
 const SOURCE_LABEL = "IC memo";
 
 describe("conflict excerpt from the span that caused the verdict", () => {
-  test("if the pair is conflicting and no conflicting single-pick exists, the span is the conflict excerpt", () => {
+  test("if the pair is conflicting and no conflicting single-pick exists, the span is the primary excerpt", () => {
     const out = selectExcerpts({
       statementMatches: [
         {
@@ -28,12 +28,11 @@ describe("conflict excerpt from the span that caused the verdict", () => {
       ],
       sources: [{ text: SPAN_PASSAGE, label: SOURCE_LABEL }],
     });
-    assert.equal(out.conflictExcerpt?.passage, SPAN_PASSAGE);
-    assert.equal(out.conflictExcerpt?.sourceLabel, SOURCE_LABEL);
     assert.equal(out.primaryExcerpt?.passage, SPAN_PASSAGE);
+    assert.equal(out.conflictExcerpt, null);
   });
 
-  test("a conflicting single-pick is still preferred over a span", () => {
+  test("a conflicting single-pick keeps primary; a different stored span fills conflictExcerpt", () => {
     const pickPassage = "Westhaven Capital agrees to acquire Norwell from Bridgepoint.";
     const out = selectExcerpts({
       statementMatches: [
@@ -53,10 +52,11 @@ describe("conflict excerpt from the span that caused the verdict", () => {
           passage: SPAN_PASSAGE,
         },
       ],
-      sources: [{ text: pickPassage, label: SOURCE_LABEL }],
+      sources: [{ text: `${pickPassage} ${SPAN_PASSAGE}`, label: SOURCE_LABEL }],
     });
     assert.equal(out.primaryExcerpt?.passage, pickPassage);
-    assert.equal(out.conflictExcerpt, null);
+    assert.equal(out.conflictExcerpt?.passage, SPAN_PASSAGE);
+    assert.notEqual(out.conflictExcerpt?.passage, out.primaryExcerpt?.passage);
   });
 
   test("an empty span passage is not used as the excerpt", () => {

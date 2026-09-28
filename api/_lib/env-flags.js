@@ -5,6 +5,7 @@ import { isLlmCacheEnabled } from "../../lib/qc/llm-cache.mjs";
 import { isMultisourceCoverageEnabled } from "../../lib/qc/coverage-union.mjs";
 import { isExtractStructureEnabled, resolvePdfEngine } from "../../lib/extract-text-from-source.mjs";
 import { isRaisedCharactersEnabled } from "../../lib/extract-pdf-direct.mjs";
+import { isNarrativeCoherenceEnabled } from "../../lib/qc/narrative-coherence.mjs";
 import { readBuildIdentity } from "../../lib/qc/build-identity.mjs";
 
 export { readBuildIdentity };
@@ -52,6 +53,7 @@ export function listUnrecognisedFlags(env = process.env) {
   if (unrecognisedLoose(rawPresent(env, "QC_STAGE2_SPAN"))) names.push("QC_STAGE2_SPAN");
   if (unrecognisedLoose(rawPresent(env, "QC_LLM_CACHE"))) names.push("QC_LLM_CACHE");
   if (unrecognisedLoose(rawPresent(env, "QC_MULTISOURCE_COVERAGE"))) names.push("QC_MULTISOURCE_COVERAGE");
+  if (unrecognisedLoose(rawPresent(env, "QC_NARRATIVE_COHERENCE"))) names.push("QC_NARRATIVE_COHERENCE");
 
   const extractRaw = rawPresent(env, "QC_EXTRACT_STRUCTURE");
   if (extractRaw !== "" && extractRaw !== "true" && extractRaw !== "1") {
@@ -91,6 +93,7 @@ export function readEnvironmentSummary(env = process.env) {
     pdfEngine: flagReport(resolvePdfEngine(), "direct"),
     extractStructure: flagReport(isExtractStructureEnabled(), false),
     raisedCharacters: flagReport(isRaisedCharactersEnabled(), true),
+    narrativeCoherence: flagReport(isNarrativeCoherenceEnabled(env), false),
     unrecognisedFlags: listUnrecognisedFlags(env),
   };
 }
