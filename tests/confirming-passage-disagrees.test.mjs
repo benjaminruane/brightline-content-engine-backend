@@ -118,10 +118,10 @@ describe("B345 confirming passage that disagrees is not support", () => {
     const { demoted, agg, excerpts } = runPath(input);
     const figureSpan = demoted.supportSpans.find((s) => String(s.passage).includes("EUR 2.1 billion"));
     const qualSpan = demoted.supportSpans.find((s) => s.passage === QUAL_PASSAGE);
-    assert.equal(figureSpan.classification, "partially_confirmed");
+    assert.equal(figureSpan.classification, "conflicting");
     assert.equal(qualSpan.classification, "confirmed");
-    assert.equal(agg.verdict, "partially_confirmed");
-    assert.equal(displayVerdict(agg.verdict), "supported_partial");
+    assert.equal(agg.verdict, "conflicting");
+    assert.equal(displayVerdict(agg.verdict), "conflict");
     assert.equal(String(excerpts.primaryExcerpt?.passage).includes("EUR 2.1 billion"), true);
     assert.equal(excerpts.primaryExcerpt?.passage.includes("impressive growth"), false);
   });
@@ -143,8 +143,8 @@ describe("B345 confirming passage that disagrees is not support", () => {
     const input = twoConfirmedPassages(statement, EUR_PASSAGE, QUAL_PASSAGE);
     const { demoted, agg } = runPath(input);
     const figureSpan = demoted.supportSpans.find((s) => String(s.passage).includes("EUR 2.1 billion"));
-    assert.equal(figureSpan.classification, "partially_confirmed");
-    assert.equal(agg.verdict, "partially_confirmed");
+    assert.equal(figureSpan.classification, "conflicting");
+    assert.equal(agg.verdict, "conflicting");
   });
 
   test("T4 two money tokens skip rule a; rule b fires only on kindNameSame", () => {

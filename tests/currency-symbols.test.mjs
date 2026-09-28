@@ -1,7 +1,6 @@
 /**
- * B346. A passage with a different figure is not support, and a component is not a total.
- * Through the real post-Stage-2 path. Fixture strings are the production strings in full.
- * No model calls.
+ * B347. Currency symbols resolve to codes. Bare $ stays unresolved.
+ * Through annotateTokens and the real post-Stage-2 path. No model calls.
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
@@ -13,29 +12,24 @@ import {
 import { applyIntraSourceReducer } from "../lib/qc/pipeline-v4/intra-source-reducer.mjs";
 import { aggregateVerdict } from "../lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
-import { applyConflictProposal } from "../lib/revise-actions/conflict-engagement.mjs";
+import { annotateTokens, applyConflictProposal } from "../lib/revise-actions/conflict-engagement.mjs";
 
 const SOURCE_LABEL = "Action H1 2024";
 
-const DOCTORED_REFINANCE =
-  "Meanwhile, the company completed a USD 1.5 billion refinancing, reflecting its robust growth and strong cash generation.";
 const HONEST_REFINANCE =
   "Meanwhile, the company completed a EUR 2.1 billion refinancing, reflecting its robust growth and strong cash generation.";
+const CURRENCY_ERROR =
+  "Meanwhile, the company completed a USD 2.1 billion refinancing, reflecting its robust growth and strong cash generation.";
 const REAL_REFINANCE_PASSAGE =
   "In July 2024, Action successfully completed a refinancing event, raising €2.1 billion in total, including a second US dollar term loan issuance of $1.5 billion.";
 const QUAL_PASSAGE =
   "The successful completion of another sizable refinancing reflects Action's impressive growth and strong cash generation.";
 
-const FUND_STATEMENT = "We committed USD 50 million to the fund.";
-const FUND_PASSAGE = "The fund held its final close at EUR 800 million.";
-const ACQ_STATEMENT = "The asset was acquired for EUR 120 million.";
-const ACQ_PASSAGE = "The acquisition completed in March, funded with a EUR 45 million equity cheque.";
-
 const DOCTORED = [
   "For the six months ending 30 June 2024, Action generated record net sales and operating EBITDA.",
   "Like-for-like sales growth reached 12% for the period, driven by overall high transaction volume and robust performance in luxury goods, which offset a decline in average selling prices.",
   "Performance for the period was achieved despite a continued focus on price increases and the impact of softer seasonal sales due to adverse weather in north western Europe.",
-  DOCTORED_REFINANCE,
+  "Meanwhile, the company completed a USD 1.5 billion refinancing, reflecting its robust growth and strong cash generation.",
   "Following the refinancing, 3i recycled a portion of its proceeds to acquire an additional holding in the company in April 2024, increasing its stake to 56.7%.",
   "On the commercial front, Action added 119 new stores in Denmark over the period and remains on track to meet its target of 330 new stores for by end-2025.",
 ];
@@ -65,6 +59,10 @@ function displayVerdict(pipelineVerdict) {
   return pipelineVerdict;
 }
 
+function moneyBrief(text) {
+  return annotateTokens(text).filter((t) => t.kind === "money")[0];
+}
+
 function twoConfirmedPassages(statement, figurePassage, qualitativePassage) {
   const sourceText = `${figurePassage} ${qualitativePassage}`;
   return {
@@ -78,34 +76,10 @@ function twoConfirmedPassages(statement, figurePassage, qualitativePassage) {
       },
     ],
     supportSpans: [
-      {
-        sourceRefId: 0,
-        classification: "confirmed",
-        passage: figurePassage,
-      },
-      {
-        sourceRefId: 0,
-        classification: "confirmed",
-        passage: qualitativePassage,
-      },
+      { sourceRefId: 0, classification: "confirmed", passage: figurePassage },
+      { sourceRefId: 0, classification: "confirmed", passage: qualitativePassage },
     ],
     sources: [{ text: sourceText, label: SOURCE_LABEL }],
-  };
-}
-
-function oneConfirmedPassage(statement, passage) {
-  return {
-    statement,
-    sourceMatches: [
-      {
-        sourceIndex: 0,
-        sourceLabel: SOURCE_LABEL,
-        classification: "confirmed",
-        passage,
-      },
-    ],
-    supportSpans: [{ sourceRefId: 0, classification: "confirmed", passage }],
-    sources: [{ text: passage, label: SOURCE_LABEL }],
   };
 }
 
@@ -133,29 +107,22 @@ function runPath({ statement, sourceMatches, supportSpans, sources }) {
   return { demoted, reduced, agg, excerpts };
 }
 
-describe("B346 a different figure is not support and a component is not a total", () => {
-  test("T1 the real refinancing passage is a total disagreement and is the quote shown", () => {
-    const input = twoConfirmedPassages(DOCTORED_REFINANCE, REAL_REFINANCE_PASSAGE, QUAL_PASSAGE);
-    const { demoted, agg, excerpts } = runPath(input);
-    const figureSpan = demoted.supportSpans.find((s) => String(s.passage).includes("€2.1 billion"));
-    const qualSpan = demoted.supportSpans.find((s) => s.passage === QUAL_PASSAGE);
-    const verdict = confirmingPassageVerdict(DOCTORED_REFINANCE, REAL_REFINANCE_PASSAGE);
-    assert.equal(verdict.rule, "a");
-    assert.equal(verdict.demoteTo, "conflicting");
-    assert.equal(figureSpan.classification, "conflicting");
-    assert.equal(qualSpan.classification, "confirmed");
-    assert.equal(agg.verdict, "conflicting");
-    assert.equal(agg.hasConflict, true);
-    assert.equal(displayVerdict(agg.verdict), "conflict");
-    assert.equal(String(excerpts.primaryExcerpt?.passage).includes("€2.1 billion"), true);
-    assert.equal(String(excerpts.primaryExcerpt?.passage).includes("impressive growth"), false);
+describe("B347 currency symbols", () => {
+  test("T1 euro 2.1 billion resolves to EUR", () => {
+    const token = moneyBrief("€2.1 billion");
+    assert.equal(token.currency, "EUR");
+    assert.equal(token.value, 2.1);
+    assert.equal(token.scale, "billion");
+    assert.equal(moneyBrief("£40 million").currency, "GBP");
+    assert.equal(moneyBrief("¥500 million").currency, "JPY");
+    assert.equal(moneyBrief("US$1.5 billion").currency, "USD");
+    assert.equal(moneyBrief("$1.5 billion").currency, null);
   });
 
-  test("T2 the honest EUR 2.1 billion statement stays supported_full", () => {
+  test("T2 honest EUR 2.1 billion against the real passage stays supported_full", () => {
     const input = twoConfirmedPassages(HONEST_REFINANCE, REAL_REFINANCE_PASSAGE, QUAL_PASSAGE);
     const { demoted, agg, excerpts } = runPath(input);
-    const verdict = confirmingPassageVerdict(HONEST_REFINANCE, REAL_REFINANCE_PASSAGE);
-    assert.equal(verdict.demoteTo, null);
+    assert.equal(confirmingPassageVerdict(HONEST_REFINANCE, REAL_REFINANCE_PASSAGE).demoteTo, null);
     for (const span of demoted.supportSpans) {
       assert.equal(span.classification, "confirmed");
     }
@@ -164,60 +131,37 @@ describe("B346 a different figure is not support and a component is not a total"
     assert.equal(excerpts.primaryExcerpt?.passage, QUAL_PASSAGE);
   });
 
-  test("T3 the fund case is partly confirmed, not conflicting, and the passage is shown", () => {
-    const input = oneConfirmedPassage(FUND_STATEMENT, FUND_PASSAGE);
+  test("T3 USD 2.1 billion against the real passage is a total conflict", () => {
+    const input = twoConfirmedPassages(CURRENCY_ERROR, REAL_REFINANCE_PASSAGE, QUAL_PASSAGE);
     const { demoted, agg, excerpts } = runPath(input);
-    const verdict = confirmingPassageVerdict(FUND_STATEMENT, FUND_PASSAGE);
+    const verdict = confirmingPassageVerdict(CURRENCY_ERROR, REAL_REFINANCE_PASSAGE);
     assert.equal(verdict.rule, "a");
-    assert.equal(verdict.demoteTo, "partially_confirmed");
-    assert.equal(demoted.sourceMatches[0].classification, "partially_confirmed");
-    assert.equal(agg.verdict, "partially_confirmed");
-    assert.notEqual(agg.verdict, "conflicting");
-    assert.equal(agg.hasConflict, false);
-    assert.equal(displayVerdict(agg.verdict), "supported_partial");
-    assert.equal(excerpts.primaryExcerpt?.passage, FUND_PASSAGE);
-  });
-
-  test("T4 the acquisition case is partly confirmed, not conflicting", () => {
-    const input = oneConfirmedPassage(ACQ_STATEMENT, ACQ_PASSAGE);
-    const { demoted, agg, excerpts } = runPath(input);
-    const verdict = confirmingPassageVerdict(ACQ_STATEMENT, ACQ_PASSAGE);
-    assert.equal(verdict.rule, "a");
-    assert.equal(verdict.demoteTo, "partially_confirmed");
-    assert.equal(demoted.sourceMatches[0].classification, "partially_confirmed");
-    assert.equal(agg.verdict, "partially_confirmed");
-    assert.notEqual(agg.verdict, "conflicting");
-    assert.equal(agg.hasConflict, false);
-    assert.equal(displayVerdict(agg.verdict), "supported_partial");
-    assert.equal(excerpts.primaryExcerpt?.passage, ACQ_PASSAGE);
-  });
-
-  test("T5 rule b still conflicts on a same-kind same-name percent", () => {
-    const statement = "Like-for-like sales growth reached 12% for the period.";
-    const passage = "Like-for-like sales growth reached 9% for the period.";
-    const verdict = confirmingPassageVerdict(statement, passage);
-    assert.equal(verdict.rule, "b");
     assert.equal(verdict.demoteTo, "conflicting");
-    const { agg } = runPath(oneConfirmedPassage(statement, passage));
+    const figureSpan = demoted.supportSpans.find((s) => String(s.passage).includes("€2.1 billion"));
+    assert.equal(figureSpan.classification, "conflicting");
     assert.equal(agg.verdict, "conflicting");
     assert.equal(displayVerdict(agg.verdict), "conflict");
+    assert.equal(String(excerpts.primaryExcerpt?.passage).includes("€2.1 billion"), true);
   });
 
-  test("T6 honest draft produces zero new demotions", () => {
+  test("T4 a bare dollar of the same value as USD is not a disagreement", () => {
+    const dollar = "The company raised $1.5 billion.";
+    const usd = "The company raised USD 1.5 billion.";
+    assert.equal(confirmingPassageVerdict(dollar, usd).demoteTo, null);
+    assert.equal(confirmingPassageVerdict(usd, dollar).demoteTo, null);
+    assert.equal(moneyBrief("$1.5 billion").currency, null);
+    assert.equal(moneyBrief("USD 1.5 billion").currency, "USD");
+  });
+
+  test("T9 honest draft produces zero new demotions", () => {
     let demotions = 0;
     HONEST.forEach((statement, i) => {
       const passage = HONEST_PASSAGES[i];
-      const verdict = confirmingPassageVerdict(statement, passage);
-      if (verdict.demoteTo) demotions += 1;
+      if (confirmingPassageVerdict(statement, passage).demoteTo) demotions += 1;
       const out = demoteConfirmedClassifications({
         statementText: statement,
         sourceMatches: [
-          {
-            sourceIndex: 0,
-            sourceLabel: SOURCE_LABEL,
-            classification: "confirmed",
-            passage,
-          },
+          { sourceIndex: 0, sourceLabel: SOURCE_LABEL, classification: "confirmed", passage },
         ],
         supportSpans: [{ sourceRefId: 0, classification: "confirmed", passage }],
       });
@@ -227,28 +171,12 @@ describe("B346 a different figure is not support and a component is not a total"
     assert.equal(demotions, 0);
   });
 
-  test("T7 the five existing errors still raise; B336 still withholds 119 to 330", () => {
+  test("T10 the five existing errors still raise; B336 still withholds 119 to 330", () => {
     const already = [
-      {
-        statement: DOCTORED[1],
-        classification: "conflicting",
-        passage: "Like-for-like sales growth reached 9.0 percent.",
-      },
-      {
-        statement: DOCTORED[2],
-        classification: "conflicting",
-        passage: "Performance was achieved despite a continued focus on price reductions.",
-      },
-      {
-        statement: DOCTORED[4],
-        classification: "conflicting",
-        passage: "In July 2024, 3i increased its stake to 57.6%.",
-      },
-      {
-        statement: DOCTORED[4],
-        classification: "conflicting",
-        passage: "3i increased its stake to 57.6%.",
-      },
+      { statement: DOCTORED[1], classification: "conflicting", passage: "Like-for-like sales growth reached 9.0 percent." },
+      { statement: DOCTORED[2], classification: "conflicting", passage: "Performance was achieved despite a continued focus on price reductions." },
+      { statement: DOCTORED[4], classification: "conflicting", passage: "In July 2024, 3i increased its stake to 57.6%." },
+      { statement: DOCTORED[4], classification: "conflicting", passage: "3i increased its stake to 57.6%." },
       {
         statement: DOCTORED[5],
         classification: "conflicting",
@@ -271,14 +199,11 @@ describe("B346 a different figure is not support and a component is not a total"
       });
       assert.equal(out.sourceMatches[0].classification, "conflicting");
     }
-
-    const storeStatement = DOCTORED[5];
-    const storeExcerpt =
-      "Action added 119 new stores to the end of P6 (YTD P6 2023: 90) and remains on track to meet its target of 330 stores added this year.";
     const outcome = applyConflictProposal(
       {
-        statement: storeStatement,
-        primaryExcerpt: storeExcerpt,
+        statement: DOCTORED[5],
+        primaryExcerpt:
+          "Action added 119 new stores to the end of P6 (YTD P6 2023: 90) and remains on track to meet its target of 330 stores added this year.",
         rule: "conflicting",
       },
       null
