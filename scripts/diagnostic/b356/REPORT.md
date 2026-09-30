@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending | pending |
+| backend | 43a7354 | SHIP VERIFIED  43a7354  main  150 files  1690 tests |
 | frontend | not touched | -- |
 
 Ids used: B356 (this spec). Copy and placement only. The confirming-passages-only rule is unchanged.
