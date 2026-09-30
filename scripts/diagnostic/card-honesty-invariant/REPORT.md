@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | unpushed | not yet run |
+| backend | 796c123 | SHIP VERIFIED  796c123  main  141 files  1641 tests |
 | frontend | not touched | -- |
 
 Ids used: B351 (this spec; B349 pieces 1 and 2), B350 (closed by this spec), B352 (filed: editorial source-awareness), B353 (filed: pairing dates and scale).
