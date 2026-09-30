@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | unpushed | not yet run |
+| backend | b46eedd | SHIP VERIFIED  b46eedd  main  144 files  1656 tests |
 | frontend | not touched | -- |
 
 Ids used: B352 (this spec), B353 (closed by Part 2).
