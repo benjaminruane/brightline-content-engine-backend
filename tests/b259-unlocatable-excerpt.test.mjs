@@ -137,11 +137,12 @@ describe("B259 unlocatable excerpt (recorded r6-unsupported)", () => {
         skipEditorialDuplicationJudge: true,
       }
     );
-    assert.equal(assembled.displayVerdict, "unverifiable");
-    assert.equal(assembled.supportState, "supported");
+    assert.equal(assembled.displayVerdict, "not reviewed");
+    assert.equal(assembled.supportState, "skipped");
     assert.equal(assembled.evidenceNotReviewedReason, "excerpt_not_locatable");
     assert.equal(assembled.primaryExcerpt, null);
     assert.equal(assembled.hasRealExcerpt, false);
     assert.equal(assembled.excerptNotLocatable, true);
+    assert.notEqual(assembled.displayVerdict, "supported_full");
   });
 });
