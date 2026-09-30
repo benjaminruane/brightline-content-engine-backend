@@ -71,14 +71,15 @@ describe("B354 commentary inventory", () => {
     });
     assert.deepEqual(result.appended, ["9%"]);
     assert.equal(result.unaddressed.length, 0);
-    assert.equal(result.commentary.endsWith("The source also states 9%."), true);
+    assert.equal(/The source also states/.test(result.commentary), false);
+    assert.equal(result.commentary.endsWith("9% matches the source."), true);
     const again = appendSourceStatedClauses({
       commentary: result.commentary,
       inventory,
       confirmingPassages: [TCR_PASSAGE],
     });
     assert.equal(again.appended.length, 0);
-    assert.equal((result.commentary.match(/The source also states 9%\./g) || []).length, 1);
+    assert.equal((result.commentary.match(/9% matches the source\./g) || []).length, 1);
   });
 
   test("an item already mentioned in the commentary gets no clause", () => {
@@ -134,6 +135,7 @@ describe("B354 commentary inventory", () => {
       }
     );
     assert.equal(/The source also states 9%/.test(card.evidenceSummary), false);
+    assert.equal(/9% matches the source/.test(card.evidenceSummary), false);
     assert.equal((card.commentaryUnaddressed || []).includes("9%"), true);
   });
 
@@ -149,7 +151,9 @@ describe("B354 commentary inventory", () => {
       confirmingPassages: [passage],
     });
     assert.equal(result.appended.length, 2);
-    assert.equal((result.commentary.match(/The source also states /g) || []).length, 2);
+    assert.equal(result.commentary.includes(`${result.appended[0]} and ${result.appended[1]} match the source.`), true);
+    assert.equal(/matches the source/.test(result.commentary), false);
+    assert.equal(/The source also states /.test(result.commentary), false);
     assert.equal(result.unaddressed.length, inventory.length - 2);
   });
 
