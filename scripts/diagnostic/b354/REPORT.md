@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | unpushed / not yet run | -- |
+| backend | 5141de2 | SHIP VERIFIED  5141de2  main  147 files  1673 tests |
 | frontend | not touched | -- |
 
 Ids used: B354 (this spec). B353 is closed as B352 Part 2 and was not altered.
