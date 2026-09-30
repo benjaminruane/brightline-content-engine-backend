@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | unpushed / not yet run | -- |
+| backend | f650dfb | SHIP VERIFIED  f650dfb  main  149 files  1683 tests |
 | frontend | not touched | -- |
 
 Ids used: B355 (this spec). B354 Part 1's whole-phrase rule is superseded for causal and evaluative families and retained for all other codes.
