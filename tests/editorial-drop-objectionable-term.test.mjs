@@ -1,6 +1,6 @@
 /**
- * B354 Part 1. The drop rule must test the objectionable term.
- * Whole-phrase containment, two-word floor, quoted phrase is the objection.
+ * B354 / B355. The drop rule tests the objectionable term.
+ * Causal: connective. Evaluative: deleted word. Other: B354 whole phrase.
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
@@ -11,9 +11,9 @@ import {
   selectFlaggedTextsFromConcern,
 } from "../lib/qc/editorial-source-awareness.mjs";
 
-function drop(statement, note, passage, suggestedDirection) {
+function drop(statement, note, passage, { suggestedDirection, concernCode } = {}) {
   const concern = {
-    concernCode: "marketing_language_excess",
+    concernCode: concernCode || "marketing_language_excess",
     note,
     suggestedDirection,
   };
@@ -26,14 +26,14 @@ function drop(statement, note, passage, suggestedDirection) {
 }
 
 describe("B354 editorial drop tests the objectionable term", () => {
-  test("DROPS when the quoted objection is in the matched passage", () => {
+  test("DROPS when the causal connective is in the matched passage", () => {
     const statement = "The increase was driven primarily by a 14% rise in the share price.";
     const note = "The phrase 'driven primarily by' overstates causation.";
     const passage = "driven primarily by a 14% increase in 3i Infrastructure plc's share price";
     const selected = selectFlaggedTextsFromConcern({ note }, statement);
     assert.equal(selected.route, FLAGGED_TEXT_ROUTE.QUOTED);
     assert.deepEqual(selected.texts, ["driven primarily by"]);
-    const after = drop(statement, note, passage);
+    const after = drop(statement, note, passage, { concernCode: "overreach_unsupported_causal" });
     assert.equal(after.concerns.length, 0);
     assert.equal(after.dropped.length, 1);
     assert.equal(after.dropped[0].slug, "editorial_phrase_in_source");
@@ -53,23 +53,26 @@ describe("B354 editorial drop tests the objectionable term", () => {
     assert.equal(after.editorialVerdict, "concern");
   });
 
-  test("SURVIVES a one-word quote below the floor even when the word is in another subject", () => {
+  test("SURVIVES a one-word evaluative term that is not in the matched passage", () => {
     const statement = "This produced significant proceeds for the year.";
     const note = "Delete 'significant'.";
-    const passage = "a significant valuation uplift in TCR";
-    const selected = selectFlaggedTextsFromConcern({ note }, statement);
+    const direction = "Delete 'significant'. The phrase becomes 'generated proceeds for 3i'.";
+    const passage = "Action completed a capital restructuring with a pro-rata redemption of shares.";
+    const selected = selectFlaggedTextsFromConcern({ note, suggestedDirection: direction }, statement);
     assert.equal(selected.route, FLAGGED_TEXT_ROUTE.QUOTED);
-    assert.deepEqual(selected.texts, ["significant"]);
-    const after = drop(statement, note, passage);
+    assert.equal(selected.texts.includes("significant"), true);
+    const after = drop(statement, note, passage, { suggestedDirection: direction });
     assert.equal(after.concerns.length, 1);
     assert.equal(after.dropped.length, 0);
   });
 
-  test("DROPS a case-differing pair", () => {
+  test("DROPS a case-differing evaluative pair", () => {
     const statement = "The programme is set for another Record year.";
     const note = "The phrase 'Record year' is unsubstantiated.";
+    const direction =
+      "Delete 'Record year' and rewrite the sentence so that it reads naturally without it. Do not substitute a milder word for the deleted text.";
     const passage = "on track for another record year with an excellent reception";
-    const after = drop(statement, note, passage);
+    const after = drop(statement, note, passage, { suggestedDirection: direction });
     assert.equal(after.concerns.length, 0);
     assert.equal(after.dropped.length, 1);
   });
