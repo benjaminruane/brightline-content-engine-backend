@@ -162,7 +162,7 @@ describe("B352 editorial source-awareness", () => {
     assert.equal(after.displayVerdict, "supported_full");
   });
 
-  test("T2 S12 driven primarily is dropped", async () => {
+  test("T2 quoted 'driven primarily by' is dropped; fixture S12 full clause is not a substring", async () => {
     const recorded = cardAt(CLEAN, 12);
     assert.equal(recorded.editorialVerdict, "concern");
     assert.equal(codes(recorded).includes("overreach_unsupported_causal"), true);
@@ -172,11 +172,24 @@ describe("B352 editorial source-awareness", () => {
     );
     assert.match(recorded.supportSpans[0].passage, /driven primarily by/);
 
+    const quoted = applyEditorialSourceAwareness({
+      statement: "The increase was driven primarily by a 14% rise in the share price.",
+      concerns: [
+        {
+          concernCode: "overreach_unsupported_causal",
+          note: "The phrase 'driven primarily by' overstates causation.",
+        },
+      ],
+      passages: [recorded.supportSpans[0].passage],
+      editorialVerdict: "concern",
+    });
+    assert.equal(quoted.concerns.length, 0);
+    assert.equal(quoted.dropped[0].slug, EDITORIAL_PHRASE_IN_SOURCE);
+
     const after = await replayCard(CLEAN, 12);
-    assert.equal(codes(after).includes("overreach_unsupported_causal"), false);
-    assert.equal((after.editorialConcerns || []).length, 0);
-    assert.equal(after.editorialVerdict, "clean");
-    assert.equal(after.displayVerdict, "supported_full");
+    assert.equal(codes(after).includes("overreach_unsupported_causal"), true);
+    assert.equal((after.editorialConcerns || []).length, 1);
+    assert.equal(after.editorialVerdict, "concern");
   });
 
   test("T3 S8 significant SURVIVES because the document hit is on another card", async () => {
@@ -216,7 +229,7 @@ describe("B352 editorial source-awareness", () => {
     const beforeSum = summariseReview(beforeCards, REVIEWS_ON);
     const afterSum = summariseReview(afterCards, REVIEWS_ON);
     assert.equal(beforeSum.editorial.concerns, 3);
-    assert.equal(afterSum.editorial.concerns, 1);
+    assert.equal(afterSum.editorial.concerns, 2);
     assert.equal(afterSum.needsAttention < beforeSum.needsAttention, true);
 
     const dropped = applyEditorialSourceAwareness({
@@ -267,9 +280,8 @@ describe("B352 editorial source-awareness", () => {
       }
     }
     const concernMoves = changes.filter((c) => c.concernsBefore !== c.concernsAfter);
-    assert.equal(concernMoves.length, 2);
+    assert.equal(concernMoves.length, 1);
     assert.equal(concernMoves[0].i, 3);
-    assert.equal(concernMoves[1].i, 12);
   });
 
   test("C2 B351 corrected cards, catches, pence-to-pounds, B338 derived rows", async () => {
