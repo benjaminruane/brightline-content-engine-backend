@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | PENDING PUSH | PENDING |
+| backend | e7dcbac | SHIP VERIFIED  e7dcbac  main  139 files  1630 tests |
 | frontend | not touched | -- |
 
 Ids used: B349 (this diagnostic), B350 (filed: first piece, card-honesty invariant).
