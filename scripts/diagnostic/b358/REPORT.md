@@ -4,8 +4,8 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | pending |
-| frontend | pending push | pending |
+| backend | aeec6a6 | SHIP VERIFIED  aeec6a6  main  151 files  1699 tests |
+| frontend | 8f372b8 | SHIP VERIFIED  8f372b8  main  45 files  256 tests |
 
 Ids used: B358 (this spec). Filed **B359** (empty S7/S10 quote; diagnosis only).
 
