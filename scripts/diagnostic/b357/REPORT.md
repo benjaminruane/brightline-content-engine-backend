@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending | pending |
+| backend | 2e44851 | SHIP VERIFIED  2e44851  main  150 files  1693 tests |
 | frontend | not touched | -- |
 
 Ids used: B357 (this spec). Placement only. When the actor sentence fires is unchanged.
