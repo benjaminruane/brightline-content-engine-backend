@@ -168,7 +168,7 @@ describe("B354 actor of the action", () => {
     assert.equal(whitespace.evidenceSummary, ACTOR_SENTENCE);
   });
 
-  test("both fire: actor sentence first, B356 clause still before the reviewer instruction", async () => {
+  test("both fire: actor sentence first; match clause dropped on conflict; reviewer instruction last", async () => {
     const recorded = DOC.statements[8].qcCard.evidenceSummary;
     const statement = "MAIT also completed a 2.2% stake purchase.";
     const card = await assembleActorCard({
@@ -178,9 +178,10 @@ describe("B354 actor of the action", () => {
       commentary: recorded,
     });
     assert.equal(card.evidenceSummary.startsWith(ACTOR_SENTENCE), true);
+    assert.equal(/\b2\.2% matches the source\./.test(card.evidenceSummary), false);
     assert.equal(
       card.evidenceSummary.includes(
-        "2.2% matches the source. The reviewer should consider whether the term 'significant' is necessary or if additional context is needed to support this characterization."
+        "The reviewer should consider whether the term 'significant' is necessary or if additional context is needed to support this characterization."
       ),
       true
     );
