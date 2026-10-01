@@ -56,8 +56,12 @@ describe("B354 commentary inventory", () => {
     });
     assert.equal(result.appended.length, 0);
     assert.equal(/The source also states/.test(result.commentary), false);
+    assert.equal(
+      inventory.some((item) => /essentially all/i.test(item)),
+      true,
+      `scale lexicon should name the aggregation claim, got ${JSON.stringify(inventory)}`
+    );
     assert.deepEqual(result.unaddressed, inventory);
-    assert.deepEqual(inventory, []);
   });
 
   test("an item present verbatim in the confirming passage gets exactly one clause", () => {

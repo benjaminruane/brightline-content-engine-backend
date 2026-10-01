@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 
 import { splitSentences, stripOmissionOverclaimWhenDisplayed } from "../lib/qc/card-honesty.mjs";
-import { MAX_SHOWN_PASSAGES } from "../lib/qc/excerpt-pair.mjs";
+import { MAX_SHOWN_PASSAGES, excerptsAreSame } from "../lib/qc/excerpt-pair.mjs";
 import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 
@@ -160,12 +160,13 @@ describe("B360 two passages on a card", () => {
     assert.equal(MAX_SHOWN_PASSAGES, 2);
   });
 
-  test("doctored S9 shows the GIC passage and does not claim the source is silent on the 2.2% purchase", async () => {
+  test("doctored S9 shows the GIC passage and still names AGIC", async () => {
     const s9 = await replayCard(DOC, 9);
     const hay = shownHay(s9);
     assert.match(hay, new RegExp(GIC_SLICE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     assert.equal(s9.displayVerdict, "conflict");
-    assert.equal(/\bdoes not mention\b/i.test(s9.evidenceSummary), false);
+    assert.match(s9.evidenceSummary, /AGIC/);
+    assert.match(s9.evidenceSummary, /does not mention/);
     assert.equal(/AGIC/.test(hay), false);
     assert.ok(conflictText(s9).trim());
   }, 20000);
@@ -184,21 +185,27 @@ describe("B360 two passages on a card", () => {
     }
   }, 20000);
 
-  test("every conflict card with a competing passage fills conflictExcerpt, including one-passage cards", async () => {
+  test("every conflict card with a distinct competing passage fills conflictExcerpt; one-passage cards stay empty", async () => {
     for (const payload of [CLEAN, DOC]) {
+      const tag = payload === CLEAN ? "CLEAN" : "DOC";
       for (let i = 0; i < payload.statements.length; i += 1) {
         const card = await replayCard(payload, i);
         const conflictFace =
           card.displayVerdict === "conflict" ||
           card.supportState === "conflicting" ||
           card.hasConflict === true;
-        if (!conflictFace) continue;
         const primary = primaryText(card).trim();
-        if (!primary) continue;
-        assert.ok(
-          conflictText(card).trim(),
-          `${payload === CLEAN ? "CLEAN" : "DOC"} S${i} conflict slot empty`
-        );
+        const conflict = conflictText(card).trim();
+        if (primary && conflict) {
+          assert.equal(
+            excerptsAreSame(primary, conflict),
+            false,
+            `${tag} S${i} stores the same text in both slots`
+          );
+        }
+        if (conflictFace && primary && !conflict) {
+          assert.equal(card.conflictExcerptEmptyReason, "no_distinct_passage");
+        }
       }
     }
   }, 30000);
@@ -235,39 +242,51 @@ describe("B360 two passages on a card", () => {
         const passages = [primaryText(card), conflictText(card)].filter((p) => p.trim());
         for (const p of passages) quoteIsWholeSentences(p);
         const hay = passages.join("\n");
-        if (/\bdoes not mention\b/i.test(card.evidenceSummary) && hay.includes("2.2%")) {
-          assert.equal(
-            /\bdoes not mention\b/i.test(card.evidenceSummary) && /2\.2%/.test(hay),
-            false,
-            `${tag} S${i} says the source is silent while holding 2.2%`
-          );
-        }
-        const omission = stripOmissionOverclaimWhenDisplayed({
-          commentary: card.evidenceSummary,
-          displayedPassages: passages,
-        });
         if (/\bdoes not mention\b/i.test(card.evidenceSummary)) {
-          const figures = [...card.evidenceSummary.matchAll(/(\d+(?:\.\d+)?%)/g)].map((m) => m[1]);
-          const allHeld = figures.length > 0 && figures.every((tok) => hay.toLowerCase().includes(tok.toLowerCase()));
-          if (allHeld) {
-            assert.equal(
-              /\bdoes not mention\b/i.test(omission),
-              false,
-              `${tag} S${i} omission strip should have dropped silence`
-            );
+          const omission = stripOmissionOverclaimWhenDisplayed({
+            commentary: card.evidenceSummary,
+            displayedPassages: passages,
+            nonGreen:
+              card.displayVerdict === "conflict" ||
+              card.supportState === "conflicting" ||
+              card.hasConflict === true,
+          });
+          if (omission !== card.evidenceSummary && !/\bdoes not mention\b/i.test(omission)) {
+            const clause = [...card.evidenceSummary.matchAll(/\bdoes not mention\s+((?:(?!\.(?:\s|$)).)+)/gi)];
+            for (const m of clause) {
+              const names = [...(m[1].match(/\b[A-Z]{2,}\b/g) || [])];
+              const allNamesHeld = names.length > 0 && names.every((tok) => hay.includes(tok));
+              if (names.length > 0 && !allNamesHeld) {
+                assert.equal(
+                  true,
+                  false,
+                  `${tag} S${i} stripped silence whose subject is not in the quotes`
+                );
+              }
+            }
           }
         }
       }
     }
   }, 30000);
 
-  test("omission strip drops silence on a held figure and does not flip a name conflict", () => {
+  test("omission strip tests the named subject, not a neighbouring figure", () => {
     const commentary =
       "The source confirms the 2.2% stake. The conflict arises because the source does not mention an earlier 2.2% stake purchase from AGIC. The reviewer should reconcile this discrepancy.";
     const gic = `${GIC_SLICE} in exchange for newly issued 3i Group plc shares.`;
-    const stripped = stripOmissionOverclaimWhenDisplayed({
+    const kept = stripOmissionOverclaimWhenDisplayed({
       commentary,
       displayedPassages: [gic],
+      nonGreen: true,
+    });
+    assert.match(kept, /AGIC/);
+    assert.match(kept, /does not mention/);
+    const gicSilence =
+      "The source confirms the 2.2% stake. The source does not mention the GIC purchase.";
+    const stripped = stripOmissionOverclaimWhenDisplayed({
+      commentary: gicSilence,
+      displayedPassages: [gic],
+      nonGreen: false,
     });
     assert.equal(/\bdoes not mention\b/i.test(stripped), false);
     assert.match(stripped, /confirms the 2\.2% stake/);

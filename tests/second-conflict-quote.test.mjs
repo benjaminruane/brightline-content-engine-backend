@@ -207,7 +207,7 @@ describe("B348 second conflict quote", () => {
     assert.notEqual(excerpts.conflictExcerpt?.passage, excerpts.primaryExcerpt?.passage);
   });
 
-  test("T5 a conflict card with only one stored passage copies that passage into conflictExcerpt", () => {
+  test("T5 a conflict card with only one stored passage leaves conflictExcerpt empty", () => {
     const excerpts = selectExcerpts({
       statementMatches: [
         {
@@ -224,10 +224,10 @@ describe("B348 second conflict quote", () => {
       statementText: S1_STATEMENT,
     });
     assert.equal(excerpts.primaryExcerpt?.passage, PRIMARY_NINE);
-    assert.equal(excerpts.conflictExcerpt?.passage, PRIMARY_NINE);
+    assert.equal(excerpts.conflictExcerpt, null);
   });
 
-  test("T6 a one-passage conflict still fills the slot; a different stored span fills a distinct second", () => {
+  test("T6 a one-passage conflict does not copy primary; a different stored span fills a distinct second", () => {
     const sameTwice = selectExcerpts({
       statementMatches: [
         {
@@ -250,7 +250,7 @@ describe("B348 second conflict quote", () => {
       statementText: S1_STATEMENT,
     });
     assert.equal(sameTwice.primaryExcerpt?.passage, PRIMARY_NINE);
-    assert.equal(sameTwice.conflictExcerpt?.passage, PRIMARY_NINE);
+    assert.equal(sameTwice.conflictExcerpt, null);
 
     const different = selectExcerpts({
       statementMatches: [
