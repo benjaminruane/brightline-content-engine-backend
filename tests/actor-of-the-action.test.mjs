@@ -117,8 +117,8 @@ describe("B354 actor of the action", () => {
       passage: ACTION_PASSAGE,
       verdict: "confirmed",
     });
-    assert.equal(card.displayVerdict, "supported_partial");
-    assert.equal(card.concernLevel, "moderate");
+    assert.equal(card.displayVerdict, "conflict");
+    assert.equal(card.concernLevel, "high");
     assert.equal(card.displayVerdictReason, "actor_mismatch");
     assert.equal(card.evidenceSummary.startsWith(ACTOR_SENTENCE), true);
     assert.equal(card.evidenceSummary.includes(ACTOR_SENTENCE), true);

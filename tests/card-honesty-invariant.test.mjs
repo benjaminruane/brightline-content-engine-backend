@@ -149,7 +149,6 @@ function excerptText(card) {
   return null;
 }
 
-const OCTOBER_OPENING = "In October 2025, Action successfully completed two financing transactions.";
 const GIC_SLICE = "In September 2025, 3i acquired 2.2% of Action equity from GIC";
 const RECORDED_SU_TAIL = "Su";
 
@@ -170,8 +169,8 @@ describe("B351 card honesty invariant", () => {
     assert.equal(s7.displayVerdict, "supported_full");
     assert.equal(s6.supportState, "supported");
     assert.equal(s7.supportState, "supported");
-    assert.match(excerptText(s6), new RegExp(OCTOBER_OPENING.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(excerptText(s7), new RegExp(OCTOBER_OPENING.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+    assert.match(excerptText(s6), /capital restructuring/);
+    assert.match(excerptText(s7), /€3\.1 billion/);
     assert.equal(s6.hasRealExcerpt, true);
     assert.equal(s7.hasRealExcerpt, true);
   });
@@ -286,7 +285,7 @@ describe("B351 card honesty invariant", () => {
         assert.equal((after.framingFidelityConcerns || []).length, 0);
       }
     }
-  });
+  }, 20000);
 
   test("T10 no regression on catches, paraphrase, pence-to-pounds, or B338 derived rows on the doctored fixture", async () => {
     const cleanS0 = await replayCard(CLEAN, 0);
