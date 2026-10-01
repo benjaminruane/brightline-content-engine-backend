@@ -178,9 +178,9 @@ e. S10: the matcher quoted two non-contiguous bullets as one passage; locate req
 
 `tests/actor-of-the-action.test.mjs` FIRES: `displayVerdict` `supported_partial` / moderate became `conflict` / high. Reason `actor_mismatch` and stand-downs unchanged.
 
-`tests/card-honesty-invariant.test.mjs` T1: no longer requires the October opening sentence; requires `capital restructuring` on S6 and `€3.1 billion` on S7 (the relevant part of the same span). T9 timeout 5000ms to 20000ms because fifteen statement-aware trims exceeded 5s.
+`tests/card-honesty-invariant.test.mjs` T1: no longer requires the October opening sentence; requires `capital restructuring` on S6 and `€3.1 billion` on S7 (the relevant part of the same span). T9 timeout 5000ms to 20000ms because fifteen statement-aware trims exceeded 5s under the full suite. Same timeout on `tests/excerpt-window.test.mjs` replay cases and `tests/editorial-source-awareness.test.mjs` T4, C1, and C2.
 
-Frontend `tests/f9-concern-display-dedup.test.mjs`: a trailing `Replace` command is no longer shown; a note that is itself a command is kept (entire-note fallback). `tests/b214-no-proposal-card-copy.test.mjs`: `StatementReviewCard` does not render `acknowledgeReasonFor`. Helper still returns the shipped string.
+Frontend `tests/f9-concern-display-dedup.test.mjs`: a trailing `Replace` command is no longer shown; a note that is itself a command is kept (entire-note fallback). `tests/b214-no-proposal-card-copy.test.mjs`: `StatementReviewCard` does not render `acknowledgeReasonFor`. Helper still returns the shipped string. `tests/action-list-display.test.mjs`: acknowledge findings still attach and still do not count on the pill; the card no longer calls `acknowledgeReasonFor`. First-person unnamed ack still suppresses the proposal slot and no longer replaces the editorial concern bullet.
 
 ---
 

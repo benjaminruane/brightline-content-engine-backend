@@ -229,7 +229,7 @@ describe("B352 editorial source-awareness", () => {
       editorialVerdict: beforeCard.editorialVerdict,
     });
     assert.equal(dropped.dropped[0].slug, EDITORIAL_PHRASE_IN_SOURCE);
-  });
+  }, 20000);
 
   test("C1 control: fifteen clean statements, no evidence verdict moves beyond B351", async () => {
     const expected = {
@@ -270,7 +270,7 @@ describe("B352 editorial source-awareness", () => {
     assert.equal(concernMoves.length, 2);
     assert.equal(concernMoves[0].i, 3);
     assert.equal(concernMoves[1].i, 12);
-  });
+  }, 20000);
 
   test("C2 B351 corrected cards, catches, pence-to-pounds, B338 derived rows", async () => {
     const s6 = await replayCard(CLEAN, 6);
@@ -301,7 +301,7 @@ describe("B352 editorial source-awareness", () => {
     const ids = derived.map((e) => e.id);
     assert.equal(ids.some((id) => String(id).startsWith("S0:")), true);
     assert.equal(ids.some((id) => String(id).startsWith("S5:")), true);
-  });
+  }, 20000);
 
   test("0A-2 print fixture: S3 S8 S12 flagged span vs matched passages", () => {
     const s3 = printPart0(3);

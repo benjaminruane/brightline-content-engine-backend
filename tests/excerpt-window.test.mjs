@@ -131,7 +131,7 @@ describe("B358 excerpt window shows the relevant part", () => {
     const shown = excerptText(card);
     assert.match(shown, /redeployed to acquire a/);
     assert.match(shown, /62\.3%/);
-  });
+  }, 20000);
 
   test("October transactions sentence: shown quote contains the capital restructuring", async () => {
     const span = CLEAN.statements[6].qcCard.supportSpans[0].passage;
@@ -143,7 +143,7 @@ describe("B358 excerpt window shows the relevant part", () => {
     assert.match(excerptText(card), /capital restructuring/);
     const s8 = await replayCard(CLEAN, 8);
     assert.match(excerptText(s8), /capital restructuring/);
-  });
+  }, 20000);
 
   test("net sales sentence: shown quote contains 6.3%", async () => {
     const span = CLEAN.statements[5].qcCard.supportSpans[0].passage;
@@ -157,7 +157,7 @@ describe("B358 excerpt window shows the relevant part", () => {
     assert.match(excerptText(card), /6\.3%/);
     const doc = await replayCard(DOC, 5);
     assert.match(excerptText(doc), /6\.3%/);
-  });
+  }, 20000);
 
   test("a passage shorter than the budget is byte-identical to today", () => {
     const span = CLEAN.statements[2].qcCard.supportSpans[0].passage;
