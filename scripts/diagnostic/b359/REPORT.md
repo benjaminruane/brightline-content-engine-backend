@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | (filled after push; chat scoreboard is authoritative) | pending |
+| backend | 41f1d697d5cde1f79c5d4a9fbb67075c8c61254b | SHIP VERIFIED  41f1d69  main  154 files  1712 tests |
 | frontend | untouched | not run |
 
 Ids used: B359 (this spec). Succeeds B358 Part 4.
