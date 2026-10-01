@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | filled after verify:ship | |
+| backend | 438169f | SHIP VERIFIED  438169f  main  157 files  1736 tests |
 | frontend | not touched | |
 
 Ids used: B363 (this spec). Reopens B362 part two. Succeeds B362.
