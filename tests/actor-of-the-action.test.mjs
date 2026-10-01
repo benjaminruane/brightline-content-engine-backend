@@ -120,7 +120,73 @@ describe("B354 actor of the action", () => {
     assert.equal(card.displayVerdict, "supported_partial");
     assert.equal(card.concernLevel, "moderate");
     assert.equal(card.displayVerdictReason, "actor_mismatch");
+    assert.equal(card.evidenceSummary.startsWith(ACTOR_SENTENCE), true);
     assert.equal(card.evidenceSummary.includes(ACTOR_SENTENCE), true);
+  });
+
+  test("doctored S8: actor sentence leads the recorded comment unaltered", () => {
+    const recorded = DOC.statements[8].qcCard.evidenceSummary;
+    assert.match(recorded, /The reviewer should consider whether the term 'significant' is necessary/);
+    const applied = applyActorOfTheAction({
+      statement: MAIT_STATEMENT,
+      confirmingPassage: ACTION_PASSAGE,
+      sources: SOURCES,
+      hasConflict: false,
+      displayVerdict: "supported_partial",
+      commentaryNotReviewed: false,
+      evidenceSummary: recorded,
+    });
+    assert.equal(applied.evidenceSummary.startsWith(ACTOR_SENTENCE), true);
+    assert.equal(applied.evidenceSummary.slice(ACTOR_SENTENCE.length + 1), recorded);
+    assert.equal(applied.evidenceSummary, `${ACTOR_SENTENCE} ${recorded}`);
+    assert.equal(applied.evidenceSummary.startsWith(" "), false);
+    assert.equal(applied.evidenceSummary.includes(`${ACTOR_SENTENCE}  `), false);
+    assert.equal(applied.evidenceSummary.charAt(ACTOR_SENTENCE.length), " ");
+    assert.equal(applied.evidenceSummary.charAt(ACTOR_SENTENCE.length + 1), recorded.charAt(0));
+  });
+
+  test("empty commentary: the result is the sentence alone", () => {
+    const applied = applyActorOfTheAction({
+      statement: MAIT_STATEMENT,
+      confirmingPassage: ACTION_PASSAGE,
+      sources: SOURCES,
+      hasConflict: false,
+      displayVerdict: "supported_full",
+      commentaryNotReviewed: false,
+      evidenceSummary: "",
+    });
+    assert.equal(applied.evidenceSummary, ACTOR_SENTENCE);
+    const whitespace = applyActorOfTheAction({
+      statement: MAIT_STATEMENT,
+      confirmingPassage: ACTION_PASSAGE,
+      sources: SOURCES,
+      hasConflict: false,
+      displayVerdict: "supported_full",
+      commentaryNotReviewed: false,
+      evidenceSummary: "   ",
+    });
+    assert.equal(whitespace.evidenceSummary, ACTOR_SENTENCE);
+  });
+
+  test("both fire: actor sentence first, B356 clause still before the reviewer instruction", async () => {
+    const recorded = DOC.statements[8].qcCard.evidenceSummary;
+    const statement = "MAIT also completed a 2.2% stake purchase.";
+    const card = await assembleActorCard({
+      statement,
+      passage: ACTION_PASSAGE,
+      verdict: "confirmed",
+      commentary: recorded,
+    });
+    assert.equal(card.evidenceSummary.startsWith(ACTOR_SENTENCE), true);
+    assert.equal(
+      card.evidenceSummary.includes(
+        "2.2% matches the source. The reviewer should consider whether the term 'significant' is necessary or if additional context is needed to support this characterization."
+      ),
+      true
+    );
+    assert.equal(card.evidenceSummary.endsWith("2.2% matches the source."), false);
+    assert.equal(card.evidenceSummary.endsWith(ACTOR_SENTENCE), false);
+    assert.equal(/The source also states/.test(card.evidenceSummary), false);
   });
 
   test("STANDS DOWN on the clean S8 where both sides are Action", async () => {
