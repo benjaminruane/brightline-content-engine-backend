@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | (fill after push) | (fill after verify:ship) |
+| backend | ed6d076b466fe802f31a03cc9ecdf2ead8931ae9 | SHIP VERIFIED  ed6d076  main  156 files  1726 tests |
 | frontend | not touched | |
 
 Ids used: B362 (this spec). B158 reopened. B361 closed for the deterministic slice. Succeeds B360.
