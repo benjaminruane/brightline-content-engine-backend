@@ -29,7 +29,7 @@ describe("conflict excerpt from the span that caused the verdict", () => {
       sources: [{ text: SPAN_PASSAGE, label: SOURCE_LABEL }],
     });
     assert.equal(out.primaryExcerpt?.passage, SPAN_PASSAGE);
-    assert.equal(out.conflictExcerpt, null);
+    assert.equal(out.conflictExcerpt?.passage, SPAN_PASSAGE);
   });
 
   test("a conflicting single-pick keeps primary; a different stored span fills conflictExcerpt", () => {
