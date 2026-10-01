@@ -4,8 +4,8 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | pending |
-| frontend | pending push | pending |
+| backend | baae4c874e174e960501f55037a0e99fecebbad2 | SHIP VERIFIED  baae4c8  main  155 files  1719 tests |
+| frontend | f09d315a8831c05faca5d1c2d6aaca3b5ff6a089 | SHIP VERIFIED  f09d315  main  45 files  259 tests |
 
 Ids used: B360 (this spec). B158 closed. B361 filed for Part two. Succeeds B359.
 
