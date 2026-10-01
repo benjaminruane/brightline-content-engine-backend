@@ -17,7 +17,6 @@ import {
 import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
-import { NOT_REVIEWED_REASONS } from "../lib/qc/not-reviewed-reason.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIXTURE_DIR = path.join(ROOT, "tests/fixtures/real-runs-2026-09-29");
@@ -46,6 +45,14 @@ const silentFramingJudge = async () => ({
 
 function cardAt(payload, index) {
   return payload.statements[index].qcCard;
+}
+
+function excerptText(card) {
+  const p = card.primaryExcerpt;
+  if (p == null) return null;
+  if (typeof p === "string") return p;
+  if (typeof p.passage === "string") return p.passage;
+  return null;
 }
 
 function supportStateToVerdict(supportState) {
@@ -243,7 +250,7 @@ describe("B352 editorial source-awareness", () => {
       7: "supported_full",
       8: "supported_full",
       9: "supported_full",
-      10: "not reviewed",
+      10: "supported_full",
       11: "supported_full",
       12: "supported_full",
       13: "supported_full",
@@ -280,8 +287,10 @@ describe("B352 editorial source-awareness", () => {
     assert.equal(s6.displayVerdict, "supported_full");
     assert.equal(s7.displayVerdict, "supported_full");
     assert.equal(s9.displayVerdict, "supported_full");
-    assert.equal(s10.displayVerdict, "not reviewed");
-    assert.equal(s10.evidenceNotReviewedReason, NOT_REVIEWED_REASONS.EXCERPT_NOT_LOCATABLE);
+    assert.equal(s10.displayVerdict, "supported_full");
+    assert.equal(s10.hasRealExcerpt, true);
+    assert.match(excerptText(s10), /3\.2x/);
+    assert.match(excerptText(s10), /2\.8x/);
 
     const cleanS0 = await replayCard(CLEAN, 0);
     const cleanS5 = await replayCard(CLEAN, 5);

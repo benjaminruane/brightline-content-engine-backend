@@ -15,7 +15,6 @@ import {
 import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
 import { applyEmptyConfirmationRefusal } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
-import { NOT_REVIEWED_REASONS } from "../lib/qc/not-reviewed-reason.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIXTURE_DIR = path.join(ROOT, "tests/fixtures/real-runs-2026-09-29");
@@ -175,7 +174,7 @@ describe("B351 card honesty invariant", () => {
     assert.equal(s7.hasRealExcerpt, true);
   });
 
-  test("T2 S10 empty confirmation is refused and is not a silent Confirmed", async () => {
+  test("T2 S10 empty confirmation is refused at the matcher; assembly still shows the held bullets", async () => {
     const recorded = cardAt(CLEAN, 10);
     assert.equal(recorded.displayVerdict, "unverifiable");
     assert.equal(recorded.supportState, "supported");
@@ -192,12 +191,14 @@ describe("B351 card honesty invariant", () => {
     assert.equal(refused.emptyConfirmationRefused, true);
 
     const s10 = await replayCard(CLEAN, 10);
-    assert.notEqual(s10.displayVerdict, "supported_full");
-    assert.notEqual(s10.supportState, "supported");
-    assert.equal(s10.displayVerdict, "not reviewed");
-    assert.equal(s10.supportState, "skipped");
-    assert.equal(s10.evidenceNotReviewedReason, NOT_REVIEWED_REASONS.EXCERPT_NOT_LOCATABLE);
-    assert.equal(s10.hasRealExcerpt, false);
+    assert.equal(s10.displayVerdict, "supported_full");
+    assert.equal(s10.supportState, "supported");
+    assert.equal(s10.hasRealExcerpt, true);
+    const shown = excerptText(s10);
+    assert.match(shown, /realisation of MPM/);
+    assert.match(shown, /realisation of MAIT/);
+    assert.match(shown, /3\.2x/);
+    assert.match(shown, /2\.8x/);
   });
 
   test("T3 S9 from the clean fixture is not a conflict", async () => {
