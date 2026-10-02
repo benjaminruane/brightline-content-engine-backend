@@ -194,10 +194,10 @@ describe("B362 silence subject, last finding, empty slot, scale and cause", () =
   }, 30000);
 
   test("two distinct passages still fill both slots; one-passage conflict stays empty with a reason", async () => {
-    const s1 = await replayCard(CLEAN, 1);
-    assert.ok(primaryText(s1).trim());
-    assert.ok(conflictText(s1).trim());
-    assert.equal(excerptsAreSame(primaryText(s1), conflictText(s1)), false);
+    const s9 = await replayCard(DOC, 9);
+    assert.ok(primaryText(s9).trim());
+    assert.ok(conflictText(s9).trim());
+    assert.equal(excerptsAreSame(primaryText(s9), conflictText(s9)), false);
 
     const s0 = await replayCard(CLEAN, 0);
     assert.equal(s0.displayVerdict, "conflict");

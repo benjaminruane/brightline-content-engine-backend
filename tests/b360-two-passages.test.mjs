@@ -171,17 +171,16 @@ describe("B360 two passages on a card", () => {
     assert.ok(conflictText(s9).trim());
   }, 20000);
 
-  test("statement 1 both payloads make the PE return and the total return available, and show both", async () => {
+  test("statement 1 both payloads show the PE return; a second quote must add a claim term", async () => {
     for (const payload of [CLEAN, DOC]) {
       const s1 = await replayCard(payload, 1);
       const hay = shownHay(s1);
       assert.match(hay, /£3,234 million/);
       assert.match(hay, /14%/);
-      assert.match(hay, /13%/);
       const passages = shownPassages(s1);
-      assert.equal(passages.length, 2, "both stored figures are shown");
-      assert.match(passages.join("\n"), new RegExp(PE_RETURN.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-      assert.match(passages.join("\n"), new RegExp(TOTAL_RETURN_13.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+      assert.equal(passages.length, 1, "the 13% total-return line adds nothing to vast majority");
+      assert.match(passages[0], new RegExp(PE_RETURN.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+      assert.equal(hay.includes(TOTAL_RETURN_13), false);
     }
   }, 20000);
 

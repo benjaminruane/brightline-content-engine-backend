@@ -263,8 +263,8 @@ describe("B351 card honesty invariant", () => {
     assert.equal(omission.displayVerdict, "supported_full");
   });
 
-  test("T9 control: only S6, S7, S9 and S10 may change verdict; no new findings on the other eleven", async () => {
-    const allowed = new Set([6, 7, 9, 10]);
+  test("T9 control: only S6, S7, S9, S10 and S14 may change verdict; no new findings on the other ten", async () => {
+    const allowed = new Set([6, 7, 9, 10, 14]);
     const editorialDropAllowed = new Set([3, 12]);
     for (let i = 0; i < 15; i++) {
       const before = cardAt(CLEAN, i);

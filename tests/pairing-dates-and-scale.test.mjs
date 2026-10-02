@@ -86,8 +86,10 @@ describe("B352 pairing dates and scale", () => {
     );
     assert.equal(result.disposition, "ACTION");
     assert.equal(result.provenance, "derived");
-    assert.equal(result.proposedChange, "Replace 'GBP 3.3 million' with '£3,291 million'.");
-    assert.match(result.resultingSentence, /£3,291 million/);
+    assert.equal(result.proposedChange, "Replace 'GBP 3.3 million' with 'GBP 3,291 million'.");
+    assert.match(result.resultingSentence, /GBP 3,291 million/);
+    assert.equal(/£3,291 million/.test(result.proposedChange || ""), false);
+    assert.equal(/£3,291 million/.test(result.resultingSentence || ""), false);
     assert.equal(/30 September 2025/.test(result.proposedChange || ""), false);
     assert.match(result.resultingSentence, /30 June 2025/);
   });
