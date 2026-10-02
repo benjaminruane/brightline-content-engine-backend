@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | pending |
+| backend | d88312a | SHIP VERIFIED  d88312a  main  158 files  1747 tests |
 | frontend | not touched | |
 
 Ids used: B364 (this spec). Filed **B365** (skipped recovery for empty confirmation). Succeeds B363. Addresses B58 part five.
