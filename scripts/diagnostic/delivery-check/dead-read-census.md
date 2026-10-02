@@ -286,3 +286,23 @@ Read-only. Every key `assembleCard` assigns on the v4 `const card = { ... }` obj
 | `summaryClass` | Yes. Stamped after assemble, in the handler |
 
 Vacant constants that consumers still read: `primaryRefId`, `primarySourceOrigin`, `primaryExcerptStart`/`End`, `secondarySupportCount`, `supportingReferenceIds`/`Titles`, `conflictValues`, `reasoningHeadline`, `evidenceTrace`, `selectedExcerptReason`, `excerptMatchType`, `suggestedImprovement`, `whyItMatters`, `sentenceSubclaimCount`, `qcClaimId`, `citationHovers`, `primaryExcerptTrusted`, `conflictEvidence`. Filed under **B231**. Do not delete in a drive-by.
+
+---
+
+## B367 recount (2026-10-02)
+
+Read-only. Same three layers as the 10 September card-face table (`findings.md` Q1) and this 19 September WRITE/READ pass. Payload: `tests/fixtures/real-runs-2026-10-02/doc-review.json`. Report: `scripts/diagnostic/b367/REPORT.md`. No product changes.
+
+The 10 September census is Q1 of `findings.md`, not this file. This file is 19 September. Both dates are kept so the next pass does not have to rediscover that.
+
+| Layer | 10 / 19 September | 2 October | Direction |
+|---|---|---|---|
+| 1. Pipeline, never on the card | 7 named Q3 discards (`preBackstopClassification`, `periodAssessment`, `originalClassification`, pre-lift span class, Stage 2 `explanation`, `sourceIngestionWarning` on the main path, duplication-judge drops) | 14. Ingestion warning closed (B164). Added: `passageRecovered`, `matchNotReviewed`, `passageRejected` (flag), actor/role/scale `standDown`, last-finding backstop, `keepSecondPassage` drop, `window_bound`, source-awareness drops, `statementFigures` / `sourceFigures`. | up |
+| 2. On the card, never frontend-read | Q1: ~60 fields on the card. A4: ~18 WRITE minus READ. | 72 qcCard keys on the October payload (brief said 71). 31 with no `qcCard.key` / `card.key` read in frontend `src/`. 23 reach Assess eyes (25 counting export). | up |
+| 3. Exported, no production caller | 1 named: `computeGuardrailForSource` | 96 in `lib/` and `api/` with no production `name(` caller. The September method was too narrow. `computeGuardrailForSource` is still in the 96. | up (method widened) |
+
+Rendered count in September cannot be recovered as one number. Q1 mixed RENDERED and PARTIALLY and did not publish a total. Use today's 23 / 25 going forward.
+
+`conflictExcerpt` is now frontend-read (B360) and the empty slot was closed in name only (copy-primary), then reopened (B362 / B158). `primaryExcerptStart` / `End` were vacant in D5 and are filled on 14 of 15 October cards; still unread.
+
+Filed **B368** for unreported stand-downs, refusals, and recoveries. Delete list (vacant constants and orphaned modules) is in the B367 report, not in BACKLOG.
