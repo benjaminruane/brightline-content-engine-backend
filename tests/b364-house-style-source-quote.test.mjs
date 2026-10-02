@@ -197,7 +197,7 @@ describe("B364 house style, source name, second passage, confirmation mark", () 
     assert.match(s14.evidenceSummary, /3i Group plc/);
     assert.match(
       s14.evidenceSummary,
-      /The statement attributes this to UK; the source credits 3i Group plc\./
+      /The statement attributes this to the UK government; the source credits 3i Group plc\./
     );
     assert.equal(s14.displayVerdict, "conflict");
   }, 20000);

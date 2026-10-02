@@ -23,6 +23,12 @@ The v4 route (`lib/qc/pipeline-v4/`) runs seven logical stages. QC LLM stages us
 
 Execution in `runPipelineV4`: Stage 1, then 1b when the flag is on, then Stage 2, then the widened matcher, then Stage 3 (and supersession / coverage-union), then Stage 6, then Stage 5, then Stage 7. Stage numbers follow the architecture spec (evidence block first, then commentary, then craft/compliance), not wall-clock order.
 
+Real-run fixtures: `tests/fixtures/real-runs-2026-10-02/` is the shipped pipeline (build `438169f`, including the empty-confirmation refusal at the Stage 2 writer). `tests/fixtures/real-runs-2026-09-29/` pins the older shape from before that refusal. Keep both.
+
+Party names (**B366**). A country, region, or currency code is not a party. A geography token followed by an organisation word is a party (`the UK government`). When the product names a party from the draft, it uses the draft's own words, including a leading article where the draft has one. Shared lists live in `lib/qc/party-tokens.mjs`. Callers: `actor-of-the-action.mjs` and `role-party.mjs`.
+
+Empty-confirmation recovery (**B366**). A skipped card whose matcher returned `confirmed` with an empty passage, refused at the Stage 2 writer (`emptyConfirmationRefused`), may run the B359 claim-sentence search. Evidence-off skipped and matcher-throw `not_reviewed` do not. If locate finds nothing the card is unchanged. If it finds claim-bearing sentences the displayed verdict follows that recovered evidence, not the refused classification. The flag is copied from Stage 2 onto the pair and, when true, onto `stage2SourceFingerprints`. Do not infer it from `skipped` plus `not_reviewed`.
+
 Stage 1b pre-filter (all required): two or more verifiable anchors (number, date, or Title-Case name); an additive coordinating boundary (`, and `, `, with `, `, while `, `, including `, `; `, ` as well as `); no relational connective (`driven by`, `because`, `up from`, and the rest, word-boundary match). The batched LLM must return verbatim contiguous substrings. Validation uses the same substring / Levenshtein-<=2 locate standard as Stage 1. Each claim must also contain a verifiable anchor (B64). Any failure reverts that sentence undecomposed.
 
 Why the Stage 3 rollup is upgrade-only: decomposition is lossy. A sentence can assert a relation that lives in the connective. Whole-sentence Stage 2/3 stays authoritative.
