@@ -1,0 +1,166 @@
+{
+ "ok": true,
+ "entries": [
+  {
+   "id": "S0:evidence:conflicting:0",
+   "disposition": "ACTION",
+   "statementId": "0",
+   "statement": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+    "startChar": 0,
+    "endChar": 145
+   },
+   "thing1State": "WHOLE_STATEMENT",
+   "thing2": "The statement claims a total return of GBP 3.3 million for the six months to 30 June 2025, while the source reports a total return of GBP 3,291 million for the six months to 30 September 2025. This discrepancy in both the amount and the reporting period creates a conflict. Additionally, the source confirms a 13% return on opening shareholders' funds, but the mismatch in figures and dates needs to be reconciled. The reviewer should verify the correct figures and period or consider removing the claim.",
+   "sort": {
+    "policyPermit": true,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "permitted"
+   },
+   "provenance": "derived",
+   "explanation": "The source gives \u00a33,291 million, not the GBP 3.3 million in this sentence.",
+   "explainCode": "correction",
+   "proposedChange": "Replace 'GBP 3.3 million' with '\u00a33,291 million'.",
+   "resultingSentence": "3i Group delivered a total return of \u00a33,291 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+   "verification": {
+    "status": "checked",
+    "detail": "Stated replacement matches the resulting sentence."
+   }
+  },
+  {
+   "id": "S5:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "5",
+   "statement": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion",
+    "startChar": 0,
+    "endChar": 73
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The statement claims net sales of EUR 11.2 billion for the six months ending 30 June 2026, but the source reports EUR 11.229 billion for the nine reporting periods ending 28 September 2025. The periods do not match, leading to a conflict in the reported figures. Additionally, the source confirms a like-for-like sales growth of 6.3%, which aligns with the statement. The reviewer should reconcile the conflicting sales figures and ensure the reporting periods are consistent.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "explainCode": "conflict_suppressed_figure_agrees",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  },
+  {
+   "id": "S8:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "8",
+   "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+    "startChar": 0,
+    "endChar": 97
+   },
+   "thing1State": "WHOLE_STATEMENT",
+   "thing2": "The statement claims that MAIT completed a pro-rata redemption of shares generating significant proceeds for 3i. However, the source indicates that it was Action, not MAIT, that completed a capital restructuring with a pro-rata redemption of shares, returning \u00a3944 million of gross proceeds to 3i. This directly contradicts the statement. The reviewer should reconcile this discrepancy or remove the claim about MAIT.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  },
+  {
+   "id": "S8:editorial:marketing_language_excess:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "8",
+   "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+   "kind": "editorial",
+   "rule": "marketing_language_excess",
+   "thing1": {
+    "quote": "significant",
+    "startChar": 69,
+    "endChar": 80
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The phrase 'generated significant proceeds' uses hyperbolic language without substantiation in the immediate context.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "marketing_language_excess",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S9:evidence:supported:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "9",
+   "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i\u2019s stake in Action to 62.3%.",
+   "kind": "evidence",
+   "rule": "supported",
+   "thing1": null,
+   "thing1State": "NONE",
+   "thing2": "The statement attributes this to AGIC; the source credits GIC. The source confirms the statement that a portion of the proceeds was redeployed to acquire a further 2.2% stake in Action, which, along with an earlier 2.2% stake purchase, raised 3i's stake to 62.3%. The source specifically states that \u00a3755 million of the proceeds were used to acquire this additional 2.2% stake, resulting in a total ownership of 62.3% in Action. Both the figures of 2.2% and 62.3% are confirmed by the source.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "supported",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S12:evidence:supported:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "12",
+   "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+   "kind": "evidence",
+   "rule": "supported",
+   "thing1": null,
+   "thing1State": "NONE",
+   "thing2": "The source names a valuation uplift in TCR, not gains across essentially all of its investments.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "supported",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S14:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "14",
+   "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+    "startChar": 15,
+    "endChar": 209
+   },
+   "thing1State": "WHOLE_STATEMENT",
+   "thing2": "The source confirms the cautious stance on capital deployment into new investments and the openness to selective allocations to lower-risk reinvestments. However, it does not specifically mention the UK government, which is a key detail in the statement. The reviewer should verify the involvement of the UK government or adjust the statement to align with the source.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": true,
+    "rule": "partial",
+    "reasonCode": "partial_no_edit"
+   },
+   "provenance": "authored",
+   "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+  }
+ ]
+}

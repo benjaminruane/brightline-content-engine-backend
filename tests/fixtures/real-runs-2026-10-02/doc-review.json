@@ -1,0 +1,2088 @@
+{
+ "ok": true,
+ "statements": [
+  {
+   "id": "0",
+   "text": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+   "qcCard": {
+    "index": 0,
+    "statement": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+    "charStart": 0,
+    "charEnd": 145,
+    "supportState": "conflicting",
+    "hasConflict": true,
+    "primaryExcerpt": "3i Group delivered strong performance in the first half of FY2026\n\u2022 Total return of \u00a33,291 million or 13% on opening shareholders\u2019 funds (September 2024: \u00a32,046 million, 10%).",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": "no_distinct_passage",
+    "evidenceSummary": "The statement claims a total return of GBP 3.3 million for the six months to 30 June 2025, while the source reports a total return of GBP 3,291 million for the six months to 30 September 2025. This discrepancy in both the amount and the reporting period creates a conflict. Additionally, the source confirms a 13% return on opening shareholders' funds, but the mismatch in figures and dates needs to be reconciled. The reviewer should verify the correct figures and period or consider removing the claim.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "3i Group delivered strong performance in the first half of FY2026\n\u2022 Total return of \u00a33,291 million or 13% on opening shareholders\u2019 funds (September 2024: \u00a32,046 million, 10%).",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 88,
+    "primaryExcerptEnd": 263,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The statement claims a total return of GBP 3.3 million for the six months to 30 June 2025, while the source reports a total return of GBP 3,291 million for the six months to 30 September 2025. This discrepancy in both the amount and the reporting period creates a conflict. Additionally, the source confirms a 13% return on opening shareholders' funds, but the mismatch in figures and dates needs to be reconciled. The reviewer should verify the correct figures and period or consider removing the claim.",
+    "displayMode": "conflicting",
+    "draftSpan": {
+     "startChar": 0,
+     "endChar": 145
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "0",
+      "passage": "3i Group delivered strong performance in the first half of FY2026\n\u2022 Total return of \u00a33,291 million or 13% on opening shareholders\u2019 funds (September 2024: \u00a32,046 million, 10%).",
+      "start": 88,
+      "end": 263
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "0",
+      "classification": "conflicting",
+      "text": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "start": 0,
+      "end": 145
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "conflicting",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "monetary_figure",
+      "percentage_metric",
+      "date_period_claim"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 0,
+    "endChar": 145
+   }
+  },
+  {
+   "id": "1",
+   "text": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+   "qcCard": {
+    "index": 1,
+    "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+    "charStart": 147,
+    "charEnd": 296,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Our Private Equity business delivered a gross investment return of \u00a33,234 million or 14% (September 2024:\n\u00a32,071 million, 11%).",
+    "conflictExcerpt": {
+     "passage": "The total return of 13% represents a very good first half for the Group.",
+     "sourceLabel": "3i-hy25-highlights.pdf"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that the private equity business generated a gross investment return of 14% for the period, as stated. It also implies that this return contributed significantly to the overall total return, supporting the claim that it accounted for the vast majority. All elements of the statement are confirmed by the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Our Private Equity business delivered a gross investment return of \u00a33,234 million or 14% (September 2024:\n\u00a32,071 million, 11%).",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 523,
+    "primaryExcerptEnd": 650,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that the private equity business generated a gross investment return of 14% for the period, as stated. It also implies that this return contributed significantly to the overall total return, supporting the claim that it accounted for the vast majority. All elements of the statement are confirmed by the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 147,
+     "endChar": 296
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "1",
+      "passage": "Our Private Equity business delivered a gross investment return of \u00a33,234 million or 14% (September 2024:\n\u00a32,071 million, 11%).",
+      "start": 523,
+      "end": 650
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "1",
+      "passage": "The total return of 13% represents a very good first half for the Group.",
+      "start": 3461,
+      "end": 3533
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "percentage_metric"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 147,
+    "endChar": 296
+   }
+  },
+  {
+   "id": "2",
+   "text": "This was driven largely by Action, which continues to trade strongly.",
+   "qcCard": {
+    "index": 2,
+    "statement": "This was driven largely by Action, which continues to trade strongly.",
+    "charStart": 297,
+    "charEnd": 366,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Action continued to trade strongly, and several of our other large portfolio companies are\nshowing good momentum against a challenging macroeconomic and geopolitical backdrop across Europe and the\nUS.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that Action continues to trade strongly, directly supporting the statement. However, the source does not address whether this was the primary driver, as the phrase 'driven largely by' is not specifically mentioned. The reviewer should ensure that the emphasis on Action as the main driver is accurate or consider revising the statement to align with the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Action continued to trade strongly, and several of our other large portfolio companies are\nshowing good momentum against a challenging macroeconomic and geopolitical backdrop across Europe and the\nUS.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 651,
+    "primaryExcerptEnd": 851,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that Action continues to trade strongly, directly supporting the statement. However, the source does not address whether this was the primary driver, as the phrase 'driven largely by' is not specifically mentioned. The reviewer should ensure that the emphasis on Action as the main driver is accurate or consider revising the statement to align with the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 297,
+     "endChar": 366
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "This was driven largely by Action, which continues to trade strongly.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "2",
+      "passage": "Action continued to trade strongly, and several of our other large portfolio companies are\nshowing good momentum against a challenging macroeconomic and geopolitical backdrop across Europe and the\nUS.",
+      "start": 651,
+      "end": 851
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 297,
+    "endChar": 366
+   }
+  },
+  {
+   "id": "3",
+   "text": "The company\u2019s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+   "qcCard": {
+    "index": 3,
+    "statement": "The company\u2019s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+    "charStart": 367,
+    "charEnd": 503,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Action\u2019s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement by stating that Action's new store expansion program is on track for another record year, with new stores in Switzerland and Romania receiving an excellent reception. This directly supports the claim about the program's success and the positive reception in these countries.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Action\u2019s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 3639,
+    "primaryExcerptEnd": 3787,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement by stating that Action's new store expansion program is on track for another record year, with new stores in Switzerland and Romania receiving an excellent reception. This directly supports the claim about the program's success and the positive reception in these countries.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 367,
+     "endChar": 503
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The company\u2019s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "3",
+      "passage": "Action\u2019s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+      "start": 3639,
+      "end": 3787
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": null,
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 367,
+    "endChar": 503
+   }
+  },
+  {
+   "id": "4",
+   "text": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+   "qcCard": {
+    "index": 4,
+    "statement": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+    "charStart": 504,
+    "charEnd": 610,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Year to date LFL\ntrading remains good despite weakening consumer confidence since the summer.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement by asserting that year-to-date like-for-like trading remains good despite weakening consumer confidence since the summer. The language used in the source closely matches the statement, affirming its accuracy.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Year to date LFL\ntrading remains good despite weakening consumer confidence since the summer.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 3788,
+    "primaryExcerptEnd": 3881,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement by asserting that year-to-date like-for-like trading remains good despite weakening consumer confidence since the summer. The language used in the source closely matches the statement, affirming its accuracy.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 504,
+     "endChar": 610
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "4",
+      "passage": "Year to date LFL\ntrading remains good despite weakening consumer confidence since the summer.",
+      "start": 3788,
+      "end": 3881
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 504,
+    "endChar": 610
+   }
+  },
+  {
+   "id": "5",
+   "text": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+   "qcCard": {
+    "index": 5,
+    "statement": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+    "charStart": 611,
+    "charEnd": 726,
+    "supportState": "conflicting",
+    "hasConflict": true,
+    "primaryExcerpt": "In the nine reporting periods ending on 28 September 2025 (\u201cP9\u201d), Action generated net sales of \u20ac11,229 million\n(nine reporting periods ended P9 2024: \u20ac9,567 million), operating EBITDA of \u20ac1,563 million (nine reporting periods\nended P9 2024: \u20ac1,344 million) and like-for-like (\u201cLFL\u201d) sales growth of 6.3%.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": "no_distinct_passage",
+    "evidenceSummary": "The statement claims net sales of EUR 11.2 billion for the six months ending 30 June 2026, but the source reports EUR 11.229 billion for the nine reporting periods ending 28 September 2025. The periods do not match, leading to a conflict in the reported figures. Additionally, the source confirms a like-for-like sales growth of 6.3%, which aligns with the statement. The reviewer should reconcile the conflicting sales figures and ensure the reporting periods are consistent.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "In the nine reporting periods ending on 28 September 2025 (\u201cP9\u201d), Action generated net sales of \u20ac11,229 million\n(nine reporting periods ended P9 2024: \u20ac9,567 million), operating EBITDA of \u20ac1,563 million (nine reporting periods\nended P9 2024: \u20ac1,344 million) and like-for-like (\u201cLFL\u201d) sales growth of 6.3%.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 957,
+    "primaryExcerptEnd": 1262,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The statement claims net sales of EUR 11.2 billion for the six months ending 30 June 2026, but the source reports EUR 11.229 billion for the nine reporting periods ending 28 September 2025. The periods do not match, leading to a conflict in the reported figures. Additionally, the source confirms a like-for-like sales growth of 6.3%, which aligns with the statement. The reviewer should reconcile the conflicting sales figures and ensure the reporting periods are consistent.",
+    "displayMode": "conflicting",
+    "draftSpan": {
+     "startChar": 611,
+     "endChar": 726
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "5",
+      "passage": "In the nine reporting periods ending on 28 September 2025 (\u201cP9\u201d), Action generated net sales of \u20ac11,229 million\n(nine reporting periods ended P9 2024: \u20ac9,567 million), operating EBITDA of \u20ac1,563 million (nine reporting periods\nended P9 2024: \u20ac1,344 million) and like-for-like (\u201cLFL\u201d) sales growth of 6.3%.",
+      "start": 957,
+      "end": 1262
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "5",
+      "classification": "conflicting",
+      "text": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion",
+      "start": 0,
+      "end": 73
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "conflicting",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "monetary_figure",
+      "percentage_metric",
+      "date_period_claim"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": true,
+    "claimUpgrade": false,
+    "claims": [
+     {
+      "index": 0,
+      "text": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion",
+      "draftStart": 611,
+      "draftEnd": 684,
+      "verdict": "not_supported",
+      "hasConflict": false,
+      "matches": [
+       {
+        "sourceIndex": 0,
+        "sourceLabel": "3i-hy25-highlights.pdf",
+        "classification": "no_support",
+        "passage": "In the nine reporting periods ending on 28 September 2025 (\u201cP9\u201d), Action generated net sales of \u20ac11,229 million (nine reporting periods ended P9 2024: \u20ac9,567 million), operating EBITDA of \u20ac1,563 million (nine reporting periods ended P9 2024: \u20ac1,344 million) and like-for-like (\u201cLFL\u201d) sales growth of 6.3%.",
+        "explanation": "The source provides net sales figures for a different period ending on 28 September 2025, not for the six months to 30 June 2026. Therefore, it does not address the statement's claim.",
+        "systemFingerprint": "fp_61a9eaf3ca"
+       }
+      ]
+     },
+     {
+      "index": 1,
+      "text": "like-for-like sales growth of 6.3%",
+      "draftStart": 691,
+      "draftEnd": 725,
+      "verdict": "partially_confirmed",
+      "hasConflict": false,
+      "matches": [
+       {
+        "sourceIndex": 0,
+        "sourceLabel": "3i-hy25-highlights.pdf",
+        "classification": "partially_confirmed",
+        "passage": "In the nine reporting periods ending on 28 September 2025 (\u201cP9\u201d), Action generated net sales of \u20ac11,229 million (nine reporting periods ended P9 2024: \u20ac9,567 million), operating EBITDA of \u20ac1,563 million (nine reporting periods ended P9 2024: \u20ac1,344 million) and like-for-like (\u201cLFL\u201d) sales growth of 6.3%.",
+        "explanation": "The source confirms a like-for-like sales growth of 6.3% but for a different period (P9 2025) than the statement (H1 2026). This period mismatch results in partial confirmation.",
+        "systemFingerprint": "fp_61a9eaf3ca"
+       }
+      ]
+     }
+    ],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 611,
+    "endChar": 726
+   }
+  },
+  {
+   "id": "6",
+   "text": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+   "qcCard": {
+    "index": 6,
+    "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+    "charStart": 729,
+    "charEnd": 821,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement that Action successfully completed several balance sheet transactions in October 2025. Specifically, it details two financing transactions: raising \u20ac1.6 billion in incremental term loan debt and a capital restructuring involving a pro-rata redemption of shares, which returned \u00a3944 million to 3i. Both transactions occurred in October 2025, aligning with the statement.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1624,
+    "primaryExcerptEnd": 1987,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement that Action successfully completed several balance sheet transactions in October 2025. Specifically, it details two financing transactions: raising \u20ac1.6 billion in incremental term loan debt and a capital restructuring involving a pro-rata redemption of shares, which returned \u00a3944 million to 3i. Both transactions occurred in October 2025, aligning with the statement.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 729,
+     "endChar": 821
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "6",
+      "passage": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action.",
+      "start": 1624,
+      "end": 1987
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "date_period_claim"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 729,
+    "endChar": 821
+   }
+  },
+  {
+   "id": "7",
+   "text": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+   "qcCard": {
+    "index": 7,
+    "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+    "charStart": 822,
+    "charEnd": 1026,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "... The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n62.3%. The second financing transaction repriced \u20ac3.1 billion of Action\u2019s existing term loan debt, extending the\nmaturity of a portion of the debt and generating an annual interest cost saving of \u20ac14 million.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement by detailing that the company repriced \u20ac3.1 billion of existing term debt, extended maturities, and generated an annual interest cost saving of \u20ac14 million. Additionally, it confirms the raising of \u20ac1.6 billion in new term loan debt. Both financial figures, \u20ac3.1 billion and \u20ac1.6 billion, are directly supported by the source.",
+    "commentaryUnaddressed": [
+     "EUR 3.1 billion",
+     "EUR 1.6 billion"
+    ],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "... The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n62.3%. The second financing transaction repriced \u20ac3.1 billion of Action\u2019s existing term loan debt, extending the\nmaturity of a portion of the debt and generating an annual interest cost saving of \u20ac14 million.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1699,
+    "primaryExcerptEnd": 2278,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement by detailing that the company repriced \u20ac3.1 billion of existing term debt, extended maturities, and generated an annual interest cost saving of \u20ac14 million. Additionally, it confirms the raising of \u20ac1.6 billion in new term loan debt. Both financial figures, \u20ac3.1 billion and \u20ac1.6 billion, are directly supported by the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 822,
+     "endChar": 1026
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "7",
+      "passage": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n62.3%. The second financing transaction repriced \u20ac3.1 billion of Action\u2019s existing term loan debt, extending the\nmaturity of a portion of the debt and generating an annual interest cost saving of \u20ac14 million.",
+      "start": 1624,
+      "end": 2278
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "monetary_figure"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": true,
+    "claimUpgrade": false,
+    "claims": [
+     {
+      "index": 0,
+      "text": "The company repriced EUR 3.1 billion of existing term debt",
+      "draftStart": 822,
+      "draftEnd": 880,
+      "verdict": "confirmed",
+      "hasConflict": false,
+      "matches": [
+       {
+        "sourceIndex": 0,
+        "sourceLabel": "3i-hy25-highlights.pdf",
+        "classification": "confirmed",
+        "passage": "The second financing transaction repriced \u20ac3.1 billion of Action\u2019s existing term loan debt, extending the maturity of a portion of the debt and generating an annual interest cost saving of \u20ac14 million.",
+        "explanation": "The source confirms that \u20ac3.1 billion of existing term loan debt was repriced, matching the statement's claim.",
+        "systemFingerprint": "fp_61a9eaf3ca"
+       }
+      ]
+     },
+     {
+      "index": 1,
+      "text": "raising an incremental EUR 1.6 billion of new term loan",
+      "draftStart": 970,
+      "draftEnd": 1025,
+      "verdict": "confirmed",
+      "hasConflict": false,
+      "matches": [
+       {
+        "sourceIndex": 0,
+        "sourceLabel": "3i-hy25-highlights.pdf",
+        "classification": "confirmed",
+        "passage": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total incremental term loan debt.",
+        "explanation": "The source confirms the statement by stating that Action raised \u20ac1.6 billion of total incremental term loan debt in October 2025.",
+        "systemFingerprint": "fp_61a9eaf3ca"
+       }
+      ]
+     }
+    ],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 822,
+    "endChar": 1026
+   }
+  },
+  {
+   "id": "8",
+   "text": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+   "qcCard": {
+    "index": 8,
+    "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+    "charStart": 1027,
+    "charEnd": 1124,
+    "supportState": "conflicting",
+    "hasConflict": true,
+    "primaryExcerpt": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": "no_distinct_passage",
+    "evidenceSummary": "The statement claims that MAIT completed a pro-rata redemption of shares generating significant proceeds for 3i. However, the source indicates that it was Action, not MAIT, that completed a capital restructuring with a pro-rata redemption of shares, returning \u00a3944 million of gross proceeds to 3i. This directly contradicts the statement. The reviewer should reconcile this discrepancy or remove the claim about MAIT.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1766,
+    "primaryExcerptEnd": 1987,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The statement claims that MAIT completed a pro-rata redemption of shares generating significant proceeds for 3i. However, the source indicates that it was Action, not MAIT, that completed a capital restructuring with a pro-rata redemption of shares, returning \u00a3944 million of gross proceeds to 3i. This directly contradicts the statement. The reviewer should reconcile this discrepancy or remove the claim about MAIT.",
+    "displayMode": "conflicting",
+    "draftSpan": {
+     "startChar": 1027,
+     "endChar": 1124
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "8",
+      "passage": "",
+      "start": null,
+      "end": null
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "8",
+      "passage": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action.",
+      "start": 1766,
+      "end": 1987
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "8",
+      "classification": "partially_confirmed",
+      "text": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "start": 0,
+      "end": 97
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "partially_confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "concern",
+    "editorialConcerns": [
+     {
+      "concernCode": "marketing_language_excess",
+      "note": "The phrase 'generated significant proceeds' uses hyperbolic language without substantiation in the immediate context.",
+      "category": "editorial",
+      "suggestedDirection": "Delete 'significant'. The phrase becomes 'which generated proceeds for 3i'.",
+      "span": [
+       {
+        "startChar": 59,
+        "endChar": 89,
+        "source": "note_quote"
+       },
+       {
+        "startChar": 69,
+        "endChar": 80,
+        "source": "direction_quote"
+       }
+      ]
+     }
+    ],
+    "editorialNote": null,
+    "editorialSuggestedDirection": "Delete 'significant'. The phrase becomes 'which generated proceeds for 3i'.",
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "concern",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1027,
+    "endChar": 1124
+   }
+  },
+  {
+   "id": "9",
+   "text": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i\u2019s stake in Action to 62.3%.",
+   "qcCard": {
+    "index": 9,
+    "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i\u2019s stake in Action to 62.3%.",
+    "charStart": 1125,
+    "charEnd": 1316,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n62.3%.",
+    "conflictExcerpt": {
+     "passage": "In September 2025, 3i acquired 2.2% of Action equity from GIC in exchange for newly issued 3i Group plc\nshares , with an equivalent consideration value of \u00a3739 million. As a result of this transaction, at 30 September 2025,\nour equity ownership in Action was 60.1%.",
+     "sourceLabel": "3i-hy25-highlights.pdf"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The statement attributes this to AGIC; the source credits GIC. The source confirms the statement that a portion of the proceeds was redeployed to acquire a further 2.2% stake in Action, which, along with an earlier 2.2% stake purchase, raised 3i's stake to 62.3%. The source specifically states that \u00a3755 million of the proceeds were used to acquire this additional 2.2% stake, resulting in a total ownership of 62.3% in Action. Both the figures of 2.2% and 62.3% are confirmed by the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n62.3%.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1624,
+    "primaryExcerptEnd": 2076,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The statement attributes this to AGIC; the source credits GIC. The source confirms the statement that a portion of the proceeds was redeployed to acquire a further 2.2% stake in Action, which, along with an earlier 2.2% stake purchase, raised 3i's stake to 62.3%. The source specifically states that \u00a3755 million of the proceeds were used to acquire this additional 2.2% stake, resulting in a total ownership of 62.3% in Action. Both the figures of 2.2% and 62.3% are confirmed by the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 1125,
+     "endChar": 1316
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": "role_party_mismatch",
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i\u2019s stake in Action to 62.3%.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "9",
+      "passage": "In September 2025, 3i acquired 2.2% of Action equity from GIC in exchange for newly issued 3i Group plc\nshares , with an equivalent consideration value of \u00a3739 million. As a result of this transaction, at 30 September 2025,\nour equity ownership in Action was 60.1%.",
+      "start": 1356,
+      "end": 1621
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "9",
+      "passage": "In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n62.3%.",
+      "start": 1624,
+      "end": 2076
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "percentage_metric"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1125,
+    "endChar": 1316
+   }
+  },
+  {
+   "id": "10",
+   "text": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+   "qcCard": {
+    "index": 10,
+    "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+    "charStart": 1319,
+    "charEnd": 1511,
+    "supportState": "skipped",
+    "hasConflict": false,
+    "primaryExcerpt": null,
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "No source addresses the claim that 3i completed the sale of MPM and signed an exit of MAIT with the specified gross money multiples of 3.2x and 2.8x. The reviewer should add a source that confirms these details or remove the claim.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": null,
+    "primarySourceOrigin": null,
+    "primaryExcerptText": null,
+    "excerptNotLocatable": true,
+    "primaryExcerptStart": null,
+    "primaryExcerptEnd": null,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": false,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "No source addresses the claim that 3i completed the sale of MPM and signed an exit of MAIT with the specified gross money multiples of 3.2x and 2.8x. The reviewer should add a source that confirms these details or remove the claim.",
+    "displayMode": "skipped",
+    "draftSpan": {
+     "startChar": 1319,
+     "endChar": 1511
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "not reviewed",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "not_reviewed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "notChecked",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "amber",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1319,
+    "endChar": 1511
+   }
+  },
+  {
+   "id": "11",
+   "text": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+   "qcCard": {
+    "index": 11,
+    "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+    "charStart": 1513,
+    "charEnd": 1646,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month\nperiod.",
+    "conflictExcerpt": {
+     "passage": "Our Infrastructure business generated a gross investment return of \u00a3139 million, or 9% (September 2024: \u00a343\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc\u2019s (\u201c3iN\u201d) share price in the six-month\nperiod to 30 September 2025.",
+     "sourceLabel": "3i-hy25-highlights.pdf"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement that gross investment returns for the infrastructure side stood at 9% for the period, outperforming expectations for the six-month period. The source specifically mentions that the infrastructure asset portfolio within 3iN outperformed its expected returns during this timeframe, aligning with the statement's claim.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month\nperiod.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 4010,
+    "primaryExcerptEnd": 4115,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement that gross investment returns for the infrastructure side stood at 9% for the period, outperforming expectations for the six-month period. The source specifically mentions that the infrastructure asset portfolio within 3iN outperformed its expected returns during this timeframe, aligning with the statement's claim.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 1513,
+     "endChar": 1646
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "11",
+      "passage": "Our Infrastructure business generated a gross investment return of \u00a3139 million, or 9% (September 2024: \u00a343\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc\u2019s (\u201c3iN\u201d) share price in the six-month\nperiod to 30 September 2025.",
+      "start": 2825,
+      "end": 3083
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "11",
+      "passage": "the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month\nperiod.",
+      "start": 4010,
+      "end": 4115
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "percentage_metric"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1513,
+    "endChar": 1646
+   }
+  },
+  {
+   "id": "12",
+   "text": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+   "qcCard": {
+    "index": 12,
+    "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+    "charStart": 1647,
+    "charEnd": 1865,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Our Infrastructure business generated a gross investment return of \u00a3139 million, or 9% (September 2024: \u00a343\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc\u2019s (\u201c3iN\u201d) share price in the six-month\nperiod to 30 September 2025. 3iN\u2019s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": "no_distinct_passage",
+    "evidenceSummary": "The source names a valuation uplift in TCR, not gains across essentially all of its investments.",
+    "commentaryUnaddressed": [
+     "across its portfolio, including meaningful gains across essentially all of its investments"
+    ],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Our Infrastructure business generated a gross investment return of \u00a3139 million, or 9% (September 2024: \u00a343\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc\u2019s (\u201c3iN\u201d) share price in the six-month\nperiod to 30 September 2025. 3iN\u2019s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 2825,
+    "primaryExcerptEnd": 3181,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source names a valuation uplift in TCR, not gains across essentially all of its investments.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 1647,
+     "endChar": 1865
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": "scale_set_one_holding",
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "12",
+      "passage": "Our Infrastructure business generated a gross investment return of \u00a3139 million, or 9% (September 2024: \u00a343\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc\u2019s (\u201c3iN\u201d) share price in the six-month\nperiod to 30 September 2025. 3iN\u2019s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.",
+      "start": 2825,
+      "end": 3181
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": null,
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1647,
+    "endChar": 1865
+   }
+  },
+  {
+   "id": "13",
+   "text": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+   "qcCard": {
+    "index": 13,
+    "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+    "charStart": 1867,
+    "charEnd": 2008,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "The first dividend of\n36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement by specifying that a dividend of 36.5 pence per share will be paid in January 2026. This matches the statement's claim of a GBP 0.365 dividend per share and its payment timing.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "3i-hy25-highlights.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "The first dividend of\n36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 3282,
+    "primaryExcerptEnd": 3411,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement by specifying that a dividend of 36.5 pence per share will be paid in January 2026. This matches the statement's claim of a GBP 0.365 dividend per share and its payment timing.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 1867,
+     "endChar": 2008
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "13",
+      "passage": "The first dividend of\n36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.",
+      "start": 3282,
+      "end": 3411
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "monetary_figure",
+      "date_period_claim",
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1867,
+    "endChar": 2008
+   }
+  },
+  {
+   "id": "14",
+   "text": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+   "qcCard": {
+    "index": 14,
+    "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+    "charStart": 2009,
+    "charEnd": 2218,
+    "supportState": "partial",
+    "hasConflict": false,
+    "primaryExcerpt": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the cautious stance on capital deployment into new investments and the openness to selective allocations to lower-risk reinvestments. However, it does not specifically mention the UK government, which is a key detail in the statement. The reviewer should verify the involvement of the UK government or adjust the statement to align with the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "3i-hy25-highlights.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 4257,
+    "primaryExcerptEnd": 4439,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the cautious stance on capital deployment into new investments and the openness to selective allocations to lower-risk reinvestments. However, it does not specifically mention the UK government, which is a key detail in the statement. The reviewer should verify the involvement of the UK government or adjust the statement to align with the source.",
+    "displayMode": "partial",
+    "draftSpan": {
+     "startChar": 2009,
+     "endChar": 2218
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_partial",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "moderate",
+    "evidenceConcernLevel": "moderate",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "14",
+      "passage": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust.",
+      "start": 4257,
+      "end": 4439
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "14",
+      "classification": "partially_confirmed",
+      "text": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "start": 15,
+      "end": 209
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "3i-hy25-highlights.pdf",
+      "classification": "partially_confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "partial",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "amber",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 2009,
+    "endChar": 2218
+   }
+  }
+ ],
+ "references": [],
+ "sources": [
+  {
+   "index": 0,
+   "id": "assess_src_1790918147055_1aa655fc80636",
+   "label": "3i-hy25-highlights.pdf",
+   "text": "13 November 2025\n3i Group plc announces results for the six months\nto 30 September 2025\n3i Group delivered strong performance in the first half of FY2026\n\u2022 Total return of \u00a33,291 million or 13% on opening shareholders\u2019 funds (September 2024: \u00a32,046 million, 10%).\nNAV per share of 2,857 pence (31 March 2025: 2,542 pence), including a 78 pence per share gain on foreign\nexchange translation (September 2024: 48 pence per share loss), and after the payment of the 42.5 pence per\nshare second FY2025 dividend in July 2025.\n\u2022 Our Private Equity business delivered a gross investment return of \u00a33,234 million or 14% (September 2024:\n\u00a32,071 million, 11%). Action continued to trade strongly, and several of our other large portfolio companies are\nshowing good momentum against a challenging macroeconomic and geopolitical backdrop across Europe and the\nUS. 98% of our Private Equity portfolio companies by value grew earnings in the 12 months to 30 June 2025.\n\u2022 In the nine reporting periods ending on 28 September 2025 (\u201cP9\u201d), Action generated net sales of \u20ac11,229 million\n(nine reporting periods ended P9 2024: \u20ac9,567 million), operating EBITDA of \u20ac1,563 million (nine reporting periods\nended P9 2024: \u20ac1,344 million) and like-for-like (\u201cLFL\u201d) sales growth of 6.3%. This strong performance supported\nvalue growth of \u00a32,118 million for Action in the period.\n\u2022 In September 2025, 3i acquired 2.2% of Action equity from GIC in exchange for newly issued 3i Group plc\nshares , with an equivalent consideration value of \u00a3739 million. As a result of this transaction, at 30 September 2025,\nour equity ownership in Action was 60.1%.\n\u2022 In October 2025, Action successfully completed two financing transactions. The first raised \u20ac1.6 billion of total\nincremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\nshares, returning \u00a3944 million of gross proceeds to 3i, \u00a3755 million of which were redeployed to acquire a\nfurther 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n62.3%. The second financing transaction repriced \u20ac3.1 billion of Action\u2019s existing term loan debt, extending the\nmaturity of a portion of the debt and generating an annual interest cost saving of \u20ac14 million.\n\u2022 In the ten reporting periods ending 26 October 2025 (\"P10\"), Action\u2019s net sales and operating EBITDA were 17% and\n15% ahead of the same period last year and LFL sales growth over the same period was 5.7%. At that date, Action\u2019s\ncash balance was \u20ac579 million.\n\u2022 Our Private Equity team completed the realisation of MPM and signed the realisation of MAIT in the period .\nThe total proceeds generated were \u00a3542 million, of which \u00a3395 million was received in the period. The sales\nachieved sterling money multiples of 3.2x and 2.8x respectively.\n\u2022 Our Infrastructure business generated a gross investment return of \u00a3139 million, or 9% (September 2024: \u00a343\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc\u2019s (\u201c3iN\u201d) share price in the six-month\nperiod to 30 September 2025. 3iN\u2019s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.\n\u2022 We ended the period with liquidity of \u00a31,639 million, net debt of \u00a3772 million and gearing of 3%. The first dividend of\n36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.\nSimon Borrows, 3i\u2019s Chief Executive, commented:\n\u201cThe total return of 13% represents a very good first half for the Group. Our long-term hold assets, Action and Royal\nSanders, continued to deliver excellent compounding returns. Action\u2019s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania. Year to date LFL\ntrading remains good despite weakening consumer confidence since the summer.\nAgainst a challenging macroeconomic and geopolitical backdrop, our Private Equity portfolio has maintained good\nmomentum, while the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month\nperiod. The strong realisations of MPM and MAIT further demonstrate the strength of our disciplined investment\nstrategy and active asset management.\nWe remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust. We are mindful that both the transaction market and the\nwider environment are likely to remain challenging into the second half of our financial year.\u201d \n1\n\nSummary financial highlights under the Investment basis\n3i prepares its statutory financial statements in accordance with UK adopted international accounting standards.\nHowever, we also report a non-GAAP \u201cInvestment basis\u201d, which we believe aids users of our report to assess the\nGroup\u2019s underlying operating performance. The Investment basis (which is unaudited) is an alternative performance\nmeasure (\u201cAPM\u201d) and is described on page 18. Total return and net assets are the same under the Investment basis\nand IFRS and we provide a reconciliation of our Investment basis financial statements to the IFRS statements from\npage 20. Pages 1 to 17 are prepared on an Investment basis.\nSix months to/as Six months to/as 12 months to/as\nat 30 September at 30 September at 31 March\nInvestment basis 2025 2024 2025\n \nTotal return 1 \u00a33,291m \u00a32,046m \u00a35,049m\nPercentage return on opening shareholders\u2019 funds 13% 10% 25%\nDividend per ordinary share 36.5p 30.5p 73.0p\n \nGross investment return 2 \u00a33,406m \u00a32,137m \u00a35,211m\nAs a percentage of opening 3i portfolio value 13% 10% 24%\n \nCash investment 2,3 \u00a3735m \u00a3893m \u00a31,182m\nRealisation proceeds \u00a3392m \u00a31,553m \u00a31,837m\n3i portfolio value \u00a329,299m \u00a322,953m \u00a325,579m\nGross debt \u00a31,211m \u00a31,191m \u00a31,194m\n \nNet debt 2 \u00a3772m \u00a3805m \u00a3771m\n \nGearing 2 3% 4% 3%\nLiquidity \u00a31,639m \u00a31,286m \u00a31,323m\nDiluted number of shares 988m 968m 968m\nDiluted net asset value per ordinary share (\u201cNAV per share\u201d) 2,857p 2,261p 2,542p\n1 Total return is defined as Total comprehensive income for the period, under both the Investment basis and the IFRS basis.\n2 Financial measure defined as APM. Further information on page 18.\n3 Six months to 30 September 2025, includes 3i's acquisition of 2.2% of Action equity from GIC in exchange for newly issued 3i Group plc shares, with an\nequivalent consideration value of \u00a3739 million.\nDisclaimer\nThese Half-year results have been prepared solely to provide information to shareholders. They should not be relied\non by any other party or for any other purpose. These Half-year results may contain statements about the future,\nincluding certain statements about the future outlook for 3i Group plc and its subsidiaries (\u201c3i\u201d or \u201cthe Group\u201d).\nThese are not guarantees of future performance and will not be updated. Although we believe our expectations are\nbased on reasonable assumptions, any statements about the future outlook may be influenced by factors that could\ncause actual outcomes and results to be materially different.\nEnquiries:\nSilvia Santoro, Group Investor Relations Director 020 7975 3258\nKathryn van der Kroft, Communications Director 020 7975 3021\nA PDF copy of this release can be downloaded from www.3i.com/investor-relations\nFor further information, including a live webcast of the results presentation at 10.00am on 13 November 2025, please\nvisit www.3i.com/investor-relations\n2",
+   "publicationState": "published_external"
+  }
+ ],
+ "excludedSources": [],
+ "meta": {
+  "pipelineVersion": "v4",
+  "stagesComplete": 7,
+  "traceId": "8d818fdd-e19a-444f-9593-01f05f44870e",
+  "reviewOptions": {
+   "evidenceEnabled": true,
+   "editorialEnabled": true,
+   "complianceEnabled": true
+  },
+  "reviewSummary": {
+   "version": 1,
+   "statements": 15,
+   "evidence": {
+    "confirmed": 8,
+    "partial": 1,
+    "conflicting": 5,
+    "notSupported": 0
+   },
+   "editorial": {
+    "concerns": 1,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "compliance": {
+    "concerns": 0,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "signalConcerns": 1,
+   "notChecked": 1,
+   "needsAttention": 5,
+   "readiness": "Needs significant work",
+   "rateLimitBoundHits": {
+    "editorial": 0,
+    "compliance": 0,
+    "commentary": 0,
+    "other": 0,
+    "statements": 0
+   }
+  },
+  "rateLimitBoundHits": {
+   "editorial": 0,
+   "compliance": 0,
+   "commentary": 0,
+   "other": 0,
+   "statements": 0
+  },
+  "capacityWait": {
+   "prelaunchCount": 0,
+   "waitMs": 0
+  },
+  "providerRefusal": null,
+  "rateLimitLastWait": null,
+  "stageSchedules": [
+   {
+    "statementCount": 15,
+    "tokensPerStatement": 13468,
+    "totalTokens": 202020,
+    "remainingTokens": 1950888,
+    "tpmLimit": 2000000,
+    "concurrency": 15,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage6"
+   },
+   {
+    "statementCount": 15,
+    "tokensPerStatement": 1800,
+    "totalTokens": 27000,
+    "remainingTokens": 1928575,
+    "tpmLimit": 2000000,
+    "concurrency": 15,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage5"
+   }
+  ],
+  "llmSpend": {
+   "calls": 88,
+   "inputTokens": 376590,
+   "cachedInputTokens": 94208,
+   "outputTokens": 7580,
+   "costUsd": 0.8943990500000001,
+   "unpricedCalls": 0,
+   "unpricedModels": [],
+   "byModel": {
+    "openai/gpt-4o-2024-08-06": {
+     "calls": 85,
+     "inputTokens": 374769,
+     "cachedInputTokens": 94208,
+     "outputTokens": 7491,
+     "costUsd": 0.8940725,
+     "unpricedCalls": 0
+    },
+    "openai/gpt-4o-mini-2024-07-18": {
+     "calls": 3,
+     "inputTokens": 1821,
+     "cachedInputTokens": 0,
+     "outputTokens": 89,
+     "costUsd": 0.00032655,
+     "unpricedCalls": 0
+    }
+   }
+  },
+  "modelConfig": {
+   "ranAt": "2026-10-02T05:17:17.076Z",
+   "stage2Fingerprints": [
+    "fp_61a9eaf3ca"
+   ],
+   "stageModels": {
+    "stage1-splitting": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage1b-claim-spans": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage2-matching": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage5-commentary": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "compliance-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    }
+   }
+  },
+  "build": {
+   "commit": "438169f",
+   "ref": "main",
+   "source": "vercel-env"
+  },
+  "draftCoverage": {
+   "dropped": [],
+   "uncovered": [],
+   "droppedCount": 0,
+   "uncoveredCount": 0,
+   "uncoveredChars": 0,
+   "draftChars": 2218
+  }
+ },
+ "bannedWordHits": [],
+ "provenanceFlags": []
+}
