@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | (fill after push) | (fill after verify:ship) |
+| backend | e3a0c7f | SHIP VERIFIED  e3a0c7f  main  162 files  1790 tests |
 | frontend | not touched | |
 
 Ids used: B372 (this spec), B373 (valuation leftover, filed not built).
