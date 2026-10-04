@@ -1,0 +1,1175 @@
+{
+ "ok": true,
+ "statements": [
+  {
+   "id": "0",
+   "text": "HICL Infrastructure\u2019s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+   "qcCard": {
+    "index": 0,
+    "statement": "HICL Infrastructure\u2019s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+    "charStart": 0,
+    "charEnd": 125,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.",
+    "conflictExcerpt": {
+     "passage": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October\u00a02025 to 28 February 2026.",
+     "sourceLabel": "HICL Infrastructure PLC.docx"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that HICL Infrastructure's performance for the five months to 28 February 2026 was positive and in line with expectations. The source specifically states that the portfolio performance was in line with expectations, supporting the statement's claim of positive performance. All items in the claim inventory, including the date '28 February 2026' and the term 'largely,' are confirmed by the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "HICL Infrastructure PLC.docx"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1651,
+    "primaryExcerptEnd": 1784,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that HICL Infrastructure's performance for the five months to 28 February 2026 was positive and in line with expectations. The source specifically states that the portfolio performance was in line with expectations, supporting the statement's claim of positive performance. All items in the claim inventory, including the date '28 February 2026' and the term 'largely,' are confirmed by the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 0,
+     "endChar": 125
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "HICL Infrastructure\u2019s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "0",
+      "passage": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October\u00a02025 to 28 February 2026.",
+      "start": 353,
+      "end": 481
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "0",
+      "passage": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.",
+      "start": 1651,
+      "end": 1784
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "0",
+      "passage": "Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets.",
+      "start": 5246,
+      "end": 5396
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "date_period_claim"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 0,
+    "endChar": 125
+   }
+  },
+  {
+   "id": "1",
+   "text": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL\u2019s dividend program.",
+   "qcCard": {
+    "index": 1,
+    "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL\u2019s dividend program.",
+    "charStart": 126,
+    "charEnd": 303,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement by describing robust operational performance, with EBITDA growth driven by capital expenditure and resilient cash generation across the portfolio. This supports HCIL's dividend program, aligning with the statement's claims.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "HICL Infrastructure PLC.docx"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 518,
+    "primaryExcerptEnd": 781,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement by describing robust operational performance, with EBITDA growth driven by capital expenditure and resilient cash generation across the portfolio. This supports HCIL's dividend program, aligning with the statement's claims.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 126,
+     "endChar": 303
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL\u2019s dividend program.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "1",
+      "passage": "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.",
+      "start": 518,
+      "end": 781
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "1",
+      "passage": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.",
+      "start": 1651,
+      "end": 1784
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "1",
+      "passage": "Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance.",
+      "start": 7521,
+      "end": 7660
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "minor",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "concern",
+    "editorialConcerns": [
+     {
+      "concernCode": "overreach_unsupported_causal",
+      "note": "The statement 'EBITDA growth driven by capital expenditure' implies a causal relationship that the draft does not establish.",
+      "category": "editorial",
+      "suggestedDirection": "Rephrase 'EBITDA growth driven by capital expenditure' to avoid implying causation without support.",
+      "span": [
+       {
+        "startChar": 63,
+        "endChar": 106,
+        "source": "note_quote"
+       }
+      ]
+     }
+    ],
+    "editorialNote": null,
+    "editorialSuggestedDirection": "Rephrase 'EBITDA growth driven by capital expenditure' to avoid implying causation without support.",
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "concern",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "amber",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 126,
+    "endChar": 303
+   }
+  },
+  {
+   "id": "2",
+   "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+   "qcCard": {
+    "index": 2,
+    "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+    "charStart": 305,
+    "charEnd": 491,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that growth investments across the portfolio are performing well, with significant expansion programs driving EBITDA growth in line with expectations. This aligns with the statement's claim.",
+    "commentaryUnaddressed": [
+     "Across the portfolio, growth investments"
+    ],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "HICL Infrastructure PLC.docx"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 5472,
+    "primaryExcerptEnd": 5623,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that growth investments across the portfolio are performing well, with significant expansion programs driving EBITDA growth in line with expectations. This aligns with the statement's claim.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 305,
+     "endChar": 491
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "2",
+      "passage": "HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.",
+      "start": 5472,
+      "end": 5623
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 305,
+    "endChar": 491
+   }
+  },
+  {
+   "id": "3",
+   "text": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+   "qcCard": {
+    "index": 3,
+    "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+    "charStart": 492,
+    "charEnd": 654,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast, as stated. Both elements of the claim are supported by the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "HICL Infrastructure PLC.docx"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 6347,
+    "primaryExcerptEnd": 6473,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast, as stated. Both elements of the claim are supported by the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 492,
+     "endChar": 654
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "3",
+      "passage": "London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.",
+      "start": 6347,
+      "end": 6473
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "named_person_entity_attribution",
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 492,
+    "endChar": 654
+   }
+  },
+  {
+   "id": "4",
+   "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+   "qcCard": {
+    "index": 4,
+    "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+    "charStart": 655,
+    "charEnd": 859,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement by noting progress on adding a second international operator on the route and Virgin Trains' announcement of its intentions for cross-Channel operations from St. Pancras. Virgin Trains is specifically mentioned in the source, confirming its role in the developments described.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "HICL Infrastructure PLC.docx"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 6474,
+    "primaryExcerptEnd": 6790,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement by noting progress on adding a second international operator on the route and Virgin Trains' announcement of its intentions for cross-Channel operations from St. Pancras. Virgin Trains is specifically mentioned in the source, confirming its role in the developments described.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 655,
+     "endChar": 859
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "4",
+      "passage": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator.",
+      "start": 6474,
+      "end": 6790
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "named_person_entity_attribution"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 655,
+    "endChar": 859
+   }
+  },
+  {
+   "id": "5",
+   "text": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+   "qcCard": {
+    "index": 5,
+    "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+    "charStart": 861,
+    "charEnd": 1076,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities. These actions are expected to support continued growth in EBITDA and valuation gains, as stated.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "HICL Infrastructure PLC.docx"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 7053,
+    "primaryExcerptEnd": 7279,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities. These actions are expected to support continued growth in EBITDA and valuation gains, as stated.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 861,
+     "endChar": 1076
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "5",
+      "passage": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.",
+      "start": 7053,
+      "end": 7279
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 861,
+    "endChar": 1076
+   }
+  },
+  {
+   "id": "6",
+   "text": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+   "qcCard": {
+    "index": 6,
+    "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+    "charStart": 1077,
+    "charEnd": 1199,
+    "supportState": "partial",
+    "hasConflict": false,
+    "primaryExcerpt": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that Fortysouth, a part of the company, completed an oversubscribed refinancing and achieved a reduction in debt margins, which aligns with the statement's claim of reduced debt servicing costs. However, the source specifies this is for Fortysouth, not the entire company, leading to partial confirmation. The reviewer should clarify whether the statement refers specifically to Fortysouth or the entire company.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 7280,
+    "primaryExcerptEnd": 7511,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that Fortysouth, a part of the company, completed an oversubscribed refinancing and achieved a reduction in debt margins, which aligns with the statement's claim of reduced debt servicing costs. However, the source specifies this is for Fortysouth, not the entire company, leading to partial confirmation. The reviewer should clarify whether the statement refers specifically to Fortysouth or the entire company.",
+    "displayMode": "partial",
+    "draftSpan": {
+     "startChar": 1077,
+     "endChar": 1199
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_partial",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "moderate",
+    "evidenceConcernLevel": "moderate",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "6",
+      "passage": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.",
+      "start": 7280,
+      "end": 7511
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "6",
+      "classification": "partially_confirmed",
+      "text": "which will lead to a reduction in debt servicing costs",
+      "start": 67,
+      "end": 121
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "partially_confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "partial",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "amber",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1077,
+    "endChar": 1199
+   }
+  },
+  {
+   "id": "7",
+   "text": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government\u2019s recently published white paper on water sector reform.",
+   "qcCard": {
+    "index": 7,
+    "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government\u2019s recently published white paper on water sector reform.",
+    "charStart": 1202,
+    "charEnd": 1384,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that Affinity Water appointed Mark Garth as the new CEO, who has significant sector experience from United Utilities. It also notes the publication of the UK government's white paper on water sector reform, which is expected to benefit strong performers like Affinity Water. Therefore, the statement is confirmed.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "HICL Infrastructure PLC.docx"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "HICL Infrastructure PLC.docx",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 5765,
+    "primaryExcerptEnd": 6334,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that Affinity Water appointed Mark Garth as the new CEO, who has significant sector experience from United Utilities. It also notes the publication of the UK government's white paper on water sector reform, which is expected to benefit strong performers like Affinity Water. Therefore, the statement is confirmed.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 1202,
+     "endChar": 1384
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government\u2019s recently published white paper on water sector reform.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "7",
+      "passage": "During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance.",
+      "start": 5765,
+      "end": 5987
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "7",
+      "passage": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.",
+      "start": 6071,
+      "end": 6334
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "HICL Infrastructure PLC.docx",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "named_person_entity_attribution"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1202,
+    "endChar": 1384
+   }
+  }
+ ],
+ "references": [],
+ "sources": [
+  {
+   "index": 0,
+   "id": "assess_src_1791109537216_315840bbc98c38",
+   "label": "HICL Infrastructure PLC.docx",
+   "text": "HICL Infrastructure PLC\n04 March 2026\n\u00a0\n4 March 2026\n\u00a0\nHICL Infrastructure PLC\n\u00a0\n\"HICL\" or \"the Company\" and, together with its subsidiaries, \"the Group\", the London-listed infrastructure investment company managed by InfraRed Capital Partners Limited (\"InfraRed\" or \"the Investment Manager\").\n\u00a0\nInterim Update Statement and Capital Allocation Update\n\u00a0\nThe Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October\u00a02025 to 28 February 2026.\n\u00a0\nMike Bane, Chair of HICL said:\n\u00a0\n\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.\n\u00a0\nFollowing the withdrawal from the proposed combination with TRIG, the Board has been engaging extensively and constructively with shareholders, covering a wide range of matters including the Company's long-term objectives and strategic priorities on a standalone basis. These discussions highlight the widespread appreciation of HICL's high quality portfolio, strategy and active approach, as well as support for the continued evolution of the Company's return profile. With good underlying investment performance, and the portfolio well-positioned for both capital and income growth, your Board looks forward to building on this progress and continuing to create shareholder value.\"\u00a0\u00a0\n\u00a0\n\n| Key Highlights | \n| \u00b7 | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | \n| \u00b7 | Active capital recycling completed, with the \u00a3225m disposal of seven UK PPP assets completed in the period in line with carrying value, which will enable full repayment of the Company's RCF and funding of committed growth investments. | \n| \u00b7 | Disciplined and flexible capital allocation with share repurchases resumed, recognising that buybacks are an accretive use of capital at current discount levels, alongside investment, distributions and balance sheet priorities. | \n| \u00b7 | Dividend outlook reaffirmed, with the Company on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026 (forecast cash cover of c.1.1x) and reiterating its target dividend of 8.50p per share for the year ending 31 March 2027. | \n| Capital Allocation | \n| \u00b7 | The Company's approach to capital allocation remains focused on balance sheet strength, shareholder distributions and accretive investment that advances the Company's strategic priorities. | \n| \u00b7 | Divestments and investments continue to be selectively pursued where they improve portfolio construction, with the return available on share buybacks providing a benchmark against which to assess capital allocation decisions. | \n| \u00b7 | As at 28 February, the RCF was \u00a350m drawn and the Company had a cash balance of \u00a3147m, including sale proceeds received from the disposal of seven assets and after a \u00a360m RCF repayment. The RCF is to be fully repaid by 31 March 2026 from the remaining sale proceeds. | \n| \u00b7 | \u00a350m of the sale proceeds was allocated to fund HICL's equity commitment to Affinity Water, as previously disclosed. Proceeds of c.\u00a366m will be allocated to funding the existing equity commitments to Blankenburg tunnel and B247, due in September and December 2026 respectively, also as previously disclosed. This contribution meets HICL's deferred equity obligations as these assets successfully complete construction and move into their operational phase. | \n| \u00b7 | The Company has resumed buying back its own shares, with \u00a34m acquired in the period since 1 January 2026 and \u00a3154m now acquired since the start of the programme, which the Board considers to be an effective allocation of capital at current discount levels. The Company expects to continue to pursue share buybacks, at its discretion, where these represent the most attractive use of capital, while preserving the Company's balance sheet and prioritising a progressive dividend. | \n| \u00b7 | Attractive opportunities to make further investments are considered by the Company where returns exceed those available from share buybacks. The Investment Manager sees significant opportunity within the existing portfolio, in particular, in the form of incremental equity stakes and follow-on investments to support growth. In such situations, the Company is well placed to maximise value from incumbent positions in high quality assets. Currently the Company is pursuing several live opportunities within the existing portfolio, of modest size, which compare favourably to alternative uses of capital. | \n| \u00b7 | The Company is also pursuing further selective accretive divestments to fund rotation into attractive investment opportunities, whether in the form of further asset acquisitions or share buybacks. The Board will also consider more opportunistic asset disposals in special situations where outsized returns are available and the economic case for sale is compelling. | \n| Portfolio Performance | \n| \u00b7 | Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets. NAV performance and cash generation remain in line with forecast. | \n| \u00b7 | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | \n| \u00b7 | o\u00a0\u00a0At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | \n| \u00b7 | o\u00a0\u00a0London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | \n| | o\u00a0\u00a0Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | \n| \u00b7 | Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance. | \n| Financial Performance and Valuation | \n| \u00b7 | The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x. The Board also re-iterates its target dividend of 8.50p per share for the year to 31 March 2027. | \n| \u00b7 | Latest actual inflation is tracking slightly below HICL's forecast for the period ending 31 March 2026 in the\u00a0UK\u00a0and\u00a0France, and slightly ahead for\u00a0New Zealand. Overall the Company expects no material impact on its 31 March 2026 NAV from actual outturn inflation. | \n| \u00b7 | Long term government bond yields in the UK have decreased slightly, by approximately 20 basis points, since the Company's valuation at 30 September 2025. Over the same period, overall movement in bond yields in the United States, Canada, New Zealand and the Eurozone has been relatively flat. Transaction activity in the period, including direct experience from HICL's recent disposals and InfraRed's broader platform, reinforces the Investment Manager's view that there is no strong evidence to support a movement in discount rates. This will be reviewed as at 31 March, in line with the established portfolio valuation process. | \n| Shareholder consultation | \n| \u00b7 | The Company's Chair and Senior Independent Director (SID) are undertaking an extensive consultation programme with shareholders which is expected to conclude shortly. Over the last six weeks, they have met 23 investors, representing over 47% of the register.. | \n| \u00b7 | Discussions have been wide-ranging and constructive, spanning portfolio construction, NAV performance, capital allocation and corporate governance. The Board expects to update shareholders on the conclusions of this consultation at the annual results, scheduled to be published in May. | \n| \u00b7 | Shareholder discussions also highlight widespread appreciation of HICL's high quality portfolio, strategy and active approach, as well as focusing on the continuing evolution of the Company's growth and returns profile. The Company expects further shareholder engagement on the strategic direction of the Company over the course of the Annual Results investor roadshow, ahead of a capital markets event planned for shortly thereafter. | \n| Market and Outlook | \n| \u00b7 | The outlook for core infrastructure continues to strengthen, underpinned by renewed political commitment to infrastructure investment, resilient transaction activity and strong investor demand for longduration, inflationlinked assets. Structural megatrends continue to drive longterm investment requirements across communications, utilities, transport and social infrastructure, reinforcing the attractiveness of infrastructure as an asset class. | \n| \u00b7 | In an environment characterised by rapid technological change, significant geopolitical instability and broader macroeconomic uncertainty, the role of essential infrastructure assets has become increasingly important. Advances such as artificial intelligence are reshaping economic activity and driving higher demand for reliable energy, transport and digital networks, while geopolitical tensions and supplychain disruption have reinforced the strategic value of resilient, domestically anchored infrastructure. | \n| \u00b7 | This is increasingly being recognised in private markets, as transaction volumes for high-quality infrastructure assets remain strong, underpinned by robust private market valuations (as demonstrated by HICL's disposal activity), and significant dry powder available for deployment. Public markets have seen defensive infrastructure and utility company share prices increase strongly in recent months. This constructive market backdrop supports ongoing asset rotation and disciplined reinvestment at attractive riskadjusted returns. | \n| \u00b7 | Against this backdrop, HICL is well positioned to progress its strategy. The portfolio benefits from inherently defensive characteristics, including inflation linkage, long asset lives and limited exposure to interest rate volatility. \u00a0The Company's business model is selfsustaining; successful disposal activity, increasing free cash generation and a strong balance sheet position drives the continued delivery of the investment proposition. This platform provides the Board with significant capital allocation flexibility, assessing selective new investment opportunities against further share repurchases, to support longterm NAV and dividend growth. | \n\n\u00a0\n\u00a0\n\u00a0\n-Ends-",
+   "publicationState": "unknown"
+  }
+ ],
+ "excludedSources": [],
+ "meta": {
+  "pipelineVersion": "v4",
+  "stagesComplete": 7,
+  "traceId": "bd68d192-7d1f-4c07-8562-94d5f6c8c177",
+  "reviewOptions": {
+   "evidenceEnabled": true,
+   "editorialEnabled": true,
+   "complianceEnabled": true
+  },
+  "reviewSummary": {
+   "version": 1,
+   "statements": 8,
+   "evidence": {
+    "confirmed": 7,
+    "partial": 1,
+    "conflicting": 0,
+    "notSupported": 0
+   },
+   "editorial": {
+    "concerns": 1,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "compliance": {
+    "concerns": 0,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "signalConcerns": 1,
+   "notChecked": 0,
+   "needsAttention": 1,
+   "readiness": "Minor points to address",
+   "rateLimitBoundHits": {
+    "editorial": 0,
+    "compliance": 0,
+    "commentary": 0,
+    "other": 0,
+    "statements": 0
+   }
+  },
+  "rateLimitBoundHits": {
+   "editorial": 0,
+   "compliance": 0,
+   "commentary": 0,
+   "other": 0,
+   "statements": 0
+  },
+  "capacityWait": {
+   "prelaunchCount": 0,
+   "waitMs": 0
+  },
+  "providerRefusal": null,
+  "rateLimitLastWait": null,
+  "stageSchedules": [
+   {
+    "statementCount": 8,
+    "tokensPerStatement": 13259,
+    "totalTokens": 106072,
+    "remainingTokens": 1966087,
+    "tpmLimit": 2000000,
+    "concurrency": 8,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage6"
+   },
+   {
+    "statementCount": 8,
+    "tokensPerStatement": 1800,
+    "totalTokens": 14400,
+    "remainingTokens": 1975780,
+    "tpmLimit": 2000000,
+    "concurrency": 8,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage5"
+   }
+  ],
+  "llmSpend": {
+   "calls": 43,
+   "inputTokens": 199090,
+   "cachedInputTokens": 89472,
+   "outputTokens": 3215,
+   "costUsd": 0.418035,
+   "unpricedCalls": 0,
+   "unpricedModels": [],
+   "byModel": {
+    "openai/gpt-4o-2024-08-06": {
+     "calls": 43,
+     "inputTokens": 199090,
+     "cachedInputTokens": 89472,
+     "outputTokens": 3215,
+     "costUsd": 0.418035,
+     "unpricedCalls": 0
+    }
+   }
+  },
+  "modelConfig": {
+   "ranAt": "2026-10-04T10:26:29.791Z",
+   "stage2Fingerprints": [
+    "fp_61a9eaf3ca"
+   ],
+   "stageModels": {
+    "stage1-splitting": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage1b-claim-spans": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage2-matching": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage5-commentary": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "compliance-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    }
+   }
+  },
+  "build": {
+   "commit": "2b68499",
+   "ref": "main",
+   "source": "vercel-env"
+  },
+  "draftCoverage": {
+   "dropped": [],
+   "uncovered": [],
+   "droppedCount": 0,
+   "uncoveredCount": 0,
+   "uncoveredChars": 0,
+   "draftChars": 1384
+  }
+ },
+ "bannedWordHits": [],
+ "provenanceFlags": []
+}

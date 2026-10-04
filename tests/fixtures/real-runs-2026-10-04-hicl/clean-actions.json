@@ -1,0 +1,51 @@
+{
+ "ok": true,
+ "entries": [
+  {
+   "id": "S1:editorial:overreach_unsupported_causal:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "1",
+   "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL\u2019s dividend program.",
+   "kind": "editorial",
+   "rule": "overreach_unsupported_causal",
+   "thing1": {
+    "quote": "EBITDA growth driven by capital expenditure",
+    "startChar": 63,
+    "endChar": 106
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The statement 'EBITDA growth driven by capital expenditure' implies a causal relationship that the draft does not establish.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "overreach_unsupported_causal",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S6:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "6",
+   "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "which will lead to a reduction in debt servicing costs",
+    "startChar": 67,
+    "endChar": 121
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source confirms that Fortysouth, a part of the company, completed an oversubscribed refinancing and achieved a reduction in debt margins, which aligns with the statement's claim of reduced debt servicing costs. However, the source specifies this is for Fortysouth, not the entire company, leading to partial confirmation. The reviewer should clarify whether the statement refers specifically to Fortysouth or the entire company.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": true,
+    "rule": "partial",
+    "reasonCode": "partial_no_edit"
+   },
+   "provenance": "authored",
+   "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+  }
+ ]
+}
