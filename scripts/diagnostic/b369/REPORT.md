@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | PENDING_SHA | PENDING_VERIFY |
+| backend | 76aaf10 | SHIP VERIFIED  76aaf10  main  160 files  1767 tests |
 | frontend | not touched | |
 
 Ids used: B369 (this spec). Succeeds B366.
