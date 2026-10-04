@@ -1,0 +1,48 @@
+{
+  "s10Recovered": {
+    "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+    "displayVerdict": "supported_full",
+    "supportState": "supported",
+    "concernLevel": "none",
+    "commentaryNotReviewed": false,
+    "quote": "• Our Private Equity team completed the realisation of MPM and signed the realisation of MAIT in the period . ... The sales\nachieved sterling money multiples of 3.2x and 2.8x respectively.",
+    "conflictQuote": null,
+    "evidenceSummary": "3.2x and 2.8x match the source. The phrases 'MPM' and 'MAIT' match the source."
+  },
+  "anchors": {
+    "extractVerifiableAnchors": [
+      "3",
+      "2"
+    ],
+    "claimAnchors": [
+      "3.2x",
+      "2.8x",
+      "MPM",
+      "MAIT"
+    ],
+    "namedInQuote": [
+      "3.2x",
+      "2.8x",
+      "MPM",
+      "MAIT"
+    ]
+  },
+  "fillLogs": [
+    "[stage7] quote-without-comment statementIndex=10 route=empty_confirmation_cleared named=4 fallback=false",
+    "[stage7] quote-without-comment statementIndex=10 route=empty_confirmation_cleared named=4 fallback=false"
+  ],
+  "sweeps": {
+    "septClean": {
+      "emptyQuote": []
+    },
+    "septDoc": {
+      "emptyQuote": []
+    },
+    "octDoc": {
+      "emptyQuote": []
+    },
+    "octDocInjected": {
+      "emptyQuote": []
+    }
+  }
+}

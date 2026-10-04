@@ -161,7 +161,7 @@ describe("B354 commentary inventory", () => {
     assert.equal(result.unaddressed.length, inventory.length - 2);
   });
 
-  test("empty or not-reviewed commentary is untouched", async () => {
+  test("appendSourceStatedClauses does not invent a comment on empty prose", () => {
     const inventory = buildClaimInventory("Gross investment return was 9% for the period.");
     const empty = appendSourceStatedClauses({
       commentary: "",
@@ -170,7 +170,9 @@ describe("B354 commentary inventory", () => {
     });
     assert.equal(empty.commentary, "");
     assert.equal(empty.appended.length, 0);
+  });
 
+  test("a confirmed card with a quote and a Stage 5 miss gets a named-term comment", async () => {
     const card = await assembleCard(
       {
         statementText: "Gross investment return was 9% for the period.",
@@ -207,8 +209,8 @@ describe("B354 commentary inventory", () => {
         sources: CLEAN.sources,
       }
     );
-    assert.equal(card.commentaryNotReviewed, true);
-    assert.equal(card.evidenceSummary, "");
+    assert.equal(card.commentaryNotReviewed, false);
+    assert.equal(card.evidenceSummary, "9% matches the source.");
     assert.deepEqual(card.commentaryUnaddressed, []);
   });
 });
