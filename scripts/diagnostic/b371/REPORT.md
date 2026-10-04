@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending push | pending |
+| backend | 2b68499 | SHIP VERIFIED  2b68499  main  161 files  1774 tests |
 | frontend | not touched | |
 
 Ids used: B371 (this spec). Standing ruling recorded next to B348.
