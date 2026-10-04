@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | PENDING_SHA | PENDING_VERIFY |
+| backend | 8c28cb5 | SHIP VERIFIED  8c28cb5  main  160 files  1767 tests |
 | frontend | not touched | |
 
 Ids used: B370 (this diagnostic).
