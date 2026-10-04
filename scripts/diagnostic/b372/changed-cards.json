@@ -1,0 +1,266 @@
+{
+  "generated": "B372 dump",
+  "rows": [
+    {
+      "payload": "hicl-clean",
+      "statementIndex": 1,
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "editorial": {
+        "beforeCodes": [
+          "overreach_unsupported_causal"
+        ],
+        "afterCodes": [],
+        "beforeEditorialVerdict": "concern",
+        "afterEditorialVerdict": "clean",
+        "dropped": [
+          {
+            "concernCode": "overreach_unsupported_causal",
+            "slug": "editorial_phrase_in_source",
+            "family": "causal"
+          }
+        ]
+      },
+      "companyAndDateFields": [],
+      "dateSpansChanged": false,
+      "before": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms the statement by describing robust operational performance, with EBITDA growth driven by capital expenditure and resilient cash generation across the portfolio. This supports HCIL's dividend program, aligning with the statement's claims.",
+        "primaryExcerpt": "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.",
+        "conflictExcerpt": ""
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms the statement by describing robust operational performance, with EBITDA growth driven by capital expenditure and resilient cash generation across the portfolio. This supports HCIL's dividend program, aligning with the statement's claims.",
+        "primaryExcerpt": "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.",
+        "conflictExcerpt": ""
+      }
+    },
+    {
+      "payload": "hicl-clean",
+      "statementIndex": 6,
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+      "editorial": null,
+      "companyAndDateFields": [
+        "displayVerdict",
+        "concernLevel",
+        "evidenceSummary"
+      ],
+      "dateSpansChanged": false,
+      "before": {
+        "displayVerdict": "supported_partial",
+        "concernLevel": "moderate",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that Fortysouth, a part of the company, completed an oversubscribed refinancing and achieved a reduction in debt margins, which aligns with the statement's claim of reduced debt servicing costs. However, the source specifies this is for Fortysouth, not the entire company, leading to partial confirmation. The reviewer should clarify whether the statement refers specifically to Fortysouth or the entire company.",
+        "primaryExcerpt": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.",
+        "conflictExcerpt": ""
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that Fortysouth, a part of the company, completed an oversubscribed refinancing and achieved a reduction in debt margins, which aligns with the statement's claim of reduced debt servicing costs. The reviewer should clarify whether the statement refers specifically to Fortysouth or the entire company.",
+        "primaryExcerpt": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.",
+        "conflictExcerpt": ""
+      }
+    },
+    {
+      "payload": "hicl-doc",
+      "statementIndex": 0,
+      "statement": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+      "editorial": null,
+      "companyAndDateFields": [
+        "displayVerdict",
+        "concernLevel",
+        "primaryExcerpt",
+        "conflictExcerpt"
+      ],
+      "dateSpansChanged": true,
+      "before": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that HCIL Infrastructure's performance for the six months to 31 December 2025 was positive and largely in line with expectations. It specifically states that the portfolio performance was in line with expectations, supporting the statement's claim.",
+        "primaryExcerpt": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.",
+        "conflictExcerpt": ""
+      },
+      "after": {
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that HCIL Infrastructure's performance for the six months to 31 December 2025 was positive and largely in line with expectations. It specifically states that the portfolio performance was in line with expectations, supporting the statement's claim.",
+        "primaryExcerpt": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October 2025 to 28 February 2026.",
+        "conflictExcerpt": "Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets."
+      }
+    },
+    {
+      "payload": "sept-clean",
+      "statementIndex": 3,
+      "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+      "editorial": {
+        "beforeCodes": [
+          "marketing_language_excess"
+        ],
+        "afterCodes": [],
+        "beforeEditorialVerdict": "concern",
+        "afterEditorialVerdict": "clean",
+        "dropped": [
+          {
+            "concernCode": "marketing_language_excess",
+            "slug": "editorial_phrase_in_source",
+            "family": "evaluative"
+          }
+        ]
+      },
+      "companyAndDateFields": [],
+      "dateSpansChanged": false,
+      "before": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that the company's new store expansion program is on track for another record year, with new stores in Switzerland and Romania receiving an excellent reception. This directly supports the statement.",
+        "primaryExcerpt": "Action’s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+        "conflictExcerpt": ""
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that the company's new store expansion program is on track for another record year, with new stores in Switzerland and Romania receiving an excellent reception. This directly supports the statement.",
+        "primaryExcerpt": "Action’s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+        "conflictExcerpt": ""
+      }
+    },
+    {
+      "payload": "sept-clean",
+      "statementIndex": 12,
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+      "editorial": {
+        "beforeCodes": [
+          "overreach_unsupported_causal"
+        ],
+        "afterCodes": [],
+        "beforeEditorialVerdict": "concern",
+        "afterEditorialVerdict": "clean",
+        "dropped": [
+          {
+            "concernCode": "overreach_unsupported_causal",
+            "slug": "editorial_phrase_in_source",
+            "family": "causal"
+          }
+        ]
+      },
+      "companyAndDateFields": [],
+      "dateSpansChanged": false,
+      "before": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms the statement by reporting that the performance was primarily driven by a 14% increase in 3i Infrastructure plc's share price. It also mentions a significant valuation uplift in TCR, supporting the claim of meaningful gains on its investment in TCR. The phrase 'driven primarily by' matches the source.",
+        "primaryExcerpt": "Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\nperiod to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.",
+        "conflictExcerpt": ""
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms the statement by reporting that the performance was primarily driven by a 14% increase in 3i Infrastructure plc's share price. It also mentions a significant valuation uplift in TCR, supporting the claim of meaningful gains on its investment in TCR. The phrase 'driven primarily by' matches the source.",
+        "primaryExcerpt": "Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\nperiod to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.",
+        "conflictExcerpt": ""
+      }
+    },
+    {
+      "payload": "sept-doc",
+      "statementIndex": 3,
+      "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+      "editorial": {
+        "beforeCodes": [
+          "marketing_language_excess"
+        ],
+        "afterCodes": [],
+        "beforeEditorialVerdict": "concern",
+        "afterEditorialVerdict": "clean",
+        "dropped": [
+          {
+            "concernCode": "marketing_language_excess",
+            "slug": "editorial_phrase_in_source",
+            "family": "evaluative"
+          }
+        ]
+      },
+      "companyAndDateFields": [],
+      "dateSpansChanged": false,
+      "before": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that the company's new store expansion program is on track for another record year, with new stores in Switzerland and Romania receiving an excellent reception. This directly supports the statement.",
+        "primaryExcerpt": "Action’s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+        "conflictExcerpt": ""
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "concernLevel": "none",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source confirms that the company's new store expansion program is on track for another record year, with new stores in Switzerland and Romania receiving an excellent reception. This directly supports the statement.",
+        "primaryExcerpt": "Action’s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+        "conflictExcerpt": ""
+      }
+    },
+    {
+      "payload": "sept-doc",
+      "statementIndex": 12,
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+      "editorial": {
+        "beforeCodes": [
+          "overreach_unsupported_causal"
+        ],
+        "afterCodes": [],
+        "beforeEditorialVerdict": "concern",
+        "afterEditorialVerdict": "clean",
+        "dropped": [
+          {
+            "concernCode": "overreach_unsupported_causal",
+            "slug": "editorial_phrase_in_source",
+            "family": "causal"
+          }
+        ]
+      },
+      "companyAndDateFields": [],
+      "dateSpansChanged": false,
+      "before": {
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source names a valuation uplift in TCR, not gains across essentially all of its investments.",
+        "primaryExcerpt": "Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\nperiod to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.",
+        "conflictExcerpt": ""
+      },
+      "after": {
+        "displayVerdict": "conflict",
+        "concernLevel": "high",
+        "editorialVerdict": "clean",
+        "codes": [],
+        "evidenceSummary": "The source names a valuation uplift in TCR, not gains across essentially all of its investments.",
+        "primaryExcerpt": "Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\nmillion, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\nperiod to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\nTCR.",
+        "conflictExcerpt": ""
+      }
+    }
+  ]
+}
