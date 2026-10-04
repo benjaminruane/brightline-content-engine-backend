@@ -64,6 +64,8 @@ Label versus pipeline:
 - F15 own-brand. Ben P after Correction 3, pipeline X on some runs.
 - F04 risk-adjusted return profile. Ben C, pipeline P on some runs.
 - F11 revenue and EBITDA from SEK 4.2 billion. Ben C, pipeline varies.
+- F08 competitive position / F09 Brno / F10 600 customers / F16 clinical advisory board. Ben C, pipeline conflict via the actor check (2026-10-04 pass).
+- F15 own-brand. Ben P after Correction 3, pipeline `supported_full` on the 2026-10-04 pass (was P or X on earlier runs).
 
 Two remaining catch misses (Group A still not caught). The expanded corpus must cover them:
 
@@ -80,6 +82,8 @@ Two remaining catch misses (Group A still not caught). The expanded corpus must 
 - Evidence scoring run (2026-09-05, fixtures 01-20, cache off, editorial and compliance off, commentary skipped): Ben approved a combined ceiling of $40 for two independent passes. Pre-run estimate was about $6 to $12 per pass, $12 to $24 for both, under the ceiling. The runner metered $0.00 on both of those passes because `lib/qc/pipeline-v4/index.mjs` copied Stage 2 matches without `costUsd` or `usage` (lines 364-377), so `run-evidence.mjs` had nothing to sum. That cause was fixed in `32f3b97`. Later passes metered correctly: $5.41 for the reducer pair, $5.36 for the rounding pair, $2.27 for the lift pass. Wall clock on the 2026-09-05 pair: pass 1 254411 ms, pass 2 249500 ms. Stage 1 alone was $0.14. Pass 1 stored 271 whole-sentence Stage 2 pairs across 261 cards. The 2026-09-05 pair has no meter. Do not re-run it to recover the missing meter.
 
 ## Scoreboard
+
+Current reading (2026-10-04, `runs/evidence-pass-oct-04-baseline`): catch 10 of 11, leave-alone 61 of 74. Against the 8 September bar of 9 of 11 and 67 of 74. Never average the two groups. Report `runs/evidence-pass-oct-04-baseline/REPORT.md`.
 
 Current reading (2026-09-08, `runs/evidence-pass-lift-1`): catch 9 of 11, leave-alone 67 of 74.
 
@@ -108,6 +112,8 @@ This pack cannot validate a judging change smaller than the noise already measur
 - Catch of 11 has a Wilson 95 percent interval 43 percentage points wide at the observed 9 of 11: [0.5230, 0.9486]. At the original 3 of 11 it was 47 points: [0.0975, 0.5657]. An interval "roughly 25 points wide" is a floor. The measured width is larger.
 
 Differences smaller than these (a few leave-alone points, a stability tick, a catch of 11 moving by one) are not evidence that a judging change worked. This instrument cannot tell them from Stage 2 noise. Do not propose another judging change against this labelled set. The next work is a larger corpus.
+
+Current reading after the honesty fortnight (one billed pass, `runs/evidence-pass-oct-04-baseline/cards.json`, 2026-10-04, spend USD 2.9785, ceiling remaining 40): freeze 261 / 0 unmatched. Catch 10 of 11, Wilson [0.6226, 0.9838]. Leave-alone 61 of 74 = 82.43%. Catch still clears 6 of 11. Leave-alone does not clear 85%. Twelve labelled verdicts moved versus lift-1. Five of those are the actor check. Role-party, scale, quote recovery, and empty-confirmation recovery moved none of the 100. Labels not moved. Details in `runs/evidence-pass-oct-04-baseline/REPORT.md`.
 
 Current reading after the lift-only span fix (one billed pass, `runs/evidence-pass-lift-1/cards.json`, 2026-09-08, spend USD 2.27, ceiling USD 5): freeze 261 / 0 unmatched. Catch 9 of 11, Wilson [0.5230, 0.9486]. Leave-alone 67 of 74 = 90.54%. PASS (catch at least 6 of 11 and leave-alone at least 85%). BUILD-QUALITY (leave-alone at least 89%). Conflict cards with no excerpt: 0. One non-planted intra-source confirm-plus-conflict remains red (F15 Atelier 18 stores). No second pass: the last pair already measured the noise.
 

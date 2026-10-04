@@ -109,10 +109,17 @@ export function compactCards(fixtureId, pipelineResult) {
     ).map((m) => ({
       classification: m?.classification ?? null,
       sourceIndex: m?.sourceIndex,
+      emptyConfirmationRefused: m?.emptyConfirmationRefused === true,
+      matchNotReviewed: m?.matchNotReviewed === true,
     })),
     supportSpans: compactSupportSpans(card),
     primaryExcerpt: excerptPassage(card?.primaryExcerpt),
     conflictExcerpt: excerptPassage(card?.conflictExcerpt),
+    displayVerdictReason: card?.displayVerdictReason ?? null,
+    supportState: card?.supportState ?? null,
+    evidenceNotReviewedReason: card?.evidenceNotReviewedReason ?? null,
+    excerptNotLocatable: card?.excerptNotLocatable === true,
+    hasRealExcerpt: card?.hasRealExcerpt === true,
   }));
   return addOccurrenceIndices(
     rows.map((r) => ({
@@ -125,6 +132,11 @@ export function compactCards(fixtureId, pipelineResult) {
       supportSpans: r.supportSpans,
       primaryExcerpt: r.primaryExcerpt,
       conflictExcerpt: r.conflictExcerpt,
+      displayVerdictReason: r.displayVerdictReason,
+      supportState: r.supportState,
+      evidenceNotReviewedReason: r.evidenceNotReviewedReason,
+      excerptNotLocatable: r.excerptNotLocatable,
+      hasRealExcerpt: r.hasRealExcerpt,
     }))
   ).map((r) => ({
     fixtureId: r.fixtureId,
@@ -137,6 +149,11 @@ export function compactCards(fixtureId, pipelineResult) {
     supportSpans: r.supportSpans,
     primaryExcerpt: r.primaryExcerpt,
     conflictExcerpt: r.conflictExcerpt,
+    displayVerdictReason: r.displayVerdictReason ?? null,
+    supportState: r.supportState ?? null,
+    evidenceNotReviewedReason: r.evidenceNotReviewedReason ?? null,
+    excerptNotLocatable: r.excerptNotLocatable === true,
+    hasRealExcerpt: r.hasRealExcerpt === true,
   }));
 }
 
@@ -251,6 +268,7 @@ async function runOneFixture(fixture, runPipelineV4, calculateLlmCostUsd, frozen
     requiredVersion: cfg.requiredVersion === "public" ? "public" : "complete",
     outputType: typeof cfg.outputType === "string" ? cfg.outputType : undefined,
     eventType: typeof cfg.eventType === "string" ? cfg.eventType : undefined,
+    evidenceEnabled: true,
     editorialEnabled: false,
     complianceEnabled: false,
     skipCommentary: true,

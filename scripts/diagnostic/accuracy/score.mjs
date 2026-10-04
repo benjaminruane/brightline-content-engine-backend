@@ -3,6 +3,7 @@
  * Score Ben labels against a later evidence run. Do not average Group A and Group B.
  *
  *   node scripts/diagnostic/accuracy/score.mjs --labels path --cards path --manifest path
+ *   node scripts/diagnostic/accuracy/score.mjs --pass oct-04-baseline
  *
  * This pass ships the scorer. Do not run an evidence pass here.
  */
@@ -29,11 +30,17 @@ function runningAsMain() {
 export { formatScoreReport, scoreAccuracy };
 
 function parseArgs(argv) {
-  const out = { labels: null, cards: null, manifest: null };
+  const out = { labels: null, cards: null, manifest: null, pass: null };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === "--labels" && argv[i + 1]) out.labels = argv[++i];
     else if (argv[i] === "--cards" && argv[i + 1]) out.cards = argv[++i];
     else if (argv[i] === "--manifest" && argv[i + 1]) out.manifest = argv[++i];
+    else if (argv[i] === "--pass" && argv[i + 1]) out.pass = String(argv[++i]);
+  }
+  if (out.pass) {
+    if (!out.labels) out.labels = path.join(__dirname, "labels.json");
+    if (!out.manifest) out.manifest = path.join(__dirname, "sample-manifest.json");
+    if (!out.cards) out.cards = path.join(__dirname, "runs", `evidence-pass-${out.pass}`, "cards.json");
   }
   return out;
 }
@@ -62,7 +69,9 @@ export async function runScore({ labelsPath, cardsPath, manifestPath }) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (!args.labels || !args.cards || !args.manifest) {
-    console.error("usage: node score.mjs --labels <file> --cards <file> --manifest <file>");
+    console.error(
+      "usage: node score.mjs --labels <file> --cards <file> --manifest <file>\n       node score.mjs --pass <pass-id>"
+    );
     process.exit(2);
   }
   const result = await runScore({
