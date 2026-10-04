@@ -6,6 +6,7 @@ import { isMultisourceCoverageEnabled } from "../../lib/qc/coverage-union.mjs";
 import { isExtractStructureEnabled, resolvePdfEngine } from "../../lib/extract-text-from-source.mjs";
 import { isRaisedCharactersEnabled } from "../../lib/extract-pdf-direct.mjs";
 import { isNarrativeCoherenceEnabled } from "../../lib/qc/narrative-coherence.mjs";
+import { isActorOfTheActionEnabled } from "../../lib/qc/actor-of-the-action.mjs";
 import { readBuildIdentity } from "../../lib/qc/build-identity.mjs";
 
 export { readBuildIdentity };
@@ -54,6 +55,7 @@ export function listUnrecognisedFlags(env = process.env) {
   if (unrecognisedLoose(rawPresent(env, "QC_LLM_CACHE"))) names.push("QC_LLM_CACHE");
   if (unrecognisedLoose(rawPresent(env, "QC_MULTISOURCE_COVERAGE"))) names.push("QC_MULTISOURCE_COVERAGE");
   if (unrecognisedLoose(rawPresent(env, "QC_NARRATIVE_COHERENCE"))) names.push("QC_NARRATIVE_COHERENCE");
+  if (unrecognisedLoose(rawPresent(env, "QC_ACTOR_OF_THE_ACTION"))) names.push("QC_ACTOR_OF_THE_ACTION");
 
   const extractRaw = rawPresent(env, "QC_EXTRACT_STRUCTURE");
   if (extractRaw !== "" && extractRaw !== "true" && extractRaw !== "1") {
@@ -94,6 +96,7 @@ export function readEnvironmentSummary(env = process.env) {
     extractStructure: flagReport(isExtractStructureEnabled(), false),
     raisedCharacters: flagReport(isRaisedCharactersEnabled(), true),
     narrativeCoherence: flagReport(isNarrativeCoherenceEnabled(env), false),
+    actorOfTheAction: flagReport(isActorOfTheActionEnabled(env), false),
     unrecognisedFlags: listUnrecognisedFlags(env),
   };
 }

@@ -1,0 +1,85 @@
+{
+  "pass": "oct-04-baseline",
+  "method": "arithmetic from movers.json",
+  "replay": "not run. compact cards.json has no source documents and no evidenceSummary.",
+  "predictionHeld": true,
+  "billed": {
+    "catch": "10 of 11",
+    "leaveAlone": "61 of 74",
+    "leaveAloneRate": 0.8243
+  },
+  "corrected": {
+    "catch": "9 of 11",
+    "leaveAlone": "64 of 74",
+    "leaveAloneRate": 0.8649,
+    "leaveAlonePct": "86.5%",
+    "passBar85": true,
+    "buildQualityBar89": false
+  },
+  "actorMoversRemoved": [
+    {
+      "id": "F08 competitive position",
+      "statement": "The Company's competitive position is exceptional.",
+      "shape": "Company as a party",
+      "group": "B",
+      "label": "confirmed",
+      "effectOnCatch": "none",
+      "effectOnLeaveAlone": "none. already supported_partial on 8 September, not in the leave-alone denominator."
+    },
+    {
+      "id": "F09 Brno",
+      "statement": "The Brno automation programme has progressed to first-phase capex approval of EUR 18 million, with installation targeted for Q3 2026.",
+      "shape": "a city as a party",
+      "group": "B",
+      "label": "confirmed",
+      "effectOnCatch": "none",
+      "effectOnLeaveAlone": "returns. +1"
+    },
+    {
+      "id": "F10 600 customers",
+      "statement": "It supplies more than 600 customers worldwide, with particular strength in ultra-high-purity solvents used in semiconductor wafer fabrication and pharmaceutical active ingredient manufacturing.",
+      "shape": "no subject present",
+      "group": "B",
+      "label": "confirmed",
+      "effectOnCatch": "none",
+      "effectOnLeaveAlone": "returns. +1"
+    },
+    {
+      "id": "F13 EBITDA margin",
+      "statement": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
+      "shape": "a metric as a party",
+      "group": "A",
+      "label": "conflicting",
+      "effectOnCatch": "reverts. the catch was accidental. -1",
+      "effectOnLeaveAlone": "none"
+    },
+    {
+      "id": "F16 advisory board",
+      "statement": "Bloom is supported by a clinical advisory board of seven specialists across endocrinology, nutrition, and women's health.",
+      "shape": "passive; not the actor",
+      "group": "B",
+      "label": "confirmed",
+      "effectOnCatch": "none",
+      "effectOnLeaveAlone": "returns. +1"
+    }
+  ],
+  "remainingLeaveAloneLossesVsLift1": [
+    {
+      "id": "F01 employees",
+      "attributed": "Stage 2 matcher variation. no shipped change."
+    },
+    {
+      "id": "F09 period revenue",
+      "attributed": "Stage 2 matcher variation. no shipped change."
+    },
+    {
+      "id": "F16 gross margin",
+      "attributed": "Stage 2 matcher variation. no shipped change."
+    }
+  ],
+  "notes": [
+    "Billed leave-alone 61 of 74 = 67 minus seven leavers plus F08 principal risks joining. Restoring the three actor leavers (Brno, 600 customers, advisory) yields 64 of 74.",
+    "F04 risk-adjusted return also left leave-alone and F08 principal risks joined. Those two offset. The net 67 to 64 gap is F01, F09 period revenue, F16 gross margin.",
+    "Labels not moved. Labelled set not changed."
+  ]
+}

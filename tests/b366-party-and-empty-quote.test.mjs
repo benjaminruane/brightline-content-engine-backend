@@ -8,7 +8,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, test } from "vitest";
+import { afterEach, describe, test } from "vitest";
+import { vi } from "vitest";
 
 import {
   actorMismatch,
@@ -45,6 +46,10 @@ const silentFramingJudge = async () => ({
   sourceStance: "",
   note: "",
   reason: "",
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
 });
 
 function excerptText(card) {
@@ -159,7 +164,7 @@ describe("B366 party tokens", () => {
 });
 
 describe("B366 part one. A country is not a party", () => {
-  test("October S14 names the UK government and stays a conflict", async () => {
+  test("October S14 names the UK government; the check is off so the card is not an actor conflict", async () => {
     const vocab = sourceNameVocabulary(OCT_DOC.sources);
     assert.equal(vocab.has("UK"), false);
     assert.equal(vocab.has("US"), false);
@@ -167,10 +172,14 @@ describe("B366 part one. A country is not a party", () => {
     const hit = leadingActor(OCT_DOC.statements[14].qcCard.statement, vocab);
     assert.equal(hit.actor, "the UK government");
     const s14 = await replayCard(OCT_DOC, 14);
-    assert.equal(s14.displayVerdict, "conflict");
-    assert.equal(s14.displayVerdictReason, "actor_mismatch");
-    assert.equal(s14.evidenceSummary.startsWith(ACTOR_UK), true);
-    assert.equal(/attributes this to UK;/.test(s14.evidenceSummary), false);
+    assert.notEqual(s14.displayVerdictReason, "actor_mismatch");
+    assert.equal(s14.evidenceSummary.startsWith(ACTOR_UK), false);
+    vi.stubEnv("QC_ACTOR_OF_THE_ACTION", "1");
+    const on = await replayCard(OCT_DOC, 14);
+    assert.equal(on.displayVerdict, "conflict");
+    assert.equal(on.displayVerdictReason, "actor_mismatch");
+    assert.equal(on.evidenceSummary.startsWith(ACTOR_UK), true);
+    assert.equal(/attributes this to UK;/.test(on.evidenceSummary), false);
   }, 20000);
 
   test("US sales against a first-person source produces no finding", () => {
@@ -212,7 +221,8 @@ describe("B366 part one. A country is not a party", () => {
     assert.equal(mait.sourceParty, "Action");
   });
 
-  test("MAIT and AGIC findings are unchanged on both payloads", async () => {
+  test("MAIT and AGIC findings are unchanged on both payloads when the actor check is on", async () => {
+    vi.stubEnv("QC_ACTOR_OF_THE_ACTION", "1");
     const sept8 = await replayCard(SEPT_DOC, 8);
     assert.equal(sept8.displayVerdict, "conflict");
     assert.equal(sept8.displayVerdictReason, "actor_mismatch");

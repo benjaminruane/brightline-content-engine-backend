@@ -83,7 +83,7 @@ Two remaining catch misses (Group A still not caught). The expanded corpus must 
 
 ## Scoreboard
 
-Current reading (2026-10-04, `runs/evidence-pass-oct-04-baseline`): catch 10 of 11, leave-alone 61 of 74. Against the 8 September bar of 9 of 11 and 67 of 74. Never average the two groups. Report `runs/evidence-pass-oct-04-baseline/REPORT.md`.
+Current reading (2026-10-04, `runs/evidence-pass-oct-04-baseline`): catch 10 of 11, leave-alone 61 of 74. Against the 8 September bar of 9 of 11 and 67 of 74. Never average the two groups. Report `runs/evidence-pass-oct-04-baseline/REPORT.md`. **B371** turns the actor check off; arithmetic with those five movers removed is catch 9 of 11, leave-alone 64 of 74. That is not a new billed pass.
 
 Current reading (2026-09-08, `runs/evidence-pass-lift-1`): catch 9 of 11, leave-alone 67 of 74.
 

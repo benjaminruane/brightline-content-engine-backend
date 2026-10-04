@@ -6,11 +6,13 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, test } from "vitest";
+import { afterEach, describe, test } from "vitest";
+import { vi } from "vitest";
 
 import {
   actorMismatch,
   applyActorOfTheAction,
+  isActorOfTheActionEnabled,
   leadingActor,
   sourceNameVocabulary,
 } from "../lib/qc/actor-of-the-action.mjs";
@@ -44,6 +46,14 @@ const REVIEWS_ON = {
   editorialEnabled: true,
   complianceEnabled: true,
 };
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
+function enableActorCheck() {
+  vi.stubEnv("QC_ACTOR_OF_THE_ACTION", "1");
+}
 
 function editorialClean() {
   return {
@@ -101,6 +111,7 @@ async function assembleActorCard({
 
 describe("B354 actor of the action", () => {
   test("FIRES on doctored S8 MAIT vs Action", async () => {
+    enableActorCheck();
     assert.equal(MAIT_STATEMENT, "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.");
     assert.match(ACTION_PASSAGE, /Action completed a capital restructuring with a pro-rata redemption of/);
     assert.equal(VOCAB.has("MAIT"), true);
@@ -125,6 +136,7 @@ describe("B354 actor of the action", () => {
   });
 
   test("doctored S8: actor sentence leads the recorded comment unaltered", () => {
+    enableActorCheck();
     const recorded = DOC.statements[8].qcCard.evidenceSummary;
     assert.match(recorded, /The reviewer should consider whether the term 'significant' is necessary/);
     const applied = applyActorOfTheAction({
@@ -146,6 +158,7 @@ describe("B354 actor of the action", () => {
   });
 
   test("empty commentary: the result is the sentence alone", () => {
+    enableActorCheck();
     const applied = applyActorOfTheAction({
       statement: MAIT_STATEMENT,
       confirmingPassage: ACTION_PASSAGE,
@@ -169,6 +182,7 @@ describe("B354 actor of the action", () => {
   });
 
   test("both fire: actor sentence first; match clause dropped on conflict; reviewer instruction last", async () => {
+    enableActorCheck();
     const recorded = DOC.statements[8].qcCard.evidenceSummary;
     const statement = "MAIT also completed a 2.2% stake purchase.";
     const card = await assembleActorCard({
@@ -243,6 +257,7 @@ describe("B354 actor of the action", () => {
   });
 
   test("STANDS DOWN on a conflict card", async () => {
+    enableActorCheck();
     const applied = applyActorOfTheAction({
       statement: MAIT_STATEMENT,
       confirmingPassage: ACTION_PASSAGE,
@@ -275,5 +290,27 @@ describe("B354 actor of the action", () => {
       sources: SOURCES,
     });
     assert.equal(mismatch, null);
+  });
+
+  test("B371 default off: a mismatch does not reach the card", async () => {
+    assert.equal(isActorOfTheActionEnabled(), false);
+    const applied = applyActorOfTheAction({
+      statement: MAIT_STATEMENT,
+      confirmingPassage: ACTION_PASSAGE,
+      sources: SOURCES,
+      hasConflict: false,
+      displayVerdict: "supported_full",
+      commentaryNotReviewed: false,
+      evidenceSummary: "The source confirms the redemption.",
+    });
+    assert.equal(applied, null);
+    const card = await assembleActorCard({
+      statement: MAIT_STATEMENT,
+      passage: ACTION_PASSAGE,
+      verdict: "confirmed",
+    });
+    assert.notEqual(card.displayVerdict, "conflict");
+    assert.notEqual(card.displayVerdictReason, "actor_mismatch");
+    assert.equal(card.evidenceSummary.includes(ACTOR_SENTENCE), false);
   });
 });

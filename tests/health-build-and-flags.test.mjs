@@ -19,6 +19,7 @@ import { isMultisourceCoverageEnabled } from "../lib/qc/coverage-union.mjs";
 import { isExtractStructureEnabled, resolvePdfEngine } from "../lib/extract-text-from-source.mjs";
 import { isRaisedCharactersEnabled } from "../lib/extract-pdf-direct.mjs";
 import { isNarrativeCoherenceEnabled } from "../lib/qc/narrative-coherence.mjs";
+import { isActorOfTheActionEnabled } from "../lib/qc/actor-of-the-action.mjs";
 import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
 import { buildIncompleteReviewResponse } from "../lib/qc/review-deadline.mjs";
 import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
@@ -33,6 +34,7 @@ const B2_FLAGS = [
   "extractStructure",
   "raisedCharacters",
   "narrativeCoherence",
+  "actorOfTheAction",
 ];
 
 function createRes() {
@@ -117,6 +119,7 @@ describe("B340 health build and resolved flags", () => {
     assert.equal(env.extractStructure.resolved, isExtractStructureEnabled());
     assert.equal(env.raisedCharacters.resolved, isRaisedCharactersEnabled());
     assert.equal(env.narrativeCoherence.resolved, isNarrativeCoherenceEnabled());
+    assert.equal(env.actorOfTheAction.resolved, isActorOfTheActionEnabled());
   });
 
   test("T4 editorial true is OFF and the name is listed without the value", async () => {

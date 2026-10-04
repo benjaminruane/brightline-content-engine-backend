@@ -7,7 +7,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, test } from "vitest";
+import { afterEach, describe, test } from "vitest";
+import { vi } from "vitest";
 
 import {
   actorMismatch,
@@ -28,6 +29,11 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIXTURE_DIR = path.join(ROOT, "tests/fixtures/real-runs-2026-09-29");
 const CLEAN = JSON.parse(readFileSync(path.join(FIXTURE_DIR, "clean-review.json"), "utf8"));
 const DOC = JSON.parse(readFileSync(path.join(FIXTURE_DIR, "doc-review.json"), "utf8"));
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
 const STAGE5 = readFileSync(
   path.join(ROOT, "lib/qc/pipeline-v4/prompts/stage5_v2.md"),
   "utf8"
@@ -191,6 +197,7 @@ describe("B364 house style, source name, second passage, confirmation mark", () 
   });
 
   test("UK government card names the party the source attributes the stance to", async () => {
+    vi.stubEnv("QC_ACTOR_OF_THE_ACTION", "1");
     const self = sourceSelfNameFromSources(DOC.sources);
     assert.equal(self, "3i Group plc");
     const s14 = await replayCard(DOC, 14);
