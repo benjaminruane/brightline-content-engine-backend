@@ -1,0 +1,115 @@
+{
+  "clean": [
+    {
+      "id": "S1:editorial:overreach_unsupported_causal:0",
+      "disposition": "ACKNOWLEDGE",
+      "kind": "editorial",
+      "rule": "overreach_unsupported_causal",
+      "proposedChange": null,
+      "resultingSentence": null,
+      "verification": null,
+      "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+    },
+    {
+      "id": "S6:evidence:partial:0",
+      "disposition": "ACKNOWLEDGE",
+      "kind": "evidence",
+      "rule": "partial",
+      "proposedChange": null,
+      "resultingSentence": null,
+      "verification": null,
+      "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+    }
+  ],
+  "doctored": [
+    {
+      "id": "S1:evidence:partial:0",
+      "disposition": "ACKNOWLEDGE",
+      "kind": "evidence",
+      "rule": "partial",
+      "proposedChange": null,
+      "resultingSentence": null,
+      "verification": null,
+      "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+    },
+    {
+      "id": "S2:evidence:partial:0",
+      "disposition": "ACKNOWLEDGE",
+      "kind": "evidence",
+      "rule": "partial",
+      "proposedChange": null,
+      "resultingSentence": null,
+      "verification": null,
+      "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+    },
+    {
+      "id": "S2:editorial:overreach_unsupported_causal:0",
+      "disposition": "ACKNOWLEDGE",
+      "kind": "editorial",
+      "rule": "overreach_unsupported_causal",
+      "proposedChange": null,
+      "resultingSentence": null,
+      "verification": null,
+      "noProposalReason": "This concern stands. The wording is yours."
+    },
+    {
+      "id": "S3:evidence:conflicting:0",
+      "disposition": "ACTION",
+      "kind": "evidence",
+      "rule": "conflicting",
+      "proposedChange": "Replace 'Paris St. Germain High Speed' with 'London St. Pancras High Speed'.",
+      "resultingSentence": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+      "verification": {
+        "status": "checked",
+        "detail": "Stated replacement matches the resulting sentence."
+      },
+      "noProposalReason": null
+    },
+    {
+      "id": "S4:evidence:conflicting:0",
+      "disposition": "ACTION",
+      "kind": "evidence",
+      "rule": "conflicting",
+      "proposedChange": "Replace 'St. Germain' with 'St. Pancras'.",
+      "resultingSentence": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+      "verification": {
+        "status": "checked",
+        "detail": "Stated replacement matches the resulting sentence."
+      },
+      "noProposalReason": null
+    },
+    {
+      "id": "S5:evidence:conflicting:0",
+      "disposition": "ACTION",
+      "kind": "evidence",
+      "rule": "conflicting",
+      "proposedChange": "Replace 'TowerCo' with 'Fortysouth' and '20' with '16'.",
+      "resultingSentence": "Elsewhere, Fortysouth delivered 16 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "verification": {
+        "status": "checked",
+        "detail": "Stated replacement matches the resulting sentence."
+      },
+      "noProposalReason": null
+    },
+    {
+      "id": "S6:evidence:conflicting:0",
+      "disposition": "ACKNOWLEDGE",
+      "kind": "evidence",
+      "rule": "conflicting",
+      "proposedChange": null,
+      "resultingSentence": null,
+      "verification": null,
+      "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+    },
+    {
+      "id": "S7:evidence:not_supported:0",
+      "disposition": "ACKNOWLEDGE",
+      "kind": "evidence",
+      "rule": "not_supported",
+      "proposedChange": null,
+      "resultingSentence": null,
+      "verification": null,
+      "noProposalReason": "No supplied source speaks to this claim, either way. The wording is yours."
+    }
+  ]
+}
