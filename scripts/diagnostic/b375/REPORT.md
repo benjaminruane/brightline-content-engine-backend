@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending | not yet run |
+| backend | 579d59a | SHIP VERIFIED  579d59a  main  163 files  1795 tests |
 | frontend | not touched | |
 
 Ids used: B375 (this diagnostic). Filed in the findings log. No build row.
