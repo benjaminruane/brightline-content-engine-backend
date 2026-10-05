@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | pending | not yet run |
+| backend | 6642182 | SHIP VERIFIED  6642182  main  163 files  1795 tests |
 | frontend | not touched | |
 
 Ids used: B377. No product code. `lib/` unchanged.
