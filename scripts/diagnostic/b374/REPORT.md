@@ -4,7 +4,7 @@
 
 | Repo | SHA | verify:ship |
 |------|-----|-------------|
-| backend | PENDING | PENDING |
+| backend | 98c54be | SHIP VERIFIED  98c54be  main  163 files  1795 tests |
 | frontend | not touched | |
 
 Ids used: B374 (this spec). B373 remains open (valuation leftover, not this work).
