@@ -1,0 +1,896 @@
+{
+  "system": "You repair one sentence, or you refuse.\nPrefer deleting words. A restatement is allowed only if every fact in it appears in the passages supplied.\nNever substitute a milder evaluative word for a stronger one. Never approximate an unbacked figure into a vaguer word.\nNever introduce a figure, date or name that is not in the statement or the supplied passages.\nNever remove a name.\nChange nothing outside the flagged phrase, except a connector left dangling by the cut.\nRefusing is a correct answer. Say so rather than inventing a repair.\nReply as JSON with exactly these keys: offer (boolean), removed (string), resultingSentence (string), reason (one line).\nIf you refuse, offer is false and removed and resultingSentence are empty strings.\nresultingSentence is the full sentence after the change, so it can be checked with no inference.\nDo not write anything outside that JSON object.",
+  "cards": [
+    {
+      "name": "hicl-doc",
+      "file": "tests/fixtures/real-runs-2026-10-04-hicl/doc-review.json",
+      "sid": "1",
+      "statement": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "displayVerdict": "supported_partial",
+      "supportState": "partial",
+      "hasConflict": false,
+      "unsupported": [
+        "with average 30% EBITDA growth"
+      ],
+      "confirmed": [
+        "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.",
+        "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.",
+        "Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance."
+      ],
+      "confirmedEmpty": 0,
+      "claims": [],
+      "hasEvidenceObject": false,
+      "called": true,
+      "skipReason": null,
+      "passes": [
+        {
+          "n": 1,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 362,
+            "outputTokens": 85,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "average 30% ",
+            "resultingSentence": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+            "reason": "The confirmed passages support EBITDA growth driven by capex but do not substantiate an average 30% figure.",
+            "raw": "{\"offer\": true, \"removed\": \"average 30% \", \"resultingSentence\": \"Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.\", \"reason\": \"The confirmed passages support EBITDA growth driven by capex but do not substantiate an average 30% figure.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "with average 30% EBITDA growth",
+                "span": {
+                  "start": 58,
+                  "end": 88
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 2,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 362,
+            "outputTokens": 85,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "average 30% ",
+            "resultingSentence": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+            "reason": "The confirmed passages support EBITDA growth driven by capex but do not substantiate an average 30% figure.",
+            "raw": "{\"offer\": true, \"removed\": \"average 30% \", \"resultingSentence\": \"Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.\", \"reason\": \"The confirmed passages support EBITDA growth driven by capex but do not substantiate an average 30% figure.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "with average 30% EBITDA growth",
+                "span": {
+                  "start": 58,
+                  "end": 88
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 3,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 362,
+            "outputTokens": 85,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "average 30% ",
+            "resultingSentence": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+            "reason": "The confirmed passages support EBITDA growth driven by capex but do not substantiate an average 30% figure.",
+            "raw": "{\"offer\": true, \"removed\": \"average 30% \", \"resultingSentence\": \"Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.\", \"reason\": \"The confirmed passages support EBITDA growth driven by capex but do not substantiate an average 30% figure.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "with average 30% EBITDA growth",
+                "span": {
+                  "start": 58,
+                  "end": 88
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        }
+      ],
+      "userPayload": "STATEMENT:\nAcross the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.\n\nFLAGGED PHRASE 1: with average 30% EBITDA growth\n\nCONFIRMED PASSAGES:\nPASSAGE 1: HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\n\nPASSAGE 2: Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\n\nPASSAGE 3: Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance.",
+      "stability": "the three passes agree: an offer exists, and it is the same offer."
+    },
+    {
+      "name": "hicl-doc",
+      "file": "tests/fixtures/real-runs-2026-10-04-hicl/doc-review.json",
+      "sid": "2",
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+      "displayVerdict": "supported_partial",
+      "supportState": "partial",
+      "hasConflict": false,
+      "unsupported": [
+        "driving EBITDA growth that continues to significantly outperform budgets"
+      ],
+      "confirmed": [
+        "HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations."
+      ],
+      "confirmedEmpty": 0,
+      "claims": [],
+      "hasEvidenceObject": false,
+      "called": true,
+      "skipReason": null,
+      "passes": [
+        {
+          "n": 1,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 277,
+            "outputTokens": 77,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "driving EBITDA growth that continues to significantly outperform budgets",
+            "resultingSentence": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs.",
+            "reason": "The confirmed passage only supports that EBITDA is in line with expectations, not significantly outperforming budgets.",
+            "raw": "{\"offer\": true, \"removed\": \"driving EBITDA growth that continues to significantly outperform budgets\", \"resultingSentence\": \"Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs.\", \"reason\": \"The confirmed passage only supports that EBITDA is in line with expectations, not significantly outperforming budgets.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "driving EBITDA growth that continues to significantly outperform budgets",
+                "span": {
+                  "start": 117,
+                  "end": 189
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": false,
+              "detail": "removed without being flagged: EBITDA"
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 2,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 277,
+            "outputTokens": 85,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "driving EBITDA growth that continues to significantly outperform budgets",
+            "resultingSentence": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs delivering EBITDA in line with expectations.",
+            "reason": "Replaced the flagged phrase with wording directly supported by the confirmed passage about EBITDA being in line with expectations.",
+            "raw": "{\"offer\": true, \"removed\": \"driving EBITDA growth that continues to significantly outperform budgets\", \"resultingSentence\": \"Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs delivering EBITDA in line with expectations.\", \"reason\": \"Replaced the flagged phrase with wording directly supported by the confirmed passage about EBITDA being in line with expectations.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "driving EBITDA growth that continues to significantly outperform budgets",
+                "span": {
+                  "start": 117,
+                  "end": 189
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 3,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 277,
+            "outputTokens": 85,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "driving EBITDA growth that continues to significantly outperform budgets",
+            "resultingSentence": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs delivering EBITDA in line with expectations.",
+            "reason": "Replaced the flagged phrase with wording directly supported by the confirmed passage about EBITDA being in line with expectations.",
+            "raw": "{\"offer\": true, \"removed\": \"driving EBITDA growth that continues to significantly outperform budgets\", \"resultingSentence\": \"Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs delivering EBITDA in line with expectations.\", \"reason\": \"Replaced the flagged phrase with wording directly supported by the confirmed passage about EBITDA being in line with expectations.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "driving EBITDA growth that continues to significantly outperform budgets",
+                "span": {
+                  "start": 117,
+                  "end": 189
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        }
+      ],
+      "userPayload": "STATEMENT:\nAcross the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.\n\nFLAGGED PHRASE 1: driving EBITDA growth that continues to significantly outperform budgets\n\nCONFIRMED PASSAGES:\nPASSAGE 1: HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.",
+      "stability": "the three passes agree that an offer exists. The offers are not the same."
+    },
+    {
+      "name": "hicl-clean",
+      "file": "tests/fixtures/real-runs-2026-10-04-hicl/clean-review.json",
+      "sid": "6",
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+      "displayVerdict": "supported_partial",
+      "supportState": "partial",
+      "hasConflict": false,
+      "unsupported": [
+        "which will lead to a reduction in debt servicing costs"
+      ],
+      "confirmed": [
+        "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues."
+      ],
+      "confirmedEmpty": 0,
+      "claims": [],
+      "hasEvidenceObject": false,
+      "called": true,
+      "skipReason": null,
+      "passes": [
+        {
+          "n": 1,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 295,
+            "outputTokens": 90,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "which will lead to a reduction in debt servicing costs",
+            "resultingSentence": "The company also recently completed an oversubscribed refinancing, which enabled a step-down on debt margins earlier than forecast.",
+            "reason": "Replaced the unsubstantiated claim about reduced debt servicing costs with the supported description of a step-down on debt margins from the passage.",
+            "raw": "{\"offer\": true, \"removed\": \"which will lead to a reduction in debt servicing costs\", \"resultingSentence\": \"The company also recently completed an oversubscribed refinancing, which enabled a step-down on debt margins earlier than forecast.\", \"reason\": \"Replaced the unsubstantiated claim about reduced debt servicing costs with the supported description of a step-down on debt margins from the passage.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "which will lead to a reduction in debt servicing costs",
+                "span": {
+                  "start": 67,
+                  "end": 121
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 2,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 295,
+            "outputTokens": 84,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "which will lead to a reduction in debt servicing costs",
+            "resultingSentence": "The company also recently completed an oversubscribed refinancing, which enabled a step-down on debt margins earlier than forecast.",
+            "reason": "Replaced the flagged phrase with the supported description from the confirmed passage about a step-down on debt margins.",
+            "raw": "{\"offer\": true, \"removed\": \"which will lead to a reduction in debt servicing costs\", \"resultingSentence\": \"The company also recently completed an oversubscribed refinancing, which enabled a step-down on debt margins earlier than forecast.\", \"reason\": \"Replaced the flagged phrase with the supported description from the confirmed passage about a step-down on debt margins.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "which will lead to a reduction in debt servicing costs",
+                "span": {
+                  "start": 67,
+                  "end": 121
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 3,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 295,
+            "outputTokens": 90,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "which will lead to a reduction in debt servicing costs",
+            "resultingSentence": "The company also recently completed an oversubscribed refinancing, which enabled a step-down on debt margins earlier than forecast.",
+            "reason": "Replaced the unsubstantiated claim about reduced debt servicing costs with the supported description of a step-down on debt margins from the passage.",
+            "raw": "{\"offer\": true, \"removed\": \"which will lead to a reduction in debt servicing costs\", \"resultingSentence\": \"The company also recently completed an oversubscribed refinancing, which enabled a step-down on debt margins earlier than forecast.\", \"reason\": \"Replaced the unsubstantiated claim about reduced debt servicing costs with the supported description of a step-down on debt margins from the passage.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "which will lead to a reduction in debt servicing costs",
+                "span": {
+                  "start": 67,
+                  "end": 121
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        }
+      ],
+      "userPayload": "STATEMENT:\nThe company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.\n\nFLAGGED PHRASE 1: which will lead to a reduction in debt servicing costs\n\nCONFIRMED PASSAGES:\nPASSAGE 1: The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.",
+      "stability": "the three passes agree: an offer exists, and it is the same offer."
+    },
+    {
+      "name": "3i-sep-doc",
+      "file": "tests/fixtures/real-runs-2026-09-29/doc-review.json",
+      "sid": "8",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "displayVerdict": "supported_partial",
+      "supportState": "partial",
+      "hasConflict": false,
+      "unsupported": [
+        "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i."
+      ],
+      "confirmed": [],
+      "confirmedEmpty": 0,
+      "claims": [],
+      "hasEvidenceObject": false,
+      "called": false,
+      "skipReason": "no supportSpan with classification confirmed.",
+      "passes": [],
+      "stability": "not called"
+    },
+    {
+      "name": "3i-sep-doc",
+      "file": "tests/fixtures/real-runs-2026-09-29/doc-review.json",
+      "sid": "14",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "displayVerdict": "supported_partial",
+      "supportState": "partial",
+      "hasConflict": false,
+      "unsupported": [
+        "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies."
+      ],
+      "confirmed": [
+        "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust."
+      ],
+      "confirmedEmpty": 0,
+      "claims": [],
+      "hasEvidenceObject": false,
+      "called": true,
+      "skipReason": null,
+      "passes": [
+        {
+          "n": 1,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 314,
+            "outputTokens": 113,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+            "resultingSentence": "Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.",
+            "reason": "Replaced the flagged phrase with the confirmed passage to ensure alignment with the source text.",
+            "raw": "{\"offer\": true, \"removed\": \"the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\", \"resultingSentence\": \"Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\", \"reason\": \"Replaced the flagged phrase with the confirmed passage to ensure alignment with the source text.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+                "span": {
+                  "start": 15,
+                  "end": 209
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 2,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 314,
+            "outputTokens": 115,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+            "resultingSentence": "Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.",
+            "reason": "Replaced the flagged phrase with the confirmed passage to align exactly with the supported wording and facts.",
+            "raw": "{\"offer\": true, \"removed\": \"the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\", \"resultingSentence\": \"Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\", \"reason\": \"Replaced the flagged phrase with the confirmed passage to align exactly with the supported wording and facts.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+                "span": {
+                  "start": 15,
+                  "end": 209
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 3,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 314,
+            "outputTokens": 119,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+            "resultingSentence": "Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.",
+            "reason": "Replaced the flagged phrase with the directly supported wording from the confirmed passage to avoid introducing unsupported subject and phrasing.",
+            "raw": "{\"offer\": true, \"removed\": \"the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\", \"resultingSentence\": \"Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\", \"reason\": \"Replaced the flagged phrase with the directly supported wording from the confirmed passage to avoid introducing unsupported subject and phrasing.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+                "span": {
+                  "start": 15,
+                  "end": 209
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        }
+      ],
+      "userPayload": "STATEMENT:\nLooking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\n\nFLAGGED PHRASE 1: the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\n\nCONFIRMED PASSAGES:\nPASSAGE 1: We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust.",
+      "stability": "the three passes agree: an offer exists, and it is the same offer."
+    },
+    {
+      "name": "3i-sep-clean",
+      "file": "tests/fixtures/real-runs-2026-09-29/clean-review.json",
+      "sid": "1",
+      "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+      "displayVerdict": "supported_partial",
+      "supportState": "partial",
+      "hasConflict": false,
+      "unsupported": [],
+      "confirmed": [
+        "Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n£2,071 million, 11%)."
+      ],
+      "confirmedEmpty": 0,
+      "claims": [],
+      "hasEvidenceObject": false,
+      "called": true,
+      "skipReason": null,
+      "passes": [
+        {
+          "n": 1,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 279,
+            "outputTokens": 40,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": false,
+            "removed": "",
+            "resultingSentence": "",
+            "reason": "No phrase is flagged for editing, so no repair consistent with the instructions is possible.",
+            "raw": "{\"offer\":false,\"removed\":\"\",\"resultingSentence\":\"\",\"reason\":\"No phrase is flagged for editing, so no repair consistent with the instructions is possible.\"}"
+          },
+          "checks": null
+        },
+        {
+          "n": 2,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 279,
+            "outputTokens": 40,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": false,
+            "removed": "",
+            "resultingSentence": "",
+            "reason": "No phrase is flagged for editing, so no repair consistent with the instructions is possible.",
+            "raw": "{\"offer\":false,\"removed\":\"\",\"resultingSentence\":\"\",\"reason\":\"No phrase is flagged for editing, so no repair consistent with the instructions is possible.\"}"
+          },
+          "checks": null
+        },
+        {
+          "n": 3,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 279,
+            "outputTokens": 40,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": false,
+            "removed": "",
+            "resultingSentence": "",
+            "reason": "No phrase is flagged for editing, so no repair consistent with the instructions is possible.",
+            "raw": "{\"offer\":false,\"removed\":\"\",\"resultingSentence\":\"\",\"reason\":\"No phrase is flagged for editing, so no repair consistent with the instructions is possible.\"}"
+          },
+          "checks": null
+        }
+      ],
+      "userPayload": "STATEMENT:\nThe private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.\n\nFLAGGED PHRASE: none on this card.\n\nCONFIRMED PASSAGES:\nPASSAGE 1: Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n£2,071 million, 11%).",
+      "stability": "the three passes agree: no offer."
+    },
+    {
+      "name": "3i-oct-doc",
+      "file": "tests/fixtures/real-runs-2026-10-02/doc-review.json",
+      "sid": "14",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "displayVerdict": "supported_partial",
+      "supportState": "partial",
+      "hasConflict": false,
+      "unsupported": [
+        "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies."
+      ],
+      "confirmed": [
+        "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust."
+      ],
+      "confirmedEmpty": 0,
+      "claims": [],
+      "hasEvidenceObject": false,
+      "called": true,
+      "skipReason": null,
+      "passes": [
+        {
+          "n": 1,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 314,
+            "outputTokens": 115,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+            "resultingSentence": "Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.",
+            "reason": "Replaced the flagged phrase with the confirmed passage text to align exactly with supported wording and facts.",
+            "raw": "{\"offer\": true, \"removed\": \"the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\", \"resultingSentence\": \"Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\", \"reason\": \"Replaced the flagged phrase with the confirmed passage text to align exactly with supported wording and facts.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+                "span": {
+                  "start": 15,
+                  "end": 209
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 2,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 314,
+            "outputTokens": 113,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+            "resultingSentence": "Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.",
+            "reason": "Replaced the flagged phrase with the wording from the confirmed passage to ensure factual alignment.",
+            "raw": "{\"offer\": true, \"removed\": \"the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\", \"resultingSentence\": \"Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\", \"reason\": \"Replaced the flagged phrase with the wording from the confirmed passage to ensure factual alignment.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+                "span": {
+                  "start": 15,
+                  "end": 209
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        },
+        {
+          "n": 3,
+          "error": null,
+          "finishReason": "stop",
+          "model": "gpt-5.1-2025-11-13",
+          "systemFingerprint": null,
+          "usage": {
+            "inputTokens": 314,
+            "outputTokens": 113,
+            "cachedInputTokens": 0,
+            "reasoningTokens": 0
+          },
+          "reply": {
+            "parseOk": true,
+            "offer": true,
+            "removed": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+            "resultingSentence": "Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.",
+            "reason": "Replaced the flagged phrase with the confirmed passage to ensure alignment with the source text.",
+            "raw": "{\"offer\": true, \"removed\": \"the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\", \"resultingSentence\": \"Looking ahead, we remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\", \"reason\": \"Replaced the flagged phrase with the confirmed passage to ensure alignment with the source text.\"}"
+          },
+          "checks": {
+            "runnable": true,
+            "locateSpan": [
+              {
+                "text": "the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+                "span": {
+                  "start": 15,
+                  "end": 209
+                }
+              }
+            ],
+            "locateSpanNote": null,
+            "outside": {
+              "ok": true
+            },
+            "invented": {
+              "ok": true
+            },
+            "entities": {
+              "ok": true
+            },
+            "entitiesNote": "called with claims from the card and no evidence object. The card has no evidence.reason, evidence.excerpt, or evidence.sourcePassage, so the finding-named exception is empty."
+          }
+        }
+      ],
+      "userPayload": "STATEMENT:\nLooking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\n\nFLAGGED PHRASE 1: the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.\n\nCONFIRMED PASSAGES:\nPASSAGE 1: We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\nto lower-risk reinvestments in businesses we know and trust.",
+      "stability": "the three passes agree: an offer exists, and it is the same offer."
+    }
+  ]
+}
