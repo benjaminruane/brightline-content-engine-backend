@@ -15,14 +15,14 @@ Browser: skipped. No layout, control, or card-face chrome change. The off switch
 
 ---
 
-## Corrected score. Prediction held.
+## Corrected score. Prediction held, then measured.
 
-Ben's prediction **holds**.
+Ben's prediction **holds**. Arithmetic on 4 October; measured on 5 October (`oct-05-b372-b374`).
 
-| Measure | 8 September lift-1 | Billed oct-04-baseline | Arithmetic with actor movers removed |
-|---------|--------------------|------------------------|--------------------------------------|
-| Catch (Group A) | 9 of 11 | 10 of 11 | **9 of 11** |
-| Leave-alone (Group B Ben-Confirmed) | 67 of 74 | 61 of 74 | **64 of 74 (86.5%)** |
+| Measure | 8 September lift-1 | Billed oct-04-baseline | Arithmetic with actor movers removed | Measured oct-05-b372-b374 |
+|---------|--------------------|------------------------|--------------------------------------|---------------------------|
+| Catch (Group A) | 9 of 11 | 10 of 11 | **9 of 11** | **9 of 11** |
+| Leave-alone (Group B Ben-Confirmed) | 67 of 74 | 61 of 74 | **64 of 74 (86.5%)** | **64 of 74 (86.5%)** |
 
 86.5% clears the 85% PASS bar. It does not clear the 89% BUILD-QUALITY bar.
 
@@ -30,7 +30,7 @@ Labels were not moved. The labelled set was not changed.
 
 Arithmetic lives in `scripts/diagnostic/b371/corrected-score.json`. Source: `scripts/diagnostic/accuracy/runs/evidence-pass-oct-04-baseline/movers.json`.
 
-Replay of assembly against those stored cards was **not run**. `cards.json` is compact: source-match class and excerpt text, no source documents, no `evidenceSummary`. That is not enough to re-run Stage 7 with the check off. The arithmetic stands on its own.
+Replay of assembly against those stored cards was **not run** on 4 October. The 5 October billed pass `oct-05-b372-b374` is the measurement. Headlines match. Composition of the 64 is not identical: F08 competitive joined leave-alone (Stage 2 now confirmed, not the predicted partial) and F08 principal risks left. Those two offset. All five `actor_mismatch` cards moved. Attribution of those five to the actor check was not wrong.
 
 ---
 

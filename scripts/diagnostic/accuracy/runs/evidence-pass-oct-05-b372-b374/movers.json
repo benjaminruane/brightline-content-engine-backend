@@ -1,0 +1,223 @@
+{
+  "nMoved": 7,
+  "movers": [
+    {
+      "fixtureId": "08",
+      "occurrence": 0,
+      "group": "B",
+      "label": "confirmed",
+      "statement": "The Company's competitive position is exceptional.",
+      "oldVerdict": "conflict",
+      "newVerdict": "supported_full",
+      "oldMapped": "conflicting",
+      "newMapped": "confirmed",
+      "displayVerdictReason": null,
+      "oldReason": "actor_mismatch",
+      "oldClasses": [
+        "partially_confirmed"
+      ],
+      "newClasses": [
+        "confirmed"
+      ],
+      "oldSupportState": "partial",
+      "newSupportState": "supported",
+      "dateSubjectAddedNew": false,
+      "dateSubjectAddedOld": false,
+      "genericSubject": true,
+      "actorReasonNow": false,
+      "actorReasonThen": true,
+      "attributed": [
+        "Actor check off (B371)",
+        "Stage 2 classification change (partially_confirmed → confirmed). Destination is full, not the B371-predicted partial."
+      ],
+      "agreesWithLabelNow": true,
+      "agreedWithLabelThen": false
+    },
+    {
+      "fixtureId": "08",
+      "occurrence": 0,
+      "group": "B",
+      "label": "confirmed",
+      "statement": "Principal risks include semiconductor cyclicality, customer concentration in medical implants, foreign exchange exposure, and the upcoming founder transition — each is understood and reflected in our planning, with specific mitigations in place.",
+      "oldVerdict": "supported_full",
+      "newVerdict": "supported_partial",
+      "oldMapped": "confirmed",
+      "newMapped": "partially_confirmed",
+      "displayVerdictReason": null,
+      "oldReason": null,
+      "oldClasses": [
+        "confirmed"
+      ],
+      "newClasses": [
+        "partially_confirmed"
+      ],
+      "oldSupportState": "supported",
+      "newSupportState": "partial",
+      "dateSubjectAddedNew": false,
+      "dateSubjectAddedOld": false,
+      "genericSubject": false,
+      "actorReasonNow": false,
+      "actorReasonThen": false,
+      "attributed": [
+        "Stage 2 classification change (confirmed → partially_confirmed). Not B372. Not B374."
+      ],
+      "agreesWithLabelNow": false,
+      "agreedWithLabelThen": true
+    },
+    {
+      "fixtureId": "09",
+      "occurrence": 0,
+      "group": "B",
+      "label": "confirmed",
+      "statement": "The Brno automation programme has progressed to first-phase capex approval of EUR 18 million, with installation targeted for Q3 2026.",
+      "oldVerdict": "conflict",
+      "newVerdict": "supported_full",
+      "oldMapped": "conflicting",
+      "newMapped": "confirmed",
+      "displayVerdictReason": null,
+      "oldReason": "actor_mismatch",
+      "oldClasses": [
+        "confirmed"
+      ],
+      "newClasses": [
+        "confirmed"
+      ],
+      "oldSupportState": "supported",
+      "newSupportState": "supported",
+      "dateSubjectAddedNew": false,
+      "dateSubjectAddedOld": false,
+      "genericSubject": false,
+      "actorReasonNow": false,
+      "actorReasonThen": true,
+      "attributed": [
+        "Actor check off (B371). Stage 2 stayed confirmed."
+      ],
+      "agreesWithLabelNow": true,
+      "agreedWithLabelThen": false
+    },
+    {
+      "fixtureId": "10",
+      "occurrence": 0,
+      "group": "B",
+      "label": "confirmed",
+      "statement": "It supplies more than 600 customers worldwide, with particular strength in ultra-high-purity solvents used in semiconductor wafer fabrication and pharmaceutical active ingredient manufacturing.",
+      "oldVerdict": "conflict",
+      "newVerdict": "supported_full",
+      "oldMapped": "conflicting",
+      "newMapped": "confirmed",
+      "displayVerdictReason": null,
+      "oldReason": "actor_mismatch",
+      "oldClasses": [
+        "confirmed"
+      ],
+      "newClasses": [
+        "confirmed"
+      ],
+      "oldSupportState": "supported",
+      "newSupportState": "supported",
+      "dateSubjectAddedNew": false,
+      "dateSubjectAddedOld": false,
+      "genericSubject": false,
+      "actorReasonNow": false,
+      "actorReasonThen": true,
+      "attributed": [
+        "Actor check off (B371). Stage 2 stayed confirmed."
+      ],
+      "agreesWithLabelNow": true,
+      "agreedWithLabelThen": false
+    },
+    {
+      "fixtureId": "13",
+      "occurrence": 0,
+      "group": "A",
+      "label": "conflicting",
+      "statement": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
+      "oldVerdict": "conflict",
+      "newVerdict": "supported_full",
+      "oldMapped": "conflicting",
+      "newMapped": "confirmed",
+      "displayVerdictReason": null,
+      "oldReason": "actor_mismatch",
+      "oldClasses": [
+        "confirmed"
+      ],
+      "newClasses": [
+        "confirmed"
+      ],
+      "oldSupportState": "supported",
+      "newSupportState": "supported",
+      "dateSubjectAddedNew": false,
+      "dateSubjectAddedOld": false,
+      "genericSubject": false,
+      "actorReasonNow": false,
+      "actorReasonThen": true,
+      "attributed": [
+        "Actor check off (B371). Accidental Group A catch reverts. Matcher still misses approximately 13% (B161)."
+      ],
+      "agreesWithLabelNow": false,
+      "agreedWithLabelThen": true
+    },
+    {
+      "fixtureId": "13",
+      "occurrence": 0,
+      "group": "B",
+      "label": "partially_confirmed",
+      "statement": "Our base case generates 2.6x MOIC and 21% gross IRR.",
+      "oldVerdict": "conflict",
+      "newVerdict": "supported_partial",
+      "oldMapped": "conflicting",
+      "newMapped": "partially_confirmed",
+      "displayVerdictReason": null,
+      "oldReason": null,
+      "oldClasses": [
+        "confirmed"
+      ],
+      "newClasses": [
+        "confirmed"
+      ],
+      "oldSupportState": "conflicting",
+      "newSupportState": "partial",
+      "dateSubjectAddedNew": false,
+      "dateSubjectAddedOld": false,
+      "genericSubject": false,
+      "actorReasonNow": false,
+      "actorReasonThen": false,
+      "attributed": [
+        "Span class change (conflicting → partially_confirmed). Not B372 date. Not B374. Pipeline now agrees with the P label."
+      ],
+      "agreesWithLabelNow": true,
+      "agreedWithLabelThen": false
+    },
+    {
+      "fixtureId": "16",
+      "occurrence": 0,
+      "group": "B",
+      "label": "confirmed",
+      "statement": "Bloom is supported by a clinical advisory board of seven specialists across endocrinology, nutrition, and women's health.",
+      "oldVerdict": "conflict",
+      "newVerdict": "supported_full",
+      "oldMapped": "conflicting",
+      "newMapped": "confirmed",
+      "displayVerdictReason": null,
+      "oldReason": "actor_mismatch",
+      "oldClasses": [
+        "confirmed"
+      ],
+      "newClasses": [
+        "confirmed"
+      ],
+      "oldSupportState": "supported",
+      "newSupportState": "supported",
+      "dateSubjectAddedNew": false,
+      "dateSubjectAddedOld": false,
+      "genericSubject": false,
+      "actorReasonNow": false,
+      "actorReasonThen": true,
+      "attributed": [
+        "Actor check off (B371). Stage 2 stayed confirmed."
+      ],
+      "agreesWithLabelNow": true,
+      "agreedWithLabelThen": false
+    }
+  ]
+}
