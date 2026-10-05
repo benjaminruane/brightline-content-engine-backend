@@ -124,6 +124,7 @@ No proposals. Two acknowledge entries, as today.
 3. Truncated primary quotes may still license a name that sits on `supportSpans`.
 4. S5 offers both the name and the figure. Unique 1:1 on both. R2 would have silenced the card if the count were not unique.
 5. `St.` is a name token, so `St. Germain` / `St. Pancras` / `London St. Pancras High Speed` collect as runs. Role-party still does not.
+6. The collector is AUTHOR-NAME-BLIND. The house name is a legitimate span when either side states it.
 
 ---
 
