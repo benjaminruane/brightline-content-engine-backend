@@ -11,7 +11,7 @@ Scored build: `a5106b8` (B378 on main, including the scoreboard stamp).
 
 | | |
 |---|---|
-| SHIPPED | pending `npm run verify:ship` |
+| SHIPPED | SHIP VERIFIED  c04d216  main  164 files  1805 tests |
 | Catch | 9 of 11 |
 | Leave-alone | 65 of 74 |
 | Prediction | Held. Zero labelled verdicts moved because of B378. |
