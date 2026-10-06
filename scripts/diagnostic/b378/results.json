@@ -1,0 +1,627 @@
+{
+  "payloadsWithSources": 22,
+  "jsonFiles": 43,
+  "asOfNullToValue": 5,
+  "asOfOtherChanges": 0,
+  "nullToValue": [
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run2-review.json",
+      "index": 0,
+      "label": "20251113-GPI_30th-anniversary.pdf",
+      "before": null,
+      "after": "2025-11-13"
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run3-review.json",
+      "index": 0,
+      "label": "20251113-GPI_30th-anniversary.pdf",
+      "before": null,
+      "after": "2025-11-13"
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run4-review.json",
+      "index": 0,
+      "label": "20251113-GPI_30th-anniversary.pdf",
+      "before": null,
+      "after": "2025-11-13"
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run5-review.json",
+      "index": 0,
+      "label": "20251113-GPI_30th-anniversary.pdf",
+      "before": null,
+      "after": "2025-11-13"
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/doc-review.json",
+      "index": 0,
+      "label": "20251113-GPI_30th-anniversary.pdf",
+      "before": null,
+      "after": "2025-11-13"
+    }
+  ],
+  "otherAsOf": [],
+  "verdictMoves": [
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run2-review.json",
+      "id": "0",
+      "before": {
+        "displayVerdict": "supported_partial",
+        "supportState": "partial",
+        "hasConflict": false,
+        "evidence": "partial",
+        "cardTone": "amber"
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "supportState": "supported",
+        "hasConflict": false,
+        "evidence": "confirmed",
+        "cardTone": "green"
+      },
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid "
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run3-review.json",
+      "id": "0",
+      "before": {
+        "displayVerdict": "supported_partial",
+        "supportState": "partial",
+        "hasConflict": false,
+        "evidence": "partial",
+        "cardTone": "amber"
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "supportState": "supported",
+        "hasConflict": false,
+        "evidence": "confirmed",
+        "cardTone": "green"
+      },
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid "
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run4-review.json",
+      "id": "0",
+      "before": {
+        "displayVerdict": "supported_partial",
+        "supportState": "partial",
+        "hasConflict": false,
+        "evidence": "partial",
+        "cardTone": "amber"
+      },
+      "after": {
+        "displayVerdict": "supported_full",
+        "supportState": "supported",
+        "hasConflict": false,
+        "evidence": "confirmed",
+        "cardTone": "green"
+      },
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid "
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/doc-review.json",
+      "id": "0",
+      "before": {
+        "displayVerdict": "supported_partial",
+        "supportState": "partial",
+        "hasConflict": false,
+        "evidence": "partial",
+        "cardTone": "amber"
+      },
+      "after": {
+        "displayVerdict": "conflict",
+        "supportState": "conflicting",
+        "hasConflict": true,
+        "evidence": "conflicting",
+        "cardTone": "red"
+      },
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve th"
+    }
+  ],
+  "outsideGpi": [],
+  "commentaryOnly": [
+    {
+      "file": "real-runs-2026-10-06-gpi/clean-run5-review.json",
+      "id": "0",
+      "displayVerdict": "supported_full"
+    }
+  ],
+  "separatorDrops": [
+    {
+      "file": "b247/recovered-shopify-messy-prefix.json",
+      "id": "15",
+      "cited": "",
+      "note": "The statement uses a comma as a thousands separator instead of a high comma."
+    },
+    {
+      "file": "b247/shopify-messy-full-after.json",
+      "id": "15",
+      "cited": "",
+      "note": "The statement uses a comma as a thousands separator instead of a high comma."
+    },
+    {
+      "file": "b247/shopify-messy-full-after.json",
+      "id": "102",
+      "cited": "3 n 5%",
+      "note": "The statement uses '3 n 5%' instead of the correct format with a high comma as a thousands separator."
+    },
+    {
+      "file": "b247/shopify-messy-full.json",
+      "id": "102",
+      "cited": "3 n 5%",
+      "note": "The statement uses 'n' as a separator instead of a high comma or a hyphen. Replace 'n' with a hyphen for clarity."
+    },
+    {
+      "file": "b247/shopify-messy-full.json",
+      "id": "157",
+      "cited": "13.5%",
+      "note": "The statement uses a comma as a thousands separator instead of a high comma."
+    },
+    {
+      "file": "real-runs-2026-10-06-gpi/doc-review.json",
+      "id": "4",
+      "cited": "60 billion",
+      "note": "The statement uses a comma as a thousands separator instead of a high comma. Replace '60 billion' with '60'000 million'."
+    }
+  ],
+  "gpi": {
+    "clean-run2-review.json": {
+      "0": {
+        "before": {
+          "displayVerdict": "supported_partial",
+          "supportState": "partial",
+          "hasConflict": false,
+          "evidence": "partial",
+          "cardTone": "amber"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "1": {
+        "before": {
+          "displayVerdict": "supported_partial",
+          "supportState": "partial",
+          "hasConflict": false,
+          "evidence": "partial",
+          "cardTone": "amber"
+        },
+        "after": {
+          "displayVerdict": "supported_partial",
+          "supportState": "partial",
+          "hasConflict": false,
+          "evidence": "partial",
+          "cardTone": "amber"
+        },
+        "silenceGone": true,
+        "datelineQuote": "production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+        "pairs": [
+          {
+            "classification": "partially_confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "4": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      }
+    },
+    "clean-run3-review.json": {
+      "0": {
+        "before": {
+          "displayVerdict": "supported_partial",
+          "supportState": "partial",
+          "hasConflict": false,
+          "evidence": "partial",
+          "cardTone": "amber"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "1": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": null,
+        "pairs": [],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "4": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      }
+    },
+    "clean-run4-review.json": {
+      "0": {
+        "before": {
+          "displayVerdict": "supported_partial",
+          "supportState": "partial",
+          "hasConflict": false,
+          "evidence": "partial",
+          "cardTone": "amber"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "1": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": null,
+        "pairs": [],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "4": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      }
+    },
+    "clean-run5-review.json": {
+      "0": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "1": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": null,
+        "pairs": [],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "4": {
+        "before": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "after": {
+          "displayVerdict": "supported_full",
+          "supportState": "supported",
+          "hasConflict": false,
+          "evidence": "confirmed",
+          "cardTone": "green"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+        "pairs": [
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      }
+    },
+    "doc-review.json": {
+      "0": {
+        "before": {
+          "displayVerdict": "supported_partial",
+          "supportState": "partial",
+          "hasConflict": false,
+          "evidence": "partial",
+          "cardTone": "amber"
+        },
+        "after": {
+          "displayVerdict": "conflict",
+          "supportState": "conflicting",
+          "hasConflict": true,
+          "evidence": "conflicting",
+          "cardTone": "red"
+        },
+        "silenceGone": false,
+        "datelineQuote": "13 November 2025, Singapore",
+        "pairs": [
+          {
+            "classification": "partially_confirmed",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "partially_confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "1": {
+        "before": {
+          "displayVerdict": "conflict",
+          "supportState": "conflicting",
+          "hasConflict": true,
+          "evidence": "conflicting",
+          "cardTone": "red"
+        },
+        "after": {
+          "displayVerdict": "conflict",
+          "supportState": "conflicting",
+          "hasConflict": true,
+          "evidence": "conflicting",
+          "cardTone": "red"
+        },
+        "silenceGone": true,
+        "datelineQuote": "this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+        "pairs": [
+          {
+            "classification": "conflicting",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "confirmed",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": false,
+        "offerAfter": false
+      },
+      "4": {
+        "before": {
+          "displayVerdict": "conflict",
+          "supportState": "conflicting",
+          "hasConflict": true,
+          "evidence": "conflicting",
+          "cardTone": "red"
+        },
+        "after": {
+          "displayVerdict": "conflict",
+          "supportState": "conflicting",
+          "hasConflict": true,
+          "evidence": "conflicting",
+          "cardTone": "red"
+        },
+        "silenceGone": true,
+        "datelineQuote": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+        "pairs": [
+          {
+            "classification": "conflicting",
+            "pairCount": 0,
+            "pairs": []
+          },
+          {
+            "classification": "conflicting",
+            "pairCount": 0,
+            "pairs": []
+          }
+        ],
+        "offerBefore": true,
+        "offerAfter": false
+      }
+    }
+  }
+}
