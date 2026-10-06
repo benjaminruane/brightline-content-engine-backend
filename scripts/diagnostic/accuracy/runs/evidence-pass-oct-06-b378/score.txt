@@ -1,0 +1,226 @@
+GROUP A
+  n=11 agreements=9 rate=0.8182
+  wilson95=[0.5230, 0.9486]
+  confusion (rows=Ben, cols=pipeline):
+    confirmed partially_confirmed conflicting no_support
+    confirmed 0 0 0 0
+    partially_confirmed 0 0 0 0
+    conflicting 1 1 9 0
+    no_support 0 0 0 0
+  disagreements:
+    05 ben=conflicting pipeline=partially_confirmed displayVerdict=supported_partial
+      Halden Group will support continued growth in commercial aerospace and an accelerated expansion of Norwell's space applications business, where the Company has identified meaningful capacity to grow share.
+    13 ben=conflicting pipeline=confirmed displayVerdict=supported_full
+      EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.
+GROUP B
+  n=89 agreements=73 rate=0.8202
+  wilson95=[0.7277, 0.8862]
+  confusion (rows=Ben, cols=pipeline):
+    confirmed partially_confirmed conflicting no_support
+    confirmed 65 4 4 1
+    partially_confirmed 7 6 0 0
+    conflicting 0 0 1 0
+    no_support 0 0 0 1
+  disagreements:
+    01 ben=partially_confirmed pipeline=confirmed displayVerdict=supported_full
+      Shopify (the "Company") is a Canadian e-commerce platform serving small and medium businesses, founded in 2007 in Ottawa.
+    01 ben=confirmed pipeline=conflicting displayVerdict=conflict
+      Shopify's 24 employees are based in Ottawa, where the Company has recruited strong design and engineering talent at 60-70% of comparable Silicon Valley or New York costs.
+    01 ben=confirmed pipeline=no_support displayVerdict=not_supported
+      We recommend approval.
+    04 ben=partially_confirmed pipeline=confirmed displayVerdict=supported_full
+      We are writing to inform you of a new investment in Pinterest (the "Company"), a visual discovery and bookmarking platform that lets users organize images they find interesting onto themed boards.
+    04 ben=confirmed pipeline=partially_confirmed displayVerdict=supported_partial
+      The Company's user base is unusual in two respects.
+    04 ben=confirmed pipeline=partially_confirmed displayVerdict=supported_partial
+      We have stress-tested for total loss and consider the risk-adjusted return profile acceptable given the conviction we have in the engagement signal and the founder team.
+    08 ben=partially_confirmed pipeline=confirmed displayVerdict=supported_full
+      We are writing to inform you of a new investment in Helvetia Precision Components (the "Company"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.
+    08 ben=partially_confirmed pipeline=confirmed displayVerdict=supported_full
+      - International margin expansion — footprint consolidation in Switzerland and procurement programs are expected to deliver 300-400 basis points of EBITDA margin uplift.
+    08 ben=partially_confirmed pipeline=confirmed displayVerdict=supported_full
+      - End-market growth — structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.
+    09 ben=confirmed pipeline=conflicting displayVerdict=conflict
+      Period revenue of EUR 318 million was 4 percent above plan, and EBITDA of EUR 58 million was 7 percent above plan with margins of 18.3 percent.
+    09 ben=partially_confirmed pipeline=confirmed displayVerdict=supported_full
+      Strong demand in medical implants, particularly from our largest orthopaedic customer, has been the principal driver of the upside.
+    13 ben=confirmed pipeline=partially_confirmed displayVerdict=supported_partial
+      The Company has built strong fundamentals.
+    14 ben=confirmed pipeline=partially_confirmed displayVerdict=supported_partial
+      Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.
+    16 ben=confirmed pipeline=conflicting displayVerdict=conflict
+      Gross margin is 71.4 percent and EBITDA margin is 32.8 percent.
+    17 ben=partially_confirmed pipeline=confirmed displayVerdict=supported_full
+      We are writing to inform you of a new investment in the Urbis Logistics Portfolio, a portfolio of 11 last-mile logistics properties located in major European urban areas.
+    18 ben=confirmed pipeline=conflicting displayVerdict=conflict
+      We have invested EUR 158 million for a 60% controlling stake.
+GROUP B among Ben-Confirmed (leave-alone)
+  n=74 pipelineAlsoConfirmed=65 rate=0.8784
+  wilson95=[0.7847, 0.9347]
+ANY-CONFIRMED-WINS disagreements: 0 (A=0 B=0)
+ESCAPES: 0 rate=0.0000
+  perFixture: {}
+SKIPPED_NON_STATEMENT: 0 byKind={}
+UNMATCHED LABELS: 0
+UNMATCHED PREDICTIONS: 161
+  01 #0 The Company has grown rapidly, with customers increasing from 5'500 a year ago to nearly 10'000 today.
+  01 #0 Monthly recurring revenue has grown from USD 164'000 to USD 438'000 over the same period, representing growth of more than 150% year on year.
+  01 #0 Shopify's strategic moat is its App Store, which two-thirds of customers actively use.
+  01 #0 The product is simple enough that a non-technical user can set up a fully functioning online store within a few hours.
+  01 #0 Customer acquisition has been almost entirely organic, with paid marketing remaining underdeveloped — paid channels account for 10-15% of sign-ups.
+  01 #0 We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.
+  01 #0 The team, led by founder-CEO Mr. Lütke, has demonstrated strong product and management instincts despite Mr. Lütke being a first-time CEO.
+  01 #0 In summary, Shopify combines exceptional unit economics, a defensible competitive position, and clear growth runway.
+  02 #0 Partners Group originally acquired atNorth in 2022.
+  02 #0 Under its ownership, atNorth has expanded to eight operational data centers across the Nordics, alongside several sites under development.
+  02 #0 Contracted EBITDA has grown 14-fold over the four-year holding period, delivering compounded annual returns of more than 30% and a 2.5x multiple on invested capital for Partners Group's clients.
+  02 #0 The Company offers high-density compute infrastructure to a diversified base of over 100 international customers and has secured 1 GW of power to support continued expansion.
+  02 #0 Partners Group will reinvest alongside CPP Investments and Equinix and retain up to 10% of the Company going forward.
+  02 #0 Partners Group's Infrastructure business has USD 36 billion in assets under management globally.
+  03 #0 Partners Group, through its infrastructure secondaries business, has agreed to invest over EUR 120 million in Gestcompost, the largest organic waste treatment manager in Spain.
+  03 #0 Gestcompost was founded in 2003 and operates three organic waste management sites with combined treatment capacity of 1.2 million tons of waste per year.
+  03 #0 The Company processes waste through composting and anaerobic digestion, with the latter producing biogas that can be upgraded to biomethane — an increasingly important alternative to natural gas in the European energy transition.
+  03 #0 Partners Group's investment will support continued growth through increased waste volumes, the acquisition of additional biomethane plants, and operational improvements.
+  03 #0 Alejandro Lafarga, currently CEO of Madrilena Red de Gas, will join the Company's board as Vice Chairman on behalf of Partners Group's clients.
+  03 #0 This is Partners Group's tenth continuation vehicle investment in the past three years and the firm's second investment in Spain since 2023.
+  04 #0 We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million, for approximately 20% on a fully-diluted basis.
+  04 #0 What attracted us was the user engagement profile.
+  04 #0 Average session length on the Company's platform is approximately 14 minutes, compared to roughly 7 minutes on Facebook and 2-3 minutes on most social bookmarking products.
+  04 #0 Users return roughly six times per week on average, and 68% remain active 30 days after first signup.
+  04 #0 First, 82% of active users are women — an unusually high concentration.
+  04 #0 Second, the user base skews older than typical social products, with heaviest concentration in the 25-44 age range.
+  04 #0 This combination — engaged users, female-skewed, older demographic — represents a strong and underserved advertising audience and supports a credible long-term monetization path through native advertising in categories such as home decor, fashion, and weddings.
+  04 #0 Mr. Silbermann in particular has built a reputation at Google for being unusually focused on users and product.
+  04 #0 There is no revenue yet — the founders have deliberately deferred monetization in favour of growing engagement.
+  04 #0 The risks are clear.
+  04 #0 The Company has no monetization strategy yet.
+  04 #0 Defensibility against well-funded competitive responses is uncertain.
+  04 #0 In summary, the Company combines exceptional engagement, a defensible consumer position, and a founder team in which we have high conviction.
+  05 #0 The transaction is expected to close in the first quarter of 2026, subject to customary regulatory approvals.
+  05 #0 The Company operates eight manufacturing facilities across the United States and Mexico and employs approximately 3,200 people.
+  05 #0 The Company now operates three of the most advanced automated composite layup facilities in North America.
+  06 #0 Cirrus Data Services has continued to perform strongly during 2025.
+  06 #0 Revenue grew to GBP 312 million for the year, up from GBP 187 million at the time of our investment in March 2022 — a compound annual growth rate of approximately 19 percent.
+  06 #0 We see continued strong demand for managed IT services in the UK and Irish mid-market and view Cirrus as well positioned to keep gaining share.
+  06 #0 Revenue for the year ended 31 December 2025 was EUR 218 million, modestly above the EUR 196 million at the time of our investment, and EBITDA margins have been broadly stable at around 14 percent over the holding period.
+  06 #0 The holding period has lengthened from our original underwriting; we now expect a total hold of seven to eight years rather than the originally envisaged five to six years.
+  06 #0 Across the portfolio, ESG performance continues to improve.
+  06 #0 Eighty-five percent of our portfolio companies now report Scope 1 and Scope 2 emissions on a comparable basis, up from 72 percent in 2024.
+  06 #0 Twelve portfolio companies have committed to Science-Based Targets initiative validation, with eight of these having received approval.
+  07 #0 We believe the dominant pattern of the next decade will be vertical AI agents — software that doesn't just present a workflow for a human to complete, but completes the workflow itself, with the human stepping in only for exceptions, oversight, and high-stakes calls.
+  07 #0 The workflows where this will hit hardest share three characteristics: they're high-volume and labour-intensive; they're largely deterministic at the level of individual decisions; and their outputs can be verified after the fact.
+  07 #0 It's a thesis about the specific economic deployment of current and near-future AI capability.
+  07 #0 We've made fifteen investments in this category over the past two years and are continuing to invest actively.
+  08 #0 The transaction values the Company at an enterprise value of EUR 1.15 billion, representing 11.2x trailing twelve months EBITDA.
+  08 #0 We have invested EUR 480 million of equity for a 78% controlling stake, with the founding Schiller family and management retaining the balance.
+  08 #0 It is one of three qualified suppliers globally for hip and knee replacement components meeting both FDA Class II and EU Medical Device Regulation (MDR) requirements at scale.
+  08 #0 Revenue has grown from EUR 312 million in 2020 to EUR 587 million in 2024, a compound annual rate of 17%.
+  08 #0 EBITDA margins have expanded from 15.4% to 17.5% over the same period.
+  08 #0 Our value creation plan rests on four pillars, which we believe can deliver attractive returns over our planned five-year hold:
+  08 #0 - M&A — the European precision machining sector is fragmented, with five actionable targets identified across the EUR 30-80 million enterprise value range.
+  08 #0 - Operating leverage — the balance of EBITDA growth comes from operating leverage on the broader cost base.
+  08 #0 We have committed funding for two to three add-on acquisitions over the hold and have already identified the priority pipeline.
+  08 #0 In summary, the Company combines a defensible competitive position, structurally growing end markets, a clear operational improvement plan, and a credible M&A roadmap.
+  08 #0 We are confident in the team and the opportunity, and we look forward to providing further updates as the hold progresses.
+  09 #0 Six months after closing, our investment in Helvetia Precision Components is tracking modestly ahead of underwriting.
+  09 #0 The leadership transition has proceeded smoothly.
+  09 #0 Petra Köhler assumed the CEO role in June and has made decisive progress on the procurement, footprint, and commercial priorities identified at IC.
+  09 #0 Andreas Schiller has integrated comfortably into his board role and continues to support customer relationships.
+  09 #0 First, the semiconductor capital equipment cycle has softened, with two customers pushing orders by one to two quarters.
+  09 #0 We have lowered our 2026 semiconductor revenue forecast to EUR 105 million from the original underwriting of EUR 122 million.
+  09 #0 Second, a quality issue at our second-largest medical customer was identified in October and is being addressed through a corrective action programme.
+  09 #0 The financial impact is small (approximately EUR 3 million in returns and rework) but the customer has placed HPC on enhanced quality monitoring for 12 months.
+  09 #0 Sophie Lehmann joined as Chief Commercial Officer in October.
+  10 #0 Meridian Capital today announced the completion of its acquisition of Lumen Specialty Chemicals (the "Company"), a leading European producer of high-purity specialty chemicals for the electronics, pharmaceutical, and advanced materials industries.
+  10 #0 The Company will be led by its existing Chief Executive, Dr. Annika Brandt.
+  10 #0 Meridian intends to support an acceleration of the Company's expansion strategy, with a focus on the Asian electronics market and on selective acquisitions in adjacent specialty chemical categories.
+  10 #0 The transaction represents the eighth investment from Meridian's European Industrials strategy.
+  10 #0 Total invested capital from the Meridian platform in the specialty chemicals sector now exceeds EUR 2 billion across the firm's global investments.
+  11 #0 We are pleased to inform you that Meridian Industrials Fund IV has completed the sale of NorTech Industries to Brookfield Asset Management.
+  11 #0 Net to LPs after carry and expenses, the realisation delivers 2.74x net MOIC and 24.2 percent net IRR.
+  11 #0 International expansion took revenue contribution from outside the Nordic region from 19 percent at entry to 42 percent at exit.
+  11 #0 A modular product redesign drove gross margin from 28.4 percent to 34.1 percent.
+  11 #0 Four bolt-on acquisitions, anchored by HeatTech GmbH for SEK 1.1 billion, added meaningful scale.
+  11 #0 The exit process attracted seven preliminary offers, with Brookfield's SEK 18.4 billion bid meaningfully ahead of the next bid at SEK 16.9 billion.
+  11 #0 With this realisation Fund IV becomes one of our strongest vintages.
+  11 #0 Our focus turns to the three remaining portfolio companies and to deployment of Fund V, which closed in August 2025 at hard cap.
+  12 #0 After more than four years of partnership, Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.
+  12 #0 The transformation since has been substantial.
+  12 #0 NorTech today operates across the Nordic region, Germany, France, the UK, and Poland, with international revenue having grown from a fifth of total revenue at entry to more than 40 percent at exit.
+  12 #0 Total revenue grew nearly threefold over the hold period and EBITDA margins moved from 11 to 18 percent.
+  12 #0 The numbers tell one story; the team's transformation tells the bigger one.
+  12 #0 Excited to see what NorTech does next under Brookfield's ownership.
+  13 #0 The transaction values the Company at an enterprise value of EUR 445 million.
+  13 #0 Net revenue retention has averaged 113% over the past 24 months.
+  13 #0 The team is led by founder-CEO Mr. Tom Fairfield and CTO Mr. James O'Brien.
+  13 #0 It has built a clear competitive lead in the European mid-market against entrenched legacy software competitors.
+  13 #0 First, the European freight forwarding software market remains structurally underpenetrated, with approximately 40% of forwarders still on legacy systems or spreadsheets.
+  13 #0 Second, the Company's vertical product depth creates very high switching costs.
+  13 #0 In summary, the Company is a high-quality vertical SaaS asset with a defensible competitive position.
+  13 #0 The investment fits well with the broader portfolio strategy.
+  14 #0 We are seeing increasing opportunity in European clinical decision support (CDS) software.
+  14 #0 First, the regulatory pathway under the EU Medical Device Regulation (MDR) has matured.
+  14 #0 Incumbents with serious clinical software have built up meaningful regulatory clearances, creating real barriers to entry.
+  14 #0 Third, generative AI is creating both opportunity and competitive pressure.
+  14 #0 The European market is structurally distinct from the US in ways that favour a thoughtful financial sponsor.
+  14 #0 National payers create clearer routes to scale once adopted by a national authority.
+  14 #0 The competitive landscape is fragmented across national markets, with leaders in the UK, Germany, France, and the Nordics but few players with meaningful pan-European presence — creating conditions for a buy-and-build strategy that pairs well with our M&A capabilities.
+  15 #0 We are writing to inform you of a new investment in Casa Verde Group (the "Company"), a Milan-headquartered premium European homeware and kitchenware specialist.
+  15 #0 The transaction values the Company at an enterprise value of EUR 1.85 billion, representing 12.4x trailing twelve months EBITDA.
+  15 #0 We have invested EUR 720 million of equity for an 84% stake.
+  15 #0 The Company was founded in 1973 as a single shop in Milan.
+  15 #0 It today operates 184 retail stores across Italy, France, Spain, and Germany, alongside an e-commerce platform that contributes 31% of group revenue and a wholesale business serving design-led independent retailers across Europe.
+  15 #0 Category leadership in the EUR 38 billion European premium homeware market — a structurally attractive category growing at 4-5% annually.
+  15 #0 Exceptional store unit economics — average four-wall EBITDA margins of 22% (meaning the EBITDA generated by each individual store before head-office costs) and 2.4-year payback on new store openings.
+  15 #0 A well-defined international expansion runway — the Company has executed successful launches in France, Spain, and Germany, and we plan to enter the UK, Netherlands, and Nordics.
+  15 #0 The Atelier 73 growth concept — Atelier 73 is the Company's smaller, design-led store format positioned at a younger urban customer.
+  15 #0 The format currently operates 18 stores and represents a fifth value driver alongside the four pillars above.
+  15 #0 Atelier 73 has potential to become a meaningful growth pillar.
+  15 #0 Our value creation plan envisages revenue growth from EUR 612 million to approximately EUR 1.04 billion by 2031, a 9.2% CAGR.
+  15 #0 EBITDA is expected to grow from EUR 149 million to approximately EUR 295 million with margins expanding to 28.4%.
+  15 #0 The base case generates 2.7x MOIC and 22% gross IRR.
+  15 #0 The principal risks are well understood and reflected in our planning.
+  15 #0 The Company's discretionary positioning means demand sensitivity to macroeconomic conditions.
+  15 #0 Marco Esposito will step back from day-to-day responsibilities post-close, with Elena Conti (current COO and 17-year company veteran) becoming CEO.
+  15 #0 Reference checks have been comprehensive and uniformly positive.
+  15 #0 167 of 184 stores are leased with average remaining term of 7.2 years.
+  15 #0 The model has been stress-tested for modest lease renegotiation.
+  15 #0 The wholesale channel has meaningful customer concentration in its top five accounts.
+  15 #0 Underlying relationships are stable but the dependency is noted.
+  15 #0 This transaction has been negotiated bilaterally over an 18-month period with the Esposito family.
+  15 #0 The agreed enterprise value reflects a discount of approximately 10-15% to fair competitive value, in line with the family's stated preference for a partner over the highest price.
+  15 #0 We have completed comprehensive diligence covering commercial, financial, legal, and ESG dimensions; the conclusions are circulated separately.
+  15 #0 In summary, the Company offers exceptional category positioning, defensible unit economics, and a clear international growth runway.
+  15 #0 We have high conviction in the management team and the value creation plan, and we look forward to providing further updates as the hold progresses.
+  16 #0 Bloom Nutrition is a London-headquartered premium women's nutrition brand offering an evidence-based supplement range across four primary categories: hormonal balance, energy and recovery, skin and hair health, and pregnancy and postnatal nutrition.
+  16 #0 The proposed transaction values Bloom at an enterprise value of EUR 310 million for a 72 percent stake.
+  16 #0 The unit economics are exceptional for a brand at this stage.
+  16 #0 Customer acquisition cost payback is 5.2 months on first-purchase margin, and 87 percent of revenue comes from repeat customers.
+  16 #0 The Company was founded in 2018 by Sarah Whitmore and Dr. Lara Bennett, both Cambridge-trained scientists.
+  16 #0 Product development cadence is two new product launches per year, supported by in-house formulation capability and contract manufacturing through GMP-certified European facilities.
+  16 #0 Our investment thesis rests on the structural attractiveness of premium women's health (a EUR-denominated category growing at approximately 14 percent annually), Bloom's defensible product credibility and brand position, and a clear international runway in France, Italy, Spain, and selectively in the US over a five-year hold.
+  16 #0 Base case revenue growth from EUR 64 million to approximately EUR 195 million by 2030 generates 2.9x MOIC and 24 percent IRR.
+  17 #0 The Portfolio comprises 337,000 square metres of lettable area distributed across Greater London (89,000 sqm in three assets), Greater Paris (72,000 sqm in three assets), Greater Amsterdam (64,000 sqm in two assets), Greater Madrid (71,000 sqm in two assets), and Greater Milan (41,000 sqm in one asset).
+  17 #0 All eleven assets are within 15 kilometres of city centres and serve last-mile delivery operations for major e-commerce platforms, grocery delivery operators, and parcel logistics players.
+  17 #0 Occupancy is 96 percent and the weighted average unexpired lease term is 6.8 years.
+  17 #0 Contracted annual rental income is EUR 33.1 million.
+  17 #0 Importantly, embedded rental reversion across the Portfolio is estimated at approximately 18 percent, concentrated in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.
+  17 #0 Urban last-mile is one of the most structurally supported segments of European commercial real estate.
+  17 #0 Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executing a EUR 38 million value-add capex programme to modernise three older assets, and benefiting from continued rental growth and modest yield compression.
+  18 #0 The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.
+  18 #0 The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.
+  18 #0 In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.
+  19 #0 Meridian European Industrials Fund IV continues to perform strongly.
+  19 #0 As of 31 December 2025, the Fund's net IRR stands at 19.7 percent, with net MOIC of 2.13x and net DPI of 0.94x.
+  19 #0 The exit of NorTech Industries — which closed in January 2026 at SEK 18.4 billion and generated a 3.56x gross MOIC / 31.4 percent gross IRR — is the largest realisation in the Fund's history and the principal driver of the Fund's current returns trajectory.
+  19 #0 Helvetia Precision Components, acquired in June 2025, is six months into the hold and tracking modestly ahead of underwriting; the recently-acquired Lumen Specialty Chemicals is on track with its 100-day plan; Brightway Industrial Coatings has had a strong 2025 with revenue and EBITDA growing 14 percent and 21 percent respectively; Eltex Power Systems has performed exceptionally, with revenue growing 23 percent and EBITDA growing 31 percent year-on-year supported by an order backlog that has grown from EUR 285 million at acquisition to EUR 480 million today.
+  19 #0 Drift Logistics, our 2024 third-party logistics investment, faces a softer parcel volume environment (European parcel volumes down 3 percent year-on-year); the Company has nevertheless gained share, with revenue up 6 percent, but EBITDA margins have compressed from 14 to 12 percent.
+  19 #0 Portfolio ESG performance has continued to mature.
+  19 #0 Female representation in senior leadership across the portfolio reached 34 percent by year-end, up from 28 percent at the start of the year and 22 percent at fund inception, against a 40 percent target by 2027.
+  19 #0 Brightway Industrial Coatings and Eltex Power Systems are both progressing toward exit-readiness, with formal processes likely to launch in the first and third quarters respectively.
+  20 #0 Fund V is the largest fund in Meridian's history, representing a meaningful step-up from Fund IV which closed at EUR 3.2 billion in 2021.
+  20 #0 Re-up rates from existing LPs were strong at 96 percent by capital, and the Fund welcomed new investors across three of the largest US public pension funds, two Asian sovereign wealth funds, and a number of European and North American family offices and endowments.
+  20 #0 The LP base spans 92 institutional investors across 26 countries.
+  20 #0 Fund V will be deployed across European industrial sectors with a particular focus on advanced manufacturing, energy transition, and specialty chemicals.
+  20 #0 We anticipate 10 to 12 platform investments over the four-year deployment period, with typical equity tickets in the EUR 300 to 700 million range.
+  20 #0 Our investment team has been preparing Fund V's pipeline for many months and we expect first capital calls in the second quarter of 2026.

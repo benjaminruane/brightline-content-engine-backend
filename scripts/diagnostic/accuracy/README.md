@@ -61,17 +61,18 @@ The labelled set is closed. These are cases where a label and the pipeline disag
 Label versus pipeline:
 
 - F13 returns, "2.6x MOIC and 21% gross IRR". Ben P. Pipeline X on earlier runs (B159). On `oct-05-b372-b374` the pipeline is `supported_partial` and agrees. Still an open question because it has moved.
-- F15 own-brand. Ben P after Correction 3, pipeline `supported_full` on `oct-04-baseline` and `oct-05-b372-b374` (was P or X on earlier runs).
+- F15 own-brand. Ben P after Correction 3, pipeline `supported_full` on `oct-04-baseline` and `oct-05-b372-b374` (was P or X on earlier runs). On `oct-06-b378` the pipeline is `supported_partial` and agrees. Still recorded because it moved. Label not moved.
 - F04 risk-adjusted return profile. Ben C, pipeline P on some runs, including this one.
 - F11 revenue and EBITDA from SEK 4.2 billion. Ben C, pipeline varies.
-- F08 principal risks (semiconductor cyclicality). Ben C, pipeline `supported_partial` on `oct-05-b372-b374` (was confirmed on 4 October). Matcher variation. Do not retune.
+- F08 principal risks (semiconductor cyclicality). Ben C, pipeline `supported_partial` on `oct-05-b372-b374` (was confirmed on 4 October), `supported_full` again on `oct-06-b378`. Matcher variation. Do not retune.
+- F08 end-market growth (9% compound revenue). Ben P. Pipeline `supported_partial` on `oct-05-b372-b374`, `supported_full` on `oct-06-b378`. Matcher variation. Do not retune. Label not moved.
 - F01 employees, F09 period revenue, F16 gross margin. Ben C, pipeline X. Matcher variation. Inside the noise floor (**B162**).
 - F08 competitive position / F09 Brno / F10 600 customers / F16 clinical advisory board. Ben C. The 4 October conflicts were the actor check. On `oct-05-b372-b374` the pipeline confirms all four.
 
 Two remaining catch misses (Group A still not caught). The expanded corpus must cover them:
 
 - F05 Halden support. No contradicting passage exists to find. Rubric: an invented actor reads as an omission.
-- F13 EBITDA 11.1%. The widened matcher returns the 11.1% passage and never the "approximately 13%" line. The 4 October catch was the actor check, not that passage. Missed again on `oct-05-b372-b374`.
+- F13 EBITDA 11.1%. The widened matcher returns the 11.1% passage and never the "approximately 13%" line. The 4 October catch was the actor check, not that passage. Missed again on `oct-05-b372-b374` and `oct-06-b378`.
 
 ## Seed
 
@@ -83,6 +84,8 @@ Two remaining catch misses (Group A still not caught). The expanded corpus must 
 - Evidence scoring run (2026-09-05, fixtures 01-20, cache off, editorial and compliance off, commentary skipped): Ben approved a combined ceiling of $40 for two independent passes. Pre-run estimate was about $6 to $12 per pass, $12 to $24 for both, under the ceiling. The runner metered $0.00 on both of those passes because `lib/qc/pipeline-v4/index.mjs` copied Stage 2 matches without `costUsd` or `usage` (lines 364-377), so `run-evidence.mjs` had nothing to sum. That cause was fixed in `32f3b97`. Later passes metered correctly: $5.41 for the reducer pair, $5.36 for the rounding pair, $2.27 for the lift pass. Wall clock on the 2026-09-05 pair: pass 1 254411 ms, pass 2 249500 ms. Stage 1 alone was $0.14. Pass 1 stored 271 whole-sentence Stage 2 pairs across 261 cards. The 2026-09-05 pair has no meter. Do not re-run it to recover the missing meter.
 
 ## Scoreboard
+
+Current reading (2026-10-06, `runs/evidence-pass-oct-06-b378`): catch 9 of 11, leave-alone 65 of 74. Prediction of zero B378 labelled movers held. Three labelled verdicts differ from 5 October. None is the dateline reader and none is the dateline rule. Versus oct-05, leave-alone plus 1 (inside noise). Versus lift-1, leave-alone minus 2 (inside noise). Versus oct-04, catch minus 1 (not readable) and leave-alone plus 4 counts (one count past the identical-run swing; three of those counts are the actor-check-off shift already measured). Never average the two groups. Report `runs/evidence-pass-oct-06-b378/REPORT.md`.
 
 Current reading (2026-10-05, `runs/evidence-pass-oct-05-b372-b374`): catch 9 of 11, leave-alone 64 of 74. First measured number with the actor check off. Against 8 September lift-1 (9 of 11, 67 of 74): catch unchanged, leave-alone minus 3, inside noise. Against 4 October oct-04-baseline (10 of 11, 61 of 74, check ON): catch minus 1 (not readable), leave-alone plus 3 (inside noise). B371 arithmetic prediction (9 of 11, 64 of 74) holds. None of B372's three parts moved a labelled verdict. B374 moved none. Date rule touches 0 of 100 labelled. Never average the two groups. Report `runs/evidence-pass-oct-05-b372-b374/REPORT.md`.
 
@@ -115,6 +118,8 @@ This pack cannot validate a judging change smaller than the noise already measur
 - Catch of 11 has a Wilson 95 percent interval 43 percentage points wide at the observed 9 of 11: [0.5230, 0.9486]. At the original 3 of 11 it was 47 points: [0.0975, 0.5657]. An interval "roughly 25 points wide" is a floor. The measured width is larger.
 
 Differences smaller than these (a few leave-alone points, a stability tick, a catch of 11 moving by one) are not evidence that a judging change worked. This instrument cannot tell them from Stage 2 noise. Do not propose another judging change against this labelled set. The next work is a larger corpus.
+
+Current reading after B378 (one billed pass, `runs/evidence-pass-oct-06-b378/cards.json`, 2026-10-06, spend USD 2.9345, this-pass ceiling USD 5): freeze 261 / 0 unmatched. Catch 9 of 11, Wilson [0.5230, 0.9486]. Leave-alone 65 of 74 = 87.84%. Catch still clears 6 of 11. Leave-alone clears 85% PASS and does not clear 89% BUILD-QUALITY. Versus oct-05, leave-alone plus 1 (inside noise). Versus lift-1, leave-alone minus 2 (inside noise). Versus oct-04, catch minus 1 (not readable) and leave-alone plus 4 counts, one count past the identical-run swing, not a dateline effect. Prediction of zero B378 movers held. Labels not moved. Details in `runs/evidence-pass-oct-06-b378/REPORT.md`.
 
 Current reading after B372/B374 with the actor check off (one billed pass, `runs/evidence-pass-oct-05-b372-b374/cards.json`, 2026-10-05, spend USD 2.9947, ceiling remaining 40): freeze 261 / 0 unmatched. Catch 9 of 11, Wilson [0.5230, 0.9486]. Leave-alone 64 of 74 = 86.49%. Catch still clears 6 of 11. Leave-alone clears 85% PASS and does not clear 89% BUILD-QUALITY. Versus lift-1, leave-alone minus 3 (inside noise). Versus oct-04, leave-alone plus 3 (inside noise). Catch minus 1 versus oct-04 is not readable. Labels not moved. Details in `runs/evidence-pass-oct-05-b372-b374/REPORT.md`.
 
