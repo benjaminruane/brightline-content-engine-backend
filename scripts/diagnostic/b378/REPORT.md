@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending `npm run verify:ship` on the implementation commit |
+| SHIPPED | SHIP VERIFIED  55e8cd8  main  164 files  1805 tests |
 | Cost | USD 0. No model calls. |
 | Fixtures | `8db103f` fixtures: GP Industries press release, doctored run and five clean runs |
 | Tests | 164 files, 1805 tests, passed locally before this commit |
