@@ -1,0 +1,779 @@
+{
+ "ok": true,
+ "statements": [
+  {
+   "id": "0",
+   "text": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+   "qcCard": {
+    "index": 0,
+    "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+    "charStart": 0,
+    "charEnd": 201,
+    "supportState": "partial",
+    "hasConflict": false,
+    "primaryExcerpt": "GP Industries Limited (GP Industries), the world\u2019s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+    "conflictExcerpt": {
+     "passage": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+     "sourceLabel": "20251113-GPI_30th-anniversary.pdf"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that GP Industries is shifting production capacity to Southeast Asia to navigate US tariffs and rising geopolitical tensions, but it does not specify that the announcement was made in November 2025. The statement's timing detail is not addressed by the source. The shift to Southeast Asia is confirmed. The reviewer should verify the announcement date or adjust the statement to align with the available information.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "20251113-GPI_30th-anniversary.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "GP Industries Limited (GP Industries), the world\u2019s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 574,
+    "primaryExcerptEnd": 810,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that GP Industries is shifting production capacity to Southeast Asia to navigate US tariffs and rising geopolitical tensions, but it does not specify that the announcement was made in November 2025. The statement's timing detail is not addressed by the source. The shift to Southeast Asia is confirmed. The reviewer should verify the announcement date or adjust the statement to align with the available information.",
+    "displayMode": "partial",
+    "draftSpan": {
+     "startChar": 0,
+     "endChar": 201
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_partial",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "moderate",
+    "evidenceConcernLevel": "moderate",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "0",
+      "passage": "GP Industries Limited (GP Industries), the world\u2019s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+      "start": 574,
+      "end": 810
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "0",
+      "passage": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets.",
+      "start": 1148,
+      "end": 1431
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "0",
+      "classification": "partially_confirmed",
+      "text": "In November 2025, GP Industries announced that it intends",
+      "start": 0,
+      "end": 57
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "20251113-GPI_30th-anniversary.pdf",
+      "classification": "partially_confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "date_period_claim",
+      "named_person_entity_attribution",
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "partial",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "amber",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 0,
+    "endChar": 201
+   }
+  },
+  {
+   "id": "1",
+   "text": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+   "qcCard": {
+    "index": 1,
+    "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+    "charStart": 202,
+    "charEnd": 426,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "It also has two other plants in the UK.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The phrase 'UK' matches the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "20251113-GPI_30th-anniversary.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "It also has two other plants in the UK.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 906,
+    "primaryExcerptEnd": 946,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The phrase 'UK' matches the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 202,
+     "endChar": 426
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "20251113-GPI_30th-anniversary.pdf",
+      "classification": "not_reviewed",
+      "systemFingerprint": "fp_61a9eaf3ca",
+      "emptyConfirmationRefused": true
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 202,
+    "endChar": 426
+   }
+  },
+  {
+   "id": "2",
+   "text": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+   "qcCard": {
+    "index": 2,
+    "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+    "charStart": 427,
+    "charEnd": 571,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "The move will streamline supply chains to meet country-of-origin\nrequirements and maintain cost competitiveness.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that the capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness. The source explicitly states that the move will achieve these objectives, directly supporting the statement.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "20251113-GPI_30th-anniversary.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "20251113-GPI_30th-anniversary.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "The move will streamline supply chains to meet country-of-origin\nrequirements and maintain cost competitiveness.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1432,
+    "primaryExcerptEnd": 1544,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that the capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness. The source explicitly states that the move will achieve these objectives, directly supporting the statement.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 427,
+     "endChar": 571
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "2",
+      "passage": "The move will streamline supply chains to meet country-of-origin\nrequirements and maintain cost competitiveness.",
+      "start": 1432,
+      "end": 1544
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "20251113-GPI_30th-anniversary.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": []
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 427,
+    "endChar": 571
+   }
+  },
+  {
+   "id": "3",
+   "text": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+   "qcCard": {
+    "index": 3,
+    "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+    "charStart": 572,
+    "charEnd": 745,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which\nis planning a multi-million-dollar investment in Johor to produce next-generation battery to\nsupport data centres.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that Gold Peak Technology Group, the parent company of GP Industries, is planning a multi-million-dollar investment in Johor, Malaysia, to produce next-generation batteries for data centres. This supports the statement fully.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "20251113-GPI_30th-anniversary.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "20251113-GPI_30th-anniversary.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which\nis planning a multi-million-dollar investment in Johor to produce next-generation battery to\nsupport data centres.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1545,
+    "primaryExcerptEnd": 1743,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that Gold Peak Technology Group, the parent company of GP Industries, is planning a multi-million-dollar investment in Johor, Malaysia, to produce next-generation batteries for data centres. This supports the statement fully.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 572,
+     "endChar": 745
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "3",
+      "passage": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which\nis planning a multi-million-dollar investment in Johor to produce next-generation battery to\nsupport data centres.",
+      "start": 1545,
+      "end": 1743
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "20251113-GPI_30th-anniversary.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "named_person_entity_attribution"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 572,
+    "endChar": 745
+   }
+  },
+  {
+   "id": "4",
+   "text": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+   "qcCard": {
+    "index": 4,
+    "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+    "charStart": 746,
+    "charEnd": 919,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "GP Industries traces its roots to a small battery business established in Hong Kong in\n1964. It has since grown into a global manufacturer, producing over six billion batteries\nannually, sold through one million outlets worldwide.",
+    "conflictExcerpt": {
+     "passage": "GP Industries Limited (GP Industries), the world\u2019s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+     "sourceLabel": "20251113-GPI_30th-anniversary.pdf"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement that GP Industries is the second-largest producer of consumer batteries globally, producing over six billion batteries annually and selling them through one million outlets worldwide. The source specifically states that GP Industries produces over six billion batteries annually and sells them through one million outlets, directly supporting the figures in the statement.",
+    "commentaryUnaddressed": [
+     "6 billion",
+     "1 million"
+    ],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "20251113-GPI_30th-anniversary.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "20251113-GPI_30th-anniversary.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "GP Industries traces its roots to a small battery business established in Hong Kong in\n1964. It has since grown into a global manufacturer, producing over six billion batteries\nannually, sold through one million outlets worldwide.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 2911,
+    "primaryExcerptEnd": 3141,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement that GP Industries is the second-largest producer of consumer batteries globally, producing over six billion batteries annually and selling them through one million outlets worldwide. The source specifically states that GP Industries produces over six billion batteries annually and sells them through one million outlets, directly supporting the figures in the statement.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 746,
+     "endChar": 919
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "4",
+      "passage": "GP Industries Limited (GP Industries), the world\u2019s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.",
+      "start": 574,
+      "end": 810
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "4",
+      "passage": "It has since grown into a global manufacturer, producing over six billion batteries\nannually, sold through one million outlets worldwide.",
+      "start": 3004,
+      "end": 3141
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "20251113-GPI_30th-anniversary.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "monetary_figure",
+      "comparative_superlative"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 746,
+    "endChar": 919
+   }
+  }
+ ],
+ "references": [],
+ "sources": [
+  {
+   "index": 0,
+   "id": "assess_src_1791281493378_2d6f98ecd25d48",
+   "label": "20251113-GPI_30th-anniversary.pdf",
+   "text": "Press Release\nFor Immediate Release\n13 November 2025, Singapore\nGP Industries to shift production to Southeast Asia to serve\nUS market amid tariffs and rising geopolitical tensions\n\u2022 To maintain competitiveness, GP Industries\u2019 SE Asia facilities will produce for US\nmarket, China for Europe and Asia\n \n\u2022 GP Industries celebrates 30th anniversary of Singapore\u2019s public listing and\nincorporation\n\u2022 World\u2019s second largest producer of consumer batteries see s growth in rechargeable\nNickel Metal Hydride batteries, and in higher value, less capital-intensive acoustics\nbusiness\nGP Industries Limited (GP Industries), the world\u2019s second-largest producer of consumer\nbatteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to\nnavigate US tariffs and rising geopolitical tensions.\nThe Group currently operates three facilities in Malaysia, two in Vietnam, and one in\nThailand. It also has two other plants in the UK. The diversification of its manufacturing\nnetwork is proving to be a crucial and timely competitive advantage, offering operational\nflexibility amid the changing tariff landscape, GP Industries said.\n \nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets. The move will streamline supply chains to meet country-of-origin\nrequirements and maintain cost competitiveness.\nGP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which\nis planning a multi-million-dollar investment in Johor to produce next-generation battery to\nsupport data centres.\n \nChairman and CEO of GP Industries, Mr Victor Lo, in Singapore for the 30th anniversary\nPage 1 of 3\n\ncelebration, said, \u201cOver the past three decades, GP Industries has shown resilience and\nmaintained steady growth through financial crises, a global pandemic, geopolitical\ntensions, and transformative technological changes including the ongoing AI revolution.\n\u201cWe are confident that we will continue to demonstrate the same strength, adaptability,\nand commitment to innovation that have sustained our growth and performance through\ntimes of change.\u201d\nAfter higher initial costs from diversifying production to Southeast Asia, GP Industries said\nmargins have risen due to improved utilisation, lower commodity costs, and optimised\nsupply chains. Its FY2025 gross margin for batteries rose to 25%.\nMr Lo sees potential for the Gold Peak Technology Group, both GP Industries and its\nparent, to scale significantly in Johor in the next five years.\n\u201cWe chose Johor for its fast-track investment approvals, logistical proximity to Singapore,\nskilled workforce, and a supportive business environment, ensuring both operational\nefficiency and scalability for future growth.\u201d\nGP Industries traces its roots to a small battery business established in Hong Kong in\n1964. It has since grown into a global manufacturer, producing over six billion batteries\nannually, sold through one million outlets worldwide. It diversified into the acoustics\nbusiness in 1992 when it acquired leading high-end British brands, KEF and Celestion. Its\nthird business is in industrial investments, where it takes stake in companies that\nmanufacture and trade parts and components aligned to its battery solutions and acoustic\nbusinesses.\nReflecting on the milestone achievement, Mr Lo said: \u201cMy greatest satisfaction comes\nfrom witnessing the growth and transformation of GP Industries into a global technology\ncompany built on the collective efforts and enduring dedication of our entire team.\u201d\nHe added that the biggest shift in the battery industry has been the transition from singleuse, low-power batteries to advanced, rechargeable Nickel Metal Hydride batteries \u2013 a\nchange that has enabled the rise of portable electronics and the Internet of Things.\nMr Lo described the Group\u2019s acoustics business \u201cas a core area for diversification,\nleveraging our technical strengths in precision engineering and energy management to\nPage 2 of 3\n\nexpand into higher-value, less capital-intensive opportunities.\u201d\nKEF GP Group, GP Industries\u2019 acoustics division, pioneered the use of computers in\nloudspeaker design in 1973 and saw sales rise seven percent in FY2025, driven by new\nretail and automotive partnerships.\nIts sister brand, Celestion, whose speakers have been used by legendary musicians such\nas Jimi Hendrix and Eric Clapton, is expanding into consumer audio products to reach a\nwider market.\nLooking ahead, GP Industries plans to further invest in R&D, enhance operational\nefficiency, and expand its network of audio experience centres globally.\nMr Lo also emphasised the importance of nurturing future leaders to sustain the Group\u2019s\nlegacy. \u201cSuccession has always been a priority for me. We have brought fresh\nperspectives into senior management, strengthened our Board with independent directors,\nand invested in development programmes to ensure our values and vision are carried\nforward,\u201d he said.\n# # #\nPage 3 of 3",
+   "publicationState": "published_external"
+  }
+ ],
+ "excludedSources": [],
+ "meta": {
+  "pipelineVersion": "v4",
+  "stagesComplete": 7,
+  "traceId": "5ecc88b4-3c66-4ed3-b72d-885b9ab7f658",
+  "reviewOptions": {
+   "evidenceEnabled": true,
+   "editorialEnabled": true,
+   "complianceEnabled": true
+  },
+  "reviewSummary": {
+   "version": 1,
+   "statements": 5,
+   "evidence": {
+    "confirmed": 4,
+    "partial": 1,
+    "conflicting": 0,
+    "notSupported": 0
+   },
+   "editorial": {
+    "concerns": 0,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "compliance": {
+    "concerns": 0,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "signalConcerns": 0,
+   "notChecked": 0,
+   "needsAttention": 0,
+   "readiness": "Minor points to address",
+   "rateLimitBoundHits": {
+    "editorial": 0,
+    "compliance": 0,
+    "commentary": 0,
+    "other": 0,
+    "statements": 0
+   }
+  },
+  "rateLimitBoundHits": {
+   "editorial": 0,
+   "compliance": 0,
+   "commentary": 0,
+   "other": 0,
+   "statements": 0
+  },
+  "capacityWait": {
+   "prelaunchCount": 0,
+   "waitMs": 0
+  },
+  "providerRefusal": null,
+  "rateLimitLastWait": null,
+  "stageSchedules": [
+   {
+    "statementCount": 5,
+    "tokensPerStatement": 13143,
+    "totalTokens": 65715,
+    "remainingTokens": 1988501,
+    "tpmLimit": 2000000,
+    "concurrency": 5,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage6"
+   },
+   {
+    "statementCount": 5,
+    "tokensPerStatement": 1800,
+    "totalTokens": 9000,
+    "remainingTokens": 1976482,
+    "tpmLimit": 2000000,
+    "concurrency": 5,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage5"
+   }
+  ],
+  "llmSpend": {
+   "calls": 26,
+   "inputTokens": 107370,
+   "cachedInputTokens": 55040,
+   "outputTokens": 1622,
+   "costUsd": 0.215845,
+   "unpricedCalls": 0,
+   "unpricedModels": [],
+   "byModel": {
+    "openai/gpt-4o-2024-08-06": {
+     "calls": 26,
+     "inputTokens": 107370,
+     "cachedInputTokens": 55040,
+     "outputTokens": 1622,
+     "costUsd": 0.215845,
+     "unpricedCalls": 0
+    }
+   }
+  },
+  "modelConfig": {
+   "ranAt": "2026-10-06T11:10:48.208Z",
+   "stage2Fingerprints": [
+    "fp_61a9eaf3ca"
+   ],
+   "stageModels": {
+    "stage1-splitting": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage1b-claim-spans": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage2-matching": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage5-commentary": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "compliance-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    }
+   }
+  },
+  "build": {
+   "commit": "98c54be",
+   "ref": "main",
+   "source": "vercel-env"
+  },
+  "draftCoverage": {
+   "dropped": [],
+   "uncovered": [],
+   "droppedCount": 0,
+   "uncoveredCount": 0,
+   "uncoveredChars": 0,
+   "draftChars": 919
+  }
+ },
+ "bannedWordHits": [],
+ "provenanceFlags": []
+}

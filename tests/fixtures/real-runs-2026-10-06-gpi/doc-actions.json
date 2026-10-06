@@ -1,0 +1,139 @@
+{
+ "ok": true,
+ "entries": [
+  {
+   "id": "S0:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "0",
+   "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+    "startChar": 0,
+    "endChar": 241
+   },
+   "thing1State": "WHOLE_STATEMENT",
+   "thing2": "The source confirms that GP Industries is shifting production capacity to Southeast Asia due to US tariffs and rising geopolitical tensions, but it does not specify the 75% figure or the exact timing in October 2025. The source also does not mention escalating oil prices as a reason for the shift. The statement's claim about the percentage and timing is not addressed by the source. The reviewer should verify these details or adjust the statement accordingly.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "partial",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S1:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "1",
+   "statement": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": null,
+   "thing1State": "NONE",
+   "thing2": "The statement conflicts with the source regarding the number of facilities in Malaysia. The statement claims the company operates 15 facilities, while the source states it operates only three. Additionally, there is a contradiction about the focus of the China plant; the statement claims it will focus primarily on the European market, but the source indicates it will focus on both the European and Asian markets. The reviewer should reconcile these discrepancies or remove the conflicting claims.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  },
+  {
+   "id": "S2:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "2",
+   "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "enhancing site security",
+    "startChar": 144,
+    "endChar": 167
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source does not mention enhancing site security, which is a gap in the statement. It confirms the intention to streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness. The reviewer should consider adding a source that addresses site security or revising the statement to align with the available information.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": true,
+    "rule": "partial",
+    "reasonCode": "partial_no_edit"
+   },
+   "provenance": "authored",
+   "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+  },
+  {
+   "id": "S3:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "3",
+   "statement": "Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "Silver Hill Technology (parent of GP Industries)",
+    "startChar": 11,
+    "endChar": 59
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The statement incorrectly attributes the investment program in Johor to Silver Hill Technology. The source specifies that Gold Peak Technology Group, not Silver Hill Technology, is planning the investment to produce next-generation batteries for data centres. The statement should be revised to reflect the correct parent company, Gold Peak Technology Group, or the claim about Silver Hill Technology should be removed.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  },
+  {
+   "id": "S4:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "4",
+   "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually",
+    "startChar": 0,
+    "endChar": 114
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The statement incorrectly claims that GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually. The source contradicts this by stating that GP Industries is the second-largest producer and produces over six billion batteries annually. The claim of distribution through one million outlets is confirmed. The reviewer should reconcile these discrepancies or remove the unsupported claims.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  },
+  {
+   "id": "S4:editorial:thousand_separator:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "4",
+   "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+   "kind": "editorial",
+   "rule": "thousand_separator",
+   "thing1": {
+    "quote": "60 billion",
+    "startChar": 85,
+    "endChar": 95
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The statement uses a comma as a thousands separator instead of a high comma. Replace '60 billion' with '60'000 million'.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "thousand_separator",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  }
+ ]
+}

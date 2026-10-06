@@ -1,0 +1,51 @@
+{
+ "ok": true,
+ "entries": [
+  {
+   "id": "S0:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "0",
+   "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "In November 2025, GP Industries announced that it intends to",
+    "startChar": 0,
+    "endChar": 60
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source confirms that GP Industries is shifting production capacity to Southeast Asia to navigate US tariffs and rising geopolitical tensions, but it does not specify that the announcement was made in November 2025. The statement's timing detail is not addressed by the source. The shift to Southeast Asia is confirmed. Please verify the announcement date or adjust the statement to align with the available information.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "partial",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S1:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "1",
+   "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "and one plant in China, which will now focus primarily on the European and Asian markets.",
+    "startChar": 135,
+    "endChar": 224
+   },
+   "thing1State": "PHRASE",
+   "thing2": "It confirms the number of facilities in Malaysia, Vietnam, Thailand, and the UK.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "partial",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  }
+ ]
+}
