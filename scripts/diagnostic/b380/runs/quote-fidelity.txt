@@ -1,0 +1,589 @@
+llm-1 cards=261 passages=243 exact=165 normalised=33 notFound=45 noPassage=18
+llm-1 confirmed-or-conflicting=187 of-which-no-passage=0
+NOT FOUND llm-1 F01 i=0 verdict=confirmed sourceId="0" label=01_bvp_shopify_memo
+Shopify was founded in 2007 by two Ruby on Rails core developers. One of the co-founders left soon after starting the business. The other, Tobi L�tke, stayed on and is serving as CEO. ... Shopify�s 24 employees are located in Ottawa, Canada.
+...
+Shopify, a provider of e-commerce software to SMBs.
+---
+NOT FOUND llm-1 F01 i=4 verdict=partially_confirmed sourceId="0" label=01_bvp_shopify_memo
+Yet sophisticated features are also available without complicating the overall user experience. Shopify accomplishes this by making available an �App Store�. ... This approach is a big competitive differentiator for Shopify.
+...
+From a customer�s perspective, they can add a feature by accessing Shopify�s �App Store�. Customer take-up has been impressive, with roughly two-thirds (66%) of customers using at least one third-party app.
+---
+NOT FOUND llm-1 F01 i=5 verdict=confirmed sourceId="0" label=01_bvp_shopify_memo
+We are excited by what we see as a great product that has struck a chord with customers. The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours.
+...
+In many ways, its strength lies in its simplicity, which is ideally suited to small businesses. A non-techie can start taking orders from a professional-looking online store in a few hours after sign-up.
+---
+NOT FOUND llm-1 F01 i=10 verdict=partially_confirmed sourceId="0" label=01_bvp_shopify_memo
+Despite this, they are able to acquire a customer for between $175�225 and can pay back that spend in 7�9 months on a churn-adjusted basis.
+...
+We believe that Shopify�s technology solution is better positioned than competitors to provide these solutions to the growing number of �Main Street� retailers who are coming online.
+...
+Further, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.
+---
+NOT FOUND llm-1 F02 i=6 verdict=partially_confirmed sourceId="0" label=02_pg_atnorth_exit
+As a result, Partners Group has committed to reinvest and acquire up to 10% of the Company.
+...
+We congratulate CPP Investments and Equinix as they partner with the Company and management team. We are excited to reinvest alongside them for the next chapter of growth.
+---
+NOT FOUND llm-1 F04 i=0 verdict=confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+We seek partnership approval for a Series A investment of USD 10mm in Pinterest, Inc., a visual discovery and bookmarking platform, at a USD 40mm pre-money valuation.
+
+Pinterest is a visual discovery tool. Users create themed boards onto which they "pin" images they want to remember, organise, or return to.
+---
+NOT FOUND llm-1 F04 i=2 verdict=partially_confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+What gives us conviction is the depth of user engagement we have observed.
+
+USER BEHAVIOUR
+
+What persuaded us is the user behaviour we have observed in diligence.
+---
+NOT FOUND llm-1 F04 i=4 verdict=confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+Average sessions per active user per week is approximately 6 — also exceptional.
+...
+Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.
+---
+NOT FOUND llm-1 F04 i=10 verdict=partially_confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+The user demographic is unusual. Approximately 82% of active users are women, and the user base is heavily weighted to the 25 to 44 age range — meaningfully older than typical social product demographics. This is a desirable advertising audience.
+...
+We expect monetisation to come eventually from native advertising — particularly from advertisers in categories such as home decor, fashion, and weddings that align naturally with user behaviour — but we have not underwritten any specific revenue projections.
+...
+Second, the user demographic and behavioural profile creates unusual monetisation potential. The combination of high-intent commercial categories (home decor, fashion, weddings) and a desirable demographic (women, 25 to 44) is genuinely scarce.
+---
+NOT FOUND llm-1 F04 i=12 verdict=partially_confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+Ben Silbermann (co-founder, CEO) is a former Google product manager.
+...
+References from his time at Google are uniformly positive — he is described as exceptionally product-focused, calm under pressure, and unusually willing to listen to user feedback and to evolve product decisions based on it.
+---
+NOT FOUND llm-1 F04 i=13 verdict=confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+Pinterest is a young company. The product has been in market for roughly 16 months. The team is small — six full-time employees plus the two founders.
+...
+The product has not yet been pressure-tested at meaningful scale. Current monthly active users are approximately 1.5 million, growing rapidly.
+---
+NOT FOUND llm-1 F04 i=20 verdict=partially_confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.
+...
+Third, the founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.
+...
+Defensibility is uncertain. The visual discovery mechanic is not patented. We see two potential sources of competitive moat: (1) network effects from the collaborative pinning and following dynamics, and (2) the accumulation of organised, categorised content that becomes increasingly valuable as it grows. Whether these prove durable in the face of well-funded competitive responses is uncertain.
+---
+NOT FOUND llm-1 F05 i=2 verdict=confirmed sourceId="0" label=05_synth_competitor_press_release
+Norwell, headquartered in Cleveland, Ohio, is a leading manufacturer of structural composite components and titanium machined parts used in commercial aerospace, defense, and space applications.
+...
+Norwell counts the major commercial aircraft original equipment manufacturers and the leading US defense primes among its long-standing customers.
+---
+NOT FOUND llm-1 F06 i=6 verdict=confirmed sourceId="0" label=06_synth_listed_pe_report_excerpt
+We have introduced several operational changes during 2025, including the recruitment of a new Chief Commercial Officer and the appointment of a new Chairman with deep Iberian consumer experience. We are also implementing a structured cost reduction programme targeting approximately EUR 5 million of annualised savings. We expect these changes to begin contributing meaningfully in 2026.
+...
+We continue to view the underlying business as fundamentally sound and well-positioned for recovery as the operational programme takes effect and as the Iberian consumer environment improves.
+---
+NOT FOUND llm-1 F07 i=5 verdict=confirmed sourceId="0" label=07_synth_vc_thesis_post
+We expect significant disruption to the incumbent vertical SaaS industry. Incumbents have built defensible positions around workflow ownership, but those workflows are precisely what agents are positioned to replace.
+
+We expect deep changes to the buyer journey and to commercial models.
+...
+We expect to see strong winner-takes-most dynamics in specific verticals, with the leading agent in each category establishing a sustainable advantage through accumulation of training data, customer trust, and integration depth.
+---
+NOT FOUND llm-1 F08 i=2 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG ("HPC" or "the Company")... Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.
+...
+The Schiller family will retain a 15% economic interest. Management will hold the remaining 7%.
+---
+NOT FOUND llm-1 F08 i=10 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+Second, the end markets HPC serves are structurally attractive. The orthopaedic implants market is forecast to grow at 5–6% annually through 2030, driven by ageing demographics in Europe and the United States. Aerospace component demand is recovering strongly post-COVID, with Airbus and Boeing collectively targeting build-rate increases of approximately 40% over the next five years.
+...
+Revenue growth of 9% CAGR, taking 2024 revenue of EUR 587 million to approximately EUR 905 million by 2029. This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A.
+---
+NOT FOUND llm-1 F08 i=15 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+We have identified four principal risks.
+
+The semiconductor exposure introduces cyclicality that the medical and aerospace segments do not.
+...
+Customer concentration is a watch item. HPC's largest customer, a global orthopaedic implants manufacturer, accounted for 18% of revenue in 2024.
+...
+Foreign exchange exposure is significant.
+...
+Founder transition risk is moderate.
+---
+NOT FOUND llm-1 F08 i=16 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+We are attracted to HPC for four reasons.
+
+First, the Company occupies an enviable competitive position.
+
+Second, the end markets HPC serves are structurally attractive.
+
+Third, there is a clear margin expansion path.
+
+Fourth, we see meaningful M&A opportunity.
+---
+NOT FOUND llm-1 F09 i=2 verdict=partially_confirmed sourceId="0" label=09_synth_portfolio_update_letter
+Period revenue of EUR 318 million represents growth of 11% versus the prior comparable period. The medical implants segment grew 14%, well ahead of expectations, driven by a 22% increase from our largest orthopaedic customer following their successful US product launch.
+
+EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX (CHF weakened to 1.02 against EUR over the period, against our base case of 0.98).
+---
+NOT FOUND llm-1 F09 i=8 verdict=partially_confirmed sourceId="0" label=09_synth_portfolio_update_letter
+We remain confident in our base case returns of 2.4x MOIC and 19% IRR. The early traction on procurement and the strength in medical implants are partial offsets to the semiconductor weakness and the customer quality issue. We do not at this stage see reason to revise our underwriting.
+
+Semiconductor slowdown: We flagged this as a cyclical risk in our underwriting and the early signals are now visible. Two semiconductor capital equipment customers have pushed orders by one to two quarters. We do not expect a deep downturn — the demand picture for EUV remains structurally strong — but we are guiding to flat semiconductor revenue for the next 12 months and have adjusted our full-year forecast accordingly. The full-year 2026 budget assumes semiconductor revenue of EUR 105 million versus our original underwriting of EUR 122 million.
+---
+NOT FOUND llm-1 F09 i=11 verdict=confirmed sourceId="0" label=09_synth_portfolio_update_letter
+We have recruited two of the three new senior hires planned in our underwriting. Klaus Wenger joined as Chief Procurement Officer in September, having previously held the same role at Belimo.
+...
+EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX (CHF weakened to 1.02 against EUR over the period, against our base case of 0.98).
+---
+NOT FOUND llm-1 F11 i=9 verdict=confirmed sourceId="0" label=11_synth_investor_letter_exit
+At the time of our investment, the Company generated revenue of SEK 4.2 billion and EBITDA of SEK 480 million, representing an EBITDA margin of 11.4%.
+...
+By the time of exit, international revenue had grown to SEK 4.8
+billion, representing 42% of total revenue. Total Company revenue at exit was SEK 11.4 billion.
+...
+Combined with the modularity
+programme, this drove EBITDA margins from 11.4% at entry to 18.2% at exit. Absolute EBITDA
+grew from SEK 480 million to SEK 2.08 billion over the hold.
+---
+NOT FOUND llm-1 F13 i=3 verdict=confirmed sourceId="0" label=13_synth_internal_inconsistency_memo
+The Company serves over 1,200 freight forwarder and customs broker customers across 28 European countries.
+
+CloudPivot generates annual recurring revenue ("ARR") of EUR 84 million as of October 2025, up from EUR 52 million two years prior — representing 27% CAGR.
+---
+NOT FOUND llm-1 F14 i=1 verdict=confirmed sourceId="0" label=14_synth_thesis_only_memo
+Clinical decision support software helps clinicians make better, faster, more consistent treatment decisions at the point of care.
+...
+We believe the European market is at an inflection point. Three forces are aligning.
+---
+NOT FOUND llm-1 F14 i=4 verdict=partially_confirmed sourceId="0" label=14_synth_thesis_only_memo
+Reimbursement codes for digital health products have improved meaningfully across the major European markets over the past three years.
+...
+Second, payer willingness to reimburse CDS software has improved markedly.
+---
+NOT FOUND llm-1 F14 i=8 verdict=partially_confirmed sourceId="0" label=14_synth_thesis_only_memo
+The European CDS market is structurally distinct from the US market in several ways.
+...
+The category has been under-served by private equity to date. Most scaled European CDS businesses are either bootstrapped, owned by clinical professional bodies, or sit inside larger health IT groups. There is meaningful opportunity for a thoughtful financial sponsor to play a constructive consolidation role.
+---
+NOT FOUND llm-1 F15 i=2 verdict=partially_confirmed sourceId="0" label=15_synth_very_long_memo
+The transaction will be funded with EUR 720 million of equity from Halden Group, EUR 110 million of co-investment from two of our long-standing LP relationships (Singapore and Canadian institutions, both already informally committed), EUR 90 million of management rollover from the Esposito family and senior management, and EUR 480 million of senior debt and EUR 150 million of mezzanine financing.
+...
+The Esposito family will retain a 10% interest. Management will retain 6%. Halden Group and co-investors will hold 84% in aggregate.
+---
+NOT FOUND llm-1 F15 i=10 verdict=confirmed sourceId="0" label=15_synth_very_long_memo
+The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores targeting younger urban customers with a curated, design-led assortment.
+
+...
+
+Fifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar. The 18 stores operating today generate average four-wall margins of 18%, slightly below the core Casa Verde concept, but the format is younger, less proven, and at much earlier scale. The format's appeal to a clearly differentiated customer cohort (younger, more design-led, more urban) gives the Company a vehicle to capture share in segments where the core Casa Verde brand does not naturally resonate.
+---
+NOT FOUND llm-1 F15 i=11 verdict=partially_confirmed sourceId="0" label=15_synth_very_long_memo
+The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores targeting younger urban customers with a curated, design-led assortment.
+
+...
+
+Fifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar.
+---
+NOT FOUND llm-1 F15 i=30 verdict=confirmed sourceId="0" label=15_synth_very_long_memo
+DUE DILIGENCE OBSERVATIONS
+
+Commercial diligence was conducted by Bain & Company over a ten-week period concluding in early January 2026. The Bain report (circulated separately) confirms market positioning, validates the international expansion thesis, and provides detailed competitive mapping.
+
+Financial and tax diligence was conducted by Deloitte. No issues of material consequence.
+
+Legal diligence was conducted by Latham & Watkins.
+
+ESG diligence was conducted by ERM.
+---
+NOT FOUND llm-1 F16 i=9 verdict=confirmed sourceId="0" label=16_synth_healthcare_consumer
+The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.
+
+The product range comprises 24 SKUs, all formulated in-house, manufactured under contract by GMP-certified European facilities, and sold direct-to-consumer through Bloom's own website and Amazon, alongside a select wholesale presence in premium retailers including Selfridges, Le Bon Marché, KaDeWe, and Sephora.
+---
+NOT FOUND llm-1 F16 i=10 verdict=partially_confirmed sourceId="0" label=16_synth_healthcare_consumer
+Premium women's health is a structurally attractive emerging category. Women's health has been historically under-served by both mainstream and premium consumer health brands. The category is growing at approximately 14% annually in Europe, with significantly faster growth in dedicated direct-to-consumer brands. Bloom is well-positioned within this category as a clinically-credible, premium-positioned, multi-product brand.
+
+International expansion runway is significant. Bloom is strong in the UK and increasingly strong in DACH, but underdeveloped in France, Italy, and Spain. The brand has demonstrable cross-border appeal — DACH revenue has grown from zero in 2021 to EUR 18 million in 2024 — and we see clear opportunity to replicate this in the Romance language markets.
+
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR. The growth is sourced from continued UK growth (modest, reflecting maturation), continued strong DACH growth, accelerated entry into France and Spain, and selective US market entry in year three.
+---
+NOT FOUND llm-1 F16 i=11 verdict=partially_confirmed sourceId="0" label=16_synth_healthcare_consumer
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR.
+...
+The base case generates a 2.9x MOIC and 24% IRR over a five-year hold.
+---
+NOT FOUND llm-1 F16 i=12 verdict=confirmed sourceId="0" label=16_synth_healthcare_consumer
+Customer acquisition cost inflation in direct-to-consumer is the principal risk. Bloom's current 5.2-month payback period has lengthened from 3.8 months in 2022, reflecting both increased competition and broader paid social media cost inflation.
+
+Brand-driven categories are subject to founder-dependency risk. Sarah Whitmore in particular is closely associated with the brand through content, podcast appearances, and visible founder presence.
+
+Regulatory risk in women's health is real. Several of Bloom's products make claims around hormonal support and pregnancy wellness that are subject to evolving regulatory scrutiny across European markets. The Company has invested appropriately in regulatory affairs and has a clean track record, but the regulatory environment for nutrition claims is becoming more demanding.
+---
+NOT FOUND llm-1 F17 i=9 verdict=confirmed sourceId="0" label=17_synth_real_estate_logistics
+Our base case underwrites a five-year hold with the following return drivers. Rental growth of approximately 6% annually (a moderation from the recent 8% pace), capture of embedded reversion as approximately 40% of leases roll during the hold period, value-add capex returning a yield-on-cost of approximately 8.5%, and exit at a 5.0% yield reflecting modest yield compression supported by continued strong investor demand for the asset class.
+...
+We have budgeted EUR 38 million of value-add capital expenditure across the hold period. The principal investments are EUR 14 million in modernising the Park Royal asset (enabling a rent uplift from the current EUR 8 per square foot to an estimated EUR 14 per square foot at next renewal), EUR 8 million in the San Fernando asset, EUR 6 million in the Schiphol asset, and the remainder spread across smaller modernisation works across the Portfolio.
+---
+NOT FOUND llm-1 F18 i=3 verdict=partially_confirmed sourceId="0" label=18a_synth_cross_source_pair_initial
+The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.
+...
+UPDATED CUSTOMER COUNT
+
+The Company currently serves 412 property management companies, not 380 as stated in our initial memo.
+---
+NOT FOUND llm-1 F18 i=4 verdict=conflicting sourceId="0" label=18a_synth_cross_source_pair_initial
+Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.
+
+Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.
+---
+NOT FOUND llm-1 F18 i=6 verdict=confirmed sourceId="0" label=18a_synth_cross_source_pair_initial
+Three factors drive our conviction.
+
+First, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support.
+
+Second, the Nordic property management technology market remains structurally underpenetrated. Approximately 40% of Nordic property management companies still use legacy systems or spreadsheets. NSH has a clear runway to continue penetrating this addressable market.
+
+Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+---
+NOT FOUND llm-1 F18 i=8 verdict=partially_confirmed sourceId="0" label=18a_synth_cross_source_pair_initial
+The base case generates a 2.8x MOIC and 23% IRR.
+...
+Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.
+---
+NOT FOUND llm-1 F18 i=9 verdict=partially_confirmed sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity.
+...
+NSH is a high-quality Nordic vertical SaaS asset with strong unit economics, exceptional product strength, and a clear growth runway.
+...
+Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+...
+Bain & Company's customer reference work confirmed the strength of the product and the relationship picture.
+---
+NOT FOUND llm-1 F19 i=0 verdict=confirmed sourceId="0" label=19_synth_annual_report
+This has been an exceptional year for the Fund, characterised by strong portfolio
+performance across the substantial majority of our investments, the successful realisation of
+NorTech Industries at outstanding economics, and meaningful progress on operational
+improvement initiatives at our remaining portfolio companies.
+...
+The Fund's net IRR as of 31 December 2025 stands at 19.7%, with a net MOIC of 2.13x and net
+DPI of 0.94x.
+---
+NOT FOUND llm-1 F19 i=3 verdict=confirmed sourceId="0" label=19_synth_annual_report
+This has been an exceptional year for the Fund, characterised by strong portfolio
+performance across the substantial majority of our investments, the successful realisation of
+NorTech Industries at outstanding economics, and meaningful progress on operational
+improvement initiatives at our remaining portfolio companies.
+...
+The Fund is now fully deployed across nine investments, of which one (NorTech)
+has been fully realised and the remaining eight continue to be held actively.
+...
+Continental Plastics has had a more challenging 2025.
+...
+Drift Logistics had a mixed 2025.
+---
+NOT FOUND llm-1 F19 i=4 verdict=confirmed sourceId="0" label=19_synth_annual_report
+Helvetia Precision Components ("HPC") was acquired in June 2025 in a transaction valuing the Company at EUR 1.15 billion. HPC manufactures complex precision machined components for the medical devices, aerospace, and semiconductor end markets. Six months post-close, the Company is tracking modestly ahead of our underwriting on both revenue and EBITDA, with strong early traction on procurement programmes and the leadership transition proceeding well.
+...
+The 100-day plan is on track, with the new financial reporting infrastructure substantially in place and the procurement initiative beginning to deliver early wins.
+...
+Brightway has had a strong 2025, with revenue growing 14% year-on-year and EBITDA growing 21%.
+...
+Eltex Power Systems has performed strongly, benefiting from substantial increases in European power infrastructure investment. Revenue grew 23% year-on-year and EBITDA grew 31%. The order backlog stands at EUR 480 million, up from EUR 285 million at our acquisition date.
+---
+NOT FOUND llm-1 F19 i=6 verdict=confirmed sourceId="0" label=19_synth_annual_report
+We have introduced operational changes during the year, including the replacement of the Chief Operating Officer and the launch of a structured cost reduction programme targeting EUR 22 million of annualised savings. Early progress on this programme is encouraging.
+...
+The Company remains a long-term high-quality asset but the realisation timeline has lengthened by approximately 12 months from our original underwriting.
+---
+llm-2 cards=261 passages=242 exact=168 normalised=30 notFound=44 noPassage=19
+llm-2 confirmed-or-conflicting=187 of-which-no-passage=0
+NOT FOUND llm-2 F01 i=0 verdict=confirmed sourceId="0" label=01_bvp_shopify_memo
+Shopify was founded in 2007 by two Ruby on Rails core developers. One of the co-founders left soon after starting the business. The other, Tobi L�tke, stayed on and is serving as CEO. ... Shopify�s 24 employees are located in Ottawa, Canada.
+...
+We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.
+---
+NOT FOUND llm-2 F01 i=4 verdict=partially_confirmed sourceId="0" label=01_bvp_shopify_memo
+Yet sophisticated features are also available without complicating the overall user experience. Shopify accomplishes this by making available an �App Store�. A customer can click and install an �App� that extends the functionality of their online store beyond what Shopify provides. To make the �App Store� possible, Shopify exposes an open API that allows third party software developers to integrate into its platform. This approach is a big competitive differentiator for Shopify.
+...
+From a customer�s perspective, they can add a feature by accessing Shopify�s �App Store�. Customer take-up has been impressive, with roughly two-thirds (66%) of customers using at least one third-party app.
+---
+NOT FOUND llm-2 F01 i=5 verdict=confirmed sourceId="0" label=01_bvp_shopify_memo
+We are excited by what we see as a great product that has struck a chord with customers. The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours.
+...
+Product
+Shopify is a SaaS application for setting up and running an online store. In many ways, its strength lies in its simplicity, which is ideally suited to small businesses. A non-techie can start taking orders from a professional-looking online store in a few hours after sign-up.
+---
+NOT FOUND llm-2 F01 i=10 verdict=partially_confirmed sourceId="0" label=01_bvp_shopify_memo
+We are enthusiastic about the potential for Shopify to disrupt existing solutions with a consumer-like product that has resonated with customers and enabled the company to demonstrate strong organic growth. Further, uptake of the App Store�by both third-party developers and customers�provides differentiation and a path to break away from the pack.
+...
+Despite this, they are able to acquire a customer for between $175�225 and can pay back that spend in 7�9 months on a churn-adjusted basis.
+...
+Further, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.
+---
+NOT FOUND llm-2 F02 i=6 verdict=partially_confirmed sourceId="0" label=02_pg_atnorth_exit
+As a result, Partners Group has committed to reinvest and acquire up to 10% of the Company.
+...
+We congratulate CPP Investments and Equinix as they partner with the Company and management team. We are excited to reinvest alongside them for the next chapter of growth.
+---
+NOT FOUND llm-2 F03 i=0 verdict=confirmed sourceId="0" label=03_pg_gestcompost_investment
+Partners Group will invest over EUR 120 million in the Gestcompost continuation fund via its infrastructure secondaries business
+...
+Partners Group, one of the largest firms in the global private markets industry, acting on behalf of its clients, has agreed to acquire a significant minority stake in Gestcompost (or "the Company"), the largest organic waste treatment manager in Spain. Partners Group will invest over EUR 120 million through its infrastructure secondaries business, acting as a cornerstone investor in a continuation fund for Gestcompost that was successfully established and will be managed by current owner Suma Capital.
+---
+NOT FOUND llm-2 F04 i=0 verdict=confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+We seek partnership approval for a Series A investment of USD 10mm in Pinterest, Inc., a visual discovery and bookmarking platform, at a USD 40mm pre-money valuation.
+
+Pinterest is a visual discovery tool. Users create themed boards onto which they "pin" images they want to remember, organise, or return to.
+---
+NOT FOUND llm-2 F04 i=2 verdict=partially_confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+What gives us conviction is the depth of user engagement we have observed.
+
+USER BEHAVIOUR
+
+What persuaded us is the user behaviour we have observed in diligence.
+---
+NOT FOUND llm-2 F04 i=4 verdict=confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+Average sessions per active user per week is approximately 6 — also exceptional.
+...
+Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.
+---
+NOT FOUND llm-2 F04 i=10 verdict=partially_confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+The user demographic is unusual. Approximately 82% of active users are women, and the user base is heavily weighted to the 25 to 44 age range — meaningfully older than typical social product demographics. This is a desirable advertising audience.
+...
+We expect monetisation to come eventually from native advertising — particularly from advertisers in categories such as home decor, fashion, and weddings that align naturally with user behaviour — but we have not underwritten any specific revenue projections.
+...
+Second, the user demographic and behavioural profile creates unusual monetisation potential. The combination of high-intent commercial categories (home decor, fashion, weddings) and a desirable demographic (women, 25 to 44) is genuinely scarce.
+---
+NOT FOUND llm-2 F04 i=13 verdict=confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+Pinterest is a young company. The product has been in market for roughly 16 months. The team is small — six full-time employees plus the two founders.
+...
+The product has not yet been pressure-tested at meaningful scale. Current monthly active users are approximately 1.5 million, growing rapidly.
+---
+NOT FOUND llm-2 F04 i=20 verdict=partially_confirmed sourceId="0" label=04_synth_vc_pinterest_style_memo
+First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.
+...
+Third, the founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.
+...
+Defensibility is uncertain. The visual discovery mechanic is not patented. We see two potential sources of competitive moat: (1) network effects from the collaborative pinning and following dynamics, and (2) the accumulation of organised, categorised content that becomes increasingly valuable as it grows. Whether these prove durable in the face of well-funded competitive responses is uncertain.
+---
+NOT FOUND llm-2 F05 i=2 verdict=confirmed sourceId="0" label=05_synth_competitor_press_release
+Norwell, headquartered in Cleveland, Ohio, is a leading manufacturer of structural composite components and titanium machined parts used in commercial aerospace, defense, and space applications.
+...
+Norwell counts the major commercial aircraft original equipment manufacturers and the leading US defense primes among its long-standing customers.
+---
+NOT FOUND llm-2 F06 i=6 verdict=confirmed sourceId="0" label=06_synth_listed_pe_report_excerpt
+We have introduced several operational changes during 2025, including the recruitment of a new Chief Commercial Officer and the appointment of a new Chairman with deep Iberian consumer experience. We are also implementing a structured cost reduction programme targeting approximately EUR 5 million of annualised savings. We expect these changes to begin contributing meaningfully in 2026.
+...
+We continue to view the underlying business as fundamentally sound and well-positioned for recovery as the operational programme takes effect and as the Iberian consumer environment improves.
+---
+NOT FOUND llm-2 F07 i=5 verdict=confirmed sourceId="0" label=07_synth_vc_thesis_post
+We expect significant disruption to the incumbent vertical SaaS industry. Incumbents have built defensible positions around workflow ownership, but those workflows are precisely what agents are positioned to replace.
+
+We expect deep changes to the buyer journey and to commercial models.
+...
+We expect to see strong winner-takes-most dynamics in specific verticals, with the leading agent in each category establishing a sustainable advantage through accumulation of training data, customer trust, and integration depth.
+---
+NOT FOUND llm-2 F08 i=2 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG ("HPC" or "the Company")... Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.
+...
+The transaction will be funded with EUR 480 million of equity from Halden Group, EUR 130 million of equity from co-investors (currently anticipated to include two existing LP relationships), and EUR 540 million of senior and second-lien debt.
+...
+The Schiller family will retain a 15% economic interest. Management will hold the remaining 7%.
+---
+NOT FOUND llm-2 F08 i=10 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+Second, the end markets HPC serves are structurally attractive. The orthopaedic implants market is forecast to grow at 5–6% annually through 2030, driven by ageing demographics in Europe and the United States. Aerospace component demand is recovering strongly post-COVID, with Airbus and Boeing collectively targeting build-rate increases of approximately 40% over the next five years.
+...
+Revenue growth of 9% CAGR, taking 2024 revenue of EUR 587 million to approximately EUR 905 million by 2029. This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A.
+---
+NOT FOUND llm-2 F08 i=15 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+We have identified four principal risks.
+
+The semiconductor exposure introduces cyclicality that the medical and aerospace segments do not.
+...
+Customer concentration is a watch item. HPC's largest customer, a global orthopaedic implants manufacturer, accounted for 18% of revenue in 2024.
+...
+Foreign exchange exposure is significant.
+...
+Founder transition risk is moderate.
+---
+NOT FOUND llm-2 F08 i=16 verdict=partially_confirmed sourceId="0" label=08_synth_industrial_buyout_memo
+We are attracted to HPC for four reasons.
+
+First, the Company occupies an enviable competitive position.
+
+Second, the end markets HPC serves are structurally attractive.
+
+Third, there is a clear margin expansion path.
+
+Fourth, we see meaningful M&A opportunity.
+---
+NOT FOUND llm-2 F09 i=2 verdict=partially_confirmed sourceId="0" label=09_synth_portfolio_update_letter
+Period revenue of EUR 318 million represents growth of 11% versus the prior comparable period. The medical implants segment grew 14%, well ahead of expectations, driven by a 22% increase from our largest orthopaedic customer following their successful US product launch.
+
+EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX (CHF weakened to 1.02 against EUR over the period, against our base case of 0.98).
+---
+NOT FOUND llm-2 F09 i=11 verdict=confirmed sourceId="0" label=09_synth_portfolio_update_letter
+We have recruited two of the three new senior hires planned in our underwriting. Klaus Wenger joined as Chief Procurement Officer in September, having previously held the same role at Belimo.
+...
+EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX (CHF weakened to 1.02 against EUR over the period, against our base case of 0.98).
+---
+NOT FOUND llm-2 F11 i=9 verdict=confirmed sourceId="0" label=11_synth_investor_letter_exit
+At the time of our investment, the Company generated revenue of SEK 4.2 billion and EBITDA of SEK 480 million, representing an EBITDA margin of 11.4%.
+...
+By the time of exit, international revenue had grown to SEK 4.8
+billion, representing 42% of total revenue. Total Company revenue at exit was SEK 11.4 billion.
+...
+Combined with the modularity
+programme, this drove EBITDA margins from 11.4% at entry to 18.2% at exit. Absolute EBITDA
+grew from SEK 480 million to SEK 2.08 billion over the hold.
+---
+NOT FOUND llm-2 F13 i=3 verdict=confirmed sourceId="0" label=13_synth_internal_inconsistency_memo
+The Company serves over 1,200 freight forwarder and customs broker customers across 28 European countries.
+
+CloudPivot generates annual recurring revenue ("ARR") of EUR 84 million as of October 2025, up from EUR 52 million two years prior — representing 27% CAGR.
+---
+NOT FOUND llm-2 F14 i=1 verdict=confirmed sourceId="0" label=14_synth_thesis_only_memo
+Clinical decision support software helps clinicians make better, faster, more consistent treatment decisions at the point of care.
+...
+We believe the European market is at an inflection point. Three forces are aligning. First, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances. Second, payer willingness to reimburse CDS software has improved markedly. Third, generative AI is creating both opportunity and pressure: opportunity to genuinely improve clinical workflows, pressure on incumbents who lack credible AI strategies.
+---
+NOT FOUND llm-2 F14 i=4 verdict=partially_confirmed sourceId="0" label=14_synth_thesis_only_memo
+Reimbursement codes for digital health products have improved meaningfully across the major European markets over the past three years.
+...
+Second, payer willingness to reimburse CDS software has improved markedly.
+---
+NOT FOUND llm-2 F14 i=8 verdict=partially_confirmed sourceId="0" label=14_synth_thesis_only_memo
+The European CDS market is structurally distinct from the US market in several ways.
+...
+The category has been under-served by private equity to date. Most scaled European CDS businesses are either bootstrapped, owned by clinical professional bodies, or sit inside larger health IT groups. There is meaningful opportunity for a thoughtful financial sponsor to play a constructive consolidation role.
+---
+NOT FOUND llm-2 F15 i=2 verdict=partially_confirmed sourceId="0" label=15_synth_very_long_memo
+The transaction will be funded with EUR 720 million of equity from Halden Group, EUR 110 million of co-investment from two of our long-standing LP relationships (Singapore and Canadian institutions, both already informally committed), EUR 90 million of management rollover from the Esposito family and senior management, and EUR 480 million of senior debt and EUR 150 million of mezzanine financing.
+...
+The Esposito family will retain a 10% interest. Management will retain 6%. Halden Group and co-investors will hold 84% in aggregate.
+---
+NOT FOUND llm-2 F15 i=11 verdict=partially_confirmed sourceId="0" label=15_synth_very_long_memo
+The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores targeting younger urban customers with a curated, design-led assortment.
+
+...
+
+Fifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar.
+---
+NOT FOUND llm-2 F15 i=30 verdict=confirmed sourceId="0" label=15_synth_very_long_memo
+DUE DILIGENCE OBSERVATIONS
+
+Commercial diligence was conducted by Bain & Company over a ten-week period concluding in early January 2026. The Bain report (circulated separately) confirms market positioning, validates the international expansion thesis, and provides detailed competitive mapping.
+
+Financial and tax diligence was conducted by Deloitte. No issues of material consequence.
+
+Legal diligence was conducted by Latham & Watkins.
+
+ESG diligence was conducted by ERM.
+---
+NOT FOUND llm-2 F15 i=32 verdict=partially_confirmed sourceId="0" label=15_synth_very_long_memo
+The management team is strong... the value creation plan is well-defined, and the financing structure is appropriately conservative.
+---
+NOT FOUND llm-2 F16 i=2 verdict=partially_confirmed sourceId="0" label=16_synth_healthcare_consumer
+EBITDA margin is 32.8%, which is exceptional for a brand at this growth stage and reflects both strong gross margins and disciplined marketing efficiency.
+...
+The recent twelve-month period has shown some deceleration to 31% year-on-year growth as the Company has scaled, but absolute growth remains strong and the unit economics have continued to improve.
+---
+NOT FOUND llm-2 F16 i=9 verdict=confirmed sourceId="0" label=16_synth_healthcare_consumer
+The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.
+
+The product range comprises 24 SKUs, all formulated in-house, manufactured under contract by GMP-certified European facilities, and sold direct-to-consumer through Bloom's own website and Amazon, alongside a select wholesale presence in premium retailers including Selfridges, Le Bon Marché, KaDeWe, and Sephora.
+---
+NOT FOUND llm-2 F16 i=10 verdict=partially_confirmed sourceId="0" label=16_synth_healthcare_consumer
+Premium women's health is a structurally attractive emerging category. Women's health has been historically under-served by both mainstream and premium consumer health brands. The category is growing at approximately 14% annually in Europe, with significantly faster growth in dedicated direct-to-consumer brands. Bloom is well-positioned within this category as a clinically-credible, premium-positioned, multi-product brand.
+
+International expansion runway is significant. Bloom is strong in the UK and increasingly strong in DACH, but underdeveloped in France, Italy, and Spain. The brand has demonstrable cross-border appeal — DACH revenue has grown from zero in 2021 to EUR 18 million in 2024 — and we see clear opportunity to replicate this in the Romance language markets.
+
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR. The growth is sourced from continued UK growth (modest, reflecting maturation), continued strong DACH growth, accelerated entry into France and Spain, and selective US market entry in year three.
+
+The base case generates a 2.9x MOIC and 24% IRR over a five-year hold.
+---
+NOT FOUND llm-2 F16 i=11 verdict=partially_confirmed sourceId="0" label=16_synth_healthcare_consumer
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR.
+...
+The base case generates a 2.9x MOIC and 24% IRR over a five-year hold.
+---
+NOT FOUND llm-2 F16 i=12 verdict=confirmed sourceId="0" label=16_synth_healthcare_consumer
+Customer acquisition cost inflation in direct-to-consumer is the principal risk. Bloom's current 5.2-month payback period has lengthened from 3.8 months in 2022, reflecting both increased competition and broader paid social media cost inflation.
+
+Brand-driven categories are subject to founder-dependency risk. Sarah Whitmore in particular is closely associated with the brand through content, podcast appearances, and visible founder presence.
+
+Regulatory risk in women's health is real. Several of Bloom's products make claims around hormonal support and pregnancy wellness that are subject to evolving regulatory scrutiny across European markets. The Company has invested appropriately in regulatory affairs and has a clean track record, but the regulatory environment for nutrition claims is becoming more demanding.
+---
+NOT FOUND llm-2 F17 i=9 verdict=confirmed sourceId="0" label=17_synth_real_estate_logistics
+Our base case underwrites a five-year hold with the following return drivers. Rental growth of approximately 6% annually (a moderation from the recent 8% pace), capture of embedded reversion as approximately 40% of leases roll during the hold period, value-add capex returning a yield-on-cost of approximately 8.5%, and exit at a 5.0% yield reflecting modest yield compression supported by continued strong investor demand for the asset class.
+...
+We have budgeted EUR 38 million of value-add capital expenditure across the hold period. The principal investments are EUR 14 million in modernising the Park Royal asset (enabling a rent uplift from the current EUR 8 per square foot to an estimated EUR 14 per square foot at next renewal), EUR 8 million in the San Fernando asset, EUR 6 million in the Schiphol asset, and the remainder spread across smaller modernisation works across the Portfolio.
+---
+NOT FOUND llm-2 F18 i=3 verdict=partially_confirmed sourceId="0" label=18a_synth_cross_source_pair_initial
+The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.
+...
+UPDATED CUSTOMER COUNT
+
+The Company currently serves 412 property management companies, not 380 as stated in our initial memo.
+---
+NOT FOUND llm-2 F18 i=4 verdict=conflicting sourceId="0" label=18a_synth_cross_source_pair_initial
+Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.
+
+Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.
+---
+NOT FOUND llm-2 F18 i=6 verdict=confirmed sourceId="0" label=18a_synth_cross_source_pair_initial
+Three factors drive our conviction.
+
+First, the product is genuinely market-leading. Independent customer research conducted as part of diligence rated NSH significantly higher than the principal Nordic competitor (Yardi Nordic) on usability, feature completeness, and customer support.
+
+Second, the Nordic property management technology market remains structurally underpenetrated. Approximately 40% of Nordic property management companies still use legacy systems or spreadsheets. NSH has a clear runway to continue penetrating this addressable market.
+
+Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+---
+NOT FOUND llm-2 F18 i=9 verdict=partially_confirmed sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity.
+...
+Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+...
+NSH is a high-quality Nordic vertical SaaS asset with strong unit economics, exceptional product strength, and a clear growth runway.
+---
+NOT FOUND llm-2 F19 i=0 verdict=confirmed sourceId="0" label=19_synth_annual_report
+This has been an exceptional year for the Fund, characterised by strong portfolio performance across the substantial majority of our investments, the successful realisation of NorTech Industries at outstanding economics, and meaningful progress on operational improvement initiatives at our remaining portfolio companies.
+...
+The Fund's net IRR as of 31 December 2025 stands at 19.7%, with a net MOIC of 2.13x and net DPI of 0.94x.
+---
+NOT FOUND llm-2 F19 i=3 verdict=confirmed sourceId="0" label=19_synth_annual_report
+We are pleased to present the 2025 Annual Portfolio Review for Meridian European Industrials
+Fund IV. This has been an exceptional year for the Fund, characterised by strong portfolio
+performance across the substantial majority of our investments, the successful realisation of
+NorTech Industries at outstanding economics, and meaningful progress on operational
+improvement initiatives at our remaining portfolio companies.
+...
+The Fund is now fully deployed across nine investments, of which one (NorTech)
+has been fully realised and the remaining eight continue to be held actively.
+...
+Continental Plastics has had a more challenging 2025.
+...
+Drift Logistics had a mixed 2025.
+---
+NOT FOUND llm-2 F19 i=4 verdict=confirmed sourceId="0" label=19_synth_annual_report
+Helvetia Precision Components ("HPC") was acquired in June 2025 in a transaction valuing the Company at EUR 1.15 billion. HPC manufactures complex precision machined components for the medical devices, aerospace, and semiconductor end markets. Six months post-close, the Company is tracking modestly ahead of our underwriting on both revenue and EBITDA, with strong early traction on procurement programmes and the leadership transition proceeding well.
+...
+The 100-day plan is on track, with the new financial reporting infrastructure substantially in place and the procurement initiative beginning to deliver early wins.
+...
+Brightway has had a strong 2025, with revenue growing 14% year-on-year and EBITDA growing 21%.
+...
+Eltex Power Systems has performed strongly, benefiting from substantial increases in European power infrastructure investment. Revenue grew 23% year-on-year and EBITDA grew 31%. The order backlog stands at EUR 480 million, up from EUR 285 million at our acquisition date.
+---
+NOT FOUND llm-2 F19 i=6 verdict=confirmed sourceId="0" label=19_synth_annual_report
+We have introduced operational changes during the year, including the replacement of the Chief Operating Officer and the launch of a structured cost reduction programme targeting EUR 22
+million of annualised savings. Early progress on this programme is encouraging.
+...
+The Company remains a long-term high-quality asset but the realisation timeline has lengthened
+by approximately 12 months from our original underwriting.
+---
+STABILITY labelled=100 same=97 moved=3 missing=0
+MOVE 09 #0 partially_confirmed -> no_support
+  Our base case returns remain intact but the segment will be a moderating factor through 2026.
+MOVE 12 #0 partially_confirmed -> confirmed
+  Magnus Karlsson, who took on the international expansion challenge with grace and decisiveness.
+MOVE 12 #0 conflicting -> partially_confirmed
+  And the wider NorTech team across Stockholm and the new international footprint, who built something genuinely exceptional.
+wrote /Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/b380/runs/quote-fidelity.json
