@@ -4,7 +4,7 @@ Read-only. No product code. Nothing in `lib/` changed. No model calls. Spend USD
 
 | | |
 |---|---|
-| SHIPPED | pending. The line from `npm run verify:ship` is written into this table after the push. |
+| SHIPPED | `SHIP VERIFIED  6e0dbcf  main  164 files  1805 tests` |
 
 The ClearPoint fixtures were already on `origin/main` as `d258ff7` (`fixtures: ClearPoint Neuro Q1 2026, three clean runs and one doctored`). This pass did not recommit them.
 
