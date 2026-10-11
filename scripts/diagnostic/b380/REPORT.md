@@ -4,7 +4,7 @@ Read-only on product code. Nothing in `lib/` changed. The arm does not authorise
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship |
+| SHIPPED | `SHIP VERIFIED  94e32e9  main  164 files  1805 tests` |
 
 `npm test` before the billed passes: 164 files, 1805 tests, all passed. Labels, the freeze, the manifest, and `group-a-design.json` were not rewritten. The prompt file was not edited after the first call.
 
