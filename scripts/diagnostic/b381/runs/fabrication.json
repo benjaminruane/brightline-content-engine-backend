@@ -1,0 +1,2048 @@
+{
+  "passes": {
+    "draft-1": {
+      "quotes": {
+        "passages": 316,
+        "exact": 190,
+        "normalised": 53,
+        "notFound": 73,
+        "nullPassage": 12,
+        "claimsLosingEvidence": 73,
+        "commentsWithheld": 73,
+        "strikes": [
+          {
+            "fixtureId": "01",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.\n...\nShopify was founded in 2007 by two Ruby on Rails core developers.\n...\nShopify�s 24 employees are located in Ottawa, Canada.",
+            "comment": "The source describes Shopify as a provider of e-commerce software to SMBs, founded in 2007, with employees located in Ottawa, Canada. This supports that it is a Canadian e‑commerce platform serving small and medium businesses founded in 2007 in Ottawa."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Yet sophisticated features are also available without complicating the overall user experience. Shopify accomplishes this by making available an �App Store�.\n...\nThis approach is a big competitive differentiator for Shopify.\n...\nRoughly two-thirds of Shopify�s customers utilize at least one app from their �App Store�.",
+            "comment": "The source clearly supports that the App Store is a major competitive differentiator and that roughly two‑thirds of customers use at least one app. It does not explicitly label the App Store as the company’s overall \"strategic moat\" or say that those customers \"actively\" use it, though that is a reasonable inference. Hence, usage and competitive differentiation are confirmed; the specific framing as the strategic moat is interpretive."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 5,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store. A typical customer signs up using their credit card and is up and running in a few hours with no long-term contract.\n...\nThe product is simple enough so that anyone can set up a fully functioning online store in a matter of hours.",
+            "comment": "The memo explicitly states that anyone can set up a fully functioning store in a matter of hours, which supports the claim about non‑technical users."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Roughly 65�70% of customers sign-up via word-of-mouth. Roughly 20% of customers sign-up via referrals from web design firms.\n...\nFinally, roughly 10�15% of customers sign-up via paid channels, which is largely keyword marketing and the occasional contest program.\n...\nWe believe that Shopify has under-invested in marketing in a big way and that with a VP of Marketing and a few experienced people in place, the company can accelerate growth.",
+            "comment": "The breakdown of sign-ups and the 10–15% figure for paid channels are directly supported. The memo also notes under-investment in marketing. However, it does not literally say acquisition has been \"almost entirely organic\"; that is a fair synthesis of the 80–90% non‑paid share but still interpretive."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Despite this, they are able to acquire a customer for between $175�225 and can pay back that spend in 7�9 months on a churn-adjusted basis.\n...\nWe are excited by what we see as a great product that has struck a chord with customers.\n...\nThis approach is a big competitive differentiator for Shopify.\n...\nFurther, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.",
+            "comment": "The memo clearly supports strong unit economics (CAC and payback), a competitive differentiator via the App Store, and significant growth opportunities. However, it does not literally use the phrases \"exceptional unit economics\" or \"defensible competitive position\" or \"clear growth runway\"; these are synthesized conclusions, albeit well grounded in the data presented."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.\n...\nWe recommend this investment.",
+            "comment": "The memo explicitly states that the authors seek approval for the investment and that they recommend the investment."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "Average sessions per active user per week is approximately 6 — also exceptional. Users return to the product not as a check-in but as a destination.\n...\nRepeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.",
+            "comment": "The figures (six sessions per week and 68% repeat after 30 days) are correct. However, the memo describes a repeat visit rate after 30 days, not explicitly “remain active 30 days after first signup,” which slightly reframes the metric."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "Average session length is 14 minutes — exceptional for a social product.\n...\nAverage sessions per active user per week is approximately 6 — also exceptional.\n...\nRepeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.\n...\nWe are willing to invest at a USD 40mm pre-money valuation — which is undeniably expensive on conventional venture metrics — for three reasons.\nFirst, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.",
+            "comment": "The memo repeatedly characterises these engagement metrics as exceptional and ties them to consumer investments, supporting the evaluative claim."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "...the user base is heavily weighted to the 25 to 44 age range — meaningfully older than typical social product demographics.",
+            "comment": "The memo states the user base is heavily weighted to 25–44 and older than typical social products, which supports the claim that it skews older with heaviest concentration in that range."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "The user demographic is unusual. Approximately 82% of active users are women, and the user base is heavily weighted to the 25 to 44 age range — meaningfully older than typical social product demographics. This is a desirable advertising audience.\n...\nWe expect monetisation to come eventually from native advertising — particularly from advertisers in categories such as home decor, fashion, and weddings that align naturally with user behaviour — but we have not underwritten any specific revenue projections.\n...\nThe user demographic and behavioural profile creates unusual monetisation potential. The combination of high-intent commercial categories (home decor, fashion, weddings) and a desirable demographic (women, 25 to 44) is genuinely scarce. We can envision multiple paths to a multi-billion-dollar revenue business.",
+            "comment": "The memo supports that this demographic is a desirable advertising audience and that native advertising in those categories is a likely monetisation path. However, it does not explicitly describe the audience as “underserved,” so that part goes beyond the source."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "Ben Silbermann (co-founder, CEO) is a former Google product manager. Evan Sharp (co-founder, head of design) joined from Facebook earlier this year and has been instrumental in the product's distinctive visual aesthetic. Both founders are first-time founders.\n...\nOur diligence on Ben has been deep. References from his time at Google are uniformly positive — he is described as exceptionally product-focused, calm under pressure, and unusually willing to listen to user feedback and to evolve product decisions based on it. We have spent significant time with both founders and find them thoughtful, deliberate, and genuinely passionate about the product.",
+            "comment": "The memo confirms both that they are first-time founders and that diligence, particularly on Ben, has been deeply positive."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 13,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "Pinterest is a young company. The product has been in market for roughly 16 months. The team is small — six full-time employees plus the two founders.\n...\nCurrent monthly active users are approximately 1.5 million, growing rapidly.",
+            "comment": "The memo supports that there are six full-time employees plus two founders (total eight) and approximately 1.5 million MAUs. The draft’s wording is consistent with this, so both parts are supported."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 19,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "We acknowledge that this is a higher-than-typical entry valuation for a Series A investment with zero revenue. We are comfortable with this on the basis that consumer products with the engagement profile we are seeing here are rare, and entry valuation in such cases is less important to ultimate returns than getting the call right.\n...\nOur base case envisages a hold of approximately 5 to 7 years with a target return of 10 times or better. The downside case is total loss, which we have stress-tested and consider tolerable given the conviction in the engagement signal.",
+            "comment": "The memo confirms that total loss has been stress-tested and deemed tolerable given conviction in the engagement signal. It does not explicitly use the phrase “risk-adjusted return profile” or mention the founder team in this specific context, though conviction in the founders is discussed elsewhere. Hence, part of the wording extends beyond the source."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 20,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.\n...\nThird, the founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.\n...\nDefensibility is uncertain. The visual discovery mechanic is not patented. We see two potential sources of competitive moat... Whether these prove durable in the face of well-funded competitive responses is uncertain.",
+            "comment": "The memo supports that engagement is exceptional and that the team inspires high conviction. However, it explicitly states that defensibility is uncertain, so describing the company as having a “defensible consumer position” overstates what the source claims."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "06_synth_listed_pe_report_excerpt",
+            "claimedSourceMissing": false,
+            "passage": "We have introduced several operational changes during 2025, including the recruitment of a new Chief Commercial Officer and the appointment of a new Chairman with deep Iberian consumer experience. We are also implementing a structured cost reduction programme targeting approximately EUR 5 million of annualised savings. We expect these changes to begin contributing meaningfully in 2026.\n...\nWe continue to view the underlying business as fundamentally sound and well-positioned for recovery as the operational programme takes effect and as the Iberian consumer environment improves.",
+            "comment": "The source confirms both the specific operational changes (new CCO and Chairman), the expectation of meaningful contribution from 2026, and the view that the business is fundamentally sound."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "06_synth_listed_pe_report_excerpt",
+            "claimedSourceMissing": false,
+            "passage": "Northstar Partners' environmental, social and governance (\"ESG\") programme has continued to mature during 2025.\n...\nWe continue to integrate ESG considerations into our investment process from sourcing through diligence and into post-investment value creation planning. We see ESG performance as both a values commitment and a meaningful contributor to long-term commercial performance.",
+            "comment": "The source notes that the ESG programme has continued to mature and provides improving metrics (emissions reporting, SBTi commitments, female representation). Describing ESG performance as continuing to improve is consistent with these statements."
+          },
+          {
+            "fixtureId": "07",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "07_synth_vc_thesis_post",
+            "claimedSourceMissing": false,
+            "passage": "We expect a meaningful share of new vertical SaaS company formation to be agent-first rather than workflow-first.\n\nWe expect significant disruption to the incumbent vertical SaaS industry.",
+            "comment": "The source clearly states that a meaningful share of new vertical SaaS formation will be agent-first and that agents will displace meaningful portions of human work, but it does not explicitly say that vertical AI agents will be *the* dominant pattern of the next decade. The direction of travel is consistent, but the draft slightly overstates the strength of the prediction."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG (\"HPC\" or \"the Company\")... Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.\n...\nThe Schiller family will retain a 15% economic interest. Management will hold the remaining 7%.",
+            "comment": "The equity amount, 78% stake, and that the balance is retained by the Schiller family and management are supported. However, the memo is written pre-approval and uses \"seek approval\" and \"would acquire\" rather than confirming that the investment \"has\" been made, so the timing/definitiveness of the investment is not strictly supported."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "Our base case underwrites a five-year hold with the following value drivers.\n...\nThe base case generates a 2.4x gross MOIC and a 19% gross IRR.",
+            "comment": "The five-year hold and the link between value drivers and attractive returns (2.4x / 19%) are supported. However, the memo does not explicitly label these as \"four pillars\"; that framing is an editorial overlay."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "Third, there is a clear margin expansion path. HPC's current EBITDA margin of 17.5% trails best-in-class peers... and our diligence has identified a coherent set of operational levers we believe can deliver 300 to 400 basis points of margin uplift over five years. The principal levers are: footprint consolidation in Switzerland (closing the Winterthur facility and absorbing volumes into Olten), procurement consolidation across the now-fragmented supplier base inherited from the Indianapolis acquisition, and a programme of automation investment in the Brno facility.",
+            "comment": "The 300–400 bps uplift and the role of Swiss footprint consolidation and procurement are supported. However, the memo attributes the uplift to three levers (including automation in Brno), whereas the draft mentions only two and labels the pillar \"International margin expansion,\" a phrase not used in the source."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "Revenue growth of 9% CAGR, taking 2024 revenue of EUR 587 million to approximately EUR 905 million by 2029. This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A.\n...\nSecond, the end markets HPC serves are structurally attractive. The orthopaedic implants market is forecast to grow at 5–6% annually through 2030... Aerospace component demand is recovering strongly post-COVID, with Airbus and Boeing collectively targeting build-rate increases of approximately 40% over the next five years.",
+            "comment": "The 9% CAGR and its linkage to structurally attractive medical implants and aerospace build-rate increases are supported by the base case and end-market sections."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 12,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "EBITDA margin expansion from 17.5% to 21.0% over the hold period... The margin lift is sourced from the footprint consolidation programme (approximately 120 bps), procurement initiatives (approximately 80 bps), automation investment in Brno (approximately 60 bps), and operating leverage on incremental revenue (approximately 60 bps).",
+            "comment": "The memo explicitly cites operating leverage on incremental revenue as a contributor to margin expansion (about 60 bps). However, it does not state that \"the balance of EBITDA growth\" comes from operating leverage; that phrasing is a simplification of a more detailed breakdown."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 15,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "We have identified four principal risks.\n\nThe semiconductor exposure introduces cyclicality that the medical and aerospace segments do not.\n...\nCustomer concentration is a watch item. HPC's largest customer, a global orthopaedic implants manufacturer, accounted for 18% of revenue in 2024.\n...\nForeign exchange exposure is significant.\n...\nFounder transition risk is moderate.\n...\nWe are comfortable with this exposure given (a) the structural growth in EUV, and (b) HPC's flexible cost base, which allowed the Company to maintain EBITDA margins above 15% throughout the 2023 downturn.",
+            "comment": "The identification of the four principal risks is fully supported. The memo discusses comfort level and some mitigants (e.g., flexible cost base, hedging plans), but it does not explicitly state that each risk is \"reflected in our planning\" with \"specific mitigations in place\" in such general terms; that language is a summarising gloss."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 16,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "First, the Company occupies an enviable competitive position.\nSecond, the end markets HPC serves are structurally attractive.\nThird, there is a clear margin expansion path.\nFourth, we see meaningful M&A opportunity.\n...\nHPC represents an attractive opportunity to acquire a category leader in a structurally growing market with a clear operational improvement plan and proven through-cycle resilience.",
+            "comment": "Each of the elements listed (competitive position, structurally growing end markets, operational improvement plan, M&A opportunity) is supported in the memo, but the exact phrasing \"defensible\" and \"credible M&A roadmap\" is interpretive rather than verbatim."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "09_synth_portfolio_update_letter",
+            "claimedSourceMissing": false,
+            "passage": "The leadership transition has gone better than expected.",
+            "comment": "Describing the transition as having gone “better than expected” supports the characterization that it has proceeded smoothly."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "09_synth_portfolio_update_letter",
+            "claimedSourceMissing": false,
+            "passage": "Medical device customer quality issue: In October, our second-largest medical customer raised a quality concern relating to a specific component lot manufactured in the Olten facility. ... Petra Köhler met the customer's COO in November and the customer is satisfied with the corrective action plan.",
+            "comment": "The timing (October), the fact that it is the second-largest medical customer, and the existence of a quality issue are confirmed. The source refers to a “corrective action plan” rather than explicitly to a “corrective action programme,” though the sense is similar; that wording is slightly interpretive."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "09_synth_portfolio_update_letter",
+            "claimedSourceMissing": false,
+            "passage": "The cost impact to HPC is limited — approximately EUR 3 million in returns, rework, and credit — but the relationship cost is more significant. ... However the customer has placed HPC on enhanced quality monitoring for 12 months, which is an unwelcome development.",
+            "comment": "The EUR 3 million figure and the 12‑month enhanced quality monitoring are confirmed. The draft omits “and credit” from the cost description and labels the impact as “small” rather than “limited,” which is a mild rephrasing but not strictly verbatim."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "09_synth_portfolio_update_letter",
+            "claimedSourceMissing": false,
+            "passage": "Klaus Wenger joined as Chief Procurement Officer in September, having previously held the same role at Belimo. ... EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: ... early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million)",
+            "comment": "The timing of his joining, his role, and the EUR 2.1m vs EUR 5m target are all confirmed. The source does not explicitly restate “annualised” in the second mention but clearly refers to “annualised savings” in the first, so the draft is consistent."
+          },
+          {
+            "fixtureId": "11",
+            "statementIndex": 5,
+            "sourceId": "0",
+            "sourceLabel": "11_synth_investor_letter_exit",
+            "claimedSourceMissing": false,
+            "passage": "International expansion. At entry, the Company generated SEK 3.4 billion (81%) of revenue from the Nordic region. ... By the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue.",
+            "comment": "If 81% of revenue was Nordic at entry, then 19% was non-Nordic; the source also confirms 42% international revenue at exit, matching the claim."
+          },
+          {
+            "fixtureId": "11",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "11_synth_investor_letter_exit",
+            "claimedSourceMissing": false,
+            "passage": "At the time of our investment, the Company generated revenue of SEK 4.2 billion and EBITDA of SEK 480 million, representing an EBITDA margin of 11.4%.\n...\nBy the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue. Total Company revenue at exit was SEK 11.4 billion.\n...\nCombined with the modularity programme, this drove EBITDA margins from 11.4% at entry to 18.2% at exit. Absolute EBITDA grew from SEK 480 million to SEK 2.08 billion over the hold.",
+            "comment": "All revenue, EBITDA, and margin figures at entry and exit match the source exactly."
+          },
+          {
+            "fixtureId": "13",
+            "statementIndex": 7,
+            "sourceId": "0",
+            "sourceLabel": "13_synth_internal_inconsistency_memo",
+            "claimedSourceMissing": false,
+            "passage": "CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore.\n...\nThe total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.",
+            "comment": "The memo contains an internal inconsistency: one section states 320 employees across the listed offices, while another states a total team of 285 people. The draft adopts the 320 figure without acknowledging the discrepancy, so the claim conflicts with part of the source."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "This memo sets out a thematic investment thesis on European clinical decision support (\"CDS\") software.\n...\nWe believe the European market is at an inflection point.",
+            "comment": "The memo explicitly focuses on an investment thesis in European CDS software and states that the market is at an inflection point, which implies increasing opportunity."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 1,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "Clinical decision support software helps clinicians make better, faster, more consistent treatment decisions at the point of care.\n...\nWe believe the European market is at an inflection point. Three forces are aligning.",
+            "comment": "The memo defines CDS in essentially identical terms and states that the European market is at an inflection point driven by three forces. The draft’s wording \"structural\" is consistent with the memo’s framing of structural distinctiveness and inflection point."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway.\n...\nFirst, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances.",
+            "comment": "The source states that the EU MDR pathway is now well‑understood and has created higher barriers to entry. The draft’s claim that it has \"matured\" is an interpretive gloss but directionally consistent. However, \"matured\" is not used explicitly, so this is only partially confirmed."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway.\n...\nFirst, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances.",
+            "comment": "The memo explicitly notes that incumbents have built up significant clearances and that MDR has created higher barriers to entry for serious clinical software. \"Meaningful\" and \"real\" are stylistic variants of \"significant\" and \"higher\" and are consistent with the source."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "Reimbursement codes for digital health products have improved meaningfully across the major European markets over the past three years.\n...\nSecond, payer willingness to reimburse CDS software has improved markedly.",
+            "comment": "The memo states that reimbursement codes for digital health products have improved meaningfully across major European markets and that payer willingness to reimburse CDS software has improved markedly. The draft generalises this to payer willingness for digital health products broadly; this is directionally aligned but slightly broader than the CDS‑specific point, so only partially confirmed."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "The European CDS market is structurally distinct from the US market in several ways.\n...\nThe thesis fits our European healthcare investment platform well.\n...\nThe category has been under-served by private equity to date. ... There is meaningful opportunity for a thoughtful financial sponsor to play a constructive consolidation role.",
+            "comment": "The memo confirms that the European CDS market is structurally distinct from the US and separately notes meaningful opportunity for a thoughtful financial sponsor. The draft links these two ideas causally (distinct \"in ways that favour\" a sponsor), which is a reasonable synthesis but not stated verbatim, so this is partially confirmed."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "We are not recommending any specific investment at this time. We are seeking endorsement of the thesis and authorisation to invest sourcing time accordingly.\n...\nPlan to return to the Committee within six months with either a specific transaction memo or a refreshed thesis based on what we have learned.",
+            "comment": "The memo explicitly states that no specific investment is being recommended at this time and only plans to return within six months with either a specific transaction memo or a refreshed thesis. The draft’s assertion that a specific potential investment is expected \"over the coming months\" implies a more definite expectation than the source, creating a conflict in tone and certainty."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The transaction will be funded with EUR 720 million of equity from Halden Group, EUR 110 million of co-investment from two of our long-standing LP relationships... The Esposito family will retain a 10% interest. Management will retain 6%. Halden Group and co-investors will hold 84% in aggregate.",
+            "comment": "EUR 720m equity from Halden Group and 84% aggregate stake are supported, but the source distinguishes between Halden Group and co-investors; it does not say that the full 84% corresponds solely to “our” EUR 720m."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The Company has grown... with operations across Italy, France, Spain, and Germany. The Company currently operates 184 retail stores...",
+            "comment": "Store count and countries match the source."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "...and a wholesale business that supplies independent design-led homeware retailers across Europe.",
+            "comment": "Description of the wholesale channel aligns closely with the source wording."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 7,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "...with payback on new store openings averaging 2.4 years.",
+            "comment": "The average payback period is explicitly given."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 7,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The unit economics of Casa Verde stores are exceptional. The Company's average four-wall store EBITDA margin is 22%...",
+            "comment": "While the definition is not spelled out, this is the standard meaning of four-wall EBITDA in the memo’s context; interpreting it as pre-head-office store EBITDA is consistent and not contradicted."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores...",
+            "comment": "Store count is explicitly given."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Our thesis rests on five pillars.\n...\nFifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar.",
+            "comment": "The memo frames Atelier 73 as the fifth pillar of the investment thesis and a potential third growth pillar. The draft’s wording as a “fifth value driver” is directionally consistent but uses different terminology; the concept is supported, the exact phrasing is not in the source."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 16,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "We have identified five principal risks.\n...\nThe principal risks are well-understood and we have built specific mitigations into our approach.",
+            "comment": "The memo states that principal risks are well-understood and mitigations are built in. The phrase “reflected in our planning” is an interpretive extension but consistent with the described mitigations and stress tests."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 17,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "International expansion (contributing approximately EUR 240 million of incremental revenue, primarily from the UK and Nordic launches),",
+            "comment": "Source confirms that international expansion, primarily from UK and Nordics, is a major driver, but does not explicitly label it “the largest single contributor to growth” versus other drivers; this is a reasonable but not verbatim characterisation."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 30,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Commercial diligence was conducted by Bain & Company over a ten-week period...\nFinancial and tax diligence was conducted by Deloitte.\nLegal diligence was conducted by Latham & Watkins.\nESG diligence was conducted by ERM.\n...\nThe Bain report (circulated separately) confirms market positioning, validates the international expansion thesis, and provides detailed competitive mapping.",
+            "comment": "The memo confirms that commercial, financial, legal, and ESG diligences were conducted. Only the Bain commercial report is explicitly said to be “circulated separately”; the statement generalises that all conclusions are circulated separately, which is not directly supported."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 31,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Casa Verde represents one of the most attractive opportunities... The Company combines a strong direct-to-consumer brand with category-leading market share... demonstrably strong unit economics, and a clear runway for international expansion that has been deliberately constrained under family ownership.",
+            "comment": "The memo supports strong/leading category position, strong unit economics, and clear international runway. The adjectives “exceptional” and “defensible” are evaluative but consistent with the tone; they are not literal quotes."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 32,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The management team is strong.\n...\nThe management team is strong, the value creation plan is well-defined, and the financing structure is appropriately conservative.\n...\nWe recommend approval of an investment of up to EUR 720 million of equity from Halden Group...",
+            "comment": "The memo clearly expresses strong endorsement of management and the value creation plan, implying high conviction. The specific phrase about “providing further updates as the hold progresses” is not in the source and reflects standard investor-letter framing rather than sourced content."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "We seek IC approval for an investment of EUR 195 million for a 72% controlling stake in Bloom Nutrition Holdings Limited (\"Bloom\" or \"the Company\"), a London-headquartered premium women's nutrition and wellness brand with a multi-channel European presence.\n\n...offering a focused range of evidence-based supplement products targeting four primary use cases: hormonal balance, energy and recovery, skin and hair health, and pregnancy and postnatal nutrition.",
+            "comment": "Headquarters (London), premium women's nutrition positioning, evidence-based supplements, and the four primary categories are all explicitly stated in the source."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 1,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "We seek IC approval for an investment of EUR 195 million for a 72% controlling stake in Bloom Nutrition Holdings Limited (\"Bloom\" or \"the Company\")... The transaction values Bloom at an enterprise value of EUR 310 million, representing 14.8x trailing twelve months EBITDA of EUR 21 million.",
+            "comment": "The EV of EUR 310m and the 72% stake are both correct, but the source does not phrase this as \"EUR 310m for a 72% stake\"; rather, EUR 195m is being invested for the 72% stake and the EV is a separate valuation metric. The wording risks implying price paid equals EV."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "Gross margin is 71.4%, reflecting the premium pricing and direct-to-consumer channel weight. EBITDA margin is 32.8%, which is exceptional for a brand at this growth stage...",
+            "comment": "Both margin figures match the source exactly."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.\n\n...all formulated in-house, manufactured under contract by GMP-certified European facilities...",
+            "comment": "The memo states a typical cadence of two launches per year, in-house formulation, and contract manufacturing via GMP-certified European facilities; the draft accurately synthesises these points."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "Premium women's health is a structurally attractive emerging category. Women's health has been historically under-served by both mainstream and premium consumer health brands. The category is growing at approximately 14% annually in Europe, with significantly faster growth in dedicated direct-to-consumer brands. Bloom is well-positioned within this category as a clinically-credible, premium-positioned, multi-product brand.\n\nBloom has built a defensible position in a category where most competitors are either single-product brands (limiting customer lifetime value) or insufficiently differentiated. The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.\n\nInternational expansion runway is significant. Bloom is strong in the UK and increasingly strong in DACH, but underdeveloped in France, Italy, and Spain. The brand has demonstrable cross-border appeal — DACH revenue has grown from zero in 2021 to EUR 18 million in 2024 — and we see clear opportunity to replicate this in the Romance language markets.\n\nWe underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR. The growth is sourced from continued UK growth (modest, reflecting maturation), continued strong DACH growth, accelerated entry into France and Spain, and selective US market entry in year three.\n\nThe base case generates a 2.9x MOIC and 24% IRR over a five-year hold.",
+            "comment": "The three pillars—structural attractiveness (14% growth), Bloom’s defensible position, and international expansion including France, Italy, Spain and selective US entry—are all supported. However, the phrase \"EUR-denominated category\" does not appear in the source and is an unnecessary embellishment; the source only specifies growth in Europe, not that the category is defined or quoted in euros."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR.\n...\nThe base case generates a 2.9x MOIC and 24% IRR over a five-year hold.",
+            "comment": "The starting and ending revenue figures, timing, and the resulting 2.9x MOIC and 24% IRR are all explicitly stated in the memo."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 12,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "Customer acquisition cost inflation in direct-to-consumer is the principal risk. Bloom's current 5.2-month payback period has lengthened from 3.8 months in 2022, reflecting both increased competition and broader paid social media cost inflation.\n\nBrand-driven categories are subject to founder-dependency risk. Sarah Whitmore in particular is closely associated with the brand through content, podcast appearances, and visible founder presence.\n\nRegulatory risk in women's health is real. Several of Bloom's products make claims around hormonal support and pregnancy wellness that are subject to evolving regulatory scrutiny across European markets. The Company has invested appropriately in regulatory affairs and has a clean track record, but the regulatory environment for nutrition claims is becoming more demanding.",
+            "comment": "All three principal risks—CAC inflation with the specific payback elongation, founder dependency on Sarah Whitmore, and tightening regulatory scrutiny across European markets—are directly supported."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "We have budgeted EUR 38 million of value-add capital expenditure across the hold period. The principal investments are EUR 14 million in modernising the Park Royal asset ... EUR 8 million in the San Fernando asset, EUR 6 million in the Schiphol asset, and the remainder spread across smaller modernisation works across the Portfolio.",
+            "comment": "The total value-add capex of EUR 38m and focus on modernising Park Royal, San Fernando, and Schiphol are supported. However, the source also allocates some capex to “smaller modernisation works across the Portfolio,” so describing the programme solely as modernising three older assets omits this element and is slightly incomplete."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "Rental growth of approximately 6% annually (a moderation from the recent 8% pace)... and exit at a 5.0% yield reflecting modest yield compression supported by continued strong investor demand for the asset class.",
+            "comment": "The base case explicitly assumes ongoing rental growth and modest yield compression as return drivers."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "Levered at 55% loan-to-value, the equity gross IRR is 16.8% and the MOIC is 2.1x.\n...\nSenior debt of EUR 337 million (55% LTV) has been pre-arranged",
+            "comment": "The source clearly states leverage at 55% LTV."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "Levered at 55% loan-to-value, the equity gross IRR is 16.8% and the MOIC is 2.1x.\nOur base case underwrites a five-year hold",
+            "comment": "The MOIC of 2.1x and the five‑year hold period are both explicitly stated in the source."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\").",
+            "comment": "The amount and stake size are supported, but the memos only show a recommendation, not that the investment has actually been made. The past-tense assertion of having invested is not supported."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.\n\nThe Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+            "comment": "The initial memo states \"over 380\" customers, but the updated memo explicitly corrects this to 412 currently. The draft’s use of 380 as the current figure conflicts with the updated source information."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 4,
+            "sourceId": "1",
+            "sourceLabel": "18b_synth_cross_source_pair_update",
+            "claimedSourceMissing": false,
+            "passage": "Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.\n\nAnnual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.",
+            "comment": "The initial memo supports EUR 38m ARR, but the confirmatory memo corrects this to EUR 35m on a cleaned basis and explicitly says the earlier figure was overstated. Using EUR 38m as the current ARR conflicts with the updated source."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 5,
+            "sourceId": "1",
+            "sourceLabel": "18b_synth_cross_source_pair_update",
+            "claimedSourceMissing": false,
+            "passage": "The Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people).\n\nThe Company employs 167 people as of 28 May, not 142 as stated in our initial memo.",
+            "comment": "The initial memo supports 142 employees, but the updated memo explicitly corrects this to 167 as of 28 May. Presenting 142 as the current figure conflicts with the latest source data."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction.\n\nFirst, the product is genuinely market-leading.\n\nSecond, the Nordic property management technology market remains structurally underpenetrated.\n\nThird, the founder team is exceptional.",
+            "comment": "The three pillars as summarised match the three conviction drivers in the investment thesis section."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "NSH was founded in 2013 by Erik Lindqvist (current CEO) and three co-founders.\n\nThe technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.",
+            "comment": "The source confirms that Lindqvist is CEO and Virtanen is CTO and part of the leadership, but does not explicitly state that they \"lead\" the founder team as a formulation. The essence is supported, but the exact leadership framing is inferred."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 7,
+            "sourceId": "1",
+            "sourceLabel": "18b_synth_cross_source_pair_update",
+            "claimedSourceMissing": false,
+            "passage": "Our base case envisages ARR growth from EUR 38 million today to approximately EUR 95 million over a five-year hold. This is supported by continued strong organic growth (we underwrite 22% ARR CAGR over the hold period), modest expansion into adjacent verticals (commercial property management), and selective add-on M&A.\n\nAnnual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million.",
+            "comment": "The structure of the base case and the EUR 95m target are supported, but the starting ARR of EUR 38m has been corrected to EUR 35m in the confirmatory memo. Using EUR 38m as the current base conflicts with the updated figures that the team has agreed to adopt."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 8,
+            "sourceId": "1",
+            "sourceLabel": "18b_synth_cross_source_pair_update",
+            "claimedSourceMissing": false,
+            "passage": "The base case generates a 2.8x MOIC and 23% IRR.\n\nThe combined effect of the above updates is a modest reduction in our underwritten returns. Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+            "comment": "The initial memo supports 2.8x / 23%, but the updated memo explicitly revises the base case to 2.6x / 21%. Presenting 2.8x / 23% as the current base case conflicts with the latest analysis."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity.\n\nThird, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.",
+            "comment": "The memo clearly supports a strong, defensible position (specialised vertical, high switching costs) and praises the founder and technical leadership, which reasonably underpins the idea of a credible operational team. The exact phrasing \"growing category\" is implied by the growth thesis but not stated verbatim, so the claim is mostly but not fully textually grounded."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "19_synth_annual_report",
+            "claimedSourceMissing": false,
+            "passage": "Across the remaining eight portfolio companies, performance has been broadly positive with two notable challenges.\n...\nContinental Plastics has had a more challenging 2025.\n...\nDrift Logistics had a mixed 2025.",
+            "comment": "The source describes broadly positive performance and highlights Continental Plastics and Drift Logistics as weaker spots. However, the exact framing of “two notable challenges” is interpretive rather than explicitly stated, so this is only partially confirmed."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "19_synth_annual_report",
+            "claimedSourceMissing": false,
+            "passage": "1. Helvetia Precision Components AG\nInvestment date: June 2025 Sector: Precision manufacturing Total Fund equity: EUR 480 million\nStatus: Active, year 1 of hold\n...\nSix months post-close, the Company is tracking modestly ahead of our underwriting on both revenue and EBITDA",
+            "comment": "The acquisition date and the six‑months‑post‑close timing are explicitly supported. The phrase “six months into the hold” is consistent with “six months post-close” but not verbatim; overall the substance is supported, hence partially confirmed."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "19_synth_annual_report",
+            "claimedSourceMissing": false,
+            "passage": "2. Lumen Specialty Chemicals GmbH\nInvestment date: October 2025...\nThe integration into the Fund's portfolio is proceeding well. The 100-day plan is on track, with the new financial reporting infrastructure substantially in place and the procurement initiative beginning to deliver early wins.",
+            "comment": "The source confirms both the recent acquisition (October 2025) and that the 100‑day plan is on track."
+          }
+        ]
+      },
+      "numbers": {
+        "unitsChecked": 565,
+        "unitsWithheld": 8,
+        "claimsLosingEvidence": 2,
+        "commentsWithheld": 8,
+        "strikes": [
+          {
+            "fixtureId": "01",
+            "statementIndex": 6,
+            "kind": "comment",
+            "key": "80|",
+            "raw": "80",
+            "sentence": "However, it does not literally say acquisition has been \"almost entirely organic\"; that is a fair synthesis of the 80–90% non‑paid share but still interpretive."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 6,
+            "kind": "comment",
+            "key": "90|percent",
+            "raw": "90%",
+            "sentence": "However, it does not literally say acquisition has been \"almost entirely organic\"; that is a fair synthesis of the 80–90% non‑paid share but still interpretive."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 9,
+            "kind": "comment",
+            "key": "60|",
+            "raw": "60",
+            "sentence": "Employee count, location, talent quality, and the 60–70% cost comparison are all explicitly stated."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "90|percent",
+            "raw": "90%",
+            "sentence": "The phrase “almost entirely organic” for customer acquisition is directionally correct but somewhat absolute; you might anchor it more explicitly in the numbers (“around 85–90% of sign‑ups come from non‑paid channels”)."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "18.5|percent",
+            "raw": "18.5 percent",
+            "sentence": "\"representing a compound annual growth rate of 18.6 percent\" or \"approximately 18.5 percent\" rather than rounding up to 19 percent, to avoid any perception of embellishment."
+          },
+          {
+            "fixtureId": "12",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "40|",
+            "raw": "40",
+            "sentence": "Remove or substantiate the detailed financial metrics (international revenue moving from one-fifth to over 40 per cent, nearly threefold revenue growth, EBITDA margins from 11 to 18 per cent)."
+          },
+          {
+            "fixtureId": "12",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "11|",
+            "raw": "11",
+            "sentence": "Remove or substantiate the detailed financial metrics (international revenue moving from one-fifth to over 40 per cent, nearly threefold revenue growth, EBITDA margins from 11 to 18 per cent)."
+          },
+          {
+            "fixtureId": "13",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "300|",
+            "raw": "300",
+            "sentence": "“approximately 300+ people”), but avoid stating 320 as an unqualified fact without reconciling the discrepancy."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": null,
+            "kind": "strength",
+            "key": "1|",
+            "raw": "1",
+            "sentence": "The narrative flows logically from company description to thesis to base case and conclusion, making the memo easy to read in one pass."
+          },
+          {
+            "fixtureId": "20",
+            "statementIndex": null,
+            "kind": "assessment",
+            "key": "1|",
+            "raw": "1",
+            "sentence": "From a source-backing perspective, the draft is very strong: all factual elements that are present in the source are accurately reflected, with only one substantive addition (pipeline preparation and Q2 2026 capital calls) that is not supported by the document."
+          }
+        ]
+      },
+      "names": {
+        "unitsChecked": 565,
+        "unitsWithheld": 18,
+        "claimsLosingEvidence": 13,
+        "commentsWithheld": 18,
+        "strikes": [
+          {
+            "fixtureId": "01",
+            "statementIndex": 2,
+            "kind": "comment",
+            "name": "The MRR",
+            "sentence": "The MRR figures and the >150% year-on-year growth are directly supported by the source."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": null,
+            "kind": "assessment",
+            "name": "For Financial Times",
+            "sentence": "For Financial Times standards, you could sharpen the distinction between sourced fact and editorial judgment by slightly tempering or explicitly attributing superlatives, but overall the piece reads as a clear, well‑supported investment summary."
+          },
+          {
+            "fixtureId": "02",
+            "statementIndex": 0,
+            "kind": "comment",
+            "name": "The EV",
+            "sentence": "The EV of USD 4 billion is directly stated in the source."
+          },
+          {
+            "fixtureId": "02",
+            "statementIndex": null,
+            "kind": "assessment",
+            "name": "Financial Times",
+            "sentence": "Overall text quality and readability are high, with clear, economical sentences and a coherent structure that would meet Financial Times standards with modest tightening of precision around timeframes and characterisations."
+          },
+          {
+            "fixtureId": "03",
+            "statementIndex": 8,
+            "kind": "comment",
+            "name": "Given Partners Group",
+            "sentence": "The source states that the Infrastructure business has USD 27 billion in overall AUM but does not explicitly use the word \"globally.\" Given Partners Group is a global firm, the inference is reasonable but not directly stated, so the geographic qualifier is not fully supported."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": 8,
+            "kind": "comment",
+            "name": "Describing ESG",
+            "sentence": "Describing ESG performance as continuing to improve is consistent with these statements."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "assessment",
+            "name": "Cirrus CAGR",
+            "sentence": "Nearly all statements are directly supported by the annual report excerpt, with only a minor rounding of the Cirrus CAGR figure."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "improvement",
+            "name": "Cirrus CAGR",
+            "sentence": "Adjust the Cirrus CAGR description to match the source more precisely, e.g."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 6,
+            "kind": "comment",
+            "name": "The CAGR",
+            "sentence": "The CAGR is rounded to 17% in the draft versus 17.1% in the source, so the claim is mostly but not exactly supported."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 10,
+            "kind": "comment",
+            "name": "The EUR",
+            "sentence": "The EUR 3 million figure and the 12‑month enhanced quality monitoring are confirmed."
+          },
+          {
+            "fixtureId": "10",
+            "statementIndex": null,
+            "kind": "strength",
+            "name": "Dr Annika Brandt",
+            "sentence": "Leadership continuity is correctly represented, with Dr Annika Brandt remaining in charge, consistent with the source."
+          },
+          {
+            "fixtureId": "11",
+            "statementIndex": 13,
+            "kind": "comment",
+            "name": "Fund V’s August",
+            "sentence": "This sentence is effectively identical to the source, confirming both the three remaining companies and Fund V’s August 2025 hard-cap close."
+          },
+          {
+            "fixtureId": "12",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "No EBITDA",
+            "sentence": "No EBITDA margin figures or changes are mentioned in the source."
+          },
+          {
+            "fixtureId": "13",
+            "statementIndex": 12,
+            "kind": "comment",
+            "name": "The ARR",
+            "sentence": "The ARR starting point, target, time frame, and 19% CAGR are all explicitly supported."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 1,
+            "kind": "comment",
+            "name": "The EV",
+            "sentence": "The EV of EUR 310m and the 72% stake are both correct, but the source does not phrase this as \"EUR 310m for a 72% stake\"; rather, EUR 195m is being invested for the 72% stake and the EV is a separate valuation metric."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "Using EUR",
+            "sentence": "Using EUR 38m as the current ARR conflicts with the updated source."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 7,
+            "kind": "comment",
+            "name": "Using EUR",
+            "sentence": "Using EUR 38m as the current base conflicts with the updated figures that the team has agreed to adopt."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 2,
+            "kind": "comment",
+            "name": "The MOIC",
+            "sentence": "The MOIC and IRR figures match the source exactly."
+          }
+        ]
+      }
+    },
+    "draft-2": {
+      "quotes": {
+        "passages": 308,
+        "exact": 187,
+        "normalised": 53,
+        "notFound": 68,
+        "nullPassage": 13,
+        "claimsLosingEvidence": 68,
+        "commentsWithheld": 68,
+        "strikes": [
+          {
+            "fixtureId": "01",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Shopify was founded in 2007 by two Ruby on Rails core developers... Shopify�s 24 employees are located in Ottawa, Canada.\n...\nWe seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.",
+            "comment": "Source states Shopify was founded in 2007, is located in Ottawa, Canada, and provides e‑commerce software to SMBs. That supports it being a Canadian e‑commerce platform serving small and medium businesses founded in 2007 in Ottawa."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Yet sophisticated features are also available without complicating the overall user experience. Shopify accomplishes this by making available an �App Store�.\n...\nThis approach is a big competitive differentiator for Shopify.\n...\nRoughly two-thirds of Shopify�s customers utilize at least one app from their �App Store�.",
+            "comment": "The memo calls the App Store a “big competitive differentiator” and notes that roughly two‑thirds of customers use at least one app. It does not use the term “strategic moat,” which is an interpretive upgrade, but the underlying facts about differentiation and usage are supported."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 5,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store. A typical customer signs up using their credit card and is up and running in a few hours with no long-term contract.\n...\nThe product is simple enough so that anyone can set up a fully functioning online store in a matter of hours.",
+            "comment": "The memo explicitly states that anyone can set up a fully functioning online store in a matter of hours, matching the claim about non‑technical users and timing."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Roughly 65�70% of customers sign-up via word-of-mouth. Roughly 20% of customers sign-up via referrals from web design firms.\n...\nFinally, roughly 10�15% of customers sign-up via paid channels, which is largely keyword marketing and the occasional contest program.\n...\nWe believe that Shopify has under-invested in marketing in a big way and that with a VP of Marketing and a few experienced people in place, the company can accelerate growth.",
+            "comment": "The 10–15% figure for paid channels is directly supported, and the memo notes under‑investment in marketing. However, it does not literally say acquisition has been “almost entirely organic”; that is a reasonable synthesis of the channel mix but still interpretive."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "Despite this, they are able to acquire a customer for between $175�225 and can pay back that spend in 7�9 months on a churn-adjusted basis.\n...\nWe are excited by what we see as a great product that has struck a chord with customers.\n...\nThis approach is a big competitive differentiator for Shopify.\n...\nFurther, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.",
+            "comment": "The memo provides evidence of strong unit economics (CAC and payback), a competitive differentiator via the App Store, and significant opportunity to accelerate growth. However, it does not explicitly label these as “exceptional unit economics” or a “defensible competitive position”; those are evaluative characterisations built on the data."
+          },
+          {
+            "fixtureId": "01",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "01_bvp_shopify_memo",
+            "claimedSourceMissing": false,
+            "passage": "We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify...\n...\nWe recommend this investment.",
+            "comment": "The memo explicitly states that they seek approval for the investment and concludes with “We recommend this investment,” which aligns with recommending approval."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "Average sessions per active user per week is approximately 6 — also exceptional. ... Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.",
+            "comment": "The memo provides both the ~6 sessions per week and the 68% repeat visit rate after 30 days; this supports the claim. The draft’s wording \"remain active\" is consistent with \"repeat visit rate.\""
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "Average session length is 14 minutes — exceptional for a social product. ... Average sessions per active user per week is approximately 6 — also exceptional. ... Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.",
+            "comment": "The memo repeatedly characterises these metrics as exceptional and at the high end of benchmarks, supporting the evaluative statement."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "The user demographic is unusual. ... This is a desirable advertising audience.\n\nWe expect monetisation to come eventually from native advertising — particularly from advertisers in categories such as home decor, fashion, and weddings that align naturally with user behaviour — but we have not underwritten any specific revenue projections.",
+            "comment": "The memo supports that this demographic is a desirable advertising audience and that native advertising in home decor, fashion, and weddings is the expected monetisation path. However, it does not explicitly describe the audience as \"underserved\" or explicitly call the monetisation path \"credible\"; those are reasonable inferences but not directly stated."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 13,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "Pinterest is a young company. The product has been in market for roughly 16 months. The team is small — six full-time employees plus the two founders.\n...\nCurrent monthly active users are approximately 1.5 million, growing rapidly.",
+            "comment": "The memo supports that there are six full-time employees plus two founders (i.e., 8 including founders) and approximately 1.5 million monthly active users. The draft’s wording \"currently has 8 employees, including the founders\" is consistent, but the memo does not explicitly use the word \"employees\" for founders; that part is a mild extrapolation."
+          },
+          {
+            "fixtureId": "04",
+            "statementIndex": 20,
+            "sourceId": "0",
+            "sourceLabel": "04_synth_vc_pinterest_style_memo",
+            "claimedSourceMissing": false,
+            "passage": "First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.\n...\nThird, the founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.\n...\nDefensibility is uncertain.",
+            "comment": "The memo supports exceptional engagement and high conviction in the founders. However, it explicitly states that defensibility is uncertain, not that the company has a defensible consumer position. That part of the claim is not supported and is somewhat at odds with the source."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "06_synth_listed_pe_report_excerpt",
+            "claimedSourceMissing": false,
+            "passage": "We have introduced several operational changes during 2025, including the recruitment of a new Chief Commercial Officer and the appointment of a new Chairman with deep Iberian consumer experience. We are also implementing a structured cost reduction programme targeting approximately EUR 5 million of annualised savings. We expect these changes to begin contributing meaningfully in 2026.\n...\nWe continue to view the underlying business as fundamentally sound and well-positioned for recovery as the operational programme takes effect and as the Iberian consumer environment improves.",
+            "comment": "The source confirms both the specific operational changes, the expected timing of their contribution in 2026, and the view that the underlying business is fundamentally sound."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "06_synth_listed_pe_report_excerpt",
+            "claimedSourceMissing": false,
+            "passage": "Northstar Partners' environmental, social and governance (\"ESG\") programme has continued to mature during 2025. Eighty-five percent of our portfolio companies now report Scope 1 and Scope 2 emissions on a comparable basis, up from 72 percent in 2024.\n...\nFemale representation in senior management across the portfolio reached 31 percent at the end of 2025, up from 26 percent at the end of 2024.",
+            "comment": "The source describes the ESG programme as continuing to mature and provides improving metrics on emissions reporting and gender representation, which supports the general statement that ESG performance continues to improve."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG (\"HPC\" or \"the Company\")… Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.\n\nThe Schiller family will retain a 15% economic interest. Management will hold the remaining 7%.",
+            "comment": "The 78% stake and the residual 22% split between the Schiller family and management are supported. However, the memo says Halden Group seeks approval to invest up to EUR 480m, not that it has already invested this amount. The draft’s past-tense certainty overstates the status, so the claim is only partially confirmed."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "Our base case underwrites a five-year hold with the following value drivers.\n\nThe base case generates a 2.4x gross MOIC and a 19% gross IRR.",
+            "comment": "The memo clearly sets out a five-year hold and specific value drivers that underpin attractive returns (2.4x MOIC, 19% IRR). However, it does not explicitly label them as “four pillars,” nor does it use that exact framing. The substance is supported, but the specific ‘four pillars’ language is interpretive."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "Revenue growth of 9% CAGR, taking 2024 revenue of EUR 587 million to approximately EUR 905 million by 2029. This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A.\n\nSecond, the end markets HPC serves are structurally attractive. The orthopaedic implants market is forecast to grow at 5–6% annually through 2030, driven by ageing demographics in Europe and the United States. Aerospace component demand is recovering strongly post-COVID, with Airbus and Boeing collectively targeting build-rate increases of approximately 40% over the next five years.",
+            "comment": "The 9% CAGR over the hold and the structural attractiveness of medical implants and aerospace build-rate increases are supported. However, the memo attributes only 5% of the 9% CAGR to end-market growth, with 2% from share gains and 2% from M&A. The draft implies that end-market exposure alone supports the full 9%, which overstates that linkage. Hence partially_confirmed."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 14,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "Fourth, we see meaningful M&A opportunity. The European precision machining sector remains highly fragmented… We have already identified five actionable targets in the EUR 30–80 million enterprise value range that would be accretive on both growth and margin grounds.\n\nUnder our ownership we expect to complete two to three add-on acquisitions over the holding period.\n\nThe transaction will be funded with EUR 480 million of equity from Halden Group, EUR 130 million of equity from co-investors (currently anticipated to include two existing LP relationships), and EUR 540 million of senior and second-lien debt.",
+            "comment": "The expectation of completing two to three add-ons and the existence of an identified pipeline of targets are supported. However, the memo does not state that funding for these add-ons has already been specifically committed; it only details funding for the initial acquisition. Thus, the ‘committed funding’ element is not supported."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 15,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "We have identified four principal risks.\n\nThe semiconductor exposure introduces cyclicality that the medical and aerospace segments do not.\n\nCustomer concentration is a watch item. HPC's largest customer, a global orthopaedic implants manufacturer, accounted for 18% of revenue in 2024.\n\nForeign exchange exposure is significant.\n\nFounder transition risk is moderate.\n\nWe expect to hedge transaction exposure systematically post-close and have factored a normalised CHF/EUR rate of 0.98 into our base case.\n\nWe have completed extensive reference checks. Andreas Schiller has committed to remain on the board for the first three years post-close and will rollover approximately 8% of his proceeds into the transaction.",
+            "comment": "The four principal risks listed match the memo exactly, and the document discusses mitigants such as FX hedging and the structured founder transition. However, the broad assertion that each risk is ‘reflected in our planning, with specific mitigations in place’ is more general than the explicit statements in the memo, which do not systematically list mitigations for every risk. Hence partially_confirmed."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 16,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "We are attracted to HPC for four reasons.\n\nFirst, the Company occupies an enviable competitive position.\n\nSecond, the end markets HPC serves are structurally attractive.\n\nThird, there is a clear margin expansion path.\n\nFourth, we see meaningful M&A opportunity.",
+            "comment": "This summary accurately synthesises the four investment thesis points in the memo: competitive position, structurally attractive end markets, margin expansion (operational improvement), and M&A opportunity (roadmap)."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 17,
+            "sourceId": "0",
+            "sourceLabel": "08_synth_industrial_buyout_memo",
+            "claimedSourceMissing": false,
+            "passage": "HPC represents an attractive opportunity to acquire a category leader in a structurally growing market with a clear operational improvement plan and proven through-cycle resilience. The base case returns of 2.4x / 19% are in line with our private equity portfolio benchmarks, and we see meaningful upside optionality from M&A and end-market acceleration. The risks are well-understood and manageable. We recommend approval.\n\nPetra Köhler… Reference checks across customers, suppliers, and former colleagues have been uniformly positive.",
+            "comment": "The memo clearly conveys confidence in both the opportunity and the management team, and it recommends approval. However, it does not mention providing updates over the hold period; that element is specific to the investor-letter format and not grounded in the source. Thus, the confidence aspect is supported, but the updates language is not."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "09_synth_portfolio_update_letter",
+            "claimedSourceMissing": false,
+            "passage": "The medical implants segment grew 14%, well ahead of expectations, driven by a 22% increase from our largest orthopaedic customer following their successful US product launch.\n\nEBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX...",
+            "comment": "The source confirms strong growth in medical implants and that strength in medical contributed to EBITDA outperformance, with a 22% increase from the largest orthopaedic customer. However, it also cites procurement wins and FX as additional key drivers. Calling medical implants ‘the principal driver of the upside’ goes beyond the source, which does not rank the drivers."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "09_synth_portfolio_update_letter",
+            "claimedSourceMissing": false,
+            "passage": "The leadership transition has gone better than expected.",
+            "comment": "The source states the transition has gone ‘better than expected’, which comfortably supports describing it as having proceeded smoothly."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "09_synth_portfolio_update_letter",
+            "claimedSourceMissing": false,
+            "passage": "Klaus Wenger joined as Chief Procurement Officer in September, having previously held the same role at Belimo. He brings strong category management discipline that the Company has historically lacked.\n\nEBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX...",
+            "comment": "Both the timing of his joining and the savings versus target are directly supported by the source."
+          },
+          {
+            "fixtureId": "11",
+            "statementIndex": 5,
+            "sourceId": "0",
+            "sourceLabel": "11_synth_investor_letter_exit",
+            "claimedSourceMissing": false,
+            "passage": "International expansion. At entry, the Company generated SEK 3.4 billion (81%) of revenue from the Nordic region. ... By the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue.",
+            "comment": "If 81% of revenue was Nordic at entry, 19% was non-Nordic; the source then states international revenue was 42% at exit, matching the claim."
+          },
+          {
+            "fixtureId": "11",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "11_synth_investor_letter_exit",
+            "claimedSourceMissing": false,
+            "passage": "At the time of our investment, the Company generated revenue of SEK 4.2 billion and EBITDA of SEK 480 million, representing an EBITDA margin of 11.4%.\n...\nBy the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue. Total Company revenue at exit was SEK 11.4 billion.\n...\nCombined with the modularity programme, this drove EBITDA margins from 11.4% at entry to 18.2% at exit. Absolute EBITDA grew from SEK 480 million to SEK 2.08 billion over the hold.",
+            "comment": "All revenue, EBITDA and margin figures at entry and exit are explicitly provided in the source and match the claim."
+          },
+          {
+            "fixtureId": "11",
+            "statementIndex": 13,
+            "sourceId": "0",
+            "sourceLabel": "11_synth_investor_letter_exit",
+            "claimedSourceMissing": false,
+            "passage": "With three remaining portfolio companies and approximately SEK 2.1 billion of unrealised value, Fund IV is now solidly tracking to deliver above the 2.5x net MOIC target communicated at fund close.\n...\nOur focus now turns to the three remaining portfolio companies and to deployment of Fund V, which closed in August 2025 at hard cap.",
+            "comment": "The source confirms there are three remaining portfolio companies and that Fund V closed in August 2025 at hard cap, and uses almost identical wording on focus."
+          },
+          {
+            "fixtureId": "13",
+            "statementIndex": 7,
+            "sourceId": "0",
+            "sourceLabel": "13_synth_internal_inconsistency_memo",
+            "claimedSourceMissing": false,
+            "passage": "CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore.\n...\nThe total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.",
+            "comment": "The memo contains an internal inconsistency: one section states 320 employees across the listed offices, while another states a total team of 285 people. The draft selects one of these figures (320) without acknowledging the discrepancy. Because the source itself is conflicting on headcount, the claim cannot be treated as cleanly supported."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 1,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "Clinical decision support software helps clinicians make better, faster, more consistent treatment decisions at the point of care.\n...\nWe believe the European market is at an inflection point. Three forces are aligning.",
+            "comment": "The definition of CDS and the assertion that the European market is at an inflection point driven by three forces are both explicitly stated in the source."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway.\n...\nFirst, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances.",
+            "comment": "The memo explicitly notes that incumbents have built up significant clearances and that MDR has created higher barriers to entry for serious clinical software, which together support this claim."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "Reimbursement codes for digital health products have improved meaningfully across the major European markets over the past three years.\n...\nSecond, payer willingness to reimburse CDS software has improved markedly.",
+            "comment": "The memo directly states that reimbursement codes have improved meaningfully across major European markets and that payer willingness to reimburse CDS software has improved markedly."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "The European CDS market is structurally distinct from the US market in several ways. European healthcare is dominated by national payers, which gives CDS products a clearer route to scale once adopted by a national authority.\n...\nThe thesis fits our European healthcare investment platform well.\n...\nThe category has been under-served by private equity to date. ... There is meaningful opportunity for a thoughtful financial sponsor to play a constructive consolidation role.",
+            "comment": "The memo confirms that the European CDS market is structurally distinct from the US and separately notes meaningful opportunity for a thoughtful financial sponsor. It does not explicitly state that the structural distinctiveness itself is what favours such a sponsor, though that linkage is implied. Hence partially confirmed."
+          },
+          {
+            "fixtureId": "14",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "14_synth_thesis_only_memo",
+            "claimedSourceMissing": false,
+            "passage": "We are not recommending any specific investment at this time. We are seeking endorsement of the thesis and authorisation to invest sourcing time accordingly.\n...\nPlan to return to the Committee within six months with either a specific transaction memo or a refreshed thesis based on what we have learned.",
+            "comment": "The memo explicitly says they are not recommending any specific investment now and only plan to return within six months with either a specific transaction memo or a refreshed thesis. It does not state an expectation that a specific potential investment will be brought in the coming months; that is more definite than the source, which keeps both outcomes open. This conflicts with the draft’s more committed language."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The transaction will be funded with EUR 720 million of equity from Halden Group, EUR 110 million of co-investment from two of our long-standing LP relationships... The Esposito family will retain a 10% interest. Management will retain 6%. Halden Group and co-investors will hold 84% in aggregate.",
+            "comment": "The EUR 720m equity figure is supported, and the total equity stake of Halden plus co-investors is 84%. However, the draft implies a single investor holding 84%, whereas the source splits this between Halden Group and co-investors."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The Company has grown... with operations across Italy, France, Spain, and Germany. The Company currently operates 184 retail stores...",
+            "comment": "The store count and countries match the source."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "...and a wholesale business that supplies independent design-led homeware retailers across Europe.",
+            "comment": "The description of the wholesale channel matches the source language closely."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Casa Verde is a category leader in a structurally attractive sector. ... The Company holds an estimated 4.1% share of the addressable European premium market — a meaningful position in a fragmented category where the next largest specialist competitor holds roughly 2.7%.",
+            "comment": "The source explicitly calls Casa Verde a category leader and provides share data to support that."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 7,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Second, the unit economics of Casa Verde stores are exceptional. The Company's average four-wall store EBITDA margin is 22%... This is materially better than premium homeware peers and reflects strong product margins...",
+            "comment": "While the memo does not define the term in words, in this context \"four-wall\" is standard industry terminology for store-level EBITDA before central costs. The explanatory parenthetical in the draft is consistent with that standard meaning and not contradicted by the source."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The next logical markets are the UK, the Netherlands, and the Nordic region, none of which have been entered. Our commercial diligence suggests substantial unmet demand...",
+            "comment": "The memo identifies the UK, Netherlands and Nordics as the next logical markets and describes a clear expansion playbook, supporting the claim of a planned, well-defined runway."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores...",
+            "comment": "The store count for Atelier 73 matches the source."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Our thesis rests on five pillars.\n\nFirst, Casa Verde is a category leader...\nSecond, the unit economics...\nThird, there is a clear and well-defined international expansion runway.\nFourth, there is meaningful product-side opportunity.\nFifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar.",
+            "comment": "The memo indeed treats Atelier 73 as one of five thesis pillars, but it labels it the fifth pillar, not a separate \"fifth value driver\" in addition to four pillars. The idea that it is a distinct driver is right; the wording that it is \"alongside the four pillars above\" is slightly misleading because Atelier 73 is itself one of those pillars."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 16,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "We have identified five principal risks.\n...\nWe have mitigated this risk through detailed commercial diligence... Even so, this risk warrants close governance attention...\nWe have stress-tested our model... and the returns remain attractive.\n...\nWe have stress-tested our model for the scenario in which 10% of leases are renegotiated upward by 20% at the next break, and the impact on returns is modest.\n...\nWe have reviewed each of these relationships in diligence and they are stable, but we note the dependency.",
+            "comment": "The memo explicitly identifies principal risks and describes mitigations and stress-testing, supporting the characterisation that they are understood and built into planning."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 17,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The principal drivers are international expansion (contributing approximately EUR 240 million of incremental revenue, primarily from the UK and Nordic launches)...",
+            "comment": "The memo states that international expansion is a principal driver and that this is primarily from the UK and Nordics, but it does not explicitly say this is the single largest contributor to overall growth versus other drivers. The wording \"largest single contributor\" slightly overstates what is in the source."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 19,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Homeware is a discretionary purchase, and the European consumer environment in 2025 is uneven. ... A broader European consumer downturn would put pressure on the plan; we are comfortable that the Company's premium positioning and resilient unit economics give meaningful downside protection.",
+            "comment": "The memo explicitly notes homeware as discretionary and links performance to the consumer environment, supporting demand sensitivity to macro conditions."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 22,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Marco Esposito, son of the founder, has served as Chairman and CEO since 2008. He will step back from day-to-day responsibilities post-close but will remain Chairman for at least three years. The current Chief Operating Officer, Elena Conti, will assume the CEO role. Elena has been with the Company for 17 years...",
+            "comment": "The leadership transition, Elena’s current role, and her 17-year tenure are all explicitly stated."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 30,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Commercial diligence was conducted by Bain & Company over a ten-week period... Financial and tax diligence was conducted by Deloitte. ... Legal diligence was conducted by Latham & Watkins. ... ESG diligence was conducted by ERM. ... The Bain report (circulated separately) confirms market positioning...",
+            "comment": "The memo confirms that commercial, financial/tax, legal, and ESG diligences were conducted, supporting the claim of comprehensive diligence. However, it only explicitly notes the Bain commercial report as circulated separately; it does not state that all diligence conclusions are circulated separately."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 31,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "Casa Verde represents one of the most attractive opportunities our European Consumer team has reviewed... The Company combines a strong direct-to-consumer brand with category-leading market share... and a clear runway for international expansion... Second, the unit economics of Casa Verde stores are exceptional.",
+            "comment": "The memo explicitly refers to exceptional unit economics, category leadership, and a clear international expansion runway, supporting this summary characterisation."
+          },
+          {
+            "fixtureId": "15",
+            "statementIndex": 32,
+            "sourceId": "0",
+            "sourceLabel": "15_synth_very_long_memo",
+            "claimedSourceMissing": false,
+            "passage": "The management team is strong. ... The management team is strong, the value creation plan is well-defined, and the financing structure is appropriately conservative.\n...\nWe recommend approval of an investment of up to EUR 720 million of equity from Halden Group...",
+            "comment": "The memo clearly expresses strong confidence in management and the value creation plan, but it does not mention providing further updates during the hold; that forward-looking investor-relations phrasing is an addition."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "We seek IC approval for an investment of EUR 195 million for a 72% controlling stake in Bloom Nutrition Holdings Limited (\"Bloom\" or \"the Company\"), a London-headquartered premium women's nutrition and wellness brand with a multi-channel European presence.\n\nBloom was founded in 2018 by Sarah Whitmore and Dr. Lara Bennett, both Cambridge-trained scientists. The Company operates in the premium women's health and nutrition category, offering a focused range of evidence-based supplement products targeting four primary use cases: hormonal balance, energy and recovery, skin and hair health, and pregnancy and postnatal nutrition.",
+            "comment": "Headquarters, premium women's nutrition positioning, evidence-based supplements, and the four primary categories are all explicitly supported by the source."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "Bloom has built a defensible position in a category where most competitors are either single-product brands (limiting customer lifetime value) or insufficiently differentiated. The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.\n\nThe product range comprises 24 SKUs, all formulated in-house, manufactured under contract by GMP-certified European facilities, and sold direct-to-consumer through Bloom's own website and Amazon, alongside a select wholesale presence in premium retailers including Selfridges, Le Bon Marché, KaDeWe, and Sephora.",
+            "comment": "The cadence of two launches per year, in-house formulation, and use of GMP-certified European contract manufacturers are all clearly supported."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "Three pillars support our investment thesis.\n\nPremium women's health is a structurally attractive emerging category. Women's health has been historically under-served by both mainstream and premium consumer health brands. The category is growing at approximately 14% annually in Europe, with significantly faster growth in dedicated direct-to-consumer brands. Bloom is well-positioned within this category as a clinically-credible, premium-positioned, multi-product brand.\n\nInternational expansion runway is significant. Bloom is strong in the UK and increasingly strong in DACH, but underdeveloped in France, Italy, and Spain. The brand has demonstrable cross-border appeal — DACH revenue has grown from zero in 2021 to EUR 18 million in 2024 — and we see clear opportunity to replicate this in the Romance language markets.\n\nWe underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR. The growth is sourced from continued UK growth (modest, reflecting maturation), continued strong DACH growth, accelerated entry into France and Spain, and selective US market entry in year three.\n\nThe base case generates a 2.9x MOIC and 24% IRR over a five-year hold.",
+            "comment": "Structural attractiveness, ~14% category growth, Bloom’s defensible positioning, and international runway in France, Italy, Spain and selective US entry are all supported. However, the source does not describe the category as \"EUR-denominated\"; that qualifier is introduced in the draft."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 11,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR.\n...\nThe base case generates a 2.9x MOIC and 24% IRR over a five-year hold.",
+            "comment": "The revenue trajectory, MOIC, and IRR figures all match the source; the draft omits the 2025 start year but does not contradict it."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 12,
+            "sourceId": "0",
+            "sourceLabel": "16_synth_healthcare_consumer",
+            "claimedSourceMissing": false,
+            "passage": "Customer acquisition cost inflation in direct-to-consumer is the principal risk. Bloom's current 5.2-month payback period has lengthened from 3.8 months in 2022, reflecting both increased competition and broader paid social media cost inflation.\n\nBrand-driven categories are subject to founder-dependency risk. Sarah Whitmore in particular is closely associated with the brand through content, podcast appearances, and visible founder presence.\n\nRegulatory risk in women's health is real. Several of Bloom's products make claims around hormonal support and pregnancy wellness that are subject to evolving regulatory scrutiny across European markets. The Company has invested appropriately in regulatory affairs and has a clean track record, but the regulatory environment for nutrition claims is becoming more demanding.",
+            "comment": "All three principal risks, the payback elongation from 3.8 to 5.2 months, founder dependency on Sarah, and tightening regulation across Europe are directly supported."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "We have budgeted EUR 38 million of value-add capital expenditure across the hold period. The principal investments are EUR 14 million in modernising the Park Royal asset ... EUR 8 million in the San Fernando asset, EUR 6 million in the Schiphol asset, and the remainder spread across smaller modernisation works across the Portfolio.",
+            "comment": "The total EUR 38m value-add capex and focus on modernising Park Royal, San Fernando, and Schiphol are supported. However, the source also allocates some capex to smaller works across the portfolio, so describing the programme solely as modernising three older assets is incomplete."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "Rental growth of approximately 6% annually (a moderation from the recent 8% pace)... and exit at a 5.0% yield reflecting modest yield compression supported by continued strong investor demand for the asset class.",
+            "comment": "The base case explicitly assumes ongoing rental growth and modest yield compression from 5.4% to 5.0%."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "Levered at 55% loan-to-value, the equity gross IRR is 16.8% and the MOIC is 2.1x.\n...\nSenior debt of EUR 337 million (55% LTV) has been pre-arranged",
+            "comment": "The memorandum clearly states 55% LTV for the leverage."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 10,
+            "sourceId": "0",
+            "sourceLabel": "17_synth_real_estate_logistics",
+            "claimedSourceMissing": false,
+            "passage": "Our base case underwrites a five-year hold with the following return drivers. ... Levered at 55% loan-to-value, the equity gross IRR is 16.8%",
+            "comment": "The base case is explicitly a five‑year hold and the levered equity gross IRR is 16.8%."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB (\"NSH\" or \"the Company\").",
+            "comment": "The amount and percentage are supported, but the source only shows a recommendation, not that the investment has been made. The past-tense assertion of completion is not supported."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.\n\nThe Company currently serves 412 property management companies, not 380 as stated in our initial memo.",
+            "comment": "The initial memo cites ‘over 380’ customers, but the confirmatory memo updates this to 412 and explicitly corrects the 380 figure. Using 380 as the current figure conflicts with the latest source."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 4,
+            "sourceId": "1",
+            "sourceLabel": "18b_synth_cross_source_pair_update",
+            "claimedSourceMissing": false,
+            "passage": "Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.\n\nAnnual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.",
+            "comment": "The initial memo supports EUR 38m, but the confirmatory memo corrects this to EUR 35m on a cleaned basis and explicitly states the earlier figure was overstated. Presenting EUR 38m as the current ARR without qualification conflicts with the updated source."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 5,
+            "sourceId": "1",
+            "sourceLabel": "18b_synth_cross_source_pair_update",
+            "claimedSourceMissing": false,
+            "passage": "The Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people).\n\nThe Company employs 167 people as of 28 May, not 142 as stated in our initial memo.",
+            "comment": "142 employees is from the initial memo, but the confirmatory memo updates this to 167 and explicitly corrects the 142 figure. Using 142 as the current number conflicts with the latest information."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction.\n\nFirst, the product is genuinely market-leading.\n\nSecond, the Nordic property management technology market remains structurally underpenetrated.\n\nThird, the founder team is exceptional.",
+            "comment": "The three pillars are directly aligned with the three conviction factors in the initial memo."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "NSH was founded in 2013 by Erik Lindqvist (current CEO) and three co-founders.\n\nThe technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.",
+            "comment": "The source confirms that Lindqvist is CEO and Virtanen is CTO, but does not explicitly state that they ‘lead’ the founder team. The leadership roles are supported; the specific framing about leading the founder team is an extrapolation."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 8,
+            "sourceId": "1",
+            "sourceLabel": "18b_synth_cross_source_pair_update",
+            "claimedSourceMissing": false,
+            "passage": "The base case generates a 2.8x MOIC and 23% IRR.\n\nOur updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.",
+            "comment": "The initial memo supports 2.8x / 23%, but the confirmatory memo explicitly updates and reduces these to 2.6x / 21% and frames the earlier numbers as superseded. Using 2.8x / 23% as the current base case conflicts with the latest source."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 9,
+            "sourceId": "0",
+            "sourceLabel": "18a_synth_cross_source_pair_initial",
+            "claimedSourceMissing": false,
+            "passage": "NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity.\n\nThird, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.\n\nNSH is a high-quality Nordic vertical SaaS asset with strong unit economics, exceptional product strength, and a clear growth runway.",
+            "comment": "The memos support that NSH has a strong, defensible position and an exceptional, capable leadership team. The exact phrasing ‘growing category’ and ‘credible operational team’ is interpretive rather than verbatim, but directionally consistent with the sources."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "19_synth_annual_report",
+            "claimedSourceMissing": false,
+            "passage": "Across the remaining eight portfolio companies, performance has been broadly positive with two notable challenges.\n...\nContinental Plastics has had a more challenging 2025.\n...\nDrift Logistics had a mixed 2025.",
+            "comment": "The source describes strong or solid performance at most portfolio companies and explicitly highlights Continental Plastics and Drift Logistics as facing challenges, which supports the summary that performance is broadly positive with two notable challenges."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "19_synth_annual_report",
+            "claimedSourceMissing": false,
+            "passage": "Helvetia Precision Components AG\nInvestment date: June 2025 Sector: Precision manufacturing Total Fund equity: EUR 480 million\nStatus: Active, year 1 of hold\n... Six months post-close, the Company is tracking modestly ahead of our underwriting on both revenue and EBITDA...\n\nLumen Specialty Chemicals GmbH\nInvestment date: October 2025 ... The integration into the Fund's portfolio is proceeding well. The 100-day plan is on track...\n\nBrightway Industrial Coatings Ltd\n... Brightway has had a strong 2025, with revenue growing 14% year-on-year and EBITDA growing 21%.\n\nEltex Power Systems AS\n... Revenue grew 23% year-on-year and EBITDA grew 31%. The order backlog stands at EUR 480 million, up from EUR 285 million at our acquisition date.",
+            "comment": "For Helvetia, the acquisition date (June 2025), six months post-close timing, and tracking modestly ahead of underwriting are all supported. For Lumen, the 100‑day plan being on track is supported. For Brightway, the revenue and EBITDA growth figures and the characterisation of a strong 2025 are supported. For Eltex, the revenue and EBITDA growth figures and the increase in order backlog from EUR 285m to EUR 480m are supported. The only nuance is that the source does not literally use the word “exceptionally” for Eltex, but it does call Eltex “one of the strongest performers in the portfolio,” which is broadly consistent; therefore the claim is mostly but not perfectly aligned with the source language."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 5,
+            "sourceId": "0",
+            "sourceLabel": "19_synth_annual_report",
+            "claimedSourceMissing": false,
+            "passage": "Continental Plastics Holdings\nInvestment date: March 2023 ... Continental Plastics has had a more challenging 2025. Revenue grew 4% year-on-year (against an underwriting of 9%) and EBITDA was broadly flat.",
+            "comment": "The investment date, description of a more difficult/challenging 2025, 4% revenue growth versus 9% underwriting, and broadly flat EBITDA all match the source."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 7,
+            "sourceId": "0",
+            "sourceLabel": "19_synth_annual_report",
+            "claimedSourceMissing": false,
+            "passage": "Drift Logistics Group BV\nInvestment date: April 2024 Sector: Third-party logistics ... Drift Logistics had a mixed 2025. The European parcel volume environment has been softer than expected, with overall European parcel volumes down approximately 3% year-on-year. The Company has nevertheless gained share, with revenue growing 6% against the negative market backdrop. EBITDA margins have been pressured by overcapacity in the market and have compressed from 14% to 12% year-on-year.",
+            "comment": "The investment timing (2024), sector, softer parcel volume environment with volumes down ~3%, revenue up 6%, and EBITDA margin compression from 14% to 12% are all directly supported."
+          }
+        ]
+      },
+      "numbers": {
+        "unitsChecked": 559,
+        "unitsWithheld": 6,
+        "claimsLosingEvidence": 2,
+        "commentsWithheld": 6,
+        "strikes": [
+          {
+            "fixtureId": "01",
+            "statementIndex": 9,
+            "kind": "comment",
+            "key": "60|",
+            "raw": "60",
+            "sentence": "The memo confirms the 24 employees are in Ottawa and that development and design talent has been recruited at 60–70% of Silicon Valley or New York cost."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "assessment",
+            "key": "18.6|",
+            "raw": "18.6",
+            "sentence": "The only minor deviation is the rounding of Cirrus’s revenue CAGR from 18.6 per cent to “approximately 19 per cent”, which is acceptable but should be treated consciously as a rounding choice."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "assessment",
+            "key": "19|",
+            "raw": "19",
+            "sentence": "The only minor deviation is the rounding of Cirrus’s revenue CAGR from 18.6 per cent to “approximately 19 per cent”, which is acceptable but should be treated consciously as a rounding choice."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "18.6|",
+            "raw": "18.6",
+            "sentence": "Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "18.5|",
+            "raw": "18.5",
+            "sentence": "Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "19|",
+            "raw": "19",
+            "sentence": "Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment."
+          },
+          {
+            "fixtureId": "07",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "0|",
+            "raw": "0",
+            "sentence": "Optionally reintroduce a short nod to the continued importance of non-agent, human-centric software (as in the source) to avoid the impression that the thesis is zero-sum about agents replacing all software."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 2,
+            "kind": "comment",
+            "key": "22|percent",
+            "raw": "22%",
+            "sentence": "The 78% stake and the residual 22% split between the Schiller family and management are supported."
+          },
+          {
+            "fixtureId": "13",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "300|",
+            "raw": "300",
+            "sentence": "\"around 300 employees\"), or clarifying which figure is current and why, if that information is available."
+          }
+        ]
+      },
+      "names": {
+        "unitsChecked": 559,
+        "unitsWithheld": 13,
+        "claimsLosingEvidence": 11,
+        "commentsWithheld": 13,
+        "strikes": [
+          {
+            "fixtureId": "01",
+            "statementIndex": null,
+            "kind": "assessment",
+            "name": "Financial Times",
+            "sentence": "Readability is strong, though a few evaluative phrases could be sharpened or more explicitly tied to the cited numbers to maintain the Financial Times–level discipline around evidentiary support and to avoid over-claiming relative to the source language."
+          },
+          {
+            "fixtureId": "02",
+            "statementIndex": 0,
+            "kind": "comment",
+            "name": "The EV",
+            "sentence": "The EV of USD 4 billion is explicitly stated in the source."
+          },
+          {
+            "fixtureId": "05",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "The CAGR",
+            "sentence": "The CAGR of approximately 11 percent over the past five years is directly stated in the source."
+          },
+          {
+            "fixtureId": "06",
+            "statementIndex": null,
+            "kind": "improvement",
+            "name": "Cirrus CAGR",
+            "sentence": "Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 6,
+            "kind": "comment",
+            "name": "The CAGR",
+            "sentence": "The CAGR is given as 17.1% in the source, while the draft rounds this to 17%."
+          },
+          {
+            "fixtureId": "08",
+            "statementIndex": 13,
+            "kind": "comment",
+            "name": "The MOIC",
+            "sentence": "The MOIC and IRR figures match the source exactly."
+          },
+          {
+            "fixtureId": "09",
+            "statementIndex": 10,
+            "kind": "comment",
+            "name": "The EUR",
+            "sentence": "The EUR 3 million figure and its limited nature, as well as the 12‑month enhanced quality monitoring, are explicitly supported."
+          },
+          {
+            "fixtureId": "12",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "No EBITDA",
+            "sentence": "No EBITDA margin data or percentages appear in the source, so this numerical claim is unsupported."
+          },
+          {
+            "fixtureId": "13",
+            "statementIndex": 12,
+            "kind": "comment",
+            "name": "The ARR",
+            "sentence": "The ARR starting point, target, time frame, and CAGR all match the source language exactly."
+          },
+          {
+            "fixtureId": "16",
+            "statementIndex": 1,
+            "kind": "comment",
+            "name": "The EV",
+            "sentence": "The EV of EUR 310m and the 72% stake are both correct, but the EV is for the whole company, not specifically \"for a 72 percent stake\"."
+          },
+          {
+            "fixtureId": "17",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "The WAULT",
+            "sentence": "The WAULT of 6.8 years is explicitly given."
+          },
+          {
+            "fixtureId": "18",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "Presenting EUR",
+            "sentence": "Presenting EUR 38m as the current ARR without qualification conflicts with the updated source."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "For Helvetia",
+            "sentence": "For Helvetia, the acquisition date (June 2025), six months post-close timing, and tracking modestly ahead of underwriting are all supported."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "For Lumen",
+            "sentence": "For Lumen, the 100‑day plan being on track is supported."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "For Brightway",
+            "sentence": "For Brightway, the revenue and EBITDA growth figures and the characterisation of a strong 2025 are supported."
+          },
+          {
+            "fixtureId": "19",
+            "statementIndex": 4,
+            "kind": "comment",
+            "name": "For Eltex",
+            "sentence": "For Eltex, the revenue and EBITDA growth figures and the increase in order backlog from EUR 285m to EUR 480m are supported."
+          }
+        ]
+      }
+    },
+    "real-runs": {
+      "quotes": {
+        "passages": 44,
+        "exact": 15,
+        "normalised": 8,
+        "notFound": 21,
+        "nullPassage": 2,
+        "claimsLosingEvidence": 21,
+        "commentsWithheld": 21,
+        "strikes": [
+          {
+            "fixtureId": "2026-10-04-hicl",
+            "statementIndex": 1,
+            "sourceId": "0",
+            "sourceLabel": "source-hicl-interim-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\"",
+            "comment": "The source confirms robust operational performance, capex programmes driving EBITDA growth, and resilient cash generation supporting dividend cover. However, it does not mention an average 30% EBITDA growth figure, nor does it refer to a ‘dividend program’ in those terms, and the company name is HICL, not HCIL. Hence only part of the claim is supported."
+          },
+          {
+            "fixtureId": "2026-10-04-hicl",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "source-hicl-interim-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.\"",
+            "comment": "The source supports that growth investments continue to perform well and that significant expansion capex programmes are being progressed. It states EBITDA is \"in line with expectations\", not that it \"significantly outperform[s] budgets\". Therefore the outperformance element is not supported."
+          },
+          {
+            "fixtureId": "2026-10-04-hicl",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "source-hicl-interim-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.\"",
+            "comment": "The source clearly identifies the asset as London St. Pancras High Speed, not Paris St. Germain High Speed. Performance and train path bookings being slightly ahead of forecast are supported, but the location/name is incorrect and contradicts the source."
+          },
+          {
+            "fixtureId": "2026-10-04-hicl",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "source-hicl-interim-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator.\"",
+            "comment": "The source confirms progress toward a potential second international operator and that Virgin Trains announced intentions for cross-Channel operations from St. Pancras. However, the draft misnames the station as St. Germain, which is not supported. The commercial-progress elements are correct; the location is not."
+          },
+          {
+            "fixtureId": "2026-10-04-hicl",
+            "statementIndex": 5,
+            "sourceId": "0",
+            "sourceLabel": "source-hicl-interim-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.\"",
+            "comment": "The source supports that the relevant tower company (Fortysouth) delivered new towers, is progressing co-location opportunities, and that these are expected to support continued EBITDA growth. However, the name is Fortysouth, not TowerCo; the number is 16 towers, not 20; and the source refers to EBITDA growth in line with valuation assumptions, not explicit ‘valuation gains’. Thus only part of the claim is supported."
+          },
+          {
+            "fixtureId": "2026-10-04-hicl",
+            "statementIndex": 6,
+            "sourceId": "0",
+            "sourceLabel": "source-hicl-interim-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.\"",
+            "comment": "The source confirms that the company (Fortysouth) completed an oversubscribed refinancing. However, it states that this enabled a step-down in debt margins, implying lower, not higher, debt servicing costs. The claim that it will lead to an increase in debt servicing costs conflicts with the source, so only the refinancing and oversubscription elements are supported."
+          },
+          {
+            "fixtureId": "2026-10-04-hicl",
+            "statementIndex": 7,
+            "sourceId": "0",
+            "sourceLabel": "source-hicl-interim-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.\"",
+            "comment": "The source states that Affinity Water appointed a new CEO (Mark Garth), not a CFO, and that the relevant white paper is from the UK Government on water sector reform, not the French government on electricity sector reform. These elements directly contradict the draft statement."
+          },
+          {
+            "fixtureId": "2026-10-06-gpi",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "source-gpi-press-release-extracted",
+            "claimedSourceMissing": false,
+            "passage": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+            "comment": "The source confirms that GP Industries is shifting production capacity to Southeast Asia to serve the US market amid US tariffs and rising geopolitical tensions, but it does not mention October 2025, any 75% figure, or escalating oil prices. The timing, percentage, and oil-price rationale are absent, so the specific claim as written is not supported."
+          },
+          {
+            "fixtureId": "2026-10-06-gpi",
+            "statementIndex": 1,
+            "sourceId": "0",
+            "sourceLabel": "source-gpi-press-release-extracted",
+            "claimedSourceMissing": false,
+            "passage": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand. It also has two other plants in the UK.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+            "comment": "The source confirms the existence and locations of facilities in Malaysia, Vietnam, Thailand, and the UK, and that the China facility will focus primarily on European and Asian markets. However, it states three facilities in Malaysia, not 15, and does not describe China as having only one plant or focusing solely on the European market. Thus, the facility count and the narrowing to only Europe are inaccurate, while the rest is supported."
+          },
+          {
+            "fixtureId": "2026-10-06-gpi",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "source-gpi-press-release-extracted",
+            "claimedSourceMissing": false,
+            "passage": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets. The move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness.\n...\nAfter higher initial costs from diversifying production to Southeast Asia, GP Industries said margins have risen due to improved utilisation, lower commodity costs, and optimised supply chains.",
+            "comment": "The source explicitly supports that the move is intended to streamline supply chains, meet country-of-origin requirements, and maintain cost competitiveness (i.e., improve the cost structure). However, there is no mention of enhancing site security as an objective of the capacity adjustments. That part of the claim is unsupported, so the statement is only partially confirmed."
+          },
+          {
+            "fixtureId": "2026-10-06-gpi",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "source-gpi-press-release-extracted",
+            "claimedSourceMissing": false,
+            "passage": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nIt has since grown into a global manufacturer, producing over six billion batteries annually, sold through one million outlets worldwide.",
+            "comment": "The source states that GP Industries is the world’s second-largest producer of consumer batteries, not the largest, and that it produces over six billion batteries annually, not 60 billion. It also says the batteries are sold, not bartered, through one million outlets worldwide. These are direct contradictions, although the one-million-outlets figure is correct."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 0,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "SOLANA BEACH, Calif., May 13, 2026 (Newswire.com) - ClearPoint Neuro, Inc. (Nasdaq:CLPT) (the \"Company\"), a global device, cell, and gene therapy-enabling company offering precise navigation to the brain and spine, today announced financial results for its first quarter ended March 31, 2026.",
+            "comment": "The company did announce financial results for Q1 2026, but the press release is dated May 13, 2026, not April 2026. Timing is misstated."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 1,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;\nThe activated installed base across all ClearPoint technology including IRRAflow systems now includes over 175 global centers;\nAchievement of measurable revenue and cost synergies through the continuing integration of the IRRAflow product portfolio and team;",
+            "comment": "The source confirms 43% growth, an installed base of over 175 centers, and measurable revenue synergies from IRRAflow integration. However, it does not explicitly state that the 43% growth was *driven* by the installed base expansion and integration; that causal framing is interpretive."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;",
+            "comment": "The press release states 16% year-over-year total organic growth, not -50%. This directly contradicts the draft."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 2,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "\"While record revenue achievement and 25% organic devices growth made the headline, there is no shortage of meaningful strategic progress across the entire organization.\"",
+            "comment": "The CEO quote explicitly mentions 25% organic devices growth, but does not specify that this is year-on-year. Given context, it is very likely YoY, but the time basis is not spelled out, so the explicit “year on year” wording goes slightly beyond the text."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Biologics and drug delivery revenue... increased slightly to $4.8 million...\nNeurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million...\nCapital equipment and software revenue... increased 177% to $1.4 million...\nTotal revenue was $12.1 million...",
+            "comment": "Numerically, neurosurgery navigation, therapy and access revenue ($5.9m) is the single largest segment but is less than half of total revenue ($12.1m). Calling it “the vast majority” overstates its share. The segment contribution is supported; the “vast majority” characterization is not."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025.",
+            "comment": "The source explicitly states an 80% increase versus the prior-year period."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 3,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million... The increase is driven by additional revenues from sales of the IRRAflow product of as well as the introduction of our 3.0 operating room navigation software, which has positively impacted procedural volumes in the operating room during the three months ended March 31, 2026, compared to the same period in 2025.",
+            "comment": "The press release directly attributes the increase in this segment to IRRAflow product sales and the 3.0 OR navigation software."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 4,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Capital equipment and software revenue... increased 177% to $1.4 million... from $0.5 million for the same period in 2025 due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+            "comment": "The causal explanation is stated verbatim in the source."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 5,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Biologics and drug delivery revenue... increased slightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the three months ended March 31, 2025.",
+            "comment": "Revenue moved from $4.7m to $4.8m, which the source itself describes as having “increased slightly.” Describing this as “broadly flat” is a fair, supported characterization."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 8,
+            "sourceId": "0",
+            "sourceLabel": "source-clearpoint-q1-2026-extracted",
+            "claimedSourceMissing": false,
+            "passage": "Received Medical Device License (MDL) from Health Canada for the ClearPoint Neuro Navigation System, covering both MRI-guidance and iCT guidance workflows with first cases now scheduled;",
+            "comment": "The license described is a Medical Device License from Health Canada, not the FDA. The draft misattributes the issuing authority."
+          }
+        ]
+      },
+      "numbers": {
+        "unitsChecked": 98,
+        "unitsWithheld": 5,
+        "claimsLosingEvidence": 3,
+        "commentsWithheld": 5,
+        "strikes": [
+          {
+            "fixtureId": "2026-09-29",
+            "statementIndex": 0,
+            "kind": "comment",
+            "key": "3.3|billion",
+            "raw": "£3.3 billion",
+            "sentence": "The source confirms a total return of £3,291 million and a 13% return on opening shareholders’ funds, but the draft misstates the figure as £3.3 million instead of approximately £3.3 billion and gives the period as six months to 30 June 2025 rather than to 30 September 2025."
+          },
+          {
+            "fixtureId": "2026-09-29",
+            "statementIndex": 5,
+            "kind": "comment",
+            "key": "11.229|billion",
+            "raw": "€11.229 billion",
+            "sentence": "The figures for net sales (€11.229 billion) and like-for-like sales growth (6.3%) are supported, but the period is misstated."
+          },
+          {
+            "fixtureId": "2026-09-29",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "3.3|billion",
+            "raw": "£3.3bn",
+            "sentence": "£3.3bn), not £3.3 million, and it relates to the six months to 30 September 2025, not to 30 June 2025; similarly, the Action sales and LFL data are for nine reporting periods to 28 September 2025, not six months to 30 June 2026."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 9,
+            "kind": "comment",
+            "key": "52|",
+            "raw": "$52",
+            "sentence": "The guidance range of $52–56m is for 2026, not 2027, and is presented as a range rather than a single point of $56m."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": null,
+            "kind": "improvement",
+            "key": "52|",
+            "raw": "$52",
+            "sentence": "The company provides a 2026 revenue estimate range of $52–56m, not a single-point guidance of $56m for 2027."
+          }
+        ]
+      },
+      "names": {
+        "unitsChecked": 98,
+        "unitsWithheld": 3,
+        "claimsLosingEvidence": 1,
+        "commentsWithheld": 3,
+        "strikes": [
+          {
+            "fixtureId": "2026-10-06-gpi",
+            "statementIndex": null,
+            "kind": "assessment",
+            "name": "Financial Times",
+            "sentence": "Text quality and readability are acceptable for a news-style summary, yet the piece would not meet Financial Times standards for precision and sourcing in its current form."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": 2,
+            "kind": "comment",
+            "name": "The CEO",
+            "sentence": "The CEO quote explicitly mentions 25% organic devices growth, but does not specify that this is year-on-year."
+          },
+          {
+            "fixtureId": "2026-10-06-clearpoint",
+            "statementIndex": null,
+            "kind": "assessment",
+            "name": "Health Canada Medical Device License",
+            "sentence": "However, there are significant factual errors around organic growth (including an invented -50% figure), the timing of the results announcement, the nature and issuer of regulatory approvals (confusing FDA clearance with a Health Canada Medical Device License and introducing an unsubstantiated FDA submission), and the year and structure of revenue guidance."
+          }
+        ]
+      }
+    }
+  },
+  "knownCases": [
+    {
+      "id": "biologics-4.1-against-4.1",
+      "text": "Biologics and drug delivery revenue was 4.1 million against 4.1 million.",
+      "numbers": [
+        {
+          "raw": "4.1 million",
+          "key": "4.1|million",
+          "inDraftOrSource": false
+        },
+        {
+          "raw": "4.1 million",
+          "key": "4.1|million",
+          "inDraftOrSource": false
+        }
+      ],
+      "names": []
+    },
+    {
+      "id": "guidance-48.0-to-52.0-august-release",
+      "text": "The company guided to a range of 48.0 to 52.0 million in an August release.",
+      "numbers": [
+        {
+          "raw": "48.0",
+          "key": "48|million",
+          "inDraftOrSource": false
+        },
+        {
+          "raw": "52.0 million",
+          "key": "52|million",
+          "inDraftOrSource": true
+        }
+      ],
+      "names": []
+    },
+    {
+      "id": "largest-on-an-invented-figure",
+      "text": "The neurosurgery segment is the largest, on an invented figure of 9.4 million.",
+      "numbers": [
+        {
+          "raw": "9.4 million",
+          "key": "9.4|million",
+          "inDraftOrSource": false
+        }
+      ],
+      "names": []
+    }
+  ]
+}

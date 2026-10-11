@@ -1,0 +1,1035 @@
+draft-1 QUOTES passages=316 exact=190 normalised=53 notFound=73 nullPassage=12 claimsLosingEvidence=73 commentsWithheld=73
+draft-1 NUMBERS units=565 withheld=8 claimsLosingEvidence=2
+draft-1 NAMES units=565 withheld=18 claimsLosingEvidence=13
+NOT FOUND draft-1
+NOT FOUND draft-1 01 statement 0 sourceId="0" label=01_bvp_shopify_memo
+We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.
+...
+Shopify was founded in 2007 by two Ruby on Rails core developers.
+...
+Shopify�s 24 employees are located in Ottawa, Canada.
+---
+NOT FOUND draft-1 01 statement 4 sourceId="0" label=01_bvp_shopify_memo
+Yet sophisticated features are also available without complicating the overall user experience. Shopify accomplishes this by making available an �App Store�.
+...
+This approach is a big competitive differentiator for Shopify.
+...
+Roughly two-thirds of Shopify�s customers utilize at least one app from their �App Store�.
+---
+NOT FOUND draft-1 01 statement 5 sourceId="0" label=01_bvp_shopify_memo
+Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store. A typical customer signs up using their credit card and is up and running in a few hours with no long-term contract.
+...
+The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours.
+---
+NOT FOUND draft-1 01 statement 6 sourceId="0" label=01_bvp_shopify_memo
+Roughly 65�70% of customers sign-up via word-of-mouth. Roughly 20% of customers sign-up via referrals from web design firms.
+...
+Finally, roughly 10�15% of customers sign-up via paid channels, which is largely keyword marketing and the occasional contest program.
+...
+We believe that Shopify has under-invested in marketing in a big way and that with a VP of Marketing and a few experienced people in place, the company can accelerate growth.
+---
+NOT FOUND draft-1 01 statement 10 sourceId="0" label=01_bvp_shopify_memo
+Despite this, they are able to acquire a customer for between $175�225 and can pay back that spend in 7�9 months on a churn-adjusted basis.
+...
+We are excited by what we see as a great product that has struck a chord with customers.
+...
+This approach is a big competitive differentiator for Shopify.
+...
+Further, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.
+---
+NOT FOUND draft-1 01 statement 11 sourceId="0" label=01_bvp_shopify_memo
+We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.
+...
+We recommend this investment.
+---
+NOT FOUND draft-1 04 statement 4 sourceId="0" label=04_synth_vc_pinterest_style_memo
+Average sessions per active user per week is approximately 6 — also exceptional. Users return to the product not as a check-in but as a destination.
+...
+Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.
+---
+NOT FOUND draft-1 04 statement 6 sourceId="0" label=04_synth_vc_pinterest_style_memo
+Average session length is 14 minutes — exceptional for a social product.
+...
+Average sessions per active user per week is approximately 6 — also exceptional.
+...
+Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.
+...
+We are willing to invest at a USD 40mm pre-money valuation — which is undeniably expensive on conventional venture metrics — for three reasons.
+First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.
+---
+NOT FOUND draft-1 04 statement 9 sourceId="0" label=04_synth_vc_pinterest_style_memo
+...the user base is heavily weighted to the 25 to 44 age range — meaningfully older than typical social product demographics.
+---
+NOT FOUND draft-1 04 statement 10 sourceId="0" label=04_synth_vc_pinterest_style_memo
+The user demographic is unusual. Approximately 82% of active users are women, and the user base is heavily weighted to the 25 to 44 age range — meaningfully older than typical social product demographics. This is a desirable advertising audience.
+...
+We expect monetisation to come eventually from native advertising — particularly from advertisers in categories such as home decor, fashion, and weddings that align naturally with user behaviour — but we have not underwritten any specific revenue projections.
+...
+The user demographic and behavioural profile creates unusual monetisation potential. The combination of high-intent commercial categories (home decor, fashion, weddings) and a desirable demographic (women, 25 to 44) is genuinely scarce. We can envision multiple paths to a multi-billion-dollar revenue business.
+---
+NOT FOUND draft-1 04 statement 11 sourceId="0" label=04_synth_vc_pinterest_style_memo
+Ben Silbermann (co-founder, CEO) is a former Google product manager. Evan Sharp (co-founder, head of design) joined from Facebook earlier this year and has been instrumental in the product's distinctive visual aesthetic. Both founders are first-time founders.
+...
+Our diligence on Ben has been deep. References from his time at Google are uniformly positive — he is described as exceptionally product-focused, calm under pressure, and unusually willing to listen to user feedback and to evolve product decisions based on it. We have spent significant time with both founders and find them thoughtful, deliberate, and genuinely passionate about the product.
+---
+NOT FOUND draft-1 04 statement 13 sourceId="0" label=04_synth_vc_pinterest_style_memo
+Pinterest is a young company. The product has been in market for roughly 16 months. The team is small — six full-time employees plus the two founders.
+...
+Current monthly active users are approximately 1.5 million, growing rapidly.
+---
+NOT FOUND draft-1 04 statement 19 sourceId="0" label=04_synth_vc_pinterest_style_memo
+We acknowledge that this is a higher-than-typical entry valuation for a Series A investment with zero revenue. We are comfortable with this on the basis that consumer products with the engagement profile we are seeing here are rare, and entry valuation in such cases is less important to ultimate returns than getting the call right.
+...
+Our base case envisages a hold of approximately 5 to 7 years with a target return of 10 times or better. The downside case is total loss, which we have stress-tested and consider tolerable given the conviction in the engagement signal.
+---
+NOT FOUND draft-1 04 statement 20 sourceId="0" label=04_synth_vc_pinterest_style_memo
+First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.
+...
+Third, the founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.
+...
+Defensibility is uncertain. The visual discovery mechanic is not patented. We see two potential sources of competitive moat... Whether these prove durable in the face of well-funded competitive responses is uncertain.
+---
+NOT FOUND draft-1 06 statement 6 sourceId="0" label=06_synth_listed_pe_report_excerpt
+We have introduced several operational changes during 2025, including the recruitment of a new Chief Commercial Officer and the appointment of a new Chairman with deep Iberian consumer experience. We are also implementing a structured cost reduction programme targeting approximately EUR 5 million of annualised savings. We expect these changes to begin contributing meaningfully in 2026.
+...
+We continue to view the underlying business as fundamentally sound and well-positioned for recovery as the operational programme takes effect and as the Iberian consumer environment improves.
+---
+NOT FOUND draft-1 06 statement 8 sourceId="0" label=06_synth_listed_pe_report_excerpt
+Northstar Partners' environmental, social and governance ("ESG") programme has continued to mature during 2025.
+...
+We continue to integrate ESG considerations into our investment process from sourcing through diligence and into post-investment value creation planning. We see ESG performance as both a values commitment and a meaningful contributor to long-term commercial performance.
+---
+NOT FOUND draft-1 07 statement 0 sourceId="0" label=07_synth_vc_thesis_post
+We expect a meaningful share of new vertical SaaS company formation to be agent-first rather than workflow-first.
+
+We expect significant disruption to the incumbent vertical SaaS industry.
+---
+NOT FOUND draft-1 08 statement 2 sourceId="0" label=08_synth_industrial_buyout_memo
+We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG ("HPC" or "the Company")... Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.
+...
+The Schiller family will retain a 15% economic interest. Management will hold the remaining 7%.
+---
+NOT FOUND draft-1 08 statement 8 sourceId="0" label=08_synth_industrial_buyout_memo
+Our base case underwrites a five-year hold with the following value drivers.
+...
+The base case generates a 2.4x gross MOIC and a 19% gross IRR.
+---
+NOT FOUND draft-1 08 statement 9 sourceId="0" label=08_synth_industrial_buyout_memo
+Third, there is a clear margin expansion path. HPC's current EBITDA margin of 17.5% trails best-in-class peers... and our diligence has identified a coherent set of operational levers we believe can deliver 300 to 400 basis points of margin uplift over five years. The principal levers are: footprint consolidation in Switzerland (closing the Winterthur facility and absorbing volumes into Olten), procurement consolidation across the now-fragmented supplier base inherited from the Indianapolis acquisition, and a programme of automation investment in the Brno facility.
+---
+NOT FOUND draft-1 08 statement 10 sourceId="0" label=08_synth_industrial_buyout_memo
+Revenue growth of 9% CAGR, taking 2024 revenue of EUR 587 million to approximately EUR 905 million by 2029. This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A.
+...
+Second, the end markets HPC serves are structurally attractive. The orthopaedic implants market is forecast to grow at 5–6% annually through 2030... Aerospace component demand is recovering strongly post-COVID, with Airbus and Boeing collectively targeting build-rate increases of approximately 40% over the next five years.
+---
+NOT FOUND draft-1 08 statement 12 sourceId="0" label=08_synth_industrial_buyout_memo
+EBITDA margin expansion from 17.5% to 21.0% over the hold period... The margin lift is sourced from the footprint consolidation programme (approximately 120 bps), procurement initiatives (approximately 80 bps), automation investment in Brno (approximately 60 bps), and operating leverage on incremental revenue (approximately 60 bps).
+---
+NOT FOUND draft-1 08 statement 15 sourceId="0" label=08_synth_industrial_buyout_memo
+We have identified four principal risks.
+
+The semiconductor exposure introduces cyclicality that the medical and aerospace segments do not.
+...
+Customer concentration is a watch item. HPC's largest customer, a global orthopaedic implants manufacturer, accounted for 18% of revenue in 2024.
+...
+Foreign exchange exposure is significant.
+...
+Founder transition risk is moderate.
+...
+We are comfortable with this exposure given (a) the structural growth in EUV, and (b) HPC's flexible cost base, which allowed the Company to maintain EBITDA margins above 15% throughout the 2023 downturn.
+---
+NOT FOUND draft-1 08 statement 16 sourceId="0" label=08_synth_industrial_buyout_memo
+First, the Company occupies an enviable competitive position.
+Second, the end markets HPC serves are structurally attractive.
+Third, there is a clear margin expansion path.
+Fourth, we see meaningful M&A opportunity.
+...
+HPC represents an attractive opportunity to acquire a category leader in a structurally growing market with a clear operational improvement plan and proven through-cycle resilience.
+---
+NOT FOUND draft-1 09 statement 3 sourceId="0" label=09_synth_portfolio_update_letter
+The leadership transition has gone better than expected.
+---
+NOT FOUND draft-1 09 statement 9 sourceId="0" label=09_synth_portfolio_update_letter
+Medical device customer quality issue: In October, our second-largest medical customer raised a quality concern relating to a specific component lot manufactured in the Olten facility. ... Petra Köhler met the customer's COO in November and the customer is satisfied with the corrective action plan.
+---
+NOT FOUND draft-1 09 statement 10 sourceId="0" label=09_synth_portfolio_update_letter
+The cost impact to HPC is limited — approximately EUR 3 million in returns, rework, and credit — but the relationship cost is more significant. ... However the customer has placed HPC on enhanced quality monitoring for 12 months, which is an unwelcome development.
+---
+NOT FOUND draft-1 09 statement 11 sourceId="0" label=09_synth_portfolio_update_letter
+Klaus Wenger joined as Chief Procurement Officer in September, having previously held the same role at Belimo. ... EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: ... early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million)
+---
+NOT FOUND draft-1 11 statement 5 sourceId="0" label=11_synth_investor_letter_exit
+International expansion. At entry, the Company generated SEK 3.4 billion (81%) of revenue from the Nordic region. ... By the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue.
+---
+NOT FOUND draft-1 11 statement 9 sourceId="0" label=11_synth_investor_letter_exit
+At the time of our investment, the Company generated revenue of SEK 4.2 billion and EBITDA of SEK 480 million, representing an EBITDA margin of 11.4%.
+...
+By the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue. Total Company revenue at exit was SEK 11.4 billion.
+...
+Combined with the modularity programme, this drove EBITDA margins from 11.4% at entry to 18.2% at exit. Absolute EBITDA grew from SEK 480 million to SEK 2.08 billion over the hold.
+---
+NOT FOUND draft-1 13 statement 7 sourceId="0" label=13_synth_internal_inconsistency_memo
+CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore.
+...
+The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.
+---
+NOT FOUND draft-1 14 statement 0 sourceId="0" label=14_synth_thesis_only_memo
+This memo sets out a thematic investment thesis on European clinical decision support ("CDS") software.
+...
+We believe the European market is at an inflection point.
+---
+NOT FOUND draft-1 14 statement 1 sourceId="0" label=14_synth_thesis_only_memo
+Clinical decision support software helps clinicians make better, faster, more consistent treatment decisions at the point of care.
+...
+We believe the European market is at an inflection point. Three forces are aligning.
+---
+NOT FOUND draft-1 14 statement 2 sourceId="0" label=14_synth_thesis_only_memo
+Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway.
+...
+First, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances.
+---
+NOT FOUND draft-1 14 statement 3 sourceId="0" label=14_synth_thesis_only_memo
+Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway.
+...
+First, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances.
+---
+NOT FOUND draft-1 14 statement 4 sourceId="0" label=14_synth_thesis_only_memo
+Reimbursement codes for digital health products have improved meaningfully across the major European markets over the past three years.
+...
+Second, payer willingness to reimburse CDS software has improved markedly.
+---
+NOT FOUND draft-1 14 statement 8 sourceId="0" label=14_synth_thesis_only_memo
+The European CDS market is structurally distinct from the US market in several ways.
+...
+The thesis fits our European healthcare investment platform well.
+...
+The category has been under-served by private equity to date. ... There is meaningful opportunity for a thoughtful financial sponsor to play a constructive consolidation role.
+---
+NOT FOUND draft-1 14 statement 11 sourceId="0" label=14_synth_thesis_only_memo
+We are not recommending any specific investment at this time. We are seeking endorsement of the thesis and authorisation to invest sourcing time accordingly.
+...
+Plan to return to the Committee within six months with either a specific transaction memo or a refreshed thesis based on what we have learned.
+---
+NOT FOUND draft-1 15 statement 2 sourceId="0" label=15_synth_very_long_memo
+The transaction will be funded with EUR 720 million of equity from Halden Group, EUR 110 million of co-investment from two of our long-standing LP relationships... The Esposito family will retain a 10% interest. Management will retain 6%. Halden Group and co-investors will hold 84% in aggregate.
+---
+NOT FOUND draft-1 15 statement 4 sourceId="0" label=15_synth_very_long_memo
+The Company has grown... with operations across Italy, France, Spain, and Germany. The Company currently operates 184 retail stores...
+---
+NOT FOUND draft-1 15 statement 4 sourceId="0" label=15_synth_very_long_memo
+...and a wholesale business that supplies independent design-led homeware retailers across Europe.
+---
+NOT FOUND draft-1 15 statement 7 sourceId="0" label=15_synth_very_long_memo
+...with payback on new store openings averaging 2.4 years.
+---
+NOT FOUND draft-1 15 statement 7 sourceId="0" label=15_synth_very_long_memo
+The unit economics of Casa Verde stores are exceptional. The Company's average four-wall store EBITDA margin is 22%...
+---
+NOT FOUND draft-1 15 statement 11 sourceId="0" label=15_synth_very_long_memo
+The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores...
+---
+NOT FOUND draft-1 15 statement 11 sourceId="0" label=15_synth_very_long_memo
+Our thesis rests on five pillars.
+...
+Fifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar.
+---
+NOT FOUND draft-1 15 statement 16 sourceId="0" label=15_synth_very_long_memo
+We have identified five principal risks.
+...
+The principal risks are well-understood and we have built specific mitigations into our approach.
+---
+NOT FOUND draft-1 15 statement 17 sourceId="0" label=15_synth_very_long_memo
+International expansion (contributing approximately EUR 240 million of incremental revenue, primarily from the UK and Nordic launches),
+---
+NOT FOUND draft-1 15 statement 30 sourceId="0" label=15_synth_very_long_memo
+Commercial diligence was conducted by Bain & Company over a ten-week period...
+Financial and tax diligence was conducted by Deloitte.
+Legal diligence was conducted by Latham & Watkins.
+ESG diligence was conducted by ERM.
+...
+The Bain report (circulated separately) confirms market positioning, validates the international expansion thesis, and provides detailed competitive mapping.
+---
+NOT FOUND draft-1 15 statement 31 sourceId="0" label=15_synth_very_long_memo
+Casa Verde represents one of the most attractive opportunities... The Company combines a strong direct-to-consumer brand with category-leading market share... demonstrably strong unit economics, and a clear runway for international expansion that has been deliberately constrained under family ownership.
+---
+NOT FOUND draft-1 15 statement 32 sourceId="0" label=15_synth_very_long_memo
+The management team is strong.
+...
+The management team is strong, the value creation plan is well-defined, and the financing structure is appropriately conservative.
+...
+We recommend approval of an investment of up to EUR 720 million of equity from Halden Group...
+---
+NOT FOUND draft-1 16 statement 0 sourceId="0" label=16_synth_healthcare_consumer
+We seek IC approval for an investment of EUR 195 million for a 72% controlling stake in Bloom Nutrition Holdings Limited ("Bloom" or "the Company"), a London-headquartered premium women's nutrition and wellness brand with a multi-channel European presence.
+
+...offering a focused range of evidence-based supplement products targeting four primary use cases: hormonal balance, energy and recovery, skin and hair health, and pregnancy and postnatal nutrition.
+---
+NOT FOUND draft-1 16 statement 1 sourceId="0" label=16_synth_healthcare_consumer
+We seek IC approval for an investment of EUR 195 million for a 72% controlling stake in Bloom Nutrition Holdings Limited ("Bloom" or "the Company")... The transaction values Bloom at an enterprise value of EUR 310 million, representing 14.8x trailing twelve months EBITDA of EUR 21 million.
+---
+NOT FOUND draft-1 16 statement 4 sourceId="0" label=16_synth_healthcare_consumer
+Gross margin is 71.4%, reflecting the premium pricing and direct-to-consumer channel weight. EBITDA margin is 32.8%, which is exceptional for a brand at this growth stage...
+---
+NOT FOUND draft-1 16 statement 9 sourceId="0" label=16_synth_healthcare_consumer
+The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.
+
+...all formulated in-house, manufactured under contract by GMP-certified European facilities...
+---
+NOT FOUND draft-1 16 statement 10 sourceId="0" label=16_synth_healthcare_consumer
+Premium women's health is a structurally attractive emerging category. Women's health has been historically under-served by both mainstream and premium consumer health brands. The category is growing at approximately 14% annually in Europe, with significantly faster growth in dedicated direct-to-consumer brands. Bloom is well-positioned within this category as a clinically-credible, premium-positioned, multi-product brand.
+
+Bloom has built a defensible position in a category where most competitors are either single-product brands (limiting customer lifetime value) or insufficiently differentiated. The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.
+
+International expansion runway is significant. Bloom is strong in the UK and increasingly strong in DACH, but underdeveloped in France, Italy, and Spain. The brand has demonstrable cross-border appeal — DACH revenue has grown from zero in 2021 to EUR 18 million in 2024 — and we see clear opportunity to replicate this in the Romance language markets.
+
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR. The growth is sourced from continued UK growth (modest, reflecting maturation), continued strong DACH growth, accelerated entry into France and Spain, and selective US market entry in year three.
+
+The base case generates a 2.9x MOIC and 24% IRR over a five-year hold.
+---
+NOT FOUND draft-1 16 statement 11 sourceId="0" label=16_synth_healthcare_consumer
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR.
+...
+The base case generates a 2.9x MOIC and 24% IRR over a five-year hold.
+---
+NOT FOUND draft-1 16 statement 12 sourceId="0" label=16_synth_healthcare_consumer
+Customer acquisition cost inflation in direct-to-consumer is the principal risk. Bloom's current 5.2-month payback period has lengthened from 3.8 months in 2022, reflecting both increased competition and broader paid social media cost inflation.
+
+Brand-driven categories are subject to founder-dependency risk. Sarah Whitmore in particular is closely associated with the brand through content, podcast appearances, and visible founder presence.
+
+Regulatory risk in women's health is real. Several of Bloom's products make claims around hormonal support and pregnancy wellness that are subject to evolving regulatory scrutiny across European markets. The Company has invested appropriately in regulatory affairs and has a clean track record, but the regulatory environment for nutrition claims is becoming more demanding.
+---
+NOT FOUND draft-1 17 statement 9 sourceId="0" label=17_synth_real_estate_logistics
+We have budgeted EUR 38 million of value-add capital expenditure across the hold period. The principal investments are EUR 14 million in modernising the Park Royal asset ... EUR 8 million in the San Fernando asset, EUR 6 million in the Schiphol asset, and the remainder spread across smaller modernisation works across the Portfolio.
+---
+NOT FOUND draft-1 17 statement 9 sourceId="0" label=17_synth_real_estate_logistics
+Rental growth of approximately 6% annually (a moderation from the recent 8% pace)... and exit at a 5.0% yield reflecting modest yield compression supported by continued strong investor demand for the asset class.
+---
+NOT FOUND draft-1 17 statement 10 sourceId="0" label=17_synth_real_estate_logistics
+Levered at 55% loan-to-value, the equity gross IRR is 16.8% and the MOIC is 2.1x.
+...
+Senior debt of EUR 337 million (55% LTV) has been pre-arranged
+---
+NOT FOUND draft-1 17 statement 10 sourceId="0" label=17_synth_real_estate_logistics
+Levered at 55% loan-to-value, the equity gross IRR is 16.8% and the MOIC is 2.1x.
+Our base case underwrites a five-year hold
+---
+NOT FOUND draft-1 18 statement 2 sourceId="0" label=18a_synth_cross_source_pair_initial
+We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB ("NSH" or "the Company").
+---
+NOT FOUND draft-1 18 statement 3 sourceId="0" label=18a_synth_cross_source_pair_initial
+The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.
+
+The Company currently serves 412 property management companies, not 380 as stated in our initial memo.
+---
+NOT FOUND draft-1 18 statement 4 sourceId="1" label=18b_synth_cross_source_pair_update
+Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.
+
+Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.
+---
+NOT FOUND draft-1 18 statement 5 sourceId="1" label=18b_synth_cross_source_pair_update
+The Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people).
+
+The Company employs 167 people as of 28 May, not 142 as stated in our initial memo.
+---
+NOT FOUND draft-1 18 statement 6 sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction.
+
+First, the product is genuinely market-leading.
+
+Second, the Nordic property management technology market remains structurally underpenetrated.
+
+Third, the founder team is exceptional.
+---
+NOT FOUND draft-1 18 statement 6 sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH was founded in 2013 by Erik Lindqvist (current CEO) and three co-founders.
+
+The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+---
+NOT FOUND draft-1 18 statement 7 sourceId="1" label=18b_synth_cross_source_pair_update
+Our base case envisages ARR growth from EUR 38 million today to approximately EUR 95 million over a five-year hold. This is supported by continued strong organic growth (we underwrite 22% ARR CAGR over the hold period), modest expansion into adjacent verticals (commercial property management), and selective add-on M&A.
+
+Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million.
+---
+NOT FOUND draft-1 18 statement 8 sourceId="1" label=18b_synth_cross_source_pair_update
+The base case generates a 2.8x MOIC and 23% IRR.
+
+The combined effect of the above updates is a modest reduction in our underwritten returns. Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.
+---
+NOT FOUND draft-1 18 statement 9 sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity.
+
+Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+---
+NOT FOUND draft-1 19 statement 3 sourceId="0" label=19_synth_annual_report
+Across the remaining eight portfolio companies, performance has been broadly positive with two notable challenges.
+...
+Continental Plastics has had a more challenging 2025.
+...
+Drift Logistics had a mixed 2025.
+---
+NOT FOUND draft-1 19 statement 4 sourceId="0" label=19_synth_annual_report
+1. Helvetia Precision Components AG
+Investment date: June 2025 Sector: Precision manufacturing Total Fund equity: EUR 480 million
+Status: Active, year 1 of hold
+...
+Six months post-close, the Company is tracking modestly ahead of our underwriting on both revenue and EBITDA
+---
+NOT FOUND draft-1 19 statement 4 sourceId="0" label=19_synth_annual_report
+2. Lumen Specialty Chemicals GmbH
+Investment date: October 2025...
+The integration into the Fund's portfolio is proceeding well. The 100-day plan is on track, with the new financial reporting infrastructure substantially in place and the procurement initiative beginning to deliver early wins.
+---
+NUMBER STRIKES draft-1
+NUMBER draft-1 01 comment statement 6 80 (80|)
+However, it does not literally say acquisition has been "almost entirely organic"; that is a fair synthesis of the 80–90% non‑paid share but still interpretive.
+---
+NUMBER draft-1 01 comment statement 6 90% (90|percent)
+However, it does not literally say acquisition has been "almost entirely organic"; that is a fair synthesis of the 80–90% non‑paid share but still interpretive.
+---
+NUMBER draft-1 01 comment statement 9 60 (60|)
+Employee count, location, talent quality, and the 60–70% cost comparison are all explicitly stated.
+---
+NUMBER draft-1 01 improvement statement null 90% (90|percent)
+The phrase “almost entirely organic” for customer acquisition is directionally correct but somewhat absolute; you might anchor it more explicitly in the numbers (“around 85–90% of sign‑ups come from non‑paid channels”).
+---
+NUMBER draft-1 06 improvement statement null 18.5 percent (18.5|percent)
+"representing a compound annual growth rate of 18.6 percent" or "approximately 18.5 percent" rather than rounding up to 19 percent, to avoid any perception of embellishment.
+---
+NUMBER draft-1 12 improvement statement null 40 (40|)
+Remove or substantiate the detailed financial metrics (international revenue moving from one-fifth to over 40 per cent, nearly threefold revenue growth, EBITDA margins from 11 to 18 per cent).
+---
+NUMBER draft-1 12 improvement statement null 11 (11|)
+Remove or substantiate the detailed financial metrics (international revenue moving from one-fifth to over 40 per cent, nearly threefold revenue growth, EBITDA margins from 11 to 18 per cent).
+---
+NUMBER draft-1 13 improvement statement null 300 (300|)
+“approximately 300+ people”), but avoid stating 320 as an unqualified fact without reconciling the discrepancy.
+---
+NUMBER draft-1 18 strength statement null 1 (1|)
+The narrative flows logically from company description to thesis to base case and conclusion, making the memo easy to read in one pass.
+---
+NUMBER draft-1 20 assessment statement null 1 (1|)
+From a source-backing perspective, the draft is very strong: all factual elements that are present in the source are accurately reflected, with only one substantive addition (pipeline preparation and Q2 2026 capital calls) that is not supported by the document.
+---
+NAME STRIKES draft-1
+NAME draft-1 01 comment statement 2 The MRR
+The MRR figures and the >150% year-on-year growth are directly supported by the source.
+---
+NAME draft-1 01 assessment statement null For Financial Times
+For Financial Times standards, you could sharpen the distinction between sourced fact and editorial judgment by slightly tempering or explicitly attributing superlatives, but overall the piece reads as a clear, well‑supported investment summary.
+---
+NAME draft-1 02 comment statement 0 The EV
+The EV of USD 4 billion is directly stated in the source.
+---
+NAME draft-1 02 assessment statement null Financial Times
+Overall text quality and readability are high, with clear, economical sentences and a coherent structure that would meet Financial Times standards with modest tightening of precision around timeframes and characterisations.
+---
+NAME draft-1 03 comment statement 8 Given Partners Group
+The source states that the Infrastructure business has USD 27 billion in overall AUM but does not explicitly use the word "globally." Given Partners Group is a global firm, the inference is reasonable but not directly stated, so the geographic qualifier is not fully supported.
+---
+NAME draft-1 06 comment statement 8 Describing ESG
+Describing ESG performance as continuing to improve is consistent with these statements.
+---
+NAME draft-1 06 assessment statement null Cirrus CAGR
+Nearly all statements are directly supported by the annual report excerpt, with only a minor rounding of the Cirrus CAGR figure.
+---
+NAME draft-1 06 improvement statement null Cirrus CAGR
+Adjust the Cirrus CAGR description to match the source more precisely, e.g.
+---
+NAME draft-1 08 comment statement 6 The CAGR
+The CAGR is rounded to 17% in the draft versus 17.1% in the source, so the claim is mostly but not exactly supported.
+---
+NAME draft-1 09 comment statement 10 The EUR
+The EUR 3 million figure and the 12‑month enhanced quality monitoring are confirmed.
+---
+NAME draft-1 10 strength statement null Dr Annika Brandt
+Leadership continuity is correctly represented, with Dr Annika Brandt remaining in charge, consistent with the source.
+---
+NAME draft-1 11 comment statement 13 Fund V’s August
+This sentence is effectively identical to the source, confirming both the three remaining companies and Fund V’s August 2025 hard-cap close.
+---
+NAME draft-1 12 comment statement 4 No EBITDA
+No EBITDA margin figures or changes are mentioned in the source.
+---
+NAME draft-1 13 comment statement 12 The ARR
+The ARR starting point, target, time frame, and 19% CAGR are all explicitly supported.
+---
+NAME draft-1 16 comment statement 1 The EV
+The EV of EUR 310m and the 72% stake are both correct, but the source does not phrase this as "EUR 310m for a 72% stake"; rather, EUR 195m is being invested for the 72% stake and the EV is a separate valuation metric.
+---
+NAME draft-1 18 comment statement 4 Using EUR
+Using EUR 38m as the current ARR conflicts with the updated source.
+---
+NAME draft-1 18 comment statement 7 Using EUR
+Using EUR 38m as the current base conflicts with the updated figures that the team has agreed to adopt.
+---
+NAME draft-1 19 comment statement 2 The MOIC
+The MOIC and IRR figures match the source exactly.
+---
+draft-2 QUOTES passages=308 exact=187 normalised=53 notFound=68 nullPassage=13 claimsLosingEvidence=68 commentsWithheld=68
+draft-2 NUMBERS units=559 withheld=6 claimsLosingEvidence=2
+draft-2 NAMES units=559 withheld=13 claimsLosingEvidence=11
+NOT FOUND draft-2
+NOT FOUND draft-2 01 statement 0 sourceId="0" label=01_bvp_shopify_memo
+Shopify was founded in 2007 by two Ruby on Rails core developers... Shopify�s 24 employees are located in Ottawa, Canada.
+...
+We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify, a provider of e-commerce software to SMBs.
+---
+NOT FOUND draft-2 01 statement 4 sourceId="0" label=01_bvp_shopify_memo
+Yet sophisticated features are also available without complicating the overall user experience. Shopify accomplishes this by making available an �App Store�.
+...
+This approach is a big competitive differentiator for Shopify.
+...
+Roughly two-thirds of Shopify�s customers utilize at least one app from their �App Store�.
+---
+NOT FOUND draft-2 01 statement 5 sourceId="0" label=01_bvp_shopify_memo
+Shopify sells a simple SaaS solution that enables a business to quickly setup and run an online retail store. A typical customer signs up using their credit card and is up and running in a few hours with no long-term contract.
+...
+The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours.
+---
+NOT FOUND draft-2 01 statement 6 sourceId="0" label=01_bvp_shopify_memo
+Roughly 65�70% of customers sign-up via word-of-mouth. Roughly 20% of customers sign-up via referrals from web design firms.
+...
+Finally, roughly 10�15% of customers sign-up via paid channels, which is largely keyword marketing and the occasional contest program.
+...
+We believe that Shopify has under-invested in marketing in a big way and that with a VP of Marketing and a few experienced people in place, the company can accelerate growth.
+---
+NOT FOUND draft-2 01 statement 10 sourceId="0" label=01_bvp_shopify_memo
+Despite this, they are able to acquire a customer for between $175�225 and can pay back that spend in 7�9 months on a churn-adjusted basis.
+...
+We are excited by what we see as a great product that has struck a chord with customers.
+...
+This approach is a big competitive differentiator for Shopify.
+...
+Further, we think that there is an enormous opportunity to accelerate growth by investing in: i) marketing, ii) international expansion and product localization and iii) business development to expand the applications available in the Shopify App Store.
+---
+NOT FOUND draft-2 01 statement 11 sourceId="0" label=01_bvp_shopify_memo
+We seek approval for BVP to invest up to $7mm in the Series A financing of Shopify...
+...
+We recommend this investment.
+---
+NOT FOUND draft-2 04 statement 4 sourceId="0" label=04_synth_vc_pinterest_style_memo
+Average sessions per active user per week is approximately 6 — also exceptional. ... Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.
+---
+NOT FOUND draft-2 04 statement 6 sourceId="0" label=04_synth_vc_pinterest_style_memo
+Average session length is 14 minutes — exceptional for a social product. ... Average sessions per active user per week is approximately 6 — also exceptional. ... Repeat visit rate after the first 30 days is 68%, which is at the very high end of social product benchmarks.
+---
+NOT FOUND draft-2 04 statement 10 sourceId="0" label=04_synth_vc_pinterest_style_memo
+The user demographic is unusual. ... This is a desirable advertising audience.
+
+We expect monetisation to come eventually from native advertising — particularly from advertisers in categories such as home decor, fashion, and weddings that align naturally with user behaviour — but we have not underwritten any specific revenue projections.
+---
+NOT FOUND draft-2 04 statement 13 sourceId="0" label=04_synth_vc_pinterest_style_memo
+Pinterest is a young company. The product has been in market for roughly 16 months. The team is small — six full-time employees plus the two founders.
+...
+Current monthly active users are approximately 1.5 million, growing rapidly.
+---
+NOT FOUND draft-2 04 statement 20 sourceId="0" label=04_synth_vc_pinterest_style_memo
+First, the engagement metrics are exceptional and are the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.
+...
+Third, the founders are exceptional. Our consistent experience is that the team is the principal determinant of outcomes in early-stage consumer investments. We have high conviction in Ben and Evan as builders.
+...
+Defensibility is uncertain.
+---
+NOT FOUND draft-2 06 statement 6 sourceId="0" label=06_synth_listed_pe_report_excerpt
+We have introduced several operational changes during 2025, including the recruitment of a new Chief Commercial Officer and the appointment of a new Chairman with deep Iberian consumer experience. We are also implementing a structured cost reduction programme targeting approximately EUR 5 million of annualised savings. We expect these changes to begin contributing meaningfully in 2026.
+...
+We continue to view the underlying business as fundamentally sound and well-positioned for recovery as the operational programme takes effect and as the Iberian consumer environment improves.
+---
+NOT FOUND draft-2 06 statement 8 sourceId="0" label=06_synth_listed_pe_report_excerpt
+Northstar Partners' environmental, social and governance ("ESG") programme has continued to mature during 2025. Eighty-five percent of our portfolio companies now report Scope 1 and Scope 2 emissions on a comparable basis, up from 72 percent in 2024.
+...
+Female representation in senior management across the portfolio reached 31 percent at the end of 2025, up from 26 percent at the end of 2024.
+---
+NOT FOUND draft-2 08 statement 2 sourceId="0" label=08_synth_industrial_buyout_memo
+We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG ("HPC" or "the Company")… Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management.
+
+The Schiller family will retain a 15% economic interest. Management will hold the remaining 7%.
+---
+NOT FOUND draft-2 08 statement 8 sourceId="0" label=08_synth_industrial_buyout_memo
+Our base case underwrites a five-year hold with the following value drivers.
+
+The base case generates a 2.4x gross MOIC and a 19% gross IRR.
+---
+NOT FOUND draft-2 08 statement 10 sourceId="0" label=08_synth_industrial_buyout_memo
+Revenue growth of 9% CAGR, taking 2024 revenue of EUR 587 million to approximately EUR 905 million by 2029. This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A.
+
+Second, the end markets HPC serves are structurally attractive. The orthopaedic implants market is forecast to grow at 5–6% annually through 2030, driven by ageing demographics in Europe and the United States. Aerospace component demand is recovering strongly post-COVID, with Airbus and Boeing collectively targeting build-rate increases of approximately 40% over the next five years.
+---
+NOT FOUND draft-2 08 statement 14 sourceId="0" label=08_synth_industrial_buyout_memo
+Fourth, we see meaningful M&A opportunity. The European precision machining sector remains highly fragmented… We have already identified five actionable targets in the EUR 30–80 million enterprise value range that would be accretive on both growth and margin grounds.
+
+Under our ownership we expect to complete two to three add-on acquisitions over the holding period.
+
+The transaction will be funded with EUR 480 million of equity from Halden Group, EUR 130 million of equity from co-investors (currently anticipated to include two existing LP relationships), and EUR 540 million of senior and second-lien debt.
+---
+NOT FOUND draft-2 08 statement 15 sourceId="0" label=08_synth_industrial_buyout_memo
+We have identified four principal risks.
+
+The semiconductor exposure introduces cyclicality that the medical and aerospace segments do not.
+
+Customer concentration is a watch item. HPC's largest customer, a global orthopaedic implants manufacturer, accounted for 18% of revenue in 2024.
+
+Foreign exchange exposure is significant.
+
+Founder transition risk is moderate.
+
+We expect to hedge transaction exposure systematically post-close and have factored a normalised CHF/EUR rate of 0.98 into our base case.
+
+We have completed extensive reference checks. Andreas Schiller has committed to remain on the board for the first three years post-close and will rollover approximately 8% of his proceeds into the transaction.
+---
+NOT FOUND draft-2 08 statement 16 sourceId="0" label=08_synth_industrial_buyout_memo
+We are attracted to HPC for four reasons.
+
+First, the Company occupies an enviable competitive position.
+
+Second, the end markets HPC serves are structurally attractive.
+
+Third, there is a clear margin expansion path.
+
+Fourth, we see meaningful M&A opportunity.
+---
+NOT FOUND draft-2 08 statement 17 sourceId="0" label=08_synth_industrial_buyout_memo
+HPC represents an attractive opportunity to acquire a category leader in a structurally growing market with a clear operational improvement plan and proven through-cycle resilience. The base case returns of 2.4x / 19% are in line with our private equity portfolio benchmarks, and we see meaningful upside optionality from M&A and end-market acceleration. The risks are well-understood and manageable. We recommend approval.
+
+Petra Köhler… Reference checks across customers, suppliers, and former colleagues have been uniformly positive.
+---
+NOT FOUND draft-2 09 statement 2 sourceId="0" label=09_synth_portfolio_update_letter
+The medical implants segment grew 14%, well ahead of expectations, driven by a 22% increase from our largest orthopaedic customer following their successful US product launch.
+
+EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX...
+---
+NOT FOUND draft-2 09 statement 3 sourceId="0" label=09_synth_portfolio_update_letter
+The leadership transition has gone better than expected.
+---
+NOT FOUND draft-2 09 statement 11 sourceId="0" label=09_synth_portfolio_update_letter
+Klaus Wenger joined as Chief Procurement Officer in September, having previously held the same role at Belimo. He brings strong category management discipline that the Company has historically lacked.
+
+EBITDA of EUR 58 million versus a budget of EUR 54 million was driven by three factors: favourable mix (the strength in medical was higher-margin than budgeted), early procurement wins (Klaus Wenger has already secured EUR 2.1 million of annualised savings against a year-one target of EUR 5 million), and modest favourable FX...
+---
+NOT FOUND draft-2 11 statement 5 sourceId="0" label=11_synth_investor_letter_exit
+International expansion. At entry, the Company generated SEK 3.4 billion (81%) of revenue from the Nordic region. ... By the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue.
+---
+NOT FOUND draft-2 11 statement 9 sourceId="0" label=11_synth_investor_letter_exit
+At the time of our investment, the Company generated revenue of SEK 4.2 billion and EBITDA of SEK 480 million, representing an EBITDA margin of 11.4%.
+...
+By the time of exit, international revenue had grown to SEK 4.8 billion, representing 42% of total revenue. Total Company revenue at exit was SEK 11.4 billion.
+...
+Combined with the modularity programme, this drove EBITDA margins from 11.4% at entry to 18.2% at exit. Absolute EBITDA grew from SEK 480 million to SEK 2.08 billion over the hold.
+---
+NOT FOUND draft-2 11 statement 13 sourceId="0" label=11_synth_investor_letter_exit
+With three remaining portfolio companies and approximately SEK 2.1 billion of unrealised value, Fund IV is now solidly tracking to deliver above the 2.5x net MOIC target communicated at fund close.
+...
+Our focus now turns to the three remaining portfolio companies and to deployment of Fund V, which closed in August 2025 at hard cap.
+---
+NOT FOUND draft-2 13 statement 7 sourceId="0" label=13_synth_internal_inconsistency_memo
+CloudPivot employs 320 people across offices in London (headquarters), Hamburg, Lisbon, and Bangalore.
+...
+The total team of 285 people is split approximately as follows: engineering 110, customer success and implementation 75, sales 55, customer support 35, and general & administrative 10.
+---
+NOT FOUND draft-2 14 statement 1 sourceId="0" label=14_synth_thesis_only_memo
+Clinical decision support software helps clinicians make better, faster, more consistent treatment decisions at the point of care.
+...
+We believe the European market is at an inflection point. Three forces are aligning.
+---
+NOT FOUND draft-2 14 statement 3 sourceId="0" label=14_synth_thesis_only_memo
+Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway.
+...
+First, the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances.
+---
+NOT FOUND draft-2 14 statement 4 sourceId="0" label=14_synth_thesis_only_memo
+Reimbursement codes for digital health products have improved meaningfully across the major European markets over the past three years.
+...
+Second, payer willingness to reimburse CDS software has improved markedly.
+---
+NOT FOUND draft-2 14 statement 8 sourceId="0" label=14_synth_thesis_only_memo
+The European CDS market is structurally distinct from the US market in several ways. European healthcare is dominated by national payers, which gives CDS products a clearer route to scale once adopted by a national authority.
+...
+The thesis fits our European healthcare investment platform well.
+...
+The category has been under-served by private equity to date. ... There is meaningful opportunity for a thoughtful financial sponsor to play a constructive consolidation role.
+---
+NOT FOUND draft-2 14 statement 11 sourceId="0" label=14_synth_thesis_only_memo
+We are not recommending any specific investment at this time. We are seeking endorsement of the thesis and authorisation to invest sourcing time accordingly.
+...
+Plan to return to the Committee within six months with either a specific transaction memo or a refreshed thesis based on what we have learned.
+---
+NOT FOUND draft-2 15 statement 2 sourceId="0" label=15_synth_very_long_memo
+The transaction will be funded with EUR 720 million of equity from Halden Group, EUR 110 million of co-investment from two of our long-standing LP relationships... The Esposito family will retain a 10% interest. Management will retain 6%. Halden Group and co-investors will hold 84% in aggregate.
+---
+NOT FOUND draft-2 15 statement 4 sourceId="0" label=15_synth_very_long_memo
+The Company has grown... with operations across Italy, France, Spain, and Germany. The Company currently operates 184 retail stores...
+---
+NOT FOUND draft-2 15 statement 4 sourceId="0" label=15_synth_very_long_memo
+...and a wholesale business that supplies independent design-led homeware retailers across Europe.
+---
+NOT FOUND draft-2 15 statement 6 sourceId="0" label=15_synth_very_long_memo
+Casa Verde is a category leader in a structurally attractive sector. ... The Company holds an estimated 4.1% share of the addressable European premium market — a meaningful position in a fragmented category where the next largest specialist competitor holds roughly 2.7%.
+---
+NOT FOUND draft-2 15 statement 7 sourceId="0" label=15_synth_very_long_memo
+Second, the unit economics of Casa Verde stores are exceptional. The Company's average four-wall store EBITDA margin is 22%... This is materially better than premium homeware peers and reflects strong product margins...
+---
+NOT FOUND draft-2 15 statement 8 sourceId="0" label=15_synth_very_long_memo
+The next logical markets are the UK, the Netherlands, and the Nordic region, none of which have been entered. Our commercial diligence suggests substantial unmet demand...
+---
+NOT FOUND draft-2 15 statement 11 sourceId="0" label=15_synth_very_long_memo
+The Atelier 73 banner — relaunched in 2022 — operates 18 small-format stores...
+---
+NOT FOUND draft-2 15 statement 11 sourceId="0" label=15_synth_very_long_memo
+Our thesis rests on five pillars.
+
+First, Casa Verde is a category leader...
+Second, the unit economics...
+Third, there is a clear and well-defined international expansion runway.
+Fourth, there is meaningful product-side opportunity.
+Fifth, the Atelier 73 concept has the potential to become a meaningful third growth pillar.
+---
+NOT FOUND draft-2 15 statement 16 sourceId="0" label=15_synth_very_long_memo
+We have identified five principal risks.
+...
+We have mitigated this risk through detailed commercial diligence... Even so, this risk warrants close governance attention...
+We have stress-tested our model... and the returns remain attractive.
+...
+We have stress-tested our model for the scenario in which 10% of leases are renegotiated upward by 20% at the next break, and the impact on returns is modest.
+...
+We have reviewed each of these relationships in diligence and they are stable, but we note the dependency.
+---
+NOT FOUND draft-2 15 statement 17 sourceId="0" label=15_synth_very_long_memo
+The principal drivers are international expansion (contributing approximately EUR 240 million of incremental revenue, primarily from the UK and Nordic launches)...
+---
+NOT FOUND draft-2 15 statement 19 sourceId="0" label=15_synth_very_long_memo
+Homeware is a discretionary purchase, and the European consumer environment in 2025 is uneven. ... A broader European consumer downturn would put pressure on the plan; we are comfortable that the Company's premium positioning and resilient unit economics give meaningful downside protection.
+---
+NOT FOUND draft-2 15 statement 22 sourceId="0" label=15_synth_very_long_memo
+Marco Esposito, son of the founder, has served as Chairman and CEO since 2008. He will step back from day-to-day responsibilities post-close but will remain Chairman for at least three years. The current Chief Operating Officer, Elena Conti, will assume the CEO role. Elena has been with the Company for 17 years...
+---
+NOT FOUND draft-2 15 statement 30 sourceId="0" label=15_synth_very_long_memo
+Commercial diligence was conducted by Bain & Company over a ten-week period... Financial and tax diligence was conducted by Deloitte. ... Legal diligence was conducted by Latham & Watkins. ... ESG diligence was conducted by ERM. ... The Bain report (circulated separately) confirms market positioning...
+---
+NOT FOUND draft-2 15 statement 31 sourceId="0" label=15_synth_very_long_memo
+Casa Verde represents one of the most attractive opportunities our European Consumer team has reviewed... The Company combines a strong direct-to-consumer brand with category-leading market share... and a clear runway for international expansion... Second, the unit economics of Casa Verde stores are exceptional.
+---
+NOT FOUND draft-2 15 statement 32 sourceId="0" label=15_synth_very_long_memo
+The management team is strong. ... The management team is strong, the value creation plan is well-defined, and the financing structure is appropriately conservative.
+...
+We recommend approval of an investment of up to EUR 720 million of equity from Halden Group...
+---
+NOT FOUND draft-2 16 statement 0 sourceId="0" label=16_synth_healthcare_consumer
+We seek IC approval for an investment of EUR 195 million for a 72% controlling stake in Bloom Nutrition Holdings Limited ("Bloom" or "the Company"), a London-headquartered premium women's nutrition and wellness brand with a multi-channel European presence.
+
+Bloom was founded in 2018 by Sarah Whitmore and Dr. Lara Bennett, both Cambridge-trained scientists. The Company operates in the premium women's health and nutrition category, offering a focused range of evidence-based supplement products targeting four primary use cases: hormonal balance, energy and recovery, skin and hair health, and pregnancy and postnatal nutrition.
+---
+NOT FOUND draft-2 16 statement 9 sourceId="0" label=16_synth_healthcare_consumer
+Bloom has built a defensible position in a category where most competitors are either single-product brands (limiting customer lifetime value) or insufficiently differentiated. The Company's clinical advisory board, in-house formulation capability, and disciplined product development cadence (typically two new product launches per year) create meaningful competitive moats.
+
+The product range comprises 24 SKUs, all formulated in-house, manufactured under contract by GMP-certified European facilities, and sold direct-to-consumer through Bloom's own website and Amazon, alongside a select wholesale presence in premium retailers including Selfridges, Le Bon Marché, KaDeWe, and Sephora.
+---
+NOT FOUND draft-2 16 statement 10 sourceId="0" label=16_synth_healthcare_consumer
+Three pillars support our investment thesis.
+
+Premium women's health is a structurally attractive emerging category. Women's health has been historically under-served by both mainstream and premium consumer health brands. The category is growing at approximately 14% annually in Europe, with significantly faster growth in dedicated direct-to-consumer brands. Bloom is well-positioned within this category as a clinically-credible, premium-positioned, multi-product brand.
+
+International expansion runway is significant. Bloom is strong in the UK and increasingly strong in DACH, but underdeveloped in France, Italy, and Spain. The brand has demonstrable cross-border appeal — DACH revenue has grown from zero in 2021 to EUR 18 million in 2024 — and we see clear opportunity to replicate this in the Romance language markets.
+
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR. The growth is sourced from continued UK growth (modest, reflecting maturation), continued strong DACH growth, accelerated entry into France and Spain, and selective US market entry in year three.
+
+The base case generates a 2.9x MOIC and 24% IRR over a five-year hold.
+---
+NOT FOUND draft-2 16 statement 11 sourceId="0" label=16_synth_healthcare_consumer
+We underwrite revenue growth from EUR 64 million in 2025 to approximately EUR 195 million by 2030, an 25% CAGR.
+...
+The base case generates a 2.9x MOIC and 24% IRR over a five-year hold.
+---
+NOT FOUND draft-2 16 statement 12 sourceId="0" label=16_synth_healthcare_consumer
+Customer acquisition cost inflation in direct-to-consumer is the principal risk. Bloom's current 5.2-month payback period has lengthened from 3.8 months in 2022, reflecting both increased competition and broader paid social media cost inflation.
+
+Brand-driven categories are subject to founder-dependency risk. Sarah Whitmore in particular is closely associated with the brand through content, podcast appearances, and visible founder presence.
+
+Regulatory risk in women's health is real. Several of Bloom's products make claims around hormonal support and pregnancy wellness that are subject to evolving regulatory scrutiny across European markets. The Company has invested appropriately in regulatory affairs and has a clean track record, but the regulatory environment for nutrition claims is becoming more demanding.
+---
+NOT FOUND draft-2 17 statement 9 sourceId="0" label=17_synth_real_estate_logistics
+We have budgeted EUR 38 million of value-add capital expenditure across the hold period. The principal investments are EUR 14 million in modernising the Park Royal asset ... EUR 8 million in the San Fernando asset, EUR 6 million in the Schiphol asset, and the remainder spread across smaller modernisation works across the Portfolio.
+---
+NOT FOUND draft-2 17 statement 9 sourceId="0" label=17_synth_real_estate_logistics
+Rental growth of approximately 6% annually (a moderation from the recent 8% pace)... and exit at a 5.0% yield reflecting modest yield compression supported by continued strong investor demand for the asset class.
+---
+NOT FOUND draft-2 17 statement 10 sourceId="0" label=17_synth_real_estate_logistics
+Levered at 55% loan-to-value, the equity gross IRR is 16.8% and the MOIC is 2.1x.
+...
+Senior debt of EUR 337 million (55% LTV) has been pre-arranged
+---
+NOT FOUND draft-2 17 statement 10 sourceId="0" label=17_synth_real_estate_logistics
+Our base case underwrites a five-year hold with the following return drivers. ... Levered at 55% loan-to-value, the equity gross IRR is 16.8%
+---
+NOT FOUND draft-2 18 statement 2 sourceId="0" label=18a_synth_cross_source_pair_initial
+We recommend an investment of EUR 158 million for a 60% controlling stake in Nordic SaaS Holdings AB ("NSH" or "the Company").
+---
+NOT FOUND draft-2 18 statement 3 sourceId="0" label=18a_synth_cross_source_pair_initial
+The platform serves over 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240,000 residential units.
+
+The Company currently serves 412 property management companies, not 380 as stated in our initial memo.
+---
+NOT FOUND draft-2 18 statement 4 sourceId="1" label=18b_synth_cross_source_pair_update
+Annual recurring revenue stands at EUR 38 million as of March 2025, up from EUR 28 million the prior year — representing 36% year-on-year growth.
+
+Annual recurring revenue at end of April was EUR 35 million, not EUR 38 million as stated in our initial memo. The discrepancy arose from the Company's internal reporting convention, which has historically included committed but not yet activated annual contracts in the headline ARR figure. The cleaned ARR (representing live, billing customer contracts only) is EUR 35 million. Growth on a cleaned basis is 28% year-on-year rather than the 36% previously reported.
+---
+NOT FOUND draft-2 18 statement 5 sourceId="1" label=18b_synth_cross_source_pair_update
+The Company employs 142 people, with the majority based at the Stockholm headquarters and smaller offices in Oslo (12 people) and Helsinki (8 people).
+
+The Company employs 167 people as of 28 May, not 142 as stated in our initial memo.
+---
+NOT FOUND draft-2 18 statement 6 sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity. Three factors drive our conviction.
+
+First, the product is genuinely market-leading.
+
+Second, the Nordic property management technology market remains structurally underpenetrated.
+
+Third, the founder team is exceptional.
+---
+NOT FOUND draft-2 18 statement 6 sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH was founded in 2013 by Erik Lindqvist (current CEO) and three co-founders.
+
+The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+---
+NOT FOUND draft-2 18 statement 8 sourceId="1" label=18b_synth_cross_source_pair_update
+The base case generates a 2.8x MOIC and 23% IRR.
+
+Our updated base case generates a 2.6x MOIC and 21% IRR over the five-year hold, compared with the 2.8x / 23% in our initial recommendation.
+---
+NOT FOUND draft-2 18 statement 9 sourceId="0" label=18a_synth_cross_source_pair_initial
+NSH occupies a strong position in a deeply specialised vertical with high switching costs and a clear consolidation opportunity.
+
+Third, the founder team is exceptional. Erik Lindqvist is a domain-deep CEO who has rebuilt the product from the ground up over the past four years. The technical leadership has been stable and capable, with the CTO (Pekka Virtanen) having been with the Company since 2015.
+
+NSH is a high-quality Nordic vertical SaaS asset with strong unit economics, exceptional product strength, and a clear growth runway.
+---
+NOT FOUND draft-2 19 statement 3 sourceId="0" label=19_synth_annual_report
+Across the remaining eight portfolio companies, performance has been broadly positive with two notable challenges.
+...
+Continental Plastics has had a more challenging 2025.
+...
+Drift Logistics had a mixed 2025.
+---
+NOT FOUND draft-2 19 statement 4 sourceId="0" label=19_synth_annual_report
+Helvetia Precision Components AG
+Investment date: June 2025 Sector: Precision manufacturing Total Fund equity: EUR 480 million
+Status: Active, year 1 of hold
+... Six months post-close, the Company is tracking modestly ahead of our underwriting on both revenue and EBITDA...
+
+Lumen Specialty Chemicals GmbH
+Investment date: October 2025 ... The integration into the Fund's portfolio is proceeding well. The 100-day plan is on track...
+
+Brightway Industrial Coatings Ltd
+... Brightway has had a strong 2025, with revenue growing 14% year-on-year and EBITDA growing 21%.
+
+Eltex Power Systems AS
+... Revenue grew 23% year-on-year and EBITDA grew 31%. The order backlog stands at EUR 480 million, up from EUR 285 million at our acquisition date.
+---
+NOT FOUND draft-2 19 statement 5 sourceId="0" label=19_synth_annual_report
+Continental Plastics Holdings
+Investment date: March 2023 ... Continental Plastics has had a more challenging 2025. Revenue grew 4% year-on-year (against an underwriting of 9%) and EBITDA was broadly flat.
+---
+NOT FOUND draft-2 19 statement 7 sourceId="0" label=19_synth_annual_report
+Drift Logistics Group BV
+Investment date: April 2024 Sector: Third-party logistics ... Drift Logistics had a mixed 2025. The European parcel volume environment has been softer than expected, with overall European parcel volumes down approximately 3% year-on-year. The Company has nevertheless gained share, with revenue growing 6% against the negative market backdrop. EBITDA margins have been pressured by overcapacity in the market and have compressed from 14% to 12% year-on-year.
+---
+NUMBER STRIKES draft-2
+NUMBER draft-2 01 comment statement 9 60 (60|)
+The memo confirms the 24 employees are in Ottawa and that development and design talent has been recruited at 60–70% of Silicon Valley or New York cost.
+---
+NUMBER draft-2 06 assessment statement null 18.6 (18.6|)
+The only minor deviation is the rounding of Cirrus’s revenue CAGR from 18.6 per cent to “approximately 19 per cent”, which is acceptable but should be treated consciously as a rounding choice.
+---
+NUMBER draft-2 06 assessment statement null 19 (19|)
+The only minor deviation is the rounding of Cirrus’s revenue CAGR from 18.6 per cent to “approximately 19 per cent”, which is acceptable but should be treated consciously as a rounding choice.
+---
+NUMBER draft-2 06 improvement statement null 18.6 (18.6|)
+Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment.
+---
+NUMBER draft-2 06 improvement statement null 18.5 (18.5|)
+Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment.
+---
+NUMBER draft-2 06 improvement statement null 19 (19|)
+Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment.
+---
+NUMBER draft-2 07 improvement statement null 0 (0|)
+Optionally reintroduce a short nod to the continued importance of non-agent, human-centric software (as in the source) to avoid the impression that the thesis is zero-sum about agents replacing all software.
+---
+NUMBER draft-2 08 comment statement 2 22% (22|percent)
+The 78% stake and the residual 22% split between the Schiller family and management are supported.
+---
+NUMBER draft-2 13 improvement statement null 300 (300|)
+"around 300 employees"), or clarifying which figure is current and why, if that information is available.
+---
+NAME STRIKES draft-2
+NAME draft-2 01 assessment statement null Financial Times
+Readability is strong, though a few evaluative phrases could be sharpened or more explicitly tied to the cited numbers to maintain the Financial Times–level discipline around evidentiary support and to avoid over-claiming relative to the source language.
+---
+NAME draft-2 02 comment statement 0 The EV
+The EV of USD 4 billion is explicitly stated in the source.
+---
+NAME draft-2 05 comment statement 4 The CAGR
+The CAGR of approximately 11 percent over the past five years is directly stated in the source.
+---
+NAME draft-2 06 improvement statement null Cirrus CAGR
+Consider aligning the Cirrus CAGR wording more precisely with the source by either retaining the 18.6 per cent figure or explicitly noting it as “approximately 18.5 per cent” rather than rounding up to 19 per cent, to avoid any perception of embellishment.
+---
+NAME draft-2 08 comment statement 6 The CAGR
+The CAGR is given as 17.1% in the source, while the draft rounds this to 17%.
+---
+NAME draft-2 08 comment statement 13 The MOIC
+The MOIC and IRR figures match the source exactly.
+---
+NAME draft-2 09 comment statement 10 The EUR
+The EUR 3 million figure and its limited nature, as well as the 12‑month enhanced quality monitoring, are explicitly supported.
+---
+NAME draft-2 12 comment statement 4 No EBITDA
+No EBITDA margin data or percentages appear in the source, so this numerical claim is unsupported.
+---
+NAME draft-2 13 comment statement 12 The ARR
+The ARR starting point, target, time frame, and CAGR all match the source language exactly.
+---
+NAME draft-2 16 comment statement 1 The EV
+The EV of EUR 310m and the 72% stake are both correct, but the EV is for the whole company, not specifically "for a 72 percent stake".
+---
+NAME draft-2 17 comment statement 4 The WAULT
+The WAULT of 6.8 years is explicitly given.
+---
+NAME draft-2 18 comment statement 4 Presenting EUR
+Presenting EUR 38m as the current ARR without qualification conflicts with the updated source.
+---
+NAME draft-2 19 comment statement 4 For Helvetia
+For Helvetia, the acquisition date (June 2025), six months post-close timing, and tracking modestly ahead of underwriting are all supported.
+---
+NAME draft-2 19 comment statement 4 For Lumen
+For Lumen, the 100‑day plan being on track is supported.
+---
+NAME draft-2 19 comment statement 4 For Brightway
+For Brightway, the revenue and EBITDA growth figures and the characterisation of a strong 2025 are supported.
+---
+NAME draft-2 19 comment statement 4 For Eltex
+For Eltex, the revenue and EBITDA growth figures and the increase in order backlog from EUR 285m to EUR 480m are supported.
+---
+real-runs QUOTES passages=44 exact=15 normalised=8 notFound=21 nullPassage=2 claimsLosingEvidence=21 commentsWithheld=21
+real-runs NUMBERS units=98 withheld=5 claimsLosingEvidence=3
+real-runs NAMES units=98 withheld=3 claimsLosingEvidence=1
+NOT FOUND real-runs
+NOT FOUND real-runs 2026-10-04-hicl statement 1 sourceId="0" label=source-hicl-interim-extracted
+"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year."
+---
+NOT FOUND real-runs 2026-10-04-hicl statement 2 sourceId="0" label=source-hicl-interim-extracted
+"HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations."
+---
+NOT FOUND real-runs 2026-10-04-hicl statement 3 sourceId="0" label=source-hicl-interim-extracted
+"London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast."
+---
+NOT FOUND real-runs 2026-10-04-hicl statement 4 sourceId="0" label=source-hicl-interim-extracted
+"The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator."
+---
+NOT FOUND real-runs 2026-10-04-hicl statement 5 sourceId="0" label=source-hicl-interim-extracted
+"Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption."
+---
+NOT FOUND real-runs 2026-10-04-hicl statement 6 sourceId="0" label=source-hicl-interim-extracted
+"The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues."
+---
+NOT FOUND real-runs 2026-10-04-hicl statement 7 sourceId="0" label=source-hicl-interim-extracted
+"At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water."
+---
+NOT FOUND real-runs 2026-10-06-gpi statement 0 sourceId="0" label=source-gpi-press-release-extracted
+GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.
+...
+GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.
+---
+NOT FOUND real-runs 2026-10-06-gpi statement 1 sourceId="0" label=source-gpi-press-release-extracted
+The Group currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand. It also has two other plants in the UK.
+...
+GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.
+---
+NOT FOUND real-runs 2026-10-06-gpi statement 2 sourceId="0" label=source-gpi-press-release-extracted
+GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets. The move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness.
+...
+After higher initial costs from diversifying production to Southeast Asia, GP Industries said margins have risen due to improved utilisation, lower commodity costs, and optimised supply chains.
+---
+NOT FOUND real-runs 2026-10-06-gpi statement 4 sourceId="0" label=source-gpi-press-release-extracted
+GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.
+...
+It has since grown into a global manufacturer, producing over six billion batteries annually, sold through one million outlets worldwide.
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 0 sourceId="0" label=source-clearpoint-q1-2026-extracted
+SOLANA BEACH, Calif., May 13, 2026 (Newswire.com) - ClearPoint Neuro, Inc. (Nasdaq:CLPT) (the "Company"), a global device, cell, and gene therapy-enabling company offering precise navigation to the brain and spine, today announced financial results for its first quarter ended March 31, 2026.
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 1 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;
+The activated installed base across all ClearPoint technology including IRRAflow systems now includes over 175 global centers;
+Achievement of measurable revenue and cost synergies through the continuing integration of the IRRAflow product portfolio and team;
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 2 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 2 sourceId="0" label=source-clearpoint-q1-2026-extracted
+"While record revenue achievement and 25% organic devices growth made the headline, there is no shortage of meaningful strategic progress across the entire organization."
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 3 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Biologics and drug delivery revenue... increased slightly to $4.8 million...
+Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million...
+Capital equipment and software revenue... increased 177% to $1.4 million...
+Total revenue was $12.1 million...
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 3 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025.
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 3 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million... The increase is driven by additional revenues from sales of the IRRAflow product of as well as the introduction of our 3.0 operating room navigation software, which has positively impacted procedural volumes in the operating room during the three months ended March 31, 2026, compared to the same period in 2025.
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 4 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Capital equipment and software revenue... increased 177% to $1.4 million... from $0.5 million for the same period in 2025 due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 5 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Biologics and drug delivery revenue... increased slightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the three months ended March 31, 2025.
+---
+NOT FOUND real-runs 2026-10-06-clearpoint statement 8 sourceId="0" label=source-clearpoint-q1-2026-extracted
+Received Medical Device License (MDL) from Health Canada for the ClearPoint Neuro Navigation System, covering both MRI-guidance and iCT guidance workflows with first cases now scheduled;
+---
+NUMBER STRIKES real-runs
+NUMBER real-runs 2026-09-29 comment statement 0 £3.3 billion (3.3|billion)
+The source confirms a total return of £3,291 million and a 13% return on opening shareholders’ funds, but the draft misstates the figure as £3.3 million instead of approximately £3.3 billion and gives the period as six months to 30 June 2025 rather than to 30 September 2025.
+---
+NUMBER real-runs 2026-09-29 comment statement 5 €11.229 billion (11.229|billion)
+The figures for net sales (€11.229 billion) and like-for-like sales growth (6.3%) are supported, but the period is misstated.
+---
+NUMBER real-runs 2026-09-29 improvement statement null £3.3bn (3.3|billion)
+£3.3bn), not £3.3 million, and it relates to the six months to 30 September 2025, not to 30 June 2025; similarly, the Action sales and LFL data are for nine reporting periods to 28 September 2025, not six months to 30 June 2026.
+---
+NUMBER real-runs 2026-10-06-clearpoint comment statement 9 $52 (52|)
+The guidance range of $52–56m is for 2026, not 2027, and is presented as a range rather than a single point of $56m.
+---
+NUMBER real-runs 2026-10-06-clearpoint improvement statement null $52 (52|)
+The company provides a 2026 revenue estimate range of $52–56m, not a single-point guidance of $56m for 2027.
+---
+NAME STRIKES real-runs
+NAME real-runs 2026-10-06-gpi assessment statement null Financial Times
+Text quality and readability are acceptable for a news-style summary, yet the piece would not meet Financial Times standards for precision and sourcing in its current form.
+---
+NAME real-runs 2026-10-06-clearpoint comment statement 2 The CEO
+The CEO quote explicitly mentions 25% organic devices growth, but does not specify that this is year-on-year.
+---
+NAME real-runs 2026-10-06-clearpoint assessment statement null Health Canada Medical Device License
+However, there are significant factual errors around organic growth (including an invented -50% figure), the timing of the results announcement, the nature and issuer of regulatory approvals (confusing FDA clearance with a Health Canada Medical Device License and introducing an unsubstantiated FDA submission), and the year and structure of revenue guidance.
+---
+KNOWN CASES against the ClearPoint doctored draft and its source
+biologics-4.1-against-4.1
+Biologics and drug delivery revenue was 4.1 million against 4.1 million.
+  number 4.1 million 4.1|million ABSENT
+  number 4.1 million 4.1|million ABSENT
+  names: none
+guidance-48.0-to-52.0-august-release
+The company guided to a range of 48.0 to 52.0 million in an August release.
+  number 48.0 48|million ABSENT
+  number 52.0 million 52|million occurs
+  names: none
+largest-on-an-invented-figure
+The neurosurgery segment is the largest, on an invented figure of 9.4 million.
+  number 9.4 million 9.4|million ABSENT
+  names: none
+wrote /Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/b381/runs/fabrication.json

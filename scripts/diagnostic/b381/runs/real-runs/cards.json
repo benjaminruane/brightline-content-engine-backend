@@ -1,0 +1,1899 @@
+{
+  "arm": "b381-draft-review",
+  "pass": "real-runs",
+  "realRuns": true,
+  "model": "gpt-5.1-2025-11-13",
+  "provider": "openai",
+  "temperature": 0,
+  "seed": 1,
+  "cache": "off",
+  "modelsTried": 1,
+  "promptFile": "scripts/diagnostic/b381/prompt.md",
+  "promptSha256": "3bb3f1debea3abcf696408afb90b29fd8c2e2bc2f032dba0a030950dda0be3b0",
+  "range": "real-runs",
+  "frozenFrom": null,
+  "stage1Called": false,
+  "labelsRead": false,
+  "pipelineOutputRead": false,
+  "readmeRead": false,
+  "costUsd": 0.1228825,
+  "costUsdList": 0.12288249999999999,
+  "calls": 4,
+  "inputTokens": 14074,
+  "cachedInputTokens": 0,
+  "outputTokens": 10529,
+  "unpricedCalls": 0,
+  "priorPasses": [
+    "draft-1",
+    "draft-2"
+  ],
+  "priorCostUsd": 1.1597575,
+  "combinedCostUsd": 1.28264,
+  "ceilingUsd": 10,
+  "stopped": false,
+  "stopReason": null,
+  "noClaimCards": 0,
+  "extractedAt": "2026-10-11T10:48:48.425Z",
+  "fixtures": [
+    {
+      "fixtureId": "2026-09-29",
+      "label": "3i-hy25-doctored",
+      "parseOk": true,
+      "parseError": null,
+      "finishReason": "stop",
+      "assessment": "From a source-backing perspective, the draft is loosely based on the half-year results but contains several material inaccuracies in dates, magnitudes, counterparties and attributions. While many core figures (returns, percentages, transaction sizes) are correctly drawn from the release, the text frequently misstates periods (e.g. June vs September, 2026 vs 2025), misattributes corporate actions (assigning Action’s capital restructuring to MAIT, and 3i’s capital deployment stance to the UK government), and occasionally introduces unsupported interpretive gloss (e.g. claiming outperformance vs expectations, portfolio-wide gains). Narrative flow is broadly coherent, but these factual slips undermine credibility. The prose itself is generally clear and readable, but it needs tighter alignment with the source document and more careful handling of causality and attribution to meet a high editorial standard.",
+      "strengths": [
+        "Core financial metrics such as the 13% total return, 14% private equity gross investment return, 9% infrastructure return, and the 36.5p dividend are correctly taken from the source and presented clearly.",
+        "The description of Action’s trading performance, store expansion, and geographic rollout in Switzerland and Romania closely tracks the CEO’s commentary and is well integrated into the narrative.",
+        "The treatment of the October 2025 financing transactions at Action (incremental €1.6bn term loan and repricing of €3.1bn of term debt) is largely accurate and captures the economic substance of the actions.",
+        "The summary of the MPM and MAIT realisations, including the money multiples of 3.2x and 2.8x, is faithful to the source and concisely expressed.",
+        "Overall structure—moving from group performance to Action, then portfolio transactions, infrastructure, and dividend—is logical and easy for a general financial audience to follow."
+      ],
+      "improvements": [
+        "Correct all period references and magnitudes to match the source: the total return is £3,291 million (c. £3.3bn), not £3.3 million, and it relates to the six months to 30 September 2025, not to 30 June 2025; similarly, the Action sales and LFL data are for nine reporting periods to 28 September 2025, not six months to 30 June 2026.",
+        "Fix misattributions of transactions and counterparties: the pro-rata redemption of shares and £944m of proceeds relate to Action, not MAIT; the earlier 2.2% stake was acquired from GIC, not \"AGIC\"; and the cautious capital deployment stance is 3i’s own, not that of the UK government.",
+        "Avoid introducing unsupported causal or evaluative statements. Remove or soften claims that private equity returns were \"driven largely\" by Action, that infrastructure returns \"outperformed expectations\", and that there were \"meaningful gains across essentially all\" infrastructure investments unless you can cite explicit support.",
+        "Align wording more closely with the source where nuance matters. For example, retain the specific period definitions (\"first half of FY2026\", \"nine reporting periods ending on 28 September 2025\") and use neutral descriptors like \"good\" rather than upgrading them to \"healthy\" unless you intend to add your own analysis and label it as such.",
+        "Tighten the final forward-looking paragraph to reflect 3i’s stated position rather than introducing new actors or policy stances. Recast it along the lines of the CEO’s comment: 3i remains cautious in deploying capital into new investments but will continue to allocate selectively, including to lower-risk reinvestments in businesses it knows and trusts.",
+        "Check sequencing and transaction mechanics carefully. The source distinguishes between the incremental term loan raise and the subsequent capital restructuring; ensure the narrative preserves that order and does not conflate the two.",
+        "Perform a final line-by-line fact check against the source for all dates, currencies, and percentages to eliminate residual discrepancies and ensure the piece can withstand close scrutiny by sophisticated investors."
+      ],
+      "claimCount": 15,
+      "unmatchedClaims": [],
+      "noClaimStatementIndexes": [],
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "3i Group delivered strong performance in the first half of FY2026\n•   Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms a total return of £3,291 million and a 13% return on opening shareholders’ funds, but the draft misstates the figure as £3.3 million instead of approximately £3.3 billion and gives the period as six months to 30 June 2025 rather than to 30 September 2025."
+        },
+        {
+          "statementIndex": 1,
+          "claim": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%).",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that the Private Equity business delivered a gross investment return of 14%. However, it does not state that this accounted for the vast majority of the overall total return, so that part is not supported."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "This was driven largely by Action, which continues to trade strongly.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%). Action continued to trade strongly, and several of our other large portfolio companies are\n    showing good momentum against a challenging macroeconomic and geopolitical backdrop across Europe and the\n    US.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that Action continues to trade strongly. It does not explicitly say that the Private Equity gross investment return was driven largely by Action, although Action is highlighted as a strong contributor. The causal emphasis \"driven largely\" is not directly supported."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Action’s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "This is a close paraphrase of the CEO’s comment and is fully supported by the source."
+        },
+        {
+          "statementIndex": 4,
+          "claim": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Year to date LFL\ntrading remains good despite weakening consumer confidence since the summer.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source states that year-to-date like-for-like trading remains \"good\" despite weakening consumer confidence. The draft’s use of \"healthy\" is interpretive but broadly consistent; the rest of the claim is supported. Marked as partially confirmed due to the slight change in characterisation."
+        },
+        {
+          "statementIndex": 5,
+          "claim": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   In the nine reporting periods ending on 28 September 2025 (“P9”), Action generated net sales of €11,229 million\n    (nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods\n    ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The figures for net sales (€11.229 billion) and like-for-like sales growth (6.3%) are supported, but the period is misstated. The source refers to nine reporting periods ending on 28 September 2025, not six months to 30 June 2026."
+        },
+        {
+          "statementIndex": 6,
+          "claim": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "•   In October 2025, Action successfully completed two financing transactions.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that Action completed two financing transactions in October 2025, which are balance sheet-related. \"Several\" is a reasonable paraphrase of two in this context."
+        },
+        {
+          "statementIndex": 7,
+          "claim": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   In October 2025, Action successfully completed two financing transactions. The first raised €1.6 billion of total\n    incremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n    62.3%. The second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the\n    maturity of a portion of the debt and generating an annual interest cost saving of €14 million.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms the repricing of €3.1 billion of existing term loan debt, the extension of the maturity of a portion of the debt, and an annual interest cost saving of €14 million, as well as the raising of €1.6 billion of incremental term loan debt. The draft’s description of \"meaningful\" savings is interpretive but reasonable. However, it reverses the sequence of the two transactions (in the source, the €1.6bn raise is first and the repricing is second), so the exact ordering is not supported."
+        },
+        {
+          "statementIndex": 8,
+          "claim": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source clearly attributes the pro-rata redemption of shares and the £944 million of gross proceeds to Action, not MAIT. The draft misattributes this transaction to MAIT, which conflicts with the source."
+        },
+        {
+          "statementIndex": 9,
+          "claim": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   In September 2025, 3i acquired 2.2% of Action equity from GIC in exchange for newly issued 3i Group plc\n    shares, with an equivalent consideration value of £739 million. As a result of this transaction, at 30 September 2025,\n    our equity ownership in Action was 60.1%.\n\n•   In October 2025, Action successfully completed two financing transactions. The first raised €1.6 billion of total\n    incremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n    62.3%.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that part of the proceeds from Action’s pro-rata redemption were redeployed to acquire a further 2.2% stake, and that together with a prior 2.2% acquisition from GIC this increased 3i’s stake to 62.3%. However, the draft incorrectly names \"AGIC\" instead of GIC, so the counterparty detail is not supported."
+        },
+        {
+          "statementIndex": 10,
+          "claim": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "•   Our Private Equity team completed the realisation of MPM and signed the realisation of MAIT in the period.\n    The total proceeds generated were £542 million, of which £395 million was received in the period. The sales\n    achieved sterling money multiples of 3.2x and 2.8x respectively.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms completion of the realisation of MPM, signing of the realisation of MAIT, and money multiples of 3.2x and 2.8x respectively. \"Exit\" is a standard synonym for realisation in this context."
+        },
+        {
+          "statementIndex": 11,
+          "claim": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The 9% gross investment return for the Infrastructure business is confirmed. However, the source does not state that this outperformed expectations, so that part of the claim is not supported."
+        },
+        {
+          "statementIndex": 12,
+          "claim": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that performance was driven primarily by a 14% increase in 3i Infrastructure plc’s share price and that the underlying portfolio continues to perform well, with a significant uplift in TCR. However, it does not say that there were meaningful gains across essentially all investments; that extrapolation is not supported."
+        },
+        {
+          "statementIndex": 13,
+          "claim": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "We ended the period with liquidity of £1,639 million, net debt of £772 million and gearing of 3%. The first dividend of\n    36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms a dividend of 36.5 pence per share (GBP 0.365) to be paid in January 2026. However, it does not explicitly link the declaration to \"the overall good performance of the portfolio\" as the rationale, so that causal framing is not supported."
+        },
+        {
+          "statementIndex": 14,
+          "claim": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\n    to lower-risk reinvestments in businesses we know and trust.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source attributes this cautious stance and selective allocation approach to 3i, not to the UK government. The draft misattributes the sentiment to the UK government, which conflicts with the source."
+        }
+      ],
+      "callUsage": {
+        "inputTokens": 3260,
+        "outputTokens": 3545,
+        "cachedInputTokens": 0,
+        "cacheHitRate": 0
+      }
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "label": "hicl-interim-doctored",
+      "parseOk": true,
+      "parseError": null,
+      "finishReason": "stop",
+      "assessment": "From a source-backing perspective, the draft departs materially from the underlying HICL interim update. While some core ideas are aligned – robust operational performance, capex-driven EBITDA growth, resilient cash generation, and positive developments at key assets – the piece repeatedly misstates names, time periods, numbers, and even jurisdictions and policy areas. These inaccuracies undermine credibility. Narrative flow is broadly coherent, moving from portfolio-wide performance to specific assets, but it is built on a series of factual distortions. Text quality and readability are generally acceptable, with clear sentences and a logical structure, but the factual misalignment with the source would not meet publication standards and needs substantial correction and tightening.",
+      "strengths": [
+        "Captures several key thematic points from the source, such as robust operational performance, capex-driven EBITDA growth, and resilient cash generation supporting dividends.",
+        "Uses a clear, investor-oriented narrative structure: portfolio overview followed by asset-level colour and then specific corporate developments.",
+        "Readable, concise prose with a tone that is appropriate for an infrastructure investment update."
+      ],
+      "improvements": [
+        "Correct all factual references to align with the source: the company is HICL, not HCIL; the period covered is 1 October 2025 to 28 February 2026, not the six months to 31 December 2025.",
+        "Remove or substantiate unsupported quantitative detail, such as the claim of “average 30% EBITDA growth” and “20 new towers”; if the source does not provide these figures, they should not be asserted as fact.",
+        "Use the correct asset names and locations: London St. Pancras High Speed (not Paris St. Germain High Speed) and Fortysouth (not TowerCo).",
+        "Align characterisations of performance with the source language: where the source says “in line with expectations”, avoid upgrading this to “significantly outperform budgets” unless there is explicit evidence.",
+        "Correct the description of the Fortysouth refinancing: it was oversubscribed and led to a step-down in debt margins, implying lower, not higher, debt servicing costs.",
+        "Fix the Affinity Water section: the appointment was of a CEO (Mark Garth), not a CFO; the relevant policy document is a UK Government white paper on water sector reform, not a French electricity-sector white paper.",
+        "Ensure policy and jurisdictional references are accurate and consistent with the source, particularly when citing government white papers and regulatory developments.",
+        "Tighten the draft to avoid embellishments that are not grounded in the source (e.g., explicit “valuation gains” where the source only mentions EBITDA in line with valuation assumptions)."
+      ],
+      "claimCount": 8,
+      "unmatchedClaims": [],
+      "noClaimStatementIndexes": [],
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+          "verdict": "not_supported",
+          "rawVerdict": "not_supported",
+          "passage": null,
+          "passageWasNotString": false,
+          "sourceId": null,
+          "comment": "The source refers to HICL Infrastructure PLC (not HCIL) and covers the period from 1 October 2025 to 28 February 2026, not the six months to 31 December 2025. While it does say performance was in line with expectations, the period and even the company name differ from the source, so this exact claim is not supported."
+        },
+        {
+          "statementIndex": 1,
+          "claim": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms robust operational performance, capex programmes driving EBITDA growth, and resilient cash generation supporting dividend cover. However, it does not mention an average 30% EBITDA growth figure, nor does it refer to a ‘dividend program’ in those terms, and the company name is HICL, not HCIL. Hence only part of the claim is supported."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source supports that growth investments continue to perform well and that significant expansion capex programmes are being progressed. It states EBITDA is \"in line with expectations\", not that it \"significantly outperform[s] budgets\". Therefore the outperformance element is not supported."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "\"London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source clearly identifies the asset as London St. Pancras High Speed, not Paris St. Germain High Speed. Performance and train path bookings being slightly ahead of forecast are supported, but the location/name is incorrect and contradicts the source."
+        },
+        {
+          "statementIndex": 4,
+          "claim": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms progress toward a potential second international operator and that Virgin Trains announced intentions for cross-Channel operations from St. Pancras. However, the draft misnames the station as St. Germain, which is not supported. The commercial-progress elements are correct; the location is not."
+        },
+        {
+          "statementIndex": 5,
+          "claim": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source supports that the relevant tower company (Fortysouth) delivered new towers, is progressing co-location opportunities, and that these are expected to support continued EBITDA growth. However, the name is Fortysouth, not TowerCo; the number is 16 towers, not 20; and the source refers to EBITDA growth in line with valuation assumptions, not explicit ‘valuation gains’. Thus only part of the claim is supported."
+        },
+        {
+          "statementIndex": 6,
+          "claim": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that the company (Fortysouth) completed an oversubscribed refinancing. However, it states that this enabled a step-down in debt margins, implying lower, not higher, debt servicing costs. The claim that it will lead to an increase in debt servicing costs conflicts with the source, so only the refinancing and oversubscription elements are supported."
+        },
+        {
+          "statementIndex": 7,
+          "claim": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "\"At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source states that Affinity Water appointed a new CEO (Mark Garth), not a CFO, and that the relevant white paper is from the UK Government on water sector reform, not the French government on electricity sector reform. These elements directly contradict the draft statement."
+        }
+      ],
+      "callUsage": {
+        "inputTokens": 3226,
+        "outputTokens": 1878,
+        "cachedInputTokens": 0,
+        "cacheHitRate": 0
+      }
+    },
+    {
+      "fixtureId": "2026-10-06-gpi",
+      "label": "gpi-press-release-doctored",
+      "parseOk": true,
+      "parseError": null,
+      "finishReason": "stop",
+      "assessment": "From a source-backing perspective, the draft departs materially from the press release on several key factual points: dates, magnitudes (facility counts and production volumes), corporate parent identity, and superlative claims about market position. While the overall narrative arc—shifting production to Southeast Asia, refocusing China on Europe and Asia, and investing in Johor for next-generation batteries—is broadly aligned with the source, the text repeatedly exaggerates or distorts specifics. Narrative flow is generally coherent, but the accumulation of inaccuracies undermines credibility. Text quality and readability are acceptable for a news-style summary, yet the piece would not meet Financial Times standards for precision and sourcing in its current form.",
+      "strengths": [
+        "Captures the central strategic theme of the press release: a shift of production capacity to Southeast Asia to serve the US market in response to tariffs and geopolitical tensions.",
+        "Correctly reflects that the China facility will focus primarily on European and Asian markets, preserving the geographic rebalancing of supply.",
+        "Accurately conveys the Johor investment’s purpose—next-generation batteries to support data centres—even though the parent company is misnamed.",
+        "Maintains a clear, linear narrative from production strategy to investment plans and then to the company’s scale and market reach.",
+        "Uses concise, businesslike language that is broadly in keeping with a corporate/financial news register."
+      ],
+      "improvements": [
+        "Correct all quantitative details to match the source: three facilities in Malaysia (not 15), over six billion batteries annually (not 60 billion), and remove the unsupported 75% figure for global production capacity.",
+        "Align corporate hierarchy with the source: identify Gold Peak Technology Group, not Silver Hill Technology, as the parent of GP Industries and as the investor in Johor.",
+        "Adjust market-position language to the source: describe GP Industries as the world’s second-largest producer of consumer batteries, not the largest.",
+        "Remove or substantiate elements not present in the source, such as the specific announcement date (October 2025), escalating oil prices, and site security as explicit drivers or objectives of the capacity shift.",
+        "Ensure geographic and strategic nuances are preserved: note that the China facility will focus on both European and Asian markets, not just Europe, and avoid implying there is only one plant in China unless supported.",
+        "Replace non-standard or inaccurate phrasing such as “bartered through 1 million outlets” with the source-backed “sold through one million outlets worldwide.”",
+        "Tighten the lede to avoid overloading it with unverified specifics; lead with the confirmed strategic shift and then layer in only those details that are clearly supported by the press release.",
+        "Adopt a more disciplined sourcing mindset: where the press release is silent (e.g., on percentages, oil prices, security), either omit those details or clearly attribute them to other, properly cited sources."
+      ],
+      "claimCount": 5,
+      "unmatchedClaims": [],
+      "noClaimStatementIndexes": [],
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+          "verdict": "not_supported",
+          "rawVerdict": "not_supported",
+          "passage": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that GP Industries is shifting production capacity to Southeast Asia to serve the US market amid US tariffs and rising geopolitical tensions, but it does not mention October 2025, any 75% figure, or escalating oil prices. The timing, percentage, and oil-price rationale are absent, so the specific claim as written is not supported."
+        },
+        {
+          "statementIndex": 1,
+          "claim": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand. It also has two other plants in the UK.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms the existence and locations of facilities in Malaysia, Vietnam, Thailand, and the UK, and that the China facility will focus primarily on European and Asian markets. However, it states three facilities in Malaysia, not 15, and does not describe China as having only one plant or focusing solely on the European market. Thus, the facility count and the narrowing to only Europe are inaccurate, while the rest is supported."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets. The move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness.\n...\nAfter higher initial costs from diversifying production to Southeast Asia, GP Industries said margins have risen due to improved utilisation, lower commodity costs, and optimised supply chains.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source explicitly supports that the move is intended to streamline supply chains, meet country-of-origin requirements, and maintain cost competitiveness (i.e., improve the cost structure). However, there is no mention of enhancing site security as an objective of the capacity adjustments. That part of the claim is unsupported, so the statement is only partially confirmed."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source clearly identifies Gold Peak Technology Group, not Silver Hill Technology, as the parent of GP Industries and as the entity planning a multi-million-dollar investment in Johor to produce next-generation batteries to support data centres. The draft substitutes a different parent name, which directly conflicts with the source, although the Johor investment purpose is otherwise consistent."
+        },
+        {
+          "statementIndex": 4,
+          "claim": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nIt has since grown into a global manufacturer, producing over six billion batteries annually, sold through one million outlets worldwide.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source states that GP Industries is the world’s second-largest producer of consumer batteries, not the largest, and that it produces over six billion batteries annually, not 60 billion. It also says the batteries are sold, not bartered, through one million outlets worldwide. These are direct contradictions, although the one-million-outlets figure is correct."
+        }
+      ],
+      "callUsage": {
+        "inputTokens": 1722,
+        "outputTokens": 1760,
+        "cachedInputTokens": 0,
+        "cacheHitRate": 0
+      }
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "label": "clearpoint-q1-2026-doctored",
+      "parseOk": true,
+      "parseError": null,
+      "finishReason": "stop",
+      "assessment": "From a source-backing perspective, the draft mixes several well-supported data points with a number of material inaccuracies and over-interpretations. Core financial metrics such as total revenue, overall growth rate, segment growth (notably neurosurgery navigation, therapy and access, and capital equipment and software), gross margin, and the scale of the biopharma partner base are accurately drawn from the source. However, there are significant factual errors around organic growth (including an invented -50% figure), the timing of the results announcement, the nature and issuer of regulatory approvals (confusing FDA clearance with a Health Canada Medical Device License and introducing an unsubstantiated FDA submission), and the year and structure of revenue guidance. Some causal attributions and characterizations (e.g. “vast majority” of revenue, specific growth drivers) go beyond what the press release explicitly states. In terms of narrative flow and readability, the piece is generally coherent and well-structured, moving from headline financials to segment detail and then to strategic and regulatory developments. The prose is clear and in line with a professional financial-news style. Nonetheless, the factual slips and occasional overstatement undermine the reliability expected of FT-standard coverage and need to be corrected or more carefully qualified against the source material.",
+      "strengths": [
+        "Core headline numbers are correctly captured: Q1 2026 revenue of $12.1m and 43% year-on-year growth are accurately sourced.",
+        "Segmental performance is well reflected: the 80% growth in neurosurgery navigation, therapy and access, the 177% increase in capital equipment and software, and the near-flat biologics and drug delivery revenue are all consistent with the source.",
+        "The draft correctly notes the 64% gross margin and appropriately links the expansion to lower excess and obsolete inventory, as per the company’s explanation.",
+        "Strategic context is incorporated: the reference to more than 60 active biopharma partners and ongoing clinical and regulatory progress aligns with the company’s own framing.",
+        "Narrative structure is logical and readable, moving from overall results to segment detail and then to pipeline and regulatory developments in a way that would be accessible to a general financial readership."
+      ],
+      "improvements": [
+        "Correct the timing of the results announcement: the press release is dated May 13, 2026, not April 2026. If the piece needs a month reference, it should match the source or be omitted if uncertain.",
+        "Remove or fix the erroneous organic growth figures. The source states 16% year-over-year total organic growth and mentions 25% organic devices growth; there is no basis for a -50% organic growth figure. Recast this sentence to reflect the stated 16% and 25%, and avoid adding a time qualifier (e.g. “year on year”) where the source does not explicitly provide it.",
+        "Moderate causal language and avoid over-interpretation. Phrases such as “driven by an expansion of the activated installed base” and “contributed the vast majority of the company’s overall revenue” go beyond the text. You can say the installed base reached over 175 centers and that neurosurgery navigation, therapy and access was the largest revenue segment, but avoid asserting causality or “vast majority” without explicit support.",
+        "Clarify regulatory details precisely. The Velocity Alpha MR High Speed Surgical Drill System is described as having FDA clearance and having been used clinically; there is no mention of a submission for approval. Similarly, the Medical Device License for the ClearPoint Neuro Navigation System is from Health Canada, not the FDA. These points should be corrected to match the source and avoid conflating regulators or approval stages.",
+        "Align guidance language with the source. The company provides a 2026 revenue estimate range of $52–56m, not a single-point guidance of $56m for 2027. Restate this as a 2026 range and avoid implying that $56m is the firm target.",
+        "Tighten wording where the draft understates or misstates status. For example, the Asia-Pacific drug delivery case has been completed, not merely commenced; using the company’s own wording (“completion of the first commercial drug delivery case”) will improve precision.",
+        "Where you infer drivers of growth (e.g. installed base expansion, IRRAflow integration), either anchor them explicitly in the company’s own language about revenue and cost synergies or frame them more cautiously (e.g. “alongside” or “in the context of”) rather than as definitive causes."
+      ],
+      "claimCount": 18,
+      "unmatchedClaims": [],
+      "noClaimStatementIndexes": [],
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "SOLANA BEACH, Calif., May 13, 2026 (Newswire.com) - ClearPoint Neuro, Inc. (Nasdaq:CLPT) (the \"Company\"), a global device, cell, and gene therapy-enabling company offering precise navigation to the brain and spine, today announced financial results for its first quarter ended March 31, 2026.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The company did announce financial results for Q1 2026, but the press release is dated May 13, 2026, not April 2026. Timing is misstated."
+        },
+        {
+          "statementIndex": 1,
+          "claim": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Total revenue was $12.1 million for the three months ended March 31, 2026, and $8.5 million for the three months ended March 31, 2025, which represents an increase of $3.6 million, or 43%.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source explicitly states Q1 2026 revenue of $12.1m versus $8.5m in Q1 2025, a 43% increase."
+        },
+        {
+          "statementIndex": 1,
+          "claim": "The 43% year-on-year growth in revenue was driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;\nThe activated installed base across all ClearPoint technology including IRRAflow systems now includes over 175 global centers;\nAchievement of measurable revenue and cost synergies through the continuing integration of the IRRAflow product portfolio and team;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms 43% growth, an installed base of over 175 centers, and measurable revenue synergies from IRRAflow integration. However, it does not explicitly state that the 43% growth was *driven* by the installed base expansion and integration; that causal framing is interpretive."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "Organic growth amounted to -50% year on year.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The press release states 16% year-over-year total organic growth, not -50%. This directly contradicts the draft."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "Organic growth for devices amounted to 25% year on year.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"While record revenue achievement and 25% organic devices growth made the headline, there is no shortage of meaningful strategic progress across the entire organization.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The CEO quote explicitly mentions 25% organic devices growth, but does not specify that this is year-on-year. Given context, it is very likely YoY, but the time basis is not spelled out, so the explicit “year on year” wording goes slightly beyond the text."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "The gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "The Company achieved a gross margin of 64% on its sales for the three months ended March 31, 2026, and a gross margin of 60% in the same period in 2025. The increase in gross margin is primarily due to lower excess and obsolete inventory for the three months ended March 31, 2026, as compared to the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms both the 64% gross margin and that the expansion was primarily due to lower excess and obsolete inventory."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "Topline growth was driven by the neurosurgery navigation, therapy and access division.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Neurosurgery navigation, therapy and access revenue, which primarily consists of disposable product commercial sales related to cases utilizing the ClearPoint and IRRAflow systems, increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The neurosurgery navigation, therapy and access segment shows the largest percentage and absolute increase, implying a major contribution to topline growth. However, the source does not explicitly say that topline growth was “driven by” this division; that is an inference."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "The neurosurgery navigation, therapy and access division contributed the vast majority of the company’s overall revenue.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Biologics and drug delivery revenue... increased slightly to $4.8 million...\nNeurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million...\nCapital equipment and software revenue... increased 177% to $1.4 million...\nTotal revenue was $12.1 million...",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "Numerically, neurosurgery navigation, therapy and access revenue ($5.9m) is the single largest segment but is less than half of total revenue ($12.1m). Calling it “the vast majority” overstates its share. The segment contribution is supported; the “vast majority” characterization is not."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "The neurosurgery navigation, therapy and access division achieved 80% year-on-year growth.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source explicitly states an 80% increase versus the prior-year period."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "The neurosurgery navigation, therapy and access division benefited from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million... The increase is driven by additional revenues from sales of the IRRAflow product of as well as the introduction of our 3.0 operating room navigation software, which has positively impacted procedural volumes in the operating room during the three months ended March 31, 2026, compared to the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The press release directly attributes the increase in this segment to IRRAflow product sales and the 3.0 OR navigation software."
+        },
+        {
+          "statementIndex": 4,
+          "claim": "Capital equipment and software revenue increased by 177% from a low base.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Capital equipment and software revenue, consisting of sales of ClearPoint and IRRAflow reusable hardware and software and related services, increased 177% to $1.4 million for the three months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms the 177% increase and shows the prior-year figure of $0.5m, which reasonably supports the characterization of a low base."
+        },
+        {
+          "statementIndex": 4,
+          "claim": "The 177% increase in capital equipment and software revenue was due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Capital equipment and software revenue... increased 177% to $1.4 million... from $0.5 million for the same period in 2025 due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The causal explanation is stated verbatim in the source."
+        },
+        {
+          "statementIndex": 5,
+          "claim": "Biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Biologics and drug delivery revenue... increased slightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the three months ended March 31, 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "Revenue moved from $4.7m to $4.8m, which the source itself describes as having “increased slightly.” Describing this as “broadly flat” is a fair, supported characterization."
+        },
+        {
+          "statementIndex": 6,
+          "claim": "The company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Continued clinical trial and regulatory progress across more than 60 active biopharma partners;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source notes continued clinical trial and regulatory progress and specifies more than 60 active biopharma partners."
+        },
+        {
+          "statementIndex": 7,
+          "claim": "A submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+          "verdict": "not_supported",
+          "rawVerdict": "not_supported",
+          "passage": null,
+          "passageWasNotString": false,
+          "sourceId": null,
+          "comment": "The press release states that the Velocity Alpha MR High Speed Surgical Drill System has FDA clearance and has been used clinically, but does not mention any submission for FDA approval or timing thereof."
+        },
+        {
+          "statementIndex": 8,
+          "claim": "The FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Received Medical Device License (MDL) from Health Canada for the ClearPoint Neuro Navigation System, covering both MRI-guidance and iCT guidance workflows with first cases now scheduled;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The license described is a Medical Device License from Health Canada, not the FDA. The draft misattributes the issuing authority."
+        },
+        {
+          "statementIndex": 8,
+          "claim": "The first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms completion of the first commercial drug delivery case in Asia-Pacific. The draft says it “has been commenced,” which understates the status but does not contradict the fact that the case occurred."
+        },
+        {
+          "statementIndex": 9,
+          "claim": "The company provided updated revenue guidance of USD 56 million for 2027.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Business Outlook\nThe Company estimates revenue in 2026 to be between $52.0 million and $56.0 million.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The guidance range of $52–56m is for 2026, not 2027, and is presented as a range rather than a single point of $56m. The draft misstates both the year and the form of the guidance."
+        }
+      ],
+      "callUsage": {
+        "inputTokens": 5866,
+        "outputTokens": 3346,
+        "cachedInputTokens": 0,
+        "cacheHitRate": 0
+      }
+    }
+  ],
+  "cards": [
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "index": 0,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "3i Group delivered strong performance in the first half of FY2026\n•   Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "3i Group delivered strong performance in the first half of FY2026\n•   Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms a total return of £3,291 million and a 13% return on opening shareholders’ funds, but the draft misstates the figure as £3.3 million instead of approximately £3.3 billion and gives the period as six months to 30 June 2025 rather than to 30 September 2025."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%).",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 1,
+          "claim": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%).",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that the Private Equity business delivered a gross investment return of 14%. However, it does not state that this accounted for the vast majority of the overall total return, so that part is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "This was driven largely by Action, which continues to trade strongly.",
+      "index": 2,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%). Action continued to trade strongly, and several of our other large portfolio companies are\n    showing good momentum against a challenging macroeconomic and geopolitical backdrop across Europe and the\n    US.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 2,
+          "claim": "This was driven largely by Action, which continues to trade strongly.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%). Action continued to trade strongly, and several of our other large portfolio companies are\n    showing good momentum against a challenging macroeconomic and geopolitical backdrop across Europe and the\n    US.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that Action continues to trade strongly. It does not explicitly say that the Private Equity gross investment return was driven largely by Action, although Action is highlighted as a strong contributor. The causal emphasis \"driven largely\" is not directly supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+      "index": 3,
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Action’s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_full",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "all_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 3,
+          "claim": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Action’s new store expansion programme is on track for\nanother record year with an excellent reception to the new stores in Switzerland and Romania.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "This is a close paraphrase of the CEO’s comment and is fully supported by the source."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+      "index": 4,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Year to date LFL\ntrading remains good despite weakening consumer confidence since the summer.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 4,
+          "claim": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Year to date LFL\ntrading remains good despite weakening consumer confidence since the summer.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source states that year-to-date like-for-like trading remains \"good\" despite weakening consumer confidence. The draft’s use of \"healthy\" is interpretive but broadly consistent; the rest of the claim is supported. Marked as partially confirmed due to the slight change in characterisation."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+      "index": 5,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   In the nine reporting periods ending on 28 September 2025 (“P9”), Action generated net sales of €11,229 million\n    (nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods\n    ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 5,
+          "claim": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   In the nine reporting periods ending on 28 September 2025 (“P9”), Action generated net sales of €11,229 million\n    (nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods\n    ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The figures for net sales (€11.229 billion) and like-for-like sales growth (6.3%) are supported, but the period is misstated. The source refers to nine reporting periods ending on 28 September 2025, not six months to 30 June 2026."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+      "index": 6,
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   In October 2025, Action successfully completed two financing transactions.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_full",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "all_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 6,
+          "claim": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "•   In October 2025, Action successfully completed two financing transactions.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that Action completed two financing transactions in October 2025, which are balance sheet-related. \"Several\" is a reasonable paraphrase of two in this context."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+      "index": 7,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   In October 2025, Action successfully completed two financing transactions. The first raised €1.6 billion of total\n    incremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n    62.3%. The second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the\n    maturity of a portion of the debt and generating an annual interest cost saving of €14 million.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 7,
+          "claim": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   In October 2025, Action successfully completed two financing transactions. The first raised €1.6 billion of total\n    incremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n    62.3%. The second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the\n    maturity of a portion of the debt and generating an annual interest cost saving of €14 million.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms the repricing of €3.1 billion of existing term loan debt, the extension of the maturity of a portion of the debt, and an annual interest cost saving of €14 million, as well as the raising of €1.6 billion of incremental term loan debt. The draft’s description of \"meaningful\" savings is interpretive but reasonable. However, it reverses the sequence of the two transactions (in the source, the €1.6bn raise is first and the repricing is second), so the exact ordering is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "index": 8,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 8,
+          "claim": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source clearly attributes the pro-rata redemption of shares and the £944 million of gross proceeds to Action, not MAIT. The draft misattributes this transaction to MAIT, which conflicts with the source."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+      "index": 9,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   In September 2025, 3i acquired 2.2% of Action equity from GIC in exchange for newly issued 3i Group plc\n    shares, with an equivalent consideration value of £739 million. As a result of this transaction, at 30 September 2025,\n    our equity ownership in Action was 60.1%.\n\n•   In October 2025, Action successfully completed two financing transactions. The first raised €1.6 billion of total\n    incremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n    62.3%.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 9,
+          "claim": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   In September 2025, 3i acquired 2.2% of Action equity from GIC in exchange for newly issued 3i Group plc\n    shares, with an equivalent consideration value of £739 million. As a result of this transaction, at 30 September 2025,\n    our equity ownership in Action was 60.1%.\n\n•   In October 2025, Action successfully completed two financing transactions. The first raised €1.6 billion of total\n    incremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a\n    further 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to\n    62.3%.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that part of the proceeds from Action’s pro-rata redemption were redeployed to acquire a further 2.2% stake, and that together with a prior 2.2% acquisition from GIC this increased 3i’s stake to 62.3%. However, the draft incorrectly names \"AGIC\" instead of GIC, so the counterparty detail is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+      "index": 10,
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   Our Private Equity team completed the realisation of MPM and signed the realisation of MAIT in the period.\n    The total proceeds generated were £542 million, of which £395 million was received in the period. The sales\n    achieved sterling money multiples of 3.2x and 2.8x respectively.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_full",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "all_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 10,
+          "claim": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "•   Our Private Equity team completed the realisation of MPM and signed the realisation of MAIT in the period.\n    The total proceeds generated were £542 million, of which £395 million was received in the period. The sales\n    achieved sterling money multiples of 3.2x and 2.8x respectively.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms completion of the realisation of MPM, signing of the realisation of MAIT, and money multiples of 3.2x and 2.8x respectively. \"Exit\" is a standard synonym for realisation in this context."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+      "index": 11,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 11,
+          "claim": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The 9% gross investment return for the Infrastructure business is confirmed. However, the source does not state that this outperformed expectations, so that part of the claim is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+      "index": 12,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 12,
+          "claim": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that performance was driven primarily by a 14% increase in 3i Infrastructure plc’s share price and that the underlying portfolio continues to perform well, with a significant uplift in TCR. However, it does not say that there were meaningful gains across essentially all investments; that extrapolation is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+      "index": 13,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "We ended the period with liquidity of £1,639 million, net debt of £772 million and gearing of 3%. The first dividend of\n    36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 13,
+          "claim": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "We ended the period with liquidity of £1,639 million, net debt of £772 million and gearing of 3%. The first dividend of\n    36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms a dividend of 36.5 pence per share (GBP 0.365) to be paid in January 2026. However, it does not explicitly link the declaration to \"the overall good performance of the portfolio\" as the rationale, so that causal framing is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-09-29",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "index": 14,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\n    to lower-risk reinvestments in businesses we know and trust.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 14,
+          "claim": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including\n    to lower-risk reinvestments in businesses we know and trust.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source attributes this cautious stance and selective allocation approach to 3i, not to the UK government. The draft misattributes the sentiment to the UK government, which conflicts with the source."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+      "index": 0,
+      "displayVerdict": "not_supported",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "not_supported",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": false,
+      "rollupReason": "every_not_supported",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+          "verdict": "not_supported",
+          "rawVerdict": "not_supported",
+          "passage": null,
+          "passageWasNotString": false,
+          "sourceId": null,
+          "comment": "The source refers to HICL Infrastructure PLC (not HCIL) and covers the period from 1 October 2025 to 28 February 2026, not the six months to 31 December 2025. While it does say performance was in line with expectations, the period and even the company name differ from the source, so this exact claim is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\"",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 1,
+          "claim": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms robust operational performance, capex programmes driving EBITDA growth, and resilient cash generation supporting dividend cover. However, it does not mention an average 30% EBITDA growth figure, nor does it refer to a ‘dividend program’ in those terms, and the company name is HICL, not HCIL. Hence only part of the claim is supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+      "index": 2,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "\"HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.\"",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 2,
+          "claim": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source supports that growth investments continue to perform well and that significant expansion capex programmes are being progressed. It states EBITDA is \"in line with expectations\", not that it \"significantly outperform[s] budgets\". Therefore the outperformance element is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+      "index": 3,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "\"London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.\"",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 3,
+          "claim": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "\"London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source clearly identifies the asset as London St. Pancras High Speed, not Paris St. Germain High Speed. Performance and train path bookings being slightly ahead of forecast are supported, but the location/name is incorrect and contradicts the source."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+      "index": 4,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "\"The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator.\"",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 4,
+          "claim": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms progress toward a potential second international operator and that Virgin Trains announced intentions for cross-Channel operations from St. Pancras. However, the draft misnames the station as St. Germain, which is not supported. The commercial-progress elements are correct; the location is not."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "index": 5,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "\"Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.\"",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 5,
+          "claim": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source supports that the relevant tower company (Fortysouth) delivered new towers, is progressing co-location opportunities, and that these are expected to support continued EBITDA growth. However, the name is Fortysouth, not TowerCo; the number is 16 towers, not 20; and the source refers to EBITDA growth in line with valuation assumptions, not explicit ‘valuation gains’. Thus only part of the claim is supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+      "index": 6,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "\"The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.\"",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 6,
+          "claim": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that the company (Fortysouth) completed an oversubscribed refinancing. However, it states that this enabled a step-down in debt margins, implying lower, not higher, debt servicing costs. The claim that it will lead to an increase in debt servicing costs conflicts with the source, so only the refinancing and oversubscription elements are supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-04-hicl",
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+      "index": 7,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "\"At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.\"",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 7,
+          "claim": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "\"At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source states that Affinity Water appointed a new CEO (Mark Garth), not a CFO, and that the relevant white paper is from the UK Government on water sector reform, not the French government on electricity sector reform. These elements directly contradict the draft statement."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-gpi",
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+      "index": 0,
+      "displayVerdict": "not_supported",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "not_supported",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "every_not_supported",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+          "verdict": "not_supported",
+          "rawVerdict": "not_supported",
+          "passage": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms that GP Industries is shifting production capacity to Southeast Asia to serve the US market amid US tariffs and rising geopolitical tensions, but it does not mention October 2025, any 75% figure, or escalating oil prices. The timing, percentage, and oil-price rationale are absent, so the specific claim as written is not supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-gpi",
+      "statement": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand. It also has two other plants in the UK.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 1,
+          "claim": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand. It also has two other plants in the UK.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms the existence and locations of facilities in Malaysia, Vietnam, Thailand, and the UK, and that the China facility will focus primarily on European and Asian markets. However, it states three facilities in Malaysia, not 15, and does not describe China as having only one plant or focusing solely on the European market. Thus, the facility count and the narrowing to only Europe are inaccurate, while the rest is supported."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-gpi",
+      "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+      "index": 2,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets. The move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness.\n...\nAfter higher initial costs from diversifying production to Southeast Asia, GP Industries said margins have risen due to improved utilisation, lower commodity costs, and optimised supply chains.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 2,
+          "claim": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "GP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets. The move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness.\n...\nAfter higher initial costs from diversifying production to Southeast Asia, GP Industries said margins have risen due to improved utilisation, lower commodity costs, and optimised supply chains.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source explicitly supports that the move is intended to streamline supply chains, meet country-of-origin requirements, and maintain cost competitiveness (i.e., improve the cost structure). However, there is no mention of enhancing site security as an objective of the capacity adjustments. That part of the claim is unsupported, so the statement is only partially confirmed."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-gpi",
+      "statement": "Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+      "index": 3,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 3,
+          "claim": "Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source clearly identifies Gold Peak Technology Group, not Silver Hill Technology, as the parent of GP Industries and as the entity planning a multi-million-dollar investment in Johor to produce next-generation batteries to support data centres. The draft substitutes a different parent name, which directly conflicts with the source, although the Johor investment purpose is otherwise consistent."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-gpi",
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+      "index": 4,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nIt has since grown into a global manufacturer, producing over six billion batteries annually, sold through one million outlets worldwide.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 4,
+          "claim": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\n...\nIt has since grown into a global manufacturer, producing over six billion batteries annually, sold through one million outlets worldwide.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source states that GP Industries is the world’s second-largest producer of consumer batteries, not the largest, and that it produces over six billion batteries annually, not 60 billion. It also says the batteries are sold, not bartered, through one million outlets worldwide. These are direct contradictions, although the one-million-outlets figure is correct."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+      "index": 0,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "SOLANA BEACH, Calif., May 13, 2026 (Newswire.com) - ClearPoint Neuro, Inc. (Nasdaq:CLPT) (the \"Company\"), a global device, cell, and gene therapy-enabling company offering precise navigation to the brain and spine, today announced financial results for its first quarter ended March 31, 2026.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 0,
+          "claim": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "SOLANA BEACH, Calif., May 13, 2026 (Newswire.com) - ClearPoint Neuro, Inc. (Nasdaq:CLPT) (the \"Company\"), a global device, cell, and gene therapy-enabling company offering precise navigation to the brain and spine, today announced financial results for its first quarter ended March 31, 2026.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The company did announce financial results for Q1 2026, but the press release is dated May 13, 2026, not April 2026. Timing is misstated."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Total revenue was $12.1 million for the three months ended March 31, 2026, and $8.5 million for the three months ended March 31, 2025, which represents an increase of $3.6 million, or 43%.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 2,
+      "claims": [
+        {
+          "statementIndex": 1,
+          "claim": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Total revenue was $12.1 million for the three months ended March 31, 2026, and $8.5 million for the three months ended March 31, 2025, which represents an increase of $3.6 million, or 43%.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source explicitly states Q1 2026 revenue of $12.1m versus $8.5m in Q1 2025, a 43% increase."
+        },
+        {
+          "statementIndex": 1,
+          "claim": "The 43% year-on-year growth in revenue was driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;\nThe activated installed base across all ClearPoint technology including IRRAflow systems now includes over 175 global centers;\nAchievement of measurable revenue and cost synergies through the continuing integration of the IRRAflow product portfolio and team;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms 43% growth, an installed base of over 175 centers, and measurable revenue synergies from IRRAflow integration. However, it does not explicitly state that the 43% growth was *driven* by the installed base expansion and integration; that causal framing is interpretive."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+      "index": 2,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 3,
+      "claims": [
+        {
+          "statementIndex": 2,
+          "claim": "Organic growth amounted to -50% year on year.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The press release states 16% year-over-year total organic growth, not -50%. This directly contradicts the draft."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "Organic growth for devices amounted to 25% year on year.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "\"While record revenue achievement and 25% organic devices growth made the headline, there is no shortage of meaningful strategic progress across the entire organization.\"",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The CEO quote explicitly mentions 25% organic devices growth, but does not specify that this is year-on-year. Given context, it is very likely YoY, but the time basis is not spelled out, so the explicit “year on year” wording goes slightly beyond the text."
+        },
+        {
+          "statementIndex": 2,
+          "claim": "The gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "The Company achieved a gross margin of 64% on its sales for the three months ended March 31, 2026, and a gross margin of 60% in the same period in 2025. The increase in gross margin is primarily due to lower excess and obsolete inventory for the three months ended March 31, 2026, as compared to the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms both the 64% gross margin and that the expansion was primarily due to lower excess and obsolete inventory."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "index": 3,
+      "displayVerdict": "supported_partial",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Neurosurgery navigation, therapy and access revenue, which primarily consists of disposable product commercial sales related to cases utilizing the ClearPoint and IRRAflow systems, increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_partial",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_not_confirmed",
+      "claimCount": 4,
+      "claims": [
+        {
+          "statementIndex": 3,
+          "claim": "Topline growth was driven by the neurosurgery navigation, therapy and access division.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Neurosurgery navigation, therapy and access revenue, which primarily consists of disposable product commercial sales related to cases utilizing the ClearPoint and IRRAflow systems, increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The neurosurgery navigation, therapy and access segment shows the largest percentage and absolute increase, implying a major contribution to topline growth. However, the source does not explicitly say that topline growth was “driven by” this division; that is an inference."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "The neurosurgery navigation, therapy and access division contributed the vast majority of the company’s overall revenue.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Biologics and drug delivery revenue... increased slightly to $4.8 million...\nNeurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million...\nCapital equipment and software revenue... increased 177% to $1.4 million...\nTotal revenue was $12.1 million...",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "Numerically, neurosurgery navigation, therapy and access revenue ($5.9m) is the single largest segment but is less than half of total revenue ($12.1m). Calling it “the vast majority” overstates its share. The segment contribution is supported; the “vast majority” characterization is not."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "The neurosurgery navigation, therapy and access division achieved 80% year-on-year growth.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source explicitly states an 80% increase versus the prior-year period."
+        },
+        {
+          "statementIndex": 3,
+          "claim": "The neurosurgery navigation, therapy and access division benefited from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million... The increase is driven by additional revenues from sales of the IRRAflow product of as well as the introduction of our 3.0 operating room navigation software, which has positively impacted procedural volumes in the operating room during the three months ended March 31, 2026, compared to the same period in 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The press release directly attributes the increase in this segment to IRRAflow product sales and the 3.0 OR navigation software."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+      "index": 4,
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Capital equipment and software revenue, consisting of sales of ClearPoint and IRRAflow reusable hardware and software and related services, increased 177% to $1.4 million for the three months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_full",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "all_confirmed",
+      "claimCount": 2,
+      "claims": [
+        {
+          "statementIndex": 4,
+          "claim": "Capital equipment and software revenue increased by 177% from a low base.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Capital equipment and software revenue, consisting of sales of ClearPoint and IRRAflow reusable hardware and software and related services, increased 177% to $1.4 million for the three months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms the 177% increase and shows the prior-year figure of $0.5m, which reasonably supports the characterization of a low base."
+        },
+        {
+          "statementIndex": 4,
+          "claim": "The 177% increase in capital equipment and software revenue was due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Capital equipment and software revenue... increased 177% to $1.4 million... from $0.5 million for the same period in 2025 due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The causal explanation is stated verbatim in the source."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+      "index": 5,
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Biologics and drug delivery revenue... increased slightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the three months ended March 31, 2025.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_full",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "all_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 5,
+          "claim": "Biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Biologics and drug delivery revenue... increased slightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the three months ended March 31, 2025.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "Revenue moved from $4.7m to $4.8m, which the source itself describes as having “increased slightly.” Describing this as “broadly flat” is a fair, supported characterization."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+      "index": 6,
+      "displayVerdict": "supported_full",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Continued clinical trial and regulatory progress across more than 60 active biopharma partners;",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "supported_full",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "all_confirmed",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 6,
+          "claim": "The company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "verdict": "confirmed",
+          "rawVerdict": "confirmed",
+          "passage": "Continued clinical trial and regulatory progress across more than 60 active biopharma partners;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source notes continued clinical trial and regulatory progress and specifies more than 60 active biopharma partners."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+      "index": 7,
+      "displayVerdict": "not_supported",
+      "hasConflict": false,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "not_supported",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": false,
+      "rollupReason": "every_not_supported",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 7,
+          "claim": "A submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+          "verdict": "not_supported",
+          "rawVerdict": "not_supported",
+          "passage": null,
+          "passageWasNotString": false,
+          "sourceId": null,
+          "comment": "The press release states that the Velocity Alpha MR High Speed Surgical Drill System has FDA clearance and has been used clinically, but does not mention any submission for FDA approval or timing thereof."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "index": 8,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Received Medical Device License (MDL) from Health Canada for the ClearPoint Neuro Navigation System, covering both MRI-guidance and iCT guidance workflows with first cases now scheduled;",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 2,
+      "claims": [
+        {
+          "statementIndex": 8,
+          "claim": "The FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Received Medical Device License (MDL) from Health Canada for the ClearPoint Neuro Navigation System, covering both MRI-guidance and iCT guidance workflows with first cases now scheduled;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The license described is a Medical Device License from Health Canada, not the FDA. The draft misattributes the issuing authority."
+        },
+        {
+          "statementIndex": 8,
+          "claim": "The first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+          "verdict": "partially_confirmed",
+          "rawVerdict": "partially_confirmed",
+          "passage": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The source confirms completion of the first commercial drug delivery case in Asia-Pacific. The draft says it “has been commenced,” which understates the status but does not contradict the fact that the case occurred."
+        }
+      ],
+      "occurrence": 0
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "index": 9,
+      "displayVerdict": "conflict",
+      "hasConflict": true,
+      "sourceMatches": [],
+      "supportSpans": [],
+      "primaryExcerpt": "Business Outlook\nThe Company estimates revenue in 2026 to be between $52.0 million and $56.0 million.",
+      "conflictExcerpt": "",
+      "displayVerdictReason": "b381_draft_review",
+      "supportState": "conflict",
+      "evidenceNotReviewedReason": null,
+      "excerptNotLocatable": false,
+      "hasRealExcerpt": true,
+      "rollupReason": "any_conflicting",
+      "claimCount": 1,
+      "claims": [
+        {
+          "statementIndex": 9,
+          "claim": "The company provided updated revenue guidance of USD 56 million for 2027.",
+          "verdict": "conflicting",
+          "rawVerdict": "conflicting",
+          "passage": "Business Outlook\nThe Company estimates revenue in 2026 to be between $52.0 million and $56.0 million.",
+          "passageWasNotString": false,
+          "sourceId": "0",
+          "comment": "The guidance range of $52–56m is for 2026, not 2027, and is presented as a range rather than a single point of $56m. The draft misstates both the year and the form of the guidance."
+        }
+      ],
+      "occurrence": 0
+    }
+  ]
+}
