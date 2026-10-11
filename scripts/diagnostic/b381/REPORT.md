@@ -6,7 +6,7 @@ Only one model was tried: `STAGE_MODELS["writing-rewrite"]`, `gpt-5.1-2025-11-13
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship |
+| SHIPPED | `SHIP VERIFIED  bc35705  main  164 files  1805 tests` |
 
 `npm test` before the billed passes: 164 files, 1805 tests, all passed. Labels, the freeze, the manifest, and `group-a-design.json` were not rewritten.
 
