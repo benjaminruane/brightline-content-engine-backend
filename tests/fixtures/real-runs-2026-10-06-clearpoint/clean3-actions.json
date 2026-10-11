@@ -1,0 +1,74 @@
+{
+ "ok": true,
+ "entries": [
+  {
+   "id": "S2:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "2",
+   "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+    "startChar": 63,
+    "endChar": 183
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source does not confirm that the gross margin expansion to 64% was due to lower allowances for excess and obsolete inventory, which is a material gap. It does confirm the 16% overall organic growth and the 25% growth for devices, as well as the 64% gross margin expansion. The reviewer should verify the reason for the gross margin expansion or adjust the statement accordingly.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "partial",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S5:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "5",
+   "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "was broadly flat compared with the prior year",
+    "startChar": 47,
+    "endChar": 92
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source indicates that biologics and drug delivery revenue increased slightly from $4.7 million to $4.8 million for the three months ended March 31, 2026, compared to the same period in 2025. This suggests a slight increase rather than being broadly flat, and the statement refers to the entire prior year, which the source does not address. The reviewer should clarify the time period or adjust the claim to reflect the slight increase noted in the source.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": true,
+    "rule": "partial",
+    "reasonCode": "partial_no_edit"
+   },
+   "provenance": "authored",
+   "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+  },
+  {
+   "id": "S9:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "9",
+   "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "provided updated revenue guidance",
+    "startChar": 12,
+    "endChar": 45
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source confirms the company's revenue guidance for 2026 as being between USD 52 million and USD 56 million, matching the statement exactly. However, the classification as 'conflicting' suggests there may be an error in the system's processing. Verify the source content and classification to ensure accuracy.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  }
+ ]
+}

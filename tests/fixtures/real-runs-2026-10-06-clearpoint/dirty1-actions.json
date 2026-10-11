@@ -1,0 +1,141 @@
+{
+ "ok": true,
+ "entries": [
+  {
+   "id": "S0:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "0",
+   "statement": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+    "startChar": 0,
+    "endChar": 93
+   },
+   "thing1State": "WHOLE_STATEMENT",
+   "thing2": "The statement conflicts with the source regarding the announcement date. The statement claims ClearPoint Neuro announced its financial results in April 2026, but the source specifies the announcement was made on May 13, 2026. The year 2026 is confirmed, but the month is not. The reviewer should reconcile the discrepancy in the announcement date or remove the claim about the month.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  },
+  {
+   "id": "S2:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "2",
+   "statement": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+    "startChar": 0,
+    "endChar": 184
+   },
+   "thing1State": "WHOLE_STATEMENT",
+   "thing2": "The statement's claim of -50% year-on-year organic growth conflicts with the source, which reports a 16% year-over-year total organic growth. The source confirms the 25% organic growth for devices and the gross margin expansion to 64%. The reviewer should reconcile these discrepancies or remove the conflicting claim about total organic growth.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "explanation": "The same source states 25% elsewhere, so the figures cannot be reconciled from it.",
+   "explainCode": "self_disagreement",
+   "noProposalReason": "The same source states 25% elsewhere, so the figures cannot be reconciled from it."
+  },
+  {
+   "id": "S5:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "5",
+   "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "was broadly flat compared with the prior year",
+    "startChar": 47,
+    "endChar": 92
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source indicates that biologics and drug delivery revenue increased slightly from $4.7 million to $4.8 million for the three months ended March 31, 2026, compared to the same period in 2025. This suggests a slight increase rather than being broadly flat, and the statement refers to the entire prior year, creating a period mismatch. The reviewer should adjust the statement to reflect the specific quarterly comparison or provide additional context for the full year.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": true,
+    "rule": "partial",
+    "reasonCode": "partial_no_edit"
+   },
+   "provenance": "authored",
+   "noProposalReason": "A source supports part of this statement, not all of it. The wording is yours."
+  },
+  {
+   "id": "S7:evidence:conflicting:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "7",
+   "statement": "Notably, a submission for FDA approval has been made for the company\u2019s Velocity Alpha MR High Speed Surgical Drill System.",
+   "kind": "evidence",
+   "rule": "conflicting",
+   "thing1": {
+    "quote": "a submission for FDA approval has been made for the company\u2019s Velocity Alpha MR High Speed Surgical Drill System",
+    "startChar": 9,
+    "endChar": 121
+   },
+   "thing1State": "WHOLE_STATEMENT",
+   "thing2": "The statement conflicts with the source, which indicates that FDA clearance has already been obtained for the Velocity Alpha MR High Speed Surgical Drill System, rather than a submission being made. The statement suggests a pending approval process, while the source confirms completion. The reviewer should reconcile this discrepancy or remove the claim about the submission. The source does confirm the existence of the Velocity Alpha High Speed Surgical Drill.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "conflicting",
+    "reasonCode": "conflict_unaddressed"
+   },
+   "provenance": "derived",
+   "noProposalReason": "A source contradicts this statement. Decide whether the sentence should match the source."
+  },
+  {
+   "id": "S8:evidence:partial:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "8",
+   "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+   "kind": "evidence",
+   "rule": "partial",
+   "thing1": {
+    "quote": "the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+    "startChar": 160,
+    "endChar": 278
+   },
+   "thing1State": "PHRASE",
+   "thing2": "The source indicates that the Medical Device License for the ClearPoint Neuro Navigation System was issued by Health Canada, not the FDA, which creates a gap in the statement regarding the regulatory body. The source does confirm the coverage of both MRI-guidance and iCT guidance workflows and the commencement of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region. The reviewer should verify the correct regulatory body and adjust the statement accordingly.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": false,
+    "rule": "partial",
+    "reasonCode": "visible_signal"
+   },
+   "provenance": "authored",
+   "noProposalReason": "The review found a concern in this sentence. No wording change is proposed, so you can judge it yourself."
+  },
+  {
+   "id": "S9:evidence:not_supported:0",
+   "disposition": "ACKNOWLEDGE",
+   "statementId": "9",
+   "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+   "kind": "evidence",
+   "rule": "not_supported",
+   "thing1": null,
+   "thing1State": "NONE",
+   "thing2": "No source addresses the company's updated revenue guidance of USD 56 million for 2027. The source only provides revenue guidance for 2026, with no mention of 2027. Please add a source that supports this claim or remove it from the statement.",
+   "sort": {
+    "policyPermit": false,
+    "silenceOnCard": true,
+    "rule": "not_supported",
+    "reasonCode": "silence_no_edit"
+   },
+   "provenance": "authored",
+   "noProposalReason": "No supplied source speaks to this claim, either way. The wording is yours."
+  }
+ ]
+}

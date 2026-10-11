@@ -1,0 +1,1423 @@
+{
+ "ok": true,
+ "statements": [
+  {
+   "id": "0",
+   "text": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+   "qcCard": {
+    "index": 0,
+    "statement": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+    "charStart": 0,
+    "charEnd": 93,
+    "supportState": "conflicting",
+    "hasConflict": true,
+    "primaryExcerpt": null,
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The statement conflicts with the source regarding the announcement date. The statement claims ClearPoint Neuro announced its financial results in April 2026, but the source specifies the announcement was made on May 13, 2026. The year 2026 is confirmed, but the month is not. The reviewer should reconcile the discrepancy in the announcement date or remove the claim about the month.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": null,
+    "excerptNotLocatable": true,
+    "primaryExcerptStart": null,
+    "primaryExcerptEnd": null,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": false,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The statement conflicts with the source regarding the announcement date. The statement claims ClearPoint Neuro announced its financial results in April 2026, but the source specifies the announcement was made on May 13, 2026. The year 2026 is confirmed, but the month is not. The reviewer should reconcile the discrepancy in the announcement date or remove the claim about the month.",
+    "displayMode": "conflicting",
+    "draftSpan": {
+     "startChar": 0,
+     "endChar": 93
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "0",
+      "passage": "",
+      "start": null,
+      "end": null
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "0",
+      "classification": "conflicting",
+      "text": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+      "start": 0,
+      "end": 93
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "conflicting",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "date_period_claim"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 0,
+    "endChar": 93
+   }
+  },
+  {
+   "id": "1",
+   "text": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+   "qcCard": {
+    "index": 1,
+    "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+    "charStart": 94,
+    "charEnd": 335,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Log In Sign Up\nProducts Pricing Customer Stories Resources Newsroom \nClearPoint Neuro Reports First Quarter\n2026 Results\nPRESS RELEASE \u2022 MAY 13, 2026\nRecord Revenue Achieved Including 25% Organic Growth in Devices and 43% Overall\nGrowth\nClearPoint Neuro, Inc. ... ClearPoint Neuro Reports Second Quarter\nFirst Quarter 2026 Highlights 2026 Results\n1 MONTH AGO\nReported first quarter revenue of $12.1 million, including $2.3 million of IRRA flow\nPositive BioPharma Partner Regulatory\nrevenue, representing 43% overall growth and 16% year-over-year total organic growth\nProgress and Early Success in Focused\ncompared with the first quarter of 2025; Ultrasound Technology Platform\nExpansion\nThe activated installed base across all ClearPoint technology including IRRA flow\nsystems now includes over 175 global centers;\nClearPoint Neuro Congratulates Partner\nAspen Neuroscience on FDA Regenerative\nAchievement of measurable revenue and cost synergies through the continuing\nMedicine Advanced Therapy (RMAT)\nintegration of the IRRA flow product portfolio and team;\nDesignation for Sasineprocel\n1 MONTH AGO\nContinued clinical trial and regulatory progress across more than 60 active biopharma\nRMAT Designation Supports an Expedited\npartners;\nFDA Development and Review Pathway\nfor Aspen's Investigational Autologous\nFDA clearance and successful completion of the first clinical procedure utilizing the\nCell Replacement Therapy for Parkinson's\nVelocity Alpha MR High Speed Surgical Drill System;\nDisease. ... Financial Results - Quarter Ended March 31, 2026\nTotal revenue was $12.1 million for the three months ended March 31, 2026, and $8.5 million\nfor the three months ended March 31, 2025, which represents an increase of $3.6 million, or\n43%.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "43% and 175 match the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Log In Sign Up\nProducts Pricing Customer Stories Resources Newsroom \nClearPoint Neuro Reports First Quarter\n2026 Results\nPRESS RELEASE \u2022 MAY 13, 2026\nRecord Revenue Achieved Including 25% Organic Growth in Devices and 43% Overall\nGrowth\nClearPoint Neuro, Inc. ... ClearPoint Neuro Reports Second Quarter\nFirst Quarter 2026 Highlights 2026 Results\n1 MONTH AGO\nReported first quarter revenue of $12.1 million, including $2.3 million of IRRA flow\nPositive BioPharma Partner Regulatory\nrevenue, representing 43% overall growth and 16% year-over-year total organic growth\nProgress and Early Success in Focused\ncompared with the first quarter of 2025; Ultrasound Technology Platform\nExpansion\nThe activated installed base across all ClearPoint technology including IRRA flow\nsystems now includes over 175 global centers;\nClearPoint Neuro Congratulates Partner\nAspen Neuroscience on FDA Regenerative\nAchievement of measurable revenue and cost synergies through the continuing\nMedicine Advanced Therapy (RMAT)\nintegration of the IRRA flow product portfolio and team;\nDesignation for Sasineprocel\n1 MONTH AGO\nContinued clinical trial and regulatory progress across more than 60 active biopharma\nRMAT Designation Supports an Expedited\npartners;\nFDA Development and Review Pathway\nfor Aspen's Investigational Autologous\nFDA clearance and successful completion of the first clinical procedure utilizing the\nCell Replacement Therapy for Parkinson's\nVelocity Alpha MR High Speed Surgical Drill System;\nDisease. ... Financial Results - Quarter Ended March 31, 2026\nTotal revenue was $12.1 million for the three months ended March 31, 2026, and $8.5 million\nfor the three months ended March 31, 2025, which represents an increase of $3.6 million, or\n43%.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": null,
+    "primaryExcerptEnd": null,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "43% and 175 match the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 94,
+     "endChar": 335
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "not_reviewed",
+      "systemFingerprint": "fp_61a9eaf3ca",
+      "emptyConfirmationRefused": true
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "monetary_figure",
+      "percentage_metric",
+      "date_period_claim",
+      "comparative_superlative"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 94,
+    "endChar": 335
+   }
+  },
+  {
+   "id": "2",
+   "text": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+   "qcCard": {
+    "index": 2,
+    "statement": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+    "charStart": 336,
+    "charEnd": 520,
+    "supportState": "conflicting",
+    "hasConflict": true,
+    "primaryExcerpt": "Gross margin expanded to 64%; and\nReported cash and cash equivalents totaling $35.6 million as of March 31, 2026.",
+    "conflictExcerpt": {
+     "passage": "record revenue achievement and 25% organic devices growth made the headline",
+     "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The statement's claim of -50% year-on-year organic growth conflicts with the source, which reports a 16% year-over-year total organic growth. The source confirms the 25% organic growth for devices and the gross margin expansion to 64%. The reviewer should reconcile these discrepancies or remove the conflicting claim about total organic growth.",
+    "commentaryUnaddressed": [
+     "year on year"
+    ],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Gross margin expanded to 64%; and\nReported cash and cash equivalents totaling $35.6 million as of March 31, 2026.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 2192,
+    "primaryExcerptEnd": 2305,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The statement's claim of -50% year-on-year organic growth conflicts with the source, which reports a 16% year-over-year total organic growth. The source confirms the 25% organic growth for devices and the gross margin expansion to 64%. The reviewer should reconcile these discrepancies or remove the conflicting claim about total organic growth.",
+    "displayMode": "conflicting",
+    "draftSpan": {
+     "startChar": 336,
+     "endChar": 520
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "2",
+      "passage": "Gross margin expanded to 64%; and\nReported cash and cash equivalents totaling $35.6 million as of March 31, 2026.",
+      "start": 2192,
+      "end": 2305
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "2",
+      "passage": "record revenue achievement and 25% organic devices growth made the headline",
+      "start": 2488,
+      "end": 2563
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "2",
+      "passage": "",
+      "start": null,
+      "end": null
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "2",
+      "classification": "conflicting",
+      "text": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+      "start": 0,
+      "end": 184
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "conflicting",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "percentage_metric",
+      "date_period_claim"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": null,
+    "editorialSuggestedDirection": "Clarify the relationship between overall organic growth and device-specific growth to resolve the inconsistency.",
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": true,
+    "claimUpgrade": false,
+    "claims": [
+     {
+      "index": 0,
+      "text": "Organic growth amounted to -50% year on year",
+      "draftStart": 336,
+      "draftEnd": 380,
+      "verdict": "conflicting",
+      "hasConflict": true,
+      "matches": [
+       {
+        "sourceIndex": 0,
+        "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+        "classification": "conflicting",
+        "passage": "",
+        "explanation": "The statement claims a -50% year-on-year organic growth, while the source reports a 16% year-over-year total organic growth for the same period. This is a direct contradiction.",
+        "systemFingerprint": "fp_61a9eaf3ca"
+       }
+      ]
+     },
+     {
+      "index": 1,
+      "text": "the gross margin expanded to 64% over the period",
+      "draftStart": 406,
+      "draftEnd": 454,
+      "verdict": "confirmed",
+      "hasConflict": false,
+      "matches": [
+       {
+        "sourceIndex": 0,
+        "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+        "classification": "confirmed",
+        "passage": "The Company achieved a gross margin of 64% on its sales for the three months ended March 31, 2026, and a gross margin of 60% in the same period in 2025. The increase in gross margin is primarily due to lower excess and obsolete inventory for the three months ended March 31, 2026, as compared to the same period in 2025.",
+        "explanation": "The source confirms the statement by reporting a gross margin of 64% for the first quarter of 2026, matching the statement's claim.",
+        "systemFingerprint": "fp_61a9eaf3ca"
+       }
+      ]
+     }
+    ],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 336,
+    "endChar": 520
+   }
+  },
+  {
+   "id": "3",
+   "text": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company\u2019s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+   "qcCard": {
+    "index": 3,
+    "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company\u2019s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+    "charStart": 522,
+    "charEnd": 825,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Neurosurgery navigation, therapy and access revenue, which primarily consists of disposable\nproduct commercial sales related to cases utilizing the ClearPoint and IRRA flow systems,\nincreased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million\nfor the same period in 2025. The increase is driven by additional revenues from sales of the\nIRRA flow product of as well as the introduction of our 3.0 operating room navigation\nsoftware, which has positively impacted procedural volumes in the operating room during\nthe three months ended March 31, 2026, compared to the same period in 2025.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "80% and 3.0 match the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Neurosurgery navigation, therapy and access revenue, which primarily consists of disposable\nproduct commercial sales related to cases utilizing the ClearPoint and IRRA flow systems,\nincreased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million\nfor the same period in 2025. The increase is driven by additional revenues from sales of the\nIRRA flow product of as well as the introduction of our 3.0 operating room navigation\nsoftware, which has positively impacted procedural volumes in the operating room during\nthe three months ended March 31, 2026, compared to the same period in 2025.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 4835,
+    "primaryExcerptEnd": 5451,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "80% and 3.0 match the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 522,
+     "endChar": 825
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company\u2019s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "not_reviewed",
+      "systemFingerprint": "fp_61a9eaf3ca",
+      "emptyConfirmationRefused": true
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "percentage_metric",
+      "date_period_claim"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": null,
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 522,
+    "endChar": 825
+   }
+  },
+  {
+   "id": "4",
+   "text": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+   "qcCard": {
+    "index": 4,
+    "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+    "charStart": 826,
+    "charEnd": 1025,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Capital equipment and software revenue, consisting of sales of ClearPoint and IRRA flow\nreusable hardware and software and related services, increased 177% to $1.4 million for the\nthree months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an\nincrease in placements of ClearPoint navigation capital and software, IRRA flow control units,\nand Prism laser units.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms the statement by reporting a 177% increase in capital equipment and software revenue, attributing this growth to increased placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units. The specific figures and reasons for the increase match the statement precisely. The phrase 'due to' matches the source.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Capital equipment and software revenue, consisting of sales of ClearPoint and IRRA flow\nreusable hardware and software and related services, increased 177% to $1.4 million for the\nthree months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an\nincrease in placements of ClearPoint navigation capital and software, IRRA flow control units,\nand Prism laser units.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 5452,
+    "primaryExcerptEnd": 5840,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms the statement by reporting a 177% increase in capital equipment and software revenue, attributing this growth to increased placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units. The specific figures and reasons for the increase match the statement precisely. The phrase 'due to' matches the source.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 826,
+     "endChar": 1025
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "4",
+      "passage": "Capital equipment and software revenue, consisting of sales of ClearPoint and IRRA flow\nreusable hardware and software and related services, increased 177% to $1.4 million for the\nthree months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an\nincrease in placements of ClearPoint navigation capital and software, IRRA flow control units,\nand Prism laser units.",
+      "start": 5452,
+      "end": 5840
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "percentage_metric"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 826,
+    "endChar": 1025
+   }
+  },
+  {
+   "id": "5",
+   "text": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+   "qcCard": {
+    "index": 5,
+    "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+    "charStart": 1026,
+    "charEnd": 1119,
+    "supportState": "partial",
+    "hasConflict": false,
+    "primaryExcerpt": "Biologics and drug delivery revenue, which include sales of disposable products and services\nrelated to customer-sponsored preclinical and clinical trials utilizing our products, increased\nslightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the\nthree months ended March 31, 2025.",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source indicates that biologics and drug delivery revenue increased slightly from $4.7 million to $4.8 million for the three months ended March 31, 2026, compared to the same period in 2025. This suggests a slight increase rather than being broadly flat, and the statement refers to the entire prior year, creating a period mismatch. The reviewer should adjust the statement to reflect the specific quarterly comparison or provide additional context for the full year.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Biologics and drug delivery revenue, which include sales of disposable products and services\nrelated to customer-sponsored preclinical and clinical trials utilizing our products, increased\nslightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the\nthree months ended March 31, 2025.",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 4329,
+    "primaryExcerptEnd": 4645,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source indicates that biologics and drug delivery revenue increased slightly from $4.7 million to $4.8 million for the three months ended March 31, 2026, compared to the same period in 2025. This suggests a slight increase rather than being broadly flat, and the statement refers to the entire prior year, creating a period mismatch. The reviewer should adjust the statement to reflect the specific quarterly comparison or provide additional context for the full year.",
+    "displayMode": "partial",
+    "draftSpan": {
+     "startChar": 1026,
+     "endChar": 1119
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_partial",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "moderate",
+    "evidenceConcernLevel": "moderate",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "5",
+      "passage": "Biologics and drug delivery revenue, which include sales of disposable products and services\nrelated to customer-sponsored preclinical and clinical trials utilizing our products, increased\nslightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the\nthree months ended March 31, 2025.",
+      "start": 4329,
+      "end": 4645
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "5",
+      "classification": "partially_confirmed",
+      "text": "was broadly flat compared with the prior year",
+      "start": 47,
+      "end": 92
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "partially_confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "comparative_superlative"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "partial",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "amber",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1026,
+    "endChar": 1119
+   }
+  },
+  {
+   "id": "6",
+   "text": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+   "qcCard": {
+    "index": 6,
+    "statement": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+    "charStart": 1122,
+    "charEnd": 1251,
+    "supportState": "supported",
+    "hasConflict": false,
+    "primaryExcerpt": "Continued clinical trial and regulatory progress across more than 60 active biopharma\nRMAT Desi",
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source confirms that the company is making progress in its clinical trial program with more than 60 active biopharma partners, directly supporting the statement.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [
+     0
+    ],
+    "supportRefTitles": [
+     "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf"
+    ],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Continued clinical trial and regulatory progress across more than 60 active biopharma\nRMAT Desi",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 1409,
+    "primaryExcerptEnd": 1504,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source confirms that the company is making progress in its clinical trial program with more than 60 active biopharma partners, directly supporting the statement.",
+    "displayMode": "supported",
+    "draftSpan": {
+     "startChar": 1122,
+     "endChar": 1251
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_full",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "none",
+    "evidenceConcernLevel": "none",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "6",
+      "passage": "Continued clinical trial and regulatory progress across more than 60 active biopharma\nRMAT Desi",
+      "start": 1409,
+      "end": 1504
+     }
+    ],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "mechanical",
+     "features": [
+      "comparative_superlative"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "confirmed",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "green",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1122,
+    "endChar": 1251
+   }
+  },
+  {
+   "id": "7",
+   "text": "Notably, a submission for FDA approval has been made for the company\u2019s Velocity Alpha MR High Speed Surgical Drill System.",
+   "qcCard": {
+    "index": 7,
+    "statement": "Notably, a submission for FDA approval has been made for the company\u2019s Velocity Alpha MR High Speed Surgical Drill System.",
+    "charStart": 1252,
+    "charEnd": 1374,
+    "supportState": "conflicting",
+    "hasConflict": true,
+    "primaryExcerpt": null,
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The statement conflicts with the source, which indicates that FDA clearance has already been obtained for the Velocity Alpha MR High Speed Surgical Drill System, rather than a submission being made. The statement suggests a pending approval process, while the source confirms completion. The reviewer should reconcile this discrepancy or remove the claim about the submission. The source does confirm the existence of the Velocity Alpha High Speed Surgical Drill.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": null,
+    "excerptNotLocatable": true,
+    "primaryExcerptStart": null,
+    "primaryExcerptEnd": null,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": false,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The statement conflicts with the source, which indicates that FDA clearance has already been obtained for the Velocity Alpha MR High Speed Surgical Drill System, rather than a submission being made. The statement suggests a pending approval process, while the source confirms completion. The reviewer should reconcile this discrepancy or remove the claim about the submission. The source does confirm the existence of the Velocity Alpha High Speed Surgical Drill.",
+    "displayMode": "conflicting",
+    "draftSpan": {
+     "startChar": 1252,
+     "endChar": 1374
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "conflict",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Notably, a submission for FDA approval has been made for the company\u2019s Velocity Alpha MR High Speed Surgical Drill System.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "7",
+      "passage": "",
+      "start": null,
+      "end": null
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "7",
+      "classification": "conflicting",
+      "text": "a submission for FDA approval has been made for the company\u2019s Velocity Alpha MR High Speed Surgical Drill System",
+      "start": 9,
+      "end": 121
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "conflicting",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "named_person_entity_attribution"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "conflicting",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1252,
+    "endChar": 1374
+   }
+  },
+  {
+   "id": "8",
+   "text": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+   "qcCard": {
+    "index": 8,
+    "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+    "charStart": 1375,
+    "charEnd": 1653,
+    "supportState": "partial",
+    "hasConflict": false,
+    "primaryExcerpt": "Completion of the first commercial drug delivery case utilizing ClearPoint technology\nin the Asia-Pacific region;",
+    "conflictExcerpt": {
+     "passage": "Received Medical Device License (MDL) from Health Canada for the ClearPoint Neuro\nNavigation System, covering both MRI-guidance and iCT guidance workflows with first ClearPoint Neuro t",
+     "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf"
+    },
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "The source indicates that the Medical Device License for the ClearPoint Neuro Navigation System was issued by Health Canada, not the FDA, which creates a gap in the statement regarding the regulatory body. The source does confirm the coverage of both MRI-guidance and iCT guidance workflows and the commencement of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region. The reviewer should verify the correct regulatory body and adjust the statement accordingly.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+    "primarySourceOrigin": null,
+    "primaryExcerptText": "Completion of the first commercial drug delivery case utilizing ClearPoint technology\nin the Asia-Pacific region;",
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": 2078,
+    "primaryExcerptEnd": 2191,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": true,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "The source indicates that the Medical Device License for the ClearPoint Neuro Navigation System was issued by Health Canada, not the FDA, which creates a gap in the statement regarding the regulatory body. The source does confirm the coverage of both MRI-guidance and iCT guidance workflows and the commencement of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region. The reviewer should verify the correct regulatory body and adjust the statement accordingly.",
+    "displayMode": "partial",
+    "draftSpan": {
+     "startChar": 1375,
+     "endChar": 1653
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "supported_partial",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "moderate",
+    "evidenceConcernLevel": "moderate",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [
+     {
+      "sourceRefId": 0,
+      "classification": "conflicting",
+      "statementId": "8",
+      "passage": "Received Medical Device License (MDL) from Health Canada for the ClearPoint Neuro\nNavigation System, covering both MRI-guidance and iCT guidance workflows with first ClearPoint Neuro t",
+      "start": 1806,
+      "end": 1990
+     },
+     {
+      "sourceRefId": 0,
+      "classification": "confirmed",
+      "statementId": "8",
+      "passage": "Completion of the first commercial drug delivery case utilizing ClearPoint technology\nin the Asia-Pacific region;",
+      "start": 2078,
+      "end": 2191
+     }
+    ],
+    "unsupportedSpans": [
+     {
+      "sourceRefId": 0,
+      "statementId": "8",
+      "classification": "partially_confirmed",
+      "text": "the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "start": 160,
+      "end": 278
+     }
+    ],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "partially_confirmed",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "named_person_entity_attribution",
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "partial",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": false,
+     "cardTone": "amber",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1375,
+    "endChar": 1653
+   }
+  },
+  {
+   "id": "9",
+   "text": "The company provided updated revenue guidance of USD 56 million for 2027.",
+   "qcCard": {
+    "index": 9,
+    "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+    "charStart": 1655,
+    "charEnd": 1728,
+    "supportState": "not_supported",
+    "hasConflict": false,
+    "primaryExcerpt": null,
+    "conflictExcerpt": null,
+    "conflictExcerptEmptyReason": null,
+    "evidenceSummary": "No source addresses the company's updated revenue guidance of USD 56 million for 2027. The source only provides revenue guidance for 2026, with no mention of 2027. Please add a source that supports this claim or remove it from the statement.",
+    "commentaryUnaddressed": [],
+    "commentaryNotReviewed": false,
+    "commentaryNotReviewedReason": null,
+    "supportRefIds": [],
+    "supportRefTitles": [],
+    "primaryRefId": null,
+    "primaryRefTitle": null,
+    "primarySourceOrigin": null,
+    "primaryExcerptText": null,
+    "excerptNotLocatable": false,
+    "primaryExcerptStart": null,
+    "primaryExcerptEnd": null,
+    "secondarySupportCount": 0,
+    "supportingReferenceIds": [],
+    "supportingReferenceTitles": [],
+    "hasRealExcerpt": false,
+    "conflictValues": null,
+    "reasoningHeadline": null,
+    "reasoningParagraph": "No source addresses the company's updated revenue guidance of USD 56 million for 2027. The source only provides revenue guidance for 2026, with no mention of 2027. Please add a source that supports this claim or remove it from the statement.",
+    "displayMode": "not_supported",
+    "draftSpan": {
+     "startChar": 1655,
+     "endChar": 1728
+    },
+    "evidenceTrace": [],
+    "selectedExcerptReason": null,
+    "excerptMatchType": "none",
+    "suggestedImprovement": null,
+    "whyItMatters": null,
+    "displayVerdict": "not_supported",
+    "displayVerdictReason": null,
+    "evidenceNotReviewedReason": null,
+    "concernLevel": "high",
+    "evidenceConcernLevel": "high",
+    "sentenceSubclaimCount": null,
+    "qcClaimId": null,
+    "originalClaimText": "The company provided updated revenue guidance of USD 56 million for 2027.",
+    "citationHovers": [],
+    "primaryExcerptTrusted": false,
+    "conflictEvidence": null,
+    "pipelineVersion": "v4",
+    "supportSpans": [],
+    "unsupportedSpans": [],
+    "stage2SourceFingerprints": [
+     {
+      "sourceIndex": 0,
+      "sourceLabel": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+      "classification": "no_support",
+      "systemFingerprint": "fp_61a9eaf3ca"
+     }
+    ],
+    "materiality": {
+     "level": "material",
+     "features": [
+      "monetary_figure",
+      "date_period_claim",
+      "forward_looking"
+     ]
+    },
+    "sourceRecencyConcerns": [],
+    "framingFidelityConcerns": [],
+    "supersededSourceNotes": [],
+    "editorialVerdict": "clean",
+    "editorialConcerns": [],
+    "editorialNote": "No editorial or style concerns identified under the listed rules.",
+    "editorialSuggestedDirection": null,
+    "editorialSuggestedRewrite": null,
+    "complianceVerdict": "clean",
+    "complianceConcerns": [],
+    "complianceNote": "No compliance concerns identified under the listed rules.",
+    "complianceSuggestedDirection": null,
+    "complianceSuggestedRewrite": null,
+    "suppressInQcWorkbench": false,
+    "editorialNotReviewedReason": null,
+    "complianceNotReviewedReason": null,
+    "decomposed": false,
+    "claimUpgrade": false,
+    "claims": [],
+    "summaryClass": {
+     "counted": true,
+     "evidence": "notSupported",
+     "editorial": "clean",
+     "compliance": "clean",
+     "needsAttention": true,
+     "cardTone": "red",
+     "turnedOffLine": null
+    }
+   },
+   "draftSpan": {
+    "startChar": 1655,
+    "endChar": 1728
+   }
+  }
+ ],
+ "references": [],
+ "sources": [
+  {
+   "index": 0,
+   "id": "assess_src_1791297058946_6561f86cb26cd8",
+   "label": "ClearPoint Neuro Reports First Quarter 2026 Results | Newswire.pdf",
+   "text": "Log In Sign Up\nProducts Pricing Customer Stories Resources Newsroom \nClearPoint Neuro Reports First Quarter\n2026 Results\nPRESS RELEASE \u2022 MAY 13, 2026\nRecord Revenue Achieved Including 25% Organic Growth in Devices and 43% Overall\nGrowth\nClearPoint Neuro, Inc.\nSOLANA BEACH, Calif., May 13, 2026 (Newswire.com) - ClearPoint Neuro, Inc.\n(Nasdaq:CLPT) (the \"Company\"), a global device, cell, and gene therapy-enabling company\noffering precise navigation to the brain and spine, today announced financial results for its\nMore Press Releases\nfirst quarter ended March 31, 2026.\nClearPoint Neuro Reports Second Quarter\nFirst Quarter 2026 Highlights 2026 Results\n1 MONTH AGO\nReported first quarter revenue of $12.1 million, including $2.3 million of IRRA flow\nPositive BioPharma Partner Regulatory\nrevenue, representing 43% overall growth and 16% year-over-year total organic growth\nProgress and Early Success in Focused\ncompared with the first quarter of 2025; Ultrasound Technology Platform\nExpansion\nThe activated installed base across all ClearPoint technology including IRRA flow\nsystems now includes over 175 global centers;\nClearPoint Neuro Congratulates Partner\nAspen Neuroscience on FDA Regenerative\nAchievement of measurable revenue and cost synergies through the continuing\nMedicine Advanced Therapy (RMAT)\nintegration of the IRRA flow product portfolio and team;\nDesignation for Sasineprocel\n1 MONTH AGO\nContinued clinical trial and regulatory progress across more than 60 active biopharma\nRMAT Designation Supports an Expedited\npartners;\nFDA Development and Review Pathway\nfor Aspen's Investigational Autologous\nFDA clearance and successful completion of the first clinical procedure utilizing the\nCell Replacement Therapy for Parkinson's\nVelocity Alpha MR High Speed Surgical Drill System;\nDisease.\nReceived Medical Device License (MDL) from Health Canada for the ClearPoint Neuro\nNavigation System, covering both MRI-guidance and iCT guidance workflows with first ClearPoint Neuro to Announce Second\nQuarter 2026 Results August 3, 2026\ncases now scheduled;\n2 MONTHS AGO\nCompletion of the first commercial drug delivery case utilizing ClearPoint technology\nin the Asia-Pacific region;\nGross margin expanded to 64%; and\nReported cash and cash equivalents totaling $35.6 million as of March 31, 2026.\n\"Our team is off to a strong start in 2026 with forward progress across our entire four-pillar\ngrowth strategy,\" commented Joe Burnett, President and CEO at ClearPoint Neuro. \"While\nrecord revenue achievement and 25% organic devices growth made the headline, there is\nno shortage of meaningful strategic progress across the entire organization. This includes\nhighlights from each pillar: multiple new drug routes-of-administration tested for the first\ntime at the ClearPoint Advanced Laboratories, expansion of our navigation installed base\nglobally, FDA clearance of the Velocity Alpha MR conditional drill that has now been used\nclinically for the first time, and the integration of the entire IRRA flow portfolio into the\nClearPoint Neuro commercial and operations teams which will lead to meaningful revenue\nand cost synergies in the second half of 2026. We continue to believe that these four pillars\nwill each contribute double digit growth in 2026, and represent a solid foundation on which\nto build our commercial cell and gene therapy delivery business in the future. Individual\ndrug development programs of course come with inherent risk, however if you look across\nour entire portfolio of more than 60 partners and programs, every quarter we see partners\ngetting funded or acquired, we see INDs being approved, we see more patients being\nrecruited and enrolled in regulatory trials, and we see our partners getting closer and closer\nto pivotal data readouts. With more than 60 shots on goal across this portfolio, and having\nworked closely with the amazing teams doing this drug development, we feel more than\never that global approvals are not a matter of if, but when.\"\nBusiness Outlook\nThe Company estimates revenue in 2026 to be between $52.0 million and $56.0 million.\nFinancial Results - Quarter Ended March 31, 2026\nTotal revenue was $12.1 million for the three months ended March 31, 2026, and $8.5 million\nfor the three months ended March 31, 2025, which represents an increase of $3.6 million, or\n43%.\nBiologics and drug delivery revenue, which include sales of disposable products and services\nrelated to customer-sponsored preclinical and clinical trials utilizing our products, increased\nslightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the\nthree months ended March 31, 2025.Of note the construction of the new CAL facility\n(ClearPoint Advanced Laboratories) is continuing, which is designed to the bring the CAL's\ncapacity to the level expected in the years ahead.\nNeurosurgery navigation, therapy and access revenue, which primarily consists of disposable\nproduct commercial sales related to cases utilizing the ClearPoint and IRRA flow systems,\nincreased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million\nfor the same period in 2025. The increase is driven by additional revenues from sales of the\nIRRA flow product of as well as the introduction of our 3.0 operating room navigation\nsoftware, which has positively impacted procedural volumes in the operating room during\nthe three months ended March 31, 2026, compared to the same period in 2025.\nCapital equipment and software revenue, consisting of sales of ClearPoint and IRRA flow\nreusable hardware and software and related services, increased 177% to $1.4 million for the\nthree months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an\nincrease in placements of ClearPoint navigation capital and software, IRRA flow control units,\nand Prism laser units.\nThe Company achieved a gross margin of 64% on its sales for the three months ended\nMarch 31, 2026, and a gross margin of 60% in the same period in 2025. The increase in gross\nmargin is primarily due to lower excess and obsolete inventory for the three months ended\nMarch 31, 2026, as compared to the same period in 2025.\nOperating expenses were $16.2 million for the three months ended March 31, 2026,\ncompared with $11.3 million for the same period in 2025, an increase of 44%. The increase\nwas mainly driven by higher personnel costs as a result of the expanded team due to the\nacquisition of IRRAS which occurred in November 2025, as well as increased occupancy\ncosts and travel costs.\nAt March 31, 2026, the Company had cash and cash equivalents totaling $35.6 million as\ncompared to $45.9 million at December 31, 2025, with the decrease resulting from the use of\n$8.0 million in cash for operating activities and $2.0 million in cash paid for taxes related to\nthe net share settlement of equity awards. The Company expects cost synergies resulting\nfrom the acquisition of IRRAS to contribute to a reduction in cash burn in the second half of\n2026 and believes that the asset integration could potentially be cash neutral for the full year\n2027.\nTeleconference Information\nInvestors and analysts are invited to listen to a live broadcast review of the Company's first\nquarter 2026 results on Wednesday, May 13, 2026 at 4:30 p.m. Eastern time (1:30 p.m. Pacific\ntime) which may be accessed online here:\nhttps://event.choruscall.com/mediaframe/webcast.html?webcastid=IjzOoM7l. Investors and\nanalysts who would like to participate in the conference call via telephone may do so at (877)\n407-9034, or at (201) 493-6737 if calling from outside the U.S. or Canada.\nFor those who cannot access the live broadcast, a replay will be available shortly after the\ncompletion of the call until June 12, 2026, by calling (877) 660-6853 or (201) 612-7415 if calling\nfrom outside the U.S. or Canada, and then entering conference I.D. number 413671. An online\narchive of the broadcast will be available on the Company's Investor website at\nhttps://ir.clearpointneuro.com/.\nAbout ClearPoint Neuro\nClearPoint Neuro is a device, cell, and gene therapy-enabling company offering precise\nnavigation to the brain and spine. The Company uniquely provides both established clinical\nproducts as well as preclinical development services for controlled drug and device delivery.\nThe Company's flagship product, the ClearPoint Neuro Navigation System, has FDA\nclearance and is CE-marked. ClearPoint Neuro is engaged with healthcare and research\ncenters in North America, Europe, Asia, and South America. The Company is also partnered\nwith the most innovative pharmaceutical/biotech companies, academic centers, and\ncontract research organizations, providing solutions for direct central nervous system\ndelivery of therapeutics in preclinical studies and clinical trials worldwide. To date, thousands\nof procedures have been performed and supported by the Company's field-based clinical\nspecialist team, which offers support and services to our customers and partners worldwide.\nFor more information, please visit www.clearpointneuro.com.\nForward-Looking Statements\nStatements in this press release and in the teleconference referenced above concerning the\nCompany's plans, growth and strategies may include forward-looking statements within the\ncontext of the federal securities laws. Statements regarding the Company's future events,\ndevelopments and future performance; the market opportunity and rate of sales and\nrevenue growth for the Company's products and services, including for the Company's\npreclinical CRO facility and its products and services, the Company's neuronavigational\nproducts, the IRRA flow Active Fluid Exchange System, and the PRISM Laser Therapy System;\nthe Company's expectations for achieving key growth drivers for its sales including its ability\nto expand its commercial organization, receive regulatory approval for its products in new\ngeographies, activate additional customer sites, generate clinical and economic data to\nsupport and expand the adoption rate for its products, and its development of new\nproducts; the Company's ability to successfully develop new products for gene and cell\ntherapy delivery; the adoption of the Company's products and services for use in the delivery\nof gene and cell therapies; the regulatory approval and commercialization of cell and gene\ntherapies being developed by the Company's biotech Partners; the Company's expectations\nregarding its four-pillar growth strategy, including its belief that each pillar will contribute\ndouble-digit growth in 2026; the Company's expectations regarding future revenue and cost\nsynergies from the integration of the IRRA flow product portfolio and team, including the\nexpectation that IRRAS integration could be cash neutral for the full year 2027; the\nCompany's expectations for the ClearPoint Advanced Laboratories (CAL) facility, including\nanticipated future study capacity; the Company's expectations regarding international\nregulatory approvals, including the Medical Device License from Health Canada and the\nscheduling of future cases; the Company's expectations regarding the Velocity Alpha MR\nHigh Speed Surgical Drill System and the PRISM Laser Therapy System, including their\nclinical adoption and commercial potential; the Company's expectations that global\nregulatory approvals of cell and gene therapies by its biotech Partners are a matter of timing\nrather than outcome; and the Company's expectations for revenues, operating expenses,\nand management's expectations, beliefs, plans, estimates or projections relating to the\nfuture, are forward-looking statements within the meaning of these laws. These forwardlooking statements are based on management's current expectations and are subject to the\nrisks inherent in the business, which may cause the Company's actual results to differ\nmaterially from those expressed in or implied by forward-looking statements. Particular\nuncertainties and risks include those relating to: the Company's biotech Partners' risks\nrelated to the ongoing conduct of their clinical studies, including the risk that such trials will\nbe unable to demonstrate data sufficient to support further clinical development or\nregulatory approval; the risk that more patient data becomes available that results in a\ndifferent interpretation then the data already released for gene and cell therapies; risks\nrelated to interactions with regulatory authorities, which may affect the initiation, timing\nand progress of clinical trials and pathways to regulatory approval of the biotech Partners'\ntherapies; the limitation or modification of the FDA's eligibility and criteria for its expedited\nreview programs with respect to such therapies; the commercialization and acceptance of\ngene and cell therapies; the Company's biotech Partner's continued use of the Company's\nproducts and services in their delivery of gene and cell therapies; the Company's ability to\nmaintain its current relationships with its biotech Partners or enter into relationships with\nnew partners; the Company's ability to continue to build and maintain the infrastructure and\npersonnel needed to allow for widespread adoption of intracranial administration of gene\nand cell therapies; risks inherent in the research, development, and regulatory approval of\nthe Company's new products; the future market for preclinical services and products and\nthe investment and timeline required to expand such services, which could divert resources\nfrom the Company's other business operations; the possibility that the anticipated benefits\nof the IRRAS transaction are not realized when expected or at all; the Company's failure to\nintegrate IRRAS into its business in accordance with expectations; deviations from the\nexpected market potential of the IRRAS products; diversion of management's attention on\nthe integration of IRRAS into its business; the risk that the Company's four-pillar growth\nstrategy may not achieve double-digit growth across each pillar as anticipated due to\nmarket, competitive, or operational factors; the risk that expected revenue and cost\nsynergies from the IRRAS integration, including the expectation of cash neutrality for the full\nyear 2027, may not be achieved on the anticipated timeline or at all; risks related to the\nconstruction, completion, and operational ramp up of the CAL facility, including the\npossibility that study capacity may not scale as expected; risks related to obtaining and\nmaintaining international regulatory approvals, including approvals from Health Canada,\nand the Company's ability to successfully commercialize its products in new geographies;\nrisks related to the clinical adoption and commercial success of the Velocity Alpha MR High\nSpeed Surgical Drill System and other newly cleared products; macroeconomic and\ninflationary conditions; regulatory and policy uncertainty; the introduction of or changes in\ntariffs, sanctions, or trade barriers; changes in monetary policy; geopolitical trends, such as\ninstability, protectionism and economic nationalism; the Company's ability to market,\ncommercialize and achieve broader market acceptance for new products and services\noffered by the Company; the availability of additional funding to support the Company's\nbusiness activity, including its research and development programs and the expansion of its\ncommercial organization; the ability of the Company to manage the growth of its business;\nand the Company's ability to attract and retain its key employees. For a detailed description\nof the Company's risks and uncertainties, you are encouraged to review its documents filed\nwith the SEC including the Company's recent filings on Form 8-K, Form 10-K and Form 10-Q.\nYou are cautioned not to place undue reliance on forward-looking statements, which speak\nonly as of the date on which they were made. The Company undertakes no obligation to\nupdate such statements to reflect events that occur or circumstances that exist after the\ndate on which they were made, except as required by law.\nContact:\nInvestor Relations:\nDanilo D'Alessandro, Chief Financial Officer\n(888) 287-9109 ext. 3\nir@clearpointneuro.com\nCLEARPOINT NEURO, INC.\nConsolidated Statements of Operations\n(in thousands, except for share and per share data)\nFor the Three Months Ended\nMarch 31,\n2026 2025\nRevenue:\n$ 8,802 $ 5,291\nProduct revenue\n3,326 3,194\nService and other revenue\n12,128 8,485\nTotal revenue\n4,372 3,353\nCost of revenue\n7,756 5,132\nGross profit\n4,522 3,379\nResearch and development costs\n6,715 3,834\nSales and marketing expenses\n4,997 4,082\nGeneral and administrative expenses\n(8,478 ) (6,163 )\nOperating loss\nOther income (expense):\n(35 ) 4\nOther (expense) income, net\n351 151\nInterest income\n(1,382 ) -\nInterest expense\n(9,544 ) (6,008 )\nNet loss before income taxes\n8 18\nIncome tax expense\n$ (9,552 $ (6,026 \n) )\nNet loss\nNet loss per share attributable to common\nstockholders:\n$ (0.32 ) $ (0.22 )\nBasic and diluted\nWeighted average shares outstanding:\n29,546,889 27,718,918\nBasic and diluted\nCLEARPOINT NEURO, INC.\nConsolidated Balance Sheets\n(in thousands, except for share and per share data)\nMarch 31,\nDecember\n2026 31,\n(Unaudited) 2025\nASSETS\nCurrent assets:\n$ 35,593 $ 45,923\nCash and cash equivalents\n8,662 6,549\nAccounts receivable, net\n8,573 8,359\nInventory, net\n2,049 2,769\nPrepaid expenses and other current assets\n54,877 63,600\nTotal current assets\n2,914 2,621\nProperty and equipment, net\n13,088 8,430\nOperating lease, right-of-use assets\n7,472 7,472\nGoodwill\n13,419 13,922\nIntangible assets, net\n1,646 1,702\nOther assets\n$ 93,416 $ 97,747\nTotal assets\nLIABILITIES AND STOCKHOLDERS' EQUITY\nCurrent liabilities:\n$ 2,330 $ 1,256\nAccounts payable\n2,977 4,360\nAccrued compensation\n2,125 2,786\nOther accrued liabilities\n234 694\nOperating lease liabilities, current portion\n1,814 1,669\nContract liabilities, current portion\n9,480 10,765\nTotal current liabilities\n13,710 8,461\nOperating lease liabilities, net of current portion\n608 581\nContract liabilities, net of current portion\n49,644 49,077\nLong-term notes payable, net\n354 354\nDeferred tax liabilities, net\n779 489\nOther long-term liabilities\n74,575 69,727\nTotal liabilities\nCommitments and contingencies\nStockholders' equity:\nPreferred stock, $0.01 par value; 25,000,000 shares\nauthorized; none issued and outstanding at March 31,\n- -\n2026 and December 31, 2025\nCommon stock, $0.01 par value; 90,000,000 shares\nauthorized at March 31, 2026 and December 31, 2025;\n29,986,639 and 29,368,760 shares issued and\noutstanding at March 31, 2026 and December 31, 2025,\n300 294\nrespectively\n239,468 238,995\nAdditional paid-in capital\n5,535 5,641\nShares to be issued\n(226,462 ) (216,910 )\nAccumulated deficit\n18,841 28,020\nTotal stockholders' equity\n$ 93,416 $ 97,747\nTotal liabilities and stockholders' equity\nCLEARPOINT NEURO, INC.\nConsolidated Statements of Cash Flows\n(in thousands)\nThree Months Ended\nMarch 31,\n2026 2025\nCash flows from operating activities:\n$ (9,552 ) $ (6,026 )\nNet loss\nAdjustments to reconcile net loss to net cash flows from\noperating activities:\n(95 ) 217\nAllowance for credit losses (recoveries)\n86 103\nDepreciation and amortization\n504 -\nAmortization of intangible assets\n2,218 1,908\nShare-based compensation\n525 -\nPayment-in-kind interest\nAmortization of debt issuance costs and original issue\n42 -\ndiscounts\nAmortization of lease right of use assets, net of accretion in\n523 231\nlease liabilities\nIncrease (decrease) in cash resulting from changes in:\n(2,019 ) 846\nAccounts receivable\n(125 ) 78\nInventory, net\n653 168\nPrepaid expenses and other current assets\n(71 ) -\nOther assets\n(437 ) (2,882 )\nAccounts payable and accrued expenses\n(391 ) (234 )\nLease liabilities\n172 (581 )\nContract liabilities\n(7,967 ) (6,172 )\nNet cash flows from operating activities\nCash flows from investing activities:\n(645 ) (183 )\nPurchases of property and equipment\n(645 ) (183 )\nNet cash flows from investing activities\nCash flows from financing activities:\n- (78 )\nPayment of At-The-Market offering costs\n148 21\nProceeds from stock option exercises\nPayments for taxes related to net share settlement of equity\n(1,993 ) (1,305 )\nawards\n(1,845 ) (1,362 )\nNet cash flows from financing activities\n(10,457 ) (7,717 )\nNet change in cash, cash equivalents and restricted cash\nCash, cash equivalents and restricted cash, beginning of\n46,973 20,104\nperiod\n$ 36,516 $ 12,387\nCash, cash equivalents and restricted cash, end of period\n35,593 12,387\nCash and cash equivalents\nRestricted cash included in other current assets and other\n923 -\nassets, non-current\n$ 36,516 $ 12,387\nTotal cash, cash equivalents and restricted cash\nSUPPLEMENTAL CASH FLOW INFORMATION\nCash paid for:\n$ - $ -\nIncome taxes\n$ 525 $ -\nInterest\nSOURCE: ClearPoint Neuro, Inc.\nSource: ClearPoint Neuro, Inc.\nTAGS\n#clpt #earnings #financials #neuro\nFree PR Guide\nProducts Company Resources Support\nPress Release Distribution About Us Resource Center Contact Us\nFinancial Distribution Blog For Journalists Email Support\nMedia Suite Customer Stories Newsroom\nMedia Database Our Media Room PR and Earned Media Planner\nMedia Pitching RSS Feeds\nMedia Monitoring Media Outlets\nAnalytics\nMedia Room\nCustomer Success\nPress Release Optimizer\n\u00a9 2005 - 2026 Newswire Terms of Service Privacy Uptime",
+   "publicationState": "published_external"
+  }
+ ],
+ "excludedSources": [],
+ "meta": {
+  "pipelineVersion": "v4",
+  "stagesComplete": 7,
+  "traceId": "123dc7d6-7a49-4fad-86ef-7eab001a72ae",
+  "reviewOptions": {
+   "evidenceEnabled": true,
+   "editorialEnabled": true,
+   "complianceEnabled": true
+  },
+  "reviewSummary": {
+   "version": 1,
+   "statements": 10,
+   "evidence": {
+    "confirmed": 4,
+    "partial": 2,
+    "conflicting": 3,
+    "notSupported": 1
+   },
+   "editorial": {
+    "concerns": 0,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "compliance": {
+    "concerns": 0,
+    "hardConcerns": 0,
+    "notChecked": 0
+   },
+   "signalConcerns": 0,
+   "notChecked": 0,
+   "needsAttention": 4,
+   "readiness": "Needs significant work",
+   "rateLimitBoundHits": {
+    "editorial": 0,
+    "compliance": 0,
+    "commentary": 0,
+    "other": 0,
+    "statements": 0
+   }
+  },
+  "rateLimitBoundHits": {
+   "editorial": 0,
+   "compliance": 0,
+   "commentary": 0,
+   "other": 0,
+   "statements": 0
+  },
+  "capacityWait": {
+   "prelaunchCount": 0,
+   "waitMs": 0
+  },
+  "providerRefusal": null,
+  "rateLimitLastWait": null,
+  "stageSchedules": [
+   {
+    "statementCount": 10,
+    "tokensPerStatement": 13345,
+    "totalTokens": 133450,
+    "remainingTokens": 1968970,
+    "tpmLimit": 2000000,
+    "concurrency": 10,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage6"
+   },
+   {
+    "statementCount": 10,
+    "tokensPerStatement": 1800,
+    "totalTokens": 18000,
+    "remainingTokens": 1944051,
+    "tpmLimit": 2000000,
+    "concurrency": 10,
+    "waves": 1,
+    "why": "fits_remaining_one_wave",
+    "remainingSource": "header",
+    "stage": "stage5"
+   }
+  ],
+  "llmSpend": {
+   "calls": 58,
+   "inputTokens": 295434,
+   "cachedInputTokens": 200960,
+   "outputTokens": 4692,
+   "costUsd": 0.5332381,
+   "unpricedCalls": 0,
+   "unpricedModels": [],
+   "byModel": {
+    "openai/gpt-4o-2024-08-06": {
+     "calls": 57,
+     "inputTokens": 295024,
+     "cachedInputTokens": 200960,
+     "outputTokens": 4681,
+     "costUsd": 0.53317,
+     "unpricedCalls": 0
+    },
+    "openai/gpt-4o-mini-2024-07-18": {
+     "calls": 1,
+     "inputTokens": 410,
+     "cachedInputTokens": 0,
+     "outputTokens": 11,
+     "costUsd": 6.809999999999999e-05,
+     "unpricedCalls": 0
+    }
+   }
+  },
+  "modelConfig": {
+   "ranAt": "2026-10-06T14:37:51.661Z",
+   "stage2Fingerprints": [
+    "fp_61a9eaf3ca"
+   ],
+   "stageModels": {
+    "stage1-splitting": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage1b-claim-spans": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage2-matching": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "stage5-commentary": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "editorial-style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "compliance-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    },
+    "style-review": {
+     "provider": "openai",
+     "model": "gpt-4o-2024-08-06"
+    }
+   }
+  },
+  "build": {
+   "commit": "55e8cd8",
+   "ref": "main",
+   "source": "vercel-env"
+  },
+  "draftCoverage": {
+   "dropped": [],
+   "uncovered": [],
+   "droppedCount": 0,
+   "uncoveredCount": 0,
+   "uncoveredChars": 0,
+   "draftChars": 1728
+  }
+ },
+ "bannedWordHits": [],
+ "provenanceFlags": []
+}
