@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | Recorded after verify:ship. |
+| SHIPPED | `SHIP VERIFIED  e21b0c1  main  166 files  1817 tests` |
 | Cost | USD 0. No model calls. No live runs. |
 | Evidence | The four doctored reviews, the clean reviews named below, their extracted sources, and `scripts/diagnostic/b385/labels.json`. |
 | Pin | Token alignment, Needleman-Wunsch, match +2, mismatch -1, gap -1. On a tie the diagonal wins. Dropped passage words are recorded and are not flags. A flag is a substituted or added position. |
