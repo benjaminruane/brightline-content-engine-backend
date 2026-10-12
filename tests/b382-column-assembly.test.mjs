@@ -81,7 +81,7 @@ describe("B382 column assembly", () => {
       /today announced financial results for its\nfirst quarter ended March 31, 2026\./
     );
     assert.doesNotMatch(text, /for its\nMore Press Releases\nfirst quarter/);
-    assert.match(text, /of IRRA flow\nrevenue, representing 43% overall growth/);
+    assert.match(text, /of IRRAflow\nrevenue, representing 43% overall growth/);
     assert.doesNotMatch(text, /IRRA flow\nPositive BioPharma Partner Regulatory\nrevenue/);
     assert.match(text, /workflows with first\ncases now scheduled;/);
     assert.doesNotMatch(text, /with first ClearPoint Neuro to Announce/);

@@ -9,13 +9,13 @@ SOLANA BEACH, Calif., May 13, 2026 (Newswire.com) -  ClearPoint Neuro, Inc.
 offering precise navigation to the brain and spine, today announced financial results for its
 first quarter ended March 31, 2026.
 First Quarter 2026 Highlights
-Reported first quarter revenue of $12.1 million, including $2.3 million of IRRA flow
+Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow
 revenue, representing 43% overall growth and 16% year-over-year total organic growth
 compared with the first quarter of 2025;
-The activated installed base across all ClearPoint technology including IRRA flow
+The activated installed base across all ClearPoint technology including IRRAflow
 systems now includes over 175 global centers;
 Achievement of measurable revenue and cost synergies through the continuing
-integration of the IRRA flow  product portfolio and team;
+integration of the IRRAflow  product portfolio and team;
 Continued clinical trial and regulatory progress across more than 60 active biopharma
 partners;
 FDA clearance and successful completion of the first clinical procedure utilizing the
@@ -34,7 +34,7 @@ no shortage of meaningful strategic progress across the entire organization. Thi
 highlights from each pillar: multiple new drug routes-of-administration tested for the first
 time at the ClearPoint Advanced Laboratories, expansion of our navigation installed base
 globally, FDA clearance of the Velocity Alpha MR conditional drill that has now been used
-clinically for the first time, and the integration of the entire IRRA flow  portfolio into the
+clinically for the first time, and the integration of the entire IRRAflow  portfolio into the
 ClearPoint Neuro commercial and operations teams which will lead to meaningful revenue
 and cost synergies in the second half of 2026. We continue to believe that these four pillars
 will each contribute double digit growth in 2026, and represent a solid foundation on which
@@ -59,16 +59,16 @@ three months ended March 31, 2025.Of note the construction of the new CAL facili
 (ClearPoint Advanced Laboratories) is continuing, which is designed to the bring the CAL's
 capacity to the level expected in the years ahead.
 Neurosurgery navigation, therapy and access revenue, which primarily consists of disposable
-product commercial sales related to cases utilizing the ClearPoint and IRRA flow  systems,
+product commercial sales related to cases utilizing the ClearPoint and IRRAflow  systems,
 increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million
 for the same period in 2025. The increase is driven by additional revenues from sales of the
-IRRA flow  product of as well as the introduction of our 3.0 operating room navigation
+IRRAflow  product of as well as the introduction of our 3.0 operating room navigation
 software, which has positively impacted procedural volumes in the operating room during
 the three months ended March 31, 2026, compared to the same period in 2025.
-Capital equipment and software revenue, consisting of sales of ClearPoint and IRRA flow
+Capital equipment and software revenue, consisting of sales of ClearPoint and IRRAflow
 reusable hardware and software and related services, increased 177% to $1.4 million for the
 three months ended March 31, 2026, from $0.5 million for the same period in 2025 due to an
-increase in placements of ClearPoint navigation capital and software, IRRA flow  control units,
+increase in placements of ClearPoint navigation capital and software, IRRAflow  control units,
 and Prism laser units.
 The Company achieved a gross margin of 64% on its sales for the three months ended
 March 31, 2026, and a gross margin of 60% in the same period in 2025. The increase in gross
@@ -118,7 +118,7 @@ context of the federal securities laws. Statements regarding the Company's futur
 developments and future performance; the market opportunity and rate of sales and
 revenue growth for the Company's products and services, including for the Company's
 preclinical CRO facility and its products and services, the Company's neuronavigational
-products, the IRRA flow  Active Fluid Exchange System, and the PRISM Laser Therapy System;
+products, the IRRAflow  Active Fluid Exchange System, and the PRISM Laser Therapy System;
 the Company's expectations for achieving key growth drivers for its sales including its ability
 to expand its commercial organization, receive regulatory approval for its products in new
 geographies, activate additional customer sites, generate clinical and economic data to
@@ -129,7 +129,7 @@ of gene and cell therapies; the regulatory approval and commercialization of cel
 therapies being developed by the Company's biotech Partners; the Company's expectations
 regarding its four-pillar growth strategy, including its belief that each pillar will contribute
 double-digit growth in 2026; the Company's expectations regarding future revenue and cost
-synergies from the integration of the IRRA flow  product portfolio and team, including the
+synergies from the integration of the IRRAflow  product portfolio and team, including the
 expectation that IRRAS integration could be cash neutral for the full year 2027; the
 Company's expectations for the ClearPoint Advanced Laboratories (CAL) facility, including
 anticipated future study capacity; the Company's expectations regarding international

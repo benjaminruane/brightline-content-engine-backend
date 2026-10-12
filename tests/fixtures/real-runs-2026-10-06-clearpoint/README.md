@@ -1,11 +1,11 @@
 # Real run 2026-10-06, ClearPoint Neuro Q1 2026, clean x3 and doctored x1
 
 Medical device genre. 10 statements. One source: the Newswire version of the
-13 May 2026 press release, saved to PDF (21,386 characters extracted after B382).
+13 May 2026 press release, saved to PDF (21,376 characters extracted after B383).
 The sidebar is still in the extract. It now follows the article instead of
-running through the middle of sentences.
+running through the middle of sentences. IRRAflow is one word.
 
-The review payloads in this folder (clean1/2/3 and dirty1) predate that fix.
+The review payloads in this folder (clean1/2/3 and dirty1) predate B382 and B383.
 They were produced from the earlier extraction.
 
 Files: clean1/2/3 and dirty1, each with -review.json and -actions.json, plus
