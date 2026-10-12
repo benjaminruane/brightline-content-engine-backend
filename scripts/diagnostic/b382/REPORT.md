@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded by `npm run verify:ship` on the implementation commit |
+| SHIPPED | `SHIP VERIFIED  ecfc345  main  165 files  1809 tests` |
 
 Ids used: B382.
 
