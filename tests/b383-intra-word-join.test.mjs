@@ -47,6 +47,11 @@ describe("B383 intra-word join", () => {
     assert.equal(text, "31st");
   });
 
+  test("a one-character fragment is not glued", () => {
+    const text = assemblePdfPageItems([item("Shopify", 0, 56), item("n", 56, 8)]);
+    assert.equal(text, "Shopify n");
+  });
+
   test("a footnote marker still takes a space", () => {
     const text = assemblePdfPageItems([item("billion", 0, 48), item("1", 48, 6, 8)]);
     assert.equal(text, "billion 1");
