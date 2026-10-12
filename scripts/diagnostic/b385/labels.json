@@ -1,0 +1,377 @@
+{
+  "runs": [
+    {
+      "runId": "3i-hy25-doctored",
+      "reviewPath": "tests/fixtures/real-runs-2026-09-29/doc-review.json",
+      "sourceLabel": "source-3i-hy25-extracted",
+      "statements": 15,
+      "entries": [
+        {
+          "statementIndex": 0,
+          "entry": "billion written as million",
+          "substitutions": [
+            {
+              "id": "3i-S0-a",
+              "was": "£3,291 million / approximately £3.3 billion",
+              "written": "£3.3 million"
+            }
+          ]
+        },
+        {
+          "statementIndex": 5,
+          "entry": "the period",
+          "substitutions": [
+            {
+              "id": "3i-S5-a",
+              "was": "nine reporting periods ending on 28 September 2025",
+              "written": "six months to 30 June 2026"
+            }
+          ]
+        },
+        {
+          "statementIndex": 8,
+          "entry": "Action written as MAIT",
+          "substitutions": [
+            {
+              "id": "3i-S8-a",
+              "was": "Action",
+              "written": "MAIT"
+            }
+          ]
+        },
+        {
+          "statementIndex": 9,
+          "entry": "GIC written as AGIC",
+          "substitutions": [
+            {
+              "id": "3i-S9-a",
+              "was": "GIC",
+              "written": "AGIC"
+            }
+          ]
+        },
+        {
+          "statementIndex": 12,
+          "entry": "gains on TCR widened to essentially all investments",
+          "substitutions": [
+            {
+              "id": "3i-S12-a",
+              "was": "gains on TCR",
+              "written": "gains across essentially all of its investments"
+            }
+          ]
+        },
+        {
+          "statementIndex": 14,
+          "entry": "3i's stance written as the UK government's",
+          "substitutions": [
+            {
+              "id": "3i-S14-a",
+              "was": "management",
+              "written": "the UK government"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "hicl-interim-doctored",
+      "reviewPath": "tests/fixtures/real-runs-2026-10-04-hicl/doc-review.json",
+      "sourceLabel": "source-hicl-interim-extracted",
+      "statements": 8,
+      "entries": [
+        {
+          "statementIndex": 0,
+          "entry": "HICL written as HCIL, and five months to 28 February 2026 written as six months to 31 December 2025",
+          "substitutions": [
+            {
+              "id": "hicl-S0-a",
+              "was": "HICL",
+              "written": "HCIL"
+            },
+            {
+              "id": "hicl-S0-b",
+              "was": "five months to 28 February 2026",
+              "written": "six months to 31 December 2025"
+            }
+          ]
+        },
+        {
+          "statementIndex": 1,
+          "entry": "with EBITDA growth written as average 30% EBITDA growth",
+          "substitutions": [
+            {
+              "id": "hicl-S1-a",
+              "was": "with EBITDA growth",
+              "written": "with average 30% EBITDA growth"
+            }
+          ]
+        },
+        {
+          "statementIndex": 2,
+          "entry": "in line with budgets written as significantly outperform budgets",
+          "substitutions": [
+            {
+              "id": "hicl-S2-a",
+              "was": "in line with budgets",
+              "written": "significantly outperform budgets"
+            }
+          ]
+        },
+        {
+          "statementIndex": 3,
+          "entry": "London St. Pancras High Speed written as Paris St. Germain High Speed",
+          "substitutions": [
+            {
+              "id": "hicl-S3-a",
+              "was": "London St. Pancras High Speed",
+              "written": "Paris St. Germain High Speed"
+            }
+          ]
+        },
+        {
+          "statementIndex": 4,
+          "entry": "operations from St. Pancras written as St. Germain",
+          "substitutions": [
+            {
+              "id": "hicl-S4-a",
+              "was": "operations from St. Pancras",
+              "written": "operations from St. Germain"
+            }
+          ]
+        },
+        {
+          "statementIndex": 5,
+          "entry": "Fortysouth and 16 towers written as TowerCo and 20",
+          "substitutions": [
+            {
+              "id": "hicl-S5-a",
+              "was": "Fortysouth",
+              "written": "TowerCo"
+            },
+            {
+              "id": "hicl-S5-b",
+              "was": "16 new towers",
+              "written": "20 new towers"
+            },
+            {
+              "id": "hicl-S5-c",
+              "was": "during the period",
+              "written": "during the past year"
+            }
+          ]
+        },
+        {
+          "statementIndex": 6,
+          "entry": "a reduction in debt costs written as an increase",
+          "substitutions": [
+            {
+              "id": "hicl-S6-a",
+              "was": "lead to a reduction in debt costs",
+              "written": "lead to an increase"
+            }
+          ]
+        },
+        {
+          "statementIndex": 7,
+          "entry": "a new CEO written as a new CFO, and the UK government's water paper written as the French government's electricity paper",
+          "substitutions": [
+            {
+              "id": "hicl-S7-a",
+              "was": "appointed a new CEO",
+              "written": "appointed a new CFO"
+            },
+            {
+              "id": "hicl-S7-b",
+              "was": "the UK government's",
+              "written": "the French government's"
+            },
+            {
+              "id": "hicl-S7-c",
+              "was": "water sector reform",
+              "written": "electricity sector reform"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "gpi-press-release-doctored",
+      "reviewPath": "tests/fixtures/real-runs-2026-10-06-gpi/doc-review.json",
+      "sourceLabel": "source-gpi-press-release-extracted",
+      "statements": 5,
+      "entries": [
+        {
+          "statementIndex": 0,
+          "entry": "October 2025, 75% of capacity, and escalating oil prices",
+          "substitutions": [
+            {
+              "id": "gpi-S0-a",
+              "was": "13 November 2025, this month",
+              "written": "October 2025"
+            },
+            {
+              "id": "gpi-S0-b",
+              "was": "not in the source",
+              "written": "75% of its global production capacity"
+            },
+            {
+              "id": "gpi-S0-c",
+              "was": "not in the source",
+              "written": "escalating oil prices"
+            }
+          ]
+        },
+        {
+          "statementIndex": 1,
+          "entry": "15 facilities in Malaysia, and the China plant limited to the European market",
+          "substitutions": [
+            {
+              "id": "gpi-S1-a",
+              "was": "three",
+              "written": "15 facilities in Malaysia"
+            },
+            {
+              "id": "gpi-S1-b",
+              "was": "European and Asian",
+              "written": "European market only"
+            }
+          ]
+        },
+        {
+          "statementIndex": 2,
+          "entry": "enhancing site security",
+          "substitutions": [
+            {
+              "id": "gpi-S2-a",
+              "was": "not in the source",
+              "written": "enhancing site security"
+            }
+          ]
+        },
+        {
+          "statementIndex": 3,
+          "entry": "Gold Peak Technology Group written as Silver Hill Technology",
+          "substitutions": [
+            {
+              "id": "gpi-S3-a",
+              "was": "Gold Peak Technology Group",
+              "written": "Silver Hill Technology"
+            }
+          ]
+        },
+        {
+          "statementIndex": 4,
+          "entry": "second-largest written as the largest, over six billion written as over 60 billion, and sold written as bartered",
+          "substitutions": [
+            {
+              "id": "gpi-S4-a",
+              "was": "second-largest",
+              "written": "the largest"
+            },
+            {
+              "id": "gpi-S4-b",
+              "was": "over six billion",
+              "written": "over 60 billion"
+            },
+            {
+              "id": "gpi-S4-c",
+              "was": "sold through",
+              "written": "bartered through"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "clearpoint-q1-2026-doctored",
+      "reviewPath": "tests/fixtures/real-runs-2026-10-06-clearpoint/dirty1-review.json",
+      "sourceLabel": "source-clearpoint-q1-2026-extracted",
+      "statements": 10,
+      "entries": [
+        {
+          "statementIndex": 0,
+          "entry": "May written as April",
+          "substitutions": [
+            {
+              "id": "clearpoint-S0-a",
+              "was": "13 May",
+              "written": "April"
+            }
+          ]
+        },
+        {
+          "statementIndex": 2,
+          "entry": "organic growth of 16% written as -50%",
+          "substitutions": [
+            {
+              "id": "clearpoint-S2-a",
+              "was": "16%",
+              "written": "-50%"
+            }
+          ]
+        },
+        {
+          "statementIndex": 3,
+          "entry": "the segment's $5.9 million written as the vast majority of revenue",
+          "substitutions": [
+            {
+              "id": "clearpoint-S3-a",
+              "was": "$5.9m of $12.1m",
+              "written": "the vast majority of the company's overall revenue"
+            }
+          ]
+        },
+        {
+          "statementIndex": 7,
+          "entry": "FDA clearance and first clinical procedures written as a submission for FDA approval",
+          "substitutions": [
+            {
+              "id": "clearpoint-S7-a",
+              "was": "FDA clearance and first clinical procedures",
+              "written": "a submission for FDA approval"
+            }
+          ]
+        },
+        {
+          "statementIndex": 8,
+          "entry": "Health Canada written as the FDA",
+          "substitutions": [
+            {
+              "id": "clearpoint-S8-a",
+              "was": "Health Canada",
+              "written": "the FDA"
+            }
+          ]
+        },
+        {
+          "statementIndex": 8,
+          "entry": "the case was completed, written as has been commenced",
+          "substitutions": [
+            {
+              "id": "clearpoint-S8-b",
+              "was": "Completion of the first commercial drug delivery case",
+              "written": "has been commenced"
+            }
+          ]
+        },
+        {
+          "statementIndex": 9,
+          "entry": "guidance of $52.0 million to $56.0 million for 2026 written as USD 56 million for 2027",
+          "substitutions": [
+            {
+              "id": "clearpoint-S9-a",
+              "was": "$52.0 million to $56.0 million",
+              "written": "USD 56 million"
+            },
+            {
+              "id": "clearpoint-S9-b",
+              "was": "2026",
+              "written": "2027"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
