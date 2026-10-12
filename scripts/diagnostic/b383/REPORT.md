@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded by `npm run verify:ship` on the implementation commit |
+| SHIPPED | `SHIP VERIFIED  ab559bb  main  166 files  1816 tests` |
 | Cost | USD 0. No model calls. |
 
 ## Part 1. Gap distribution
