@@ -229,6 +229,12 @@ dropped silently.
 
 ---
 
+## Source PDF text
+
+PDF text is read by pdfjs (`lib/extract-pdf-direct.mjs`, **B321**). On each page, items are grouped by rounded y and read left to right (**B319** arm C). **B382** runs that assembly per column when a vertical gap in x stays empty down the page and text sits on both sides of it. The columns are then concatenated left to right. A page with no such gap is the arm C path, byte for byte. Raised characters (**B327**) still reattach inside the items that share a band; the column split only decides which items share a band. Callers of `extractPdfDirect`: `extractTextFromSource` (the product PDF path), the extractor-swap and figure-fidelity diagnostics, and the extract tests. Office formats do not use this module. The return shape is unchanged. No verdict, matcher, or card rule reads the column geometry.
+
+---
+
 ## Related documents
 
 | Document | Role |

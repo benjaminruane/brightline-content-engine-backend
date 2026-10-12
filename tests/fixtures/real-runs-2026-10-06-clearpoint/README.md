@@ -1,8 +1,12 @@
 # Real run 2026-10-06, ClearPoint Neuro Q1 2026, clean x3 and doctored x1
 
 Medical device genre. 10 statements. One source: the Newswire version of the
-13 May 2026 press release, saved to PDF (21,215 characters extracted, includes
-site navigation furniture).
+13 May 2026 press release, saved to PDF (21,386 characters extracted after B382).
+The sidebar is still in the extract. It now follows the article instead of
+running through the middle of sentences.
+
+The review payloads in this folder (clean1/2/3 and dirty1) predate that fix.
+They were produced from the earlier extraction.
 
 Files: clean1/2/3 and dirty1, each with -review.json and -actions.json, plus
 both drafts and the source.
