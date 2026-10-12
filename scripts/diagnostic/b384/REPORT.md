@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded by `npm run verify:ship` on the implementation commit |
+| SHIPPED | `SHIP VERIFIED  9687b68  main  166 files  1817 tests` |
 | Cost | USD 0. No model calls. |
 
 Compared `ab559bb^` (before the intra-word join) with this revision. `scripts/diagnostic/b384/token-delta.mjs` loads `lib/extract-pdf-direct.mjs` from each revision and extracts every PDF under the repo outside `node_modules`. 79 paths, 44 after de-duplicating by basename, 35 duplicate basenames skipped.
