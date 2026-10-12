@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | Docs and diagnostic only. No product code in this commit. |
+| SHIPPED | `SHIP VERIFIED  7192fff  main  166 files  1817 tests` |
 | Cost | USD 0. No model calls. The checks below re-ran current functions on stored text. |
 | Evidence | `scripts/diagnostic/b385/REPORT.md`, `scripts/diagnostic/b385/labels.json`, `scripts/diagnostic/b381/REPORT.md` lines 93-262, the four doctored payloads, GP Industries `CLEAN-RUNS.md`, ClearPoint clean run 1. |
 | Bar | 33 of 37 planted errors. Not tradeable against a green card that is wrong. |
