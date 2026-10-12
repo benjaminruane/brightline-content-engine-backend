@@ -1,5 +1,10 @@
 # B385. The current route on the four doctored drafts
 
+| | |
+|---|---|
+| SHIPPED | `SHIP VERIFIED  befcbb2  main  166 files  1817 tests` |
+| Cost | USD 0. No model calls. |
+
 26 entries, 37 substitutions.
 
 | Run | Entries | Substitutions |
