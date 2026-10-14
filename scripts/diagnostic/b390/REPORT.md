@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship |
+| SHIPPED | `SHIP VERIFIED  0df32ad  main  166 files  1817 tests` |
 | Cost | USD 0.8511 discounted across 36 calls. Ceiling USD 8. Not crossed. |
 | Model | `gpt-5.1-2025-11-13`, temperature 0, seed 1, cache off. Same pin as B388. No tuning stage. |
 | Split | Held-out only: fixtures 11 to 20, the four doctored drafts, the four clean drafts. Two passes. The prompt is B388's with the citation instruction changed and nothing else. |
