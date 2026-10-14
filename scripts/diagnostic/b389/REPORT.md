@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | Pending the verify:ship line for this commit. |
+| SHIPPED | `SHIP VERIFIED  8432ffd  main  166 files  1817 tests` |
 | Cost | USD 0. No model calls. No live runs. The passes were already in `scripts/diagnostic/b388/runs/`. |
 | Rules | `scripts/diagnostic/b389/GATE.md`, committed as `40c9626` before `simulate.mjs` was run. |
 | Evidence | `scripts/diagnostic/b389/runs/summary.json`. |
