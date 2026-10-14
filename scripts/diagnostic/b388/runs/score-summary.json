@@ -1,0 +1,609 @@
+{
+  "cost": {
+    "held1": 0.5374352499999999,
+    "held2": 0.49690724999999997,
+    "held1List": 0.55241125,
+    "held2List": 0.5683312500000001,
+    "calls1": 18,
+    "calls2": 18
+  },
+  "catch": {
+    "held1": 5,
+    "held1n": 8,
+    "held2": 5,
+    "held2n": 8
+  },
+  "leaveAlone": {
+    "held1": {
+      "n": 40,
+      "pipelineAlsoConfirmed": 37,
+      "rate": 0.925,
+      "wilson95": {
+        "rate": 0.925,
+        "low": 0.8013546984090248,
+        "high": 0.9741644432281419
+      }
+    },
+    "held2": {
+      "n": 35,
+      "pipelineAlsoConfirmed": 31,
+      "rate": 0.8857142857142857,
+      "wilson95": {
+        "rate": 0.8857142857142857,
+        "low": 0.7404820521187976,
+        "high": 0.9546489414551025
+      }
+    }
+  },
+  "citation": {
+    "held1": {
+      "counts": {
+        "passages": 229,
+        "exact": 118,
+        "normalised": 40,
+        "notFound": 71,
+        "nullPassage": 4
+      },
+      "greens": 143,
+      "greensSurvive": 106,
+      "loseAllEvidence": 67,
+      "statements": 219
+    },
+    "held2": {
+      "counts": {
+        "passages": 203,
+        "exact": 99,
+        "normalised": 35,
+        "notFound": 69,
+        "nullPassage": 4
+      },
+      "greens": 109,
+      "greensSurvive": 78,
+      "loseAllEvidence": 59,
+      "statements": 219
+    }
+  },
+  "stability": {
+    "agree": 172,
+    "moved": 47,
+    "missing": 0,
+    "total": 219
+  },
+  "pipelineClean": {
+    "total": 38,
+    "flagged": 12,
+    "rows": [
+      {
+        "fixtureId": "2026-09-29-clean",
+        "index": 0,
+        "displayVerdict": "conflict"
+      },
+      {
+        "fixtureId": "2026-09-29-clean",
+        "index": 1,
+        "displayVerdict": "supported_partial"
+      },
+      {
+        "fixtureId": "2026-09-29-clean",
+        "index": 6,
+        "displayVerdict": "unverifiable"
+      },
+      {
+        "fixtureId": "2026-09-29-clean",
+        "index": 7,
+        "displayVerdict": "unverifiable"
+      },
+      {
+        "fixtureId": "2026-09-29-clean",
+        "index": 9,
+        "displayVerdict": "conflict"
+      },
+      {
+        "fixtureId": "2026-09-29-clean",
+        "index": 10,
+        "displayVerdict": "unverifiable"
+      },
+      {
+        "fixtureId": "2026-10-04-hicl-clean",
+        "index": 6,
+        "displayVerdict": "supported_partial"
+      },
+      {
+        "fixtureId": "2026-10-06-gpi-clean",
+        "index": 0,
+        "displayVerdict": "supported_partial"
+      },
+      {
+        "fixtureId": "2026-10-06-gpi-clean",
+        "index": 1,
+        "displayVerdict": "supported_partial"
+      },
+      {
+        "fixtureId": "2026-10-06-clearpoint-clean",
+        "index": 2,
+        "displayVerdict": "supported_partial"
+      },
+      {
+        "fixtureId": "2026-10-06-clearpoint-clean",
+        "index": 5,
+        "displayVerdict": "supported_partial"
+      },
+      {
+        "fixtureId": "2026-10-06-clearpoint-clean",
+        "index": 9,
+        "displayVerdict": "conflict"
+      }
+    ]
+  },
+  "cleanFlags1": [
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 0,
+      "displayVerdict": "conflict",
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "comments": [
+        {
+          "verdict": "conflicting",
+          "comment": "The figures for total return (£3,291m, i.e. c. £3.3bn) and 13% on opening shareholders’ funds are correct, but the period is wrong. The source clearly states the period is the six months to 30 September 2025 (first half of FY2026), not to 30 June 2025.",
+          "passage": "3i Group delivered strong performance in the first half of FY2026\n•   Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The 14% gross investment return for the Private Equity business is supported. However, the assertion that it \"accounted for the vast majority of the overall total return\" is not stated in the source; while it is plausibly inferable from the numbers, the document does not explicitly characterise it this way.",
+          "passage": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%)."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 2,
+      "displayVerdict": "supported_partial",
+      "statement": "This was driven largely by Action, which continues to trade strongly.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The claim that Action \"continues to trade strongly\" is supported. The specific causal wording that the Private Equity return \"was driven largely by Action\" is not explicitly stated, although the source notes strong performance at Action and a large value uplift; this causal dominance is an inference, not directly supported.",
+          "passage": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14%...\n    Action continued to trade strongly, and several of our other large portfolio companies are\n    showing good momentum..."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 5,
+      "displayVerdict": "supported_partial",
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The figures for net sales (€11,229m ≈ €11.2bn) and LFL growth of 6.3% and the end date 28 September 2025 are correct. However, the source describes \"nine reporting periods\" (P9), not \"nine months\"; equating reporting periods with months is not supported.",
+          "passage": "•   In the nine reporting periods ending on 28 September 2025 (“P9”), Action generated net sales of €11,229 million\n    (nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods\n    ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 6,
+      "displayVerdict": "supported_partial",
+      "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The timing (October 2025) and the fact that Action completed transactions successfully are supported. The source specifies \"two financing transactions\"; describing them as \"several balance sheet transactions\" changes both the number (two vs. several) and the characterisation (financing vs. balance sheet), so that part is not supported.",
+          "passage": "•   In October 2025, Action successfully completed two financing transactions."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 8,
+      "displayVerdict": "supported_partial",
+      "statement": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The pro-rata redemption of shares and the fact that it returned proceeds to 3i are supported. The description of the proceeds as \"significant\" is interpretive but reasonable. However, the source quantifies the proceeds as £944m; the draft omits this figure but does not contradict it, so the only unsupported element is the qualitative \"significant\", which is an interpretation rather than a factual claim.",
+          "passage": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of\n    shares, returning £944 million of gross proceeds to 3i..."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 11,
+      "displayVerdict": "supported_partial",
+      "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The 9% gross investment return for Infrastructure is supported. However, the claim that this \"outperformed expectations\" conflates two points: the source says the infrastructure asset portfolio within 3iN outperformed its expected returns, not that the 3i Infrastructure business’s 9% GIR itself outperformed expectations. That extension is not supported.",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.\n...\nwhile the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month\nperiod."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 12,
+      "displayVerdict": "supported_partial",
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The first part is supported: performance was driven primarily by a 14% increase in 3iN’s share price. The source also says 3iN’s underlying portfolio continues to perform well and notes a significant valuation uplift in TCR. However, the wording \"continues to report positive performance across its portfolio\" is not used in the source, and \"meaningful gains\" is a paraphrase of \"significant valuation uplift\". The overall sense is broadly aligned but some phrasing goes beyond the text, so this is best treated as partially supported.",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9%... This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms robust operational performance, capex programmes driving EBITDA growth, and resilient cash generation supporting the dividend (via dividend cash cover). However, the statement contains a typo/misnaming: “HCIL’s dividend program” is not supported; the company is HICL. The rest of the claim is supported, so the verdict is partially_confirmed.",
+          "passage": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.\""
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 2,
+      "displayVerdict": "supported_partial",
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms that growth investments continue to perform well, that significant expansion capex programmes are being progressed, and that EBITDA is in line with expectations. The draft’s reference to “across the portfolio” slightly overgeneralises, but the main issue is the phrase “in line with budgets,” which is not mentioned in the source. Expectations are not explicitly equated with budgets, so that part is not supported.",
+          "passage": "HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 5,
+      "displayVerdict": "supported_partial",
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms delivery of 16 new towers, active progression of incremental co-location opportunities, and that both are expected to support continued EBITDA growth in line with valuation assumptions. However, the statement adds “and valuation gains,” which is not stated in the source. That additional element is not supported.",
+          "passage": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 6,
+      "displayVerdict": "supported_partial",
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms that Fortysouth completed an accretive refinancing that was about 30% oversubscribed and that this enabled a step-down in debt margins earlier than forecast. The draft’s “oversubscribed refinancing” is supported. However, the explicit claim that this “will lead to a reduction in debt servicing costs” is an inference; the source does not state this outcome, even if it is economically plausible.",
+          "passage": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 7,
+      "displayVerdict": "supported_partial",
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The appointment of a new CEO with significant sector experience is fully supported. The source also notes that many recommendations in the white paper are expected to be beneficial for strong performers such as Affinity Water. However, the phrase “stands to benefit” slightly overstates this by implying a more definite outcome than the source’s more conditional “many of which are expected to be beneficial,” so that part is not strictly supported.",
+          "passage": "At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms three facilities in Malaysia, two in Vietnam, one in Thailand, and two plants in the UK, and that the China facility will now focus primarily on European and Asian markets. However, the source does not state that there is only \"one plant in China\"; it refers generically to \"its China facility\" without specifying the number of plants. The count of one plant in China is therefore not supported.",
+          "passage": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in\nThailand. It also has two other plants in the UK.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 3,
+      "displayVerdict": "supported_partial",
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms that Gold Peak Technology Group is the parent (86.18% owner) of GP Industries and is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres. However, the draft adds that Johor is in Malaysia, which is not stated in the source document. The investment \"program\" wording is an acceptable paraphrase of \"multi-million-dollar investment.\" The geographic specification \"Malaysia\" is not supported by the source.",
+          "passage": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which\nis planning a multi-million-dollar investment in Johor to produce next-generation battery to\nsupport data centres."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+      "comments": [
+        {
+          "verdict": "confirmed",
+          "comment": "The source states Q1 2026 revenue of $12.1 million and 43% overall growth versus Q1 2025, which is year-on-year growth.",
+          "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow\nrevenue, representing 43% overall growth and 16% year-over-year total organic growth\ncompared with the first quarter of 2025;"
+        },
+        {
+          "verdict": "not_supported",
+          "comment": "The source lists revenue growth, installed base size, and IRRAflow integration as separate highlights but does not state that the 43% revenue growth was driven by the installed base expansion and integration. The causal wording \"driven by\" is not supported.",
+          "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow\nrevenue, representing 43% overall growth and 16% year-over-year total organic growth\ncompared with the first quarter of 2025;\nThe activated installed base across all ClearPoint technology including IRRAflow\nsystems now includes over 175 global centers;\nAchievement of measurable revenue and cost synergies through the continuing\nintegration of the IRRAflow  product portfolio and team;"
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 3,
+      "displayVerdict": "supported_partial",
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The 80% increase to $5.9 million is supported. However, the assertion that overall topline growth was driven by this division is not explicitly stated in the source; it is an inference, so only the quantitative part is confirmed.",
+          "passage": "Neurosurgery navigation, therapy and access revenue, which primarily consists of disposable\nproduct commercial sales related to cases utilizing the ClearPoint and IRRAflow  systems,\nincreased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million\nfor the same period in 2025."
+        },
+        {
+          "verdict": "confirmed",
+          "comment": "The source explicitly attributes the increase in this revenue line to IRRAflow product sales and the 3.0 operating room navigation software.",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million... The increase is driven by additional revenues from sales of the\nIRRAflow  product of as well as the introduction of our 3.0 operating room navigation\nsoftware, which has positively impacted procedural volumes in the operating room during\nthe three months ended March 31, 2026, compared to the same period in 2025."
+        }
+      ]
+    }
+  ],
+  "cleanFlags2": [
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 0,
+      "displayVerdict": "conflict",
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "comments": [
+        {
+          "verdict": "conflicting",
+          "comment": "The amount (£3,291m ≈ £3.3bn) and 13% return are supported, but the period is wrong. The source clearly states the period is the six months to 30 September 2025 (first half of FY2026), not to 30 June 2025.",
+          "passage": "3i Group delivered strong performance in the first half of FY2026\n•   Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The 14% gross investment return for the Private Equity business is supported. However, the source does not state that Private Equity 'accounted for the vast majority of the overall total return', so that part is not supported.",
+          "passage": "•   Our Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\n    £2,071 million, 11%)."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 5,
+      "displayVerdict": "supported_partial",
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The figures (€11,229m ≈ €11.2bn and 6.3% LFL growth) and the end date are supported. However, the source describes 'nine reporting periods ending on 28 September 2025', not 'nine months', so the description of the period as 'nine months' is not supported.",
+          "passage": "In the nine reporting periods ending on 28 September 2025 (“P9”), Action generated net sales of €11,229 million (nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 7,
+      "displayVerdict": "supported_partial",
+      "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The amounts (€1.6bn incremental term loan and €3.1bn repriced term loan), the repricing, extension of maturities, and annual interest cost savings are supported. However, the source specifies that only 'a portion' of the debt’s maturity was extended, whereas the claim implies the entire €3.1bn had maturities extended. That part is not supported.",
+          "passage": "The first raised €1.6 billion of total incremental term loan debt. Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action. As a result of this transaction, we increased our ownership position in Action to 62.3%. The second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the maturity of a portion of the debt and generating an annual interest cost saving of €14 million."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 11,
+      "displayVerdict": "supported_partial",
+      "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The 9% gross investment return for Infrastructure is supported. However, the source says the 'infrastructure asset portfolio within 3iN outperformed its expected returns', not that the Infrastructure business’s gross investment return of 9% itself 'outperformed expectations'. The attribution of outperformance to the 9% figure is not supported.",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR.\n...\n\"...the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month period.\""
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 12,
+      "displayVerdict": "supported_partial",
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The first part—performance driven primarily by share price gains at 3i Infrastructure plc—is supported. The source also says 3iN’s underlying portfolio 'continues to perform well' and notes a 'significant valuation uplift in TCR'. However, it does not say that 3i Infrastructure plc 'continues to report positive performance across its portfolio'; that wording about reporting is not in the source, so that part is not supported.",
+          "passage": "•   Our Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43\n    million, 3%). This was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month\n    period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\n    TCR."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-09-29-clean",
+      "index": 13,
+      "displayVerdict": "supported_partial",
+      "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The dividend amount (36.5p = £0.365) and payment timing (January 2026) are supported. However, the source does not state that the dividend was declared 'in light of the overall good performance of the portfolio'; that causal framing is not in the document.",
+          "passage": "We ended the period with liquidity of £1,639 million, net debt of £772 million and gearing of 3%. The first dividend of\n36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source supports that operational performance was robust, capex programmes drove EBITDA growth, and cash generation was resilient and supports dividend cover. However, the statement refers to “HCIL’s dividend program” (a typo/misnaming of HICL) and generalises to “across the portfolio” when the source language is at company/portfolio level; these are minor but still technically deviations, so the claim is only partially confirmed.",
+          "passage": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\"\n...\n\"The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x.\""
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 2,
+      "displayVerdict": "supported_partial",
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms that growth investments continue to perform well, that they are progressing significant expansion capex programmes, and that EBITDA is in line with expectations. The draft’s use of “across the portfolio” and “in line with budgets” instead of “in line with expectations” slightly extends/changes the wording but not the substance. Because “across the portfolio” could be read more broadly than just growth investments, this is treated as partially confirmed.",
+          "passage": "\"HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below:\""
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 5,
+      "displayVerdict": "supported_partial",
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The delivery of 16 new towers, active progression of co-location opportunities, and expectation of continued EBITDA growth are all supported. However, the source does not state that these will drive “valuation gains”; it only notes EBITDA growth in line with valuation assumptions. The reference to valuation gains is therefore not supported, making the claim partially confirmed.",
+          "passage": "\"Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.\""
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 6,
+      "displayVerdict": "supported_partial",
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms that Fortysouth completed an accretive refinancing that was about 30% oversubscribed and enabled a step-down in debt margins earlier than forecast. Describing this as an “oversubscribed refinancing” is supported. However, the statement that this “will lead to a reduction in debt servicing costs” is an inference; the source does not explicitly mention overall debt servicing costs, only margins. Hence partially confirmed.",
+          "passage": "\"The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues.\""
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 7,
+      "displayVerdict": "supported_partial",
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The appointment of a new CEO with significant sector experience is directly supported. The source also notes that many recommendations in the white paper are expected to be beneficial for strong performers such as Affinity Water. However, the phrase “stands to benefit” is a mild extrapolation from “many of which are expected to be beneficial”; it is directionally consistent but not verbatim. Treated as partially confirmed to reflect that the benefit is framed in the source as a broader expectation rather than a specific forecast for Affinity Water alone.",
+          "passage": "\"At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water.\""
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The numbers and locations for Malaysia, Vietnam, Thailand, and the UK are supported, as is the statement that the China facility will now focus primarily on European and Asian markets. However, the source does not state that the company has \"one plant in China\"; it only refers to \"its China facility\" without specifying the number of plants. That specific detail is not supported.",
+          "passage": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in\nThailand. It also has two other plants in the UK.\n...\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to\nserve the US market while its China facility will now focus primarily on the European and\nAsian markets."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 3,
+      "displayVerdict": "supported_partial",
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The source confirms that Gold Peak Technology Group is the parent (86.18% owner) and is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres. However, the draft adds that Johor is in Malaysia, which is not stated in the source document. The investment \"program\" wording is an acceptable paraphrase of \"multi-million-dollar investment\". The unsupported element is the explicit country reference \"Malaysia\".",
+          "passage": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which\nis planning a multi-million-dollar investment in Johor to produce next-generation battery to\nsupport data centres."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 1,
+      "displayVerdict": "supported_partial",
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+      "comments": [
+        {
+          "verdict": "confirmed",
+          "comment": "The source states Q1 2026 revenue was $12.1 million and that this represents 43% overall growth versus Q1 2025, which is year-on-year growth.",
+          "passage": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow\nrevenue, representing 43% overall growth and 16% year-over-year total organic growth\ncompared with the first quarter of 2025;"
+        },
+        {
+          "verdict": "not_supported",
+          "comment": "The source confirms an installed base of over 175 centers and ongoing IRRAflow integration, but does not state that these factors specifically ‘drove’ the 43% revenue growth. That causal attribution is not in the document.",
+          "passage": "The activated installed base across all ClearPoint technology including IRRAflow\nsystems now includes over 175 global centers;\nAchievement of measurable revenue and cost synergies through the continuing\nintegration of the IRRAflow  product portfolio and team;"
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 3,
+      "displayVerdict": "supported_partial",
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "comments": [
+        {
+          "verdict": "not_supported",
+          "comment": "The source provides growth figures for this segment but does not state that overall topline growth was ‘driven’ by it. That relative contribution/causality is not discussed.",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025."
+        },
+        {
+          "verdict": "confirmed",
+          "comment": "The statement matches the percentage increase and the dollar amount given in the source.",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80% to $5.9 million for the three months ended March 31, 2026, from $3.3 million for the same period in 2025."
+        },
+        {
+          "verdict": "confirmed",
+          "comment": "The source states the increase was driven by IRRAflow product sales and the 3.0 OR navigation software, which supports that the division benefitted from these contributions.",
+          "passage": "Neurosurgery navigation, therapy and access revenue... increased 80%... The increase is driven by additional revenues from sales of the\nIRRAflow  product of as well as the introduction of our 3.0 operating room navigation\nsoftware, which has positively impacted procedural volumes in the operating room during\nthe three months ended March 31, 2026, compared to the same period in 2025."
+        }
+      ]
+    },
+    {
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 9,
+      "displayVerdict": "supported_partial",
+      "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+      "comments": [
+        {
+          "verdict": "partially_confirmed",
+          "comment": "The range $52–56 million is correct, but the source does not say this guidance was ‘updated’; it simply presents the estimate. The ‘updated’ characterization is not supported.",
+          "passage": "Business Outlook\nThe Company estimates revenue in 2026 to be between $52.0 million and $56.0 million."
+        }
+      ]
+    }
+  ]
+}
