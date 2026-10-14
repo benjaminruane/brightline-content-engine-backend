@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | Pending the verify:ship line for this commit. |
+| SHIPPED | `SHIP VERIFIED  b7ec0b9  main  166 files  1817 tests` |
 | Cost | USD 1.6351 discounted across 56 calls. Ceiling USD 15. Not crossed. One earlier fixture 04 call timed out and was not metered. |
 | Model | `gpt-5.1-2025-11-13`, temperature 0, seed 1, cache off. Same pin as B381. |
 | Split | Tune: accuracy fixtures 01 to 10. Held-out, scored once: fixtures 11 to 20, the four doctored drafts, the four clean drafts. Two held-out passes. The prompt was not changed after the first held-out call. |
