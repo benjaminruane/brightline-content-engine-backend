@@ -1,0 +1,324 @@
+ids-1 CATCH 0 of 8 conflicting labels, group A n=8
+ids-1 LEAVE-ALONE 37 of 40
+ids-2 CATCH 1 of 8 conflicting labels, group A n=8
+ids-2 LEAVE-ALONE 37 of 40
+ids-1 CITATIONS 245 null 3 valid 245 invalid 0 textInstead 0 malformed 0 reversed 0 outOfRangeIds 0 validIds 1135 invalidUnits 0 of 1135
+ids-1 CONTAINED 198 of 245 withElements 143 of 190 vacuous 55 WRONG-LINES 47 cap6 9 over6 36 tight 170 of 209 missingSource 0
+ids-1 LENGTHS {"1":62,"2":36,"3":41,"4":41,"5":20,"6":9,"7":11,"8":11,"9":2,"10":5,"11":1,"13":1,"37":1,"40":1,"45":1,"70":1,"111":1}
+ids-2 CITATIONS 234 null 6 valid 234 invalid 0 textInstead 0 malformed 0 reversed 0 outOfRangeIds 0 validIds 975 invalidUnits 0 of 975
+ids-2 CONTAINED 189 of 234 withElements 136 of 181 vacuous 53 WRONG-LINES 45 cap6 18 over6 33 tight 162 of 201 missingSource 0
+ids-2 LENGTHS {"1":55,"2":35,"3":39,"4":32,"5":22,"6":18,"7":13,"8":8,"9":1,"10":6,"16":2,"24":1,"37":1,"70":1}
+WRONG1 11#5 lines=[35,39] missing=[{"kind":"figure","value":"19 percent","key":"19|percent"}]
+  International expansion took revenue contribution from outside the Nordic region from 19 percent at entry to 42 percent at exit.
+WRONG1 11#10 lines=[55,58] missing=[{"kind":"name","value":"Brookfield's SEK"}]
+  The exit process attracted seven preliminary offers, with Brookfield's SEK 18.4 billion bid meaningfully ahead of the next bid at SEK 16.9 billion.
+WRONG1 12#5 lines=[{"sourceId":0,"lines":[3,3]},{"sourceId":0,"lines":[7,7]}] missing=[{"kind":"figure","value":"1","key":"1|"},{"kind":"figure","value":"1","key":"1|"}]
+  The numbers tell one story; the team's transformation tells the bigger one.
+WRONG1 13#6 lines=[9,9] missing=[{"kind":"name","value":"CEO Mr. Tom Fairfield"},{"kind":"name","value":"CTO Mr. James O'Brien"}]
+  The team is led by founder-CEO Mr. Tom Fairfield and CTO Mr. James O'Brien.
+WRONG1 13#7 lines=[11,11] missing=[{"kind":"name","value":"The Company"}]
+  The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore.
+WRONG1 13#9 lines=[20,20] missing=[{"kind":"figure","value":"40%","key":"40|percent"}]
+  First, the European freight forwarding software market remains structurally underpenetrated, with approximately 40% of forwarders still on legacy systems or spreadsheets.
+WRONG1 14#2 lines=[{"sourceId":0,"lines":[11,11]}] missing=[{"kind":"name","value":"EU Medical Device Regulation"}]
+  First, the regulatory pathway under the EU Medical Device Regulation (MDR) has matured.
+WRONG1 17#0 lines=[8,9] missing=[{"kind":"name","value":"The Urbis Logistics Portfolio"}]
+  The Urbis Logistics Portfolio consists of 11 last-mile logistics properties located in major European urban areas.
+WRONG1 17#9 lines=[67,71] missing=[{"kind":"figure","value":"3","key":"3|"}]
+  The value creation plan includes executing a EUR 38 million value-add capex programme to modernise three older assets.
+WRONG1 18#6 lines=[[0,14,18]] missing=[{"kind":"name","value":"CEO Mr. Erik Lindqvist"},{"kind":"name","value":"CTO Mr. Pekka Virtanen"}]
+  The investment thesis is anchored on three pillars: a genuinely market-leading product, a structurally underpenetrated market, and an exceptional founder team led by CEO Mr. Erik L
+WRONG1 19#0 lines=[6,10,11,117,120] missing=[{"kind":"name","value":"Meridian European Industrials Fund IV"}]
+  Meridian European Industrials Fund IV continues to perform strongly.
+WRONG1 19#2 lines=[99,103] missing=[{"kind":"figure","value":"SEK 18.4 billion","key":"18.4|billion"}]
+  The exit of NorTech Industries — which closed in January 2026 at SEK 18.4 billion and generated a 3.56x gross MOIC / 31.4 percent gross IRR — is the largest realisation in the Fund
+WRONG1 19#4 lines=[18,24,31,38,41,47,65,72] missing=[{"kind":"figure","value":"6","key":"6|"},{"kind":"figure","value":"100","key":"100|"},{"kind":"figure","value":"14 percent","key":"14|percent"},{"kind":"figure","value":"21 percent","key":"21|percent"},{"kind":"figure","value":"23 percent","key":"23|percent"},{"kind":"figure","value":"31 percent","key":"31|percent"}]
+  Helvetia Precision Components, acquired in June 2025, is six months into the hold and tracking modestly ahead of underwriting; the recently-acquired Lumen Specialty Chemicals is on
+WRONG1 19#8 lines=[104,109] missing=[{"kind":"name","value":"Portfolio ESG"}]
+  Portfolio ESG performance has continued to mature.
+WRONG1 19#10 lines=[107,108] missing=[{"kind":"name","value":"Absolute Scope"}]
+  Absolute Scope 1 and Scope 2 emissions reduced 8 percent during 2025 despite portfolio revenue growth of approximately 12 percent.
+WRONG1 19#13 lines=[48,51,121,122] missing=[{"kind":"name","value":"Eltex Power Systems"}]
+  Brightway Industrial Coatings and Eltex Power Systems are both progressing toward exit-readiness, with formal processes likely to launch in the first and third quarters respectivel
+WRONG1 20#4 lines=[{"sourceId":0,"lines":[8,8]}] missing=[{"kind":"name","value":"North American"}]
+  Re-up rates from existing LPs were strong at 96 percent by capital, and the Fund welcomed new investors across three of the largest US public pension funds, two Asian sovereign wea
+WRONG1 20#8 lines=[{"sourceId":0,"lines":[9,9]}] missing=[{"kind":"figure","value":"2026","key":"2026|"},{"kind":"name","value":"Fund V"}]
+  Our investment team has been preparing Fund V's pipeline for many months and we expect first capital calls in the second quarter of 2026.
+WRONG1 2026-09-29#0 lines=[4,5,58,61,62] missing=[{"kind":"figure","value":"GBP 3.3 million","key":"3.3|million"},{"kind":"figure","value":"30","key":"30|"},{"kind":"figure","value":"2025","key":"2025|"},{"kind":"date","value":"2025-06-30"}]
+  3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.
+WRONG1 2026-09-29#5 lines=[13,15] missing=[{"kind":"figure","value":"6","key":"6|"},{"kind":"figure","value":"30","key":"30|"},{"kind":"figure","value":"2026","key":"2026|"},{"kind":"figure","value":"EUR 11.2 billion","key":"11.2|billion"},{"kind":"date","value":"2026-06-30"}]
+  Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.
+WRONG1 2026-09-29#8 lines=[21,23,29,31] missing=[{"kind":"figure","value":"3","key":"3|"}]
+  MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.
+WRONG1 2026-09-29#9 lines=[17,19,21,23] missing=[{"kind":"figure","value":"62.3%","key":"62.3|percent"}]
+  A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Actio
+WRONG1 2026-09-29#10 lines=[29,31] missing=[{"kind":"figure","value":"3","key":"3|"}]
+  Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, r
+WRONG1 2026-09-29#13 lines=[36,37,61,63] missing=[{"kind":"figure","value":"3","key":"3|"},{"kind":"figure","value":"GBP 0.365","key":"0.365|"}]
+  In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.
+WRONG1 2026-10-04-hicl#0 lines=[{"sourceId":0,"lines":[1,7]},{"sourceId":0,"lines":[24,26]}] missing=[{"kind":"figure","value":"6","key":"6|"},{"kind":"figure","value":"31","key":"31|"},{"kind":"name","value":"HCIL Infrastructure"},{"kind":"date","value":"2025-12-31"}]
+  HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.
+WRONG1 2026-10-04-hicl#1 lines=[{"sourceId":0,"lines":[9,13]},{"sourceId":0,"lines":[24,26]},{"sourceId":0,"lines":[30,32]}] missing=[{"kind":"figure","value":"30%","key":"30|percent"}]
+  Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend
+WRONG1 2026-10-04-hicl#3 lines=[{"sourceId":0,"lines":[26,28]}] missing=[{"kind":"name","value":"Paris St. Germain High Speed"}]
+  Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.
+WRONG1 2026-10-04-hicl#4 lines=[{"sourceId":0,"lines":[28,28]}] missing=[{"kind":"name","value":"St. Germain"}]
+  On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel oper
+WRONG1 2026-10-04-hicl#5 lines=[{"sourceId":0,"lines":[29,29]}] missing=[{"kind":"figure","value":"20","key":"20|"}]
+  Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued gr
+WRONG1 2026-10-06-gpi#0 lines=[3,4,5,13,14,15,21,22] missing=[{"kind":"figure","value":"75%","key":"75|percent"},{"kind":"name","value":"In October"}]
+  In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tar
+WRONG1 2026-10-06-gpi#1 lines=[16,17,21,22] missing=[{"kind":"figure","value":"15","key":"15|"}]
+  The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus pri
+WRONG1 2026-10-06-gpi#3 lines=[25,26,27,39,40,41,42,43] missing=[{"kind":"name","value":"Silver Hill Technology"}]
+  Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.
+WRONG1 2026-10-06-gpi#4 lines=[10,11,13,44,45,46] missing=[{"kind":"figure","value":"60 billion","key":"60|billion"}]
+  GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.
+WRONG1 2026-10-06-clearpoint#1 lines=[15,16,61,67] missing=[{"kind":"figure","value":"43%","key":"43|percent"}]
+  The 43% year-on-year growth in revenue was driven by an expansion of the activated installed base to more than 175 global centers.
+WRONG1 2026-10-06-clearpoint#2 lines=[12,13,30,33] missing=[{"kind":"figure","value":"-50%","key":"-50|percent"}]
+  Organic growth amounted to -50% year on year.
+WRONG1 2026-10-06-clearpoint#8 lines=[23,25,136,137,175,176] missing=[{"kind":"name","value":"The FDA"},{"kind":"name","value":"ClearPoint Neuro Navigation System"}]
+  The FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows.
+WRONG1 2026-09-29-clean#0 lines=[[0,61],[0,62]] missing=[{"kind":"figure","value":"3","key":"3|"},{"kind":"figure","value":"GBP 3.3 billion","key":"3.3|billion"},{"kind":"figure","value":"6","key":"6|"},{"kind":"figure","value":"30","key":"30|"},{"kind":"figure","value":"2025","key":"2025|"},{"kind":"date","value":"2025-06-30"}]
+  3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.
+WRONG1 2026-09-29-clean#5 lines=[[0,13],[0,15]] missing=[{"kind":"figure","value":"EUR 11.2 billion","key":"11.2|billion"}]
+  Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.
+WRONG1 2026-09-29-clean#9 lines=[[0,17],[0,19],[0,22],[0,23]] missing=[{"kind":"figure","value":"62.3%","key":"62.3|percent"}]
+  A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action
+WRONG1 2026-09-29-clean#10 lines=[[0,29],[0,31]] missing=[{"kind":"figure","value":"3","key":"3|"}]
+  Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, r
+STABILITY agree 203 moved 16 missing 0 of 219
+  MOVE 11#7 supported_partial -> supported_full Four bolt-on acquisitions, anchored by HeatTech GmbH for SEK 1.1 billion, added meaningful scale.
+  MOVE 11#8 supported_partial -> supported_full Manufacturing footprint optimisation and the new Polish facility completed the operational picture.
+  MOVE 13#7 supported_partial -> conflict The Company employs 320 people across offices in London, Hamburg, Lisbon, and Bangalore.
+  MOVE 13#11 supported_full -> supported_partial Third, the addressable European market of 14'000 forwarders gives meaningful headroom from the Company's current 8.6% penetration.
+  MOVE 13#13 supported_partial -> supported_full Our base case generates 2.6x MOIC and 21% gross IRR.
+  MOVE 14#7 supported_full -> supported_partial At the same time, generative AI is exposing incumbents that lack credible AI strategies to renewed competitive risk from challengers — and f
+  MOVE 14#11 supported_partial -> conflict We expect to bring a specific potential investment to consider over the coming months.
+  MOVE 15#2 supported_partial -> supported_full We have invested EUR 720 million of equity for an 84% stake.
+  MOVE 17#9 supported_partial -> supported_full Our value creation plan rests on capturing the embedded reversion as approximately 40 percent of leases roll during the hold period, executi
+  MOVE 19#4 supported_partial -> supported_full Helvetia Precision Components, acquired in June 2025, is six months into the hold and tracking modestly ahead of underwriting; the recently-
+  MOVE 2026-09-29#9 supported_partial -> conflict A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purcha
+  MOVE 2026-09-29-clean#2 supported_partial -> supported_full This was driven largely by Action, which continues to trade strongly.
+  MOVE 2026-09-29-clean#6 supported_partial -> supported_full Meanwhile, Action successfully completed several balance sheet transactions in October 2025.
+  MOVE 2026-09-29-clean#8 supported_partial -> supported_full Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.
+  MOVE 2026-10-04-hicl-clean#2 supported_full -> supported_partial Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth t
+  MOVE 2026-10-06-clearpoint-clean#9 supported_full -> supported_partial The company provided updated revenue guidance of USD 52-56 million for 2026.
+PARSE FAIL ids-1 none
+PARSE FAIL ids-2 none
+CLEAN FLAGS ids-1 17 ids-2 16
+B388 PASS1 WRONG still flagged [{"fixtureId":"2026-09-29-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-09-29-clean","index":2,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-09-29-clean","index":8,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-09-29-clean","index":12,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":6,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":7,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-gpi-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-clearpoint-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-clearpoint-clean","index":3,"flagged":true,"displayVerdict":"supported_partial"}]
+B388 PASS1 REAL still flagged [{"fixtureId":"2026-09-29-clean","index":0,"flagged":true,"displayVerdict":"conflict"},{"fixtureId":"2026-09-29-clean","index":5,"flagged":false,"displayVerdict":"supported_full"},{"fixtureId":"2026-09-29-clean","index":6,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-09-29-clean","index":11,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":2,"flagged":false,"displayVerdict":"supported_full"},{"fixtureId":"2026-10-04-hicl-clean","index":5,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-gpi-clean","index":3,"flagged":true,"displayVerdict":"supported_partial"}]
+B388 PASS1 WRONG on ids-2 [{"fixtureId":"2026-09-29-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-09-29-clean","index":2,"flagged":false,"displayVerdict":"supported_full"},{"fixtureId":"2026-09-29-clean","index":8,"flagged":false,"displayVerdict":"supported_full"},{"fixtureId":"2026-09-29-clean","index":12,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":6,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":7,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-gpi-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-clearpoint-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-clearpoint-clean","index":3,"flagged":true,"displayVerdict":"supported_partial"}]
+B388 PASS1 REAL on ids-2 [{"fixtureId":"2026-09-29-clean","index":0,"flagged":true,"displayVerdict":"conflict"},{"fixtureId":"2026-09-29-clean","index":5,"flagged":false,"displayVerdict":"supported_full"},{"fixtureId":"2026-09-29-clean","index":6,"flagged":false,"displayVerdict":"supported_full"},{"fixtureId":"2026-09-29-clean","index":11,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":1,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":2,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-04-hicl-clean","index":5,"flagged":true,"displayVerdict":"supported_partial"},{"fixtureId":"2026-10-06-gpi-clean","index":3,"flagged":true,"displayVerdict":"supported_partial"}]
+CLEAN1 2026-09-29-clean#0 conflict
+3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.
+  conflicting: The total return figure (£3,291m ≈ £3.3bn) and 13% return on opening shareholders’ funds are correct, but the period is wrong. The source clearly states the period is the six months to 30 September 2025, not to 30 June 2025.
+CLEAN1 2026-09-29-clean#1 supported_partial
+The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.
+  partially_confirmed: The source confirms the Private Equity business delivered a gross investment return of 14%. However, it does not state that Private Equity accounted for the vast majority of the overall total return, so that portion is unsupported.
+CLEAN1 2026-09-29-clean#2 supported_partial
+This was driven largely by Action, which continues to trade strongly.
+  partially_confirmed: The source confirms that Action continued to trade strongly and that Private Equity delivered a strong gross investment return, but it does not explicitly say that the Private Equity return was driven largely by Action. The attribution of primary causality to Action is not supported.
+CLEAN1 2026-09-29-clean#6 supported_partial
+Meanwhile, Action successfully completed several balance sheet transactions in October 2025.
+  partially_confirmed: The source confirms that in October 2025 Action completed two financing transactions, which are balance sheet-related. However, it does not characterise them as “several”; it specifies exactly two. Describing them as “several” overstates the number.
+CLEAN1 2026-09-29-clean#8 supported_partial
+Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.
+  partially_confirmed: The source confirms a pro-rata redemption of shares that returned £944m of gross proceeds to 3i. The existence and direction of proceeds are supported, but the characterisation as “significant” is interpretive and not stated in the source. The factual part is supported; the evaluative adjective is not.
+CLEAN1 2026-09-29-clean#11 supported_partial
+On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.
+  partially_confirmed: The 9% gross investment return for Infrastructure is confirmed. The source says the infrastructure asset portfolio within 3iN outperformed its expected returns, but it does not explicitly say that the 9% gross investment return itself was above expectations. The outperformance wording is only indirectly related, so the specific claim that the 9% return “outperformed expectations” is not fully supported.
+CLEAN1 2026-09-29-clean#12 supported_partial
+Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.
+  partially_confirmed: The source confirms that Infrastructure performance was driven primarily by a 14% increase in 3i Infrastructure plc’s share price and notes a significant valuation uplift in TCR. However, it does not state that 3i Infrastructure plc “continues to report positive performance across its portfolio”; that broader characterisation is not in the text.
+CLEAN1 2026-09-29-clean#13 supported_partial
+In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.
+  partially_confirmed: The dividend amount (36.5p per share) and payment timing (January 2026) are confirmed. The source does not state that the dividend was declared “in light of the overall good performance of the portfolio”; that causal framing is not supported.
+CLEAN1 2026-10-04-hicl-clean#1 supported_partial
+Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.
+  partially_confirmed: The source supports that operational performance was robust/in line with expectations, that capex programmes are driving EBITDA growth, and that cash generation underpins dividend cover and the dividend outlook. However, the draft misspells the company as “HCIL” rather than HICL, which is not supported by the source and is an error, so the claim is only partially confirmed.
+CLEAN1 2026-10-04-hicl-clean#5 supported_partial
+Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.
+  partially_confirmed: The source confirms that Fortysouth delivered 16 new towers, is progressing incremental co-location opportunities, and that these are expected to support continued EBITDA growth in line with valuation assumptions. However, the draft adds “and valuation gains,” which is not stated in the source. The EBITDA aspect is supported; the explicit reference to valuation gains is not, so the claim is only partially confirmed.
+CLEAN1 2026-10-04-hicl-clean#6 supported_partial
+The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.
+  partially_confirmed: The source confirms that Fortysouth completed an accretive refinancing that was about 30% oversubscribed and that this enabled a step-down in debt margins earlier than forecast. Oversubscription and a reduction in debt margins are supported. However, the statement that this “will lead to a reduction in debt servicing costs” is an inference not explicitly made in the source, so that part is not directly supported, making the claim partially confirmed.
+CLEAN1 2026-10-04-hicl-clean#7 supported_partial
+Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.
+  partially_confirmed: The source confirms that Affinity Water appointed Mark Garth as CEO and that he has significant sector experience. It also notes that many aspects of the UK Government’s water sector reform white paper are expected to be beneficial for strong performers such as Affinity Water. However, the draft’s unqualified “stands to benefit” generalises this expectation; the source is more conditional and framed around strong performers. Thus, the CEO and experience elements are confirmed, while the simplified benefit claim is only partially supported.
+CLEAN1 2026-10-06-gpi-clean#1 supported_partial
+The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.
+  partially_confirmed: The source confirms three facilities in Malaysia, two in Vietnam, one in Thailand, and two other plants in the UK, and that the China facility will now focus primarily on the European and Asian markets. However, the draft adds "one plant in China" as an operational detail, which is not stated in the source; the source only refers to "its China facility" without specifying the number of plants.
+CLEAN1 2026-10-06-gpi-clean#3 supported_partial
+Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.
+  partially_confirmed: The source confirms that GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group and that this parent is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres. The draft’s description of Gold Peak Technology as the parent and its Johor investment is supported, but the term "investment program" and the explicit mention of "Malaysia" are not in the source; Johor is named without country, and the nature of the investment as a "program" is an extrapolation.
+CLEAN1 2026-10-06-clearpoint-clean#1 supported_partial
+The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.
+  confirmed: The source reports Q1 2026 revenue of $12.1 million versus $8.5 million in Q1 2025, an increase of $3.6 million or 43%.
+  partially_confirmed: The source confirms the activated installed base is over 175 centers and that integration of the IRRAflow portfolio is achieving synergies, but it does not state that these factors *drove* the 43% revenue growth. The causal framing is not supported.
+CLEAN1 2026-10-06-clearpoint-clean#3 supported_partial
+Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.
+  partially_confirmed: The source confirms neurosurgery navigation, therapy and access revenue increased 80% to $5.9 million. However, it does not state that overall topline growth was *driven* by this division; that causal attribution is not explicitly supported.
+  confirmed: The source attributes the revenue increase in this category to additional revenues from IRRAflow product sales and the introduction of the 3.0 operating room navigation software.
+CLEAN1 2026-10-06-clearpoint-clean#4 supported_partial
+Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.
+  partially_confirmed: The source confirms a 177% increase in capital equipment and software revenue and attributes it to increased placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units. The description of the prior period as a "low base" is not stated in the source and is interpretive.
+CLEAN2-DIFF 2026-10-04-hicl-clean#2 supported_partial
+Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.
+  partially_confirmed: The source states that HICL’s growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. This supports most of the claim. However, the wording 'across the portfolio' overgeneralises, as the source refers specifically to growth investments rather than the entire portfolio, and it mentions expectations rather than budgets.
+CLEAN2-DIFF 2026-10-06-clearpoint-clean#9 supported_partial
+The company provided updated revenue guidance of USD 52-56 million for 2026.
+  partially_confirmed: The source states the company estimates 2026 revenue between $52.0m and $56.0m. It does not specify that this guidance is an *update* versus prior guidance; the word "updated" is not supported.
+PLANTED 37
+PLANT 3i-S0-a conflict / conflict
+  written: £3.3 million
+  ids-1: The source reports a total return of £3,291 million (≈£3.3 billion), not £3.3 million, and for the six months to 30 September 2025, not to 30 June 2025. The 13% return on opening shareholders’ funds is correct.
+  ids-2: The source reports a total return of £3,291 million (≈£3.3 billion), not £3.3 million, and for the six months to 30 September 2025, not to 30 June 2025. The 13% return on opening shareholders’ funds is correct.
+PLANT 3i-S5-a conflict / conflict
+  written: six months to 30 June 2026
+  ids-1: The source gives net sales of €11,229 million and LFL sales growth of 6.3% for the nine reporting periods ending on 28 September 2025, not for the six months to 30 June 2026. Both the period and end date are incorrect.
+  ids-2: The source gives net sales of €11,229 million and LFL sales growth of 6.3% for the nine reporting periods ending on 28 September 2025, not for six months to 30 June 2026. Both the period and end date differ from the source.
+PLANT 3i-S8-a conflict / conflict
+  written: MAIT
+  ids-1: The source states that Action, not MAIT, completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i. Attributing this transaction to MAIT conflicts with the source.
+  ids-2: The pro-rata redemption of shares and related proceeds are attributed in the source to Action, not MAIT. MAIT is mentioned only in relation to its realisation, not a share redemption. This misattributes the transaction.
+PLANT 3i-S9-a supported_partial / conflict
+  written: AGIC
+  ids-1: The source confirms that £755m of proceeds from Action’s pro-rata redemption were redeployed to acquire a further 2.2% stake in Action, and that together with a prior 2.2% acquisition from GIC, this increased 3i’s ownership to 62.3%. However, the draft incorrectly names the earlier seller as AGIC rather than GIC, so that part conflicts.
+  ids-2: The source confirms that proceeds from Action’s capital restructuring were used to acquire a further 2.2% stake, following an earlier 2.2% acquisition from GIC, increasing 3i’s ownership to 62.3%. The draft incorrectly names the earlier seller as AGIC, not GIC.
+PLANT 3i-S12-a supported_partial / supported_partial
+  written: gains across essentially all of its investments
+  ids-1: The source confirms that the Infrastructure gross investment return was driven primarily by a 14% increase in 3i Infrastructure plc’s share price and that 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in TCR. However, it does not state that there are meaningful gains across essentially all investments, so that portion is unsupported.
+  ids-2: The source confirms that the 9% gross investment return was driven primarily by a 14% increase in 3i Infrastructure plc’s share price. It also notes that 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in TCR. However, the claim that there are meaningful gains across essentially all investments is not supported.
+PLANT 3i-S14-a conflict / conflict
+  written: the UK government
+  ids-1: The source states that 3i remains cautious in the deployment of capital into new investment but will continue to allocate selectively, including to lower-risk reinvestments. This is a stance of 3i, not the UK government. Attributing this to the UK government conflicts with the source.
+  ids-2: The source attributes this cautious stance and selective allocation approach to 3i, not to the UK government. Assigning these views to the UK government directly contradicts the source.
+PLANT hicl-S0-a conflict / conflict
+  written: HCIL
+  ids-1: The source refers to HICL Infrastructure PLC, not 'HCIL', and the period covered is from 1 October 2025 to 28 February 2026, not six months to 31 December 2025. While the source does say performance was in line with expectations, the company name and reporting period are incorrect.
+  ids-2: The source refers to HICL Infrastructure (not HCIL) and covers the period from 1 October 2025 to 28 February 2026, not the six months to 31 December 2025. While it does say portfolio performance was in line with expectations, the company name and period are incorrect.
+PLANT hicl-S0-b conflict / conflict
+  written: six months to 31 December 2025
+  ids-1: The source refers to HICL Infrastructure PLC, not 'HCIL', and the period covered is from 1 October 2025 to 28 February 2026, not six months to 31 December 2025. While the source does say performance was in line with expectations, the company name and reporting period are incorrect.
+  ids-2: The source refers to HICL Infrastructure (not HCIL) and covers the period from 1 October 2025 to 28 February 2026, not the six months to 31 December 2025. While it does say portfolio performance was in line with expectations, the company name and period are incorrect.
+PLANT hicl-S1-a supported_partial / supported_partial
+  written: with average 30% EBITDA growth
+  ids-1: The source supports that operational performance across the portfolio was in line with expectations/robust, that capex programmes are driving EBITDA growth, and that cash generation underpins dividend cover. However, there is no mention of 'average 30% EBITDA growth', nor is a specific growth rate quantified, and the company is HICL, not 'HCIL'. Those elements are not supported.
+  ids-2: The source supports that operational performance across the portfolio was in line with expectations and resilient, and that capex programmes are driving EBITDA growth and cash generation supports the dividend and dividend cover. However, it does not mention an average 30% EBITDA growth figure, nor does it quantify EBITDA growth at that level, so that part is unsupported. The company name is also HICL, not HCIL.
+PLANT hicl-S2-a supported_partial / supported_partial
+  written: significantly outperform budgets
+  ids-1: The source confirms that HICL's growth investments continue to perform well and that expansion capex programmes are driving EBITDA in line with expectations. However, there is no reference to EBITDA 'significantly outperforming budgets'; the source only states performance is in line with expectations, so that part is unsupported.
+  ids-2: The source confirms that HICL’s growth investments continue to perform well and that expansion capex programmes are delivering EBITDA in line with expectations. It does not state that EBITDA growth is significantly outperforming budgets; instead it says EBITDA is in line with expectations. The outperformance vs budgets is unsupported.
+PLANT hicl-S3-a conflict / conflict
+  written: Paris St. Germain High Speed
+  ids-1: The source refers to 'London St. Pancras High Speed', not 'Paris St. Germain High Speed'. It does confirm that this asset performed well and that international train path bookings were slightly ahead of forecast, but the asset name and implied geography are incorrect, so the claim conflicts with the source.
+  ids-2: The source refers to London St. Pancras High Speed, not Paris St. Germain High Speed. It does say this asset performed well and that international train path bookings were slightly ahead of forecast, but the name/location of the asset in the claim conflicts with the source.
+PLANT hicl-S4-a supported_partial / supported_partial
+  written: operations from St. Germain
+  ids-1: The source confirms progress towards a potential second international operator on the London St. Pancras High Speed route and that Virgin Trains announced intentions for cross-Channel operations from St. Pancras. However, the draft incorrectly refers to 'St. Germain' instead of St. Pancras. The commercial substance is supported, but the location name is wrong.
+  ids-2: The source confirms progress toward a potential second international operator and that Virgin Trains announced intentions for cross-Channel operations and its approach to rolling stock procurement. However, the source locates this at St. Pancras, not St. Germain, so the place name is incorrect. The rest of the commercial-progress description is supported.
+PLANT hicl-S5-a conflict / conflict
+  written: TowerCo
+  ids-1: The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported.
+  ids-2: The source refers to Fortysouth, not TowerCo, and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities and expected EBITDA growth, but does not mention valuation gains. The asset name, tower count, and time period conflict with the source, and the valuation gains element is unsupported.
+PLANT hicl-S5-b conflict / conflict
+  written: 20 new towers
+  ids-1: The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported.
+  ids-2: The source refers to Fortysouth, not TowerCo, and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities and expected EBITDA growth, but does not mention valuation gains. The asset name, tower count, and time period conflict with the source, and the valuation gains element is unsupported.
+PLANT hicl-S5-c conflict / conflict
+  written: during the past year
+  ids-1: The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported.
+  ids-2: The source refers to Fortysouth, not TowerCo, and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities and expected EBITDA growth, but does not mention valuation gains. The asset name, tower count, and time period conflict with the source, and the valuation gains element is unsupported.
+PLANT hicl-S6-a supported_partial / supported_partial
+  written: lead to an increase
+  ids-1: The source confirms that Fortysouth completed an accretive refinancing that was approximately 30% oversubscribed. However, it states that this enabled a step-down in debt margins earlier than forecast, implying lower, not higher, debt servicing costs. The refinancing and oversubscription are supported, but the claim that it will increase debt servicing costs conflicts with the source.
+  ids-2: The source confirms that Fortysouth completed an accretive refinancing that was about 30% oversubscribed. However, it states that this enabled a step-down in debt margins earlier than forecast, implying lower, not higher, debt servicing costs. The refinancing and oversubscription are supported; the claim that it will increase debt servicing costs conflicts with the source.
+PLANT hicl-S7-a conflict / conflict
+  written: appointed a new CFO
+  ids-1: The source states that Affinity Water appointed a new Chief Executive Officer (CEO), Mark Garth, with sector experience from United Utilities, and that the UK Government published a white paper on water sector reform, expected to benefit strong performers such as Affinity Water. The draft incorrectly refers to a CFO, the French government, and electricity sector reform, all of which conflict with the source.
+  ids-2: The source states that Affinity Water appointed a new CEO (Mark Garth) with sector experience from United Utilities, not a CFO. It also refers to a UK Government white paper on water sector reform, not a French government white paper on electricity sector reform. Both the role and the nature/jurisdiction of the white paper conflict with the source.
+PLANT hicl-S7-b conflict / conflict
+  written: the French government's
+  ids-1: The source states that Affinity Water appointed a new Chief Executive Officer (CEO), Mark Garth, with sector experience from United Utilities, and that the UK Government published a white paper on water sector reform, expected to benefit strong performers such as Affinity Water. The draft incorrectly refers to a CFO, the French government, and electricity sector reform, all of which conflict with the source.
+  ids-2: The source states that Affinity Water appointed a new CEO (Mark Garth) with sector experience from United Utilities, not a CFO. It also refers to a UK Government white paper on water sector reform, not a French government white paper on electricity sector reform. Both the role and the nature/jurisdiction of the white paper conflict with the source.
+PLANT hicl-S7-c conflict / conflict
+  written: electricity sector reform
+  ids-1: The source states that Affinity Water appointed a new Chief Executive Officer (CEO), Mark Garth, with sector experience from United Utilities, and that the UK Government published a white paper on water sector reform, expected to benefit strong performers such as Affinity Water. The draft incorrectly refers to a CFO, the French government, and electricity sector reform, all of which conflict with the source.
+  ids-2: The source states that Affinity Water appointed a new CEO (Mark Garth) with sector experience from United Utilities, not a CFO. It also refers to a UK Government white paper on water sector reform, not a French government white paper on electricity sector reform. Both the role and the nature/jurisdiction of the white paper conflict with the source.
+PLANT gpi-S0-a conflict / conflict
+  written: October 2025
+  ids-1: The source states the announcement date as 13 November 2025, not October 2025, and does not mention a 75% figure or global production share. It says production capacity in Southeast Asia will be ramped up to serve the US market amid tariffs and geopolitical tensions, but makes no reference to escalating oil prices.
+  ids-2: The source says the announcement was on 13 November 2025, not October; it does not mention a 75% figure or global production capacity; it refers to shifting production capacity to Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions, but says nothing about escalating oil prices.
+PLANT gpi-S0-b conflict / conflict
+  written: 75% of its global production capacity
+  ids-1: The source states the announcement date as 13 November 2025, not October 2025, and does not mention a 75% figure or global production share. It says production capacity in Southeast Asia will be ramped up to serve the US market amid tariffs and geopolitical tensions, but makes no reference to escalating oil prices.
+  ids-2: The source says the announcement was on 13 November 2025, not October; it does not mention a 75% figure or global production capacity; it refers to shifting production capacity to Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions, but says nothing about escalating oil prices.
+PLANT gpi-S0-c conflict / conflict
+  written: escalating oil prices
+  ids-1: The source states the announcement date as 13 November 2025, not October 2025, and does not mention a 75% figure or global production share. It says production capacity in Southeast Asia will be ramped up to serve the US market amid tariffs and geopolitical tensions, but makes no reference to escalating oil prices.
+  ids-2: The source says the announcement was on 13 November 2025, not October; it does not mention a 75% figure or global production capacity; it refers to shifting production capacity to Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions, but says nothing about escalating oil prices.
+PLANT gpi-S1-a conflict / conflict
+  written: 15 facilities in Malaysia
+  ids-1: The source states GP Industries operates three facilities in Malaysia, two in Vietnam, one in Thailand, and two plants in the UK. It does not mention 15 facilities in Malaysia or a single plant in China. It also says the China facility will focus on both European and Asian markets, not only the European market.
+  ids-2: The source states three facilities in Malaysia, two in Vietnam, and one in Thailand, plus two plants in the UK. It does not mention 15 facilities in Malaysia or a single plant in China. It also says the China facility will focus on European and Asian markets, not only the European market.
+PLANT gpi-S1-b conflict / conflict
+  written: European market only
+  ids-1: The source states GP Industries operates three facilities in Malaysia, two in Vietnam, one in Thailand, and two plants in the UK. It does not mention 15 facilities in Malaysia or a single plant in China. It also says the China facility will focus on both European and Asian markets, not only the European market.
+  ids-2: The source states three facilities in Malaysia, two in Vietnam, and one in Thailand, plus two plants in the UK. It does not mention 15 facilities in Malaysia or a single plant in China. It also says the China facility will focus on European and Asian markets, not only the European market.
+PLANT gpi-S2-a supported_partial / supported_partial
+  written: enhancing site security
+  ids-1: The source supports that capacity changes are to streamline supply chains, meet country-of-origin requirements, and maintain cost competitiveness (improve cost structure). However, it does not mention enhancing site security at all, so that portion is unsupported.
+  ids-2: The source supports that capacity changes are to streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness (improve cost structure). It does not mention enhancing site security at all, so that part is unsupported.
+PLANT gpi-S3-a conflict / conflict
+  written: Silver Hill Technology
+  ids-1: The source identifies Gold Peak Technology Group, not Silver Hill Technology, as the 86.18% owner of GP Industries and the entity planning a multi-million-dollar investment in Johor to produce next-generation batteries to support data centres. The claim misnames the parent company and thus conflicts with the source.
+  ids-2: The source identifies Gold Peak Technology Group as the Hong Kong-listed parent and as the entity planning a multi-million-dollar investment in Johor to produce next-generation batteries to support data centres. It does not mention Silver Hill Technology, so naming it as the parent and investor conflicts with the source.
+PLANT gpi-S4-a conflict / conflict
+  written: the largest
+  ids-1: The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The claim conflicts on rank, production volume, and the verb used for distribution.
+  ids-2: The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and says it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The draft inflates both the ranking and the production volume and changes the verb from sold to bartered.
+PLANT gpi-S4-b conflict / conflict
+  written: over 60 billion
+  ids-1: The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The claim conflicts on rank, production volume, and the verb used for distribution.
+  ids-2: The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and says it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The draft inflates both the ranking and the production volume and changes the verb from sold to bartered.
+PLANT gpi-S4-c conflict / conflict
+  written: bartered through
+  ids-1: The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The claim conflicts on rank, production volume, and the verb used for distribution.
+  ids-2: The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and says it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The draft inflates both the ranking and the production volume and changes the verb from sold to bartered.
+PLANT clearpoint-S0-a conflict / conflict
+  written: April
+  ids-1: The press release states the results were reported on May 13, 2026, not in April. It does confirm these were financial results for the first quarter ended March 31, 2026.
+  ids-2: The source states the press release announcing first quarter 2026 results is dated May 13, 2026, not April 2026. The quarter referenced is correct, but the month is not.
+PLANT clearpoint-S2-a conflict / conflict
+  written: -50%
+  ids-1: The source states 16% year-over-year total organic growth and 25% organic devices growth; it does not mention negative 50% organic growth. This directly conflicts with the -50% figure. || The headline and CEO commentary state 25% organic growth in devices. || The source reports gross margin expanded to 64% and attributes the increase primarily to lower excess and obsolete inventory.
+  ids-2: The source states total organic growth was 16% year-over-year, not negative 50%. || The headline and CEO commentary state 25% organic growth in devices; the year-on-year context is clear from the comparison to first quarter 2025. || The source reports gross margin of 64% for Q1 2026 versus 60% in Q1 2025 and attributes the increase primarily to lower excess and obsolete inventory.
+PLANT clearpoint-S3-a supported_partial / supported_partial
+  written: the vast majority of the company's overall revenue
+  ids-1: The source provides growth figures for neurosurgery navigation, therapy and access revenue but does not state that this segment drove overall topline growth. || The source gives segment revenues (biologics and drug delivery $4.8m, neurosurgery navigation $5.9m, capital equipment and software $1.4m) but does not characterize neurosurgery navigation as contributing the vast majority of overall revenue; it is the largest single segment but not a vast majority of the $12.1m total. || The source states neurosurgery navigation, therapy and access revenue increased 80% to $5.9 million from $3.3 million for the same period in 2025. || The source attributes the increase in neurosurgery navigation, therapy and access revenue to additional revenues from IRRAflow product sales and the introduction of the 3.0 operating room navigation software.
+  ids-2: The source details that neurosurgery navigation, therapy and access revenue grew 80%, but does not state that this segment drove overall topline growth; that causal framing is not in the document. || The source gives segment revenues: biologics and drug delivery $4.8m, neurosurgery navigation $5.9m, capital equipment and software $1.4m, totaling $12.1m. Neurosurgery navigation is the single largest segment but does not constitute a clear 'vast majority' of total revenue. || The source states neurosurgery navigation, therapy and access revenue increased 80% year-over-year. || The source attributes the increase in neurosurgery navigation, therapy and access revenue to additional revenues from IRRAflow product sales and the introduction of the 3.0 operating room navigation software.
+PLANT clearpoint-S7-a not_supported / not_supported
+  written: a submission for FDA approval
+  ids-1: The source states the Velocity Alpha MR High Speed Surgical Drill System has FDA clearance and has been used clinically; it does not mention a submission for FDA approval.
+  ids-2: The source states that FDA clearance has already been obtained and the first clinical procedure completed for the Velocity Alpha MR High Speed Surgical Drill System; it does not mention a submission being made, which would be a different regulatory stage.
+PLANT clearpoint-S8-a conflict / conflict
+  written: the FDA
+  ids-1: The source states that a Medical Device License was received from Health Canada for the ClearPoint Neuro Navigation System, covering MRI-guidance and iCT guidance workflows. It does not attribute this license to the FDA; assigning it to the FDA conflicts with the source. || The source notes completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region, which supports that such a case has commenced there.
+  ids-2: The source states that a Medical Device License was received from Health Canada for the ClearPoint Neuro Navigation System; it does not attribute this license to the FDA. The coverage of MRI-guidance and iCT workflows is correct, but the regulator is misidentified. || The source notes completion of the first commercial drug delivery case using ClearPoint technology in the Asia-Pacific region; describing this as having been commenced is consistent with that event having taken place.
+PLANT clearpoint-S8-b conflict / conflict
+  written: has been commenced
+  ids-1: The source states that a Medical Device License was received from Health Canada for the ClearPoint Neuro Navigation System, covering MRI-guidance and iCT guidance workflows. It does not attribute this license to the FDA; assigning it to the FDA conflicts with the source. || The source notes completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region, which supports that such a case has commenced there.
+  ids-2: The source states that a Medical Device License was received from Health Canada for the ClearPoint Neuro Navigation System; it does not attribute this license to the FDA. The coverage of MRI-guidance and iCT workflows is correct, but the regulator is misidentified. || The source notes completion of the first commercial drug delivery case using ClearPoint technology in the Asia-Pacific region; describing this as having been commenced is consistent with that event having taken place.
+PLANT clearpoint-S9-a conflict / conflict
+  written: USD 56 million
+  ids-1: The source provides estimated revenue guidance of $52.0–$56.0 million for 2026, not 2027, and does not describe it as updated. It also mentions expectations around 2027 cash neutrality, but not 2027 revenue guidance.
+  ids-2: The source provides revenue guidance for 2026 of $52–56 million and discusses expectations that IRRAS integration could be cash neutral in 2027, but does not give revenue guidance for 2027 or a single-point figure of $56 million.
+PLANT clearpoint-S9-b conflict / conflict
+  written: 2027
+  ids-1: The source provides estimated revenue guidance of $52.0–$56.0 million for 2026, not 2027, and does not describe it as updated. It also mentions expectations around 2027 cash neutrality, but not 2027 revenue guidance.
+  ids-2: The source provides revenue guidance for 2026 of $52–56 million and discusses expectations that IRRAS integration could be cash neutral in 2027, but does not give revenue guidance for 2027 or a single-point figure of $56 million.
+COST ids-1 0.4487 ids-2 0.4024 combined 0.8511 calls 18+18
+wrote /Users/benjaminruane/CE DEV (local)/GitHub/brightline-content-engine-backend/scripts/diagnostic/b390/runs/score-summary.json

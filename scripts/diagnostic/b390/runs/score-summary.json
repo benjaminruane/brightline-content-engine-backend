@@ -1,0 +1,140 @@
+{
+  "cost": {
+    "ids1": 0.44870775,
+    "ids2": 0.40238575,
+    "combined": 0.8510935,
+    "calls1": 18,
+    "calls2": 18
+  },
+  "catch": {
+    "ids1": 0,
+    "ids2": 1
+  },
+  "leaveAlone": {
+    "ids1": {
+      "n": 40,
+      "pipelineAlsoConfirmed": 37,
+      "rate": 0.925,
+      "wilson95": {
+        "rate": 0.925,
+        "low": 0.8013546984090248,
+        "high": 0.9741644432281419
+      }
+    },
+    "ids2": {
+      "n": 40,
+      "pipelineAlsoConfirmed": 37,
+      "rate": 0.925,
+      "wilson95": {
+        "rate": 0.925,
+        "low": 0.8013546984090248,
+        "high": 0.9741644432281419
+      }
+    }
+  },
+  "citation": {
+    "ids1": {
+      "counts": {
+        "citations": 245,
+        "nullCitations": 3,
+        "textInstead": 0,
+        "valid": 245,
+        "invalid": 0,
+        "malformed": 0,
+        "reversed": 0,
+        "outOfRangeIds": 0,
+        "validIds": 1135,
+        "invalidUnits": 0,
+        "contained": 198,
+        "containedWithElements": 143,
+        "withElements": 190,
+        "vacuous": 55,
+        "wrongLines": 47,
+        "missingSource": 0,
+        "cap6": 9,
+        "over6": 36,
+        "tight": 209,
+        "tightContained": 170
+      },
+      "lengths": {
+        "1": 62,
+        "2": 36,
+        "3": 41,
+        "4": 41,
+        "5": 20,
+        "6": 9,
+        "7": 11,
+        "8": 11,
+        "9": 2,
+        "10": 5,
+        "11": 1,
+        "13": 1,
+        "37": 1,
+        "40": 1,
+        "45": 1,
+        "70": 1,
+        "111": 1
+      },
+      "invalidRate": 0,
+      "containmentRate": 0.8081632653061225,
+      "containmentWithElementsRate": 0.7526315789473684
+    },
+    "ids2": {
+      "counts": {
+        "citations": 234,
+        "nullCitations": 6,
+        "textInstead": 0,
+        "valid": 234,
+        "invalid": 0,
+        "malformed": 0,
+        "reversed": 0,
+        "outOfRangeIds": 0,
+        "validIds": 975,
+        "invalidUnits": 0,
+        "contained": 189,
+        "containedWithElements": 136,
+        "withElements": 181,
+        "vacuous": 53,
+        "wrongLines": 45,
+        "missingSource": 0,
+        "cap6": 18,
+        "over6": 33,
+        "tight": 201,
+        "tightContained": 162
+      },
+      "lengths": {
+        "1": 55,
+        "2": 35,
+        "3": 39,
+        "4": 32,
+        "5": 22,
+        "6": 18,
+        "7": 13,
+        "8": 8,
+        "9": 1,
+        "10": 6,
+        "16": 2,
+        "24": 1,
+        "37": 1,
+        "70": 1
+      },
+      "invalidRate": 0,
+      "containmentRate": 0.8076923076923077,
+      "containmentWithElementsRate": 0.7513812154696132
+    }
+  },
+  "stability": {
+    "agree": 203,
+    "moved": 16,
+    "missing": 0,
+    "total": 219
+  },
+  "parseFail": {
+    "ids1": [],
+    "ids2": []
+  },
+  "cleanFlags": {
+    "ids1": 17,
+    "ids2": 16
+  }
+}

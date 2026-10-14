@@ -1,0 +1,4341 @@
+{
+  "window": 8,
+  "sharedMin": 3,
+  "documents": 25,
+  "figures": 1942,
+  "rawPairs": 10481,
+  "keptPairs": 3167,
+  "sameLineKept": 614,
+  "bySource": [
+    {
+      "id": "fixture-01:0",
+      "raw": 167,
+      "kept": 46,
+      "sameLine": 29
+    },
+    {
+      "id": "fixture-02:0",
+      "raw": 37,
+      "kept": 14,
+      "sameLine": 5
+    },
+    {
+      "id": "fixture-03:0",
+      "raw": 24,
+      "kept": 7,
+      "sameLine": 2
+    },
+    {
+      "id": "fixture-04:0",
+      "raw": 44,
+      "kept": 23,
+      "sameLine": 17
+    },
+    {
+      "id": "fixture-05:0",
+      "raw": 48,
+      "kept": 31,
+      "sameLine": 15
+    },
+    {
+      "id": "fixture-06:0",
+      "raw": 124,
+      "kept": 25,
+      "sameLine": 8
+    },
+    {
+      "id": "fixture-07:0",
+      "raw": 4,
+      "kept": 1,
+      "sameLine": 1
+    },
+    {
+      "id": "fixture-08:0",
+      "raw": 212,
+      "kept": 54,
+      "sameLine": 32
+    },
+    {
+      "id": "fixture-09:0",
+      "raw": 204,
+      "kept": 53,
+      "sameLine": 24
+    },
+    {
+      "id": "fixture-10:0",
+      "raw": 55,
+      "kept": 21,
+      "sameLine": 8
+    },
+    {
+      "id": "fixture-11:0",
+      "raw": 104,
+      "kept": 25,
+      "sameLine": 10
+    },
+    {
+      "id": "fixture-12:0",
+      "raw": 1,
+      "kept": 1,
+      "sameLine": 0
+    },
+    {
+      "id": "fixture-13:0",
+      "raw": 183,
+      "kept": 60,
+      "sameLine": 41
+    },
+    {
+      "id": "fixture-14:0",
+      "raw": 8,
+      "kept": 7,
+      "sameLine": 4
+    },
+    {
+      "id": "fixture-15:0",
+      "raw": 1594,
+      "kept": 419,
+      "sameLine": 142
+    },
+    {
+      "id": "fixture-16:0",
+      "raw": 119,
+      "kept": 26,
+      "sameLine": 18
+    },
+    {
+      "id": "fixture-17:0",
+      "raw": 344,
+      "kept": 233,
+      "sameLine": 22
+    },
+    {
+      "id": "fixture-18:0",
+      "raw": 57,
+      "kept": 22,
+      "sameLine": 14
+    },
+    {
+      "id": "fixture-18:1",
+      "raw": 31,
+      "kept": 23,
+      "sameLine": 11
+    },
+    {
+      "id": "fixture-19:0",
+      "raw": 620,
+      "kept": 111,
+      "sameLine": 9
+    },
+    {
+      "id": "fixture-20:0",
+      "raw": 13,
+      "kept": 4,
+      "sameLine": 4
+    },
+    {
+      "id": "real-3i",
+      "raw": 1457,
+      "kept": 377,
+      "sameLine": 65
+    },
+    {
+      "id": "real-hicl",
+      "raw": 168,
+      "kept": 11,
+      "sameLine": 5
+    },
+    {
+      "id": "real-gpi",
+      "raw": 31,
+      "kept": 15,
+      "sameLine": 5
+    },
+    {
+      "id": "real-clearpoint",
+      "raw": 4832,
+      "kept": 1558,
+      "sameLine": 123
+    }
+  ],
+  "fixture13": {
+    "margin11vs13": true,
+    "marginExcluded": true,
+    "marginTime": {
+      "excluded": true,
+      "years": [],
+      "periods": [
+        "trailing"
+      ],
+      "dates": []
+    },
+    "marginPair": {
+      "source": "fixture-13:0",
+      "fixture": "fixture-13",
+      "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+      "shared": [
+        "million",
+        "ebitda",
+        "margin",
+        "investment",
+        "product",
+        "go-to-market"
+      ],
+      "a": {
+        "raw": "13%",
+        "key": "13|percent",
+        "line": 10,
+        "window": "million On a trailing basis the Company generates an EBITDA margin of approximately reflecting continued investment in product and go-to-market 1 BUSINESS OVERVIEW CloudPivot",
+        "content": [
+          "million",
+          "trailing",
+          "basis",
+          "company",
+          "generates",
+          "ebitda",
+          "margin",
+          "approximately",
+          "reflecting",
+          "continued",
+          "investment",
+          "product",
+          "go-to-market",
+          "business",
+          "overview",
+          "cloudpivot"
+        ]
+      },
+      "b": {
+        "raw": "11.1%",
+        "key": "11.1|percent",
+        "line": 24,
+        "window": "EUR 76 million with EBITDA of EUR 8 4 million representing an EBITDA margin of Margins reflect significant ongoing investment in product and go-to-market gross",
+        "content": [
+          "eur",
+          "million",
+          "ebitda",
+          "representing",
+          "margin",
+          "margins",
+          "reflect",
+          "significant",
+          "ongoing",
+          "investment",
+          "product",
+          "go-to-market",
+          "gross"
+        ]
+      },
+      "time": {
+        "excluded": true,
+        "years": [],
+        "periods": [
+          "trailing"
+        ],
+        "dates": []
+      }
+    },
+    "staff320vs285": false,
+    "raw": 183,
+    "kept": 60,
+    "figures": [
+      {
+        "raw": "13%",
+        "key": "13|percent",
+        "line": 10,
+        "content": [
+          "million",
+          "trailing",
+          "basis",
+          "company",
+          "generates",
+          "ebitda",
+          "margin",
+          "approximately",
+          "reflecting",
+          "continued",
+          "investment",
+          "product",
+          "go-to-market",
+          "business",
+          "overview",
+          "cloudpivot"
+        ],
+        "window": "million On a trailing basis the Company generates an EBITDA margin of approximately reflecting continued investment in product and go-to-market 1 BUSINESS OVERVIEW CloudPivot"
+      },
+      {
+        "raw": "320",
+        "key": "320|",
+        "line": 18,
+        "content": [
+          "dsv's",
+          "italian",
+          "subsidiary",
+          "produced",
+          "encouraging",
+          "results",
+          "cloudpivot",
+          "employs",
+          "people",
+          "across",
+          "offices",
+          "london",
+          "headquarters",
+          "hamburg",
+          "lisbon",
+          "bangalore"
+        ],
+        "window": "DSV's Italian subsidiary has produced encouraging results CloudPivot employs people across offices in London headquarters Hamburg Lisbon and Bangalore"
+      },
+      {
+        "raw": "11.1%",
+        "key": "11.1|percent",
+        "line": 24,
+        "content": [
+          "eur",
+          "million",
+          "ebitda",
+          "representing",
+          "margin",
+          "margins",
+          "reflect",
+          "significant",
+          "ongoing",
+          "investment",
+          "product",
+          "go-to-market",
+          "gross"
+        ],
+        "window": "EUR 76 million with EBITDA of EUR 8 4 million representing an EBITDA margin of Margins reflect significant ongoing investment in product and go-to-market gross"
+      },
+      {
+        "raw": "285",
+        "key": "285|",
+        "line": 66,
+        "content": [
+          "business",
+          "tightened",
+          "reporting",
+          "unit",
+          "economics",
+          "discipline",
+          "total",
+          "team",
+          "people",
+          "split",
+          "approximately",
+          "follows",
+          "engineering",
+          "customer",
+          "success",
+          "implementation"
+        ],
+        "window": "business in 2024 and has tightened reporting and unit economics discipline The total team of people is split approximately as follows engineering 110 customer success and implementation"
+      }
+    ],
+    "keptPairs": [
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "investment",
+          "eur",
+          "million"
+        ],
+        "a": {
+          "raw": "64%",
+          "key": "64|percent",
+          "line": 10,
+          "window": "Limited RECOMMENDATION We seek IC approval for an investment of EUR 285 million for a controlling stake in CloudPivot Systems Limited CloudPivot or the Company a London-headquartered",
+          "content": [
+            "limited",
+            "recommendation",
+            "seek",
+            "ic",
+            "approval",
+            "investment",
+            "eur",
+            "million",
+            "controlling",
+            "stake",
+            "cloudpivot",
+            "systems",
+            "company",
+            "london-headquartered"
+          ]
+        },
+        "b": {
+          "raw": "11.1%",
+          "key": "11.1|percent",
+          "line": 24,
+          "window": "EUR 76 million with EBITDA of EUR 8 4 million representing an EBITDA margin of Margins reflect significant ongoing investment in product and go-to-market gross",
+          "content": [
+            "eur",
+            "million",
+            "ebitda",
+            "representing",
+            "margin",
+            "margins",
+            "reflect",
+            "significant",
+            "ongoing",
+            "investment",
+            "product",
+            "go-to-market",
+            "gross"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "trailing",
+          "ebitda",
+          "margin"
+        ],
+        "a": {
+          "raw": "EUR 445 million",
+          "key": "445|million",
+          "line": 10,
+          "window": "freight forwarding industry The transaction values CloudPivot at an enterprise value of On a trailing basis the Company generates an EBITDA margin of approximately 13% reflecting",
+          "content": [
+            "freight",
+            "forwarding",
+            "industry",
+            "transaction",
+            "values",
+            "cloudpivot",
+            "enterprise",
+            "value",
+            "trailing",
+            "basis",
+            "company",
+            "generates",
+            "ebitda",
+            "margin",
+            "approximately",
+            "reflecting"
+          ]
+        },
+        "b": {
+          "raw": "EUR 76 million",
+          "key": "76|million",
+          "line": 24,
+          "window": "vertical SaaS benchmarks Trailing twelve months revenue stands at with EBITDA of EUR 8 4 million representing an EBITDA margin of 11 1% Margins reflect",
+          "content": [
+            "vertical",
+            "saas",
+            "benchmarks",
+            "trailing",
+            "twelve",
+            "months",
+            "revenue",
+            "stands",
+            "ebitda",
+            "eur",
+            "million",
+            "representing",
+            "margin",
+            "margins",
+            "reflect"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "trailing",
+          "ebitda",
+          "margin"
+        ],
+        "a": {
+          "raw": "EUR 445 million",
+          "key": "445|million",
+          "line": 10,
+          "window": "freight forwarding industry The transaction values CloudPivot at an enterprise value of On a trailing basis the Company generates an EBITDA margin of approximately 13% reflecting",
+          "content": [
+            "freight",
+            "forwarding",
+            "industry",
+            "transaction",
+            "values",
+            "cloudpivot",
+            "enterprise",
+            "value",
+            "trailing",
+            "basis",
+            "company",
+            "generates",
+            "ebitda",
+            "margin",
+            "approximately",
+            "reflecting"
+          ]
+        },
+        "b": {
+          "raw": "EUR 8.4 million",
+          "key": "8.4|million",
+          "line": 24,
+          "window": "Trailing twelve months revenue stands at EUR 76 million with EBITDA of representing an EBITDA margin of 11 1% Margins reflect significant ongoing investment",
+          "content": [
+            "trailing",
+            "twelve",
+            "months",
+            "revenue",
+            "stands",
+            "eur",
+            "million",
+            "ebitda",
+            "representing",
+            "margin",
+            "margins",
+            "reflect",
+            "significant",
+            "ongoing",
+            "investment"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "serves",
+          "freight",
+          "customs"
+        ],
+        "a": {
+          "raw": "1,200",
+          "key": "1200|",
+          "line": 16,
+          "window": "portal functionality through a single integrated product The Company serves over freight forwarder and customs broker customers across 28 European countries",
+          "content": [
+            "portal",
+            "functionality",
+            "through",
+            "single",
+            "integrated",
+            "product",
+            "company",
+            "serves",
+            "freight",
+            "forwarder",
+            "customs",
+            "broker",
+            "customers",
+            "across",
+            "european",
+            "countries"
+          ]
+        },
+        "b": {
+          "raw": "14,000",
+          "key": "14000|",
+          "line": 36,
+          "window": "Large addressable market with limited modern competition There are approximately freight forwarders and customs brokers in Europe CloudPivot serves 1 200 of these an 8 6% penetration",
+          "content": [
+            "large",
+            "addressable",
+            "market",
+            "limited",
+            "modern",
+            "competition",
+            "there",
+            "approximately",
+            "freight",
+            "forwarders",
+            "customs",
+            "brokers",
+            "europe",
+            "cloudpivot",
+            "serves",
+            "penetration"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "customers",
+          "across",
+          "european",
+          "countries",
+          "range",
+          "single-office",
+          "operators",
+          "users",
+          "up"
+        ],
+        "a": {
+          "raw": "28",
+          "key": "28|",
+          "line": 16,
+          "window": "Company serves over 1 200 freight forwarder and customs broker customers across European countries Customers range from single-office operators with 5 to 10 users up",
+          "content": [
+            "company",
+            "serves",
+            "freight",
+            "forwarder",
+            "customs",
+            "broker",
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up"
+          ]
+        },
+        "b": {
+          "raw": "5",
+          "key": "5|",
+          "line": 16,
+          "window": "customers across 28 European countries Customers range from single-office operators with to 10 users up to mid-sized regional networks with 200 users CloudPivot has not yet",
+          "content": [
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "customers",
+          "across",
+          "european",
+          "countries",
+          "range",
+          "single-office",
+          "operators",
+          "users",
+          "up"
+        ],
+        "a": {
+          "raw": "28",
+          "key": "28|",
+          "line": 16,
+          "window": "Company serves over 1 200 freight forwarder and customs broker customers across European countries Customers range from single-office operators with 5 to 10 users up",
+          "content": [
+            "company",
+            "serves",
+            "freight",
+            "forwarder",
+            "customs",
+            "broker",
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up"
+          ]
+        },
+        "b": {
+          "raw": "10",
+          "key": "10|",
+          "line": 16,
+          "window": "customers across 28 European countries Customers range from single-office operators with 5 to users up to mid-sized regional networks with 200 users CloudPivot has not yet",
+          "content": [
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "range",
+          "single-office",
+          "operators",
+          "users",
+          "up"
+        ],
+        "a": {
+          "raw": "28",
+          "key": "28|",
+          "line": 16,
+          "window": "Company serves over 1 200 freight forwarder and customs broker customers across European countries Customers range from single-office operators with 5 to 10 users up",
+          "content": [
+            "company",
+            "serves",
+            "freight",
+            "forwarder",
+            "customs",
+            "broker",
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up"
+          ]
+        },
+        "b": {
+          "raw": "200",
+          "key": "200|",
+          "line": 16,
+          "window": "range from single-office operators with 5 to 10 users up to mid-sized regional networks with users CloudPivot has not yet meaningfully penetrated the largest global forwarders",
+          "content": [
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet",
+            "meaningfully",
+            "penetrated",
+            "largest",
+            "global",
+            "forwarders"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "customers",
+          "across",
+          "european",
+          "countries",
+          "range",
+          "single-office",
+          "operators",
+          "users",
+          "up",
+          "mid-sized",
+          "regional",
+          "networks",
+          "cloudpivot",
+          "yet"
+        ],
+        "a": {
+          "raw": "5",
+          "key": "5|",
+          "line": 16,
+          "window": "customers across 28 European countries Customers range from single-office operators with to 10 users up to mid-sized regional networks with 200 users CloudPivot has not yet",
+          "content": [
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet"
+          ]
+        },
+        "b": {
+          "raw": "10",
+          "key": "10|",
+          "line": 16,
+          "window": "customers across 28 European countries Customers range from single-office operators with 5 to users up to mid-sized regional networks with 200 users CloudPivot has not yet",
+          "content": [
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "range",
+          "single-office",
+          "operators",
+          "users",
+          "up",
+          "mid-sized",
+          "regional",
+          "networks",
+          "cloudpivot",
+          "yet"
+        ],
+        "a": {
+          "raw": "5",
+          "key": "5|",
+          "line": 16,
+          "window": "customers across 28 European countries Customers range from single-office operators with to 10 users up to mid-sized regional networks with 200 users CloudPivot has not yet",
+          "content": [
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet"
+          ]
+        },
+        "b": {
+          "raw": "200",
+          "key": "200|",
+          "line": 16,
+          "window": "range from single-office operators with 5 to 10 users up to mid-sized regional networks with users CloudPivot has not yet meaningfully penetrated the largest global forwarders",
+          "content": [
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet",
+            "meaningfully",
+            "penetrated",
+            "largest",
+            "global",
+            "forwarders"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "range",
+          "single-office",
+          "operators",
+          "users",
+          "up",
+          "mid-sized",
+          "regional",
+          "networks",
+          "cloudpivot",
+          "yet"
+        ],
+        "a": {
+          "raw": "10",
+          "key": "10|",
+          "line": 16,
+          "window": "customers across 28 European countries Customers range from single-office operators with 5 to users up to mid-sized regional networks with 200 users CloudPivot has not yet",
+          "content": [
+            "customers",
+            "across",
+            "european",
+            "countries",
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet"
+          ]
+        },
+        "b": {
+          "raw": "200",
+          "key": "200|",
+          "line": 16,
+          "window": "range from single-office operators with 5 to 10 users up to mid-sized regional networks with users CloudPivot has not yet meaningfully penetrated the largest global forwarders",
+          "content": [
+            "range",
+            "single-office",
+            "operators",
+            "users",
+            "up",
+            "mid-sized",
+            "regional",
+            "networks",
+            "cloudpivot",
+            "yet",
+            "meaningfully",
+            "penetrated",
+            "largest",
+            "global",
+            "forwarders"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "success",
+          "implementation",
+          "engineering"
+        ],
+        "a": {
+          "raw": "2",
+          "key": "2|",
+          "line": 20,
+          "window": "success and implementation teams the Bangalore office is the primary engineering centre FINANCIAL PROFILE CloudPivot generates annual recurring revenue ARR",
+          "content": [
+            "success",
+            "implementation",
+            "teams",
+            "bangalore",
+            "office",
+            "primary",
+            "engineering",
+            "centre",
+            "financial",
+            "profile",
+            "cloudpivot",
+            "generates",
+            "annual",
+            "recurring",
+            "revenue",
+            "arr"
+          ]
+        },
+        "b": {
+          "raw": "110",
+          "key": "110|",
+          "line": 66,
+          "window": "discipline The total team of 285 people is split approximately as follows engineering customer success and implementation 75 sales 55 customer support 35 and general administrative",
+          "content": [
+            "discipline",
+            "total",
+            "team",
+            "people",
+            "split",
+            "approximately",
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "annual",
+          "recurring",
+          "revenue",
+          "arr",
+          "october",
+          "up",
+          "eur",
+          "million",
+          "two",
+          "years",
+          "prior",
+          "representing"
+        ],
+        "a": {
+          "raw": "EUR 84 million",
+          "key": "84|million",
+          "line": 22,
+          "window": "FINANCIAL PROFILE CloudPivot generates annual recurring revenue ARR of as of October 2025 up from EUR 52 million two years prior representing",
+          "content": [
+            "financial",
+            "profile",
+            "cloudpivot",
+            "generates",
+            "annual",
+            "recurring",
+            "revenue",
+            "arr",
+            "october",
+            "up",
+            "eur",
+            "million",
+            "two",
+            "years",
+            "prior",
+            "representing"
+          ]
+        },
+        "b": {
+          "raw": "EUR 52 million",
+          "key": "52|million",
+          "line": 22,
+          "window": "annual recurring revenue ARR of EUR 84 million as of October 2025 up from two years prior representing 27% CAGR Net revenue retention",
+          "content": [
+            "annual",
+            "recurring",
+            "revenue",
+            "arr",
+            "eur",
+            "million",
+            "october",
+            "up",
+            "two",
+            "years",
+            "prior",
+            "representing",
+            "cagr",
+            "net",
+            "retention"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "net",
+          "revenue",
+          "retention",
+          "averaged",
+          "past",
+          "months",
+          "gross",
+          "customer",
+          "acquisition",
+          "cost",
+          "payback"
+        ],
+        "a": {
+          "raw": "113%",
+          "key": "113|percent",
+          "line": 22,
+          "window": "years prior representing 27% CAGR Net revenue retention has averaged over the past 24 months with gross retention of 94% Customer acquisition cost payback",
+          "content": [
+            "years",
+            "prior",
+            "representing",
+            "cagr",
+            "net",
+            "revenue",
+            "retention",
+            "averaged",
+            "past",
+            "months",
+            "gross",
+            "customer",
+            "acquisition",
+            "cost",
+            "payback"
+          ]
+        },
+        "b": {
+          "raw": "94%",
+          "key": "94|percent",
+          "line": 22,
+          "window": "Net revenue retention has averaged 113% over the past 24 months with gross retention of Customer acquisition cost payback is 14 months broadly in line with vertical",
+          "content": [
+            "net",
+            "revenue",
+            "retention",
+            "averaged",
+            "past",
+            "months",
+            "gross",
+            "customer",
+            "acquisition",
+            "cost",
+            "payback",
+            "broadly",
+            "line",
+            "vertical"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "months",
+          "payback",
+          "broadly",
+          "line",
+          "vertical",
+          "saas",
+          "benchmarks",
+          "trailing"
+        ],
+        "a": {
+          "raw": "14",
+          "key": "14|",
+          "line": 22,
+          "window": "past 24 months with gross retention of 94% Customer acquisition cost payback is months broadly in line with vertical SaaS benchmarks Trailing twelve",
+          "content": [
+            "past",
+            "months",
+            "gross",
+            "retention",
+            "customer",
+            "acquisition",
+            "cost",
+            "payback",
+            "broadly",
+            "line",
+            "vertical",
+            "saas",
+            "benchmarks",
+            "trailing",
+            "twelve"
+          ]
+        },
+        "b": {
+          "raw": "12",
+          "key": "12|",
+          "line": 24,
+          "window": "payback is 14 months broadly in line with vertical SaaS benchmarks Trailing months revenue stands at EUR 76 million with EBITDA of EUR 8 4 million",
+          "content": [
+            "payback",
+            "months",
+            "broadly",
+            "line",
+            "vertical",
+            "saas",
+            "benchmarks",
+            "trailing",
+            "revenue",
+            "stands",
+            "eur",
+            "million",
+            "ebitda"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "trailing",
+          "twelve",
+          "months",
+          "revenue",
+          "stands",
+          "ebitda",
+          "eur",
+          "million",
+          "representing",
+          "margin",
+          "margins",
+          "reflect"
+        ],
+        "a": {
+          "raw": "EUR 76 million",
+          "key": "76|million",
+          "line": 24,
+          "window": "vertical SaaS benchmarks Trailing twelve months revenue stands at with EBITDA of EUR 8 4 million representing an EBITDA margin of 11 1% Margins reflect",
+          "content": [
+            "vertical",
+            "saas",
+            "benchmarks",
+            "trailing",
+            "twelve",
+            "months",
+            "revenue",
+            "stands",
+            "ebitda",
+            "eur",
+            "million",
+            "representing",
+            "margin",
+            "margins",
+            "reflect"
+          ]
+        },
+        "b": {
+          "raw": "EUR 8.4 million",
+          "key": "8.4|million",
+          "line": 24,
+          "window": "Trailing twelve months revenue stands at EUR 76 million with EBITDA of representing an EBITDA margin of 11 1% Margins reflect significant ongoing investment",
+          "content": [
+            "trailing",
+            "twelve",
+            "months",
+            "revenue",
+            "stands",
+            "eur",
+            "million",
+            "ebitda",
+            "representing",
+            "margin",
+            "margins",
+            "reflect",
+            "significant",
+            "ongoing",
+            "investment"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "product",
+          "go-to-market",
+          "gross",
+          "margin",
+          "sales",
+          "marketing",
+          "spending",
+          "equivalent",
+          "revenue"
+        ],
+        "a": {
+          "raw": "78%",
+          "key": "78|percent",
+          "line": 24,
+          "window": "reflect significant ongoing investment in product and go-to-market gross margin is with sales and marketing spending equivalent to 38% of revenue and R D spending equivalent to 24% of revenue",
+          "content": [
+            "reflect",
+            "significant",
+            "ongoing",
+            "investment",
+            "product",
+            "go-to-market",
+            "gross",
+            "margin",
+            "sales",
+            "marketing",
+            "spending",
+            "equivalent",
+            "revenue"
+          ]
+        },
+        "b": {
+          "raw": "38%",
+          "key": "38|percent",
+          "line": 24,
+          "window": "product and go-to-market gross margin is 78% with sales and marketing spending equivalent to of revenue and R D spending equivalent to 24% of revenue The Company has been free cash flow",
+          "content": [
+            "product",
+            "go-to-market",
+            "gross",
+            "margin",
+            "sales",
+            "marketing",
+            "spending",
+            "equivalent",
+            "revenue",
+            "company",
+            "free",
+            "cash",
+            "flow"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "balance",
+          "sheet",
+          "september",
+          "stood",
+          "eur",
+          "million",
+          "no"
+        ],
+        "a": {
+          "raw": "2023",
+          "key": "2023|",
+          "line": 26,
+          "window": "equivalent to 24% of revenue The Company has been free cash flow positive since Cash on balance sheet at September 2025 stood at EUR 18 million with no",
+          "content": [
+            "equivalent",
+            "revenue",
+            "company",
+            "free",
+            "cash",
+            "flow",
+            "positive",
+            "since",
+            "balance",
+            "sheet",
+            "september",
+            "stood",
+            "eur",
+            "million",
+            "no"
+          ]
+        },
+        "b": {
+          "raw": "3",
+          "key": "3|",
+          "line": 28,
+          "window": "balance sheet at September 2025 stood at EUR 18 million with no debt INVESTMENT THESIS We are attracted to CloudPivot for the following reasons Vertical SaaS",
+          "content": [
+            "balance",
+            "sheet",
+            "september",
+            "stood",
+            "eur",
+            "million",
+            "no",
+            "debt",
+            "investment",
+            "thesis",
+            "attracted",
+            "cloudpivot",
+            "following",
+            "reasons",
+            "vertical",
+            "saas"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "competition",
+          "approximately",
+          "freight",
+          "forwarders",
+          "customs",
+          "brokers",
+          "europe",
+          "cloudpivot",
+          "serves",
+          "penetration"
+        ],
+        "a": {
+          "raw": "14,000",
+          "key": "14000|",
+          "line": 36,
+          "window": "Large addressable market with limited modern competition There are approximately freight forwarders and customs brokers in Europe CloudPivot serves 1 200 of these an 8 6% penetration",
+          "content": [
+            "large",
+            "addressable",
+            "market",
+            "limited",
+            "modern",
+            "competition",
+            "there",
+            "approximately",
+            "freight",
+            "forwarders",
+            "customs",
+            "brokers",
+            "europe",
+            "cloudpivot",
+            "serves",
+            "penetration"
+          ]
+        },
+        "b": {
+          "raw": "1,200",
+          "key": "1200|",
+          "line": 36,
+          "window": "approximately 14 000 freight forwarders and customs brokers in Europe CloudPivot serves of these an 8 6% penetration rate The principal competition is fragmented legacy software Riege",
+          "content": [
+            "approximately",
+            "freight",
+            "forwarders",
+            "customs",
+            "brokers",
+            "europe",
+            "cloudpivot",
+            "serves",
+            "penetration",
+            "rate",
+            "principal",
+            "competition",
+            "fragmented",
+            "legacy",
+            "software",
+            "riege"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "trajectory",
+          "arr",
+          "growth",
+          "today",
+          "approximately",
+          "eur",
+          "million",
+          "five-year",
+          "hold",
+          "represents",
+          "cagr"
+        ],
+        "a": {
+          "raw": "EUR 81 million",
+          "key": "81|million",
+          "line": 46,
+          "window": "OUTLOOK We underwrite the following base case trajectory ARR growth from today to approximately EUR 195 million over a five-year hold This represents 19% CAGR",
+          "content": [
+            "outlook",
+            "underwrite",
+            "following",
+            "base",
+            "case",
+            "trajectory",
+            "arr",
+            "growth",
+            "today",
+            "approximately",
+            "eur",
+            "million",
+            "five-year",
+            "hold",
+            "represents",
+            "cagr"
+          ]
+        },
+        "b": {
+          "raw": "EUR 195 million",
+          "key": "195|million",
+          "line": 46,
+          "window": "case trajectory ARR growth from EUR 81 million today to approximately over a five-year hold This represents 19% CAGR reflecting a measured deceleration from the recent",
+          "content": [
+            "case",
+            "trajectory",
+            "arr",
+            "growth",
+            "eur",
+            "million",
+            "today",
+            "approximately",
+            "five-year",
+            "hold",
+            "represents",
+            "cagr",
+            "reflecting",
+            "measured",
+            "deceleration",
+            "recent"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "company",
+          "scales",
+          "revenue",
+          "expected",
+          "grow",
+          "approximately",
+          "eur",
+          "million",
+          "ebitda",
+          "margins",
+          "expanding",
+          "current",
+          "levels"
+        ],
+        "a": {
+          "raw": "EUR 76 million",
+          "key": "76|million",
+          "line": 48,
+          "window": "deceleration from the recent 27% pace as the Company scales Revenue is expected to grow from in 2025 to approximately EUR 185 million by 2030 with EBITDA margins expanding from current levels",
+          "content": [
+            "deceleration",
+            "recent",
+            "pace",
+            "company",
+            "scales",
+            "revenue",
+            "expected",
+            "grow",
+            "approximately",
+            "eur",
+            "million",
+            "ebitda",
+            "margins",
+            "expanding",
+            "current",
+            "levels"
+          ]
+        },
+        "b": {
+          "raw": "EUR 185 million",
+          "key": "185|million",
+          "line": 48,
+          "window": "Company scales Revenue is expected to grow from EUR 76 million in 2025 to approximately by 2030 with EBITDA margins expanding from current levels to 28% as the business scales and sales",
+          "content": [
+            "company",
+            "scales",
+            "revenue",
+            "expected",
+            "grow",
+            "eur",
+            "million",
+            "approximately",
+            "ebitda",
+            "margins",
+            "expanding",
+            "current",
+            "levels",
+            "business",
+            "sales"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "reflecting",
+          "prudence",
+          "regarding",
+          "pricing",
+          "power",
+          "business",
+          "matures",
+          "risks",
+          "principal",
+          "cargowise",
+          "competitive",
+          "response"
+        ],
+        "a": {
+          "raw": "5",
+          "key": "5|",
+          "line": 52,
+          "window": "recent 113% reflecting prudence regarding pricing power as the business matures RISKS Three principal risks CargoWise competitive response CargoWise",
+          "content": [
+            "recent",
+            "reflecting",
+            "prudence",
+            "regarding",
+            "pricing",
+            "power",
+            "business",
+            "matures",
+            "risks",
+            "three",
+            "principal",
+            "cargowise",
+            "competitive",
+            "response"
+          ]
+        },
+        "b": {
+          "raw": "3",
+          "key": "3|",
+          "line": 54,
+          "window": "reflecting prudence regarding pricing power as the business matures 5 RISKS principal risks CargoWise competitive response CargoWise is the entrenched leader",
+          "content": [
+            "reflecting",
+            "prudence",
+            "regarding",
+            "pricing",
+            "power",
+            "business",
+            "matures",
+            "risks",
+            "principal",
+            "cargowise",
+            "competitive",
+            "response",
+            "entrenched",
+            "leader"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "joined",
+          "patrick",
+          "lawrence"
+        ],
+        "a": {
+          "raw": "2022",
+          "key": "2022|",
+          "line": 64,
+          "window": "remain deeply engaged Maria Santangelo CRO joined from HubSpot in and has rebuilt the European sales organisation The CFO Patrick Lawrence joined",
+          "content": [
+            "remain",
+            "deeply",
+            "engaged",
+            "maria",
+            "santangelo",
+            "cro",
+            "joined",
+            "hubspot",
+            "rebuilt",
+            "european",
+            "sales",
+            "organisation",
+            "cfo",
+            "patrick",
+            "lawrence"
+          ]
+        },
+        "b": {
+          "raw": "2024",
+          "key": "2024|",
+          "line": 64,
+          "window": "Patrick Lawrence joined from a private equity-backed UK SaaS business in and has tightened reporting and unit economics discipline The total team of 285 people",
+          "content": [
+            "patrick",
+            "lawrence",
+            "joined",
+            "private",
+            "equity-backed",
+            "uk",
+            "saas",
+            "business",
+            "tightened",
+            "reporting",
+            "unit",
+            "economics",
+            "discipline",
+            "total",
+            "team",
+            "people"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "split",
+          "approximately",
+          "follows",
+          "engineering",
+          "customer",
+          "success",
+          "implementation",
+          "sales",
+          "support",
+          "general",
+          "administrative",
+          "see",
+          "opportunities",
+          "invest"
+        ],
+        "a": {
+          "raw": "75",
+          "key": "75|",
+          "line": 66,
+          "window": "people is split approximately as follows engineering 110 customer success and implementation sales 55 customer support 35 and general administrative 10 We see opportunities to invest",
+          "content": [
+            "people",
+            "split",
+            "approximately",
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest"
+          ]
+        },
+        "b": {
+          "raw": "55",
+          "key": "55|",
+          "line": 66,
+          "window": "split approximately as follows engineering 110 customer success and implementation 75 sales customer support 35 and general administrative 10 We see opportunities to invest further",
+          "content": [
+            "split",
+            "approximately",
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "follows",
+          "engineering",
+          "customer",
+          "success",
+          "implementation",
+          "sales",
+          "support",
+          "general",
+          "administrative",
+          "see",
+          "opportunities",
+          "invest"
+        ],
+        "a": {
+          "raw": "75",
+          "key": "75|",
+          "line": 66,
+          "window": "people is split approximately as follows engineering 110 customer success and implementation sales 55 customer support 35 and general administrative 10 We see opportunities to invest",
+          "content": [
+            "people",
+            "split",
+            "approximately",
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest"
+          ]
+        },
+        "b": {
+          "raw": "35",
+          "key": "35|",
+          "line": 66,
+          "window": "follows engineering 110 customer success and implementation 75 sales 55 customer support and general administrative 10 We see opportunities to invest further in product and in mid-market",
+          "content": [
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further",
+            "product",
+            "mid-market"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "customer",
+          "success",
+          "implementation",
+          "sales",
+          "support",
+          "general",
+          "administrative",
+          "see",
+          "opportunities",
+          "invest"
+        ],
+        "a": {
+          "raw": "75",
+          "key": "75|",
+          "line": 66,
+          "window": "people is split approximately as follows engineering 110 customer success and implementation sales 55 customer support 35 and general administrative 10 We see opportunities to invest",
+          "content": [
+            "people",
+            "split",
+            "approximately",
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest"
+          ]
+        },
+        "b": {
+          "raw": "10",
+          "key": "10|",
+          "line": 66,
+          "window": "customer success and implementation 75 sales 55 customer support 35 and general administrative We see opportunities to invest further in product and in mid-market sales capacity",
+          "content": [
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further",
+            "product",
+            "mid-market",
+            "capacity"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "follows",
+          "engineering",
+          "customer",
+          "success",
+          "implementation",
+          "sales",
+          "support",
+          "general",
+          "administrative",
+          "see",
+          "opportunities",
+          "invest",
+          "further"
+        ],
+        "a": {
+          "raw": "55",
+          "key": "55|",
+          "line": 66,
+          "window": "split approximately as follows engineering 110 customer success and implementation 75 sales customer support 35 and general administrative 10 We see opportunities to invest further",
+          "content": [
+            "split",
+            "approximately",
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further"
+          ]
+        },
+        "b": {
+          "raw": "35",
+          "key": "35|",
+          "line": 66,
+          "window": "follows engineering 110 customer success and implementation 75 sales 55 customer support and general administrative 10 We see opportunities to invest further in product and in mid-market",
+          "content": [
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further",
+            "product",
+            "mid-market"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "customer",
+          "success",
+          "implementation",
+          "sales",
+          "support",
+          "general",
+          "administrative",
+          "see",
+          "opportunities",
+          "invest",
+          "further"
+        ],
+        "a": {
+          "raw": "55",
+          "key": "55|",
+          "line": 66,
+          "window": "split approximately as follows engineering 110 customer success and implementation 75 sales customer support 35 and general administrative 10 We see opportunities to invest further",
+          "content": [
+            "split",
+            "approximately",
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further"
+          ]
+        },
+        "b": {
+          "raw": "10",
+          "key": "10|",
+          "line": 66,
+          "window": "customer success and implementation 75 sales 55 customer support 35 and general administrative We see opportunities to invest further in product and in mid-market sales capacity",
+          "content": [
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further",
+            "product",
+            "mid-market",
+            "capacity"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "customer",
+          "success",
+          "implementation",
+          "sales",
+          "support",
+          "general",
+          "administrative",
+          "see",
+          "opportunities",
+          "invest",
+          "further",
+          "product",
+          "mid-market"
+        ],
+        "a": {
+          "raw": "35",
+          "key": "35|",
+          "line": 66,
+          "window": "follows engineering 110 customer success and implementation 75 sales 55 customer support and general administrative 10 We see opportunities to invest further in product and in mid-market",
+          "content": [
+            "follows",
+            "engineering",
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further",
+            "product",
+            "mid-market"
+          ]
+        },
+        "b": {
+          "raw": "10",
+          "key": "10|",
+          "line": 66,
+          "window": "customer success and implementation 75 sales 55 customer support 35 and general administrative We see opportunities to invest further in product and in mid-market sales capacity",
+          "content": [
+            "customer",
+            "success",
+            "implementation",
+            "sales",
+            "support",
+            "general",
+            "administrative",
+            "see",
+            "opportunities",
+            "invest",
+            "further",
+            "product",
+            "mid-market",
+            "capacity"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "returns",
+          "invest",
+          "eur",
+          "million",
+          "equity",
+          "founders",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james"
+        ],
+        "a": {
+          "raw": "64%",
+          "key": "64|percent",
+          "line": 70,
+          "window": "continental Europe 7 TRANSACTION STRUCTURE AND RETURNS We will invest EUR 285 million for of the equity The founders and management will retain 28% in aggregate Tom Fairfield 14% James",
+          "content": [
+            "continental",
+            "europe",
+            "transaction",
+            "structure",
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james"
+          ]
+        },
+        "b": {
+          "raw": "28%",
+          "key": "28|percent",
+          "line": 70,
+          "window": "RETURNS We will invest EUR 285 million for 64% of the equity The founders and management will retain in aggregate Tom Fairfield 14% James O'Brien 7% other management 7% and existing",
+          "content": [
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "million",
+          "equity",
+          "founders",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james"
+        ],
+        "a": {
+          "raw": "64%",
+          "key": "64|percent",
+          "line": 70,
+          "window": "continental Europe 7 TRANSACTION STRUCTURE AND RETURNS We will invest EUR 285 million for of the equity The founders and management will retain 28% in aggregate Tom Fairfield 14% James",
+          "content": [
+            "continental",
+            "europe",
+            "transaction",
+            "structure",
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james"
+          ]
+        },
+        "b": {
+          "raw": "14%",
+          "key": "14|percent",
+          "line": 70,
+          "window": "million for 64% of the equity The founders and management will retain 28% in aggregate Tom Fairfield James O'Brien 7% other management 7% and existing growth equity investor",
+          "content": [
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "investor"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "founders",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james"
+        ],
+        "a": {
+          "raw": "64%",
+          "key": "64|percent",
+          "line": 70,
+          "window": "continental Europe 7 TRANSACTION STRUCTURE AND RETURNS We will invest EUR 285 million for of the equity The founders and management will retain 28% in aggregate Tom Fairfield 14% James",
+          "content": [
+            "continental",
+            "europe",
+            "transaction",
+            "structure",
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james"
+          ]
+        },
+        "b": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "founders and management will retain 28% in aggregate Tom Fairfield 14% James O'Brien other management 7% and existing growth equity investor Index Ventures",
+          "content": [
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james"
+        ],
+        "a": {
+          "raw": "64%",
+          "key": "64|percent",
+          "line": 70,
+          "window": "continental Europe 7 TRANSACTION STRUCTURE AND RETURNS We will invest EUR 285 million for of the equity The founders and management will retain 28% in aggregate Tom Fairfield 14% James",
+          "content": [
+            "continental",
+            "europe",
+            "transaction",
+            "structure",
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james"
+          ]
+        },
+        "b": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "retain 28% in aggregate Tom Fairfield 14% James O'Brien 7% other management and existing growth equity investor Index Ventures will retain 8% There",
+          "content": [
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "there"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "management",
+          "retain"
+        ],
+        "a": {
+          "raw": "64%",
+          "key": "64|percent",
+          "line": 70,
+          "window": "continental Europe 7 TRANSACTION STRUCTURE AND RETURNS We will invest EUR 285 million for of the equity The founders and management will retain 28% in aggregate Tom Fairfield 14% James",
+          "content": [
+            "continental",
+            "europe",
+            "transaction",
+            "structure",
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james"
+          ]
+        },
+        "b": {
+          "raw": "8%",
+          "key": "8|percent",
+          "line": 70,
+          "window": "management 7% and existing growth equity investor Index Ventures will retain There is no third-party debt at close We have negotiated standard governance",
+          "content": [
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "retain",
+            "there",
+            "no",
+            "third-party",
+            "debt",
+            "close",
+            "negotiated",
+            "standard",
+            "governance"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "million",
+          "equity",
+          "founders",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james",
+          "o'brien",
+          "other",
+          "existing"
+        ],
+        "a": {
+          "raw": "28%",
+          "key": "28|percent",
+          "line": 70,
+          "window": "RETURNS We will invest EUR 285 million for 64% of the equity The founders and management will retain in aggregate Tom Fairfield 14% James O'Brien 7% other management 7% and existing",
+          "content": [
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing"
+          ]
+        },
+        "b": {
+          "raw": "14%",
+          "key": "14|percent",
+          "line": 70,
+          "window": "million for 64% of the equity The founders and management will retain 28% in aggregate Tom Fairfield James O'Brien 7% other management 7% and existing growth equity investor",
+          "content": [
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "investor"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "founders",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james",
+          "o'brien",
+          "other",
+          "existing"
+        ],
+        "a": {
+          "raw": "28%",
+          "key": "28|percent",
+          "line": 70,
+          "window": "RETURNS We will invest EUR 285 million for 64% of the equity The founders and management will retain in aggregate Tom Fairfield 14% James O'Brien 7% other management 7% and existing",
+          "content": [
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing"
+          ]
+        },
+        "b": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "founders and management will retain 28% in aggregate Tom Fairfield 14% James O'Brien other management 7% and existing growth equity investor Index Ventures",
+          "content": [
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james",
+          "o'brien",
+          "other",
+          "existing"
+        ],
+        "a": {
+          "raw": "28%",
+          "key": "28|percent",
+          "line": 70,
+          "window": "RETURNS We will invest EUR 285 million for 64% of the equity The founders and management will retain in aggregate Tom Fairfield 14% James O'Brien 7% other management 7% and existing",
+          "content": [
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing"
+          ]
+        },
+        "b": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "retain 28% in aggregate Tom Fairfield 14% James O'Brien 7% other management and existing growth equity investor Index Ventures will retain 8% There",
+          "content": [
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "there"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "management",
+          "retain",
+          "existing"
+        ],
+        "a": {
+          "raw": "28%",
+          "key": "28|percent",
+          "line": 70,
+          "window": "RETURNS We will invest EUR 285 million for 64% of the equity The founders and management will retain in aggregate Tom Fairfield 14% James O'Brien 7% other management 7% and existing",
+          "content": [
+            "returns",
+            "invest",
+            "eur",
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing"
+          ]
+        },
+        "b": {
+          "raw": "8%",
+          "key": "8|percent",
+          "line": 70,
+          "window": "management 7% and existing growth equity investor Index Ventures will retain There is no third-party debt at close We have negotiated standard governance",
+          "content": [
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "retain",
+            "there",
+            "no",
+            "third-party",
+            "debt",
+            "close",
+            "negotiated",
+            "standard",
+            "governance"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "founders",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james",
+          "o'brien",
+          "other",
+          "existing",
+          "growth",
+          "investor"
+        ],
+        "a": {
+          "raw": "14%",
+          "key": "14|percent",
+          "line": 70,
+          "window": "million for 64% of the equity The founders and management will retain 28% in aggregate Tom Fairfield James O'Brien 7% other management 7% and existing growth equity investor",
+          "content": [
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "investor"
+          ]
+        },
+        "b": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "founders and management will retain 28% in aggregate Tom Fairfield 14% James O'Brien other management 7% and existing growth equity investor Index Ventures",
+          "content": [
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "management",
+          "retain",
+          "aggregate",
+          "tom",
+          "fairfield",
+          "james",
+          "o'brien",
+          "other",
+          "existing",
+          "growth",
+          "investor"
+        ],
+        "a": {
+          "raw": "14%",
+          "key": "14|percent",
+          "line": 70,
+          "window": "million for 64% of the equity The founders and management will retain 28% in aggregate Tom Fairfield James O'Brien 7% other management 7% and existing growth equity investor",
+          "content": [
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "investor"
+          ]
+        },
+        "b": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "retain 28% in aggregate Tom Fairfield 14% James O'Brien 7% other management and existing growth equity investor Index Ventures will retain 8% There",
+          "content": [
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "there"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "equity",
+          "management",
+          "retain",
+          "existing",
+          "growth",
+          "investor"
+        ],
+        "a": {
+          "raw": "14%",
+          "key": "14|percent",
+          "line": 70,
+          "window": "million for 64% of the equity The founders and management will retain 28% in aggregate Tom Fairfield James O'Brien 7% other management 7% and existing growth equity investor",
+          "content": [
+            "million",
+            "equity",
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "investor"
+          ]
+        },
+        "b": {
+          "raw": "8%",
+          "key": "8|percent",
+          "line": 70,
+          "window": "management 7% and existing growth equity investor Index Ventures will retain There is no third-party debt at close We have negotiated standard governance",
+          "content": [
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "retain",
+            "there",
+            "no",
+            "third-party",
+            "debt",
+            "close",
+            "negotiated",
+            "standard",
+            "governance"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "management",
+          "retain",
+          "existing",
+          "growth",
+          "equity",
+          "investor",
+          "index",
+          "ventures"
+        ],
+        "a": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "founders and management will retain 28% in aggregate Tom Fairfield 14% James O'Brien other management 7% and existing growth equity investor Index Ventures",
+          "content": [
+            "founders",
+            "management",
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures"
+          ]
+        },
+        "b": {
+          "raw": "8%",
+          "key": "8|percent",
+          "line": 70,
+          "window": "management 7% and existing growth equity investor Index Ventures will retain There is no third-party debt at close We have negotiated standard governance",
+          "content": [
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "retain",
+            "there",
+            "no",
+            "third-party",
+            "debt",
+            "close",
+            "negotiated",
+            "standard",
+            "governance"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "retain",
+          "management",
+          "existing",
+          "growth",
+          "equity",
+          "investor",
+          "index",
+          "ventures",
+          "there"
+        ],
+        "a": {
+          "raw": "7%",
+          "key": "7|percent",
+          "line": 70,
+          "window": "retain 28% in aggregate Tom Fairfield 14% James O'Brien 7% other management and existing growth equity investor Index Ventures will retain 8% There",
+          "content": [
+            "retain",
+            "aggregate",
+            "tom",
+            "fairfield",
+            "james",
+            "o'brien",
+            "other",
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "there"
+          ]
+        },
+        "b": {
+          "raw": "8%",
+          "key": "8|percent",
+          "line": 70,
+          "window": "management 7% and existing growth equity investor Index Ventures will retain There is no third-party debt at close We have negotiated standard governance",
+          "content": [
+            "management",
+            "existing",
+            "growth",
+            "equity",
+            "investor",
+            "index",
+            "ventures",
+            "retain",
+            "there",
+            "no",
+            "third-party",
+            "debt",
+            "close",
+            "negotiated",
+            "standard",
+            "governance"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "negotiated",
+          "standard",
+          "governance",
+          "majority",
+          "halden",
+          "group",
+          "board",
+          "control",
+          "seats",
+          "returns",
+          "base",
+          "case",
+          "generates",
+          "moic",
+          "irr",
+          "upside"
+        ],
+        "a": {
+          "raw": "3",
+          "key": "3|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control of 5 seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "5",
+          "key": "5|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control 3 of seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "group",
+          "board",
+          "control",
+          "seats",
+          "returns",
+          "base",
+          "case",
+          "generates",
+          "moic",
+          "irr",
+          "upside"
+        ],
+        "a": {
+          "raw": "3",
+          "key": "3|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control of 5 seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "2.6",
+          "key": "2.6|",
+          "line": 72,
+          "window": "Group board control 3 of 5 seats Returns our base case generates a x MOIC and 21% IRR The upside case assuming faster international expansion",
+          "content": [
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside",
+            "assuming",
+            "faster",
+            "international",
+            "expansion"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "3",
+          "key": "3|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control of 5 seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "3.4",
+          "key": "3.4|",
+          "line": 72,
+          "window": "faster international expansion and modest multiple expansion at exit generates x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR 8 CONCLUSION",
+          "content": [
+            "faster",
+            "international",
+            "expansion",
+            "modest",
+            "multiple",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "3",
+          "key": "3|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control of 5 seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "1.5",
+          "key": "1.5|",
+          "line": 72,
+          "window": "expansion at exit generates 3 4x MOIC and 28% IRR The downside case generates x MOIC and 9% IRR 8 CONCLUSION CloudPivot is a high-quality vertical SaaS asset",
+          "content": [
+            "expansion",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "3",
+          "key": "3|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control of 5 seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "8",
+          "key": "8|",
+          "line": 74,
+          "window": "generates 3 4x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR CONCLUSION CloudPivot is a high-quality vertical SaaS asset with strong unit",
+          "content": [
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset",
+            "strong",
+            "unit"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "group",
+          "board",
+          "control",
+          "seats",
+          "returns",
+          "base",
+          "case",
+          "generates",
+          "moic",
+          "irr",
+          "upside"
+        ],
+        "a": {
+          "raw": "5",
+          "key": "5|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control 3 of seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "2.6",
+          "key": "2.6|",
+          "line": 72,
+          "window": "Group board control 3 of 5 seats Returns our base case generates a x MOIC and 21% IRR The upside case assuming faster international expansion",
+          "content": [
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside",
+            "assuming",
+            "faster",
+            "international",
+            "expansion"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "5",
+          "key": "5|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control 3 of seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "3.4",
+          "key": "3.4|",
+          "line": 72,
+          "window": "faster international expansion and modest multiple expansion at exit generates x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR 8 CONCLUSION",
+          "content": [
+            "faster",
+            "international",
+            "expansion",
+            "modest",
+            "multiple",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "5",
+          "key": "5|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control 3 of seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "1.5",
+          "key": "1.5|",
+          "line": 72,
+          "window": "expansion at exit generates 3 4x MOIC and 28% IRR The downside case generates x MOIC and 9% IRR 8 CONCLUSION CloudPivot is a high-quality vertical SaaS asset",
+          "content": [
+            "expansion",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "5",
+          "key": "5|",
+          "line": 70,
+          "window": "negotiated standard governance with majority Halden Group board control 3 of seats Returns our base case generates a 2 6x MOIC and 21% IRR The upside",
+          "content": [
+            "negotiated",
+            "standard",
+            "governance",
+            "majority",
+            "halden",
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside"
+          ]
+        },
+        "b": {
+          "raw": "8",
+          "key": "8|",
+          "line": 74,
+          "window": "generates 3 4x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR CONCLUSION CloudPivot is a high-quality vertical SaaS asset with strong unit",
+          "content": [
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset",
+            "strong",
+            "unit"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr",
+          "faster",
+          "international",
+          "expansion"
+        ],
+        "a": {
+          "raw": "2.6",
+          "key": "2.6|",
+          "line": 72,
+          "window": "Group board control 3 of 5 seats Returns our base case generates a x MOIC and 21% IRR The upside case assuming faster international expansion",
+          "content": [
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside",
+            "assuming",
+            "faster",
+            "international",
+            "expansion"
+          ]
+        },
+        "b": {
+          "raw": "3.4",
+          "key": "3.4|",
+          "line": 72,
+          "window": "faster international expansion and modest multiple expansion at exit generates x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR 8 CONCLUSION",
+          "content": [
+            "faster",
+            "international",
+            "expansion",
+            "modest",
+            "multiple",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr",
+          "expansion"
+        ],
+        "a": {
+          "raw": "2.6",
+          "key": "2.6|",
+          "line": 72,
+          "window": "Group board control 3 of 5 seats Returns our base case generates a x MOIC and 21% IRR The upside case assuming faster international expansion",
+          "content": [
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside",
+            "assuming",
+            "faster",
+            "international",
+            "expansion"
+          ]
+        },
+        "b": {
+          "raw": "1.5",
+          "key": "1.5|",
+          "line": 72,
+          "window": "expansion at exit generates 3 4x MOIC and 28% IRR The downside case generates x MOIC and 9% IRR 8 CONCLUSION CloudPivot is a high-quality vertical SaaS asset",
+          "content": [
+            "expansion",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "2.6",
+          "key": "2.6|",
+          "line": 72,
+          "window": "Group board control 3 of 5 seats Returns our base case generates a x MOIC and 21% IRR The upside case assuming faster international expansion",
+          "content": [
+            "group",
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside",
+            "assuming",
+            "faster",
+            "international",
+            "expansion"
+          ]
+        },
+        "b": {
+          "raw": "8",
+          "key": "8|",
+          "line": 74,
+          "window": "generates 3 4x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR CONCLUSION CloudPivot is a high-quality vertical SaaS asset with strong unit",
+          "content": [
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset",
+            "strong",
+            "unit"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr",
+          "international",
+          "expansion",
+          "modest"
+        ],
+        "a": {
+          "raw": "21%",
+          "key": "21|percent",
+          "line": 72,
+          "window": "board control 3 of 5 seats Returns our base case generates a 2 6x MOIC and IRR The upside case assuming faster international expansion and modest",
+          "content": [
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside",
+            "assuming",
+            "faster",
+            "international",
+            "expansion",
+            "modest"
+          ]
+        },
+        "b": {
+          "raw": "28%",
+          "key": "28|percent",
+          "line": 72,
+          "window": "international expansion and modest multiple expansion at exit generates 3 4x MOIC and IRR The downside case generates 1 5x MOIC and 9% IRR 8 CONCLUSION CloudPivot",
+          "content": [
+            "international",
+            "expansion",
+            "modest",
+            "multiple",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "case",
+          "generates",
+          "moic",
+          "irr"
+        ],
+        "a": {
+          "raw": "21%",
+          "key": "21|percent",
+          "line": 72,
+          "window": "board control 3 of 5 seats Returns our base case generates a 2 6x MOIC and IRR The upside case assuming faster international expansion and modest",
+          "content": [
+            "board",
+            "control",
+            "seats",
+            "returns",
+            "base",
+            "case",
+            "generates",
+            "moic",
+            "irr",
+            "upside",
+            "assuming",
+            "faster",
+            "international",
+            "expansion",
+            "modest"
+          ]
+        },
+        "b": {
+          "raw": "9%",
+          "key": "9|percent",
+          "line": 72,
+          "window": "exit generates 3 4x MOIC and 28% IRR The downside case generates 1 5x MOIC and IRR 8 CONCLUSION CloudPivot is a high-quality vertical SaaS asset with strong",
+          "content": [
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset",
+            "strong"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "expansion",
+          "exit",
+          "generates",
+          "moic",
+          "irr",
+          "downside",
+          "case",
+          "conclusion"
+        ],
+        "a": {
+          "raw": "3.4",
+          "key": "3.4|",
+          "line": 72,
+          "window": "faster international expansion and modest multiple expansion at exit generates x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR 8 CONCLUSION",
+          "content": [
+            "faster",
+            "international",
+            "expansion",
+            "modest",
+            "multiple",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion"
+          ]
+        },
+        "b": {
+          "raw": "1.5",
+          "key": "1.5|",
+          "line": 72,
+          "window": "expansion at exit generates 3 4x MOIC and 28% IRR The downside case generates x MOIC and 9% IRR 8 CONCLUSION CloudPivot is a high-quality vertical SaaS asset",
+          "content": [
+            "expansion",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "generates",
+          "moic",
+          "irr",
+          "downside",
+          "case",
+          "conclusion"
+        ],
+        "a": {
+          "raw": "3.4",
+          "key": "3.4|",
+          "line": 72,
+          "window": "faster international expansion and modest multiple expansion at exit generates x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR 8 CONCLUSION",
+          "content": [
+            "faster",
+            "international",
+            "expansion",
+            "modest",
+            "multiple",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion"
+          ]
+        },
+        "b": {
+          "raw": "8",
+          "key": "8|",
+          "line": 74,
+          "window": "generates 3 4x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR CONCLUSION CloudPivot is a high-quality vertical SaaS asset with strong unit",
+          "content": [
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset",
+            "strong",
+            "unit"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "exit",
+          "generates",
+          "moic",
+          "irr",
+          "downside",
+          "case",
+          "conclusion",
+          "cloudpivot"
+        ],
+        "a": {
+          "raw": "28%",
+          "key": "28|percent",
+          "line": 72,
+          "window": "international expansion and modest multiple expansion at exit generates 3 4x MOIC and IRR The downside case generates 1 5x MOIC and 9% IRR 8 CONCLUSION CloudPivot",
+          "content": [
+            "international",
+            "expansion",
+            "modest",
+            "multiple",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot"
+          ]
+        },
+        "b": {
+          "raw": "9%",
+          "key": "9|percent",
+          "line": 72,
+          "window": "exit generates 3 4x MOIC and 28% IRR The downside case generates 1 5x MOIC and IRR 8 CONCLUSION CloudPivot is a high-quality vertical SaaS asset with strong",
+          "content": [
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset",
+            "strong"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      },
+      {
+        "source": "fixture-13:0",
+        "fixture": "fixture-13",
+        "label": "synth_internal_inconsistency_memo source 0 13_synth_internal_inconsistency_memo",
+        "shared": [
+          "generates",
+          "moic",
+          "irr",
+          "downside",
+          "case",
+          "conclusion",
+          "cloudpivot",
+          "high-quality",
+          "vertical",
+          "saas",
+          "asset"
+        ],
+        "a": {
+          "raw": "1.5",
+          "key": "1.5|",
+          "line": 72,
+          "window": "expansion at exit generates 3 4x MOIC and 28% IRR The downside case generates x MOIC and 9% IRR 8 CONCLUSION CloudPivot is a high-quality vertical SaaS asset",
+          "content": [
+            "expansion",
+            "exit",
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset"
+          ]
+        },
+        "b": {
+          "raw": "8",
+          "key": "8|",
+          "line": 74,
+          "window": "generates 3 4x MOIC and 28% IRR The downside case generates 1 5x MOIC and 9% IRR CONCLUSION CloudPivot is a high-quality vertical SaaS asset with strong unit",
+          "content": [
+            "generates",
+            "moic",
+            "irr",
+            "downside",
+            "case",
+            "conclusion",
+            "cloudpivot",
+            "high-quality",
+            "vertical",
+            "saas",
+            "asset",
+            "strong",
+            "unit"
+          ]
+        },
+        "time": {
+          "excluded": false,
+          "years": [],
+          "periods": [],
+          "dates": []
+        }
+      }
+    ]
+  }
+}
