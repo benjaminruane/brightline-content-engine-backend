@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship on the measurement commit |
+| SHIPPED | `SHIP VERIFIED  2ede100  main  166 files  1817 tests` |
 | Cost | USD 0. No model calls. The B390 cards are reused. |
 | Definition | `scripts/diagnostic/b393/ELEMENTS-v2.md`, committed as `0f5065b` before any count. Not revised after a number. `scripts/diagnostic/b392/ELEMENTS.md` and `scripts/diagnostic/b392/REPORT.md` are unchanged. |
 | Evidence | `scripts/diagnostic/b392/elements.mjs`, `scripts/diagnostic/b392/cross-table.mjs`, `scripts/diagnostic/b392/runs/cross-table.json`. |
