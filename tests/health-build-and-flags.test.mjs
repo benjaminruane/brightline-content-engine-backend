@@ -20,6 +20,7 @@ import { isExtractStructureEnabled, resolvePdfEngine } from "../lib/extract-text
 import { isRaisedCharactersEnabled } from "../lib/extract-pdf-direct.mjs";
 import { isNarrativeCoherenceEnabled } from "../lib/qc/narrative-coherence.mjs";
 import { isActorOfTheActionEnabled } from "../lib/qc/actor-of-the-action.mjs";
+import { isRecoveryMayNotGreenEnabled } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
 import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
 import { buildIncompleteReviewResponse } from "../lib/qc/review-deadline.mjs";
 import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
@@ -35,6 +36,7 @@ const B2_FLAGS = [
   "raisedCharacters",
   "narrativeCoherence",
   "actorOfTheAction",
+  "recoveryMayNotGreen",
 ];
 
 function createRes() {
@@ -120,6 +122,8 @@ describe("B340 health build and resolved flags", () => {
     assert.equal(env.raisedCharacters.resolved, isRaisedCharactersEnabled());
     assert.equal(env.narrativeCoherence.resolved, isNarrativeCoherenceEnabled());
     assert.equal(env.actorOfTheAction.resolved, isActorOfTheActionEnabled());
+    assert.equal(env.recoveryMayNotGreen.resolved, isRecoveryMayNotGreenEnabled());
+    assert.equal(env.recoveryMayNotGreen.differsFromDefault, false);
   });
 
   test("T4 editorial true is OFF and the name is listed without the value", async () => {

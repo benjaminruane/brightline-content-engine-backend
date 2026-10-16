@@ -234,7 +234,7 @@ describe("B369 quote without comment", () => {
     assert.equal(/matches the source/.test(nonGreen.commentary), false);
   });
 
-  test("October S10 with the empty-confirmation flag is Confirmed with quote and named comment", async () => {
+  test("October S10 with the empty-confirmation flag keeps the quote and the absence comment", async () => {
     const logs = [];
     const spy = vi.spyOn(console, "info").mockImplementation((...args) => {
       logs.push(String(args[0] || ""));
@@ -246,16 +246,16 @@ describe("B369 quote without comment", () => {
     assert.match(quote, /MAIT/);
     assert.match(quote, /3\.2x/);
     assert.match(quote, /2\.8x/);
-    assert.equal(s10.supportState, "supported");
-    assert.equal(s10.displayVerdict, "supported_full");
-    assert.equal(s10.evidenceSummary, S10_NAMED_COMMENT);
-    assert.equal(/no source addresses/i.test(s10.evidenceSummary), false);
-    assert.equal(s10.commentaryNotReviewed, false);
-    const fillLog = logs.find((line) => line.includes("[stage7] quote-without-comment"));
-    assert.match(fillLog, /statementIndex=10/);
-    assert.match(fillLog, /route=empty_confirmation_cleared/);
-    assert.match(fillLog, /named=4/);
-    assert.match(fillLog, /fallback=false/);
+    // B395. This test locked the defect: it required supported_full and the
+    // named match comment that replaced "No source addresses the claim".
+    assert.match(s10.evidenceSummary, /No source addresses the claim/);
+    assert.equal(s10.supportState, "skipped");
+    assert.equal(s10.displayVerdict, "not reviewed");
+    assert.equal(s10.evidenceSummary === S10_NAMED_COMMENT, false);
+    assert.equal(
+      logs.some((line) => line.includes("route=empty_confirmation_cleared")),
+      false
+    );
   }, 20000);
 
   test("no card in either fixture set ends with a quote and an empty comment", async () => {

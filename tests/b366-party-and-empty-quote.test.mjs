@@ -337,9 +337,11 @@ describe("B366 part two. Empty confirmation can get its quote back", () => {
     assert.match(quote, /MAIT/);
     assert.match(quote, /3\.2x/);
     assert.match(quote, /2\.8x/);
-    assert.equal(/no source addresses/i.test(s10.evidenceSummary), false);
-    assert.equal(s10.supportState, "supported");
-    assert.equal(s10.displayVerdict, "supported_full");
+    // B395. This assertion locked the defect: a located passage forced supported_full
+    // and cleared the absence comment. The quote stays. The Stage 3 skip stays.
+    assert.match(s10.evidenceSummary, /No source addresses the claim/);
+    assert.equal(s10.supportState, "skipped");
+    assert.equal(s10.displayVerdict, "not reviewed");
     assert.equal(s10.excerptNotLocatable, false);
   }, 20000);
 
