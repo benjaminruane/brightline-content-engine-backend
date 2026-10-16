@@ -1,0 +1,3155 @@
+{
+  "cleanElements": [
+    {
+      "doc": "3i",
+      "statementIndex": 0,
+      "kind": "name",
+      "surface": "3i Group",
+      "found": true,
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 0,
+      "kind": "figure",
+      "surface": "GBP 3.3 billion",
+      "found": true,
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 0,
+      "kind": "figure",
+      "surface": "six",
+      "found": true,
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 0,
+      "kind": "date",
+      "surface": "30 June 2025",
+      "found": true,
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 0,
+      "kind": "figure",
+      "surface": "13%",
+      "found": true,
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "14%",
+      "found": true,
+      "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 2,
+      "kind": "name",
+      "surface": "Action",
+      "found": true,
+      "statement": "This was driven largely by Action, which continues to trade strongly."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "Switzerland",
+      "found": true,
+      "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "Romania",
+      "found": true,
+      "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 5,
+      "kind": "figure",
+      "surface": "nine",
+      "found": true,
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 5,
+      "kind": "date",
+      "surface": "28 September 2025",
+      "found": true,
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 5,
+      "kind": "figure",
+      "surface": "EUR 11.2 billion",
+      "found": true,
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 5,
+      "kind": "figure",
+      "surface": "6.3%",
+      "found": true,
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 6,
+      "kind": "name",
+      "surface": "Action",
+      "found": true,
+      "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 6,
+      "kind": "date",
+      "surface": "October 2025",
+      "found": true,
+      "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 7,
+      "kind": "figure",
+      "surface": "EUR 3.1 billion",
+      "found": true,
+      "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 7,
+      "kind": "figure",
+      "surface": "EUR 1.6 billion",
+      "found": true,
+      "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "Action",
+      "found": true,
+      "statement": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "3i",
+      "found": true,
+      "statement": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 9,
+      "kind": "figure",
+      "surface": "2.2%",
+      "found": true,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 9,
+      "kind": "figure",
+      "surface": "2.2%",
+      "found": true,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 9,
+      "kind": "name",
+      "surface": "GIC",
+      "found": true,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 9,
+      "kind": "name",
+      "surface": "3i",
+      "found": true,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 9,
+      "kind": "name",
+      "surface": "Action",
+      "found": true,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 9,
+      "kind": "figure",
+      "surface": "62.3%",
+      "found": true,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 10,
+      "kind": "name",
+      "surface": "3i",
+      "found": true,
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 10,
+      "kind": "name",
+      "surface": "MPM",
+      "found": true,
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 10,
+      "kind": "name",
+      "surface": "MAIT",
+      "found": true,
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 10,
+      "kind": "figure",
+      "surface": "3.2x",
+      "found": true,
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 10,
+      "kind": "figure",
+      "surface": "2.8x",
+      "found": true,
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 11,
+      "kind": "figure",
+      "surface": "9%",
+      "found": true,
+      "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 11,
+      "kind": "figure",
+      "surface": "six",
+      "found": true,
+      "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 12,
+      "kind": "name",
+      "surface": "3i Infrastructure",
+      "found": true,
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 12,
+      "kind": "name",
+      "surface": "TCR",
+      "found": true,
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 13,
+      "kind": "name",
+      "surface": "3i",
+      "found": true,
+      "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 13,
+      "kind": "figure",
+      "surface": "GBP 0.365",
+      "found": false,
+      "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026."
+    },
+    {
+      "doc": "3i",
+      "statementIndex": 13,
+      "kind": "date",
+      "surface": "January 2026",
+      "found": true,
+      "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 0,
+      "kind": "name",
+      "surface": "HICL Infrastructure",
+      "found": true,
+      "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 0,
+      "kind": "figure",
+      "surface": "five",
+      "found": false,
+      "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 0,
+      "kind": "date",
+      "surface": "28 February 2026",
+      "found": true,
+      "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "EBITDA",
+      "found": true,
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "HCIL",
+      "found": false,
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 2,
+      "kind": "name",
+      "surface": "EBITDA",
+      "found": true,
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "Among",
+      "found": false,
+      "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "London St. Pancras High Speed",
+      "found": true,
+      "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 4,
+      "kind": "name",
+      "surface": "Virgin Trains",
+      "found": true,
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 4,
+      "kind": "name",
+      "surface": "Channel",
+      "found": false,
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 4,
+      "kind": "name",
+      "surface": "St. Pancras",
+      "found": true,
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 5,
+      "kind": "name",
+      "surface": "Fortysouth",
+      "found": true,
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 5,
+      "kind": "figure",
+      "surface": "16",
+      "found": true,
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 5,
+      "kind": "name",
+      "surface": "EBITDA",
+      "found": true,
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 7,
+      "kind": "name",
+      "surface": "Affinity Water",
+      "found": true,
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 7,
+      "kind": "name",
+      "surface": "CEO",
+      "found": false,
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 7,
+      "kind": "name",
+      "surface": "UK",
+      "found": true,
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 0,
+      "kind": "date",
+      "surface": "November 2025",
+      "found": false,
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 0,
+      "kind": "name",
+      "surface": "GP Industries",
+      "found": true,
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 0,
+      "kind": "name",
+      "surface": "Southeast Asia",
+      "found": true,
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 0,
+      "kind": "name",
+      "surface": "US",
+      "found": true,
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "three",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "Malaysia",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "two",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "Vietnam",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "one",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "Thailand",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "two",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "UK",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "one",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "China",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "European",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "Asian",
+      "found": true,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "Gold Peak Technology",
+      "found": true,
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "GP Industries",
+      "found": true,
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "Johor",
+      "found": true,
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "Malaysia",
+      "found": true,
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 4,
+      "kind": "name",
+      "surface": "GP Industries",
+      "found": true,
+      "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 4,
+      "kind": "figure",
+      "surface": "6 billion",
+      "found": true,
+      "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide."
+    },
+    {
+      "doc": "GPI",
+      "statementIndex": 4,
+      "kind": "figure",
+      "surface": "1 million",
+      "found": true,
+      "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 0,
+      "kind": "date",
+      "surface": "May 2026",
+      "found": false,
+      "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 0,
+      "kind": "name",
+      "surface": "ClearPoint Neuro",
+      "found": true,
+      "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 0,
+      "kind": "date",
+      "surface": "first quarter of 2026",
+      "found": true,
+      "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "43%",
+      "found": true,
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "USD 12.1 million",
+      "found": true,
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 1,
+      "kind": "figure",
+      "surface": "175",
+      "found": true,
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 1,
+      "kind": "name",
+      "surface": "IRRAflow",
+      "found": true,
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 2,
+      "kind": "name",
+      "surface": "Organic",
+      "found": true,
+      "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 2,
+      "kind": "figure",
+      "surface": "16%",
+      "found": true,
+      "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 2,
+      "kind": "figure",
+      "surface": "25%",
+      "found": true,
+      "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 2,
+      "kind": "figure",
+      "surface": "64%",
+      "found": true,
+      "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "Topline",
+      "found": false,
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 3,
+      "kind": "figure",
+      "surface": "80%",
+      "found": true,
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 3,
+      "kind": "figure",
+      "surface": "USD 5.9 million",
+      "found": true,
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 3,
+      "kind": "name",
+      "surface": "IRRAflow",
+      "found": true,
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 3,
+      "kind": "figure",
+      "surface": "3.0",
+      "found": true,
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 4,
+      "kind": "figure",
+      "surface": "177%",
+      "found": true,
+      "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 4,
+      "kind": "name",
+      "surface": "ClearPoint",
+      "found": true,
+      "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 4,
+      "kind": "name",
+      "surface": "IRRAflow",
+      "found": true,
+      "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 4,
+      "kind": "name",
+      "surface": "Prism",
+      "found": true,
+      "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 6,
+      "kind": "figure",
+      "surface": "60",
+      "found": true,
+      "statement": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 7,
+      "kind": "name",
+      "surface": "Notably",
+      "found": false,
+      "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 7,
+      "kind": "name",
+      "surface": "FDA",
+      "found": true,
+      "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 7,
+      "kind": "name",
+      "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+      "found": true,
+      "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "Health Canada",
+      "found": true,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "ClearPoint Neuro Navigation System",
+      "found": true,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "MRI",
+      "found": true,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "ClearPoint",
+      "found": true,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "Asia",
+      "found": true,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 8,
+      "kind": "name",
+      "surface": "Pacific",
+      "found": true,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 9,
+      "kind": "figure",
+      "surface": "USD 52",
+      "found": true,
+      "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 9,
+      "kind": "figure",
+      "surface": "56 million",
+      "found": false,
+      "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 9,
+      "kind": "date",
+      "surface": "2026",
+      "found": true,
+      "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026."
+    }
+  ],
+  "passes": {
+    "ids-1": {
+      "tables": {
+        "doctored": {
+          "found": {
+            "contradicted": 41,
+            "partial": 21,
+            "supported": 21,
+            "silent": 2
+          },
+          "notFound": {
+            "contradicted": 16,
+            "partial": 5,
+            "supported": 1,
+            "silent": 2
+          },
+          "total": 109
+        },
+        "clean": {
+          "found": {
+            "contradicted": 5,
+            "partial": 43,
+            "supported": 51,
+            "silent": 0
+          },
+          "notFound": {
+            "contradicted": 0,
+            "partial": 4,
+            "supported": 6,
+            "silent": 1
+          },
+          "total": 110
+        }
+      },
+      "c3": [
+        {
+          "doc": "3i",
+          "side": "doctored",
+          "statementIndex": 13,
+          "kind": "figure",
+          "surface": "GBP 0.365",
+          "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "HICL",
+          "side": "clean",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "five",
+          "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "HICL",
+          "side": "clean",
+          "statementIndex": 3,
+          "kind": "name",
+          "surface": "Among",
+          "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "HICL",
+          "side": "clean",
+          "statementIndex": 4,
+          "kind": "name",
+          "surface": "Channel",
+          "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "GPI",
+          "side": "clean",
+          "statementIndex": 0,
+          "kind": "date",
+          "surface": "November 2025",
+          "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "ClearPoint",
+          "side": "clean",
+          "statementIndex": 0,
+          "kind": "date",
+          "surface": "May 2026",
+          "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "ClearPoint",
+          "side": "clean",
+          "statementIndex": 9,
+          "kind": "figure",
+          "surface": "56 million",
+          "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "The company provided updated revenue guidance of USD 52-56 million for 2026."
+          },
+          "plantedIds": []
+        }
+      ],
+      "c4clean": [
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "name",
+          "surface": "3i Group",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "GBP 3.3 billion",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "six",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "date",
+          "surface": "30 June 2025",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "13%",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        }
+      ],
+      "c4doctored": [
+        {
+          "pass": "ids-1",
+          "id": "3i-S0-a",
+          "doc": "3i",
+          "statementIndex": 0,
+          "written": "£3.3 million",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "GBP 3.3 million",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "3i-S5-a",
+          "doc": "3i",
+          "statementIndex": 5,
+          "written": "six months to 30 June 2026",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "stance": "contradicted"
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2026",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "3i-S8-a",
+          "doc": "3i",
+          "statementIndex": 8,
+          "written": "MAIT",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "3i-S9-a",
+          "doc": "3i",
+          "statementIndex": 9,
+          "written": "AGIC",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "AGIC",
+              "found": false,
+              "stance": "partial"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "3i-S12-a",
+          "doc": "3i",
+          "statementIndex": 12,
+          "written": "gains across essentially all of its investments",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "3i-S14-a",
+          "doc": "3i",
+          "statementIndex": 14,
+          "written": "the UK government",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "UK",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S0-a",
+          "doc": "HICL",
+          "statementIndex": 0,
+          "written": "HCIL",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "HCIL Infrastructure",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S0-b",
+          "doc": "HICL",
+          "statementIndex": 0,
+          "written": "six months to 31 December 2025",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "stance": "contradicted"
+            },
+            {
+              "kind": "date",
+              "surface": "31 December 2025",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S1-a",
+          "doc": "HICL",
+          "statementIndex": 1,
+          "written": "with average 30% EBITDA growth",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "30%",
+              "found": false,
+              "stance": "partial"
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "stance": "partial"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S2-a",
+          "doc": "HICL",
+          "statementIndex": 2,
+          "written": "significantly outperform budgets",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S3-a",
+          "doc": "HICL",
+          "statementIndex": 3,
+          "written": "Paris St. Germain High Speed",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "Paris St. Germain High Speed",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S4-a",
+          "doc": "HICL",
+          "statementIndex": 4,
+          "written": "operations from St. Germain",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "St. Germain",
+              "found": false,
+              "stance": "partial"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S5-a",
+          "doc": "HICL",
+          "statementIndex": 5,
+          "written": "TowerCo",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "TowerCo",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S5-b",
+          "doc": "HICL",
+          "statementIndex": 5,
+          "written": "20 new towers",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "20",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S5-c",
+          "doc": "HICL",
+          "statementIndex": 5,
+          "written": "during the past year",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S6-a",
+          "doc": "HICL",
+          "statementIndex": 6,
+          "written": "lead to an increase",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S7-a",
+          "doc": "HICL",
+          "statementIndex": 7,
+          "written": "appointed a new CFO",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "CFO",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S7-b",
+          "doc": "HICL",
+          "statementIndex": 7,
+          "written": "the French government's",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "French",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "hicl-S7-c",
+          "doc": "HICL",
+          "statementIndex": 7,
+          "written": "electricity sector reform",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S0-a",
+          "doc": "GPI",
+          "statementIndex": 0,
+          "written": "October 2025",
+          "covering": [
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S0-b",
+          "doc": "GPI",
+          "statementIndex": 0,
+          "written": "75% of its global production capacity",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "75%",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S0-c",
+          "doc": "GPI",
+          "statementIndex": 0,
+          "written": "escalating oil prices",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S1-a",
+          "doc": "GPI",
+          "statementIndex": 1,
+          "written": "15 facilities in Malaysia",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "15",
+              "found": false,
+              "stance": "contradicted"
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S1-b",
+          "doc": "GPI",
+          "statementIndex": 1,
+          "written": "European market only",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "European",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S2-a",
+          "doc": "GPI",
+          "statementIndex": 2,
+          "written": "enhancing site security",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S3-a",
+          "doc": "GPI",
+          "statementIndex": 3,
+          "written": "Silver Hill Technology",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "Silver Hill Technology",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S4-a",
+          "doc": "GPI",
+          "statementIndex": 4,
+          "written": "the largest",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S4-b",
+          "doc": "GPI",
+          "statementIndex": 4,
+          "written": "over 60 billion",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "60 billion",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "gpi-S4-c",
+          "doc": "GPI",
+          "statementIndex": 4,
+          "written": "bartered through",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S0-a",
+          "doc": "ClearPoint",
+          "statementIndex": 0,
+          "written": "April",
+          "covering": [
+            {
+              "kind": "date",
+              "surface": "April 2026",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S2-a",
+          "doc": "ClearPoint",
+          "statementIndex": 2,
+          "written": "-50%",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "-50%",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S3-a",
+          "doc": "ClearPoint",
+          "statementIndex": 3,
+          "written": "the vast majority of the company's overall revenue",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S7-a",
+          "doc": "ClearPoint",
+          "statementIndex": 7,
+          "written": "a submission for FDA approval",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "found": true,
+              "stance": "silent"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S8-a",
+          "doc": "ClearPoint",
+          "statementIndex": 8,
+          "written": "the FDA",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S8-b",
+          "doc": "ClearPoint",
+          "statementIndex": 8,
+          "written": "has been commenced",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S9-a",
+          "doc": "ClearPoint",
+          "statementIndex": 9,
+          "written": "USD 56 million",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "USD 56 million",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-1",
+          "id": "clearpoint-S9-b",
+          "doc": "ClearPoint",
+          "statementIndex": 9,
+          "written": "2027",
+          "covering": [
+            {
+              "kind": "date",
+              "surface": "2027",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        }
+      ],
+      "worklists": [
+        {
+          "doc": "3i",
+          "statements": 15,
+          "items": 18,
+          "elementItems": 18,
+          "interpretive": 0,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": true,
+              "displayVerdict": "conflict",
+              "elementItems": 5,
+              "interpretive": false,
+              "items": 5
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 2,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 3,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 4,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 5,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 6,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 7,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 8,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 9,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 10,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 11,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 12,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 13,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 14,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            }
+          ]
+        },
+        {
+          "doc": "HICL",
+          "statements": 8,
+          "items": 12,
+          "elementItems": 11,
+          "interpretive": 1,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 2,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 3,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 4,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 5,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 6,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 0,
+              "interpretive": true,
+              "items": 1
+            },
+            {
+              "index": 7,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            }
+          ]
+        },
+        {
+          "doc": "GPI",
+          "statements": 5,
+          "items": 17,
+          "elementItems": 17,
+          "interpretive": 0,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 12,
+              "interpretive": false,
+              "items": 12
+            },
+            {
+              "index": 2,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 3,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 4,
+              "interpretive": false,
+              "items": 4
+            },
+            {
+              "index": 4,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            }
+          ]
+        },
+        {
+          "doc": "ClearPoint",
+          "statements": 10,
+          "items": 13,
+          "elementItems": 13,
+          "interpretive": 0,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 2,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 3,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 4,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 4,
+              "interpretive": false,
+              "items": 4
+            },
+            {
+              "index": 5,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 6,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 7,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 8,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 9,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            }
+          ]
+        }
+      ]
+    },
+    "ids-2": {
+      "tables": {
+        "doctored": {
+          "found": {
+            "contradicted": 46,
+            "partial": 11,
+            "supported": 24,
+            "silent": 4
+          },
+          "notFound": {
+            "contradicted": 17,
+            "partial": 4,
+            "supported": 1,
+            "silent": 2
+          },
+          "total": 109
+        },
+        "clean": {
+          "found": {
+            "contradicted": 5,
+            "partial": 41,
+            "supported": 53,
+            "silent": 0
+          },
+          "notFound": {
+            "contradicted": 0,
+            "partial": 5,
+            "supported": 5,
+            "silent": 1
+          },
+          "total": 110
+        }
+      },
+      "c3": [
+        {
+          "doc": "3i",
+          "side": "doctored",
+          "statementIndex": 13,
+          "kind": "figure",
+          "surface": "GBP 0.365",
+          "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "HICL",
+          "side": "clean",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "five",
+          "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "HICL",
+          "side": "clean",
+          "statementIndex": 3,
+          "kind": "name",
+          "surface": "Among",
+          "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "HICL",
+          "side": "clean",
+          "statementIndex": 4,
+          "kind": "name",
+          "surface": "Channel",
+          "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "GPI",
+          "side": "clean",
+          "statementIndex": 0,
+          "kind": "date",
+          "surface": "November 2025",
+          "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions."
+          },
+          "plantedIds": []
+        },
+        {
+          "doc": "ClearPoint",
+          "side": "clean",
+          "statementIndex": 0,
+          "kind": "date",
+          "surface": "May 2026",
+          "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+          "claim": {
+            "verdict": "confirmed",
+            "claim": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026."
+          },
+          "plantedIds": []
+        }
+      ],
+      "c4clean": [
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "name",
+          "surface": "3i Group",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "GBP 3.3 billion",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "six",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "date",
+          "surface": "30 June 2025",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        },
+        {
+          "doc": "3i",
+          "statementIndex": 0,
+          "kind": "figure",
+          "surface": "13%",
+          "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "claim": {
+            "verdict": "conflicting",
+            "claim": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds."
+          }
+        }
+      ],
+      "c4doctored": [
+        {
+          "pass": "ids-2",
+          "id": "3i-S0-a",
+          "doc": "3i",
+          "statementIndex": 0,
+          "written": "£3.3 million",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "GBP 3.3 million",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "3i-S5-a",
+          "doc": "3i",
+          "statementIndex": 5,
+          "written": "six months to 30 June 2026",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "stance": "contradicted"
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2026",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "3i-S8-a",
+          "doc": "3i",
+          "statementIndex": 8,
+          "written": "MAIT",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "3i-S9-a",
+          "doc": "3i",
+          "statementIndex": 9,
+          "written": "AGIC",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "AGIC",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "3i-S12-a",
+          "doc": "3i",
+          "statementIndex": 12,
+          "written": "gains across essentially all of its investments",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "3i-S14-a",
+          "doc": "3i",
+          "statementIndex": 14,
+          "written": "the UK government",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "UK",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S0-a",
+          "doc": "HICL",
+          "statementIndex": 0,
+          "written": "HCIL",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "HCIL Infrastructure",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S0-b",
+          "doc": "HICL",
+          "statementIndex": 0,
+          "written": "six months to 31 December 2025",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "stance": "contradicted"
+            },
+            {
+              "kind": "date",
+              "surface": "31 December 2025",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S1-a",
+          "doc": "HICL",
+          "statementIndex": 1,
+          "written": "with average 30% EBITDA growth",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "30%",
+              "found": false,
+              "stance": "partial"
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "stance": "partial"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S2-a",
+          "doc": "HICL",
+          "statementIndex": 2,
+          "written": "significantly outperform budgets",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S3-a",
+          "doc": "HICL",
+          "statementIndex": 3,
+          "written": "Paris St. Germain High Speed",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "Paris St. Germain High Speed",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S4-a",
+          "doc": "HICL",
+          "statementIndex": 4,
+          "written": "operations from St. Germain",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "St. Germain",
+              "found": false,
+              "stance": "partial"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S5-a",
+          "doc": "HICL",
+          "statementIndex": 5,
+          "written": "TowerCo",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "TowerCo",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S5-b",
+          "doc": "HICL",
+          "statementIndex": 5,
+          "written": "20 new towers",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "20",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S5-c",
+          "doc": "HICL",
+          "statementIndex": 5,
+          "written": "during the past year",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S6-a",
+          "doc": "HICL",
+          "statementIndex": 6,
+          "written": "lead to an increase",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S7-a",
+          "doc": "HICL",
+          "statementIndex": 7,
+          "written": "appointed a new CFO",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "CFO",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S7-b",
+          "doc": "HICL",
+          "statementIndex": 7,
+          "written": "the French government's",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "French",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "hicl-S7-c",
+          "doc": "HICL",
+          "statementIndex": 7,
+          "written": "electricity sector reform",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S0-a",
+          "doc": "GPI",
+          "statementIndex": 0,
+          "written": "October 2025",
+          "covering": [
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S0-b",
+          "doc": "GPI",
+          "statementIndex": 0,
+          "written": "75% of its global production capacity",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "75%",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S0-c",
+          "doc": "GPI",
+          "statementIndex": 0,
+          "written": "escalating oil prices",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S1-a",
+          "doc": "GPI",
+          "statementIndex": 1,
+          "written": "15 facilities in Malaysia",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "15",
+              "found": false,
+              "stance": "contradicted"
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S1-b",
+          "doc": "GPI",
+          "statementIndex": 1,
+          "written": "European market only",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "European",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S2-a",
+          "doc": "GPI",
+          "statementIndex": 2,
+          "written": "enhancing site security",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S3-a",
+          "doc": "GPI",
+          "statementIndex": 3,
+          "written": "Silver Hill Technology",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "Silver Hill Technology",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S4-a",
+          "doc": "GPI",
+          "statementIndex": 4,
+          "written": "the largest",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S4-b",
+          "doc": "GPI",
+          "statementIndex": 4,
+          "written": "over 60 billion",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "60 billion",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "gpi-S4-c",
+          "doc": "GPI",
+          "statementIndex": 4,
+          "written": "bartered through",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S0-a",
+          "doc": "ClearPoint",
+          "statementIndex": 0,
+          "written": "April",
+          "covering": [
+            {
+              "kind": "date",
+              "surface": "April 2026",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S2-a",
+          "doc": "ClearPoint",
+          "statementIndex": 2,
+          "written": "-50%",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "-50%",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S3-a",
+          "doc": "ClearPoint",
+          "statementIndex": 3,
+          "written": "the vast majority of the company's overall revenue",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S7-a",
+          "doc": "ClearPoint",
+          "statementIndex": 7,
+          "written": "a submission for FDA approval",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "found": true,
+              "stance": "silent"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S8-a",
+          "doc": "ClearPoint",
+          "statementIndex": 8,
+          "written": "the FDA",
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S8-b",
+          "doc": "ClearPoint",
+          "statementIndex": 8,
+          "written": "has been commenced",
+          "covering": [],
+          "checkCaught": false,
+          "modelOnly": false,
+          "uncovered": true
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S9-a",
+          "doc": "ClearPoint",
+          "statementIndex": 9,
+          "written": "USD 56 million",
+          "covering": [
+            {
+              "kind": "figure",
+              "surface": "USD 56 million",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        },
+        {
+          "pass": "ids-2",
+          "id": "clearpoint-S9-b",
+          "doc": "ClearPoint",
+          "statementIndex": 9,
+          "written": "2027",
+          "covering": [
+            {
+              "kind": "date",
+              "surface": "2027",
+              "found": true,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": false,
+          "modelOnly": true,
+          "uncovered": false
+        }
+      ],
+      "worklists": [
+        {
+          "doc": "3i",
+          "statements": 15,
+          "items": 13,
+          "elementItems": 13,
+          "interpretive": 0,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": true,
+              "displayVerdict": "conflict",
+              "elementItems": 5,
+              "interpretive": false,
+              "items": 5
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 2,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 3,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 4,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 5,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 6,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 7,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 8,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 9,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 10,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 11,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 12,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 13,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 14,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            }
+          ]
+        },
+        {
+          "doc": "HICL",
+          "statements": 8,
+          "items": 13,
+          "elementItems": 12,
+          "interpretive": 1,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 2,
+              "interpretive": false,
+              "items": 2
+            },
+            {
+              "index": 2,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 3,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 4,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 5,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 6,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 0,
+              "interpretive": true,
+              "items": 1
+            },
+            {
+              "index": 7,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            }
+          ]
+        },
+        {
+          "doc": "GPI",
+          "statements": 5,
+          "items": 17,
+          "elementItems": 17,
+          "interpretive": 0,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 12,
+              "interpretive": false,
+              "items": 12
+            },
+            {
+              "index": 2,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 3,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 4,
+              "interpretive": false,
+              "items": 4
+            },
+            {
+              "index": 4,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            }
+          ]
+        },
+        {
+          "doc": "ClearPoint",
+          "statements": 10,
+          "items": 15,
+          "elementItems": 15,
+          "interpretive": 0,
+          "perStatement": [
+            {
+              "index": 0,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 1,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 2,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 3,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            },
+            {
+              "index": 4,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 4,
+              "interpretive": false,
+              "items": 4
+            },
+            {
+              "index": 5,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 6,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 7,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 1,
+              "interpretive": false,
+              "items": 1
+            },
+            {
+              "index": 8,
+              "marked": false,
+              "displayVerdict": "supported_full",
+              "elementItems": 0,
+              "interpretive": false,
+              "items": 0
+            },
+            {
+              "index": 9,
+              "marked": true,
+              "displayVerdict": "supported_partial",
+              "elementItems": 3,
+              "interpretive": false,
+              "items": 3
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
