@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship on the measurement commit |
+| SHIPPED | `SHIP VERIFIED  7380418  main  166 files  1817 tests` |
 | Cost | USD 0. No model calls. No live runs. |
 | Definition | `scripts/diagnostic/b392/ELEMENTS.md`, committed as `d107622` before any count. Not revised after a number. |
 | Input | The four doctored drafts and the four clean drafts in the B390 held-out set. Model stance from `scripts/diagnostic/b390/runs/ids-1/cards.json` and `ids-2/cards.json`. Planted substitutions from `scripts/diagnostic/b385/labels.json`. |
