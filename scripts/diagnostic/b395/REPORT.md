@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship. |
+| SHIPPED | `SHIP VERIFIED  de372ac  main  166 files  1819 tests` |
 | Cost | USD 0. No model calls. |
 | Flag | `QC_RECOVERY_MAY_NOT_GREEN`, default on. Off is the old forced green, for this measurement only. |
 | Evidence | `scripts/diagnostic/b395/runs/diff.json`. Predictions in `scripts/diagnostic/b395/PREDICTIONS.md`, written before the run and not revised. |
