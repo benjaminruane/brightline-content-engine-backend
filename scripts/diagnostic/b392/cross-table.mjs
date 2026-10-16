@@ -73,9 +73,39 @@ function assertExamples() {
   if (!percent || elementFound(percent, "the count was 13")) throw new Error("example failed: percent matched a bare figure");
   const elsewhere = extractElements("Elsewhere the group grew.", "Elsewhere the group grew.");
   if (elsewhere.some((item) => item.surface === "Elsewhere")) throw new Error("example failed: Elsewhere kept");
-  const onThe = extractElements("On the hill.", "On the hill.");
+  const onThe = extractElements("On the hill.", "On the hill.", "on the hill");
   if (onThe.some((item) => item.surface === "On" || item.surface === "On the")) {
     throw new Error("example failed: On the kept");
+  }
+  const pence = extractElements("a dividend of GBP 0.365 per share", "a dividend of GBP 0.365 per share").find((item) => item.kind === "figure");
+  if (!pence || !elementFound(pence, "36.5 pence per share for the year")) throw new Error("example failed: pence");
+  const november = extractElements("In November 2025, the group", "In November 2025, the group").find((item) => item.kind === "date");
+  if (!november || !elementFound(november, "13 November 2025, Singapore")) throw new Error("example failed: month against full date");
+  const fullDate = extractElements("signed on 13 November 2025 today", "signed on 13 November 2025 today").find((item) => item.kind === "date" && item.key === "2025-11-13");
+  if (!fullDate || elementFound(fullDate, "met in November 2025 only")) throw new Error("example failed: full date matched a month");
+  const range = extractElements("guidance of USD 52-56 million", "guidance of USD 52-56 million").filter((item) => item.kind === "figure");
+  const high = range.find((item) => item.written === 56);
+  if (!high || high.unit !== "USD" || high.scale !== "million") throw new Error("example failed: range currency");
+  if (!elementFound(high, "between $52.0 million and $56.0 million")) throw new Error("example failed: 56 million");
+  const channel = extractElements("cross-Channel operations", "cross-Channel operations").find((item) => item.kind === "name");
+  if (!channel || !elementFound(channel, "intentions for crossChannel operations")) throw new Error("example failed: crossChannel");
+  const pancras = extractElements("operations from St. Pancras.", "operations from St. Pancras.").find((item) => item.kind === "name" && item.surface.startsWith("St."));
+  if (!pancras || pancras.surface !== "St. Pancras" || !elementFound(pancras, "from St. Pancras today")) {
+    throw new Error("example failed: St. Pancras");
+  }
+  const eighty = extractElements("achieved 80% year-on-year growth", "achieved 80% year-on-year growth").find((item) => item.kind === "figure");
+  if (!eighty || !elementFound(eighty, "increased 80% to $5.9 million for the three months")) {
+    throw new Error("example failed: 80 percent");
+  }
+  const ebitda = extractElements("EBITDA grew.", "EBITDA grew.");
+  if (ebitda.some((item) => item.surface === "EBITDA")) throw new Error("example failed: EBITDA kept");
+  const fda = extractElements("FDA cleared the device.", "FDA cleared the device.");
+  if (!fda.some((item) => item.surface === "FDA")) throw new Error("example failed: FDA dropped");
+  const lower = "action hicl hcil fortysouth johor switzerland 3i";
+  for (const word of ["Action", "HICL", "HCIL", "Fortysouth", "Johor", "Switzerland", "3i"]) {
+    const text = `${word} reported results.`;
+    const kept = extractElements(text, text, lower).some((item) => item.kind === "name" && item.surface === word);
+    if (!kept) throw new Error(`must-keep failed: ${word}`);
   }
 }
 
@@ -226,7 +256,7 @@ async function main() {
         : [];
       const elements = [];
       statements.forEach((text, index) => {
-        for (const element of extractElements(text, draft)) {
+        for (const element of extractElements(text, draft, source)) {
           const planted = subs.filter((sub) => sub.statementIndex === index && overlapsSpan(element.start, element.end, locateAll(text, sub.written)));
           elements.push({
             doc: doc.doc,

@@ -1,5 +1,6 @@
 /**
- * B392 element extractor. Implements ELEMENTS.md. That file is not revised from here.
+ * Element extractor. B392 ELEMENTS.md stands. Matching and name rules follow
+ * scripts/diagnostic/b393/ELEMENTS-v2.md, which supersedes it.
  */
 const CURRENCY = "USD|GBP|EUR|SEK|\\$|£|€";
 const SCALE_WORD = "thousand|million|billion|bn|mn";
@@ -35,8 +36,12 @@ const MONTH_INDEX = {
   dec: 12,
 };
 
-const SENTENCE_INITIAL = new Set(
-  "elsewhere meanwhile looking across this the on in year net our performance".split(" ")
+const SENTENCE_OPENERS = new Set(
+  "among notably meanwhile elsewhere looking across however separately additionally overall finally topline organic".split(" ")
+);
+const MUST_KEEP = new Set("action hicl hcil fortysouth johor switzerland 3i".split(" "));
+const GENERIC_ABBREV = new Set(
+  "ebitda ceo cfo coo cio nav irr moic tvpi dpi arr gmv api cagr lfl mri ct esg".split(" ")
 );
 const NOT_A_NAME = new Set(
   `${CARDINALS.replace(/\|/g, " ")} thousand million billion bn mn percent ${MONTH} usd gbp eur sek`.split(/\s+/)
@@ -180,6 +185,38 @@ function unitOf(currency, percent) {
   return "bare";
 }
 
+function refold(figure) {
+  const major = figure.minor ? figure.written / 100 : figure.written;
+  figure.folded = figure.sign * major * SCALE_MULT[figure.scale || ""];
+}
+
+function applyMinor(figure, minorToken) {
+  const token = String(minorToken || "").toLowerCase();
+  if (!token || figure.unit === "percent") return figure;
+  const pence = token === "p" || token === "pence";
+  const cents = token === "c" || token === "cents";
+  const ore = token === "öre" || token === "ore";
+  if (!pence && !cents && !ore) return figure;
+  if (pence) {
+    if (figure.unit !== "bare" && figure.unit !== "GBP") return figure;
+    figure.unit = "GBP";
+    figure.minor = "pence";
+  } else if (ore) {
+    if (figure.unit !== "bare" && figure.unit !== "SEK") return figure;
+    figure.unit = "SEK";
+    figure.minor = "ore";
+  } else if (figure.unit === "USD" || figure.unit === "EUR") {
+    figure.minor = "cents";
+  } else if (figure.unit === "bare") {
+    figure.unit = "cent";
+    figure.minor = "cents";
+  } else {
+    return figure;
+  }
+  refold(figure);
+  return figure;
+}
+
 function figureFrom(match, parts) {
   const { sign, currency, body, frac, scaleWord, scaleSuffix, percent } = parts;
   if (!body) return null;
@@ -204,13 +241,14 @@ function figureFrom(match, parts) {
     decimals,
     scale,
     unit,
+    minor: null,
     folded: signNum * written * SCALE_MULT[scale],
   };
 }
 
 function collectFigures(text, spans) {
   const digitRe = new RegExp(
-    `(?<![\\w.])(-?)(?:(${CURRENCY})\\s*)?(\\d{1,3}(?:,\\d{3})+|\\d+)(\\.\\d+)?(?:\\s+(${SCALE_WORD})\\b|(m|k)\\b)?(?:\\s*(%|percent)(?!\\w))?(?:x\\b)?(?![A-Za-z])`,
+    `(?<![\\w.])(-?)(?:(${CURRENCY})\\s*)?(\\d{1,3}(?:,\\d{3})+|\\d+)(\\.\\d+)?(?:\\s+(${SCALE_WORD})\\b|(m|k)\\b)?(?:\\s*(%|percent)(?!\\w))?(?:\\s+(pence|cents|öre|ore)\\b|([pc])\\b|x\\b)?(?![A-Za-z])`,
     "gi"
   );
   const wordRe = new RegExp(
@@ -224,6 +262,7 @@ function collectFigures(text, spans) {
     if (overlaps(spans, start, end)) return;
     const figure = figureFrom(match, parts);
     if (!figure) return;
+    applyMinor(figure, parts.minor);
     pending.push(figure);
   };
   for (const match of text.matchAll(digitRe)) {
@@ -237,6 +276,7 @@ function collectFigures(text, spans) {
       scaleWord: match[5],
       scaleSuffix: match[6],
       percent: match[7],
+      minor: match[8] || match[9] || "",
     });
   }
   const words = { zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20 };
@@ -249,24 +289,36 @@ function collectFigures(text, spans) {
       scaleWord: match[4],
       scaleSuffix: "",
       percent: match[5] || (match[0].includes("%") ? "%" : ""),
+      minor: "",
     });
   }
   pending.sort((a, b) => a.start - b.start);
   for (let i = 1; i < pending.length; i += 1) {
     const prev = pending[i - 1];
     const curr = pending[i];
-    if (prev.scale || !curr.scale || prev.unit === "percent") continue;
+    if (prev.unit === "percent" || curr.unit === "percent") continue;
     const between = text.slice(prev.end, curr.start);
-    if (/^\s*(?:-|to)\s*$/i.test(between)) {
-      prev.scale = curr.scale;
-      prev.folded = prev.sign * prev.written * SCALE_MULT[prev.scale];
-    }
+    if (!/^\s*(?:-|to)\s*$/i.test(between)) continue;
+    if (prev.unit !== "bare" && curr.unit !== "bare" && prev.unit !== curr.unit) continue;
+    if (prev.scale && curr.scale && prev.scale !== curr.scale) continue;
+    if (!prev.scale && curr.scale) prev.scale = curr.scale;
+    if (!curr.scale && prev.scale) curr.scale = prev.scale;
+    if (prev.unit === "bare" && curr.unit !== "bare") prev.unit = curr.unit;
+    if (curr.unit === "bare" && prev.unit !== "bare") curr.unit = prev.unit;
+    refold(prev);
+    refold(curr);
   }
   for (const figure of pending) pushSpan(spans, figure.start, figure.end);
   return pending;
 }
 
-function collectNames(text, spans, draft) {
+function stripNameEdge(surface) {
+  let cleaned = surface.replace(/(?:'s|’s)$/i, "");
+  if (!/^St\.$/.test(cleaned)) cleaned = cleaned.replace(/[.,;:]+$/, "");
+  return cleaned;
+}
+
+function collectNames(text, spans, corpus) {
   const tokenRe = /(?<![A-Za-z0-9])(?:[A-Z][A-Za-z0-9'’]*|\d+[A-Za-z][A-Za-z0-9'’]*)(?:\.[A-Za-z][A-Za-z0-9'’]*)*\.?/g;
   const tokens = [...text.matchAll(tokenRe)];
   const names = [];
@@ -278,15 +330,19 @@ function collectNames(text, spans, draft) {
     const end = run[run.length - 1].index + run[run.length - 1][0].length;
     run = [];
     if (overlaps(spans, start, end)) return;
-    const cleaned = surface.replace(/(?:'s|’s)$/i, "").replace(/\.$/, "");
+    const cleaned = stripNameEdge(surface);
     let words = cleaned.split(/\s+/).filter(Boolean);
     if (start === firstWordStart(text) && words.length) {
-      const first = words[0].replace(/\./g, "");
-      if (SENTENCE_INITIAL.has(first.toLowerCase()) || lowercaseElsewhere(draft, first)) {
+      const first = words[0].replace(/\.$/, "");
+      const key = first.toLowerCase();
+      if (!MUST_KEEP.has(key) && (SENTENCE_OPENERS.has(key) || lowercaseElsewhere(corpus, first))) {
         words = words.slice(1);
       }
     }
-    const kept = words.filter((word) => !NOT_A_NAME.has(word.toLowerCase().replace(/\./g, "")));
+    const kept = words.filter((word) => {
+      const key = word.toLowerCase().replace(/\./g, "");
+      return !NOT_A_NAME.has(key) && !GENERIC_ABBREV.has(key);
+    });
     if (!kept.length) return;
     const name = kept.join(" ");
     names.push({ kind: "name", surface: name, start, end });
@@ -321,12 +377,13 @@ function lowercaseElsewhere(draft, word) {
   return new RegExp(`\\b${lower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(draft);
 }
 
-export function extractElements(statement, draft) {
+export function extractElements(statement, draft, sources) {
   const text = String(statement);
   const spans = [];
   const dates = collectDates(text, spans);
   const figures = collectFigures(text, spans);
-  const names = collectNames(text, spans, String(draft || text));
+  const corpus = `${draft || text}\n${sources || ""}`;
+  const names = collectNames(text, spans, corpus);
   return [...dates, ...figures, ...names].sort((a, b) => a.start - b.start || a.end - b.end);
 }
 
@@ -336,15 +393,75 @@ function roundAway(value, places) {
   return (sign * Math.round(Math.abs(value) * factor)) / factor;
 }
 
+function unitsMatch(draftFigure, sourceFigure) {
+  if (draftFigure.unit === "percent" || sourceFigure.unit === "percent") {
+    return draftFigure.unit === "percent" && sourceFigure.unit === "percent";
+  }
+  if (draftFigure.unit === sourceFigure.unit) return true;
+  const centSide = draftFigure.unit === "cent" || sourceFigure.unit === "cent";
+  const major = draftFigure.unit === "cent" ? sourceFigure.unit : draftFigure.unit;
+  return centSide && (major === "USD" || major === "EUR" || major === "cent");
+}
+
+function asDraftWrote(foldedMajor, draftFigure) {
+  const inDraftUnit = draftFigure.minor ? foldedMajor * 100 : foldedMajor;
+  return inDraftUnit / SCALE_MULT[draftFigure.scale || ""];
+}
+
 function figuresMatch(draftFigure, sourceFigure) {
-  if (draftFigure.unit !== sourceFigure.unit) return false;
-  if (draftFigure.unit === "percent" && sourceFigure.unit !== "percent") return false;
+  if (!unitsMatch(draftFigure, sourceFigure)) return false;
   if (draftFigure.sign !== sourceFigure.sign && draftFigure.written !== 0) return false;
   const gap = Math.abs(draftFigure.folded - sourceFigure.folded);
-  if (gap <= Math.max(1e-4, Math.abs(draftFigure.folded) * 1e-9)) return true;
-  const mult = SCALE_MULT[draftFigure.scale];
-  const sourceInDraftScale = sourceFigure.folded / mult;
+  if (gap <= Math.max(1e-6, Math.abs(draftFigure.folded) * 1e-9)) return true;
+  const sourceInDraftScale = asDraftWrote(sourceFigure.folded, draftFigure);
   return roundAway(sourceInDraftScale, draftFigure.decimals) === draftFigure.sign * draftFigure.written;
+}
+
+function parseDateKey(key) {
+  const fy = /^FY(\d{4})$/.exec(key);
+  if (fy) return { kind: "fy", year: +fy[1] };
+  const quarter = /^(\d{4})-Q([1-4])$/.exec(key);
+  if (quarter) return { kind: "quarter", year: +quarter[1], quarter: +quarter[2] };
+  const half = /^(\d{4})-H([12])$/.exec(key);
+  if (half) return { kind: "half", year: +half[1], half: +half[2] };
+  const full = /^(\d{4})-(\d{2})-(\d{2})$/.exec(key);
+  if (full) return { kind: "full", year: +full[1], month: +full[2], day: +full[3] };
+  const month = /^(\d{4})-(\d{2})$/.exec(key);
+  if (month) return { kind: "month", year: +month[1], month: +month[2] };
+  if (/^\d{4}$/.test(key)) return { kind: "year", year: +key };
+  return null;
+}
+
+function quarterOf(month) {
+  return Math.floor((month - 1) / 3) + 1;
+}
+
+function halfOf(month) {
+  return month <= 6 ? 1 : 2;
+}
+
+function datesAgree(draftKey, sourceKey) {
+  const draft = parseDateKey(draftKey);
+  const source = parseDateKey(sourceKey);
+  if (!draft || !source) return false;
+  if (draft.kind === "fy" || source.kind === "fy") {
+    return draft.kind === "fy" && source.kind === "fy" && draft.year === source.year;
+  }
+  if (draft.year !== source.year) return false;
+  if (draft.kind === "year") return true;
+  if (draft.kind === "month") return source.month === draft.month;
+  if (draft.kind === "full") return source.month === draft.month && source.day === draft.day;
+  if (draft.kind === "quarter") {
+    if (source.quarter) return source.quarter === draft.quarter;
+    if (source.month) return quarterOf(source.month) === draft.quarter;
+    return false;
+  }
+  if (draft.kind === "half") {
+    if (source.half) return source.half === draft.half;
+    if (source.month) return halfOf(source.month) === draft.half;
+    return false;
+  }
+  return false;
 }
 
 function sourceFigures(source) {
@@ -358,12 +475,15 @@ function nameOccurs(source, name) {
   const needle = normaliseName(name);
   if (!needle) return false;
   const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`(?:^|[^A-Za-z0-9])${escaped}(?=$|[^A-Za-z0-9])`).test(hay);
+  if (new RegExp(`(?:^|[^A-Za-z0-9])${escaped}(?=$|[^A-Za-z0-9])`).test(hay)) return true;
+  const foldedNeedle = needle.replace(/[-\s]/g, "");
+  const foldedHay = hay.replace(/[-\s]/g, "");
+  return foldedNeedle.length > 0 && foldedHay.includes(foldedNeedle);
 }
 
 export function elementFound(element, sourceText) {
   const source = String(sourceText || "");
   if (element.kind === "name") return nameOccurs(source, element.surface);
-  if (element.kind === "date") return collectDates(source, []).some((date) => date.key === element.key);
+  if (element.kind === "date") return collectDates(source, []).some((date) => datesAgree(element.key, date.key));
   return sourceFigures(source).some((figure) => figuresMatch(element, figure));
 }
