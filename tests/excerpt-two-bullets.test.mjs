@@ -169,3 +169,35 @@ describe("B359 two bullets as one passage", () => {
     assert.equal(hit.runCount, 2);
   });
 });
+
+describe("B394 page furniture is not a selected sentence", () => {
+  test("a navigation sentence that also contains the year is skipped", () => {
+    const source = [
+      "Log In Sign Up Products Pricing Customer Stories Resources Newsroom ClearPoint reports 2026 results.",
+      "Total revenue was $12.1 million for the three months ended March 31, 2026.",
+    ].join("\n");
+    const hit = locateClaimSentencesInSource({
+      statement: "Revenue in 2026 was $12.1 million.",
+      sourceText: source,
+      sourceLabel: "ClearPoint",
+    });
+    assert.ok(hit?.passage);
+    assert.equal(/log in/i.test(hit.passage), false);
+    assert.match(hit.passage, /\$12\.1 million/);
+  });
+
+  test("a related-story sentence is skipped", () => {
+    const source = [
+      "ClearPoint Neuro Reports Second Quarter 1 MONTH AGO revenue was $12.1 million in 2026.",
+      "Total revenue was $12.1 million for the three months ended March 31, 2026.",
+    ].join(" ");
+    const hit = locateClaimSentencesInSource({
+      statement: "Revenue in 2026 was $12.1 million.",
+      sourceText: source,
+      sourceLabel: "ClearPoint",
+    });
+    assert.ok(hit?.passage);
+    assert.equal(/month ago/i.test(hit.passage), false);
+    assert.match(hit.passage, /\$12\.1 million/);
+  });
+});
