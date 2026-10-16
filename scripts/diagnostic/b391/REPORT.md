@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship |
+| SHIPPED | `SHIP VERIFIED  ed56abe  main  166 files  1817 tests` |
 | Cost | USD 0. No model calls. The four doctored reviews and the clean reviews were already committed. |
 | Input | `scripts/diagnostic/b385/labels.json` (26 entries, 37 substitutions) and the stored `qcCard.displayVerdict` on each sentence. Comments, excerpts, spans and proposals are not read. |
 | Evidence | `scripts/diagnostic/b391/score-verdict-only.mjs`. |
