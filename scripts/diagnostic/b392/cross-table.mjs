@@ -98,7 +98,11 @@ function assertExamples() {
     throw new Error("example failed: 80 percent");
   }
   const ebitda = extractElements("EBITDA grew.", "EBITDA grew.");
-  if (ebitda.some((item) => item.surface === "EBITDA")) throw new Error("example failed: EBITDA kept");
+  if (!ebitda.some((item) => item.surface === "EBITDA")) throw new Error("example failed: EBITDA dropped");
+  const ceo = extractElements("appointed a new CEO", "appointed a new CEO").find((item) => item.surface === "CEO");
+  if (!ceo || !elementFound(ceo, "appointed Mark Garth as Chief Executive Officer")) throw new Error("example failed: CEO expansion");
+  const cfo = extractElements("appointed a new CFO", "appointed a new CFO").find((item) => item.surface === "CFO");
+  if (!cfo || elementFound(cfo, "appointed Mark Garth as Chief Executive Officer")) throw new Error("example failed: CFO matched CEO");
   const fda = extractElements("FDA cleared the device.", "FDA cleared the device.");
   if (!fda.some((item) => item.surface === "FDA")) throw new Error("example failed: FDA dropped");
   const lower = "action hicl hcil fortysouth johor switzerland 3i";
@@ -239,9 +243,17 @@ async function main() {
   }
 
   const rows = [];
+  const navHits = [];
   for (const doc of DOCS) {
     const source = await readFile(path.join(ROOT, doc.source), "utf8");
     if (!source.trim()) throw new Error(`empty source ${doc.source}`);
+    let navigation = "";
+    if (doc.doc === "ClearPoint") {
+      const footerAt = source.indexOf("Products Company Resources");
+      const loginAt = source.indexOf("Log In  Sign Up");
+      if (footerAt < 0 || loginAt < 0) throw new Error("ClearPoint navigation text missing");
+      navigation = `${source.split("\n")[0]}\n${source.slice(footerAt, loginAt + "Log In  Sign Up".length)}`;
+    }
     const labelRun = byRun.get(doc.runId);
     if (!labelRun) throw new Error(`missing labels for ${doc.runId}`);
     for (const side of ["doctored", "clean"]) {
@@ -270,6 +282,9 @@ async function main() {
             found: elementFound(element, source),
             plantedIds: planted.map((sub) => sub.id),
           });
+          if (navigation && elementFound(element, navigation)) {
+            navHits.push({ side, statementIndex: index, kind: element.kind, surface: element.surface });
+          }
         }
       });
       for (const sub of subs) {
@@ -285,6 +300,20 @@ async function main() {
     .filter((row) => row.side === "doctored")
     .flatMap((row) => row.subs);
   if (planted.length !== 37) throw new Error(`expected 37 substitutions, found ${planted.length}`);
+  const role = (doc, side, surface) => rows
+    .find((row) => row.doc === doc && row.side === side)
+    .elements.filter((element) => element.surface === surface);
+  const doctoredCfo = role("HICL", "doctored", "CFO");
+  const cleanCeo = role("HICL", "clean", "CEO");
+  if (!doctoredCfo.length || doctoredCfo.some((element) => element.found)) {
+    throw new Error("HICL doctored CFO was not a not-found element");
+  }
+  if (!cleanCeo.length || cleanCeo.some((element) => !element.found)) {
+    throw new Error("HICL clean CEO was not found");
+  }
+  console.log(`assert HICL doctored CFO not-found ${doctoredCfo.length}; HICL clean CEO found ${cleanCeo.length}`);
+  console.log(`A4 navigation matches ${navHits.length}`);
+  for (const hit of navHits) console.log(`  NAV ${hit.side} #${hit.statementIndex} ${hit.kind} [${hit.surface}]`);
 
   const report = { passes: {} };
   for (const name of ["ids-1", "ids-2"]) {

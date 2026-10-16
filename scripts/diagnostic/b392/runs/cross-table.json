@@ -324,9 +324,25 @@
       "doc": "HICL",
       "statementIndex": 1,
       "kind": "name",
+      "surface": "EBITDA",
+      "found": true,
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 1,
+      "kind": "name",
       "surface": "HCIL",
       "found": false,
       "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 2,
+      "kind": "name",
+      "surface": "EBITDA",
+      "found": true,
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets."
     },
     {
       "doc": "HICL",
@@ -378,9 +394,25 @@
     },
     {
       "doc": "HICL",
+      "statementIndex": 5,
+      "kind": "name",
+      "surface": "EBITDA",
+      "found": true,
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains."
+    },
+    {
+      "doc": "HICL",
       "statementIndex": 7,
       "kind": "name",
       "surface": "Affinity Water",
+      "found": true,
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform."
+    },
+    {
+      "doc": "HICL",
+      "statementIndex": 7,
+      "kind": "name",
+      "surface": "CEO",
       "found": true,
       "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform."
     },
@@ -764,6 +796,14 @@
       "doc": "ClearPoint",
       "statementIndex": 8,
       "kind": "name",
+      "surface": "MRI",
+      "found": true,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
+    },
+    {
+      "doc": "ClearPoint",
+      "statementIndex": 8,
+      "kind": "name",
       "surface": "ClearPoint",
       "found": true,
       "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region."
@@ -814,24 +854,24 @@
       "tables": {
         "doctored": {
           "found": {
-            "contradicted": 38,
-            "partial": 20,
+            "contradicted": 40,
+            "partial": 22,
             "supported": 22,
             "silent": 2
           },
           "notFound": {
-            "contradicted": 14,
+            "contradicted": 15,
             "partial": 4,
             "supported": 0,
             "silent": 0
           },
-          "total": 100
+          "total": 105
         },
         "clean": {
           "found": {
             "contradicted": 5,
-            "partial": 42,
-            "supported": 52,
+            "partial": 45,
+            "supported": 54,
             "silent": 0
           },
           "notFound": {
@@ -840,7 +880,7 @@
             "supported": 1,
             "silent": 0
           },
-          "total": 101
+          "total": 106
         }
       },
       "c3": [
@@ -1077,6 +1117,12 @@
               "surface": "30%",
               "found": false,
               "stance": "partial"
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "stance": "partial"
             }
           ],
           "checkCaught": true,
@@ -1194,10 +1240,17 @@
           "doc": "HICL",
           "statementIndex": 7,
           "written": "appointed a new CFO",
-          "covering": [],
-          "checkCaught": false,
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "CFO",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
           "modelOnly": false,
-          "uncovered": true
+          "uncovered": false
         },
         {
           "pass": "ids-1",
@@ -1650,8 +1703,8 @@
         {
           "doc": "HICL",
           "statements": 8,
-          "items": 7,
-          "elementItems": 6,
+          "items": 10,
+          "elementItems": 9,
           "interpretive": 1,
           "perStatement": [
             {
@@ -1666,9 +1719,9 @@
               "index": 1,
               "marked": true,
               "displayVerdict": "supported_partial",
-              "elementItems": 1,
+              "elementItems": 2,
               "interpretive": false,
-              "items": 1
+              "items": 2
             },
             {
               "index": 2,
@@ -1698,9 +1751,9 @@
               "index": 5,
               "marked": true,
               "displayVerdict": "supported_partial",
-              "elementItems": 2,
+              "elementItems": 3,
               "interpretive": false,
-              "items": 2
+              "items": 3
             },
             {
               "index": 6,
@@ -1714,9 +1767,9 @@
               "index": 7,
               "marked": true,
               "displayVerdict": "supported_partial",
-              "elementItems": 2,
+              "elementItems": 3,
               "interpretive": false,
-              "items": 2
+              "items": 3
             }
           ]
         },
@@ -1864,24 +1917,24 @@
       "tables": {
         "doctored": {
           "found": {
-            "contradicted": 43,
-            "partial": 10,
+            "contradicted": 45,
+            "partial": 12,
             "supported": 25,
             "silent": 4
           },
           "notFound": {
-            "contradicted": 15,
+            "contradicted": 16,
             "partial": 3,
             "supported": 0,
             "silent": 0
           },
-          "total": 100
+          "total": 105
         },
         "clean": {
           "found": {
             "contradicted": 5,
-            "partial": 40,
-            "supported": 54,
+            "partial": 44,
+            "supported": 55,
             "silent": 0
           },
           "notFound": {
@@ -1890,7 +1943,7 @@
             "supported": 1,
             "silent": 0
           },
-          "total": 101
+          "total": 106
         }
       },
       "c3": [
@@ -2127,6 +2180,12 @@
               "surface": "30%",
               "found": false,
               "stance": "partial"
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "stance": "partial"
             }
           ],
           "checkCaught": true,
@@ -2244,10 +2303,17 @@
           "doc": "HICL",
           "statementIndex": 7,
           "written": "appointed a new CFO",
-          "covering": [],
-          "checkCaught": false,
+          "covering": [
+            {
+              "kind": "name",
+              "surface": "CFO",
+              "found": false,
+              "stance": "contradicted"
+            }
+          ],
+          "checkCaught": true,
           "modelOnly": false,
-          "uncovered": true
+          "uncovered": false
         },
         {
           "pass": "ids-2",
@@ -2700,9 +2766,9 @@
         {
           "doc": "HICL",
           "statements": 8,
-          "items": 8,
-          "elementItems": 6,
-          "interpretive": 2,
+          "items": 11,
+          "elementItems": 10,
+          "interpretive": 1,
           "perStatement": [
             {
               "index": 0,
@@ -2716,16 +2782,16 @@
               "index": 1,
               "marked": true,
               "displayVerdict": "supported_partial",
-              "elementItems": 1,
+              "elementItems": 2,
               "interpretive": false,
-              "items": 1
+              "items": 2
             },
             {
               "index": 2,
               "marked": true,
               "displayVerdict": "supported_partial",
-              "elementItems": 0,
-              "interpretive": true,
+              "elementItems": 1,
+              "interpretive": false,
               "items": 1
             },
             {
@@ -2748,9 +2814,9 @@
               "index": 5,
               "marked": true,
               "displayVerdict": "supported_partial",
-              "elementItems": 2,
+              "elementItems": 3,
               "interpretive": false,
-              "items": 2
+              "items": 3
             },
             {
               "index": 6,
@@ -2764,9 +2830,9 @@
               "index": 7,
               "marked": true,
               "displayVerdict": "supported_partial",
-              "elementItems": 2,
+              "elementItems": 3,
               "interpretive": false,
-              "items": 2
+              "items": 3
             }
           ]
         },

@@ -1,6 +1,6 @@
 /**
  * Element extractor. B392 ELEMENTS.md stands. Matching and name rules follow
- * scripts/diagnostic/b393/ELEMENTS-v2.md, which supersedes it.
+ * scripts/diagnostic/b394/ELEMENTS-v3.md, which supersedes v2.
  */
 const CURRENCY = "USD|GBP|EUR|SEK|\\$|£|€";
 const SCALE_WORD = "thousand|million|billion|bn|mn";
@@ -40,9 +40,15 @@ const SENTENCE_OPENERS = new Set(
   "among notably meanwhile elsewhere looking across however separately additionally overall finally topline organic".split(" ")
 );
 const MUST_KEEP = new Set("action hicl hcil fortysouth johor switzerland 3i".split(" "));
-const GENERIC_ABBREV = new Set(
-  "ebitda ceo cfo coo cio nav irr moic tvpi dpi arr gmv api cagr lfl mri ct esg".split(" ")
-);
+const EXPANSIONS = [
+  { abbr: "CEO", phrases: ["chief executive officer", "chief executive"] },
+  { abbr: "CFO", phrases: ["chief financial officer"] },
+  { abbr: "COO", phrases: ["chief operating officer"] },
+  { abbr: "CIO", phrases: ["chief information officer"] },
+  { abbr: "CTO", phrases: ["chief technology officer"] },
+  { abbr: "LFL", phrases: ["like-for-like", "like for like"] },
+  { abbr: "NAV", phrases: ["net asset value"] },
+];
 const NOT_A_NAME = new Set(
   `${CARDINALS.replace(/\|/g, " ")} thousand million billion bn mn percent ${MONTH} usd gbp eur sek`.split(/\s+/)
 );
@@ -341,7 +347,7 @@ function collectNames(text, spans, corpus) {
     }
     const kept = words.filter((word) => {
       const key = word.toLowerCase().replace(/\./g, "");
-      return !NOT_A_NAME.has(key) && !GENERIC_ABBREV.has(key);
+      return !NOT_A_NAME.has(key);
     });
     if (!kept.length) return;
     const name = kept.join(" ");
@@ -470,12 +476,32 @@ function sourceFigures(source) {
   return collectFigures(source, spans);
 }
 
+function abbreviationIn(source, abbr) {
+  return new RegExp(`(?:^|[^A-Za-z0-9])${abbr}(?=$|[^A-Za-z0-9])`).test(source);
+}
+
+function phraseIn(source, phrase) {
+  const body = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+  return new RegExp(`(?:^|[^A-Za-z0-9])${body}(?=$|[^A-Za-z0-9])`, "i").test(source);
+}
+
+function expansionMatch(source, name) {
+  const needle = normaliseName(name);
+  for (const row of EXPANSIONS) {
+    const phrases = row.phrases.map((phrase) => phrase.toLowerCase());
+    if (needle === row.abbr) return phrases.some((phrase) => phraseIn(source, phrase));
+    if (phrases.includes(needle.toLowerCase())) return abbreviationIn(source, row.abbr);
+  }
+  return false;
+}
+
 function nameOccurs(source, name) {
   const hay = normaliseName(source);
   const needle = normaliseName(name);
   if (!needle) return false;
   const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   if (new RegExp(`(?:^|[^A-Za-z0-9])${escaped}(?=$|[^A-Za-z0-9])`).test(hay)) return true;
+  if (expansionMatch(source, needle)) return true;
   const foldedNeedle = needle.replace(/[-\s]/g, "");
   const foldedHay = hay.replace(/[-\s]/g, "");
   return foldedNeedle.length > 0 && foldedHay.includes(foldedNeedle);
