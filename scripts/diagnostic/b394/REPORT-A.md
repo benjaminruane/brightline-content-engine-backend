@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship. Part A only. Part B is a later commit. |
+| SHIPPED | `SHIP VERIFIED  bd2b115  main  166 files  1819 tests`. Part A is `f6d65fc`, contained in that HEAD. |
 | Cost | USD 0. No model calls. |
 | Definition | `scripts/diagnostic/b394/ELEMENTS-v3.md`, committed as `8cdc948` before any count. Not revised after a number. v2 stays as written. |
 | Evidence | `scripts/diagnostic/b392/elements.mjs`, `scripts/diagnostic/b392/cross-table.mjs`, `scripts/diagnostic/b392/runs/cross-table.json`. |

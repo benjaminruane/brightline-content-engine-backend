@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship. |
+| SHIPPED | `SHIP VERIFIED  bd2b115  main  166 files  1819 tests` |
 | Cost | USD 0. No model calls. |
 | Scope | Selection only. The ClearPoint extract is unchanged. |
 
