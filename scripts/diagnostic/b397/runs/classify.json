@@ -1,0 +1,1439 @@
+{
+  "planted": 37,
+  "byType": {
+    "quantity": [
+      "3i-S0-a",
+      "hicl-S1-a",
+      "hicl-S5-b",
+      "gpi-S0-b",
+      "gpi-S1-a",
+      "gpi-S4-b",
+      "clearpoint-S2-a",
+      "clearpoint-S9-a"
+    ],
+    "date": [
+      "3i-S5-a",
+      "hicl-S0-b",
+      "gpi-S0-a",
+      "clearpoint-S0-a",
+      "clearpoint-S9-b"
+    ],
+    "name": [
+      "3i-S8-a",
+      "3i-S9-a",
+      "3i-S14-a",
+      "hicl-S0-a",
+      "hicl-S3-a",
+      "hicl-S4-a",
+      "hicl-S5-a",
+      "hicl-S7-a",
+      "hicl-S7-b",
+      "gpi-S3-a",
+      "clearpoint-S8-a"
+    ],
+    "ratio": [
+      "3i-S12-a",
+      "clearpoint-S3-a"
+    ],
+    "rank": [
+      "gpi-S4-a"
+    ],
+    "polarity": [
+      "hicl-S6-a",
+      "clearpoint-S7-a",
+      "clearpoint-S8-b"
+    ],
+    "benchmark": [
+      "hicl-S2-a"
+    ],
+    "set": [
+      "gpi-S1-b"
+    ],
+    "causation": [],
+    "evaluation": [],
+    "open-wording": [
+      "hicl-S5-c",
+      "hicl-S7-c",
+      "gpi-S0-c",
+      "gpi-S2-a",
+      "gpi-S4-c"
+    ]
+  },
+  "mechanical": {
+    "count": 24,
+    "caught": 19
+  },
+  "partly": {
+    "count": 8,
+    "counterpart": 5,
+    "caught": 5
+  },
+  "reach": 24,
+  "unreached": [
+    {
+      "id": "3i-S8-a",
+      "type": "name",
+      "class": "mechanical",
+      "reason": "MAIT found=true",
+      "comments": [
+        "The source states that Action, not MAIT, completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i. Attributing this transaction to MAIT conflicts with the source."
+      ],
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i."
+    },
+    {
+      "id": "3i-S14-a",
+      "type": "name",
+      "class": "mechanical",
+      "reason": "UK found=true",
+      "comments": [
+        "The source states that 3i remains cautious in the deployment of capital into new investment but will continue to allocate selectively, including to lower-risk reinvestments. This is a stance of 3i, not the UK government. Attributing this to the UK government conflicts with the source."
+      ],
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies."
+    },
+    {
+      "id": "hicl-S2-a",
+      "type": "benchmark",
+      "class": "partly",
+      "reason": "no source sentence has budgets and a comparison word",
+      "comments": [
+        "The source confirms that HICL's growth investments continue to perform well and that expansion capex programmes are driving EBITDA in line with expectations. However, there is no reference to EBITDA 'significantly outperforming budgets'; the source only states performance is in line with expectations, so that part is unsupported."
+      ],
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets."
+    },
+    {
+      "id": "hicl-S5-b",
+      "type": "quantity",
+      "class": "mechanical",
+      "reason": "20 found=true",
+      "comments": [
+        "The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported."
+      ],
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains."
+    },
+    {
+      "id": "hicl-S5-c",
+      "type": "open-wording",
+      "class": "not",
+      "reason": "no deterministic rule",
+      "comments": [
+        "The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported."
+      ],
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains."
+    },
+    {
+      "id": "hicl-S7-c",
+      "type": "open-wording",
+      "class": "not",
+      "reason": "no deterministic rule",
+      "comments": [
+        "The source states that Affinity Water appointed a new Chief Executive Officer (CEO), Mark Garth, with sector experience from United Utilities, and that the UK Government published a white paper on water sector reform, expected to benefit strong performers such as Affinity Water. The draft incorrectly refers to a CFO, the French government, and electricity sector reform, all of which conflict with the source."
+      ],
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform."
+    },
+    {
+      "id": "gpi-S0-c",
+      "type": "open-wording",
+      "class": "not",
+      "reason": "no deterministic rule",
+      "comments": [
+        "The source states the announcement date as 13 November 2025, not October 2025, and does not mention a 75% figure or global production share. It says production capacity in Southeast Asia will be ramped up to serve the US market amid tariffs and geopolitical tensions, but makes no reference to escalating oil prices."
+      ],
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions."
+    },
+    {
+      "id": "gpi-S1-b",
+      "type": "set",
+      "class": "partly",
+      "reason": "written span is not in the statement. no only",
+      "comments": [
+        "The source states GP Industries operates three facilities in Malaysia, two in Vietnam, one in Thailand, and two plants in the UK. It does not mention 15 facilities in Malaysia or a single plant in China. It also says the China facility will focus on both European and Asian markets, not only the European market."
+      ],
+      "statement": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market."
+    },
+    {
+      "id": "gpi-S2-a",
+      "type": "open-wording",
+      "class": "not",
+      "reason": "no deterministic rule",
+      "comments": [
+        "The source supports that capacity changes are to streamline supply chains, meet country-of-origin requirements, and maintain cost competitiveness (improve cost structure). However, it does not mention enhancing site security at all, so that portion is unsupported."
+      ],
+      "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security."
+    },
+    {
+      "id": "gpi-S4-c",
+      "type": "open-wording",
+      "class": "not",
+      "reason": "no deterministic rule",
+      "comments": [
+        "The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The claim conflicts on rank, production volume, and the verb used for distribution."
+      ],
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide."
+    },
+    {
+      "id": "clearpoint-S3-a",
+      "type": "ratio",
+      "class": "partly",
+      "reason": "counterpart missing head=software lead=topline part=false whole=false",
+      "comments": [
+        "The source provides growth figures for neurosurgery navigation, therapy and access revenue but does not state that this segment drove overall topline growth.",
+        "The source gives segment revenues (biologics and drug delivery $4.8m, neurosurgery navigation $5.9m, capital equipment and software $1.4m) but does not characterize neurosurgery navigation as contributing the vast majority of overall revenue; it is the largest single segment but not a vast majority of the $12.1m total.",
+        "The source states neurosurgery navigation, therapy and access revenue increased 80% to $5.9 million from $3.3 million for the same period in 2025.",
+        "The source attributes the increase in neurosurgery navigation, therapy and access revenue to additional revenues from IRRAflow product sales and the introduction of the 3.0 operating room navigation software."
+      ],
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software."
+    },
+    {
+      "id": "clearpoint-S8-a",
+      "type": "name",
+      "class": "mechanical",
+      "reason": "FDA found=true",
+      "comments": [
+        "The source states that a Medical Device License was received from Health Canada for the ClearPoint Neuro Navigation System, covering MRI-guidance and iCT guidance workflows. It does not attribute this license to the FDA; assigning it to the FDA conflicts with the source.",
+        "The source notes completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region, which supports that such a case has commenced there."
+      ],
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region."
+    },
+    {
+      "id": "clearpoint-S9-b",
+      "type": "date",
+      "class": "mechanical",
+      "reason": "2027 found=true",
+      "comments": [
+        "The source provides estimated revenue guidance of $52.0–$56.0 million for 2026, not 2027, and does not describe it as updated. It also mentions expectations around 2027 cash neutrality, but not 2027 revenue guidance."
+      ],
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027."
+    }
+  ],
+  "cleanTypeCounts": {
+    "quantity": 18,
+    "date": 8,
+    "name": 26,
+    "ratio": 1,
+    "rank": 1,
+    "polarity": 8,
+    "benchmark": 5,
+    "set": 0,
+    "causation": 6,
+    "evaluation": 13,
+    "open-wording": 1
+  },
+  "cleanFlags": {
+    "quantity": [
+      {
+        "doc": "HICL",
+        "index": 0,
+        "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+        "flags": [
+          {
+            "type": "quantity",
+            "surface": "five",
+            "reason": "not in the source"
+          }
+        ]
+      }
+    ],
+    "date": [],
+    "name": [
+      {
+        "doc": "HICL",
+        "index": 1,
+        "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+        "flags": [
+          {
+            "type": "name",
+            "surface": "HCIL",
+            "reason": "not in the source"
+          }
+        ]
+      }
+    ],
+    "ratio": [],
+    "rank": [],
+    "polarity": [
+      {
+        "doc": "HICL",
+        "index": 6,
+        "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+        "flags": [
+          {
+            "type": "polarity",
+            "surface": "poles reduction/increase, shared company",
+            "reason": "poles reduction/increase, shared company"
+          }
+        ]
+      }
+    ],
+    "benchmark": [
+      {
+        "doc": "HICL",
+        "index": 3,
+        "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+        "flags": [
+          {
+            "type": "benchmark",
+            "surface": "draft ahead forecast, source in line",
+            "reason": "draft ahead forecast, source in line"
+          }
+        ]
+      }
+    ],
+    "set": []
+  },
+  "residue": [
+    {
+      "doc": "3i",
+      "index": 4,
+      "types": [
+        "evaluation"
+      ],
+      "statement": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer."
+    },
+    {
+      "doc": "3i",
+      "index": 14,
+      "types": [
+        "evaluation"
+      ],
+      "statement": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies."
+    },
+    {
+      "doc": "GPI",
+      "index": 2,
+      "types": [
+        "open-wording"
+      ],
+      "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness."
+    }
+  ],
+  "rows": [
+    {
+      "id": "3i-S0-a",
+      "doc": "3i",
+      "fixtureId": "2026-09-29",
+      "index": 0,
+      "written": "£3.3 million",
+      "was": "£3,291 million / approximately £3.3 billion",
+      "statement": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "GBP 3.3 million found=false",
+      "modelComments": [
+        "The source reports a total return of £3,291 million (≈£3.3 billion), not £3.3 million, and for the six months to 30 September 2025, not to 30 June 2025. The 13% return on opening shareholders’ funds is correct."
+      ]
+    },
+    {
+      "id": "3i-S5-a",
+      "doc": "3i",
+      "fixtureId": "2026-09-29",
+      "index": 5,
+      "written": "six months to 30 June 2026",
+      "was": "nine reporting periods ending on 28 September 2025",
+      "statement": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+      "type": "date",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "30 June 2026 found=false",
+      "modelComments": [
+        "The source gives net sales of €11,229 million and LFL sales growth of 6.3% for the nine reporting periods ending on 28 September 2025, not for the six months to 30 June 2026. Both the period and end date are incorrect."
+      ]
+    },
+    {
+      "id": "3i-S8-a",
+      "doc": "3i",
+      "fixtureId": "2026-09-29",
+      "index": 8,
+      "written": "MAIT",
+      "was": "Action",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "MAIT found=true",
+      "modelComments": [
+        "The source states that Action, not MAIT, completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i. Attributing this transaction to MAIT conflicts with the source."
+      ]
+    },
+    {
+      "id": "3i-S9-a",
+      "doc": "3i",
+      "fixtureId": "2026-09-29",
+      "index": 9,
+      "written": "AGIC",
+      "was": "GIC",
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "AGIC found=false",
+      "modelComments": [
+        "The source confirms that £755m of proceeds from Action’s pro-rata redemption were redeployed to acquire a further 2.2% stake in Action, and that together with a prior 2.2% acquisition from GIC, this increased 3i’s ownership to 62.3%. However, the draft incorrectly names the earlier seller as AGIC rather than GIC, so that part conflicts."
+      ]
+    },
+    {
+      "id": "3i-S12-a",
+      "doc": "3i",
+      "fixtureId": "2026-09-29",
+      "index": 12,
+      "written": "gains across essentially all of its investments",
+      "was": "gains on TCR",
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+      "type": "ratio",
+      "class": "partly",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": true,
+      "reason": "one holding: TCR",
+      "modelComments": [
+        "The source confirms that the Infrastructure gross investment return was driven primarily by a 14% increase in 3i Infrastructure plc’s share price and that 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in TCR. However, it does not state that there are meaningful gains across essentially all investments, so that portion is unsupported."
+      ]
+    },
+    {
+      "id": "3i-S14-a",
+      "doc": "3i",
+      "fixtureId": "2026-09-29",
+      "index": 14,
+      "written": "the UK government",
+      "was": "management",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "UK found=true",
+      "modelComments": [
+        "The source states that 3i remains cautious in the deployment of capital into new investment but will continue to allocate selectively, including to lower-risk reinvestments. This is a stance of 3i, not the UK government. Attributing this to the UK government conflicts with the source."
+      ]
+    },
+    {
+      "id": "hicl-S0-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 0,
+      "written": "HCIL",
+      "was": "HICL",
+      "statement": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "HCIL Infrastructure found=false",
+      "modelComments": [
+        "The source refers to HICL Infrastructure PLC, not 'HCIL', and the period covered is from 1 October 2025 to 28 February 2026, not six months to 31 December 2025. While the source does say performance was in line with expectations, the company name and reporting period are incorrect."
+      ]
+    },
+    {
+      "id": "hicl-S0-b",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 0,
+      "written": "six months to 31 December 2025",
+      "was": "five months to 28 February 2026",
+      "statement": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+      "type": "date",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "31 December 2025 found=false",
+      "modelComments": [
+        "The source refers to HICL Infrastructure PLC, not 'HCIL', and the period covered is from 1 October 2025 to 28 February 2026, not six months to 31 December 2025. While the source does say performance was in line with expectations, the company name and reporting period are incorrect."
+      ]
+    },
+    {
+      "id": "hicl-S1-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 1,
+      "written": "with average 30% EBITDA growth",
+      "was": "with EBITDA growth",
+      "statement": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "30% found=false",
+      "modelComments": [
+        "The source supports that operational performance across the portfolio was in line with expectations/robust, that capex programmes are driving EBITDA growth, and that cash generation underpins dividend cover. However, there is no mention of 'average 30% EBITDA growth', nor is a specific growth rate quantified, and the company is HICL, not 'HCIL'. Those elements are not supported."
+      ]
+    },
+    {
+      "id": "hicl-S2-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 2,
+      "written": "significantly outperform budgets",
+      "was": "in line with budgets",
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+      "type": "benchmark",
+      "class": "partly",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": false,
+      "reason": "no source sentence has budgets and a comparison word",
+      "modelComments": [
+        "The source confirms that HICL's growth investments continue to perform well and that expansion capex programmes are driving EBITDA in line with expectations. However, there is no reference to EBITDA 'significantly outperforming budgets'; the source only states performance is in line with expectations, so that part is unsupported."
+      ]
+    },
+    {
+      "id": "hicl-S3-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 3,
+      "written": "Paris St. Germain High Speed",
+      "was": "London St. Pancras High Speed",
+      "statement": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "Paris St. Germain High Speed found=false",
+      "modelComments": [
+        "The source refers to 'London St. Pancras High Speed', not 'Paris St. Germain High Speed'. It does confirm that this asset performed well and that international train path bookings were slightly ahead of forecast, but the asset name and implied geography are incorrect, so the claim conflicts with the source."
+      ]
+    },
+    {
+      "id": "hicl-S4-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 4,
+      "written": "operations from St. Germain",
+      "was": "operations from St. Pancras",
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "St. Germain found=false",
+      "modelComments": [
+        "The source confirms progress towards a potential second international operator on the London St. Pancras High Speed route and that Virgin Trains announced intentions for cross-Channel operations from St. Pancras. However, the draft incorrectly refers to 'St. Germain' instead of St. Pancras. The commercial substance is supported, but the location name is wrong."
+      ]
+    },
+    {
+      "id": "hicl-S5-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 5,
+      "written": "TowerCo",
+      "was": "Fortysouth",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "TowerCo found=false",
+      "modelComments": [
+        "The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported."
+      ]
+    },
+    {
+      "id": "hicl-S5-b",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 5,
+      "written": "20 new towers",
+      "was": "16 new towers",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "20 found=true",
+      "modelComments": [
+        "The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported."
+      ]
+    },
+    {
+      "id": "hicl-S5-c",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 5,
+      "written": "during the past year",
+      "was": "during the period",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "type": "open-wording",
+      "class": "not",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "no deterministic rule",
+      "modelComments": [
+        "The source refers to 'Fortysouth', not 'TowerCo', and states that it delivered 16 new towers during the period, not 20 during the past year. It also notes incremental co-location opportunities expected to support EBITDA growth, but does not mention valuation gains. The company name, tower count, and time frame conflict with the source, and the valuation gains element is unsupported."
+      ]
+    },
+    {
+      "id": "hicl-S6-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 6,
+      "written": "lead to an increase",
+      "was": "lead to a reduction in debt costs",
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+      "type": "polarity",
+      "class": "partly",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": true,
+      "reason": "poles step-down/increase, shared company, recently, refinancing, oversubscribed",
+      "modelComments": [
+        "The source confirms that Fortysouth completed an accretive refinancing that was approximately 30% oversubscribed. However, it states that this enabled a step-down in debt margins earlier than forecast, implying lower, not higher, debt servicing costs. The refinancing and oversubscription are supported, but the claim that it will increase debt servicing costs conflicts with the source."
+      ]
+    },
+    {
+      "id": "hicl-S7-a",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 7,
+      "written": "appointed a new CFO",
+      "was": "appointed a new CEO",
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "CFO found=false",
+      "modelComments": [
+        "The source states that Affinity Water appointed a new Chief Executive Officer (CEO), Mark Garth, with sector experience from United Utilities, and that the UK Government published a white paper on water sector reform, expected to benefit strong performers such as Affinity Water. The draft incorrectly refers to a CFO, the French government, and electricity sector reform, all of which conflict with the source."
+      ]
+    },
+    {
+      "id": "hicl-S7-b",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 7,
+      "written": "the French government's",
+      "was": "the UK government's",
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "French found=false",
+      "modelComments": [
+        "The source states that Affinity Water appointed a new Chief Executive Officer (CEO), Mark Garth, with sector experience from United Utilities, and that the UK Government published a white paper on water sector reform, expected to benefit strong performers such as Affinity Water. The draft incorrectly refers to a CFO, the French government, and electricity sector reform, all of which conflict with the source."
+      ]
+    },
+    {
+      "id": "hicl-S7-c",
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl",
+      "index": 7,
+      "written": "electricity sector reform",
+      "was": "water sector reform",
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+      "type": "open-wording",
+      "class": "not",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "no deterministic rule",
+      "modelComments": [
+        "The source states that Affinity Water appointed a new Chief Executive Officer (CEO), Mark Garth, with sector experience from United Utilities, and that the UK Government published a white paper on water sector reform, expected to benefit strong performers such as Affinity Water. The draft incorrectly refers to a CFO, the French government, and electricity sector reform, all of which conflict with the source."
+      ]
+    },
+    {
+      "id": "gpi-S0-a",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 0,
+      "written": "October 2025",
+      "was": "13 November 2025, this month",
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+      "type": "date",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "October 2025 found=false",
+      "modelComments": [
+        "The source states the announcement date as 13 November 2025, not October 2025, and does not mention a 75% figure or global production share. It says production capacity in Southeast Asia will be ramped up to serve the US market amid tariffs and geopolitical tensions, but makes no reference to escalating oil prices."
+      ]
+    },
+    {
+      "id": "gpi-S0-b",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 0,
+      "written": "75% of its global production capacity",
+      "was": "not in the source",
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "75% found=false",
+      "modelComments": [
+        "The source states the announcement date as 13 November 2025, not October 2025, and does not mention a 75% figure or global production share. It says production capacity in Southeast Asia will be ramped up to serve the US market amid tariffs and geopolitical tensions, but makes no reference to escalating oil prices."
+      ]
+    },
+    {
+      "id": "gpi-S0-c",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 0,
+      "written": "escalating oil prices",
+      "was": "not in the source",
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+      "type": "open-wording",
+      "class": "not",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "no deterministic rule",
+      "modelComments": [
+        "The source states the announcement date as 13 November 2025, not October 2025, and does not mention a 75% figure or global production share. It says production capacity in Southeast Asia will be ramped up to serve the US market amid tariffs and geopolitical tensions, but makes no reference to escalating oil prices."
+      ]
+    },
+    {
+      "id": "gpi-S1-a",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 1,
+      "written": "15 facilities in Malaysia",
+      "was": "three",
+      "statement": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "15 found=false",
+      "modelComments": [
+        "The source states GP Industries operates three facilities in Malaysia, two in Vietnam, one in Thailand, and two plants in the UK. It does not mention 15 facilities in Malaysia or a single plant in China. It also says the China facility will focus on both European and Asian markets, not only the European market."
+      ]
+    },
+    {
+      "id": "gpi-S1-b",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 1,
+      "written": "European market only",
+      "was": "European and Asian",
+      "statement": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+      "type": "set",
+      "class": "partly",
+      "spanFound": false,
+      "catch": false,
+      "counterpart": null,
+      "reason": "written span is not in the statement. no only",
+      "modelComments": [
+        "The source states GP Industries operates three facilities in Malaysia, two in Vietnam, one in Thailand, and two plants in the UK. It does not mention 15 facilities in Malaysia or a single plant in China. It also says the China facility will focus on both European and Asian markets, not only the European market."
+      ]
+    },
+    {
+      "id": "gpi-S2-a",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 2,
+      "written": "enhancing site security",
+      "was": "not in the source",
+      "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+      "type": "open-wording",
+      "class": "not",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "no deterministic rule",
+      "modelComments": [
+        "The source supports that capacity changes are to streamline supply chains, meet country-of-origin requirements, and maintain cost competitiveness (improve cost structure). However, it does not mention enhancing site security at all, so that portion is unsupported."
+      ]
+    },
+    {
+      "id": "gpi-S3-a",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 3,
+      "written": "Silver Hill Technology",
+      "was": "Gold Peak Technology Group",
+      "statement": "Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "Silver Hill Technology found=false",
+      "modelComments": [
+        "The source identifies Gold Peak Technology Group, not Silver Hill Technology, as the 86.18% owner of GP Industries and the entity planning a multi-million-dollar investment in Johor to produce next-generation batteries to support data centres. The claim misnames the parent company and thus conflicts with the source."
+      ]
+    },
+    {
+      "id": "gpi-S4-a",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 4,
+      "written": "the largest",
+      "was": "second-largest",
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+      "type": "rank",
+      "class": "partly",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": true,
+      "reason": "draft largest producer, source second-largest producer",
+      "modelComments": [
+        "The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The claim conflicts on rank, production volume, and the verb used for distribution."
+      ]
+    },
+    {
+      "id": "gpi-S4-b",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 4,
+      "written": "over 60 billion",
+      "was": "over six billion",
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "60 billion found=false",
+      "modelComments": [
+        "The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The claim conflicts on rank, production volume, and the verb used for distribution."
+      ]
+    },
+    {
+      "id": "gpi-S4-c",
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi",
+      "index": 4,
+      "written": "bartered through",
+      "was": "sold through",
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+      "type": "open-wording",
+      "class": "not",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "no deterministic rule",
+      "modelComments": [
+        "The source describes GP Industries as the world’s second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, sold (not bartered) through one million outlets worldwide. The claim conflicts on rank, production volume, and the verb used for distribution."
+      ]
+    },
+    {
+      "id": "clearpoint-S0-a",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 0,
+      "written": "April",
+      "was": "13 May",
+      "statement": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+      "type": "date",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "April 2026 found=false",
+      "modelComments": [
+        "The press release states the results were reported on May 13, 2026, not in April. It does confirm these were financial results for the first quarter ended March 31, 2026."
+      ]
+    },
+    {
+      "id": "clearpoint-S2-a",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 2,
+      "written": "-50%",
+      "was": "16%",
+      "statement": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "-50% found=false",
+      "modelComments": [
+        "The source states 16% year-over-year total organic growth and 25% organic devices growth; it does not mention negative 50% organic growth. This directly conflicts with the -50% figure.",
+        "The headline and CEO commentary state 25% organic growth in devices.",
+        "The source reports gross margin expanded to 64% and attributes the increase primarily to lower excess and obsolete inventory."
+      ]
+    },
+    {
+      "id": "clearpoint-S3-a",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 3,
+      "written": "the vast majority of the company's overall revenue",
+      "was": "$5.9m of $12.1m",
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "type": "ratio",
+      "class": "partly",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": false,
+      "reason": "counterpart missing head=software lead=topline part=false whole=false",
+      "modelComments": [
+        "The source provides growth figures for neurosurgery navigation, therapy and access revenue but does not state that this segment drove overall topline growth.",
+        "The source gives segment revenues (biologics and drug delivery $4.8m, neurosurgery navigation $5.9m, capital equipment and software $1.4m) but does not characterize neurosurgery navigation as contributing the vast majority of overall revenue; it is the largest single segment but not a vast majority of the $12.1m total.",
+        "The source states neurosurgery navigation, therapy and access revenue increased 80% to $5.9 million from $3.3 million for the same period in 2025.",
+        "The source attributes the increase in neurosurgery navigation, therapy and access revenue to additional revenues from IRRAflow product sales and the introduction of the 3.0 operating room navigation software."
+      ]
+    },
+    {
+      "id": "clearpoint-S7-a",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 7,
+      "written": "a submission for FDA approval",
+      "was": "FDA clearance and first clinical procedures",
+      "statement": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+      "type": "polarity",
+      "class": "partly",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": true,
+      "reason": "poles clearance/submission, shared velocity, alpha, drill",
+      "modelComments": [
+        "The source states the Velocity Alpha MR High Speed Surgical Drill System has FDA clearance and has been used clinically; it does not mention a submission for FDA approval."
+      ]
+    },
+    {
+      "id": "clearpoint-S8-a",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 8,
+      "written": "the FDA",
+      "was": "Health Canada",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "type": "name",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "FDA found=true",
+      "modelComments": [
+        "The source states that a Medical Device License was received from Health Canada for the ClearPoint Neuro Navigation System, covering MRI-guidance and iCT guidance workflows. It does not attribute this license to the FDA; assigning it to the FDA conflicts with the source.",
+        "The source notes completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region, which supports that such a case has commenced there."
+      ]
+    },
+    {
+      "id": "clearpoint-S8-b",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 8,
+      "written": "has been commenced",
+      "was": "Completion of the first commercial drug delivery case",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "type": "polarity",
+      "class": "partly",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": true,
+      "reason": "poles completion/commenced, shared first, utilizing",
+      "modelComments": [
+        "The source states that a Medical Device License was received from Health Canada for the ClearPoint Neuro Navigation System, covering MRI-guidance and iCT guidance workflows. It does not attribute this license to the FDA; assigning it to the FDA conflicts with the source.",
+        "The source notes completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region, which supports that such a case has commenced there."
+      ]
+    },
+    {
+      "id": "clearpoint-S9-a",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 9,
+      "written": "USD 56 million",
+      "was": "$52.0 million to $56.0 million",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "type": "quantity",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": true,
+      "counterpart": null,
+      "reason": "USD 56 million found=true range-collapse",
+      "modelComments": [
+        "The source provides estimated revenue guidance of $52.0–$56.0 million for 2026, not 2027, and does not describe it as updated. It also mentions expectations around 2027 cash neutrality, but not 2027 revenue guidance."
+      ]
+    },
+    {
+      "id": "clearpoint-S9-b",
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint",
+      "index": 9,
+      "written": "2027",
+      "was": "2026",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "type": "date",
+      "class": "mechanical",
+      "spanFound": true,
+      "catch": false,
+      "counterpart": null,
+      "reason": "2027 found=true",
+      "modelComments": [
+        "The source provides estimated revenue guidance of $52.0–$56.0 million for 2026, not 2027, and does not describe it as updated. It also mentions expectations around 2027 cash neutrality, but not 2027 revenue guidance."
+      ]
+    }
+  ],
+  "clean": [
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 0,
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "types": [
+        "quantity",
+        "date",
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 1,
+      "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+      "types": [
+        "quantity",
+        "ratio"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 2,
+      "statement": "This was driven largely by Action, which continues to trade strongly.",
+      "types": [
+        "name",
+        "causation",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 3,
+      "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+      "types": [
+        "name",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 4,
+      "statement": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+      "types": [
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 5,
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+      "types": [
+        "quantity",
+        "date"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 6,
+      "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+      "types": [
+        "date",
+        "name",
+        "polarity"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 7,
+      "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+      "types": [
+        "quantity",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 8,
+      "statement": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "types": [
+        "name",
+        "polarity",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 9,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+      "types": [
+        "quantity",
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 10,
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+      "types": [
+        "quantity",
+        "name",
+        "polarity"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 11,
+      "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+      "types": [
+        "quantity",
+        "benchmark"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 12,
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+      "types": [
+        "name",
+        "causation",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 13,
+      "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+      "types": [
+        "quantity",
+        "date",
+        "name",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "3i",
+      "fixtureId": "2026-09-29-clean",
+      "index": 14,
+      "statement": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "types": [
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 0,
+      "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+      "types": [
+        "quantity",
+        "date",
+        "name",
+        "benchmark",
+        "evaluation"
+      ],
+      "flags": [
+        {
+          "type": "quantity",
+          "surface": "five",
+          "reason": "not in the source"
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 1,
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "types": [
+        "name",
+        "causation",
+        "evaluation"
+      ],
+      "flags": [
+        {
+          "type": "name",
+          "surface": "HCIL",
+          "reason": "not in the source"
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 2,
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+      "types": [
+        "name",
+        "benchmark",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 3,
+      "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+      "types": [
+        "name",
+        "benchmark",
+        "evaluation"
+      ],
+      "flags": [
+        {
+          "type": "benchmark",
+          "surface": "draft ahead forecast, source in line",
+          "reason": "draft ahead forecast, source in line"
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 4,
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+      "types": [
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 5,
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "types": [
+        "quantity",
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 6,
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+      "types": [
+        "polarity"
+      ],
+      "flags": [
+        {
+          "type": "polarity",
+          "surface": "poles reduction/increase, shared company",
+          "reason": "poles reduction/increase, shared company"
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "fixtureId": "2026-10-04-hicl-clean",
+      "index": 7,
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+      "types": [
+        "name",
+        "evaluation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 0,
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+      "types": [
+        "date",
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 1,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+      "types": [
+        "quantity",
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 2,
+      "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+      "types": [
+        "open-wording"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 3,
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+      "types": [
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "GPI",
+      "fixtureId": "2026-10-06-gpi-clean",
+      "index": 4,
+      "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+      "types": [
+        "quantity",
+        "name",
+        "rank"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 0,
+      "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+      "types": [
+        "date",
+        "name"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 1,
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+      "types": [
+        "quantity",
+        "name",
+        "causation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 2,
+      "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+      "types": [
+        "quantity",
+        "causation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 3,
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "types": [
+        "quantity",
+        "name",
+        "polarity",
+        "causation"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 4,
+      "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+      "types": [
+        "quantity",
+        "name",
+        "polarity"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 5,
+      "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+      "types": [
+        "benchmark"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 6,
+      "statement": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+      "types": [
+        "quantity"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 7,
+      "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+      "types": [
+        "name",
+        "polarity"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 8,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+      "types": [
+        "name",
+        "polarity"
+      ],
+      "flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "fixtureId": "2026-10-06-clearpoint-clean",
+      "index": 9,
+      "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+      "types": [
+        "quantity",
+        "date"
+      ],
+      "flags": []
+    }
+  ]
+}
