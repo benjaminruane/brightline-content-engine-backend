@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | Pending the verify:ship line. This commit is the measurement. |
+| SHIPPED | `SHIP VERIFIED  56cf631  main  166 files  1819 tests` |
 | Cost | USD 0. No model calls. |
 | Taxonomy | `scripts/diagnostic/b397/TAXONOMY.md`. Written before the count. Not revised after it. |
 | Evidence | `scripts/diagnostic/b397/runs/classify.json`, from `node scripts/diagnostic/b397/classify.mjs`. |
