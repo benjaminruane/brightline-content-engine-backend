@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | Pending the verify:ship line. This commit is the measurement. |
+| SHIPPED | `SHIP VERIFIED  2d5833e  main  166 files  1819 tests` |
 | Cost | USD 0. No model calls. |
 | Rules | `scripts/diagnostic/b398/BINDING.md`. B1 was written before the count and was not edited after it. B2 was added below B1 after B1 missed D3, and was not edited after its own count. |
 | Evidence | `scripts/diagnostic/b398/runs/bind.json`. Before-column is `scripts/diagnostic/b397/runs/classify.json`. |
