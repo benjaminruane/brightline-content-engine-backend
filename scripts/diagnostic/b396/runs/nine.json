@@ -1,0 +1,520 @@
+{
+  "summary": {
+    "all": {
+      "cards": 9,
+      "allInPassage": 4,
+      "someMissing": 5,
+      "noElement": 0
+    },
+    "clean": {
+      "cards": 7,
+      "allInPassage": 3,
+      "someMissing": 4,
+      "noElement": 0
+    },
+    "doctored": {
+      "cards": 2,
+      "allInPassage": 1,
+      "someMissing": 1,
+      "noElement": 0
+    }
+  },
+  "cards": [
+    {
+      "name": "cp-doc",
+      "index": 1,
+      "side": "doctored",
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+      "passageChars": 237,
+      "class": "some-missing-from-passage",
+      "elements": [
+        {
+          "kind": "figure",
+          "surface": "43%",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "USD 12.1 million",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "175",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "IRRAflow",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "cp-doc",
+      "index": 3,
+      "side": "doctored",
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "passageChars": 615,
+      "class": "all-in-passage",
+      "elements": [
+        {
+          "kind": "figure",
+          "surface": "80%",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "IRRAflow",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "3.0",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "cp-clean",
+      "index": 0,
+      "side": "clean",
+      "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+      "passageChars": 12174,
+      "class": "all-in-passage",
+      "elements": [
+        {
+          "kind": "date",
+          "surface": "May 2026",
+          "key": "2026-05",
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "ClearPoint Neuro",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "date",
+          "surface": "first quarter of 2026",
+          "key": "2026-Q1",
+          "inPassage": true,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "cp-clean",
+      "index": 1,
+      "side": "clean",
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+      "passageChars": 237,
+      "class": "some-missing-from-passage",
+      "elements": [
+        {
+          "kind": "figure",
+          "surface": "43%",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "USD 12.1 million",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "175",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "IRRAflow",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "cp-clean",
+      "index": 7,
+      "side": "clean",
+      "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+      "passageChars": 7059,
+      "class": "all-in-passage",
+      "elements": [
+        {
+          "kind": "name",
+          "surface": "FDA",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "cp-clean",
+      "index": 8,
+      "side": "clean",
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+      "passageChars": 499,
+      "class": "all-in-passage",
+      "elements": [
+        {
+          "kind": "name",
+          "surface": "Health Canada",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "ClearPoint Neuro Navigation System",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "MRI",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "ClearPoint",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Asia",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Pacific",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "gpi-clean-run3",
+      "index": 1,
+      "side": "clean",
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+      "passageChars": 39,
+      "class": "some-missing-from-passage",
+      "elements": [
+        {
+          "kind": "figure",
+          "surface": "three",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Malaysia",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "two",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Vietnam",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "one",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Thailand",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "two",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "UK",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "one",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "China",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "European",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Asian",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "gpi-clean-run4",
+      "index": 1,
+      "side": "clean",
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+      "passageChars": 39,
+      "class": "some-missing-from-passage",
+      "elements": [
+        {
+          "kind": "figure",
+          "surface": "three",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Malaysia",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "two",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Vietnam",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "one",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Thailand",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "two",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "UK",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "one",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "China",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "European",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Asian",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        }
+      ]
+    },
+    {
+      "name": "gpi-clean-run5",
+      "index": 1,
+      "side": "clean",
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+      "passageChars": 39,
+      "class": "some-missing-from-passage",
+      "elements": [
+        {
+          "kind": "figure",
+          "surface": "three",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Malaysia",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "two",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Vietnam",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "one",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Thailand",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "two",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "UK",
+          "key": null,
+          "inPassage": true,
+          "inSource": true
+        },
+        {
+          "kind": "figure",
+          "surface": "one",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "China",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "European",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        },
+        {
+          "kind": "name",
+          "surface": "Asian",
+          "key": null,
+          "inPassage": false,
+          "inSource": true
+        }
+      ]
+    }
+  ]
+}
