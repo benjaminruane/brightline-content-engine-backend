@@ -1,0 +1,2617 @@
+{
+  "a1": {
+    "reach": {
+      "b397": 24,
+      "b398": 28,
+      "b399": 28
+    },
+    "byType": [
+      {
+        "type": "quantity",
+        "n": 8,
+        "b397": 7,
+        "b398": 8,
+        "b399": 8
+      },
+      {
+        "type": "date",
+        "n": 5,
+        "b397": 4,
+        "b398": 5,
+        "b399": 5
+      },
+      {
+        "type": "name",
+        "n": 11,
+        "b397": 8,
+        "b398": 10,
+        "b399": 10
+      },
+      {
+        "type": "ratio",
+        "n": 2,
+        "b397": 1,
+        "b398": 1,
+        "b399": 1
+      },
+      {
+        "type": "benchmark",
+        "n": 1,
+        "b397": 0,
+        "b398": 0,
+        "b399": 0
+      },
+      {
+        "type": "open-wording",
+        "n": 5,
+        "b397": 0,
+        "b398": 0,
+        "b399": 0
+      },
+      {
+        "type": "polarity",
+        "n": 3,
+        "b397": 3,
+        "b398": 3,
+        "b399": 3
+      },
+      {
+        "type": "set",
+        "n": 1,
+        "b397": 0,
+        "b398": 0,
+        "b399": 0
+      },
+      {
+        "type": "rank",
+        "n": 1,
+        "b397": 1,
+        "b398": 1,
+        "b399": 1
+      }
+    ],
+    "changedFromB398": [],
+    "missedNow": [],
+    "five": [
+      {
+        "id": "3i-S8-a",
+        "doc": "3i",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "MAIT bound=true score=3 found=false shared=redemption,shares,proceeds",
+        "b399Bound": true,
+        "b399Sentence": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action"
+      },
+      {
+        "id": "3i-S14-a",
+        "doc": "3i",
+        "index": 14,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "UK bound=true score=5 found=false shared=cautious,capital,deployment,lower,reinvestments",
+        "b399Bound": true,
+        "b399Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust."
+      },
+      {
+        "id": "hicl-S5-b",
+        "doc": "HICL",
+        "index": 5,
+        "type": "quantity",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+        "b399Bound": true,
+        "b399Sentence": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assum"
+      },
+      {
+        "id": "clearpoint-S8-a",
+        "doc": "ClearPoint",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "FDA bound=true score=8 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology,pacific,region",
+        "b399Bound": true,
+        "b399Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;"
+      },
+      {
+        "id": "clearpoint-S9-b",
+        "doc": "ClearPoint",
+        "index": 9,
+        "type": "date",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+        "b399Bound": true,
+        "b399Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;"
+      }
+    ],
+    "clearpointS3": {
+      "id": "clearpoint-S3-a",
+      "doc": "ClearPoint",
+      "index": 3,
+      "type": "ratio",
+      "b397": false,
+      "b398": false,
+      "b399": false,
+      "b399Reason": "unchanged from B397",
+      "b399Bound": null,
+      "b399Sentence": ""
+    },
+    "cleanFlagCounts": {
+      "b397": 4,
+      "b398": 18,
+      "b399": 12
+    },
+    "clean": [
+      {
+        "doc": "3i",
+        "index": 0,
+        "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "3i Group",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "quantity",
+            "surface": "six",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "date",
+            "surface": "30 June 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "3i Group",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5,
+            "window": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).\nOur Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\nThe first raised €1.6 billion of total incremental term loan debt.\n“The total return of 13% represents a very good first half for the Group.\nTotal return and net assets are the same under the Investment basis and IFRS and we provide a reconciliation of our Investment basis financial statements to the IFRS statements from page 20.\nPercentage return on opening shareholders’ funds 13% 10% 25%\n1 Total return is defined as Total comprehensive income for the period, under both the Investment basis and the IFRS basis."
+          },
+          {
+            "type": "quantity",
+            "surface": "six",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5,
+            "window": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).\nOur Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\nThe first raised €1.6 billion of total incremental term loan debt.\n“The total return of 13% represents a very good first half for the Group.\nTotal return and net assets are the same under the Investment basis and IFRS and we provide a reconciliation of our Investment basis financial statements to the IFRS statements from page 20.\nPercentage return on opening shareholders’ funds 13% 10% 25%\n1 Total return is defined as Total comprehensive income for the period, under both the Investment basis and the IFRS basis."
+          },
+          {
+            "type": "date",
+            "surface": "30 June 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5,
+            "window": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).\nOur Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024:\nThe first raised €1.6 billion of total incremental term loan debt.\n“The total return of 13% represents a very good first half for the Group.\nTotal return and net assets are the same under the Investment basis and IFRS and we provide a reconciliation of our Investment basis financial statements to the IFRS statements from page 20.\nPercentage return on opening shareholders’ funds 13% 10% 25%\n1 Total return is defined as Total comprehensive income for the period, under both the Investment basis and the IFRS basis."
+          }
+        ]
+      },
+      {
+        "doc": "3i",
+        "index": 1,
+        "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 2,
+        "statement": "This was driven largely by Action, which continues to trade strongly.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 3,
+        "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 4,
+        "statement": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 5,
+        "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 6,
+        "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 7,
+        "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "EUR 1.6 billion",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 4
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 8,
+        "statement": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Action",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 9,
+        "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "GIC",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          },
+          {
+            "type": "quantity",
+            "surface": "62.3%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "GIC",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action.\nThe second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the maturity of a portion of the debt and generating an annual interest cost saving of €14 million."
+          },
+          {
+            "type": "quantity",
+            "surface": "62.3%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action.\nThe second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the maturity of a portion of the debt and generating an annual interest cost saving of €14 million."
+          }
+        ]
+      },
+      {
+        "doc": "3i",
+        "index": 10,
+        "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 11,
+        "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 12,
+        "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "TCR",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "TCR",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7,
+            "window": "NAV per share of 2,857 pence (31 March 2025: 2,542 pence), including a 78 pence per share gain on foreign exchange translation (September 2024: 48 pence per share loss), and after the payment of the 42.5 pence per share second FY2025 dividend in July 2025.\nOur Infrastructure business generated a gross investment return of £139 million, or 9% (September 2024: £43 million, 3%).\nThis was driven primarily by a 14% increase in 3i Infrastructure plc’s (“3iN”) share price in the six-month period to 30 September 2025. 3iN’s underlying portfolio continues to perform well, with a significant valuation uplift in\nAgainst a challenging macroeconomic and geopolitical backdrop, our Private Equity portfolio has maintained good momentum, while the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month period.\nWe remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\nHowever, we also report a non-GAAP “Investment basis”, which we believe aids users of our report to assess the\nThe Investment basis (which is unaudited) is an alternative performance measure (“APM”) and is described on page 18."
+          }
+        ]
+      },
+      {
+        "doc": "3i",
+        "index": 13,
+        "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "3i",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 14,
+        "statement": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 0,
+        "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+        "b397": [
+          {
+            "type": "quantity",
+            "surface": "five",
+            "reason": "not in the source"
+          }
+        ],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "HICL Infrastructure",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          },
+          {
+            "type": "quantity",
+            "surface": "five",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          },
+          {
+            "type": "date",
+            "surface": "28 February 2026",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "HICL Infrastructure",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2,
+            "window": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets."
+          },
+          {
+            "type": "quantity",
+            "surface": "five",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2,
+            "window": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets.\nPublic markets have seen defensive infrastructure and utility company share prices increase strongly in recent months."
+          },
+          {
+            "type": "date",
+            "surface": "28 February 2026",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2,
+            "window": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets.\nPublic markets have seen defensive infrastructure and utility company share prices increase strongly in recent months."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 1,
+        "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+        "b397": [
+          {
+            "type": "name",
+            "surface": "HCIL",
+            "reason": "not in the source"
+          }
+        ],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "HCIL",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 10
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "HCIL",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 10,
+            "window": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\nWith good underlying investment performance, and the portfolio well-positioned for both capital and income growth, your Board looks forward to building on this progress and continuing to create shareholder value.\"\nPortfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nActive capital recycling completed, with the £225m disposal of seven UK PPP assets completed in the period in line with carrying value, which will enable full repayment of the Company's RCF and funding of committed growth investments.\nDivestments and investments continue to be selectively pursued where they improve portfolio construction, with the return available on share buybacks providing a benchmark against which to assess capital allocation decisions.\nThe Company expects to continue to pursue share buybacks, at its discretion, where these represent the most attractive use of capital, while preserving the Company's balance sheet and prioritising a progressive dividend.\nThe Investment Manager sees significant opportunity within the existing portfolio, in particular, in the form of incremental equity stakes and follow-on investments to support growth.\nCurrently the Company is pursuing several live opportunities within the existing portfolio, of modest size, which compare favourably to alternative uses of capital.\nPortfolio Performance\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets.\nNAV performance and cash generation remain in line with forecast.\nHICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.\nDuring the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance.\nFortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.\nCash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance.\nThe Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations.\nDiscussions have been wide-ranging and constructive, spanning portfolio construction, NAV performance, capital allocation and corporate governance.\nShareholder discussions also highlight widespread appreciation of HICL's high quality portfolio, strategy and active approach, as well as focusing on the continuing evolution of the Company's growth and returns profile.\nThis platform provides the Board with significant capital allocation flexibility, assessing selective new investment opportunities against further share repurchases, to support longterm NAV and dividend growth."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 2,
+        "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 3,
+        "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+        "b397": [
+          {
+            "type": "benchmark",
+            "surface": "draft ahead forecast, source in line",
+            "reason": "draft ahead forecast, source in line"
+          }
+        ],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "London St. Pancras High Speed",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "London St. Pancras High Speed",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7,
+            "window": "Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.\nThe launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment.\nLatest actual inflation is tracking slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 4,
+        "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "St. Pancras",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "St. Pancras",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9,
+            "window": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St.\nThe launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 5,
+        "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 6,
+        "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+        "b397": [
+          {
+            "type": "polarity",
+            "surface": "poles reduction/increase, shared company",
+            "reason": "poles reduction/increase, shared company"
+          }
+        ],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 7,
+        "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "GPI",
+        "index": 0,
+        "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "date",
+            "surface": "November 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "date",
+            "surface": "November 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9,
+            "window": "GP Industries to shift production to Southeast Asia to serve\nUS market amid tariffs and rising geopolitical tensions\nTo maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nGP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\nThe diversification of its manufacturing network is proving to be a crucial and timely competitive advantage, offering operational flexibility amid the changing tariff landscape, GP Industries said.\nSingapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and\nPage 1 of 3 celebration, said, “Over the past three decades, GP Industries has shown resilience and maintained steady growth through financial crises, a global pandemic, geopolitical tensions, and transformative technological changes including the ongoing AI revolution.\nAfter higher initial costs from diversifying production to Southeast Asia, GP Industries said margins have risen due to improved utilisation, lower commodity costs, and optimised supply chains."
+          }
+        ]
+      },
+      {
+        "doc": "GPI",
+        "index": 1,
+        "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Thailand",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6
+          },
+          {
+            "type": "name",
+            "surface": "UK",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6
+          },
+          {
+            "type": "name",
+            "surface": "Asian",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "Thailand",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "To maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nThe Group currently operates three facilities in Malaysia, two in Vietnam, and one in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and\nAsian markets."
+          },
+          {
+            "type": "name",
+            "surface": "UK",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "To maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nThe Group currently operates three facilities in Malaysia, two in Vietnam, and one in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and\nAsian markets."
+          },
+          {
+            "type": "name",
+            "surface": "Asian",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "To maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nThe Group currently operates three facilities in Malaysia, two in Vietnam, and one in\nSingapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and"
+          }
+        ]
+      },
+      {
+        "doc": "GPI",
+        "index": 2,
+        "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "GPI",
+        "index": 3,
+        "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Gold Peak Technology",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "name",
+            "surface": "GP Industries",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "name",
+            "surface": "Malaysia",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "Malaysia",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9,
+            "window": "To maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nGP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\nGP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres.\nMr Lo sees potential for the Gold Peak Technology Group, both GP Industries and its parent, to scale significantly in Johor in the next five years.\n“We chose Johor for its fast-track investment approvals, logistical proximity to Singapore, skilled workforce, and a supportive business environment, ensuring both operational efficiency and scalability for future growth.”\nReflecting on the milestone achievement, Mr Lo said: “My greatest satisfaction comes from witnessing the growth and transformation of GP Industries into a global technology company built on the collective efforts and enduring dedication of our entire team.”\nLooking ahead, GP Industries plans to further invest in R&D, enhance operational efficiency, and expand its network of audio experience centres globally."
+          }
+        ]
+      },
+      {
+        "doc": "GPI",
+        "index": 4,
+        "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 0,
+        "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 1,
+        "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 2,
+        "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "16%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "quantity",
+            "surface": "16%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "Record Revenue Achieved Including 25% Organic Growth in Devices and 43% Overall\nGross margin expanded to 64%; and\n\"While record revenue achievement and 25% organic devices growth made the headline, there is no shortage of meaningful strategic progress across the entire organization.\nThe Company achieved a gross margin of 64% on its sales for the three months ended\nMarch 31, 2026, and a gross margin of 60% in the same period in 2025.\nThe increase in gross margin is primarily due to lower excess and obsolete inventory for the three months ended"
+          }
+        ]
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 3,
+        "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "80%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "quantity",
+            "surface": "USD 5.9 million",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 4,
+        "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "177%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 8
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 5,
+        "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 6,
+        "statement": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 7,
+        "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3,
+            "window": "FDA clearance and successful completion of the first clinical procedure utilizing the\nCompletion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;\nBiologics and drug delivery revenue, which include sales of disposable products and services related to customer-sponsored preclinical and clinical trials utilizing our products, increased slightly to $4.8 million for the three months ended March 31, 2026 from $4.7 million for the three months ended March 31, 2025.\nTo date, thousands of procedures have been performed and supported by the Company's field-based clinical specialist team, which offers support and services to our customers and partners worldwide."
+          }
+        ]
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 8,
+        "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Pacific",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 9,
+        "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      }
+    ],
+    "rows": [
+      {
+        "id": "3i-S0-a",
+        "doc": "3i",
+        "index": 0,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "GBP 3.3 million bound=true score=6 found=false shared=total,return,million,opening,shareholders,funds",
+        "b399Bound": true,
+        "b399Sentence": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+      },
+      {
+        "id": "3i-S5-a",
+        "doc": "3i",
+        "index": 5,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "30 June 2026 bound=true score=2 found=false shared=sales,growth",
+        "b399Bound": true,
+        "b399Sentence": "(nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%."
+      },
+      {
+        "id": "3i-S8-a",
+        "doc": "3i",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "MAIT bound=true score=3 found=false shared=redemption,shares,proceeds",
+        "b399Bound": true,
+        "b399Sentence": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action"
+      },
+      {
+        "id": "3i-S9-a",
+        "doc": "3i",
+        "index": 9,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "AGIC bound=true score=6 found=false shared=proceeds,redeployed,acquire,further,stake,action",
+        "b399Bound": true,
+        "b399Sentence": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action"
+      },
+      {
+        "id": "3i-S12-a",
+        "doc": "3i",
+        "index": 12,
+        "type": "ratio",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "3i-S14-a",
+        "doc": "3i",
+        "index": 14,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "UK bound=true score=5 found=false shared=cautious,capital,deployment,lower,reinvestments",
+        "b399Bound": true,
+        "b399Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust."
+      },
+      {
+        "id": "hicl-S0-a",
+        "doc": "HICL",
+        "index": 0,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "HCIL Infrastructure bound=true score=2 found=false shared=performance,expectations",
+        "b399Bound": true,
+        "b399Sentence": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth."
+      },
+      {
+        "id": "hicl-S0-b",
+        "doc": "HICL",
+        "index": 0,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "31 December 2025 bound=true score=2 found=false shared=performance,expectations",
+        "b399Bound": true,
+        "b399Sentence": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth."
+      },
+      {
+        "id": "hicl-S1-a",
+        "doc": "HICL",
+        "index": 1,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "30% bound=true score=10 found=false shared=portfolio,operational,performance,robust,ebitda,growth,resilient,generation",
+        "b399Bound": true,
+        "b399Sentence": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our targ"
+      },
+      {
+        "id": "hicl-S2-a",
+        "doc": "HICL",
+        "index": 2,
+        "type": "benchmark",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "dropped",
+        "b399Bound": false,
+        "b399Sentence": ""
+      },
+      {
+        "id": "hicl-S3-a",
+        "doc": "HICL",
+        "index": 3,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "Paris St. Germain High Speed bound=true score=7 found=false shared=performed,international,train,bookings,slightly,ahead,forecast",
+        "b399Bound": true,
+        "b399Sentence": "Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast."
+      },
+      {
+        "id": "hicl-S4-a",
+        "doc": "HICL",
+        "index": 4,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "St. Germain bound=true score=9 found=false shared=progress,second,international,operator,route,virgin,trains,intentions",
+        "b399Bound": true,
+        "b399Sentence": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St."
+      },
+      {
+        "id": "hicl-S5-a",
+        "doc": "HICL",
+        "index": 5,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "TowerCo bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+        "b399Bound": true,
+        "b399Sentence": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assum"
+      },
+      {
+        "id": "hicl-S5-b",
+        "doc": "HICL",
+        "index": 5,
+        "type": "quantity",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+        "b399Bound": true,
+        "b399Sentence": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assum"
+      },
+      {
+        "id": "hicl-S5-c",
+        "doc": "HICL",
+        "index": 5,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "hicl-S6-a",
+        "doc": "HICL",
+        "index": 6,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "poles step-down/increase, shared company, recently, refinancing, oversubscribed; score 3; shared recently,oversubscribed,refinancing",
+        "b399Bound": true,
+        "b399Sentence": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth'"
+      },
+      {
+        "id": "hicl-S7-a",
+        "doc": "HICL",
+        "index": 7,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "CFO bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+        "b399Bound": true,
+        "b399Sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo"
+      },
+      {
+        "id": "hicl-S7-b",
+        "doc": "HICL",
+        "index": 7,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "French bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+        "b399Bound": true,
+        "b399Sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo"
+      },
+      {
+        "id": "hicl-S7-c",
+        "doc": "HICL",
+        "index": 7,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S0-a",
+        "doc": "GPI",
+        "index": 0,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "October 2025 bound=true score=9 found=false shared=industries,production,capacity,manufacturing,southeast,tariffs,rising,geopolitical",
+        "b399Bound": true,
+        "b399Sentence": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopol"
+      },
+      {
+        "id": "gpi-S0-b",
+        "doc": "GPI",
+        "index": 0,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "75% bound=true score=9 found=false shared=industries,production,capacity,manufacturing,southeast,tariffs,rising,geopolitical",
+        "b399Bound": true,
+        "b399Sentence": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopol"
+      },
+      {
+        "id": "gpi-S0-c",
+        "doc": "GPI",
+        "index": 0,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S1-a",
+        "doc": "GPI",
+        "index": 1,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "15 bound=true score=5 found=false shared=currently,operates,facilities,malaysia,vietnam",
+        "b399Bound": true,
+        "b399Sentence": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in"
+      },
+      {
+        "id": "gpi-S1-b",
+        "doc": "GPI",
+        "index": 1,
+        "type": "set",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "dropped",
+        "b399Bound": false,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S2-a",
+        "doc": "GPI",
+        "index": 2,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S3-a",
+        "doc": "GPI",
+        "index": 3,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "Silver Hill Technology bound=true score=8 found=false shared=industries,planning,investment,johor,produce,generation,support,centres",
+        "b399Bound": true,
+        "b399Sentence": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres."
+      },
+      {
+        "id": "gpi-S4-a",
+        "doc": "GPI",
+        "index": 4,
+        "type": "rank",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S4-b",
+        "doc": "GPI",
+        "index": 4,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "60 billion bound=true score=8 found=false shared=batteries,producing,billion,annually,through,million,outlets,worldwide",
+        "b399Bound": true,
+        "b399Sentence": "It has since grown into a global manufacturer, producing over six billion batteries annually, sold through one million outlets worldwide."
+      },
+      {
+        "id": "gpi-S4-c",
+        "doc": "GPI",
+        "index": 4,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "clearpoint-S0-a",
+        "doc": "ClearPoint",
+        "index": 0,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "April 2026 bound=true score=5 found=false shared=announced,financial,results,first,quarter",
+        "b399Bound": true,
+        "b399Sentence": "(Nasdaq:CLPT) (the \"Company\"), a global device, cell, and gene therapy-enabling company offering precise navigation to the brain and spine, today announced financial results for its first quarter ended March 31, 2026."
+      },
+      {
+        "id": "clearpoint-S2-a",
+        "doc": "ClearPoint",
+        "index": 2,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "-50% bound=true score=6 found=false shared=gross,margin,lower,excess,obsolete,inventory",
+        "b399Bound": true,
+        "b399Sentence": "The increase in gross margin is primarily due to lower excess and obsolete inventory for the three months ended"
+      },
+      {
+        "id": "clearpoint-S3-a",
+        "doc": "ClearPoint",
+        "index": 3,
+        "type": "ratio",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "clearpoint-S7-a",
+        "doc": "ClearPoint",
+        "index": 7,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "poles clearance/submission, shared velocity, alpha, drill; score 6; shared velocity,alpha,speed,surgical,drill,system",
+        "b399Bound": true,
+        "b399Sentence": "Velocity Alpha MR High Speed Surgical Drill System;"
+      },
+      {
+        "id": "clearpoint-S8-a",
+        "doc": "ClearPoint",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "FDA bound=true score=8 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology,pacific,region",
+        "b399Bound": true,
+        "b399Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;"
+      },
+      {
+        "id": "clearpoint-S8-b",
+        "doc": "ClearPoint",
+        "index": 8,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "poles completion/commenced, shared first, utilizing; score 8; shared clearpoint,first,commercial,delivery,utilizing,technology,pacific,region",
+        "b399Bound": true,
+        "b399Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;"
+      },
+      {
+        "id": "clearpoint-S9-a",
+        "doc": "ClearPoint",
+        "index": 9,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "USD 56 million bound=true score=2 found=true range-collapse shared=revenue,million",
+        "b399Bound": true,
+        "b399Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;"
+      },
+      {
+        "id": "clearpoint-S9-b",
+        "doc": "ClearPoint",
+        "index": 9,
+        "type": "date",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+        "b399Bound": true,
+        "b399Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;"
+      }
+    ]
+  },
+  "a2": {
+    "reach": {
+      "b397": 24,
+      "b398": 28,
+      "b399": 27
+    },
+    "byType": [
+      {
+        "type": "quantity",
+        "n": 8,
+        "b397": 7,
+        "b398": 8,
+        "b399": 8
+      },
+      {
+        "type": "date",
+        "n": 5,
+        "b397": 4,
+        "b398": 5,
+        "b399": 5
+      },
+      {
+        "type": "name",
+        "n": 11,
+        "b397": 8,
+        "b398": 10,
+        "b399": 10
+      },
+      {
+        "type": "ratio",
+        "n": 2,
+        "b397": 1,
+        "b398": 1,
+        "b399": 1
+      },
+      {
+        "type": "benchmark",
+        "n": 1,
+        "b397": 0,
+        "b398": 0,
+        "b399": 0
+      },
+      {
+        "type": "open-wording",
+        "n": 5,
+        "b397": 0,
+        "b398": 0,
+        "b399": 0
+      },
+      {
+        "type": "polarity",
+        "n": 3,
+        "b397": 3,
+        "b398": 3,
+        "b399": 2
+      },
+      {
+        "type": "set",
+        "n": 1,
+        "b397": 0,
+        "b398": 0,
+        "b399": 0
+      },
+      {
+        "type": "rank",
+        "n": 1,
+        "b397": 1,
+        "b398": 1,
+        "b399": 1
+      }
+    ],
+    "changedFromB398": [
+      {
+        "id": "hicl-S6-a",
+        "doc": "HICL",
+        "index": 6,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": false,
+        "b399Reason": "no opposite pole in the bound window; score 2; shared recently,refinancing",
+        "b399Bound": true,
+        "b399Sentence": "The company recently completed an accretive refinancing which was c."
+      }
+    ],
+    "missedNow": [
+      {
+        "id": "hicl-S6-a",
+        "doc": "HICL",
+        "index": 6,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": false,
+        "b399Reason": "no opposite pole in the bound window; score 2; shared recently,refinancing",
+        "b399Bound": true,
+        "b399Sentence": "The company recently completed an accretive refinancing which was c."
+      }
+    ],
+    "five": [
+      {
+        "id": "3i-S8-a",
+        "doc": "3i",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "MAIT bound=true score=3 found=false shared=redemption,shares,proceeds",
+        "b399Bound": true,
+        "b399Sentence": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action"
+      },
+      {
+        "id": "3i-S14-a",
+        "doc": "3i",
+        "index": 14,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "UK bound=true score=5 found=false shared=cautious,capital,deployment,lower,reinvestments",
+        "b399Bound": true,
+        "b399Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust."
+      },
+      {
+        "id": "hicl-S5-b",
+        "doc": "HICL",
+        "index": 5,
+        "type": "quantity",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+        "b399Bound": true,
+        "b399Sentence": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assum"
+      },
+      {
+        "id": "clearpoint-S8-a",
+        "doc": "ClearPoint",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "FDA bound=true score=8 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology,pacific,region",
+        "b399Bound": true,
+        "b399Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;"
+      },
+      {
+        "id": "clearpoint-S9-b",
+        "doc": "ClearPoint",
+        "index": 9,
+        "type": "date",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+        "b399Bound": true,
+        "b399Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;"
+      }
+    ],
+    "clearpointS3": {
+      "id": "clearpoint-S3-a",
+      "doc": "ClearPoint",
+      "index": 3,
+      "type": "ratio",
+      "b397": false,
+      "b398": false,
+      "b399": false,
+      "b399Reason": "unchanged from B397",
+      "b399Bound": null,
+      "b399Sentence": ""
+    },
+    "cleanFlagCounts": {
+      "b397": 4,
+      "b398": 18,
+      "b399": 11
+    },
+    "clean": [
+      {
+        "doc": "3i",
+        "index": 0,
+        "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "3i Group",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "quantity",
+            "surface": "six",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "date",
+            "surface": "30 June 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "3i Group",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5,
+            "window": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).\nOur Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024: £2,071 million, 11%).\nThe first raised €1.6 billion of total incremental term loan debt.\n“The total return of 13% represents a very good first half for the Group.\nTotal return and net assets are the same under the Investment basis and IFRS and we provide a reconciliation of our Investment basis financial statements to the IFRS statements from page 20.\nPercentage return on opening shareholders’ funds 13% 10% 25%\n1 Total return is defined as Total comprehensive income for the period, under both the Investment basis and the IFRS basis."
+          },
+          {
+            "type": "quantity",
+            "surface": "six",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5,
+            "window": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).\nOur Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024: £2,071 million, 11%).\nThe first raised €1.6 billion of total incremental term loan debt.\n“The total return of 13% represents a very good first half for the Group.\nTotal return and net assets are the same under the Investment basis and IFRS and we provide a reconciliation of our Investment basis financial statements to the IFRS statements from page 20.\nPercentage return on opening shareholders’ funds 13% 10% 25%\n1 Total return is defined as Total comprehensive income for the period, under both the Investment basis and the IFRS basis."
+          },
+          {
+            "type": "date",
+            "surface": "30 June 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5,
+            "window": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).\nOur Private Equity business delivered a gross investment return of £3,234 million or 14% (September 2024: £2,071 million, 11%).\nThe first raised €1.6 billion of total incremental term loan debt.\n“The total return of 13% represents a very good first half for the Group.\nTotal return and net assets are the same under the Investment basis and IFRS and we provide a reconciliation of our Investment basis financial statements to the IFRS statements from page 20.\nPercentage return on opening shareholders’ funds 13% 10% 25%\n1 Total return is defined as Total comprehensive income for the period, under both the Investment basis and the IFRS basis."
+          }
+        ]
+      },
+      {
+        "doc": "3i",
+        "index": 1,
+        "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 2,
+        "statement": "This was driven largely by Action, which continues to trade strongly.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 3,
+        "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 4,
+        "statement": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 5,
+        "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 6,
+        "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 7,
+        "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "EUR 1.6 billion",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 4
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 8,
+        "statement": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Action",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 9,
+        "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "GIC",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          },
+          {
+            "type": "quantity",
+            "surface": "62.3%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "GIC",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action.\nThe second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the maturity of a portion of the debt and generating an annual interest cost saving of €14 million."
+          },
+          {
+            "type": "quantity",
+            "surface": "62.3%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action.\nThe second financing transaction repriced €3.1 billion of Action’s existing term loan debt, extending the maturity of a portion of the debt and generating an annual interest cost saving of €14 million."
+          }
+        ]
+      },
+      {
+        "doc": "3i",
+        "index": 10,
+        "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 11,
+        "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 12,
+        "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "TCR",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "3i",
+        "index": 13,
+        "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "3i",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "3i",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3,
+            "window": "NAV per share of 2,857 pence (31 March 2025: 2,542 pence), including a 78 pence per share gain on foreign exchange translation (September 2024: 48 pence per share loss), and after the payment of the 42.5 pence per share second FY2025 dividend in July 2025.\nThe first dividend of 36.5 pence per share for FY2026, set at 50% of the total dividend for FY2025, will be paid in January 2026.\nDividend per ordinary share 36.5p 30.5p 73.0p"
+          }
+        ]
+      },
+      {
+        "doc": "3i",
+        "index": 14,
+        "statement": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 0,
+        "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+        "b397": [
+          {
+            "type": "quantity",
+            "surface": "five",
+            "reason": "not in the source"
+          }
+        ],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "HICL Infrastructure",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          },
+          {
+            "type": "quantity",
+            "surface": "five",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          },
+          {
+            "type": "date",
+            "surface": "28 February 2026",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "HICL Infrastructure",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2,
+            "window": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets."
+          },
+          {
+            "type": "quantity",
+            "surface": "five",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2,
+            "window": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets.\nPublic markets have seen defensive infrastructure and utility company share prices increase strongly in recent months."
+          },
+          {
+            "type": "date",
+            "surface": "28 February 2026",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 2,
+            "window": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets.\nPublic markets have seen defensive infrastructure and utility company share prices increase strongly in recent months."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 1,
+        "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+        "b397": [
+          {
+            "type": "name",
+            "surface": "HCIL",
+            "reason": "not in the source"
+          }
+        ],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "HCIL",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 10
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "HCIL",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 10,
+            "window": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year.\nWith good underlying investment performance, and the portfolio well-positioned for both capital and income growth, your Board looks forward to building on this progress and continuing to create shareholder value.\"\nPortfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth.\nActive capital recycling completed, with the £225m disposal of seven UK PPP assets completed in the period in line with carrying value, which will enable full repayment of the Company's RCF and funding of committed growth investments.\nDivestments and investments continue to be selectively pursued where they improve portfolio construction, with the return available on share buybacks providing a benchmark against which to assess capital allocation decisions.\nThe Company expects to continue to pursue share buybacks, at its discretion, where these represent the most attractive use of capital, while preserving the Company's balance sheet and prioritising a progressive dividend.\nThe Investment Manager sees significant opportunity within the existing portfolio, in particular, in the form of incremental equity stakes and follow-on investments to support growth.\nCurrently the Company is pursuing several live opportunities within the existing portfolio, of modest size, which compare favourably to alternative uses of capital.\nPortfolio Performance\nOperational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets.\nNAV performance and cash generation remain in line with forecast.\nHICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations.\nDuring the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance.\nFortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption.\nCash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance.\nThe Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations.\nDiscussions have been wide-ranging and constructive, spanning portfolio construction, NAV performance, capital allocation and corporate governance.\nShareholder discussions also highlight widespread appreciation of HICL's high quality portfolio, strategy and active approach, as well as focusing on the continuing evolution of the Company's growth and returns profile.\nThis platform provides the Board with significant capital allocation flexibility, assessing selective new investment opportunities against further share repurchases, to support longterm NAV and dividend growth."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 2,
+        "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 3,
+        "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+        "b397": [
+          {
+            "type": "benchmark",
+            "surface": "draft ahead forecast, source in line",
+            "reason": "draft ahead forecast, source in line"
+          }
+        ],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "London St. Pancras High Speed",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "London St. Pancras High Speed",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7,
+            "window": "Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.\nThe launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment.\nLatest actual inflation is tracking slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 4,
+        "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "St. Pancras",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "St. Pancras",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9,
+            "window": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St.\nThe launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment."
+          }
+        ]
+      },
+      {
+        "doc": "HICL",
+        "index": 5,
+        "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 6,
+        "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+        "b397": [
+          {
+            "type": "polarity",
+            "surface": "poles reduction/increase, shared company",
+            "reason": "poles reduction/increase, shared company"
+          }
+        ],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "HICL",
+        "index": 7,
+        "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "GPI",
+        "index": 0,
+        "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "date",
+            "surface": "November 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "date",
+            "surface": "November 2025",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9,
+            "window": "GP Industries to shift production to Southeast Asia to serve\nUS market amid tariffs and rising geopolitical tensions\nTo maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nGP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\nThe diversification of its manufacturing network is proving to be a crucial and timely competitive advantage, offering operational flexibility amid the changing tariff landscape, GP Industries said.\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets.\nChairman and CEO of GP Industries, Mr Victor Lo, in Singapore for the 30th anniversary celebration, said, “Over the past three decades, GP Industries has shown resilience and maintained steady growth through financial crises, a global pandemic, geopolitical tensions, and transformative technological changes including the ongoing AI revolution.\nAfter higher initial costs from diversifying production to Southeast Asia, GP Industries said margins have risen due to improved utilisation, lower commodity costs, and optimised supply chains."
+          }
+        ]
+      },
+      {
+        "doc": "GPI",
+        "index": 1,
+        "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Thailand",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6
+          },
+          {
+            "type": "name",
+            "surface": "UK",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6
+          },
+          {
+            "type": "name",
+            "surface": "Asian",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "UK",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7,
+            "window": "To maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nThe Group currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand.\nGP Industries, which is celebrating the 30th anniversary of its incorporation and listing in Singapore this month, said production capacity in Southeast Asia will be ramped up to serve the US market while its China facility will now focus primarily on the European and Asian markets."
+          }
+        ]
+      },
+      {
+        "doc": "GPI",
+        "index": 2,
+        "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "GPI",
+        "index": 3,
+        "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Gold Peak Technology",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "name",
+            "surface": "GP Industries",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "name",
+            "surface": "Malaysia",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "name",
+            "surface": "Malaysia",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 9,
+            "window": "To maintain competitiveness, GP Industries’ SE Asia facilities will produce for US market, China for Europe and Asia\nGP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopolitical tensions.\nGP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres.\nMr Lo sees potential for the Gold Peak Technology Group, both GP Industries and its parent, to scale significantly in Johor in the next five years.\n“We chose Johor for its fast-track investment approvals, logistical proximity to Singapore, skilled workforce, and a supportive business environment, ensuring both operational efficiency and scalability for future growth.”\nReflecting on the milestone achievement, Mr Lo said: “My greatest satisfaction comes from witnessing the growth and transformation of GP Industries into a global technology company built on the collective efforts and enduring dedication of our entire team.”\nLooking ahead, GP Industries plans to further invest in R&D, enhance operational efficiency, and expand its network of audio experience centres globally."
+          }
+        ]
+      },
+      {
+        "doc": "GPI",
+        "index": 4,
+        "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 0,
+        "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 1,
+        "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 2,
+        "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "16%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": [
+          {
+            "type": "quantity",
+            "surface": "16%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 6,
+            "window": "Record Revenue Achieved Including 25% Organic Growth in Devices and 43% Overall\nGross margin expanded to 64%; and Reported cash and cash equivalents totaling $35.6 million as of March 31, 2026.\n\"While record revenue achievement and 25% organic devices growth made the headline, there is no shortage of meaningful strategic progress across the entire organization.\nThe Company achieved a gross margin of 64% on its sales for the three months ended\nMarch 31, 2026, and a gross margin of 60% in the same period in 2025.\nThe increase in gross margin is primarily due to lower excess and obsolete inventory for the three months ended"
+          }
+        ]
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 3,
+        "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "80%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          },
+          {
+            "type": "quantity",
+            "surface": "USD 5.9 million",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 5
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 4,
+        "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "quantity",
+            "surface": "177%",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 8
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 5,
+        "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 6,
+        "statement": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 7,
+        "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 3
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 8,
+        "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+        "b397": [],
+        "b398": [
+          {
+            "type": "name",
+            "surface": "Pacific",
+            "reason": "not in the bound window",
+            "bound": true,
+            "score": 7
+          }
+        ],
+        "b399": []
+      },
+      {
+        "doc": "ClearPoint",
+        "index": 9,
+        "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+        "b397": [],
+        "b398": [],
+        "b399": []
+      }
+    ],
+    "rows": [
+      {
+        "id": "3i-S0-a",
+        "doc": "3i",
+        "index": 0,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "GBP 3.3 million bound=true score=6 found=false shared=total,return,million,opening,shareholders,funds",
+        "b399Bound": true,
+        "b399Sentence": "Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+      },
+      {
+        "id": "3i-S5-a",
+        "doc": "3i",
+        "index": 5,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "30 June 2026 bound=true score=2 found=false shared=sales,growth",
+        "b399Bound": true,
+        "b399Sentence": "(nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%."
+      },
+      {
+        "id": "3i-S8-a",
+        "doc": "3i",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "MAIT bound=true score=3 found=false shared=redemption,shares,proceeds",
+        "b399Bound": true,
+        "b399Sentence": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action"
+      },
+      {
+        "id": "3i-S9-a",
+        "doc": "3i",
+        "index": 9,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "AGIC bound=true score=6 found=false shared=proceeds,redeployed,acquire,further,stake,action",
+        "b399Bound": true,
+        "b399Sentence": "Subsequently, Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a further 2.2% stake in Action"
+      },
+      {
+        "id": "3i-S12-a",
+        "doc": "3i",
+        "index": 12,
+        "type": "ratio",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "3i-S14-a",
+        "doc": "3i",
+        "index": 14,
+        "type": "name",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "UK bound=true score=5 found=false shared=cautious,capital,deployment,lower,reinvestments",
+        "b399Bound": true,
+        "b399Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust."
+      },
+      {
+        "id": "hicl-S0-a",
+        "doc": "HICL",
+        "index": 0,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "HCIL Infrastructure bound=true score=2 found=false shared=performance,expectations",
+        "b399Bound": true,
+        "b399Sentence": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth."
+      },
+      {
+        "id": "hicl-S0-b",
+        "doc": "HICL",
+        "index": 0,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "31 December 2025 bound=true score=2 found=false shared=performance,expectations",
+        "b399Bound": true,
+        "b399Sentence": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth."
+      },
+      {
+        "id": "hicl-S1-a",
+        "doc": "HICL",
+        "index": 1,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "30% bound=true score=10 found=false shared=portfolio,operational,performance,robust,ebitda,growth,resilient,generation",
+        "b399Bound": true,
+        "b399Sentence": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our targ"
+      },
+      {
+        "id": "hicl-S2-a",
+        "doc": "HICL",
+        "index": 2,
+        "type": "benchmark",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "dropped",
+        "b399Bound": false,
+        "b399Sentence": ""
+      },
+      {
+        "id": "hicl-S3-a",
+        "doc": "HICL",
+        "index": 3,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "Paris St. Germain High Speed bound=true score=7 found=false shared=performed,international,train,bookings,slightly,ahead,forecast",
+        "b399Bound": true,
+        "b399Sentence": "Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast."
+      },
+      {
+        "id": "hicl-S4-a",
+        "doc": "HICL",
+        "index": 4,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "St. Germain bound=true score=9 found=false shared=progress,second,international,operator,route,virgin,trains,intentions",
+        "b399Bound": true,
+        "b399Sentence": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St."
+      },
+      {
+        "id": "hicl-S5-a",
+        "doc": "HICL",
+        "index": 5,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "TowerCo bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+        "b399Bound": true,
+        "b399Sentence": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assum"
+      },
+      {
+        "id": "hicl-S5-b",
+        "doc": "HICL",
+        "index": 5,
+        "type": "quantity",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+        "b399Bound": true,
+        "b399Sentence": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assum"
+      },
+      {
+        "id": "hicl-S5-c",
+        "doc": "HICL",
+        "index": 5,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "hicl-S6-a",
+        "doc": "HICL",
+        "index": 6,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": false,
+        "b399Reason": "no opposite pole in the bound window; score 2; shared recently,refinancing",
+        "b399Bound": true,
+        "b399Sentence": "The company recently completed an accretive refinancing which was c."
+      },
+      {
+        "id": "hicl-S7-a",
+        "doc": "HICL",
+        "index": 7,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "CFO bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+        "b399Bound": true,
+        "b399Sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo"
+      },
+      {
+        "id": "hicl-S7-b",
+        "doc": "HICL",
+        "index": 7,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "French bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+        "b399Bound": true,
+        "b399Sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo"
+      },
+      {
+        "id": "hicl-S7-c",
+        "doc": "HICL",
+        "index": 7,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S0-a",
+        "doc": "GPI",
+        "index": 0,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "October 2025 bound=true score=9 found=false shared=industries,production,capacity,manufacturing,southeast,tariffs,rising,geopolitical",
+        "b399Bound": true,
+        "b399Sentence": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopol"
+      },
+      {
+        "id": "gpi-S0-b",
+        "doc": "GPI",
+        "index": 0,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "75% bound=true score=9 found=false shared=industries,production,capacity,manufacturing,southeast,tariffs,rising,geopolitical",
+        "b399Bound": true,
+        "b399Sentence": "GP Industries Limited (GP Industries), the world’s second-largest producer of consumer batteries, is shifting production capacity to its manufacturing facilities in Southeast Asia to navigate US tariffs and rising geopol"
+      },
+      {
+        "id": "gpi-S0-c",
+        "doc": "GPI",
+        "index": 0,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S1-a",
+        "doc": "GPI",
+        "index": 1,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "15 bound=true score=6 found=false shared=currently,operates,facilities,malaysia,vietnam,thailand",
+        "b399Bound": true,
+        "b399Sentence": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand."
+      },
+      {
+        "id": "gpi-S1-b",
+        "doc": "GPI",
+        "index": 1,
+        "type": "set",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "dropped",
+        "b399Bound": false,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S2-a",
+        "doc": "GPI",
+        "index": 2,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S3-a",
+        "doc": "GPI",
+        "index": 3,
+        "type": "name",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "Silver Hill Technology bound=true score=8 found=false shared=industries,planning,investment,johor,produce,generation,support,centres",
+        "b399Bound": true,
+        "b399Sentence": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which is planning a multi-million-dollar investment in Johor to produce next-generation battery to support data centres."
+      },
+      {
+        "id": "gpi-S4-a",
+        "doc": "GPI",
+        "index": 4,
+        "type": "rank",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "gpi-S4-b",
+        "doc": "GPI",
+        "index": 4,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "60 billion bound=true score=8 found=false shared=batteries,producing,billion,annually,through,million,outlets,worldwide",
+        "b399Bound": true,
+        "b399Sentence": "It has since grown into a global manufacturer, producing over six billion batteries annually, sold through one million outlets worldwide."
+      },
+      {
+        "id": "gpi-S4-c",
+        "doc": "GPI",
+        "index": 4,
+        "type": "open-wording",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "clearpoint-S0-a",
+        "doc": "ClearPoint",
+        "index": 0,
+        "type": "date",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "April 2026 bound=true score=7 found=false shared=clearpoint,neuro,announced,financial,results,first,quarter",
+        "b399Bound": true,
+        "b399Sentence": "SOLANA BEACH, Calif., May 13, 2026 (Newswire.com) - ClearPoint Neuro, Inc. (Nasdaq:CLPT) (the \"Company\"), a global device, cell, and gene therapy-enabling company offering precise navigation to the brain and spine, today"
+      },
+      {
+        "id": "clearpoint-S2-a",
+        "doc": "ClearPoint",
+        "index": 2,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "-50% bound=true score=6 found=false shared=gross,margin,lower,excess,obsolete,inventory",
+        "b399Bound": true,
+        "b399Sentence": "The increase in gross margin is primarily due to lower excess and obsolete inventory for the three months ended"
+      },
+      {
+        "id": "clearpoint-S3-a",
+        "doc": "ClearPoint",
+        "index": 3,
+        "type": "ratio",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "unchanged from B397",
+        "b399Bound": null,
+        "b399Sentence": ""
+      },
+      {
+        "id": "clearpoint-S7-a",
+        "doc": "ClearPoint",
+        "index": 7,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "poles clearance/submission, shared velocity, alpha, speed, surgical, drill, system; score 6; shared velocity,alpha,speed,surgical,drill,system",
+        "b399Bound": true,
+        "b399Sentence": "FDA clearance and successful completion of the first clinical procedure utilizing the Velocity Alpha MR High Speed Surgical Drill System;"
+      },
+      {
+        "id": "clearpoint-S8-a",
+        "doc": "ClearPoint",
+        "index": 8,
+        "type": "name",
+        "b397": false,
+        "b398": false,
+        "b399": false,
+        "b399Reason": "FDA bound=true score=8 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology,pacific,region",
+        "b399Bound": true,
+        "b399Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;"
+      },
+      {
+        "id": "clearpoint-S8-b",
+        "doc": "ClearPoint",
+        "index": 8,
+        "type": "polarity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "poles completion/commenced, shared first, utilizing, system; score 8; shared clearpoint,first,commercial,delivery,utilizing,technology,pacific,region",
+        "b399Bound": true,
+        "b399Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology in the Asia-Pacific region;"
+      },
+      {
+        "id": "clearpoint-S9-a",
+        "doc": "ClearPoint",
+        "index": 9,
+        "type": "quantity",
+        "b397": true,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "USD 56 million bound=true score=2 found=true range-collapse shared=revenue,million",
+        "b399Bound": true,
+        "b399Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;"
+      },
+      {
+        "id": "clearpoint-S9-b",
+        "doc": "ClearPoint",
+        "index": 9,
+        "type": "date",
+        "b397": false,
+        "b398": true,
+        "b399": true,
+        "b399Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+        "b399Bound": true,
+        "b399Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow revenue, representing 43% overall growth and 16% year-over-year total organic growth compared with the first quarter of 2025;"
+      }
+    ]
+  }
+}

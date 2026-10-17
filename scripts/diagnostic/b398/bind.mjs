@@ -268,6 +268,7 @@ function cleanFlagsAfter(statement, draft, source, mode) {
         reason: collapsed ? "range collapse" : "not in the bound window",
         bound: binding.bound,
         score: binding.score,
+        window: binding.window,
       });
     }
     if ((item.kind === "date" || item.kind === "name") && !found) {
@@ -277,11 +278,20 @@ function cleanFlagsAfter(statement, draft, source, mode) {
         reason: binding.bound ? "not in the bound window" : "not in the source",
         bound: binding.bound,
         score: binding.score,
+        window: binding.window,
       });
     }
   }
   const polarity = polarityAfter(statement, source, mode);
-  if (polarity.catch) flags.push({ type: "polarity", surface: polarity.reason, reason: polarity.reason, bound: true });
+  if (polarity.catch) {
+    flags.push({
+      type: "polarity",
+      surface: polarity.reason,
+      reason: polarity.reason,
+      bound: true,
+      window: polarity.sentence || "",
+    });
+  }
   return flags;
 }
 
@@ -303,7 +313,7 @@ function nbspGate(hiclSource) {
   };
 }
 
-function main() {
+export function collectBinding(loadSource = read) {
   const beforeDoc = loadJson("scripts/diagnostic/b397/runs/classify.json");
   const beforeById = new Map(beforeDoc.rows.map((row) => [row.id, row]));
   if (beforeById.size !== 37) throw new Error(`B397 rows ${beforeById.size}`);
@@ -315,7 +325,7 @@ function main() {
     const doc = byRun.get(run.runId);
     if (!doc) throw new Error(`no doc for ${run.runId}`);
     const review = loadJson(doc.doctored);
-    const source = read(doc.source);
+    const source = loadSource(doc.source);
     const draft = review.statements.map((item) => item.text).join("\n");
     for (const entry of run.entries) {
       const statement = review.statements[entry.statementIndex]?.text;
@@ -364,7 +374,7 @@ function main() {
   const clean = [];
   for (const doc of DOCS) {
     const review = loadJson(doc.clean);
-    const source = read(doc.source);
+    const source = loadSource(doc.source);
     const draft = review.statements.map((item) => item.text).join("\n");
     const priorClean = beforeDoc.clean.filter((row) => row.doc === doc.doc);
     review.statements.forEach((item, index) => {
@@ -384,7 +394,7 @@ function main() {
   }
   if (clean.length !== 38) throw new Error(`clean ${clean.length}`);
 
-  const hicl = read(DOCS[1].source);
+  const hicl = loadSource(DOCS[1].source);
   const nbsp = nbspGate(hicl);
   const changed = planted.filter((row) => row.beforeCatch !== row.afterCatch);
   const lost = planted.filter((row) => row.beforeCatch && !row.afterCatch);
@@ -414,6 +424,13 @@ function main() {
     planted,
     clean,
   };
+  return report;
+}
+
+function main() {
+  const report = collectBinding(read);
+  const { planted, lost, gained, lostB2, gainedB2, five, clean, nbsp } = report;
+  const s3 = planted.find((row) => row.id === "clearpoint-S3-a");
   mkdirSync(OUT, { recursive: true });
   writeFileSync(path.join(OUT, "bind.json"), `${JSON.stringify(report, null, 2)}\n`);
 
@@ -444,4 +461,4 @@ function main() {
   }
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
