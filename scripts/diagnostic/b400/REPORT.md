@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | backend SHIP VERIFIED  cde0687  main  167 files  1828 tests. frontend SHIP VERIFIED  252b43e  main  46 files  264 tests |
 
 USD 0. No model call.
 
