@@ -24,4 +24,11 @@ describe("B232 export verdict label", () => {
   test("an allowlisted unverifiable slug is Unverifiable", () => {
     assert.equal(normalizeExportVerdict("unverifiable"), "Unverifiable");
   });
+
+  test("factualBadge false exports nothing and is not Unverifiable", () => {
+    const card = { displayVerdict: "supported_full", factualBadge: false };
+    assert.equal(normalizeExportVerdict(card.displayVerdict, card), null);
+    assert.notEqual(normalizeExportVerdict(card.displayVerdict, card), "Unverifiable");
+    assert.equal(normalizeExportVerdict("supported_full"), "Confirmed");
+  });
 });

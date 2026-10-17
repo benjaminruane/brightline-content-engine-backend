@@ -78,4 +78,19 @@ describe("B296 card colour grid", () => {
       }
     });
   }
+
+  test("factualBadge false is unbadged and not amber, green, or red", () => {
+    const cls = classifyCard(
+      {
+        displayVerdict: "supported_full",
+        factualBadge: false,
+        editorialVerdict: "clean",
+        complianceVerdict: "clean",
+      },
+      { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true }
+    );
+    assert.equal(cls.evidence, "unbadged");
+    assert.equal(cls.cardTone, "neutral");
+    assert.equal(cls.needsAttention, false);
+  });
 });

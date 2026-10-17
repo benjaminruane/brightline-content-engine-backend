@@ -7,7 +7,10 @@ import { isExtractStructureEnabled, resolvePdfEngine } from "../../lib/extract-t
 import { isRaisedCharactersEnabled } from "../../lib/extract-pdf-direct.mjs";
 import { isNarrativeCoherenceEnabled } from "../../lib/qc/narrative-coherence.mjs";
 import { isActorOfTheActionEnabled } from "../../lib/qc/actor-of-the-action.mjs";
-import { isRecoveryMayNotGreenEnabled } from "../../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import {
+  isRecoveryMayNotGreenEnabled,
+  isUnbadgedResidueEnabled,
+} from "../../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
 import { readBuildIdentity } from "../../lib/qc/build-identity.mjs";
 
 export { readBuildIdentity };
@@ -58,6 +61,7 @@ export function listUnrecognisedFlags(env = process.env) {
   if (unrecognisedLoose(rawPresent(env, "QC_NARRATIVE_COHERENCE"))) names.push("QC_NARRATIVE_COHERENCE");
   if (unrecognisedLoose(rawPresent(env, "QC_ACTOR_OF_THE_ACTION"))) names.push("QC_ACTOR_OF_THE_ACTION");
   if (unrecognisedLoose(rawPresent(env, "QC_RECOVERY_MAY_NOT_GREEN"))) names.push("QC_RECOVERY_MAY_NOT_GREEN");
+  if (unrecognisedLoose(rawPresent(env, "QC_UNBADGED_RESIDUE"))) names.push("QC_UNBADGED_RESIDUE");
 
   const extractRaw = rawPresent(env, "QC_EXTRACT_STRUCTURE");
   if (extractRaw !== "" && extractRaw !== "true" && extractRaw !== "1") {
@@ -100,6 +104,7 @@ export function readEnvironmentSummary(env = process.env) {
     narrativeCoherence: flagReport(isNarrativeCoherenceEnabled(env), false),
     actorOfTheAction: flagReport(isActorOfTheActionEnabled(env), false),
     recoveryMayNotGreen: flagReport(isRecoveryMayNotGreenEnabled(env), true),
+    unbadgedResidue: flagReport(isUnbadgedResidueEnabled(env), true),
     unrecognisedFlags: listUnrecognisedFlags(env),
   };
 }

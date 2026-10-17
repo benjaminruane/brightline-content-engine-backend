@@ -7,7 +7,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
-import { renderCanonicalExportText } from "../lib/qc/export-review-data.mjs";
+import { buildReviewData, renderCanonicalExportText } from "../lib/qc/export-review-data.mjs";
 import { collectMarginNotes } from "../lib/qc/constructive-feedback.mjs";
 import { buildSortedEntries } from "../lib/revise-actions/sort.mjs";
 import { synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
@@ -177,5 +177,22 @@ describe("B245 corruptions", () => {
       partialStatements: [],
     });
     assert.equal(guard, true);
+  });
+
+  test("a card with factualBadge false exports an empty verdict and the note", () => {
+    const payload = cloneFixture();
+    const card = payload.statements[0].qcCard;
+    card.factualBadge = false;
+    card.displayVerdict = "supported_full";
+    card.reasoningParagraph = "The source confirms this sentence in its own words.";
+    card.commentaryNotReviewed = false;
+    const row = buildReviewData(payload, payload.meta.reviewOptions).statements[0];
+    assert.equal(row.verdict, null);
+    assert.equal(row.evidenceFinding, "The source confirms this sentence in its own words.");
+    const text = exportTextFrom(payload);
+    const slice = text.split("Statement review")[1].split(`"${card.statement}"`)[1].split('\n"')[0];
+    assert.equal(slice.includes("Verdict:"), false);
+    assert.equal(slice.includes("Not checked"), false);
+    assert.equal(slice.includes("Evidence finding: The source confirms this sentence in its own words."), true);
   });
 });

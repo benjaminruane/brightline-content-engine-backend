@@ -20,7 +20,10 @@ import { isExtractStructureEnabled, resolvePdfEngine } from "../lib/extract-text
 import { isRaisedCharactersEnabled } from "../lib/extract-pdf-direct.mjs";
 import { isNarrativeCoherenceEnabled } from "../lib/qc/narrative-coherence.mjs";
 import { isActorOfTheActionEnabled } from "../lib/qc/actor-of-the-action.mjs";
-import { isRecoveryMayNotGreenEnabled } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import {
+  isRecoveryMayNotGreenEnabled,
+  isUnbadgedResidueEnabled,
+} from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
 import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
 import { buildIncompleteReviewResponse } from "../lib/qc/review-deadline.mjs";
 import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
@@ -37,6 +40,7 @@ const B2_FLAGS = [
   "narrativeCoherence",
   "actorOfTheAction",
   "recoveryMayNotGreen",
+  "unbadgedResidue",
 ];
 
 function createRes() {
@@ -124,6 +128,8 @@ describe("B340 health build and resolved flags", () => {
     assert.equal(env.actorOfTheAction.resolved, isActorOfTheActionEnabled());
     assert.equal(env.recoveryMayNotGreen.resolved, isRecoveryMayNotGreenEnabled());
     assert.equal(env.recoveryMayNotGreen.differsFromDefault, false);
+    assert.equal(env.unbadgedResidue.resolved, isUnbadgedResidueEnabled());
+    assert.equal(env.unbadgedResidue.differsFromDefault, false);
   });
 
   test("T4 editorial true is OFF and the name is listed without the value", async () => {
