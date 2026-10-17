@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship. |
+| SHIPPED | `SHIP VERIFIED  474625a  main  166 files  1819 tests` |
 | Cost | USD 0. No model calls. |
 | Matcher | `scripts/diagnostic/b392/elements.mjs`, definition `scripts/diagnostic/b394/ELEMENTS-v3.md`. |
 | Evidence | `scripts/diagnostic/b396/runs/nine.json`. Passages from `scripts/diagnostic/b395/runs/diff.json`. |

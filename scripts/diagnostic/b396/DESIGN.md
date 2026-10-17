@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending verify:ship. |
+| SHIPPED | `SHIP VERIFIED  474625a  main  166 files  1819 tests` |
 | Cost | USD 0. No product code. No model calls. |
 | Measurement | `scripts/diagnostic/b396/MEASUREMENT.md`. |
 
