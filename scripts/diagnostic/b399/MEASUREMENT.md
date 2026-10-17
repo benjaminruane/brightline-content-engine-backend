@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | pending this commit |
+| SHIPPED | `SHIP VERIFIED  a77fe2c  main  166 files  1819 tests` |
 | Cost | USD 0. No model calls. |
 | Rules | `scripts/diagnostic/b399/ASSEMBLY.md`. A1 was written before the count and was not edited after it. A1 missed D2. A2 was added below it and was not edited after its own count. |
 | Binding | B398 rule B2, unchanged. `scripts/diagnostic/b398/bind.mjs` exposes `collectBinding(loadSource)`. The diff is 23 lines added and 6 lines removed. Three call sites read through `loadSource`. The flag object also carries the window string so this report can quote it. That copy does not change whether a flag fires. |
