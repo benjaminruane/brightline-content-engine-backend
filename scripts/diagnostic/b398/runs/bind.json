@@ -1,0 +1,2072 @@
+{
+  "beforeReach": 24,
+  "b1Reach": 28,
+  "b2Reach": 28,
+  "changed": [
+    {
+      "id": "3i-S8-a",
+      "doc": "3i",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "MAIT",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "b2Catch": true,
+      "b2Reason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "beforeReason": "MAIT found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a",
+      "b2Sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a"
+    },
+    {
+      "id": "3i-S14-a",
+      "doc": "3i",
+      "index": 14,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the UK government",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "b2Catch": true,
+      "b2Reason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "beforeReason": "UK found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including",
+      "b2Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including"
+    },
+    {
+      "id": "hicl-S5-b",
+      "doc": "HICL",
+      "index": 5,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "20 new towers",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "b2Catch": true,
+      "b2Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "beforeReason": "20 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio",
+      "b2Sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio"
+    },
+    {
+      "id": "clearpoint-S7-a",
+      "doc": "ClearPoint",
+      "index": 7,
+      "type": "polarity",
+      "class": "partly",
+      "written": "a submission for FDA approval",
+      "statement": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+      "beforeCatch": true,
+      "afterCatch": false,
+      "afterReason": "no opposite pole in the bound window; score 6; shared velocity,alpha,speed,surgical,drill,system",
+      "b2Catch": true,
+      "b2Reason": "poles clearance/submission, shared velocity, alpha, drill; score 6; shared velocity,alpha,speed,surgical,drill,system",
+      "beforeReason": "poles clearance/submission, shared velocity, alpha, drill",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Velocity Alpha MR High Speed Surgical Drill System;",
+      "b2Sentence": "Velocity Alpha MR High Speed Surgical Drill System;"
+    },
+    {
+      "id": "clearpoint-S8-a",
+      "doc": "ClearPoint",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the FDA",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "FDA bound=true score=6 found=false shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "b2Catch": false,
+      "b2Reason": "FDA bound=true score=6 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "beforeReason": "FDA found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology",
+      "b2Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology"
+    },
+    {
+      "id": "clearpoint-S9-b",
+      "doc": "ClearPoint",
+      "index": 9,
+      "type": "date",
+      "class": "mechanical",
+      "written": "2027",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "b2Catch": true,
+      "b2Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "beforeReason": "2027 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow",
+      "b2Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow"
+    }
+  ],
+  "lost": [
+    {
+      "id": "clearpoint-S7-a",
+      "doc": "ClearPoint",
+      "index": 7,
+      "type": "polarity",
+      "class": "partly",
+      "written": "a submission for FDA approval",
+      "statement": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+      "beforeCatch": true,
+      "afterCatch": false,
+      "afterReason": "no opposite pole in the bound window; score 6; shared velocity,alpha,speed,surgical,drill,system",
+      "b2Catch": true,
+      "b2Reason": "poles clearance/submission, shared velocity, alpha, drill; score 6; shared velocity,alpha,speed,surgical,drill,system",
+      "beforeReason": "poles clearance/submission, shared velocity, alpha, drill",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Velocity Alpha MR High Speed Surgical Drill System;",
+      "b2Sentence": "Velocity Alpha MR High Speed Surgical Drill System;"
+    }
+  ],
+  "gained": [
+    {
+      "id": "3i-S8-a",
+      "doc": "3i",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "MAIT",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "b2Catch": true,
+      "b2Reason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "beforeReason": "MAIT found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a",
+      "b2Sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a"
+    },
+    {
+      "id": "3i-S14-a",
+      "doc": "3i",
+      "index": 14,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the UK government",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "b2Catch": true,
+      "b2Reason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "beforeReason": "UK found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including",
+      "b2Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including"
+    },
+    {
+      "id": "hicl-S5-b",
+      "doc": "HICL",
+      "index": 5,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "20 new towers",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "b2Catch": true,
+      "b2Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "beforeReason": "20 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio",
+      "b2Sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio"
+    },
+    {
+      "id": "clearpoint-S8-a",
+      "doc": "ClearPoint",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the FDA",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "FDA bound=true score=6 found=false shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "b2Catch": false,
+      "b2Reason": "FDA bound=true score=6 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "beforeReason": "FDA found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology",
+      "b2Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology"
+    },
+    {
+      "id": "clearpoint-S9-b",
+      "doc": "ClearPoint",
+      "index": 9,
+      "type": "date",
+      "class": "mechanical",
+      "written": "2027",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "b2Catch": true,
+      "b2Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "beforeReason": "2027 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow",
+      "b2Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow"
+    }
+  ],
+  "lostB2": [],
+  "gainedB2": [
+    {
+      "id": "3i-S8-a",
+      "doc": "3i",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "MAIT",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "b2Catch": true,
+      "b2Reason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "beforeReason": "MAIT found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a",
+      "b2Sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a"
+    },
+    {
+      "id": "3i-S14-a",
+      "doc": "3i",
+      "index": 14,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the UK government",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "b2Catch": true,
+      "b2Reason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "beforeReason": "UK found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including",
+      "b2Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including"
+    },
+    {
+      "id": "hicl-S5-b",
+      "doc": "HICL",
+      "index": 5,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "20 new towers",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "b2Catch": true,
+      "b2Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "beforeReason": "20 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio",
+      "b2Sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio"
+    },
+    {
+      "id": "clearpoint-S9-b",
+      "doc": "ClearPoint",
+      "index": 9,
+      "type": "date",
+      "class": "mechanical",
+      "written": "2027",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "b2Catch": true,
+      "b2Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "beforeReason": "2027 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow",
+      "b2Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow"
+    }
+  ],
+  "five": [
+    {
+      "id": "3i-S8-a",
+      "doc": "3i",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "MAIT",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "b2Catch": true,
+      "b2Reason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "beforeReason": "MAIT found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a",
+      "b2Sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a"
+    },
+    {
+      "id": "3i-S14-a",
+      "doc": "3i",
+      "index": 14,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the UK government",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "b2Catch": true,
+      "b2Reason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "beforeReason": "UK found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including",
+      "b2Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including"
+    },
+    {
+      "id": "hicl-S5-b",
+      "doc": "HICL",
+      "index": 5,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "20 new towers",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "b2Catch": true,
+      "b2Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "beforeReason": "20 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio",
+      "b2Sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio"
+    },
+    {
+      "id": "clearpoint-S8-a",
+      "doc": "ClearPoint",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the FDA",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "FDA bound=true score=6 found=false shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "b2Catch": false,
+      "b2Reason": "FDA bound=true score=6 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "beforeReason": "FDA found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology",
+      "b2Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology"
+    },
+    {
+      "id": "clearpoint-S9-b",
+      "doc": "ClearPoint",
+      "index": 9,
+      "type": "date",
+      "class": "mechanical",
+      "written": "2027",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "b2Catch": true,
+      "b2Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "beforeReason": "2027 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow",
+      "b2Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow"
+    }
+  ],
+  "clearpointS3": {
+    "beforeCatch": false,
+    "b1Catch": false,
+    "b2Catch": false,
+    "b2Reason": "unchanged from B397"
+  },
+  "nbsp": {
+    "hiclNbsp": 26,
+    "dateExtracted": "2025-10-01",
+    "dateFolds": true,
+    "figureExtracted": "GBP 3.3 million",
+    "figureFolds": true,
+    "folds": true
+  },
+  "planted": [
+    {
+      "id": "3i-S0-a",
+      "doc": "3i",
+      "index": 0,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "£3.3 million",
+      "statement": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "GBP 3.3 million bound=true score=6 found=false shared=total,return,million,opening,shareholders,funds",
+      "b2Catch": true,
+      "b2Reason": "GBP 3.3 million bound=true score=6 found=false shared=total,return,million,opening,shareholders,funds",
+      "beforeReason": "GBP 3.3 million found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "•   Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%).",
+      "b2Sentence": "•   Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+    },
+    {
+      "id": "3i-S5-a",
+      "doc": "3i",
+      "index": 5,
+      "type": "date",
+      "class": "mechanical",
+      "written": "six months to 30 June 2026",
+      "statement": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "30 June 2026 bound=true score=2 found=false shared=sales,growth",
+      "b2Catch": true,
+      "b2Reason": "30 June 2026 bound=true score=2 found=false shared=sales,growth",
+      "beforeReason": "30 June 2026 found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%.",
+      "b2Sentence": "ended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6.3%."
+    },
+    {
+      "id": "3i-S8-a",
+      "doc": "3i",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "MAIT",
+      "statement": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "b2Catch": true,
+      "b2Reason": "MAIT bound=true score=2 found=false shared=shares,proceeds",
+      "beforeReason": "MAIT found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a",
+      "b2Sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a"
+    },
+    {
+      "id": "3i-S9-a",
+      "doc": "3i",
+      "index": 9,
+      "type": "name",
+      "class": "mechanical",
+      "written": "AGIC",
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "AGIC bound=true score=3 found=false shared=proceeds,redeployed,acquire",
+      "b2Catch": true,
+      "b2Reason": "AGIC bound=true score=3 found=false shared=proceeds,redeployed,acquire",
+      "beforeReason": "AGIC found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a",
+      "b2Sentence": "shares, returning £944 million of gross proceeds to 3i, £755 million of which were redeployed to acquire a"
+    },
+    {
+      "id": "3i-S12-a",
+      "doc": "3i",
+      "index": 12,
+      "type": "ratio",
+      "class": "partly",
+      "written": "gains across essentially all of its investments",
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "unchanged from B397",
+      "b2Catch": true,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "one holding: TCR",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "3i-S14-a",
+      "doc": "3i",
+      "index": 14,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the UK government",
+      "statement": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "b2Catch": true,
+      "b2Reason": "UK bound=true score=3 found=false shared=cautious,capital,deployment",
+      "beforeReason": "UK found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including",
+      "b2Sentence": "We remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including"
+    },
+    {
+      "id": "hicl-S0-a",
+      "doc": "HICL",
+      "index": 0,
+      "type": "name",
+      "class": "mechanical",
+      "written": "HCIL",
+      "statement": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "HCIL Infrastructure bound=true score=2 found=false shared=performance,expectations",
+      "b2Catch": true,
+      "b2Reason": "HCIL Infrastructure bound=true score=2 found=false shared=performance,expectations",
+      "beforeReason": "HCIL Infrastructure found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. |",
+      "b2Sentence": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. |"
+    },
+    {
+      "id": "hicl-S0-b",
+      "doc": "HICL",
+      "index": 0,
+      "type": "date",
+      "class": "mechanical",
+      "written": "six months to 31 December 2025",
+      "statement": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "31 December 2025 bound=true score=2 found=false shared=performance,expectations",
+      "b2Catch": true,
+      "b2Reason": "31 December 2025 bound=true score=2 found=false shared=performance,expectations",
+      "beforeReason": "31 December 2025 found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. |",
+      "b2Sentence": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. |"
+    },
+    {
+      "id": "hicl-S1-a",
+      "doc": "HICL",
+      "index": 1,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "with average 30% EBITDA growth",
+      "statement": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "30% bound=true score=10 found=false shared=portfolio,operational,performance,robust,ebitda,growth,resilient,generation",
+      "b2Catch": true,
+      "b2Reason": "30% bound=true score=10 found=false shared=portfolio,operational,performance,robust,ebitda,growth,resilient,generation",
+      "beforeReason": "30% found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our targ",
+      "b2Sentence": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our targ"
+    },
+    {
+      "id": "hicl-S2-a",
+      "doc": "HICL",
+      "index": 2,
+      "type": "benchmark",
+      "class": "partly",
+      "written": "significantly outperform budgets",
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "dropped",
+      "b2Catch": false,
+      "b2Reason": "dropped",
+      "beforeReason": "no source sentence has budgets and a comparison word",
+      "bound": false,
+      "b2Bound": false,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "hicl-S3-a",
+      "doc": "HICL",
+      "index": 3,
+      "type": "name",
+      "class": "mechanical",
+      "written": "Paris St. Germain High Speed",
+      "statement": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "Paris St. Germain High Speed bound=true score=7 found=false shared=performed,international,train,bookings,slightly,ahead,forecast",
+      "b2Catch": true,
+      "b2Reason": "Paris St. Germain High Speed bound=true score=7 found=false shared=performed,international,train,bookings,slightly,ahead,forecast",
+      "beforeReason": "Paris St. Germain High Speed found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast.",
+      "b2Sentence": "Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast."
+    },
+    {
+      "id": "hicl-S4-a",
+      "doc": "HICL",
+      "index": 4,
+      "type": "name",
+      "class": "mechanical",
+      "written": "operations from St. Germain",
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "St. Germain bound=true score=9 found=false shared=progress,second,international,operator,route,virgin,trains,intentions",
+      "b2Catch": true,
+      "b2Reason": "St. Germain bound=true score=9 found=false shared=progress,second,international,operator,route,virgin,trains,intentions",
+      "beforeReason": "St. Germain found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St.",
+      "b2Sentence": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St."
+    },
+    {
+      "id": "hicl-S5-a",
+      "doc": "HICL",
+      "index": 5,
+      "type": "name",
+      "class": "mechanical",
+      "written": "TowerCo",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "TowerCo bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "b2Catch": true,
+      "b2Reason": "TowerCo bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "beforeReason": "TowerCo found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio",
+      "b2Sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio"
+    },
+    {
+      "id": "hicl-S5-b",
+      "doc": "HICL",
+      "index": 5,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "20 new towers",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "b2Catch": true,
+      "b2Reason": "20 bound=true score=12 found=false shared=delivered,towers,actively,progressing,location,opportunities,expected,support",
+      "beforeReason": "20 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio",
+      "b2Sentence": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuatio"
+    },
+    {
+      "id": "hicl-S5-c",
+      "doc": "HICL",
+      "index": 5,
+      "type": "open-wording",
+      "class": "not",
+      "written": "during the past year",
+      "statement": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "unchanged from B397",
+      "b2Catch": false,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "no deterministic rule",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "hicl-S6-a",
+      "doc": "HICL",
+      "index": 6,
+      "type": "polarity",
+      "class": "partly",
+      "written": "lead to an increase",
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "poles step-down/increase, shared company, recently, refinancing, oversubscribed; score 3; shared recently,oversubscribed,refinancing",
+      "b2Catch": true,
+      "b2Reason": "poles step-down/increase, shared company, recently, refinancing, oversubscribed; score 3; shared recently,oversubscribed,refinancing",
+      "beforeReason": "poles step-down/increase, shared company, recently, refinancing, oversubscribed",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth'",
+      "b2Sentence": "The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth'"
+    },
+    {
+      "id": "hicl-S7-a",
+      "doc": "HICL",
+      "index": 7,
+      "type": "name",
+      "class": "mechanical",
+      "written": "appointed a new CFO",
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "CFO bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+      "b2Catch": true,
+      "b2Reason": "CFO bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+      "beforeReason": "CFO found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo",
+      "b2Sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo"
+    },
+    {
+      "id": "hicl-S7-b",
+      "doc": "HICL",
+      "index": 7,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the French government's",
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "French bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+      "b2Catch": true,
+      "b2Reason": "French bound=true score=7 found=false shared=affinity,water,sector,government,white,paper,reform",
+      "beforeReason": "French found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo",
+      "b2Sentence": "The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial fo"
+    },
+    {
+      "id": "hicl-S7-c",
+      "doc": "HICL",
+      "index": 7,
+      "type": "open-wording",
+      "class": "not",
+      "written": "electricity sector reform",
+      "statement": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "unchanged from B397",
+      "b2Catch": false,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "no deterministic rule",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "gpi-S0-a",
+      "doc": "GPI",
+      "index": 0,
+      "type": "date",
+      "class": "mechanical",
+      "written": "October 2025",
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "October 2025 bound=true score=5 found=false shared=industries,shift,production,southeast,serve",
+      "b2Catch": true,
+      "b2Reason": "October 2025 bound=true score=5 found=false shared=industries,shift,production,southeast,serve",
+      "beforeReason": "October 2025 found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "GP Industries to shift production to Southeast Asia to serve",
+      "b2Sentence": "GP Industries to shift production to Southeast Asia to serve"
+    },
+    {
+      "id": "gpi-S0-b",
+      "doc": "GPI",
+      "index": 0,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "75% of its global production capacity",
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "75% bound=true score=5 found=false shared=industries,shift,production,southeast,serve",
+      "b2Catch": true,
+      "b2Reason": "75% bound=true score=5 found=false shared=industries,shift,production,southeast,serve",
+      "beforeReason": "75% found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "GP Industries to shift production to Southeast Asia to serve",
+      "b2Sentence": "GP Industries to shift production to Southeast Asia to serve"
+    },
+    {
+      "id": "gpi-S0-c",
+      "doc": "GPI",
+      "index": 0,
+      "type": "open-wording",
+      "class": "not",
+      "written": "escalating oil prices",
+      "statement": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "unchanged from B397",
+      "b2Catch": false,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "no deterministic rule",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "gpi-S1-a",
+      "doc": "GPI",
+      "index": 1,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "15 facilities in Malaysia",
+      "statement": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "15 bound=true score=5 found=false shared=currently,operates,facilities,malaysia,vietnam",
+      "b2Catch": true,
+      "b2Reason": "15 bound=true score=5 found=false shared=currently,operates,facilities,malaysia,vietnam",
+      "beforeReason": "15 found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in",
+      "b2Sentence": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in"
+    },
+    {
+      "id": "gpi-S1-b",
+      "doc": "GPI",
+      "index": 1,
+      "type": "set",
+      "class": "partly",
+      "written": "European market only",
+      "statement": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "dropped",
+      "b2Catch": false,
+      "b2Reason": "dropped",
+      "beforeReason": "written span is not in the statement. no only",
+      "bound": false,
+      "b2Bound": false,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "gpi-S2-a",
+      "doc": "GPI",
+      "index": 2,
+      "type": "open-wording",
+      "class": "not",
+      "written": "enhancing site security",
+      "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "unchanged from B397",
+      "b2Catch": false,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "no deterministic rule",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "gpi-S3-a",
+      "doc": "GPI",
+      "index": 3,
+      "type": "name",
+      "class": "mechanical",
+      "written": "Silver Hill Technology",
+      "statement": "Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "Silver Hill Technology bound=true score=5 found=false shared=planning,investment,johor,produce,generation",
+      "b2Catch": true,
+      "b2Reason": "Silver Hill Technology bound=true score=5 found=false shared=planning,investment,johor,produce,generation",
+      "beforeReason": "Silver Hill Technology found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "is planning a multi-million-dollar investment in Johor to produce next-generation battery to",
+      "b2Sentence": "is planning a multi-million-dollar investment in Johor to produce next-generation battery to"
+    },
+    {
+      "id": "gpi-S4-a",
+      "doc": "GPI",
+      "index": 4,
+      "type": "rank",
+      "class": "partly",
+      "written": "the largest",
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "unchanged from B397",
+      "b2Catch": true,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "draft largest producer, source second-largest producer",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "gpi-S4-b",
+      "doc": "GPI",
+      "index": 4,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "over 60 billion",
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "60 billion bound=true score=5 found=false shared=annually,through,million,outlets,worldwide",
+      "b2Catch": true,
+      "b2Reason": "60 billion bound=true score=5 found=false shared=annually,through,million,outlets,worldwide",
+      "beforeReason": "60 billion found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "annually, sold through one million outlets worldwide.",
+      "b2Sentence": "annually, sold through one million outlets worldwide."
+    },
+    {
+      "id": "gpi-S4-c",
+      "doc": "GPI",
+      "index": 4,
+      "type": "open-wording",
+      "class": "not",
+      "written": "bartered through",
+      "statement": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "unchanged from B397",
+      "b2Catch": false,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "no deterministic rule",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "clearpoint-S0-a",
+      "doc": "ClearPoint",
+      "index": 0,
+      "type": "date",
+      "class": "mechanical",
+      "written": "April",
+      "statement": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "April 2026 bound=true score=4 found=false shared=clearpoint,neuro,first,quarter",
+      "b2Catch": true,
+      "b2Reason": "April 2026 bound=true score=4 found=false shared=clearpoint,neuro,first,quarter",
+      "beforeReason": "April 2026 found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "ClearPoint Neuro Reports First Quarter",
+      "b2Sentence": "ClearPoint Neuro Reports First Quarter"
+    },
+    {
+      "id": "clearpoint-S2-a",
+      "doc": "ClearPoint",
+      "index": 2,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "-50%",
+      "statement": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "-50% bound=true score=5 found=false shared=margin,lower,excess,obsolete,inventory",
+      "b2Catch": true,
+      "b2Reason": "-50% bound=true score=5 found=false shared=margin,lower,excess,obsolete,inventory",
+      "beforeReason": "-50% found=false",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "margin is primarily due to lower excess and obsolete inventory for the three months ended",
+      "b2Sentence": "margin is primarily due to lower excess and obsolete inventory for the three months ended"
+    },
+    {
+      "id": "clearpoint-S3-a",
+      "doc": "ClearPoint",
+      "index": 3,
+      "type": "ratio",
+      "class": "partly",
+      "written": "the vast majority of the company's overall revenue",
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "beforeCatch": false,
+      "afterCatch": false,
+      "afterReason": "unchanged from B397",
+      "b2Catch": false,
+      "b2Reason": "unchanged from B397",
+      "beforeReason": "counterpart missing head=software lead=topline part=false whole=false",
+      "bound": null,
+      "b2Bound": null,
+      "sentence": "",
+      "b2Sentence": ""
+    },
+    {
+      "id": "clearpoint-S7-a",
+      "doc": "ClearPoint",
+      "index": 7,
+      "type": "polarity",
+      "class": "partly",
+      "written": "a submission for FDA approval",
+      "statement": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+      "beforeCatch": true,
+      "afterCatch": false,
+      "afterReason": "no opposite pole in the bound window; score 6; shared velocity,alpha,speed,surgical,drill,system",
+      "b2Catch": true,
+      "b2Reason": "poles clearance/submission, shared velocity, alpha, drill; score 6; shared velocity,alpha,speed,surgical,drill,system",
+      "beforeReason": "poles clearance/submission, shared velocity, alpha, drill",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Velocity Alpha MR High Speed Surgical Drill System;",
+      "b2Sentence": "Velocity Alpha MR High Speed Surgical Drill System;"
+    },
+    {
+      "id": "clearpoint-S8-a",
+      "doc": "ClearPoint",
+      "index": 8,
+      "type": "name",
+      "class": "mechanical",
+      "written": "the FDA",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "FDA bound=true score=6 found=false shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "b2Catch": false,
+      "b2Reason": "FDA bound=true score=6 found=true shared=clearpoint,first,commercial,delivery,utilizing,technology",
+      "beforeReason": "FDA found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology",
+      "b2Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology"
+    },
+    {
+      "id": "clearpoint-S8-b",
+      "doc": "ClearPoint",
+      "index": 8,
+      "type": "polarity",
+      "class": "partly",
+      "written": "has been commenced",
+      "statement": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "poles completion/commenced, shared first, commercial, delivery, utilizing, clearpoint, technology; score 6; shared clearpoint,first,commercial,delivery,utilizing,technology",
+      "b2Catch": true,
+      "b2Reason": "poles completion/commenced, shared first, utilizing; score 6; shared clearpoint,first,commercial,delivery,utilizing,technology",
+      "beforeReason": "poles completion/commenced, shared first, utilizing",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology",
+      "b2Sentence": "Completion of the first commercial drug delivery case utilizing ClearPoint technology"
+    },
+    {
+      "id": "clearpoint-S9-a",
+      "doc": "ClearPoint",
+      "index": 9,
+      "type": "quantity",
+      "class": "mechanical",
+      "written": "USD 56 million",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "beforeCatch": true,
+      "afterCatch": true,
+      "afterReason": "USD 56 million bound=true score=2 found=true range-collapse shared=revenue,million",
+      "b2Catch": true,
+      "b2Reason": "USD 56 million bound=true score=2 found=true range-collapse shared=revenue,million",
+      "beforeReason": "USD 56 million found=true range-collapse",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow",
+      "b2Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow"
+    },
+    {
+      "id": "clearpoint-S9-b",
+      "doc": "ClearPoint",
+      "index": 9,
+      "type": "date",
+      "class": "mechanical",
+      "written": "2027",
+      "statement": "The company provided updated revenue guidance of USD 56 million for 2027.",
+      "beforeCatch": false,
+      "afterCatch": true,
+      "afterReason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "b2Catch": true,
+      "b2Reason": "2027 bound=true score=2 found=false shared=revenue,million",
+      "beforeReason": "2027 found=true",
+      "bound": true,
+      "b2Bound": true,
+      "sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow",
+      "b2Sentence": "Reported first quarter revenue of $12.1 million, including $2.3 million of IRRAflow"
+    }
+  ],
+  "clean": [
+    {
+      "doc": "3i",
+      "index": 0,
+      "statement": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "3i Group",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "six",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "date",
+          "surface": "30 June 2025",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "3i Group",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "six",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "date",
+          "surface": "30 June 2025",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "index": 1,
+      "statement": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 2,
+      "statement": "This was driven largely by Action, which continues to trade strongly.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 3,
+      "statement": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 4,
+      "statement": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 5,
+      "statement": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 6,
+      "statement": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 7,
+      "statement": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "quantity",
+          "surface": "EUR 1.6 billion",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 4
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "quantity",
+          "surface": "EUR 1.6 billion",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 4
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "index": 8,
+      "statement": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "Action",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "Action",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "index": 9,
+      "statement": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "GIC",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        },
+        {
+          "type": "name",
+          "surface": "Action",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        },
+        {
+          "type": "quantity",
+          "surface": "62.3%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "GIC",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        },
+        {
+          "type": "quantity",
+          "surface": "62.3%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "index": 10,
+      "statement": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "3i",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        }
+      ],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 11,
+      "statement": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "3i",
+      "index": 12,
+      "statement": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "TCR",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "TCR",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "index": 13,
+      "statement": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "3i",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "3i",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "index": 14,
+      "statement": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "HICL",
+      "index": 0,
+      "statement": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+      "beforeFlags": [
+        {
+          "type": "quantity",
+          "surface": "five",
+          "reason": "not in the source"
+        }
+      ],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "HICL Infrastructure",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        },
+        {
+          "type": "quantity",
+          "surface": "five",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        },
+        {
+          "type": "date",
+          "surface": "28 February 2026",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "HICL Infrastructure",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        },
+        {
+          "type": "quantity",
+          "surface": "five",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        },
+        {
+          "type": "date",
+          "surface": "28 February 2026",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 2
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "index": 1,
+      "statement": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "beforeFlags": [
+        {
+          "type": "name",
+          "surface": "HCIL",
+          "reason": "not in the source"
+        }
+      ],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "HCIL",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 10
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "HCIL",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 10
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "index": 2,
+      "statement": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "HICL",
+      "index": 3,
+      "statement": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+      "beforeFlags": [
+        {
+          "type": "benchmark",
+          "surface": "draft ahead forecast, source in line",
+          "reason": "draft ahead forecast, source in line"
+        }
+      ],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "London St. Pancras High Speed",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 7
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "London St. Pancras High Speed",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 7
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "index": 4,
+      "statement": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "St. Pancras",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 9
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "St. Pancras",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 9
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "index": 5,
+      "statement": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "HICL",
+      "index": 6,
+      "statement": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+      "beforeFlags": [
+        {
+          "type": "polarity",
+          "surface": "poles reduction/increase, shared company",
+          "reason": "poles reduction/increase, shared company"
+        }
+      ],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "HICL",
+      "index": 7,
+      "statement": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "CEO",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 7
+        }
+      ],
+      "b2Flags": []
+    },
+    {
+      "doc": "GPI",
+      "index": 0,
+      "statement": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "date",
+          "surface": "November 2025",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "GP Industries",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "Southeast Asia",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "date",
+          "surface": "November 2025",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "index": 1,
+      "statement": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "Thailand",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "UK",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "China",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "European",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "Asian",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "Thailand",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "UK",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "Asian",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "index": 2,
+      "statement": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "GPI",
+      "index": 3,
+      "statement": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "Gold Peak Technology",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "GP Industries",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "Malaysia",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "Gold Peak Technology",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "GP Industries",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "Malaysia",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "index": 4,
+      "statement": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "GP Industries",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "6 billion",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ],
+      "b2Flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 0,
+      "statement": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "date",
+          "surface": "May 2026",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 4
+        },
+        {
+          "type": "name",
+          "surface": "ClearPoint Neuro",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        },
+        {
+          "type": "date",
+          "surface": "first quarter of 2026",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 4
+        }
+      ],
+      "b2Flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 1,
+      "statement": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "quantity",
+          "surface": "43%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 4
+        },
+        {
+          "type": "quantity",
+          "surface": "USD 12.1 million",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 4
+        },
+        {
+          "type": "quantity",
+          "surface": "175",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 4
+        }
+      ],
+      "b2Flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 2,
+      "statement": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "quantity",
+          "surface": "16%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "25%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "64%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "quantity",
+          "surface": "16%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 3,
+      "statement": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "quantity",
+          "surface": "80%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "USD 5.9 million",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "IRRAflow",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "3.0",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "quantity",
+          "surface": "80%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "quantity",
+          "surface": "USD 5.9 million",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 4,
+      "statement": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "quantity",
+          "surface": "177%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 8
+        },
+        {
+          "type": "name",
+          "surface": "Prism",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 8
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "quantity",
+          "surface": "177%",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 8
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 5,
+      "statement": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 6,
+      "statement": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 7,
+      "statement": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "FDA",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 3
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 8,
+      "statement": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+      "beforeFlags": [],
+      "afterFlags": [
+        {
+          "type": "name",
+          "surface": "Health Canada",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 6
+        },
+        {
+          "type": "name",
+          "surface": "ClearPoint Neuro Navigation System",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 5
+        },
+        {
+          "type": "name",
+          "surface": "MRI",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 7
+        },
+        {
+          "type": "name",
+          "surface": "Asia",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 7
+        },
+        {
+          "type": "name",
+          "surface": "Pacific",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 7
+        }
+      ],
+      "b2Flags": [
+        {
+          "type": "name",
+          "surface": "Pacific",
+          "reason": "not in the bound window",
+          "bound": true,
+          "score": 7
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "index": 9,
+      "statement": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+      "beforeFlags": [],
+      "afterFlags": [],
+      "b2Flags": []
+    }
+  ]
+}
