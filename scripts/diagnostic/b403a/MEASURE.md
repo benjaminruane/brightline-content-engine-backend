@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  5b3da79  main  169 files  1851 tests |
 | Cost | Estimate printed before the reported run: primary 76 calls, 279820 input tokens at chars/4, output ceiling 300, USD 0.9275 list, `gpt-4o-2024-08-06`, no cache assumed. Part 7: 38 calls, 139901 input tokens at chars/4, output ceiling 300, USD 0.9845 list, `claude-opus-4-7`. Part 7 ceiling USD 3. Not crossed. Reported primary: 78 calls, input 242696, cached input 191488, output 4102, USD 0.408400 discounted, USD 0.647760 list. Reported part 7: 41 calls, input 232636, cached input 0, output 5821, USD 1.308705 discounted and list. Source: `spend` and `part7.spend` on `scripts/diagnostic/b403a/runs/reading.json`. |
 | Gate | `QC_B403A_READING=1`. |
 
