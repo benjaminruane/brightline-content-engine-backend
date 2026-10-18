@@ -36,7 +36,7 @@ describe("B403B wording does not mark", () => {
       },
     ]);
     assert.equal(only.line, WELL_SOURCED_LINE);
-    assert.equal(only.numbers, "1 of 1 facts matched · 0 statements to look at · 1 wording note");
+    assert.equal(only.numbers, "1 of 1 facts matched · 0 to look at · 0 worth a glance · 1 wording note");
     assert.equal(only.counts.wordingNotes, 1);
     assert.equal(only.counts.statements.nothing_to_raise, 1);
 
@@ -45,7 +45,7 @@ describe("B403B wording does not mark", () => {
       { facts: [fact("matched")], sentenceState: "conflicts", note: { bucket: "conflicts" } },
       { facts: [fact("matched")], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },
     ]);
-    assert.equal(mixed.numbers, "3 of 3 facts matched · 1 statement to look at · 2 wording notes");
+    assert.equal(mixed.numbers, "3 of 3 facts matched · 1 to look at · 0 worth a glance · 2 wording notes");
     assert.match(mixed.line, /1 statement conflicts/);
   });
 
