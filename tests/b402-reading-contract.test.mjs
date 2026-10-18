@@ -163,7 +163,7 @@ describe("B402 reading contract", () => {
   test("conflicts marks a listed element matched_disputed", () => {
     const settled = settleFacts([fact("matched")], {
       bucket: "conflicts",
-      disputedElements: ["HICL"],
+      disputedIndices: [0],
     });
     assert.equal(settled[0].status, "matched_disputed");
   });
