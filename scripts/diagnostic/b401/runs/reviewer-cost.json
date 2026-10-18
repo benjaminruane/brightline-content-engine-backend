@@ -1,0 +1,2372 @@
+{
+  "definition": "B394 elements are figure, date, and name. Settled means the element is absent from the whole source, so the presence check flags it. A tick is an element the check finds somewhere in the source and therefore does not settle. A planted substitution needs a tick to stop a green when no element inside the written text is absent from the source.",
+  "drafts": [
+    {
+      "doc": "3i",
+      "arm": "clean",
+      "statements": 15,
+      "elements": 37,
+      "settled": 0,
+      "ticks": 37,
+      "planted": 0,
+      "ticksBetweenErrorAndGreen": 0
+    },
+    {
+      "doc": "3i",
+      "arm": "doctored",
+      "statements": 15,
+      "elements": 37,
+      "settled": 3,
+      "ticks": 34,
+      "planted": 6,
+      "ticksBetweenErrorAndGreen": 3
+    },
+    {
+      "doc": "HICL",
+      "arm": "clean",
+      "statements": 8,
+      "elements": 16,
+      "settled": 2,
+      "ticks": 14,
+      "planted": 0,
+      "ticksBetweenErrorAndGreen": 0
+    },
+    {
+      "doc": "HICL",
+      "arm": "doctored",
+      "statements": 8,
+      "elements": 17,
+      "settled": 9,
+      "ticks": 8,
+      "planted": 13,
+      "ticksBetweenErrorAndGreen": 5
+    },
+    {
+      "doc": "GPI",
+      "arm": "clean",
+      "statements": 5,
+      "elements": 23,
+      "settled": 0,
+      "ticks": 23,
+      "planted": 0,
+      "ticksBetweenErrorAndGreen": 0
+    },
+    {
+      "doc": "GPI",
+      "arm": "doctored",
+      "statements": 5,
+      "elements": 23,
+      "settled": 5,
+      "ticks": 18,
+      "planted": 10,
+      "ticksBetweenErrorAndGreen": 5
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "clean",
+      "statements": 10,
+      "elements": 30,
+      "settled": 0,
+      "ticks": 30,
+      "planted": 0,
+      "ticksBetweenErrorAndGreen": 0
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "doctored",
+      "statements": 10,
+      "elements": 28,
+      "settled": 2,
+      "ticks": 26,
+      "planted": 8,
+      "ticksBetweenErrorAndGreen": 6
+    }
+  ],
+  "perStatement": [
+    {
+      "doc": "3i",
+      "arm": "clean",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 5,
+          "settled": 0,
+          "ticks": 5,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i Group",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 3.3 billion",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2025",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "13%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "14%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Switzerland",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Romania",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 5,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "nine",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "28 September 2025",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 11.2 billion",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "6.3%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "EUR 3.1 billion",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 1.6 billion",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "elements": 6,
+          "settled": 0,
+          "ticks": 6,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "GIC",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Action",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "62.3%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "elements": 5,
+          "settled": 0,
+          "ticks": 5,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "MPM",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "3.2x",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "2.8x",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "9%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i Infrastructure",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "TCR",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 0.365",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "January 2026",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "arm": "doctored",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 5,
+          "settled": 1,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i Group",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 3.3 million",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2025",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "13%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "14%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Switzerland",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Romania",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 5,
+          "elements": 4,
+          "settled": 1,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2026",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 11.2 billion",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "6.3%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "EUR 3.1 billion",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 1.6 billion",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "elements": 6,
+          "settled": 1,
+          "ticks": 5,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "AGIC",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Action",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "62.3%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "elements": 5,
+          "settled": 0,
+          "ticks": 5,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "MPM",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "3.2x",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "2.8x",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "9%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i Infrastructure",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 0.365",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "January 2026",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "UK",
+              "found": true,
+              "settled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "clean",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 3,
+          "settled": 1,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "HICL Infrastructure",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "five",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "date",
+              "surface": "28 February 2026",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 2,
+          "settled": 1,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "HCIL",
+              "found": false,
+              "settled": true
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "London St. Pancras High Speed",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Virgin Trains",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Channel",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "St. Pancras",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Fortysouth",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "16",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 7,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Affinity Water",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "CEO",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "UK",
+              "found": true,
+              "settled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "doctored",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 3,
+          "settled": 2,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "HCIL Infrastructure",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "31 December 2025",
+              "found": false,
+              "settled": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 3,
+          "settled": 2,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "30%",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "HCIL",
+              "found": false,
+              "settled": true
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "elements": 1,
+          "settled": 1,
+          "ticks": 0,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Paris St. Germain High Speed",
+              "found": false,
+              "settled": true
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 3,
+          "settled": 1,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Virgin Trains",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Channel",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "St. Germain",
+              "found": false,
+              "settled": true
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "elements": 3,
+          "settled": 1,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "TowerCo",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "figure",
+              "surface": "20",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 7,
+          "elements": 3,
+          "settled": 2,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Affinity Water",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "CFO",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "name",
+              "surface": "French",
+              "found": false,
+              "settled": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "clean",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "date",
+              "surface": "November 2025",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Southeast Asia",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "US",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 12,
+          "settled": 0,
+          "ticks": 12,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "three",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Vietnam",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Thailand",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "UK",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "China",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "European",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Asian",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 3,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Gold Peak Technology",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Johor",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "6 billion",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "1 million",
+              "found": true,
+              "settled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "doctored",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 5,
+          "settled": 2,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "75%",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "name",
+              "surface": "Southeast Asia",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "US",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 11,
+          "settled": 1,
+          "ticks": 10,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "15",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Vietnam",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Thailand",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "UK",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "China",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "European",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 3,
+          "elements": 4,
+          "settled": 1,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Silver Hill Technology",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Johor",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 3,
+          "settled": 1,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "60 billion",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "figure",
+              "surface": "1 million",
+              "found": true,
+              "settled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "clean",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "date",
+              "surface": "May 2026",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "first quarter of 2026",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "43%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "USD 12.1 million",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "175",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "16%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "25%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "64%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "80%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "USD 5.9 million",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "3.0",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "177%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Prism",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 6,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "60",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "elements": 6,
+          "settled": 0,
+          "ticks": 6,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "Health Canada",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro Navigation System",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "MRI",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Asia",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Pacific",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "USD 52",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "56 million",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "2026",
+              "found": true,
+              "settled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "doctored",
+      "rows": [
+        {
+          "index": 0,
+          "elements": 3,
+          "settled": 1,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "April 2026",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "date",
+              "surface": "first quarter of 2026",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "43%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "USD 12.1 million",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "175",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "elements": 3,
+          "settled": 1,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "-50%",
+              "found": false,
+              "settled": true
+            },
+            {
+              "kind": "figure",
+              "surface": "25%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "64%",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "elements": 3,
+          "settled": 0,
+          "ticks": 3,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "80%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "figure",
+              "surface": "3.0",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "elements": 4,
+          "settled": 0,
+          "ticks": 4,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "177%",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Prism",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "elements": 0,
+          "settled": 0,
+          "ticks": 0,
+          "detail": []
+        },
+        {
+          "index": 6,
+          "elements": 1,
+          "settled": 0,
+          "ticks": 1,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "60",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "elements": 6,
+          "settled": 0,
+          "ticks": 6,
+          "detail": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro Navigation System",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "MRI",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Asia",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "name",
+              "surface": "Pacific",
+              "found": true,
+              "settled": false
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "elements": 2,
+          "settled": 0,
+          "ticks": 2,
+          "detail": [
+            {
+              "kind": "figure",
+              "surface": "USD 56 million",
+              "found": true,
+              "settled": false
+            },
+            {
+              "kind": "date",
+              "surface": "2027",
+              "found": true,
+              "settled": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "planted": [
+    {
+      "doc": "3i",
+      "substitutions": [
+        {
+          "id": "3i-S0-a",
+          "statementIndex": 0,
+          "written": "£3.3 million",
+          "elementsInWritten": [
+            "GBP 3.3 million"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "3i-S5-a",
+          "statementIndex": 5,
+          "written": "six months to 30 June 2026",
+          "elementsInWritten": [
+            "six",
+            "30 June 2026"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "3i-S8-a",
+          "statementIndex": 8,
+          "written": "MAIT",
+          "elementsInWritten": [
+            "MAIT"
+          ],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "3i-S9-a",
+          "statementIndex": 9,
+          "written": "AGIC",
+          "elementsInWritten": [
+            "AGIC"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "3i-S12-a",
+          "statementIndex": 12,
+          "written": "gains across essentially all of its investments",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "3i-S14-a",
+          "statementIndex": 14,
+          "written": "the UK government",
+          "elementsInWritten": [
+            "UK"
+          ],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "substitutions": [
+        {
+          "id": "hicl-S0-a",
+          "statementIndex": 0,
+          "written": "HCIL",
+          "elementsInWritten": [
+            "HCIL Infrastructure"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S0-b",
+          "statementIndex": 0,
+          "written": "six months to 31 December 2025",
+          "elementsInWritten": [
+            "six",
+            "31 December 2025"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S1-a",
+          "statementIndex": 1,
+          "written": "with average 30% EBITDA growth",
+          "elementsInWritten": [
+            "30%",
+            "EBITDA"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S2-a",
+          "statementIndex": 2,
+          "written": "significantly outperform budgets",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "hicl-S3-a",
+          "statementIndex": 3,
+          "written": "Paris St. Germain High Speed",
+          "elementsInWritten": [
+            "Paris St. Germain High Speed"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S4-a",
+          "statementIndex": 4,
+          "written": "operations from St. Germain",
+          "elementsInWritten": [
+            "St. Germain"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S5-a",
+          "statementIndex": 5,
+          "written": "TowerCo",
+          "elementsInWritten": [
+            "TowerCo"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S5-b",
+          "statementIndex": 5,
+          "written": "20 new towers",
+          "elementsInWritten": [
+            "20"
+          ],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "hicl-S5-c",
+          "statementIndex": 5,
+          "written": "during the past year",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "hicl-S6-a",
+          "statementIndex": 6,
+          "written": "lead to an increase",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "hicl-S7-a",
+          "statementIndex": 7,
+          "written": "appointed a new CFO",
+          "elementsInWritten": [
+            "CFO"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S7-b",
+          "statementIndex": 7,
+          "written": "the French government's",
+          "elementsInWritten": [
+            "French"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "hicl-S7-c",
+          "statementIndex": 7,
+          "written": "electricity sector reform",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "substitutions": [
+        {
+          "id": "gpi-S0-a",
+          "statementIndex": 0,
+          "written": "October 2025",
+          "elementsInWritten": [
+            "October 2025"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "gpi-S0-b",
+          "statementIndex": 0,
+          "written": "75% of its global production capacity",
+          "elementsInWritten": [
+            "75%"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "gpi-S0-c",
+          "statementIndex": 0,
+          "written": "escalating oil prices",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "gpi-S1-a",
+          "statementIndex": 1,
+          "written": "15 facilities in Malaysia",
+          "elementsInWritten": [
+            "15",
+            "Malaysia"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "gpi-S1-b",
+          "statementIndex": 1,
+          "written": "European market only",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "gpi-S2-a",
+          "statementIndex": 2,
+          "written": "enhancing site security",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "gpi-S3-a",
+          "statementIndex": 3,
+          "written": "Silver Hill Technology",
+          "elementsInWritten": [
+            "Silver Hill Technology"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "gpi-S4-a",
+          "statementIndex": 4,
+          "written": "the largest",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "gpi-S4-b",
+          "statementIndex": 4,
+          "written": "over 60 billion",
+          "elementsInWritten": [
+            "60 billion"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "gpi-S4-c",
+          "statementIndex": 4,
+          "written": "bartered through",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "substitutions": [
+        {
+          "id": "clearpoint-S0-a",
+          "statementIndex": 0,
+          "written": "April",
+          "elementsInWritten": [
+            "April 2026"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "clearpoint-S2-a",
+          "statementIndex": 2,
+          "written": "-50%",
+          "elementsInWritten": [
+            "-50%"
+          ],
+          "machineBlocks": true,
+          "tickStandsBetweenErrorAndGreen": false
+        },
+        {
+          "id": "clearpoint-S3-a",
+          "statementIndex": 3,
+          "written": "the vast majority of the company's overall revenue",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "clearpoint-S7-a",
+          "statementIndex": 7,
+          "written": "a submission for FDA approval",
+          "elementsInWritten": [
+            "FDA"
+          ],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "clearpoint-S8-a",
+          "statementIndex": 8,
+          "written": "the FDA",
+          "elementsInWritten": [
+            "FDA"
+          ],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "clearpoint-S8-b",
+          "statementIndex": 8,
+          "written": "has been commenced",
+          "elementsInWritten": [],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "clearpoint-S9-a",
+          "statementIndex": 9,
+          "written": "USD 56 million",
+          "elementsInWritten": [
+            "USD 56 million"
+          ],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        },
+        {
+          "id": "clearpoint-S9-b",
+          "statementIndex": 9,
+          "written": "2027",
+          "elementsInWritten": [
+            "2027"
+          ],
+          "machineBlocks": false,
+          "tickStandsBetweenErrorAndGreen": true
+        }
+      ]
+    }
+  ]
+}
