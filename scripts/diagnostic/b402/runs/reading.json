@@ -1,0 +1,4124 @@
+{
+  "model": "gpt-4o-2024-08-06",
+  "estimate": {
+    "calls": 84,
+    "inputTokens": 268353,
+    "inputUsd": 0.6708825,
+    "outputUsd": 0.252,
+    "totalUsd": 0.9228825
+  },
+  "spend": {
+    "calls": 85,
+    "inputTokens": 226245,
+    "outputTokens": 3534,
+    "cachedInputTokens": 179072,
+    "costUsd": 0.3771125,
+    "listUsd": 0.6009525
+  },
+  "lineGap": "Matched elements carry lineGap true. The matcher did not report a line, and this run did not search for one.",
+  "drafts": [
+    {
+      "doc": "3i",
+      "arm": "clean",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "37 of 37 facts matched · 6 statements to look at",
+        "line": null,
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 37,
+        "elementsMatchedDisputed": 0,
+        "elementsNotFound": 0,
+        "statements": {
+          "not_in_source": 0,
+          "conflicts": 0,
+          "beyond": 1,
+          "worth_a_look": 2,
+          "nothing_to_raise": 9,
+          "refused": 3
+        }
+      },
+      "writerFeedback": "The draft effectively identifies and categorizes various statements from the source, highlighting areas that are worth further examination or are beyond the source's claims. The strong aspect of the draft is its ability to pinpoint specific statements that require attention, such as those related to trading performance and financing transactions. However, the draft could be improved by providing more context or explanation for why certain statements are marked as 'worth a look' or 'beyond,' as this would help in understanding the significance of these observations. Additionally, the repeated use of 'nothing_to_raise' without further detail may suggest a lack of depth in analysis for those sections.",
+      "statements": [
+        {
+          "index": 0,
+          "text": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": true,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i Group",
+              "start": 0,
+              "end": 8,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 3.3 billion",
+              "start": 37,
+              "end": 52,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "start": 61,
+              "end": 64,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2025",
+              "start": 75,
+              "end": 87,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "13%",
+              "start": 104,
+              "end": 107,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "bucket",
+            "proposedBucket": "conflicts|beyond|wording|none",
+            "proposedText": "The source states the total return was for the six months to 30 September 2025, not 30 June 2025."
+          },
+          "sentenceState": null,
+          "sentenceLabel": null
+        },
+        {
+          "index": 1,
+          "text": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "14%",
+              "start": 66,
+              "end": 69,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 2,
+          "text": "This was driven largely by Action, which continues to trade strongly.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "start": 27,
+              "end": 33,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "endorsing_language",
+            "proposedBucket": "wording",
+            "proposedText": "The source mentions Action trading strongly and contributing to value growth, aligning with the statement's point."
+          },
+          "sentenceState": null,
+          "sentenceLabel": null
+        },
+        {
+          "index": 3,
+          "text": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Switzerland",
+              "start": 92,
+              "end": 103,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Romania",
+              "start": 108,
+              "end": 115,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 4,
+          "text": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "wording",
+            "text": "The source mentions 'Year to date LFL trading remains good despite weakening consumer confidence since the summer.'",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "worth_a_look",
+          "sentenceLabel": "Worth a look"
+        },
+        {
+          "index": 5,
+          "text": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "nine",
+              "start": 18,
+              "end": 22,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "28 September 2025",
+              "start": 33,
+              "end": 50,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 11.2 billion",
+              "start": 63,
+              "end": 79,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "6.3%",
+              "start": 116,
+              "end": 120,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "displayVerdict": "unverifiable",
+          "factualBadge": null,
+          "knownError": true,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "start": 11,
+              "end": 17,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "start": 79,
+              "end": 91,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "wording",
+            "text": "The source mentions two financing transactions completed by Action in October 2025, which can be interpreted as balance sheet transactions.",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "worth_a_look",
+          "sentenceLabel": "Worth a look"
+        },
+        {
+          "index": 7,
+          "text": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "displayVerdict": "unverifiable",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "EUR 3.1 billion",
+              "start": 21,
+              "end": 36,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 1.6 billion",
+              "start": 171,
+              "end": 186,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 8,
+          "text": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "start": 0,
+              "end": 6,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 96,
+              "end": 99,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 9,
+          "text": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "start": 64,
+              "end": 68,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "start": 123,
+              "end": 127,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "GIC",
+              "start": 148,
+              "end": 151,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 160,
+              "end": 164,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Action",
+              "start": 174,
+              "end": 180,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "62.3%",
+              "start": 184,
+              "end": 189,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 10,
+          "text": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "displayVerdict": "unverifiable",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 48,
+              "end": 50,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "MPM",
+              "start": 73,
+              "end": 76,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "start": 99,
+              "end": 103,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "3.2x",
+              "start": 164,
+              "end": 168,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "2.8x",
+              "start": 173,
+              "end": 177,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 11,
+          "text": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": true,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "9%",
+              "start": 62,
+              "end": 64,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "start": 116,
+              "end": 119,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement claims the 9% return outperformed expectations, which the source does not mention.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: 9%",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 12,
+          "text": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i Infrastructure",
+              "start": 57,
+              "end": 74,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "TCR",
+              "start": 197,
+              "end": 201,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "endorsing_language",
+            "proposedBucket": "wording",
+            "proposedText": "The source mentions a 14% increase in 3i Infrastructure plc's share price and a significant valuation uplift in TCR, which aligns with the statement's point about share price gains and positive performance."
+          },
+          "sentenceState": null,
+          "sentenceLabel": null
+        },
+        {
+          "index": 13,
+          "text": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 59,
+              "end": 61,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 0.365",
+              "start": 85,
+              "end": 94,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "January 2026",
+              "start": 128,
+              "end": 140,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 14,
+          "text": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "arm": "doctored",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "34 of 37 facts matched · 10 statements to look at",
+        "line": "3 facts are not in the source.",
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 34,
+        "elementsMatchedDisputed": 0,
+        "elementsNotFound": 3,
+        "statements": {
+          "not_in_source": 3,
+          "conflicts": 1,
+          "beyond": 3,
+          "worth_a_look": 2,
+          "nothing_to_raise": 5,
+          "refused": 1
+        }
+      },
+      "writerFeedback": null,
+      "statements": [
+        {
+          "index": 0,
+          "text": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i Group",
+              "start": 0,
+              "end": 8,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 3.3 million",
+              "start": 37,
+              "end": 52,
+              "status": "not_found"
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "start": 61,
+              "end": 64,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2025",
+              "start": 75,
+              "end": 87,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "13%",
+              "start": 104,
+              "end": 107,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "bucket",
+            "proposedBucket": "conflicts|beyond|wording|none",
+            "proposedText": "The statement says \"GBP 3.3 million\" while the source says \"£3,291 million.\" The statement says \"30 June 2025\" while the source says \"30 September 2025.\""
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 1,
+          "text": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "14%",
+              "start": 66,
+              "end": 69,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 2,
+          "text": "This was driven largely by Action, which continues to trade strongly.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "start": 27,
+              "end": 33,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "endorsing_language",
+            "proposedBucket": "wording",
+            "proposedText": "The source mentions Action trading strongly and contributing to value growth, aligning with the statement's point."
+          },
+          "sentenceState": null,
+          "sentenceLabel": null
+        },
+        {
+          "index": 3,
+          "text": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Switzerland",
+              "start": 92,
+              "end": 103,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Romania",
+              "start": 108,
+              "end": 115,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 4,
+          "text": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "wording",
+            "text": "The source mentions 'Year to date LFL trading remains good despite weakening consumer confidence since the summer.'",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "worth_a_look",
+          "sentenceLabel": "Worth a look"
+        },
+        {
+          "index": 5,
+          "text": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "six",
+              "start": 18,
+              "end": 21,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "30 June 2026",
+              "start": 32,
+              "end": 44,
+              "status": "not_found"
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 11.2 billion",
+              "start": 57,
+              "end": 73,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "6.3%",
+              "start": 110,
+              "end": 114,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "bucket",
+            "proposedBucket": "conflicts|beyond",
+            "proposedText": "The statement mentions 'six months to 30 June 2026' while the source refers to 'nine reporting periods ending on 28 September 2025'. The statement also mentions 'EUR 11.2 billion' while the source states '€11,229 million'."
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "displayVerdict": "unverifiable",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Action",
+              "start": 11,
+              "end": 17,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "start": 79,
+              "end": 91,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "wording",
+            "text": "The source mentions two financing transactions completed by Action in October 2025, which can be interpreted as balance sheet transactions.",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "worth_a_look",
+          "sentenceLabel": "Worth a look"
+        },
+        {
+          "index": 7,
+          "text": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "displayVerdict": "unverifiable",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "EUR 3.1 billion",
+              "start": 21,
+              "end": 36,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "EUR 1.6 billion",
+              "start": 171,
+              "end": 186,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 8,
+          "text": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "start": 0,
+              "end": 4,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 94,
+              "end": 97,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement says MAIT completed a pro-rata redemption of shares, while the source describes Action completing such a transaction, not MAIT.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "name: MAIT",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "conflicts",
+          "sentenceLabel": "Conflicts with the source"
+        },
+        {
+          "index": 9,
+          "text": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "start": 64,
+              "end": 68,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "2.2%",
+              "start": 123,
+              "end": 127,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "AGIC",
+              "start": 148,
+              "end": 152,
+              "status": "not_found"
+            },
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 161,
+              "end": 165,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Action",
+              "start": 175,
+              "end": 181,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "62.3%",
+              "start": 185,
+              "end": 190,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement mentions 'AGIC' while the source mentions 'GIC'.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "name: AGIC",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 10,
+          "text": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "displayVerdict": "unverifiable",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 48,
+              "end": 50,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "MPM",
+              "start": 73,
+              "end": 76,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "MAIT",
+              "start": 99,
+              "end": 103,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "3.2x",
+              "start": 164,
+              "end": 168,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "2.8x",
+              "start": 173,
+              "end": 177,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 11,
+          "text": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "9%",
+              "start": 62,
+              "end": 64,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "start": 116,
+              "end": 119,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement claims the 9% return outperformed expectations, which the source does not mention.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: 9%",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 12,
+          "text": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i Infrastructure",
+              "start": 57,
+              "end": 74,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement claims 'meaningful gains across essentially all of its investments,' which the source does not mention.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "name: 3i Infrastructure",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 13,
+          "text": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "3i",
+              "start": 59,
+              "end": 61,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "GBP 0.365",
+              "start": 85,
+              "end": 94,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "January 2026",
+              "start": 128,
+              "end": 140,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 14,
+          "text": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "UK",
+              "start": 19,
+              "end": 21,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement discusses the UK government's stance on capital deployment, which is not mentioned in the source text. The source text discusses 3i Group's cautious approach to capital deployment.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "name",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "clean",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "14 of 16 facts matched · 4 statements to look at",
+        "line": "2 facts are not in the source.",
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 13,
+        "elementsMatchedDisputed": 1,
+        "elementsNotFound": 2,
+        "statements": {
+          "not_in_source": 2,
+          "conflicts": 0,
+          "beyond": 1,
+          "worth_a_look": 0,
+          "nothing_to_raise": 4,
+          "refused": 1
+        }
+      },
+      "writerFeedback": "The draft effectively identifies discrepancies between the statement and the source, such as the incorrect use of 'HCIL' instead of 'HICL' and the mention of 'valuation gains' not found in the source. These observations are strong as they highlight specific areas where the statement diverges from the source material. However, the draft could be improved by providing more context or suggestions on how to address these discrepancies. Additionally, the repeated 'nothing_to_raise' entries suggest a lack of engagement with other potential issues or areas for improvement, which could be explored further to enhance the overall analysis.",
+      "statements": [
+        {
+          "index": 0,
+          "text": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "HICL Infrastructure",
+              "start": 0,
+              "end": 21,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "five",
+              "start": 42,
+              "end": 46,
+              "status": "not_found"
+            },
+            {
+              "kind": "date",
+              "surface": "28 February 2026",
+              "start": 57,
+              "end": 73,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 1,
+          "text": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": true,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "start": 63,
+              "end": 69,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "HCIL",
+              "start": 153,
+              "end": 159,
+              "status": "not_found"
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement uses 'HCIL' while the source uses 'HICL'.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "name: HCIL",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 2,
+          "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": true,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "start": 125,
+              "end": 131,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "endorsing_language",
+            "proposedBucket": "wording",
+            "proposedText": "The source states that growth investments are progressing significant expansion capex programmes and delivering EBITDA in line with expectations, which aligns with the statement's point about EBITDA growth performing in line with budgets."
+          },
+          "sentenceState": null,
+          "sentenceLabel": null
+        },
+        {
+          "index": 3,
+          "text": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "London St. Pancras High Speed",
+              "start": 32,
+              "end": 61,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 4,
+          "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Virgin Trains",
+              "start": 110,
+              "end": 123,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Channel",
+              "start": 168,
+              "end": 175,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "St. Pancras",
+              "start": 192,
+              "end": 204,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 5,
+          "text": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Fortysouth",
+              "start": 11,
+              "end": 21,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "16",
+              "start": 32,
+              "end": 34,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "start": 188,
+              "end": 194,
+              "status": "matched_disputed",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement mentions 'valuation gains,' which the source does not mention.",
+            "disputedElements": [
+              "EBITDA"
+            ],
+            "rejections": []
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 6,
+          "text": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 7,
+          "text": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Affinity Water",
+              "start": 11,
+              "end": 25,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "CEO",
+              "start": 42,
+              "end": 45,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "UK",
+              "start": 112,
+              "end": 114,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "doctored",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "8 of 17 facts matched · 8 statements to look at",
+        "line": "9 facts are not in the source.",
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 7,
+        "elementsMatchedDisputed": 1,
+        "elementsNotFound": 9,
+        "statements": {
+          "not_in_source": 6,
+          "conflicts": 1,
+          "beyond": 1,
+          "worth_a_look": 0,
+          "nothing_to_raise": 0,
+          "refused": 0
+        }
+      },
+      "writerFeedback": "The draft effectively identifies discrepancies between the statement and the source material, highlighting areas where the statement includes information not present in the source or conflicts with it. This is a strong aspect as it clearly outlines the inconsistencies. However, the draft could be improved by providing more context or explanation for why these discrepancies are significant, which would help the reader understand the potential impact of these differences. Additionally, the draft could benefit from a more structured format that categorizes the types of discrepancies (e.g., time period, location, personnel) to enhance clarity and readability.",
+      "statements": [
+        {
+          "index": 0,
+          "text": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "HCIL Infrastructure",
+              "start": 0,
+              "end": 21,
+              "status": "not_found"
+            },
+            {
+              "kind": "figure",
+              "surface": "six",
+              "start": 42,
+              "end": 45,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "31 December 2025",
+              "start": 56,
+              "end": 72,
+              "status": "not_found"
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement mentions 'six months to 31 December 2025,' while the source covers the period from 1 October 2025 to 28 February 2026.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "date",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 1,
+          "text": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "30%",
+              "start": 71,
+              "end": 74,
+              "status": "not_found"
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "start": 75,
+              "end": 81,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "HCIL",
+              "start": 165,
+              "end": 171,
+              "status": "not_found"
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "bucket",
+            "proposedBucket": "conflicts|beyond",
+            "proposedText": "The statement mentions \"average 30% EBITDA growth,\" while the source does not specify a percentage for EBITDA growth. The statement refers to \"HCIL,\" but the source refers to \"HICL.\""
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 2,
+          "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "start": 125,
+              "end": 131,
+              "status": "matched_disputed",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement claims EBITDA growth significantly outperforms budgets, which the source does not mention.",
+            "disputedElements": [
+              "EBITDA"
+            ],
+            "rejections": []
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 3,
+          "text": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Paris St. Germain High Speed",
+              "start": 32,
+              "end": 60,
+              "status": "not_found"
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement mentions 'Paris St. Germain High Speed,' while the source refers to 'London St. Pancras High Speed.'",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "name",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 4,
+          "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Virgin Trains",
+              "start": 110,
+              "end": 123,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Channel",
+              "start": 168,
+              "end": 175,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "St. Germain",
+              "start": 192,
+              "end": 204,
+              "status": "not_found"
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement mentions 'St. Germain,' while the source mentions 'St. Pancras.'",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "name: St. Germain",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 5,
+          "text": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "TowerCo",
+              "start": 11,
+              "end": 18,
+              "status": "not_found"
+            },
+            {
+              "kind": "figure",
+              "surface": "20",
+              "start": 29,
+              "end": 31,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "EBITDA",
+              "start": 188,
+              "end": 194,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "bucket",
+            "proposedBucket": "conflicts|beyond",
+            "proposedText": "The statement mentions 'TowerCo' and '20 new towers', while the source refers to 'Fortysouth' and '16 new towers'."
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 6,
+          "text": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement says 'increase in debt servicing costs,' while the source says 'a step-down on debt margins.'",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "conflicts",
+          "sentenceLabel": "Conflicts with the source"
+        },
+        {
+          "index": 7,
+          "text": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+          "displayVerdict": "not_supported",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Affinity Water",
+              "start": 11,
+              "end": 25,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "CFO",
+              "start": 42,
+              "end": 45,
+              "status": "not_found"
+            },
+            {
+              "kind": "name",
+              "surface": "French",
+              "start": 112,
+              "end": 118,
+              "status": "not_found"
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement mentions a new CFO and French government reform, while the source mentions a new CEO and UK government reform.",
+            "disputedElements": [
+              "CFO",
+              "French"
+            ],
+            "rejections": []
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "clean",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "23 of 23 facts matched · 1 statement to look at",
+        "line": "Figures all check out, but 1 statement conflicts with the source.",
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 23,
+        "elementsMatchedDisputed": 0,
+        "elementsNotFound": 0,
+        "statements": {
+          "not_in_source": 0,
+          "conflicts": 1,
+          "beyond": 0,
+          "worth_a_look": 0,
+          "nothing_to_raise": 4,
+          "refused": 0
+        }
+      },
+      "writerFeedback": "The draft effectively identifies areas where there are no issues, which is a strong point as it shows thorough verification of the information. However, the section on conflicts could be improved by providing more context or details about the discrepancy regarding the plant in China. This would help clarify the nature of the conflict and guide further investigation or revision. Overall, the draft is clear in its structure, but adding more depth to the conflict section would enhance its comprehensiveness.",
+      "statements": [
+        {
+          "index": 0,
+          "text": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "date",
+              "surface": "November 2025",
+              "start": 3,
+              "end": 16,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "start": 18,
+              "end": 31,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Southeast Asia",
+              "start": 117,
+              "end": 131,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "US",
+              "start": 145,
+              "end": 147,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 1,
+          "text": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "three",
+              "start": 31,
+              "end": 36,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "start": 51,
+              "end": 59,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "start": 61,
+              "end": 64,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Vietnam",
+              "start": 68,
+              "end": 75,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "start": 81,
+              "end": 84,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Thailand",
+              "start": 88,
+              "end": 96,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "start": 108,
+              "end": 111,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "UK",
+              "start": 132,
+              "end": 134,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "start": 139,
+              "end": 142,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "China",
+              "start": 152,
+              "end": 157,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "European",
+              "start": 197,
+              "end": 205,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Asian",
+              "start": 210,
+              "end": 215,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement includes a plant in China, but the source does not mention a specific plant in China, only that the China facility will focus on European and Asian markets.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": {
+                  "figure": "one",
+                  "name": "China"
+                },
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "conflicts",
+          "sentenceLabel": "Conflicts with the source"
+        },
+        {
+          "index": 2,
+          "text": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 3,
+          "text": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": true,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Gold Peak Technology",
+              "start": 11,
+              "end": 31,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "start": 43,
+              "end": 56,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Johor",
+              "start": 95,
+              "end": 100,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "start": 102,
+              "end": 110,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 4,
+          "text": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "start": 0,
+              "end": 13,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "6 billion",
+              "start": 92,
+              "end": 101,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "1 million",
+              "start": 145,
+              "end": 154,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "doctored",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "18 of 23 facts matched · 5 statements to look at",
+        "line": "5 facts are not in the source.",
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 18,
+        "elementsMatchedDisputed": 0,
+        "elementsNotFound": 5,
+        "statements": {
+          "not_in_source": 4,
+          "conflicts": 0,
+          "beyond": 1,
+          "worth_a_look": 0,
+          "nothing_to_raise": 0,
+          "refused": 0
+        }
+      },
+      "writerFeedback": "The draft highlights several discrepancies between the statements and the source material, which is a strong aspect as it identifies areas that need correction. However, the draft lacks a cohesive structure and context, making it difficult to understand the overall purpose or argument being made. Additionally, the draft could benefit from a more organized presentation of the discrepancies, perhaps categorizing them by type or significance, to enhance clarity and readability.",
+      "statements": [
+        {
+          "index": 0,
+          "text": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "date",
+              "surface": "October 2025",
+              "start": 3,
+              "end": 15,
+              "status": "not_found"
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "start": 17,
+              "end": 30,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "75%",
+              "start": 66,
+              "end": 69,
+              "status": "not_found"
+            },
+            {
+              "kind": "name",
+              "surface": "Southeast Asia",
+              "start": 134,
+              "end": 148,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "US",
+              "start": 162,
+              "end": 164,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "bucket",
+            "proposedBucket": "conflicts|beyond",
+            "proposedText": "The statement mentions \"October 2025\" while the source mentions \"13 November 2025.\" The statement specifies \"75% of its global production capacity,\" which the source does not mention."
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 1,
+          "text": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "15",
+              "start": 31,
+              "end": 33,
+              "status": "not_found"
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "start": 48,
+              "end": 56,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "start": 58,
+              "end": 61,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Vietnam",
+              "start": 65,
+              "end": 72,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "start": 78,
+              "end": 81,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Thailand",
+              "start": 85,
+              "end": 93,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "two",
+              "start": 105,
+              "end": 108,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "UK",
+              "start": 129,
+              "end": 131,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "one",
+              "start": 136,
+              "end": 139,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "China",
+              "start": 149,
+              "end": 154,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "European",
+              "start": 194,
+              "end": 202,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement says '15 facilities in Malaysia' while the source says 'three facilities in Malaysia.'",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: 15",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "name: Malaysia",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 2,
+          "text": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement mentions enhancing site security, which the source does not address.",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 3,
+          "text": "Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Silver Hill Technology",
+              "start": 11,
+              "end": 33,
+              "status": "not_found"
+            },
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "start": 45,
+              "end": 58,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Johor",
+              "start": 97,
+              "end": 102,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Malaysia",
+              "start": 104,
+              "end": 112,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "endorsing_language",
+            "proposedBucket": "conflicts",
+            "proposedText": "The statement mentions 'Silver Hill Technology' as the parent of GP Industries, while the source states 'Gold Peak Technology Group' as the parent. The statement also refers to an investment program in Johor, Malaysia, which the source confirms but attributes to Gold Peak Technology Group."
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 4,
+          "text": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "GP Industries",
+              "start": 0,
+              "end": 13,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "60 billion",
+              "start": 85,
+              "end": 95,
+              "status": "not_found"
+            },
+            {
+              "kind": "figure",
+              "surface": "1 million",
+              "start": 143,
+              "end": 152,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement says 'largest' while the source says 'second-largest.' The statement says '60 billion' while the source says 'six billion.'",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: 60 billion",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "clean",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "30 of 30 facts matched · 2 statements to look at",
+        "line": "Figures all check out, but 1 statement conflicts with the source.",
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 30,
+        "elementsMatchedDisputed": 0,
+        "elementsNotFound": 0,
+        "statements": {
+          "not_in_source": 0,
+          "conflicts": 1,
+          "beyond": 1,
+          "worth_a_look": 0,
+          "nothing_to_raise": 8,
+          "refused": 0
+        }
+      },
+      "writerFeedback": "The draft effectively identifies discrepancies and unsupported claims in the statements, particularly in S1 and S2, where it highlights the lack of source support for the attributed growth drivers and the conflicting reasons for gross margin expansion. This demonstrates a strong ability to critically analyze and compare statements with their sources. However, the draft could be improved by providing more context or examples to clarify the nature of these discrepancies for readers who may not be familiar with the specific details of the source material. Additionally, the repeated 'nothing_to_raise' entries suggest a lack of engagement with other potential issues or areas for improvement, which could be explored further to provide a more comprehensive analysis.",
+      "statements": [
+        {
+          "index": 0,
+          "text": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "date",
+              "surface": "May 2026",
+              "start": 3,
+              "end": 11,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro",
+              "start": 13,
+              "end": 29,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "first quarter of 2026",
+              "start": 69,
+              "end": 90,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 1,
+          "text": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "43%",
+              "start": 22,
+              "end": 25,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "USD 12.1 million",
+              "start": 60,
+              "end": 76,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "175",
+              "start": 146,
+              "end": 149,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "start": 214,
+              "end": 222,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement attributes the 43% growth to the expansion of the installed base and integration of IRRAflow, which the source does not specify as the drivers for this growth.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: 43%",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "figure: USD 12.1 million",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "figure: 175",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "name: IRRAflow",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 2,
+          "text": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "16%",
+              "start": 27,
+              "end": 30,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "25%",
+              "start": 45,
+              "end": 48,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "64%",
+              "start": 98,
+              "end": 101,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement attributes the gross margin expansion to 'lower allowances for excess and obsolete inventory,' while the source attributes it to 'lower excess and obsolete inventory.'",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "conflicts",
+          "sentenceLabel": "Conflicts with the source"
+        },
+        {
+          "index": 3,
+          "text": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "80%",
+              "start": 105,
+              "end": 108,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "USD 5.9 million",
+              "start": 132,
+              "end": 147,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "start": 189,
+              "end": 197,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "3.0",
+              "start": 219,
+              "end": 222,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 4,
+          "text": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "177%",
+              "start": 52,
+              "end": 56,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "start": 109,
+              "end": 119,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "start": 153,
+              "end": 161,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Prism",
+              "start": 181,
+              "end": 186,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 5,
+          "text": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "60",
+              "start": 100,
+              "end": 102,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 7,
+          "text": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "start": 9,
+              "end": 12,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+              "start": 100,
+              "end": 151,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 8,
+          "text": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "Health Canada",
+              "start": 11,
+              "end": 24,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro Navigation System",
+              "start": 65,
+              "end": 99,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "MRI",
+              "start": 119,
+              "end": 122,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "start": 216,
+              "end": 226,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Asia",
+              "start": 259,
+              "end": 263,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Pacific",
+              "start": 264,
+              "end": 271,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 9,
+          "text": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "USD 52",
+              "start": 49,
+              "end": 55,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "56 million",
+              "start": 56,
+              "end": 66,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "2026",
+              "start": 71,
+              "end": 75,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "doctored",
+      "header": {
+        "stamp": "Source-checked",
+        "numbers": "26 of 28 facts matched · 7 statements to look at",
+        "line": "2 facts are not in the source.",
+        "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+      },
+      "counts": {
+        "elementsMatched": 25,
+        "elementsMatchedDisputed": 1,
+        "elementsNotFound": 2,
+        "statements": {
+          "not_in_source": 2,
+          "conflicts": 0,
+          "beyond": 4,
+          "worth_a_look": 0,
+          "nothing_to_raise": 3,
+          "refused": 1
+        }
+      },
+      "writerFeedback": "The draft provides a detailed analysis of discrepancies between the statement and the source material, highlighting areas where the statement either lacks support from the source or includes information not present in the source. The strong aspect of the draft is its thorough identification of specific areas where the statement diverges from the source, such as incorrect dates, growth figures, and attributions of revenue drivers. However, the draft could be improved by offering more context or suggestions on how to address these discrepancies, rather than just pointing them out. Additionally, the draft could benefit from a more structured approach to categorizing the types of discrepancies, which would make it easier to follow and address each issue systematically.",
+      "statements": [
+        {
+          "index": 0,
+          "text": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro",
+              "start": 0,
+              "end": 16,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "April 2026",
+              "start": 30,
+              "end": 40,
+              "status": "not_found"
+            },
+            {
+              "kind": "date",
+              "surface": "first quarter of 2026",
+              "start": 71,
+              "end": 92,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement says \"April 2026\" while the source says \"May 13, 2026.\"",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "date",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 1,
+          "text": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "43%",
+              "start": 22,
+              "end": 25,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "USD 12.1 million",
+              "start": 60,
+              "end": 76,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "175",
+              "start": 146,
+              "end": 149,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "start": 214,
+              "end": 222,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement attributes the 43% growth to the expansion of the installed base and integration of IRRAflow, which the source does not specify as the drivers for this growth.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: 43%",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "figure: USD 12.1 million",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "figure: 175",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "name: IRRAflow",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 2,
+          "text": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "-50%",
+              "start": 27,
+              "end": 31,
+              "status": "not_found"
+            },
+            {
+              "kind": "figure",
+              "surface": "25%",
+              "start": 46,
+              "end": 49,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "64%",
+              "start": 99,
+              "end": 102,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "conflicts",
+            "text": "The statement mentions \"-50%\" organic growth, while the source states \"16%\" year-over-year total organic growth. The statement also attributes the gross margin expansion to \"lower allowances for excess and obsolete inventory,\" while the source attributes it to \"lower excess and obsolete inventory.\"",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: -50%",
+                "reason": "not_in_statement"
+              },
+              {
+                "surface": "figure: 64%",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "not_in_source",
+          "sentenceLabel": "Not in the source"
+        },
+        {
+          "index": 3,
+          "text": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "80%",
+              "start": 169,
+              "end": 172,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "start": 234,
+              "end": 242,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "figure",
+              "surface": "3.0",
+              "start": 264,
+              "end": 267,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement claims that the neurosurgery navigation, therapy and access division contributed the vast majority of the company’s overall revenue, which is not specified in the source.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "figure: 80%",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 4,
+          "text": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "177%",
+              "start": 52,
+              "end": 56,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "start": 109,
+              "end": 119,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "IRRAflow",
+              "start": 153,
+              "end": 161,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Prism",
+              "start": 181,
+              "end": 186,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 5,
+          "text": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "displayVerdict": "supported_full",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "60",
+              "start": 100,
+              "end": 102,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "none",
+            "text": "",
+            "disputedElements": [],
+            "rejections": []
+          },
+          "sentenceState": "nothing_to_raise",
+          "sentenceLabel": "Nothing to raise"
+        },
+        {
+          "index": 7,
+          "text": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+          "displayVerdict": "conflict",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "start": 26,
+              "end": 29,
+              "status": "matched_disputed",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Velocity Alpha MR High Speed Surgical Drill System",
+              "start": 71,
+              "end": 122,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement claims a submission for FDA approval, but the source only mentions FDA clearance and successful completion of the first clinical procedure using the Velocity Alpha MR High Speed Surgical Drill System.",
+            "disputedElements": [
+              "FDA"
+            ],
+            "rejections": []
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        },
+        {
+          "index": 8,
+          "text": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+          "displayVerdict": "supported_partial",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "name",
+              "surface": "FDA",
+              "start": 15,
+              "end": 18,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint Neuro Navigation System",
+              "start": 59,
+              "end": 93,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "MRI",
+              "start": 113,
+              "end": 116,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "ClearPoint",
+              "start": 210,
+              "end": 220,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Asia",
+              "start": 258,
+              "end": 262,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "name",
+              "surface": "Pacific",
+              "start": 263,
+              "end": 270,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "refused": true,
+            "reason": "bucket",
+            "proposedBucket": "conflicts|beyond",
+            "proposedText": "The statement mentions the FDA issuing a medical device license, but the source states it was Health Canada that issued the Medical Device License. The statement also mentions the commencement of the first commercial drug delivery case in the Asia-Pacific region, which the source confirms."
+          },
+          "sentenceState": null,
+          "sentenceLabel": null
+        },
+        {
+          "index": 9,
+          "text": "The company provided updated revenue guidance of USD 56 million for 2027.",
+          "displayVerdict": "not_supported",
+          "factualBadge": null,
+          "knownError": false,
+          "facts": [
+            {
+              "kind": "figure",
+              "surface": "USD 56 million",
+              "start": 49,
+              "end": 63,
+              "status": "matched",
+              "lineGap": true
+            },
+            {
+              "kind": "date",
+              "surface": "2027",
+              "start": 68,
+              "end": 72,
+              "status": "matched",
+              "lineGap": true
+            }
+          ],
+          "editorial": {
+            "bucket": "beyond",
+            "text": "The statement mentions revenue guidance for 2027, which the source does not provide.",
+            "disputedElements": [],
+            "rejections": [
+              {
+                "surface": "date",
+                "reason": "not_in_statement"
+              }
+            ]
+          },
+          "sentenceState": "beyond",
+          "sentenceLabel": "Goes beyond the source"
+        }
+      ]
+    }
+  ],
+  "m1": {
+    "planted": 37,
+    "notFound": 18,
+    "conflictsOrBeyond": 25,
+    "neither": [
+      "hicl-S5-b",
+      "hicl-S5-c",
+      "gpi-S0-c",
+      "clearpoint-S8-a",
+      "clearpoint-S8-b"
+    ],
+    "rows": [
+      {
+        "id": "3i-S0-a",
+        "doc": "3i",
+        "statementIndex": 0,
+        "written": "£3.3 million",
+        "elementsInWritten": [
+          "GBP 3.3 million"
+        ],
+        "notFound": true,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "3i-S5-a",
+        "doc": "3i",
+        "statementIndex": 5,
+        "written": "six months to 30 June 2026",
+        "elementsInWritten": [
+          "six",
+          "30 June 2026"
+        ],
+        "notFound": true,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "3i-S8-a",
+        "doc": "3i",
+        "statementIndex": 8,
+        "written": "MAIT",
+        "elementsInWritten": [
+          "MAIT"
+        ],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "conflicts",
+        "neither": false
+      },
+      {
+        "id": "3i-S9-a",
+        "doc": "3i",
+        "statementIndex": 9,
+        "written": "AGIC",
+        "elementsInWritten": [
+          "AGIC"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "3i-S12-a",
+        "doc": "3i",
+        "statementIndex": 12,
+        "written": "gains across essentially all of its investments",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      },
+      {
+        "id": "3i-S14-a",
+        "doc": "3i",
+        "statementIndex": 14,
+        "written": "the UK government",
+        "elementsInWritten": [
+          "UK"
+        ],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      },
+      {
+        "id": "hicl-S0-a",
+        "doc": "HICL",
+        "statementIndex": 0,
+        "written": "HCIL",
+        "elementsInWritten": [
+          "HCIL Infrastructure"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S0-b",
+        "doc": "HICL",
+        "statementIndex": 0,
+        "written": "six months to 31 December 2025",
+        "elementsInWritten": [
+          "six",
+          "31 December 2025"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S1-a",
+        "doc": "HICL",
+        "statementIndex": 1,
+        "written": "with average 30% EBITDA growth",
+        "elementsInWritten": [
+          "30%",
+          "EBITDA"
+        ],
+        "notFound": true,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S2-a",
+        "doc": "HICL",
+        "statementIndex": 2,
+        "written": "significantly outperform budgets",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      },
+      {
+        "id": "hicl-S3-a",
+        "doc": "HICL",
+        "statementIndex": 3,
+        "written": "Paris St. Germain High Speed",
+        "elementsInWritten": [
+          "Paris St. Germain High Speed"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S4-a",
+        "doc": "HICL",
+        "statementIndex": 4,
+        "written": "operations from St. Germain",
+        "elementsInWritten": [
+          "St. Germain"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S5-a",
+        "doc": "HICL",
+        "statementIndex": 5,
+        "written": "TowerCo",
+        "elementsInWritten": [
+          "TowerCo"
+        ],
+        "notFound": true,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S5-b",
+        "doc": "HICL",
+        "statementIndex": 5,
+        "written": "20 new towers",
+        "elementsInWritten": [
+          "20"
+        ],
+        "notFound": false,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": true
+      },
+      {
+        "id": "hicl-S5-c",
+        "doc": "HICL",
+        "statementIndex": 5,
+        "written": "during the past year",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": true
+      },
+      {
+        "id": "hicl-S6-a",
+        "doc": "HICL",
+        "statementIndex": 6,
+        "written": "lead to an increase",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "conflicts",
+        "neither": false
+      },
+      {
+        "id": "hicl-S7-a",
+        "doc": "HICL",
+        "statementIndex": 7,
+        "written": "appointed a new CFO",
+        "elementsInWritten": [
+          "CFO"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S7-b",
+        "doc": "HICL",
+        "statementIndex": 7,
+        "written": "the French government's",
+        "elementsInWritten": [
+          "French"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "hicl-S7-c",
+        "doc": "HICL",
+        "statementIndex": 7,
+        "written": "electricity sector reform",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S0-a",
+        "doc": "GPI",
+        "statementIndex": 0,
+        "written": "October 2025",
+        "elementsInWritten": [
+          "October 2025"
+        ],
+        "notFound": true,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S0-b",
+        "doc": "GPI",
+        "statementIndex": 0,
+        "written": "75% of its global production capacity",
+        "elementsInWritten": [
+          "75%"
+        ],
+        "notFound": true,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S0-c",
+        "doc": "GPI",
+        "statementIndex": 0,
+        "written": "escalating oil prices",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": true
+      },
+      {
+        "id": "gpi-S1-a",
+        "doc": "GPI",
+        "statementIndex": 1,
+        "written": "15 facilities in Malaysia",
+        "elementsInWritten": [
+          "15",
+          "Malaysia"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S1-b",
+        "doc": "GPI",
+        "statementIndex": 1,
+        "written": "European market only",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S2-a",
+        "doc": "GPI",
+        "statementIndex": 2,
+        "written": "enhancing site security",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      },
+      {
+        "id": "gpi-S3-a",
+        "doc": "GPI",
+        "statementIndex": 3,
+        "written": "Silver Hill Technology",
+        "elementsInWritten": [
+          "Silver Hill Technology"
+        ],
+        "notFound": true,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S4-a",
+        "doc": "GPI",
+        "statementIndex": 4,
+        "written": "the largest",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S4-b",
+        "doc": "GPI",
+        "statementIndex": 4,
+        "written": "over 60 billion",
+        "elementsInWritten": [
+          "60 billion"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "gpi-S4-c",
+        "doc": "GPI",
+        "statementIndex": 4,
+        "written": "bartered through",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "clearpoint-S0-a",
+        "doc": "ClearPoint",
+        "statementIndex": 0,
+        "written": "April",
+        "elementsInWritten": [
+          "April 2026"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "clearpoint-S2-a",
+        "doc": "ClearPoint",
+        "statementIndex": 2,
+        "written": "-50%",
+        "elementsInWritten": [
+          "-50%"
+        ],
+        "notFound": true,
+        "noteRaised": true,
+        "bucket": "conflicts",
+        "sentenceState": "not_in_source",
+        "neither": false
+      },
+      {
+        "id": "clearpoint-S3-a",
+        "doc": "ClearPoint",
+        "statementIndex": 3,
+        "written": "the vast majority of the company's overall revenue",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      },
+      {
+        "id": "clearpoint-S7-a",
+        "doc": "ClearPoint",
+        "statementIndex": 7,
+        "written": "a submission for FDA approval",
+        "elementsInWritten": [
+          "FDA"
+        ],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      },
+      {
+        "id": "clearpoint-S8-a",
+        "doc": "ClearPoint",
+        "statementIndex": 8,
+        "written": "the FDA",
+        "elementsInWritten": [
+          "FDA"
+        ],
+        "notFound": false,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": null,
+        "neither": true
+      },
+      {
+        "id": "clearpoint-S8-b",
+        "doc": "ClearPoint",
+        "statementIndex": 8,
+        "written": "has been commenced",
+        "elementsInWritten": [],
+        "notFound": false,
+        "noteRaised": false,
+        "bucket": null,
+        "sentenceState": null,
+        "neither": true
+      },
+      {
+        "id": "clearpoint-S9-a",
+        "doc": "ClearPoint",
+        "statementIndex": 9,
+        "written": "USD 56 million",
+        "elementsInWritten": [
+          "USD 56 million"
+        ],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      },
+      {
+        "id": "clearpoint-S9-b",
+        "doc": "ClearPoint",
+        "statementIndex": 9,
+        "written": "2027",
+        "elementsInWritten": [
+          "2027"
+        ],
+        "notFound": false,
+        "noteRaised": true,
+        "bucket": "beyond",
+        "sentenceState": "beyond",
+        "neither": false
+      }
+    ]
+  },
+  "m2": [
+    {
+      "name": "3i period date",
+      "doc": "3i",
+      "index": 0,
+      "sentenceState": null,
+      "sentenceLabel": null,
+      "bucket": null,
+      "refused": true,
+      "text": "The source states the total return was for the six months to 30 September 2025, not 30 June 2025."
+    },
+    {
+      "name": "HICL S1 misspelling",
+      "doc": "HICL",
+      "index": 1,
+      "sentenceState": "not_in_source",
+      "sentenceLabel": "Not in the source",
+      "bucket": "conflicts",
+      "refused": false,
+      "text": "The statement uses 'HCIL' while the source uses 'HICL'."
+    },
+    {
+      "name": "HICL S2 budgets",
+      "doc": "HICL",
+      "index": 2,
+      "sentenceState": null,
+      "sentenceLabel": null,
+      "bucket": null,
+      "refused": true,
+      "text": "The source states that growth investments are progressing significant expansion capex programmes and delivering EBITDA in line with expectations, which aligns with the statement's point about EBITDA growth performing in line with budgets."
+    }
+  ],
+  "m3": {
+    "genuinelyClean": 32,
+    "wording": 1,
+    "ids": [
+      "3i S4"
+    ]
+  },
+  "m4": {
+    "kept": [],
+    "refused": [
+      {
+        "doc": "3i",
+        "arm": "clean",
+        "index": 2,
+        "text": "The source mentions Action trading strongly and contributing to value growth, aligning with the statement's point."
+      },
+      {
+        "doc": "3i",
+        "arm": "clean",
+        "index": 12,
+        "text": "The source mentions a 14% increase in 3i Infrastructure plc's share price and a significant valuation uplift in TCR, which aligns with the statement's point about share price gains and positive performance."
+      },
+      {
+        "doc": "3i",
+        "arm": "doctored",
+        "index": 2,
+        "text": "The source mentions Action trading strongly and contributing to value growth, aligning with the statement's point."
+      },
+      {
+        "doc": "3i",
+        "arm": "doctored",
+        "index": "writer",
+        "text": "The draft demonstrates a strong ability to identify and categorize different types of discrepancies between the statements and the source material, such as 'not in source,' 'worth a look,' 'conflicts,' and 'beyond.' This categorization helps in understanding the nature of each issue. However, there is a pattern of missing context or additional information that is not present in the source, which could lead to potential misunderstandings. Ensuring that all claims are directly supported by the source material would strengthen the draft."
+      },
+      {
+        "doc": "HICL",
+        "arm": "clean",
+        "index": 2,
+        "text": "The source states that growth investments are progressing significant expansion capex programmes and delivering EBITDA in line with expectations, which aligns with the statement's point about EBITDA growth performing in line with budgets."
+      },
+      {
+        "doc": "GPI",
+        "arm": "doctored",
+        "index": 3,
+        "text": "The statement mentions 'Silver Hill Technology' as the parent of GP Industries, while the source states 'Gold Peak Technology Group' as the parent. The statement also refers to an investment program in Johor, Malaysia, which the source confirms but attributes to Gold Peak Technology Group."
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 8,
+        "text": "The statement mentions the FDA issuing a medical device license, but the source states it was Health Canada that issued the Medical Device License. The statement also mentions the commencement of the first commercial drug delivery case in the Asia-Pacific region, which the source confirms."
+      }
+    ]
+  },
+  "m5": {
+    "count": 28,
+    "rows": [
+      {
+        "doc": "3i",
+        "arm": "clean",
+        "index": 11,
+        "surface": "figure: 9%",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "3i",
+        "arm": "doctored",
+        "index": 8,
+        "surface": "name: MAIT",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "3i",
+        "arm": "doctored",
+        "index": 9,
+        "surface": "name: AGIC",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "3i",
+        "arm": "doctored",
+        "index": 11,
+        "surface": "figure: 9%",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "3i",
+        "arm": "doctored",
+        "index": 12,
+        "surface": "name: 3i Infrastructure",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "3i",
+        "arm": "doctored",
+        "index": 14,
+        "surface": "name",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "HICL",
+        "arm": "clean",
+        "index": 1,
+        "surface": "name: HCIL",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "HICL",
+        "arm": "doctored",
+        "index": 0,
+        "surface": "figure",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "HICL",
+        "arm": "doctored",
+        "index": 0,
+        "surface": "date",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "HICL",
+        "arm": "doctored",
+        "index": 3,
+        "surface": "name",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "HICL",
+        "arm": "doctored",
+        "index": 4,
+        "surface": "name: St. Germain",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "GPI",
+        "arm": "clean",
+        "index": 1,
+        "surface": {
+          "figure": "one",
+          "name": "China"
+        },
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "GPI",
+        "arm": "doctored",
+        "index": 1,
+        "surface": "figure: 15",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "GPI",
+        "arm": "doctored",
+        "index": 1,
+        "surface": "name: Malaysia",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "GPI",
+        "arm": "doctored",
+        "index": 4,
+        "surface": "figure: 60 billion",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "clean",
+        "index": 1,
+        "surface": "figure: 43%",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "clean",
+        "index": 1,
+        "surface": "figure: USD 12.1 million",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "clean",
+        "index": 1,
+        "surface": "figure: 175",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "clean",
+        "index": 1,
+        "surface": "name: IRRAflow",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 0,
+        "surface": "date",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 1,
+        "surface": "figure: 43%",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 1,
+        "surface": "figure: USD 12.1 million",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 1,
+        "surface": "figure: 175",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 1,
+        "surface": "name: IRRAflow",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 2,
+        "surface": "figure: -50%",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 2,
+        "surface": "figure: 64%",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 3,
+        "surface": "figure: 80%",
+        "reason": "not_in_statement"
+      },
+      {
+        "doc": "ClearPoint",
+        "arm": "doctored",
+        "index": 9,
+        "surface": "date",
+        "reason": "not_in_statement"
+      }
+    ]
+  }
+}
