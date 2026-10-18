@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  d45145e  main  168 files  1842 tests |
 | Cost | Estimate printed before the run: 84 calls, 268353 input tokens at chars/4, output ceiling 300, USD 0.9229 list. No cache assumed. Ceiling USD 5. Not crossed. Measured: 85 calls, input 226245, cached input 179072, output 3534, USD 0.377113 discounted, USD 0.600953 list. The extra call is one writer-note retry. Model `gpt-4o-2024-08-06`. Source: `spend` on `scripts/diagnostic/b402/runs/reading.json`. |
 | Gate | `QC_B402_READING=1`. |
 

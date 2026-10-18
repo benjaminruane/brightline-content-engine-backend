@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  d45145e  main  168 files  1842 tests |
 | Cost | Estimate before the run: 84 calls, USD 0.9229 list. Measured: 85 calls, USD 0.377113 discounted, USD 0.600953 list. Model `gpt-4o-2024-08-06`. |
 | Evidence | `scripts/diagnostic/b402/runs/reading.json`, `tests/b402-reading-contract.test.mjs`. |
 
