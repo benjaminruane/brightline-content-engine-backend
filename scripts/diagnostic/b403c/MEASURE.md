@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  99d6b14  main  171 files  1861 tests |
 | Cost | Estimate printed before the run, no cache assumed, output ceiling 300 tokens. 76 calls, 288234 input tokens at chars/4, USD 2.0112 list. Model `claude-opus-4-7`. Ceiling USD 3. Not crossed. Measured list and discounted USD 2.622955, 80 calls, input 463721, output 12174, cached 0. Opus has no cached rate, so the two figures are equal. Source: `spend` in `scripts/diagnostic/b403c/runs/reading.json`. |
 | Gate | `QC_B403C_READING=1`. |
 
