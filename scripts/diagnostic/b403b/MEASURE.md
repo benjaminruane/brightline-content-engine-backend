@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  16309ea  main  170 files  1856 tests |
 | Cost | Estimates printed before each run, no cache assumed, output ceiling 300. gpt-4o: 76 calls, 288161 input tokens at chars/4, USD 0.9484 list. Sonnet: 76 calls, USD 1.2065 list. Opus: 76 calls, USD 2.0108 list. Sum of estimates USD 4.1657. Ceiling USD 6. Not crossed. Measured list USD 4.531344, discounted USD 4.235504, 245 calls. Source: `spend` on each model in `scripts/diagnostic/b403b/runs/reading.json`. |
 | Gate | `QC_B403B_READING=1`. |
 
