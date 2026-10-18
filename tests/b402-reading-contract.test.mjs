@@ -78,7 +78,7 @@ describe("B402 reading contract", () => {
       { facts: [fact("not_found")], note: { bucket: "conflicts", disputedElements: ["HCIL"] }, state: "not_in_source" },
       { facts: [fact("matched")], note: { bucket: "conflicts", disputedElements: [] }, state: "conflicts" },
       { facts: [fact("matched")], note: { bucket: "beyond", disputedElements: [] }, state: "beyond" },
-      { facts: [fact("matched")], note: { bucket: "wording", disputedElements: [] }, state: "worth_a_look" },
+      { facts: [fact("matched")], note: { bucket: "wording", disputedElements: [] }, state: "nothing_to_raise" },
       { facts: [fact("matched")], note: { bucket: "none", disputedElements: [] }, state: "nothing_to_raise" },
     ];
     for (const row of cases) {
