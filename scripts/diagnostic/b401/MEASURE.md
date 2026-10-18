@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  f922e5c  main  167 files  1828 tests |
 | R3 | USD 0. `scripts/diagnostic/b401/runs/reviewer-cost.json` |
 | R2 | USD 0.130465 discounted, 40 calls. Estimate before the run: USD 0.3359 list. Ceiling USD 5. Not crossed. |
 

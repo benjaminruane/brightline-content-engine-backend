@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  f922e5c  main  167 files  1828 tests |
 | Cost | Ensemble USD 0.130465 discounted, 40 calls. The rest of this pass is USD 0. |
 | Evidence | `scripts/diagnostic/b397/MEASUREMENT.md`, `b398/MEASUREMENT.md`, `b399/MEASUREMENT.md`, `b399/CLEAN-SET.md`, `b386/ASSESSMENT.md`, `b388/REPORT.md`, `b390/REPORT.md`, `scripts/diagnostic/b401/runs/reviewer-cost.json`, `scripts/diagnostic/b401/runs/ensemble.json`. |
 
