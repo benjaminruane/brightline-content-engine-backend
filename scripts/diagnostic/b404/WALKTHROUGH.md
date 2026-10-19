@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| SHIPPED | recorded after verify:ship |
+| SHIPPED | SHIP VERIFIED  0bbd1bf  main  172 files  1864 tests |
 | Cost | Estimate printed before the saved run, no cache assumed, output ceiling 300. 9 calls, 30543 input tokens at chars/4, USD 0.2202 list. Model `claude-opus-4-7`. Measured list and discounted USD 0.261010, 9 calls, input 44792, output 1482, cached 0. Opus has no cached rate, so the two figures are equal. Source: `spend` in `scripts/diagnostic/b404/runs/reading.json`. An earlier run of the same 9 calls crashed before the file was written. Its dollars were not stored. See the ledger. |
 | Gate | `QC_READING_VIEW` defaults on. Set it to `0` to leave the card untouched. The frontend link uses `VITE_READING_VIEW`, also default on, and only appears when the payload is present. |
 
