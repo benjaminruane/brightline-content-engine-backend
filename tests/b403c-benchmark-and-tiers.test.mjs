@@ -8,6 +8,7 @@ import { BENCHMARK_WORDS, extractElements } from "../lib/qc/b394-elements.mjs";
 import {
   DATE_EXTRACT_LIMIT,
   WELL_SOURCED_LINE,
+  lightSourcedLine,
   buildFacts,
   draftHeader,
   missingBenchmarkCard,
@@ -88,12 +89,15 @@ describe("B403C benchmark words and tiers", () => {
     ]);
     assert.equal(quiet.line, WELL_SOURCED_LINE);
     const glanceOnly = draftHeader([{ facts: [{ status: "matched" }], sentenceState: "beyond", note: { bucket: "beyond" } }]);
-    assert.match(glanceOnly.line, /goes further/);
+    assert.equal(glanceOnly.line, lightSourcedLine(1));
     const mixed = draftHeader([
       { facts: [{ status: "matched" }], sentenceState: "beyond", note: { bucket: "beyond" } },
       { facts: [{ status: "matched" }], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },
     ]);
-    assert.equal(mixed.line, null);
+    assert.equal(
+      mixed.line,
+      "Well sourced. Every figure, date and name appears in the source. 1 statement goes a little further than it does."
+    );
   });
 
   test("a date above the limit shows the count and no extracts", () => {

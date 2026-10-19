@@ -1,0 +1,1121 @@
+{
+  "source": "tests/fixtures/real-runs-2026-10-04-hicl/source-hicl-interim-extracted.txt",
+  "draft": "tests/fixtures/real-runs-2026-10-04-hicl/clean-review.json",
+  "header": {
+    "stamp": "Source-checked",
+    "numbers": "16 of 18 facts matched · 2 to look at · 1 worth a glance · 4 wording notes",
+    "line": "2 facts are not in the source.",
+    "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+  },
+  "writerFeedback": "The draft reads with a confident, analyst-style voice and moves logically from portfolio-level performance into specific holdings, which gives the reader a clear sense of what is driving results. The holding-level color on St. Pancras, Fortysouth, and Affinity Water adds useful texture rather than just restating headline numbers.\n\nThe weakness is repetition and density as a pattern: EBITDA growth and \"across the portfolio\" phrasing recur in back-to-back sentences, and several paragraphs stack multiple ideas (operations, commercial, refinancing) without a connective thread, which flattens emphasis. Watch also for small consistency issues like the HICL/HCIL spelling and clarify whether items such as the refinancing refer to the company or to a specific holding, since the antecedents drift.",
+  "writerFeedbackStatus": "shown",
+  "spend": {
+    "calls": 9,
+    "inputTokens": 44792,
+    "outputTokens": 1482,
+    "cachedInputTokens": 0,
+    "costUsd": 0.26101,
+    "listUsd": 0.26101
+  },
+  "model": "claude-opus-4-7",
+  "sentences": [
+    {
+      "index": 0,
+      "text": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+      "tier": "quiet",
+      "sentenceState": "nothing_to_raise",
+      "sentenceLabel": "Nothing to raise",
+      "wordingLine": "1 wording note",
+      "note": {
+        "bucket": "wording",
+        "text": "The source describes operational performance as \"in line with expectations\" and \"robust\" over the period 1 October 2025 to 28 February 2026. The statement's \"positive and largely in line with expectations\" restates the same assertion in other words.",
+        "disputedIndices": [],
+        "disputedElements": []
+      },
+      "facts": [
+        {
+          "kind": "name",
+          "surface": "HICL Infrastructure",
+          "start": 0,
+          "end": 21,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 2,
+          "occurrences": [
+            {
+              "lineId": "L1",
+              "extract": "HICL Infrastructure PLC",
+              "lineAfterId": "L2"
+            },
+            {
+              "lineId": "L6",
+              "extract": "HICL Infrastructure PLC",
+              "lineBeforeId": "L5",
+              "lineAfterId": "L7"
+            }
+          ],
+          "lineId": "L1",
+          "extract": "HICL Infrastructure PLC",
+          "lineAfterId": "L2",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L1",
+                "extract": "HICL Infrastructure PLC",
+                "lineAfterId": "L2"
+              },
+              {
+                "lineId": "L6",
+                "extract": "HICL Infrastructure PLC",
+                "lineBeforeId": "L5",
+                "lineAfterId": "L7"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 2
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "date",
+          "surface": "28 February 2026",
+          "start": 57,
+          "end": 73,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L12",
+              "extract": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October 2025 to 28 February 2026.",
+              "lineBeforeId": "L11",
+              "lineAfterId": "L13"
+            }
+          ],
+          "lineId": "L12",
+          "extract": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October 2025 to 28 February 2026.",
+          "lineBeforeId": "L11",
+          "lineAfterId": "L13",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L12",
+                "extract": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October 2025 to 28 February 2026.",
+                "lineBeforeId": "L11",
+                "lineAfterId": "L13"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "benchmark",
+          "surface": "expectations",
+          "start": 112,
+          "end": 124,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 5,
+          "occurrences": [
+            {
+              "lineId": "L22",
+              "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+              "lineBeforeId": "L21",
+              "lineAfterId": "L23"
+            },
+            {
+              "lineId": "L35",
+              "extract": "| · | Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets. NAV performance and cash generation remain in line with forecast. | ",
+              "lineBeforeId": "L34",
+              "lineAfterId": "L36"
+            },
+            {
+              "lineId": "L36",
+              "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+              "lineBeforeId": "L35",
+              "lineAfterId": "L37"
+            },
+            {
+              "lineId": "L40",
+              "extract": "| · | Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance. | ",
+              "lineBeforeId": "L39",
+              "lineAfterId": "L41"
+            },
+            {
+              "lineId": "L42",
+              "extract": "| · | The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x. The Board also re-iterates its target dividend of 8.50p per share for the year to 31 March 2027. | ",
+              "lineBeforeId": "L41",
+              "lineAfterId": "L43"
+            }
+          ],
+          "lineId": "L22",
+          "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+          "lineBeforeId": "L21",
+          "lineAfterId": "L23",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L22",
+                "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+                "lineBeforeId": "L21",
+                "lineAfterId": "L23"
+              },
+              {
+                "lineId": "L35",
+                "extract": "| · | Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets. NAV performance and cash generation remain in line with forecast. | ",
+                "lineBeforeId": "L34",
+                "lineAfterId": "L36"
+              },
+              {
+                "lineId": "L36",
+                "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+                "lineBeforeId": "L35",
+                "lineAfterId": "L37"
+              }
+            ],
+            "more": "and 2 more",
+            "countOnly": false,
+            "occurrenceCount": 5
+          },
+          "benchmarkCard": null
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "text": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+      "tier": "demands",
+      "sentenceState": "not_in_source",
+      "sentenceLabel": "Not in the source",
+      "wordingLine": "1 wording note",
+      "note": {
+        "bucket": "wording",
+        "text": "The statement paraphrases the Chair's remarks about robust operational performance, capex-driven EBITDA growth, and resilient cash generation supporting the dividend. \"HCIL\" appears to be a typo for HICL but does not change the claim.",
+        "disputedIndices": [],
+        "disputedElements": []
+      },
+      "facts": [
+        {
+          "kind": "name",
+          "surface": "EBITDA",
+          "start": 63,
+          "end": 69,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 4,
+          "occurrences": [
+            {
+              "lineId": "L16",
+              "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+              "lineBeforeId": "L15",
+              "lineAfterId": "L17"
+            },
+            {
+              "lineId": "L22",
+              "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+              "lineBeforeId": "L21",
+              "lineAfterId": "L23"
+            },
+            {
+              "lineId": "L36",
+              "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+              "lineBeforeId": "L35",
+              "lineAfterId": "L37"
+            },
+            {
+              "lineId": "L39",
+              "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+              "lineBeforeId": "L38",
+              "lineAfterId": "L40"
+            }
+          ],
+          "lineId": "L16",
+          "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+          "lineBeforeId": "L15",
+          "lineAfterId": "L17",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L16",
+                "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+                "lineBeforeId": "L15",
+                "lineAfterId": "L17"
+              },
+              {
+                "lineId": "L22",
+                "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+                "lineBeforeId": "L21",
+                "lineAfterId": "L23"
+              },
+              {
+                "lineId": "L36",
+                "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+                "lineBeforeId": "L35",
+                "lineAfterId": "L37"
+              }
+            ],
+            "more": "and 1 more",
+            "countOnly": false,
+            "occurrenceCount": 4
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "name",
+          "surface": "HCIL",
+          "start": 153,
+          "end": 159,
+          "status": "not_found",
+          "shown": {
+            "shown": [],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 0
+          },
+          "benchmarkCard": null
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+      "tier": "demands",
+      "sentenceState": "not_in_source",
+      "sentenceLabel": "Not in the source",
+      "wordingLine": null,
+      "note": {
+        "bucket": "conflicts",
+        "text": "The source says EBITDA is being delivered \"in line with expectations\" and in line with HICL's \"valuation assumption.\" The statement says EBITDA is in line with \"budgets,\" which is a different benchmark.",
+        "disputedIndices": [
+          1
+        ],
+        "disputedElements": [
+          "budgets"
+        ]
+      },
+      "facts": [
+        {
+          "kind": "name",
+          "surface": "EBITDA",
+          "start": 125,
+          "end": 131,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 4,
+          "occurrences": [
+            {
+              "lineId": "L16",
+              "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+              "lineBeforeId": "L15",
+              "lineAfterId": "L17"
+            },
+            {
+              "lineId": "L22",
+              "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+              "lineBeforeId": "L21",
+              "lineAfterId": "L23"
+            },
+            {
+              "lineId": "L36",
+              "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+              "lineBeforeId": "L35",
+              "lineAfterId": "L37"
+            },
+            {
+              "lineId": "L39",
+              "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+              "lineBeforeId": "L38",
+              "lineAfterId": "L40"
+            }
+          ],
+          "lineId": "L16",
+          "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+          "lineBeforeId": "L15",
+          "lineAfterId": "L17",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L16",
+                "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+                "lineBeforeId": "L15",
+                "lineAfterId": "L17"
+              },
+              {
+                "lineId": "L22",
+                "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+                "lineBeforeId": "L21",
+                "lineAfterId": "L23"
+              },
+              {
+                "lineId": "L36",
+                "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+                "lineBeforeId": "L35",
+                "lineAfterId": "L37"
+              }
+            ],
+            "more": "and 1 more",
+            "countOnly": false,
+            "occurrenceCount": 4
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "benchmark",
+          "surface": "budgets",
+          "start": 178,
+          "end": 185,
+          "status": "not_found",
+          "sourceBenchmarks": [
+            {
+              "word": "expectations",
+              "occurrenceCount": 5,
+              "occurrences": [
+                {
+                  "lineId": "L22",
+                  "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+                  "lineBeforeId": "L21",
+                  "lineAfterId": "L23"
+                },
+                {
+                  "lineId": "L35",
+                  "extract": "| · | Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets. NAV performance and cash generation remain in line with forecast. | ",
+                  "lineBeforeId": "L34",
+                  "lineAfterId": "L36"
+                },
+                {
+                  "lineId": "L36",
+                  "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+                  "lineBeforeId": "L35",
+                  "lineAfterId": "L37"
+                },
+                {
+                  "lineId": "L40",
+                  "extract": "| · | Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance. | ",
+                  "lineBeforeId": "L39",
+                  "lineAfterId": "L41"
+                },
+                {
+                  "lineId": "L42",
+                  "extract": "| · | The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x. The Board also re-iterates its target dividend of 8.50p per share for the year to 31 March 2027. | ",
+                  "lineBeforeId": "L41",
+                  "lineAfterId": "L43"
+                }
+              ]
+            },
+            {
+              "word": "forecast",
+              "occurrenceCount": 6,
+              "occurrences": [
+                {
+                  "lineId": "L25",
+                  "extract": "| · | Dividend outlook reaffirmed, with the Company on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026 (forecast cash cover of c.1.1x) and reiterating its target dividend of 8.50p per share for the year ending 31 March 2027. | ",
+                  "lineBeforeId": "L24",
+                  "lineAfterId": "L26"
+                },
+                {
+                  "lineId": "L35",
+                  "extract": "| · | Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets. NAV performance and cash generation remain in line with forecast. | ",
+                  "lineBeforeId": "L34",
+                  "lineAfterId": "L36"
+                },
+                {
+                  "lineId": "L38",
+                  "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+                  "lineBeforeId": "L37",
+                  "lineAfterId": "L39"
+                },
+                {
+                  "lineId": "L39",
+                  "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+                  "lineBeforeId": "L38",
+                  "lineAfterId": "L40"
+                },
+                {
+                  "lineId": "L42",
+                  "extract": "| · | The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x. The Board also re-iterates its target dividend of 8.50p per share for the year to 31 March 2027. | ",
+                  "lineBeforeId": "L41",
+                  "lineAfterId": "L43"
+                },
+                {
+                  "lineId": "L43",
+                  "extract": "| · | Latest actual inflation is tracking slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand. Overall the Company expects no material impact on its 31 March 2026 NAV from actual outturn inflation. | ",
+                  "lineBeforeId": "L42",
+                  "lineAfterId": "L44"
+                }
+              ]
+            },
+            {
+              "word": "guidance",
+              "occurrenceCount": 2,
+              "occurrences": [
+                {
+                  "lineId": "L40",
+                  "extract": "| · | Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance. | ",
+                  "lineBeforeId": "L39",
+                  "lineAfterId": "L41"
+                },
+                {
+                  "lineId": "L42",
+                  "extract": "| · | The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x. The Board also re-iterates its target dividend of 8.50p per share for the year to 31 March 2027. | ",
+                  "lineBeforeId": "L41",
+                  "lineAfterId": "L43"
+                }
+              ]
+            },
+            {
+              "word": "target",
+              "occurrenceCount": 3,
+              "occurrences": [
+                {
+                  "lineId": "L16",
+                  "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+                  "lineBeforeId": "L15",
+                  "lineAfterId": "L17"
+                },
+                {
+                  "lineId": "L25",
+                  "extract": "| · | Dividend outlook reaffirmed, with the Company on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026 (forecast cash cover of c.1.1x) and reiterating its target dividend of 8.50p per share for the year ending 31 March 2027. | ",
+                  "lineBeforeId": "L24",
+                  "lineAfterId": "L26"
+                },
+                {
+                  "lineId": "L42",
+                  "extract": "| · | The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x. The Board also re-iterates its target dividend of 8.50p per share for the year to 31 March 2027. | ",
+                  "lineBeforeId": "L41",
+                  "lineAfterId": "L43"
+                }
+              ]
+            }
+          ],
+          "shown": {
+            "shown": [],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 0
+          },
+          "benchmarkCard": {
+            "missing": "budgets, not in the source",
+            "source": [
+              {
+                "word": "expectations",
+                "lineId": "L22",
+                "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+                "occurrenceCount": 5
+              },
+              {
+                "word": "forecast",
+                "lineId": "L25",
+                "extract": "| · | Dividend outlook reaffirmed, with the Company on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026 (forecast cash cover of c.1.1x) and reiterating its target dividend of 8.50p per share for the year ending 31 March 2027. | ",
+                "occurrenceCount": 6
+              },
+              {
+                "word": "guidance",
+                "lineId": "L40",
+                "extract": "| · | Cash generation from the PPP portfolio continues to be in line with expectations, underpinning dividend cover in line with market guidance. | ",
+                "occurrenceCount": 2
+              },
+              {
+                "word": "target",
+                "lineId": "L16",
+                "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+                "occurrenceCount": 3
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "text": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+      "tier": "quiet",
+      "sentenceState": "nothing_to_raise",
+      "sentenceLabel": "Nothing to raise",
+      "wordingLine": "1 wording note",
+      "note": {
+        "bucket": "wording",
+        "text": "The source states London St. Pancras High Speed performed well with international train path bookings slightly ahead of forecast. The statement says the same, adding the framing \"among the significant holdings,\" which does not change the claim.",
+        "disputedIndices": [],
+        "disputedElements": []
+      },
+      "facts": [
+        {
+          "kind": "name",
+          "surface": "London St. Pancras High Speed",
+          "start": 32,
+          "end": 61,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L38",
+              "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+              "lineBeforeId": "L37",
+              "lineAfterId": "L39"
+            }
+          ],
+          "lineId": "L38",
+          "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+          "lineBeforeId": "L37",
+          "lineAfterId": "L39",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L38",
+                "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+                "lineBeforeId": "L37",
+                "lineAfterId": "L39"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "benchmark",
+          "surface": "forecast",
+          "start": 153,
+          "end": 161,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 6,
+          "occurrences": [
+            {
+              "lineId": "L25",
+              "extract": "| · | Dividend outlook reaffirmed, with the Company on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026 (forecast cash cover of c.1.1x) and reiterating its target dividend of 8.50p per share for the year ending 31 March 2027. | ",
+              "lineBeforeId": "L24",
+              "lineAfterId": "L26"
+            },
+            {
+              "lineId": "L35",
+              "extract": "| · | Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets. NAV performance and cash generation remain in line with forecast. | ",
+              "lineBeforeId": "L34",
+              "lineAfterId": "L36"
+            },
+            {
+              "lineId": "L38",
+              "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+              "lineBeforeId": "L37",
+              "lineAfterId": "L39"
+            },
+            {
+              "lineId": "L39",
+              "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+              "lineBeforeId": "L38",
+              "lineAfterId": "L40"
+            },
+            {
+              "lineId": "L42",
+              "extract": "| · | The Company remains on track to deliver its target dividend of 8.35p per share for the financial year ending 31 March 2026, a 0.1p increase on the prior year, supported by cash generation that is in line with expectations. Forecast dividend cash cover for the year end is anticipated to be in line with previous guidance at 1.1x. The Board also re-iterates its target dividend of 8.50p per share for the year to 31 March 2027. | ",
+              "lineBeforeId": "L41",
+              "lineAfterId": "L43"
+            },
+            {
+              "lineId": "L43",
+              "extract": "| · | Latest actual inflation is tracking slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand. Overall the Company expects no material impact on its 31 March 2026 NAV from actual outturn inflation. | ",
+              "lineBeforeId": "L42",
+              "lineAfterId": "L44"
+            }
+          ],
+          "lineId": "L25",
+          "extract": "| · | Dividend outlook reaffirmed, with the Company on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026 (forecast cash cover of c.1.1x) and reiterating its target dividend of 8.50p per share for the year ending 31 March 2027. | ",
+          "lineBeforeId": "L24",
+          "lineAfterId": "L26",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L25",
+                "extract": "| · | Dividend outlook reaffirmed, with the Company on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026 (forecast cash cover of c.1.1x) and reiterating its target dividend of 8.50p per share for the year ending 31 March 2027. | ",
+                "lineBeforeId": "L24",
+                "lineAfterId": "L26"
+              },
+              {
+                "lineId": "L35",
+                "extract": "| · | Operational performance across the portfolio in the period was in line with expectations, demonstrating the resilient nature of the underlying assets. NAV performance and cash generation remain in line with forecast. | ",
+                "lineBeforeId": "L34",
+                "lineAfterId": "L36"
+              },
+              {
+                "lineId": "L38",
+                "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+                "lineBeforeId": "L37",
+                "lineAfterId": "L39"
+              }
+            ],
+            "more": "and 3 more",
+            "countOnly": false,
+            "occurrenceCount": 6
+          },
+          "benchmarkCard": null
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+      "tier": "quiet",
+      "sentenceState": "nothing_to_raise",
+      "sentenceLabel": "Nothing to raise",
+      "wordingLine": null,
+      "note": {
+        "bucket": "none",
+        "text": "",
+        "disputedIndices": [],
+        "disputedElements": []
+      },
+      "facts": [
+        {
+          "kind": "name",
+          "surface": "Virgin Trains",
+          "start": 110,
+          "end": 123,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L38",
+              "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+              "lineBeforeId": "L37",
+              "lineAfterId": "L39"
+            }
+          ],
+          "lineId": "L38",
+          "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+          "lineBeforeId": "L37",
+          "lineAfterId": "L39",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L38",
+                "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+                "lineBeforeId": "L37",
+                "lineAfterId": "L39"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "name",
+          "surface": "Channel",
+          "start": 168,
+          "end": 175,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L38",
+              "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+              "lineBeforeId": "L37",
+              "lineAfterId": "L39"
+            }
+          ],
+          "lineId": "L38",
+          "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+          "lineBeforeId": "L37",
+          "lineAfterId": "L39",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L38",
+                "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+                "lineBeforeId": "L37",
+                "lineAfterId": "L39"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "name",
+          "surface": "St. Pancras",
+          "start": 192,
+          "end": 204,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L38",
+              "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+              "lineBeforeId": "L37",
+              "lineAfterId": "L39"
+            }
+          ],
+          "lineId": "L38",
+          "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+          "lineBeforeId": "L37",
+          "lineAfterId": "L39",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L38",
+                "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+                "lineBeforeId": "L37",
+                "lineAfterId": "L39"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "text": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+      "tier": "light",
+      "sentenceState": "beyond",
+      "sentenceLabel": "Goes beyond the source",
+      "wordingLine": null,
+      "note": {
+        "bucket": "beyond",
+        "text": "The source says the 16 new towers and co-location opportunities are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The statement adds \"and valuation gains,\" which the source does not assert.",
+        "disputedIndices": [
+          0
+        ],
+        "disputedElements": [
+          "Fortysouth"
+        ]
+      },
+      "facts": [
+        {
+          "kind": "name",
+          "surface": "Fortysouth",
+          "start": 11,
+          "end": 21,
+          "status": "matched_disputed",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L39",
+              "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+              "lineBeforeId": "L38",
+              "lineAfterId": "L40"
+            }
+          ],
+          "lineId": "L39",
+          "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+          "lineBeforeId": "L38",
+          "lineAfterId": "L40",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L39",
+                "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+                "lineBeforeId": "L38",
+                "lineAfterId": "L40"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "figure",
+          "surface": "16",
+          "start": 32,
+          "end": 34,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L39",
+              "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+              "lineBeforeId": "L38",
+              "lineAfterId": "L40"
+            }
+          ],
+          "lineId": "L39",
+          "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+          "lineBeforeId": "L38",
+          "lineAfterId": "L40",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L39",
+                "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+                "lineBeforeId": "L38",
+                "lineAfterId": "L40"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "name",
+          "surface": "EBITDA",
+          "start": 188,
+          "end": 194,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 4,
+          "occurrences": [
+            {
+              "lineId": "L16",
+              "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+              "lineBeforeId": "L15",
+              "lineAfterId": "L17"
+            },
+            {
+              "lineId": "L22",
+              "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+              "lineBeforeId": "L21",
+              "lineAfterId": "L23"
+            },
+            {
+              "lineId": "L36",
+              "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+              "lineBeforeId": "L35",
+              "lineAfterId": "L37"
+            },
+            {
+              "lineId": "L39",
+              "extract": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+              "lineBeforeId": "L38",
+              "lineAfterId": "L40"
+            }
+          ],
+          "lineId": "L16",
+          "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+          "lineBeforeId": "L15",
+          "lineAfterId": "L17",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L16",
+                "extract": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+                "lineBeforeId": "L15",
+                "lineAfterId": "L17"
+              },
+              {
+                "lineId": "L22",
+                "extract": "| · | Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth. | ",
+                "lineBeforeId": "L21",
+                "lineAfterId": "L23"
+              },
+              {
+                "lineId": "L36",
+                "extract": "| · | HICL's growth investments continue to perform well, progressing significant expansion capex programmes and delivering EBITDA in line with expectations. Notable updates are included below: | ",
+                "lineBeforeId": "L35",
+                "lineAfterId": "L37"
+              }
+            ],
+            "more": "and 1 more",
+            "countOnly": false,
+            "occurrenceCount": 4
+          },
+          "benchmarkCard": null
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "text": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+      "tier": "quiet",
+      "sentenceState": "nothing_to_raise",
+      "sentenceLabel": "Nothing to raise",
+      "wordingLine": "1 wording note",
+      "note": {
+        "bucket": "wording",
+        "text": "The source says Fortysouth completed an accretive refinancing that was c.30% oversubscribed and enabled a step-down on debt margins earlier than forecast. The statement restates this as an oversubscribed refinancing leading to reduced debt servicing costs, which is the same assertion in other words.",
+        "disputedIndices": [],
+        "disputedElements": []
+      },
+      "facts": []
+    },
+    {
+      "index": 7,
+      "text": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+      "tier": "quiet",
+      "sentenceState": "nothing_to_raise",
+      "sentenceLabel": "Nothing to raise",
+      "wordingLine": null,
+      "note": {
+        "bucket": "none",
+        "text": "",
+        "disputedIndices": [],
+        "disputedElements": []
+      },
+      "facts": [
+        {
+          "kind": "name",
+          "surface": "Affinity Water",
+          "start": 11,
+          "end": 25,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 2,
+          "occurrences": [
+            {
+              "lineId": "L30",
+              "extract": "| · | £50m of the sale proceeds was allocated to fund HICL's equity commitment to Affinity Water, as previously disclosed. Proceeds of c.£66m will be allocated to funding the existing equity commitments to Blankenburg tunnel and B247, due in September and December 2026 respectively, also as previously disclosed. This contribution meets HICL's deferred equity obligations as these assets successfully complete construction and move into their operational phase. | ",
+              "lineBeforeId": "L29",
+              "lineAfterId": "L31"
+            },
+            {
+              "lineId": "L37",
+              "extract": "| · | o  At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | ",
+              "lineBeforeId": "L36",
+              "lineAfterId": "L38"
+            }
+          ],
+          "lineId": "L30",
+          "extract": "| · | £50m of the sale proceeds was allocated to fund HICL's equity commitment to Affinity Water, as previously disclosed. Proceeds of c.£66m will be allocated to funding the existing equity commitments to Blankenburg tunnel and B247, due in September and December 2026 respectively, also as previously disclosed. This contribution meets HICL's deferred equity obligations as these assets successfully complete construction and move into their operational phase. | ",
+          "lineBeforeId": "L29",
+          "lineAfterId": "L31",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L30",
+                "extract": "| · | £50m of the sale proceeds was allocated to fund HICL's equity commitment to Affinity Water, as previously disclosed. Proceeds of c.£66m will be allocated to funding the existing equity commitments to Blankenburg tunnel and B247, due in September and December 2026 respectively, also as previously disclosed. This contribution meets HICL's deferred equity obligations as these assets successfully complete construction and move into their operational phase. | ",
+                "lineBeforeId": "L29",
+                "lineAfterId": "L31"
+              },
+              {
+                "lineId": "L37",
+                "extract": "| · | o  At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | ",
+                "lineBeforeId": "L36",
+                "lineAfterId": "L38"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 2
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "name",
+          "surface": "CEO",
+          "start": 42,
+          "end": 45,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 1,
+          "occurrences": [
+            {
+              "lineId": "L37",
+              "extract": "| · | o  At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | ",
+              "lineBeforeId": "L36",
+              "lineAfterId": "L38"
+            }
+          ],
+          "lineId": "L37",
+          "extract": "| · | o  At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | ",
+          "lineBeforeId": "L36",
+          "lineAfterId": "L38",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L37",
+                "extract": "| · | o  At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | ",
+                "lineBeforeId": "L36",
+                "lineAfterId": "L38"
+              }
+            ],
+            "more": null,
+            "countOnly": false,
+            "occurrenceCount": 1
+          },
+          "benchmarkCard": null
+        },
+        {
+          "kind": "name",
+          "surface": "UK",
+          "start": 112,
+          "end": 114,
+          "status": "matched",
+          "lineGap": false,
+          "occurrenceCount": 5,
+          "occurrences": [
+            {
+              "lineId": "L23",
+              "extract": "| · | Active capital recycling completed, with the £225m disposal of seven UK PPP assets completed in the period in line with carrying value, which will enable full repayment of the Company's RCF and funding of committed growth investments. | ",
+              "lineBeforeId": "L22",
+              "lineAfterId": "L24"
+            },
+            {
+              "lineId": "L37",
+              "extract": "| · | o  At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | ",
+              "lineBeforeId": "L36",
+              "lineAfterId": "L38"
+            },
+            {
+              "lineId": "L38",
+              "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+              "lineBeforeId": "L37",
+              "lineAfterId": "L39"
+            },
+            {
+              "lineId": "L43",
+              "extract": "| · | Latest actual inflation is tracking slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand. Overall the Company expects no material impact on its 31 March 2026 NAV from actual outturn inflation. | ",
+              "lineBeforeId": "L42",
+              "lineAfterId": "L44"
+            },
+            {
+              "lineId": "L44",
+              "extract": "| · | Long term government bond yields in the UK have decreased slightly, by approximately 20 basis points, since the Company's valuation at 30 September 2025. Over the same period, overall movement in bond yields in the United States, Canada, New Zealand and the Eurozone has been relatively flat. Transaction activity in the period, including direct experience from HICL's recent disposals and InfraRed's broader platform, reinforces the Investment Manager's view that there is no strong evidence to support a movement in discount rates. This will be reviewed as at 31 March, in line with the established portfolio valuation process. | ",
+              "lineBeforeId": "L43",
+              "lineAfterId": "L45"
+            }
+          ],
+          "lineId": "L23",
+          "extract": "| · | Active capital recycling completed, with the £225m disposal of seven UK PPP assets completed in the period in line with carrying value, which will enable full repayment of the Company's RCF and funding of committed growth investments. | ",
+          "lineBeforeId": "L22",
+          "lineAfterId": "L24",
+          "shown": {
+            "shown": [
+              {
+                "lineId": "L23",
+                "extract": "| · | Active capital recycling completed, with the £225m disposal of seven UK PPP assets completed in the period in line with carrying value, which will enable full repayment of the Company's RCF and funding of committed growth investments. | ",
+                "lineBeforeId": "L22",
+                "lineAfterId": "L24"
+              },
+              {
+                "lineId": "L37",
+                "extract": "| · | o  At Affinity Water, the management team remains focused on delivering the AMP8 business plan. During the period, the company appointed Mark Garth as Chief Executive Officer, who brings significant sector experience from United Utilities particularly in relation to achieving industry-leading operational performance. HICL continues to expect distributions from Affinity Water ahead of 31 March 2026. The Company notes the publication of the UK Government white paper on water sector reform, which is largely consistent with the final recommendations of the Cunliffe Report, many of which are expected to be beneficial for strong performers such as Affinity Water. | ",
+                "lineBeforeId": "L36",
+                "lineAfterId": "L38"
+              },
+              {
+                "lineId": "L38",
+                "extract": "| · | o  London St. Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast. The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator. The launch of new services remains subject to further regulatory approvals and delivery milestones; however, this progress reduces barriers to an increase in international train paths which would ultimately increase the valuation of HICL's investment. | ",
+                "lineBeforeId": "L37",
+                "lineAfterId": "L39"
+              }
+            ],
+            "more": "and 2 more",
+            "countOnly": false,
+            "occurrenceCount": 5
+          },
+          "benchmarkCard": null
+        }
+      ]
+    }
+  ]
+}

@@ -179,7 +179,10 @@ describe("B402 reading contract", () => {
       ]),
     ];
     assert.equal(headers[0].line, WELL_SOURCED_LINE);
-    assert.equal(headers[1].line, "Figures all check out. 1 statement goes further than the source does.");
+    assert.equal(
+      headers[1].line,
+      "Well sourced. Every figure, date and name appears in the source. 1 statement goes a little further than it does."
+    );
     assert.equal(headers[2].line, "Figures all check out, but 1 statement conflicts with the source.");
     assert.equal(headers[3].line, "1 fact is not in the source.");
     assert.equal(headers[3].numbers.startsWith("1 of 2 facts matched"), true);
