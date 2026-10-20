@@ -193,6 +193,7 @@ Parked, Findings log, Standing rules, Closed, and Rejected follow, in that order
 | B403C | **OPEN. Contract.** Benchmark words are facts. States carry a tier: demands, light, quiet. The note step is `claude-opus-4-7`. Clean demands 3, demands plus light 8, doctored 25 of 25, noise in demands 0. B404 calls it from assembly. Report `scripts/diagnostic/b403c/MEASURE.md`. | this spec | H | AFTER | B403 stays free. |
 | B404 | **OPEN. Walking skeleton.** A live review carries the reading payload beside the existing card. `QC_READING_VIEW` defaults on. The results screen offers a Reading link to a separate view. HICL clean: 2 to look at, S1 HCIL and S2 budgets. Report `scripts/diagnostic/b404/WALKTHROUGH.md`. | this spec | H | AFTER | The existing card screen is unchanged apart from the link. |
 | B405 | **OPEN. Excerpt quality.** Stored source text drops leading page furniture. A shown quote is capped at 400 characters and does not end mid-word. The reading view does not use these quote strings. No model calls. | this spec | H | AFTER | Pipeline v3, prompts, and recorded fixtures are unchanged. |
+| B406 | **OPEN. Read-only.** B405 drops both HICL title lines. Clean demands move from 3 to 4, noise in demands from 0 to 1, on HICL clean S0. The card's passage and the matcher's line often differ. Report `scripts/diagnostic/b406/REPORT.md`. | this spec | H | AFTER | No product change. The standing rule is proposed, not added. |
 
 ## 3. Process & governance
 
