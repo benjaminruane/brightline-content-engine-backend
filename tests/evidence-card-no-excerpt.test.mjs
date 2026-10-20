@@ -23,8 +23,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const GATE7 = path.join(ROOT, "scripts/diagnostic/extractor-swap/outputs/d17-gate7.json");
 const RECHECK = path.join(ROOT, "scripts/diagnostic/extractor-swap/outputs/d17-recheck.json");
 
-const EXCERPT_NOT_LOCATABLE_COPY =
-  "The matching passage could not be located in the named source.";
+const EXCERPT_NOT_LOCATABLE_COPY = "No passage to show.";
 
 const REVIEWS_ON = {
   evidenceEnabled: true,

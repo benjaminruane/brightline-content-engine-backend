@@ -58,6 +58,7 @@ describe("buildResponseSources", () => {
       },
     ]);
     assert.deepEqual(Object.keys(sources[0]).sort(), [
+      "furnitureLineIndexes",
       "id",
       "index",
       "label",

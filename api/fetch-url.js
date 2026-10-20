@@ -3,7 +3,7 @@
 // Fetches a public URL and returns a readable text blob + a sensible title.
 // Also sets CORS headers so it works from your Vercel frontend.
 
-import { stripLeadingPageFurniture } from "../lib/extract-boilerplate.mjs";
+import { clipKeepingFurniture, htmlToReadableText, markPageFurniture } from "../lib/extract-boilerplate.mjs";
 
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
@@ -69,14 +69,10 @@ export default async function handler(req, res) {
     const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
     const title = titleMatch ? titleMatch[1].trim() : url;
 
-    // Naive "readable text": strip scripts/styles/tags and compress whitespace
-    const text = html
-      .replace(/<script[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style[\s\S]*?<\/style>/gi, " ")
-      .replace(/<!--[\s\S]*?-->/g, " ")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+    // Keep newlines. Block closers become line breaks, then spaces collapse
+    // inside a line. Collapsing every whitespace run first turned the page
+    // into one line, so a furniture flag could not see a line to mark.
+    const text = htmlToReadableText(html);
 
     if (!text) {
       return res.status(500).json({
@@ -84,15 +80,17 @@ export default async function handler(req, res) {
       });
     }
 
-    // Keep it bounded so we don’t blow up token counts downstream
+    // 20,000 characters of non-furniture text. A furniture line inside that
+    // span stays, so the saved line numbers still match the fetch.
     const maxChars = 20000;
-    const stripped = stripLeadingPageFurniture(text);
-    const clipped = stripped.length > maxChars ? stripped.slice(0, maxChars) : stripped;
+    const clipped = clipKeepingFurniture(text, maxChars);
+    const { furnitureLineIndexes } = markPageFurniture(clipped);
 
     return res.status(200).json({
       title,
       text: clipped,
       sourceUrl: url,
+      furnitureLineIndexes,
     });
   } catch (err) {
     console.error("Error in /api/fetch-url:", err);

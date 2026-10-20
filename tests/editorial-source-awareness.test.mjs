@@ -48,6 +48,9 @@ function cardAt(payload, index) {
 }
 
 function excerptText(card) {
+  if (Array.isArray(card?.primaryExcerptParts) && card.primaryExcerptParts.length > 1) {
+    return card.primaryExcerptParts.join(" ");
+  }
   const p = card.primaryExcerpt;
   if (p == null) return null;
   if (typeof p === "string") return p;

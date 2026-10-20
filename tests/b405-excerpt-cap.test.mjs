@@ -48,19 +48,21 @@ describe("B405 excerpt cap", () => {
     assert.equal(trimExcerptToSentences(passage, ""), passage);
   });
 
-  test("offsets bracket an exact quote and are null when the quote is not one slice", () => {
+  test("offsets bracket the stored slice, including a gap and a cut", () => {
     const source = "Alpha opened the fund in March. Beta closed the fund in June.";
     const exact = offsetsForShownPassage(source, source);
     assert.equal(source.slice(exact.start, exact.end), source);
 
     const gapped = "Alpha opened the fund in March. ... Beta closed the fund in June.";
-    const none = offsetsForShownPassage(gapped, source);
-    assert.equal(none.start, null);
-    assert.equal(none.end, null);
+    const first = offsetsForShownPassage(gapped, source);
+    assert.equal(source.slice(first.start, first.end), "Alpha opened the fund in March.");
 
-    const cut = trimExcerptToSentences(`${"alpha ".repeat(99)}omega.`, "");
-    const cutBounds = offsetsForShownPassage(cut, `${"alpha ".repeat(99)}omega.`);
-    assert.equal(cutBounds.start, null);
-    assert.equal(cutBounds.end, null);
+    const sentence = `${"alpha ".repeat(99)}omega.`;
+    const cut = trimExcerptToSentences(sentence, "");
+    const cutBounds = offsetsForShownPassage(cut, sentence);
+    const stored = cut.replace(/…$/, "");
+    assert.equal(cut.includes("…"), true);
+    assert.equal(sentence.slice(cutBounds.start, cutBounds.end), stored);
+    assert.equal(stored.includes("…"), false);
   });
 });

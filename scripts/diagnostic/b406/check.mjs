@@ -9,10 +9,39 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { stripLeadingPageFurniture } from "../../../lib/extract-boilerplate.mjs";
+import { isPageFurnitureLine } from "../../../lib/extract-boilerplate.mjs";
 import { buildFacts, draftHeader, indexSourceLines, sentenceState, sentenceTier } from "../../../lib/qc/reading-contract.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+
+/**
+ * Frozen copy of the B405 deleter. B407 no longer deletes. This stays so
+ * the B406 measurement still describes the lines B405 removed.
+ */
+function b405DeletedFurniture(text) {
+  if (typeof text !== "string" || !text) return text || "";
+  const lines = text.split("\n");
+  let boundary = lines.length;
+  for (let i = 0; i < lines.length; i += 1) {
+    const trimmed = lines[i].trim();
+    if (trimmed.length >= 40 && /[.!?]$/.test(trimmed)) {
+      boundary = i;
+      break;
+    }
+  }
+  if (boundary === 0) return text;
+  const kept = [];
+  for (let i = 0; i < boundary; i += 1) {
+    if (!isPageFurnitureLine(lines[i])) kept.push(lines[i]);
+  }
+  if (kept.length === boundary) return text;
+  const headJoined = lines.slice(0, boundary).join("\n");
+  const suffix = text.slice(headJoined.length === 0 ? 0 : headJoined.length + 1);
+  const head = kept.join("\n");
+  const next = head ? `${head}\n${suffix}` : suffix;
+  if (text.length > 0 && (text.length - next.length) / text.length > 0.3) return text;
+  return next;
+}
 
 const DOCS = [
   {
@@ -194,7 +223,7 @@ console.log("G1 line counts");
 const strippedByDoc = new Map();
 for (const doc of DOCS) {
   const before = read(doc.source);
-  const after = stripLeadingPageFurniture(before);
+  const after = b405DeletedFurniture(before);
   const diff = removedLines(before, after);
   strippedByDoc.set(doc.doc, { before, after, diff });
   console.log(

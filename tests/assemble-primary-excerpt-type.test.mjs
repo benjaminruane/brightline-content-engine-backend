@@ -89,8 +89,10 @@ describe("assembleCard primaryExcerpt wire type", () => {
         ],
       }
     );
-    assert.deepEqual(card.conflictExcerpt, conflictExcerpt);
     assert.equal(card.conflictExcerpt.passage, "The other source reports EUR 71 million.");
+    assert.equal(card.conflictExcerpt.sourceLabel, conflictExcerpt.sourceLabel);
+    assert.deepEqual(card.conflictExcerpt.lineIds, ["L1"]);
+    assert.equal(card.conflictExcerpt.passage.includes("…"), false);
     assert.equal(typeof card.primaryExcerpt, "string");
     assert.equal(card.displayVerdict, "conflict");
     assert.equal(card.hasConflict, true);

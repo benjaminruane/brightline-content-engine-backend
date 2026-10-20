@@ -118,6 +118,9 @@ async function replayCard(payload, index) {
 }
 
 function primaryText(card) {
+  if (Array.isArray(card?.primaryExcerptParts) && card.primaryExcerptParts.length > 1) {
+    return card.primaryExcerptParts.join(" ");
+  }
   const p = card.primaryExcerpt;
   if (p == null) return "";
   if (typeof p === "string") return p;

@@ -85,6 +85,7 @@ Standing rules live in `docs/BACKLOG.md`. They bind here so a spec does not have
 - **P34.** A spec that changes a shared helper must enumerate every caller. See Change Surface Discipline.
 - **P35.** A spec that claims to fix an observed symptom must name the log line that will prove it, before the fix is written. B285 named none and fixed a real bug that was not the reported symptom.
 - **P36.** A default that treats a missing answer as yes is a lie waiting to happen. Prefer `=== true` for any flag that answers "did this happen". B299.
+- **P37.** Any change to extraction, boilerplate, or excerpt selection re-runs the clean ledger in scripts/diagnostic/b403c/CLEAN-LEDGER.md on the text that change would store, and reports demands, light, quiet, and noise in demands before it commits. The bar is demands 3, light 5, quiet 30, noise in demands 0. A statement that moves is named.
 
 Also keep:
 

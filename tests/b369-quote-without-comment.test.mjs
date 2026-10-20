@@ -45,6 +45,9 @@ const S10_NAMED_COMMENT =
   "3.2x and 2.8x match the source. The phrases 'MPM' and 'MAIT' match the source.";
 
 function excerptText(card) {
+  if (Array.isArray(card?.primaryExcerptParts) && card.primaryExcerptParts.length > 1) {
+    return card.primaryExcerptParts.join(" ");
+  }
   const p = card.primaryExcerpt;
   if (p == null) return "";
   if (typeof p === "string") return p;
