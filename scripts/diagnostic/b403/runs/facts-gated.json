@@ -1,0 +1,34 @@
+[
+  {
+    "subject": "HICL Infrastructure PLC",
+    "element": "Interim Update Statement period",
+    "value": "1 October 2025 to 28 February 2026",
+    "period": "",
+    "lineId": "L12",
+    "lineId2": "L12"
+  },
+  {
+    "subject": "HICL",
+    "element": "operational performance",
+    "value": "robust operational performance during the period",
+    "period": "",
+    "lineId": "L16",
+    "lineId2": "L16"
+  },
+  {
+    "subject": "HICL",
+    "element": "target dividend cash cover",
+    "value": "1.1x for the year",
+    "period": "",
+    "lineId": "L16",
+    "lineId2": "L16"
+  },
+  {
+    "subject": "Fortysouth",
+    "element": "new towers delivered",
+    "value": "16 new towers during the period",
+    "period": "",
+    "lineId": "L39",
+    "lineId2": "L39"
+  }
+]

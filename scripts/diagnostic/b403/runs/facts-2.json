@@ -1,0 +1,179 @@
+{
+  "model": "gpt-4o-2024-08-06",
+  "temperature": 0,
+  "seed": 1,
+  "source": "tests/fixtures/real-runs-2026-10-04-hicl/source-hicl-interim-extracted.txt",
+  "call": 2,
+  "finishReason": "stop",
+  "usage": {
+    "inputTokens": 2792,
+    "outputTokens": 1268,
+    "cachedInputTokens": 2560
+  },
+  "rowCount": 23,
+  "parseError": null,
+  "rows": [
+    {
+      "subject": "HICL Infrastructure PLC",
+      "element": "Interim Update Statement period",
+      "value": "1 October 2025 to 28 February 2026",
+      "period": "",
+      "lineId": "L12"
+    },
+    {
+      "subject": "HICL",
+      "element": "operational performance",
+      "value": "robust operational performance during the period",
+      "period": "",
+      "lineId": "L16"
+    },
+    {
+      "subject": "HICL",
+      "element": "target dividend cash cover",
+      "value": "1.1x for the year",
+      "period": "",
+      "lineId": "L16"
+    },
+    {
+      "subject": "HICL",
+      "element": "dividend outlook",
+      "value": "on track to deliver its target dividend of 8.35p per share for the year ending 31 March 2026",
+      "period": "",
+      "lineId": "L25"
+    },
+    {
+      "subject": "HICL",
+      "element": "target dividend",
+      "value": "8.50p per share for the year ending 31 March 2027",
+      "period": "",
+      "lineId": "L25"
+    },
+    {
+      "subject": "HICL",
+      "element": "RCF drawn",
+      "value": "£50m",
+      "period": "As at 28 February",
+      "lineId": "L29"
+    },
+    {
+      "subject": "HICL",
+      "element": "cash balance",
+      "value": "£147m",
+      "period": "As at 28 February",
+      "lineId": "L29"
+    },
+    {
+      "subject": "HICL",
+      "element": "RCF repayment",
+      "value": "to be fully repaid by 31 March 2026",
+      "period": "",
+      "lineId": "L29"
+    },
+    {
+      "subject": "HICL",
+      "element": "equity commitment to Affinity Water",
+      "value": "£50m of the sale proceeds",
+      "period": "",
+      "lineId": "L30"
+    },
+    {
+      "subject": "HICL",
+      "element": "equity commitments to Blankenburg tunnel and B247",
+      "value": "c.£66m",
+      "period": "due in September and December 2026 respectively",
+      "lineId": "L30"
+    },
+    {
+      "subject": "HICL",
+      "element": "share buybacks",
+      "value": "£4m acquired in the period since 1 January 2026",
+      "period": "",
+      "lineId": "L31"
+    },
+    {
+      "subject": "HICL",
+      "element": "total share buybacks",
+      "value": "£154m now acquired since the start of the programme",
+      "period": "",
+      "lineId": "L31"
+    },
+    {
+      "subject": "Affinity Water",
+      "element": "CEO appointment",
+      "value": "Mark Garth",
+      "period": "",
+      "lineId": "L37"
+    },
+    {
+      "subject": "Affinity Water",
+      "element": "distributions expectation",
+      "value": "ahead of 31 March 2026",
+      "period": "",
+      "lineId": "L37"
+    },
+    {
+      "subject": "London St. Pancras High Speed",
+      "element": "performance",
+      "value": "performed well in the period",
+      "period": "",
+      "lineId": "L38"
+    },
+    {
+      "subject": "Fortysouth",
+      "element": "new towers delivered",
+      "value": "16 new towers during the period",
+      "period": "",
+      "lineId": "L39"
+    },
+    {
+      "subject": "HICL",
+      "element": "target dividend for financial year ending 31 March 2026",
+      "value": "8.35p per share",
+      "period": "",
+      "lineId": "L42"
+    },
+    {
+      "subject": "HICL",
+      "element": "forecast dividend cash cover for year end",
+      "value": "1.1x",
+      "period": "",
+      "lineId": "L42"
+    },
+    {
+      "subject": "HICL",
+      "element": "target dividend for year to 31 March 2027",
+      "value": "8.50p per share",
+      "period": "",
+      "lineId": "L42"
+    },
+    {
+      "subject": "HICL",
+      "element": "actual inflation tracking",
+      "value": "slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand",
+      "period": "",
+      "lineId": "L43"
+    },
+    {
+      "subject": "UK government bond yields",
+      "element": "change",
+      "value": "decreased slightly, by approximately 20 basis points, since the Company's valuation at 30 September 2025",
+      "period": "",
+      "lineId": "L44"
+    },
+    {
+      "subject": "HICL",
+      "element": "shareholder consultation",
+      "value": "expected to conclude shortly",
+      "period": "",
+      "lineId": "L46"
+    },
+    {
+      "subject": "HICL",
+      "element": "investor meetings",
+      "value": "met 23 investors, representing over 47% of the register",
+      "period": "Over the last six weeks",
+      "lineId": "L46"
+    }
+  ],
+  "raw": null
+}

@@ -1,0 +1,472 @@
+{
+  "calls": {
+    "first": 25,
+    "second": 23,
+    "parseError": [
+      null,
+      null
+    ]
+  },
+  "first": {
+    "in": 25,
+    "g1": 25,
+    "droppedG1": 0,
+    "g5": 13,
+    "droppedG5": 12,
+    "g2": 13,
+    "droppedG2": 0
+  },
+  "second": {
+    "in": 23,
+    "g1": 23,
+    "droppedG1": 0,
+    "g5": 11,
+    "droppedG5": 12,
+    "g2": 11,
+    "droppedG2": 0
+  },
+  "g3": {
+    "kept": 4,
+    "reached": 24,
+    "rate": 0.3333333333333333,
+    "differentLine": [],
+    "disagreed": [
+      {
+        "side": 1,
+        "klass": "absent",
+        "subject": "HICL",
+        "element": "share buybacks",
+        "value": "resuming accretive share buybacks",
+        "period": "",
+        "lineId": "L16"
+      },
+      {
+        "side": 1,
+        "klass": "different value",
+        "subject": "HICL",
+        "element": "equity commitment to Affinity Water",
+        "value": "£50m of the sale proceeds was allocated",
+        "period": "",
+        "lineId": "L30"
+      },
+      {
+        "side": 1,
+        "klass": "absent",
+        "subject": "HICL",
+        "element": "equity commitments to Blankenburg tunnel and B247",
+        "value": "Proceeds of c.£66m will be allocated",
+        "period": "",
+        "lineId": "L30"
+      },
+      {
+        "side": 1,
+        "klass": "different value",
+        "subject": "Affinity Water",
+        "element": "CEO appointment",
+        "value": "appointed Mark Garth as Chief Executive Officer",
+        "period": "",
+        "lineId": "L37"
+      },
+      {
+        "side": 1,
+        "klass": "different value",
+        "subject": "Affinity Water",
+        "element": "distributions expectation",
+        "value": "HICL continues to expect distributions from Affinity Water ahead of 31 March 2026",
+        "period": "",
+        "lineId": "L37"
+      },
+      {
+        "side": 1,
+        "klass": "different value",
+        "subject": "London St. Pancras High Speed",
+        "element": "performance",
+        "value": "performed well in the period, with international train path bookings slightly ahead of forecast",
+        "period": "",
+        "lineId": "L38"
+      },
+      {
+        "side": 1,
+        "klass": "absent",
+        "subject": "Fortysouth",
+        "element": "refinancing",
+        "value": "recently completed an accretive refinancing which was c.30% oversubscribed",
+        "period": "",
+        "lineId": "L39"
+      },
+      {
+        "side": 1,
+        "klass": "absent",
+        "subject": "HICL",
+        "element": "inflation tracking",
+        "value": "Latest actual inflation is tracking slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand",
+        "period": "",
+        "lineId": "L43"
+      },
+      {
+        "side": 1,
+        "klass": "absent",
+        "subject": "HICL",
+        "element": "government bond yields in the UK",
+        "value": "decreased slightly, by approximately 20 basis points, since the Company's valuation at 30 September 2025",
+        "period": "",
+        "lineId": "L44"
+      },
+      {
+        "side": 2,
+        "klass": "different value",
+        "subject": "HICL",
+        "element": "equity commitment to Affinity Water",
+        "value": "£50m of the sale proceeds",
+        "period": "",
+        "lineId": "L30"
+      },
+      {
+        "side": 2,
+        "klass": "absent",
+        "subject": "HICL",
+        "element": "equity commitments to Blankenburg tunnel and B247",
+        "value": "c.£66m",
+        "period": "due in September and December 2026 respectively",
+        "lineId": "L30"
+      },
+      {
+        "side": 2,
+        "klass": "different value",
+        "subject": "Affinity Water",
+        "element": "CEO appointment",
+        "value": "Mark Garth",
+        "period": "",
+        "lineId": "L37"
+      },
+      {
+        "side": 2,
+        "klass": "different value",
+        "subject": "Affinity Water",
+        "element": "distributions expectation",
+        "value": "ahead of 31 March 2026",
+        "period": "",
+        "lineId": "L37"
+      },
+      {
+        "side": 2,
+        "klass": "different value",
+        "subject": "London St. Pancras High Speed",
+        "element": "performance",
+        "value": "performed well in the period",
+        "period": "",
+        "lineId": "L38"
+      },
+      {
+        "side": 2,
+        "klass": "absent",
+        "subject": "HICL",
+        "element": "actual inflation tracking",
+        "value": "slightly below HICL's forecast for the period ending 31 March 2026 in the UK and France, and slightly ahead for New Zealand",
+        "period": "",
+        "lineId": "L43"
+      },
+      {
+        "side": 2,
+        "klass": "absent",
+        "subject": "UK government bond yields",
+        "element": "change",
+        "value": "decreased slightly, by approximately 20 basis points, since the Company's valuation at 30 September 2025",
+        "period": "",
+        "lineId": "L44"
+      }
+    ],
+    "classes": {
+      "absent": 8,
+      "different value": 8
+    }
+  },
+  "lookups": [
+    {
+      "id": "clean-S0",
+      "arm": "clean",
+      "kind": "none",
+      "agreed": [],
+      "row": null
+    },
+    {
+      "id": "clean-S1",
+      "arm": "clean",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "clean-S2",
+      "arm": "clean",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "clean-S3",
+      "arm": "clean",
+      "kind": "none",
+      "agreed": [],
+      "row": null
+    },
+    {
+      "id": "clean-S4",
+      "arm": "clean",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "clean-S5",
+      "arm": "clean",
+      "kind": "partial",
+      "agreed": [
+        "subject",
+        "value"
+      ],
+      "row": {
+        "subject": "Fortysouth",
+        "element": "new towers delivered",
+        "value": "16 new towers during the period",
+        "period": "",
+        "lineId": "L39",
+        "lineId2": "L39"
+      }
+    },
+    {
+      "id": "clean-S6",
+      "arm": "clean",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "clean-S7a",
+      "arm": "clean",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "clean-S7b",
+      "arm": "clean",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "doc-S0",
+      "arm": "doctored",
+      "kind": "none",
+      "agreed": [],
+      "row": null
+    },
+    {
+      "id": "doc-S1",
+      "arm": "doctored",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "doc-S2",
+      "arm": "doctored",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "doc-S3",
+      "arm": "doctored",
+      "kind": "none",
+      "agreed": [],
+      "row": null
+    },
+    {
+      "id": "doc-S4",
+      "arm": "doctored",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "doc-S5",
+      "arm": "doctored",
+      "kind": "none",
+      "agreed": [],
+      "row": null
+    },
+    {
+      "id": "doc-S6",
+      "arm": "doctored",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "doc-S7a",
+      "arm": "doctored",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    },
+    {
+      "id": "doc-S7b",
+      "arm": "doctored",
+      "kind": "partial",
+      "agreed": [
+        "period"
+      ],
+      "row": {
+        "subject": "HICL Infrastructure PLC",
+        "element": "Interim Update Statement period",
+        "value": "1 October 2025 to 28 February 2026",
+        "period": "",
+        "lineId": "L12",
+        "lineId2": "L12"
+      }
+    }
+  ],
+  "survivors": [
+    {
+      "subject": "HICL Infrastructure PLC",
+      "element": "Interim Update Statement period",
+      "value": "1 October 2025 to 28 February 2026",
+      "period": "",
+      "lineId": "L12",
+      "lineId2": "L12",
+      "line": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October 2025 to 28 February 2026.",
+      "line2": "The Board of HICL is issuing this Interim Update Statement, which relates to the period from 1 October 2025 to 28 February 2026."
+    },
+    {
+      "subject": "HICL",
+      "element": "operational performance",
+      "value": "robust operational performance during the period",
+      "period": "",
+      "lineId": "L16",
+      "lineId2": "L16",
+      "line": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+      "line2": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks."
+    },
+    {
+      "subject": "HICL",
+      "element": "target dividend cash cover",
+      "value": "1.1x for the year",
+      "period": "",
+      "lineId": "L16",
+      "lineId2": "L16",
+      "line": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks.",
+      "line2": "\"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year. We have continued to execute our disciplined and flexible approach to capital allocation, completing divestments and resuming accretive share buybacks."
+    },
+    {
+      "subject": "Fortysouth",
+      "element": "new towers delivered",
+      "value": "16 new towers during the period",
+      "period": "",
+      "lineId": "L39",
+      "lineId2": "L39",
+      "line": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | ",
+      "line2": "| | o  Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The company recently completed an accretive refinancing which was c.30% oversubscribed, and which enabled a step-down on debt margins earlier than forecast, underlining the quality and long-term visibility of Fortysouth's revenues. | "
+    }
+  ]
+}
