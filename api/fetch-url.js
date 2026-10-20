@@ -3,6 +3,8 @@
 // Fetches a public URL and returns a readable text blob + a sensible title.
 // Also sets CORS headers so it works from your Vercel frontend.
 
+import { stripLeadingPageFurniture } from "../lib/extract-boilerplate.mjs";
+
 // --- CORS helper --------------------------------------------------
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -84,7 +86,8 @@ export default async function handler(req, res) {
 
     // Keep it bounded so we don’t blow up token counts downstream
     const maxChars = 20000;
-    const clipped = text.length > maxChars ? text.slice(0, maxChars) : text;
+    const stripped = stripLeadingPageFurniture(text);
+    const clipped = stripped.length > maxChars ? stripped.slice(0, maxChars) : stripped;
 
     return res.status(200).json({
       title,
