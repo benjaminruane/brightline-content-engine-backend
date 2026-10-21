@@ -404,6 +404,7 @@ export default async function handler(req, res) {
       // R7.B46: aligned reviewed sources + separately listed excluded (empty-text) sources
       sources,
       ...(pipelineResult?.reading ? { reading: pipelineResult.reading } : {}),
+      ...(Array.isArray(pipelineResult?.draftMarks) ? { draftMarks: pipelineResult.draftMarks } : {}),
       excludedSources,
       meta: {
         pipelineVersion: useV4 ? "v4" : "v3",

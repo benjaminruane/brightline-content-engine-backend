@@ -197,6 +197,7 @@ Parked, Findings log, Standing rules, Closed, and Rejected follow, in that order
 | B406 | **OPEN. Read-only.** B405 drops both HICL title lines. Clean demands move from 3 to 4, noise in demands from 0 to 1, on HICL clean S0. The card's passage and the matcher's line often differ. Report `scripts/diagnostic/b406/REPORT.md`. | this spec | H | AFTER | No product change. The standing rule is proposed, not added. |
 | B407 | **OPEN.** Furniture is flagged, not deleted. A quote stores a source slice and the line ids that slice covers. The unlocatable sentence is an absence. A note does not reassure on a not_found fact. Benchmark words show counts, and the extract only for the earliest line. Ledger `scripts/diagnostic/b407/LEDGER-CHECK.md`. | this spec | H | AFTER | Follows B406. The 30% deletion valve does not hide flags. |
 | B408 | **OPEN.** The reading view is reachable from the results screen and styled with the app's own type and colour. A line chip names its source. Narrow screens are out of scope. `scripts/diagnostic/b408/TRY-IT.md`. | this spec | H | AFTER | No new finding. Cards, export, and the summary are unchanged. |
+| B410 | **OPEN.** One draft span list. The draft pane is the only coloured surface: red for missing, amber for concern. Save re-checks the statements whose text changed. Proposals were measured and not enabled. Ship neither class. Reports `scripts/diagnostic/b410/MARKS.md` and `PROPOSALS.md`. | this spec | H | AFTER | Class B false-proposal count is 2. Class A proposes target for budgets. |
 
 ## 3. Process & governance
 

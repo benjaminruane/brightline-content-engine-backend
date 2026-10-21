@@ -1,0 +1,35 @@
+{
+  "stale": [
+    2
+  ],
+  "spend": {
+    "calls": 1,
+    "inputTokens": 5421,
+    "outputTokens": 155,
+    "cachedInputTokens": 0,
+    "costUsd": 0.030979999999999997,
+    "listUsd": 0.030979999999999997
+  },
+  "header": {
+    "stamp": "Source-checked",
+    "numbers": "16 of 18 facts matched · 1 to look at · 0 worth a glance · 1 wording note",
+    "line": "2 facts are not in the source.",
+    "footnote": "Your facts are matched against the source and your interpretation is read and commented on. Your judgement still decides."
+  },
+  "changed": [
+    {
+      "index": 2,
+      "sentenceState": "not_in_source",
+      "note": {
+        "bucket": "wording",
+        "text": "The source says HICL's growth investments are \"delivering EBITDA in line with expectations.\" The statement says \"in line with budget.\" Expectations and budget are close synonyms in this context and do not change the claim being made.",
+        "disputedIndices": [],
+        "disputedElements": []
+      },
+      "factStatuses": [
+        "name:matched:EBITDA",
+        "benchmark:not_found:budget"
+      ]
+    }
+  ]
+}

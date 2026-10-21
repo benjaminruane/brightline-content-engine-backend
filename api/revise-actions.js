@@ -59,6 +59,7 @@ export default async function handler(req, res) {
     const result = await runActionList(statements, {
       authoringOrganisation: body?.options?.authoringOrganisation ?? body?.authoringOrganisation,
       draftText: typeof body?.draftText === "string" ? body.draftText : undefined,
+      factMarks: Array.isArray(body?.factMarks) ? body.factMarks : [],
       sourceRulings: body?.sourceRulings,
     });
     return res.status(200).json(result);
