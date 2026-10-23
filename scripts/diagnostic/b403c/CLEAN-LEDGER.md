@@ -26,3 +26,9 @@ The clean set is 38 statements.
 The closed list is budget, expectation, forecast, guidance, target, consensus, and the ordinary plurals budgets, expectations, forecasts, and targets. Guidance and consensus have no ordinary plural on the list.
 
 The list is not extended. Outlook, estimate, plan, and assumption do not earn a place: swapping one of them for forecast or guidance does not always change the claim. Quantifiers such as several and numerous are not elements. Two can be called several, and the binding problem is closed.
+
+## Correction, B411
+
+The clean counts above are unchanged. CFO and French are not in this ledger.
+
+HICL doctored S7 carries two planted errors, hicl-S7-a and hicl-S7-b. The draft says CFO and the French government. The source says Chief Executive Officer, and the UK government. Those two words are not correct.

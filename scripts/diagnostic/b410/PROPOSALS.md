@@ -26,8 +26,8 @@ Distance is case-sensitive. `HCIL` is not `HICL` until a proposal says so. The d
 | HICL doctored | S3 | name `Paris St. Germain High Speed` | none | No name within distance 2. |
 | HICL doctored | S4 | name `St. Germain` | none | `St. Pancras` is further than distance 2. The rule produces no proposal. |
 | HICL doctored | S5 | name `TowerCo` | none | No name within distance 2. |
-| HICL doctored | S7 | name `CFO` | Class B, `RCF` | Wrong. The sentence says Affinity Water appointed a new CFO. CFO is the role. RCF is the revolving credit facility. Distance 2 is insert R and delete O. |
-| HICL doctored | S7 | name `French` | Class B, `France` | Wrong. The sentence says the French government. French is the adjective. France is a country named in the source. |
+| HICL doctored | S7 | name `CFO` | Class B, `RCF` | Wrong. Planted error hicl-S7-a. The source says Chief Executive Officer. RCF is a different wrong word. |
+| HICL doctored | S7 | name `French` | Class B, `France` | Wrong. Planted error hicl-S7-b. The source says the UK government. France is a different wrong word. |
 | 3i clean |  |  | none | No not_found fact. |
 | 3i doctored | S0 | figure `GBP 3.3 million` | none | Not a name or a benchmark. |
 | 3i doctored | S5 | date `30 June 2026` | none | Not a name or a benchmark. |
@@ -48,13 +48,13 @@ The four wrong proposals are both `budgets` to `target`, `CFO` to `RCF`, and `Fr
 
 ## P3. False proposals
 
-A false proposal would change a correct word.
+Corrected in B411. A false proposal has two shapes.
 
-`CFO` is the correct role. `French` is the correct adjective. Both would be replaced. That count is 2.
+Shape 1, a proposal that would change a correct word. The count of 2 in the first writing of this file treated `CFO` and `French` as correct words. They are planted errors, hicl-S7-a and hicl-S7-b. That count was wrong. Shape 1 is 0.
 
-`budgets` is not a correct word, so the `target` proposals are wrong counterparts and are not in this count. `HCIL` and `AGIC` are not correct words.
+Shape 2, a proposal that would replace a wrong word with a different wrong word. The four proposals that fail this shape are both `budgets` to `target`, `CFO` to `RCF`, and `French` to `France`. Shape 2 is 4.
 
-The count is 2. It is not zero.
+`HCIL` to `HICL` and `AGIC` to `GIC` are the right counterparts. They are in neither count.
 
 ## P4. What the apply path needs
 
@@ -74,6 +74,6 @@ The word's own offsets are not an input. Two writes on one statement apply neith
 
 Ship neither.
 
-Class A, as written, proposes `target` for both `budgets` sentences. The counterpart in the source is `expectations`. Class B's false-proposal count is 2. `St. Germain` against `St. Pancras` is outside distance 2, and the distance stays 2.
+Class A, as written, proposes `target` for both `budgets` sentences. The counterpart in the source is `expectations`. That is shape 2. Class B's shape 1 count is 0 after the correction above, and its shape 2 count is 4. `St. Germain` against `St. Pancras` is outside distance 2, and the distance stays 2.
 
 No proposal is enabled. The next spec can use these numbers.

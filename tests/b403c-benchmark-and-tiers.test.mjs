@@ -82,7 +82,8 @@ describe("B403C benchmark words and tiers", () => {
       { facts: [{ status: "matched" }], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },
       { facts: [{ status: "matched" }], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },
     ]);
-    assert.equal(header.numbers, "6 of 6 facts matched · 1 to look at · 2 worth a glance · 3 wording notes");
+    assert.equal(header.numbers, "6 of 6 facts matched · 1 to look at · 2 worth a glance");
+    assert.equal(header.counts.wordingNotes, 3);
     assert.match(header.line, /1 statement conflicts/);
     const quiet = draftHeader([
       { facts: [{ status: "matched" }], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },

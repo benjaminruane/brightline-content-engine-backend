@@ -30,7 +30,7 @@ The Reading control and the Cards control. The reading view as a separate screen
 
 The reading modules stay on disk. The existing reading-view test still renders them. They are not mounted.
 
-The header counts and the footnote sit above the draft pane. The counts still include the words "wording notes", because those counts were kept. The draft itself is red for `missing` and amber for `concern`.
+The header counts and the footnote sit above the draft pane. B411 takes the wording-notes clause off the numbers line. The draft itself is red for `missing` and amber for `concern`.
 
 The source passage and the source panel still open from the card, on demand. The card was not redesigned.
 

@@ -60,6 +60,7 @@ export default async function handler(req, res) {
       authoringOrganisation: body?.options?.authoringOrganisation ?? body?.authoringOrganisation,
       draftText: typeof body?.draftText === "string" ? body.draftText : undefined,
       factMarks: Array.isArray(body?.factMarks) ? body.factMarks : [],
+      sourceText: typeof body?.sourceText === "string" ? body.sourceText : undefined,
       sourceRulings: body?.sourceRulings,
     });
     return res.status(200).json(result);

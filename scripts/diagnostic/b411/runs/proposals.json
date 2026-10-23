@@ -1,0 +1,857 @@
+{
+  "spend": {
+    "calls": 18,
+    "inputTokens": 85342,
+    "outputTokens": 1210,
+    "cachedInputTokens": 0,
+    "costUsd": 0.45696000000000003,
+    "listUsd": 0.45696000000000003
+  },
+  "drafts": [
+    {
+      "doc": "3i",
+      "arm": "clean",
+      "calls": 0,
+      "listUsd": 0,
+      "statements": [
+        {
+          "index": 0,
+          "text": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "This was driven largely by Action, which continues to trade strongly.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 10,
+          "text": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 11,
+          "text": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 12,
+          "text": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 13,
+          "text": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 14,
+          "text": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "arm": "doctored",
+      "calls": 3,
+      "listUsd": 0.06393499999999999,
+      "statements": [
+        {
+          "index": 0,
+          "text": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 1,
+              "text": "£3,291 million"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "figure",
+              "surface": "GBP 3.3 million",
+              "named": "£3,291 million",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "This was driven largely by Action, which continues to trade strongly.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 1,
+              "text": "28 September 2025"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "date",
+              "surface": "30 June 2026",
+              "named": "28 September 2025",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 2,
+              "text": "GIC"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "AGIC",
+              "named": "GIC",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "text": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 11,
+          "text": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 12,
+          "text": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 13,
+          "text": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 14,
+          "text": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "clean",
+      "calls": 2,
+      "listUsd": 0.052739999999999995,
+      "statements": [
+        {
+          "index": 0,
+          "text": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "called": true,
+          "replacements": [],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "name",
+              "surface": "HCIL",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+          "called": true,
+          "replacements": [],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "benchmark",
+              "surface": "budgets",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "text": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "doctored",
+      "calls": 7,
+      "listUsd": 0.185885,
+      "statements": [
+        {
+          "index": 0,
+          "text": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 0,
+              "text": "HICL Infrastructure PLC"
+            },
+            {
+              "index": 2,
+              "text": "28 February 2026"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "HCIL Infrastructure",
+              "named": "HICL Infrastructure PLC",
+              "present": true
+            },
+            {
+              "index": 2,
+              "kind": "date",
+              "surface": "31 December 2025",
+              "named": "28 February 2026",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 0,
+              "text": "none"
+            },
+            {
+              "index": 2,
+              "text": "HICL"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "figure",
+              "surface": "30%",
+              "named": "none",
+              "present": false
+            },
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "HCIL",
+              "named": "HICL",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+          "called": true,
+          "replacements": [],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "benchmark",
+              "surface": "budgets",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "text": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 0,
+              "text": "London St. Pancras High Speed"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "Paris St. Germain High Speed",
+              "named": "London St. Pancras High Speed",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 2,
+              "text": "St. Pancras"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "St. Germain",
+              "named": "St. Pancras",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "text": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 0,
+              "text": "Fortysouth"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "TowerCo",
+              "named": "Fortysouth",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "text": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 1,
+              "text": "Chief Executive Officer"
+            },
+            {
+              "index": 2,
+              "text": "UK"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "name",
+              "surface": "CFO",
+              "named": "Chief Executive Officer",
+              "present": true
+            },
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "French",
+              "named": "UK",
+              "present": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "clean",
+      "calls": 0,
+      "listUsd": 0,
+      "statements": [
+        {
+          "index": 0,
+          "text": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "doctored",
+      "calls": 4,
+      "listUsd": 0.06431,
+      "statements": [
+        {
+          "index": 0,
+          "text": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+          "called": true,
+          "replacements": [],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "date",
+              "surface": "October 2025",
+              "named": "none",
+              "present": false
+            },
+            {
+              "index": 2,
+              "kind": "figure",
+              "surface": "75%",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 0,
+              "text": "three"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "figure",
+              "surface": "15",
+              "named": "three",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 0,
+              "text": "Gold Peak Technology Group"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "Silver Hill Technology",
+              "named": "Gold Peak Technology Group",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "text": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+          "called": true,
+          "replacements": [],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "figure",
+              "surface": "60 billion",
+              "named": "none",
+              "present": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "clean",
+      "calls": 0,
+      "listUsd": 0,
+      "statements": [
+        {
+          "index": 0,
+          "text": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "doctored",
+      "calls": 2,
+      "listUsd": 0.09009,
+      "statements": [
+        {
+          "index": 0,
+          "text": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 1,
+              "text": "May 13, 2026"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "date",
+              "surface": "April 2026",
+              "named": "May 13, 2026",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "called": true,
+          "replacements": [
+            {
+              "index": 0,
+              "text": "16%"
+            }
+          ],
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "figure",
+              "surface": "-50%",
+              "named": "16%",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "text": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "The company provided updated revenue guidance of USD 56 million for 2027.",
+          "called": false,
+          "replacements": [],
+          "notFound": []
+        }
+      ]
+    }
+  ]
+}

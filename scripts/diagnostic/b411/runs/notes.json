@@ -1,0 +1,1280 @@
+{
+  "spend": {
+    "calls": 84,
+    "inputTokens": 505948,
+    "outputTokens": 14179,
+    "cachedInputTokens": 0,
+    "costUsd": 2.884215,
+    "listUsd": 2.884215
+  },
+  "drafts": [
+    {
+      "doc": "3i",
+      "arm": "clean",
+      "statements": [
+        {
+          "index": 0,
+          "text": "3i Group delivered a total return of GBP 3.3 billion for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source states the results are for the six months to 30 September 2025, not 30 June 2025. The period end date in the statement is different from the one in the source.",
+          "replacements": [
+            {
+              "index": 3,
+              "text": "30 September 2025"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states the results are for the six months to 30 September 2025, not 30 June 2025. The statement reports a different period end date.",
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "This was driven largely by Action, which continues to trade strongly.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states Action continued to trade strongly and generated £2,118 million of value growth, which drove the Private Equity gross investment return. The statement restates this attribution in other words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states Action \"continued to trade strongly\" and that Action's value growth was £2,118 million, which was the main driver of Private Equity's £3,234 million gross investment return. The statement restates this in other words.",
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source attributes the new store expansion program to Action specifically, while the statement says \"the company's\" without specifying. The claim about a record year and good reception in Switzerland and Romania matches the source.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source attributes the new store expansion program and the reception in Switzerland and Romania to Action, while the statement attributes it to \"the company.\" Otherwise the claim is the same.",
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says \"Year to date LFL trading remains good despite weakening consumer confidence since the summer.\" The statement swaps \"good\" for \"healthy,\" which is a synonym that does not change the claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says \"Year to date LFL trading remains good despite weakening consumer confidence since the summer.\" The statement swaps \"good\" for \"healthy,\" which is a synonym expressing the same judgement.",
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Net sales for the nine months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source refers to \"nine reporting periods ending on 28 September 2025\" generating net sales of €11,229 million and LFL sales growth of 6.3%. The statement calls this \"nine months\" and rounds to €11.2 billion, which restates the same claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source refers to \"nine reporting periods ending on 28 September 2025\" with net sales of €11,229 million and LFL sales growth of 6.3%. The statement calls this \"nine months,\" which is a loose restatement of the reporting period, but the figures and date match.",
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says Action completed two financing transactions in October 2025 (a €1.6 billion incremental term loan raise plus capital restructuring, and a €3.1 billion repricing). The statement calls these \"several balance sheet transactions,\" which restates the same claim in broader terms without changing it.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says Action completed two financing transactions in October 2025. The statement calls them \"several balance sheet transactions,\" which is a looser phrasing of the same assertion.",
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states Action repriced €3.1 billion of existing term loan debt, extending maturity of a portion of the debt and generating an annual interest cost saving of €14 million, and raised €1.6 billion of incremental term loan debt. The statement's \"meaningful annual interest cost savings\" restates the saving the source already quantifies without asserting a different number.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source specifies the annual interest cost saving as €14 million, a precise figure. The statement describes it vaguely as \"meaningful,\" which adds a judgement the source does not make.",
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "Action also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i. The statement calls this \"significant proceeds,\" which restates the same claim in general terms.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states Action completed a capital restructuring with a pro-rata redemption of shares, returning £944 million of gross proceeds to 3i. The statement's description of \"significant proceeds\" restates the magnitude the source already conveys.",
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 10,
+          "text": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source describes the multiples as \"sterling money multiples\" of 3.2x and 2.8x, while the statement calls them \"gross money multiples.\" This restates the same figures with a slightly different label but does not change the quantities or subjects.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says the sales achieved \"sterling money multiples\" of 3.2x and 2.8x; the statement calls them \"gross money multiples.\" This is a rewording of the same figures rather than a different claim.",
+          "notFound": []
+        },
+        {
+          "index": 11,
+          "text": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states the Infrastructure business generated a gross investment return of 9% and separately says the 3iN infrastructure asset portfolio outperformed its expected returns for the six-month period. The statement combines these points but does not change the claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says the Infrastructure business generated a gross investment return of 9%, and that the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month period. The statement combines these points in different wording but makes the same assertions.",
+          "notFound": []
+        },
+        {
+          "index": 12,
+          "text": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains on its investment in TCR.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source attributes the Infrastructure business's gross investment return primarily to a 14% increase in 3iN's share price and notes 3iN's underlying portfolio continues to perform well with a significant valuation uplift in TCR. The statement restates the same claims in different words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source attributes the Infrastructure gross investment return primarily to a 14% rise in 3iN's share price and notes 3iN's underlying portfolio continues to perform well with a significant valuation uplift in TCR. The statement restates these same claims in different words.",
+          "notFound": []
+        },
+        {
+          "index": 13,
+          "text": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states the first dividend of 36.5 pence per share for FY2026 will be paid in January 2026, which matches GBP 0.365. The statement's framing of \"in light of overall good performance\" restates the source's positive performance context without introducing a new claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states the first dividend of 36.5 pence per share for FY2026 will be paid in January 2026, which matches GBP 0.365. The statement's framing about \"overall good performance\" restates the source's characterization of a strong first half.",
+          "notFound": []
+        },
+        {
+          "index": 14,
+          "text": "Looking ahead, management maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source quotes Borrows saying they \"remain cautious in the deployment of capital into new investment, but will continue to allocate selectively, including to lower-risk reinvestments in businesses we know and trust.\" The statement restates this same position in different words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source quotes Borrows saying they remain cautious in deploying capital into new investment but will continue to allocate selectively, including to lower-risk reinvestments in businesses they know and trust. The statement restates this in different words without changing the claim.",
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "3i",
+      "arm": "doctored",
+      "statements": [
+        {
+          "index": 0,
+          "text": "3i Group delivered a total return of GBP 3.3 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source states a total return of £3,291 million (approximately £3.3 billion) for the six months to 30 September 2025, not £3.3 million to 30 June 2025. The statement understates the figure by a factor of 1,000 and gives the wrong period end date.",
+          "replacements": [
+            {
+              "index": 1,
+              "text": "£3,291 million"
+            },
+            {
+              "index": 3,
+              "text": "30 September 2025"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states total return was £3,291 million (approximately £3.3 billion) for the six months to 30 September 2025, not £3.3 million to 30 June 2025. The statement understates the amount by a factor of 1,000 and gives the wrong period end date.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "figure",
+              "surface": "GBP 3.3 million",
+              "named": "£3,291 million",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "The private equity business generated gross investment returns of 14% for the period and accounted for the vast majority of the overall total return.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "This was driven largely by Action, which continues to trade strongly.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states Action \"continued to trade strongly\" and generated £2,118 million of value growth in the period, which supports the claim that the Group's performance was driven largely by Action. The statement rephrases this without changing the assertion.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says Action \"continued to trade strongly\" and attributes most of the Private Equity gross investment return and value growth (£2,118 million) to Action. The statement restates this same claim in different words.",
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "The company’s new store expansion program is set for another record year with new stores in Switzerland and Romania being well received.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source attributes the new store expansion programme to Action, saying it is \"on track for another record year with an excellent reception to the new stores in Switzerland and Romania.\" The statement says \"the company's\" program, which refers to the same thing in different words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source attributes the new store expansion program to Action specifically, while the statement attributes it to \"the company.\" Otherwise the claim about a record year and good reception in Switzerland and Romania matches.",
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Year to date like-for-like trading remains healthy despite weakening consumer confidence since the summer.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says \"Year to date LFL trading remains good despite weakening consumer confidence since the summer.\" The statement substitutes \"healthy\" for \"good,\" which conveys the same assertion.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says \"Year to date LFL trading remains good despite weakening consumer confidence since the summer.\" The statement substitutes \"healthy\" for \"good,\" which is a synonym and does not change the claim.",
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Net sales for the six months to 30 June 2026 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source attributes the €11,229 million net sales and 6.3% LFL growth to Action's nine reporting periods ending 28 September 2025 (\"P9\"), not to a six-month period ending 30 June 2026. The statement misstates both the period length and the end date.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "nine reporting periods"
+            },
+            {
+              "index": 1,
+              "text": "28 September 2025"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source attributes the €11,229 million net sales and 6.3% LFL sales growth to Action over nine reporting periods ending 28 September 2025, not to a six-month period ending 30 June 2026. The statement changes both the subject/scope and the date.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "date",
+              "surface": "30 June 2026",
+              "named": "28 September 2025",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, Action successfully completed several balance sheet transactions in October 2025.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says Action completed two financing transactions in October 2025 (incremental term loan debt plus capital restructuring, and a repricing of existing term loan debt). The statement calls these \"several balance sheet transactions,\" which restates the same assertion in broader terms.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says Action completed two financing transactions in October 2025; the statement calls them \"several balance sheet transactions.\" This is a looser restatement of the same events without changing the claim.",
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "The company repriced EUR 3.1 billion of existing term debt, extending maturities and generating meaningful annual interest cost savings, while also raising an incremental EUR 1.6 billion of new term loan.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states Action repriced €3.1 billion of existing term loan debt, extended maturity on a portion, and generated €14 million of annual interest savings, and raised €1.6 billion incremental term loan. The statement calls the savings \"meaningful\" rather than giving the €14 million figure, which restates the source's own characterization without changing the claim.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source specifies the annual interest cost saving as €14 million, a precise figure. The statement describes it vaguely as \"meaningful,\" which adds a judgement the source does not make.",
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "MAIT also completed a pro-rata redemption of shares, which generated significant proceeds for 3i.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source attributes the pro-rata redemption of shares to Action, not MAIT. MAIT was a realisation (sale) signed in the period, not an entity that completed a share redemption returning proceeds to 3i.",
+          "replacements": [],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says Action (not MAIT) completed the pro-rata redemption of shares that returned £944 million of gross proceeds to 3i. MAIT was a realisation signed in the period, not a share redemption.",
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from AGIC, raised 3i’s stake in Action to 62.3%.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source states the earlier 2.2% Action equity stake was acquired from GIC, not AGIC as the statement claims.",
+          "replacements": [
+            {
+              "index": 2,
+              "text": "GIC"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states the earlier 2.2% stake was acquired from GIC, not AGIC.",
+          "notFound": [
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "AGIC",
+              "named": "GIC",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "text": "Elsewhere, within the private equity portfolio, 3i completed the sale of MPM and signed an exit of MAIT during the period, which generated gross money multiples of 3.2x and 2.8x, respectively.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source describes the multiples as \"sterling money multiples\" of 3.2x and 2.8x, while the statement calls them \"gross money multiples.\" This is a rewording of the same figures rather than a different claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says the sales achieved sterling money multiples of 3.2x and 2.8x respectively; the statement calls these gross money multiples. The figures and subjects match, so this is a rewording rather than a different claim.",
+          "notFound": []
+        },
+        {
+          "index": 11,
+          "text": "On the infrastructure side, gross investment returns stood at 9% for the period, outperforming expectations for the six-month period.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states the Infrastructure business generated a gross investment return of 9%, and separately notes the infrastructure asset portfolio within 3iN outperformed its expected returns for the six-month period. The statement combines these points without changing the claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states the Infrastructure business generated a gross investment return of 9% and that 3iN's infrastructure asset portfolio outperformed its expected returns for the six-month period. The statement combines these points without changing the claim.",
+          "notFound": []
+        },
+        {
+          "index": 12,
+          "text": "Performance was driven primarily by share price gains at 3i Infrastructure plc, which continues to report positive performance across its portfolio, including meaningful gains across essentially all of its investments.",
+          "bucket": "beyond",
+          "sentenceState": "beyond",
+          "tier": "light",
+          "note": "The source attributes the gain primarily to a 14% increase in 3iN's share price and says the underlying portfolio continues to perform well, with a significant valuation uplift specifically in TCR. It does not state that there were meaningful gains across essentially all of 3iN's investments.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source says 3iN's underlying portfolio continues to perform well with a significant valuation uplift in TCR specifically. The statement expands this to \"meaningful gains across essentially all of its investments,\" which the source does not support.",
+          "notFound": []
+        },
+        {
+          "index": 13,
+          "text": "In light of the overall good performance of the portfolio, 3i declared a dividend of GBP 0.365 per share, which will be paid in January 2026.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states the first dividend of 36.5 pence per share for FY2026 will be paid in January 2026, which matches GBP 0.365 per share. The statement's framing of \"in light of the overall good performance\" restates the source's positive characterization of the half-year results rather than adding a new claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states the first dividend of 36.5 pence per share for FY2026 will be paid in January 2026, which matches GBP 0.365. The framing about \"overall good performance\" restates the source's characterisation of a strong first half rather than adding a new claim.",
+          "notFound": []
+        },
+        {
+          "index": 14,
+          "text": "Looking ahead, the UK government maintains its cautious stance on capital deployment into new investments, but remains open to selective allocations to lower-risk reinvestments in existing portfolio companies.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source attributes the cautious stance on capital deployment to 3i Group (via CEO Simon Borrows), not the UK government. The statement misattributes the position to the UK government.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "3i"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The statement attributes the cautious stance on capital deployment to the UK government. The source attributes this stance to 3i Group (via CEO Simon Borrows), not to the UK government.",
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "clean",
+      "statements": [
+        {
+          "index": 0,
+          "text": "HICL Infrastructure’s performance for the five months to 28 February 2026 was positive and largely in line with expectations.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states operational performance across the portfolio in the period (1 October 2025 to 28 February 2026) was in line with expectations and describes it as robust/resilient. The statement calls this period of five months positive and largely in line with expectations, which conveys the same assertion.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source describes operational performance in the period 1 October 2025 to 28 February 2026 as \"robust\" and \"in line with expectations,\" which is essentially the same claim as the statement's \"positive and largely in line with expectations.\"",
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "Across the portfolio, operational performance was robust, with EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "bucket": "wording",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says HICL (not HCIL) delivered robust operational performance with capex programmes driving EBITDA growth and resilient cash generation supporting the dividend. The statement conveys the same claim with a misspelling of the company name.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says \"HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover.\" The statement rephrases this with a typo (\"HCIL\") but conveys the same assertion.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "name",
+              "surface": "HCIL",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to perform in line with budgets.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says EBITDA is being delivered in line with expectations, not in line with budgets. The benchmark differs.",
+          "replacements": [
+            {
+              "index": 1,
+              "text": "expectations"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says EBITDA is delivered in line with expectations, not in line with budgets. \"Budgets\" is a different benchmark than the \"expectations\" stated in the source.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "benchmark",
+              "surface": "budgets",
+              "named": "expectations",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "text": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says London St. Pancras High Speed performed well in the period with international train path bookings slightly ahead of forecast. The statement adds \"Among the significant holdings,\" which is a framing phrase that does not change the claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says London St. Pancras High Speed performed well in the period with international train path bookings slightly ahead of forecast. The statement adds \"among the significant holdings,\" which is a minor framing phrase that does not change the claim.",
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Elsewhere, Fortysouth delivered 16 new towers during the period and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "bucket": "beyond",
+          "sentenceState": "beyond",
+          "tier": "light",
+          "note": "The source says the 16 new towers and co-location opportunities are expected to support continued growth in EBITDA in line with HICL's valuation assumption. The statement adds \"and valuation gains\" as an expected outcome, which the source does not assert.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source says the new towers and co-location opportunities are expected to support continued EBITDA growth in line with HICL's valuation assumption. The statement adds \"and valuation gains,\" which the source does not assert.",
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "The company also recently completed an oversubscribed refinancing, which will lead to a reduction in debt servicing costs.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says Fortysouth completed an accretive refinancing that was c.30% oversubscribed and enabled a step-down on debt margins earlier than forecast. The statement restates this as oversubscribed and leading to reduced debt servicing costs, which is the same claim in other words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says Fortysouth completed an accretive refinancing that was c.30% oversubscribed and enabled a step-down on debt margins earlier than forecast. The statement rephrases this as oversubscribed and leading to reduced debt servicing costs, which is the same claim in other words.",
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the UK government’s recently published white paper on water sector reform.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states Affinity Water appointed Mark Garth as CEO who brings significant sector experience, and notes the UK Government white paper on water sector reform is largely consistent with the Cunliffe Report, many of whose recommendations are expected to be beneficial for strong performers such as Affinity Water. The statement restates these points in condensed form.",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "HICL",
+      "arm": "doctored",
+      "statements": [
+        {
+          "index": 0,
+          "text": "HCIL Infrastructure’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source describes the Interim Update Statement as covering the period from 1 October 2025 to 28 February 2026 (five months), not six months to 31 December 2025. The statement's period and end date do not match the source.",
+          "replacements": [
+            {
+              "index": 1,
+              "text": "1 October 2025 to 28 February 2026"
+            },
+            {
+              "index": 2,
+              "text": "28 February 2026"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states the Interim Update Statement covers the period from 1 October 2025 to 28 February 2026 (five months), not six months to 31 December 2025. Also the company is named HICL Infrastructure, not HCIL.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "HCIL Infrastructure",
+              "named": "none",
+              "present": false
+            },
+            {
+              "index": 2,
+              "kind": "date",
+              "surface": "31 December 2025",
+              "named": "28 February 2026",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HCIL’s dividend program.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says capex programmes are driving EBITDA growth and describes EBITDA as in line with expectations/valuation assumptions, but it does not state a 30% figure for EBITDA growth. The only \"c.30%\" figure in the source refers to Fortysouth's refinancing being oversubscribed, not EBITDA growth.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "none"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says capex programmes are driving EBITDA growth and that Fortysouth's recent refinancing was c.30% oversubscribed, but it never states an average 30% EBITDA growth figure across the portfolio. The statement invents a specific quantity the source does not support.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "figure",
+              "surface": "30%",
+              "named": "none",
+              "present": false
+            },
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "HCIL",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "Across the portfolio, growth investments continue to perform well, with significant investment in expansion programs driving EBITDA growth that continues to significantly outperform budgets.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says HICL's growth investments are delivering EBITDA \"in line with expectations\" and the valuation assumption. The statement claims EBITDA growth is significantly outperforming budgets, which contradicts the source's benchmark of in-line performance.",
+          "replacements": [],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says growth investments are delivering EBITDA \"in line with expectations,\" while the statement claims EBITDA growth \"continues to significantly outperform budgets.\" Also, the benchmark in the source is expectations, not budgets.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "benchmark",
+              "surface": "budgets",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "text": "Among the significant holdings, Paris St. Germain High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source names the asset \"London St. Pancras High Speed,\" not \"Paris St. Germain High Speed.\" The statement changes the subject to a different entity.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "London St. Pancras High Speed"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source names the asset \"London St. Pancras High Speed,\" not \"Paris St. Germain High Speed.\" The statement changes the subject to a different entity.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "Paris St. Germain High Speed",
+              "named": "London St. Pancras High Speed",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "text": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Germain.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says Virgin Trains announced intentions for cross-Channel operations from St. Pancras, not St. Germain.",
+          "replacements": [
+            {
+              "index": 2,
+              "text": "St. Pancras"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says Virgin Trains announced intentions for cross-Channel operations from St. Pancras, not St. Germain.",
+          "notFound": [
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "St. Germain",
+              "named": "St. Pancras",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "text": "Elsewhere, TowerCo delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says Fortysouth delivered 16 new towers during the period, not that TowerCo delivered 20 new towers during the past year. The quantity and the name differ from what the source states.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "Fortysouth"
+            },
+            {
+              "index": 1,
+              "text": "16"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states that Fortysouth delivered 16 new towers during the period, not 20. The statement's figure of 20 contradicts the source.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "TowerCo",
+              "named": "Fortysouth",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "text": "The company also recently completed an oversubscribed refinancing, which will lead to an increase in debt servicing costs.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source says Fortysouth's refinancing enabled a step-down on debt margins earlier than forecast, meaning lower debt costs. The statement claims it will lead to an increase in debt servicing costs, which is the opposite direction.",
+          "replacements": [],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says Fortysouth's refinancing was c.30% oversubscribed and enabled a step-down on debt margins earlier than forecast, meaning debt servicing costs decreased. The statement claims the refinancing will lead to an increase in debt servicing costs, which is the opposite direction.",
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says Affinity Water appointed Mark Garth as Chief Executive Officer (CEO), not CFO. The white paper was published by the UK Government and concerns water sector reform, not the French government or electricity sector reform.",
+          "replacements": [
+            {
+              "index": 1,
+              "text": "Chief Executive Officer"
+            },
+            {
+              "index": 2,
+              "text": "UK"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says Affinity Water appointed Mark Garth as Chief Executive Officer, not a CFO. It also refers to a UK Government white paper on water sector reform, not a French government white paper on electricity sector reform.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "name",
+              "surface": "CFO",
+              "named": "Chief Executive Officer",
+              "present": true
+            },
+            {
+              "index": 2,
+              "kind": "name",
+              "surface": "French",
+              "named": "UK",
+              "present": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "clean",
+      "statements": [
+        {
+          "index": 0,
+          "text": "In November 2025, GP Industries announced that it intends to shift production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs and rising geopolitical tensions.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European and Asian markets.",
+          "bucket": "beyond",
+          "sentenceState": "beyond",
+          "tier": "light",
+          "note": "The source lists three facilities in Malaysia, two in Vietnam, one in Thailand, and two in the UK, and mentions a China facility serving Europe and Asia, but does not state that China has exactly one plant.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source lists three facilities in Malaysia, two in Vietnam, one in Thailand, and two in the UK, and refers to a China facility serving European and Asian markets, but it does not state that there is exactly one plant in China.",
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while maintaining cost competitiveness.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states the move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness. The statement conveys the same assertion using \"capacity adjustments\" and \"while maintaining.\"",
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "Meanwhile, Gold Peak Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says Gold Peak Technology Group is planning a multi-million-dollar investment in Johor to produce next-generation battery for data centres. The statement calls it an \"investment program\" rather than a multi-million-dollar investment, but the underlying claim is the same.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says Gold Peak Technology Group is planning a multi-million-dollar investment in Johor to produce next-generation battery for data centres. The statement calls it an \"investment program\" and adds \"Malaysia\" as the country for Johor, which is accurate context and does not change the claim.",
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "GP Industries is the second-largest producer of consumer batteries globally, producing over 6 billion batteries annually, which are sold through 1 million outlets worldwide.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "GPI",
+      "arm": "doctored",
+      "statements": [
+        {
+          "index": 0,
+          "text": "In October 2025, GP Industries announced that it intends to shift 75% of its global production capacity to its manufacturing sites in Southeast Asia to serve the US market amid tariffs, escalating oil prices and rising geopolitical tensions.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The press release is dated 13 November 2025, not October 2025. The source does not state a 75% figure for capacity being shifted, and it cites US tariffs and rising geopolitical tensions, not escalating oil prices.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "13 November 2025"
+            },
+            {
+              "index": 2,
+              "text": "none"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source is dated 13 November 2025, not October 2025, and does not mention a 75% figure for production capacity or cite rising oil prices as a reason. The source states the shift is to navigate US tariffs and rising geopolitical tensions, with no quantified share and no oil price factor.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "date",
+              "surface": "October 2025",
+              "named": "13 November 2025",
+              "present": true
+            },
+            {
+              "index": 2,
+              "kind": "figure",
+              "surface": "75%",
+              "named": "none",
+              "present": false
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "The company currently operates 15 facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source states GP Industries operates three facilities in Malaysia, not 15. The source also says the China facility will focus on European and Asian markets, not only the European market.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "three"
+            },
+            {
+              "index": 10,
+              "text": "European and Asian"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says GP Industries operates three facilities in Malaysia, not 15. The source also says the China facility will focus on European and Asian markets, not just European.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "figure",
+              "surface": "15",
+              "named": "three",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "text": "The capacity adjustments are intended to streamline supply chains to meet country-of-origin requirements while improving the cost structure and enhancing site security.",
+          "bucket": "beyond",
+          "sentenceState": "beyond",
+          "tier": "light",
+          "note": "The source states the move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness. The statement adds \"enhancing site security,\" which the source does not mention.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source states the move will streamline supply chains to meet country-of-origin requirements and maintain cost competitiveness. The statement adds \"enhancing site security,\" which the source does not mention.",
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "Meanwhile, Silver Hill Technology (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source identifies the parent company as Gold Peak Technology Group, not Silver Hill Technology.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "Gold Peak Technology Group"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source identifies the parent company as Gold Peak Technology Group, not Silver Hill Technology.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "name",
+              "surface": "Silver Hill Technology",
+              "named": "Gold Peak Technology Group",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "text": "GP Industries is the largest producer of consumer batteries globally, producing over 60 billion batteries annually, which are bartered through 1 million outlets worldwide.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source says GP Industries is the world's second-largest producer of consumer batteries, not the largest, and that it produces over six billion batteries annually, not 60 billion.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "world's second-largest producer of consumer batteries"
+            },
+            {
+              "index": 1,
+              "text": "over six billion"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says GP Industries is the world's second-largest producer of consumer batteries, not the largest, and states it produces over six billion batteries annually, not 60 billion.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "figure",
+              "surface": "60 billion",
+              "named": "over six billion",
+              "present": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "clean",
+      "statements": [
+        {
+          "index": 0,
+          "text": "In May 2026, ClearPoint Neuro reported its financial results for the first quarter of 2026.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 1,
+          "text": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "bucket": "beyond",
+          "sentenceState": "beyond",
+          "tier": "light",
+          "note": "The source reports 43% overall growth to $12.1 million and mentions the 175+ installed base and IRRAflow integration as separate Q1 highlights. It does not state that the installed base expansion or IRRAflow integration drove the revenue growth; the source attributes growth mainly to IRRAflow product sales and the 3.0 navigation software introduction.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source reports 43% growth to $12.1 million and notes the installed base exceeds 175 centers and that IRRAflow integration is ongoing, but it does not attribute the revenue growth to the installed base expansion or the IRRAflow integration as drivers. The statement adds a causal link the source does not make.",
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states 16% total organic growth, 25% organic devices growth, and 64% gross margin due to lower excess and obsolete inventory. The statement's \"allowances for excess and obsolete inventory\" restates the same cause in other words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states 16% total organic growth, 25% organic devices growth, and gross margin of 64% due to lower excess and obsolete inventory. The statement's phrase \"allowances for excess and obsolete inventory\" restates the same cause in other words.",
+          "notFound": []
+        },
+        {
+          "index": 3,
+          "text": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which achieved an 80% increase in revenue to USD 5.9 million, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states capital equipment and software revenue increased 177% to $1.4 million from $0.5 million due to increased placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units. The statement's \"from a low base\" is a characterization of the $0.5 million prior figure, not a different claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says capital equipment and software revenue increased 177% to $1.4 million from $0.5 million due to increased placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units. The statement's phrase \"from a low base\" is a characterization of the $0.5 million prior-period figure that restates what the source numbers already show.",
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says biologics and drug delivery revenue increased slightly to $4.8 million from $4.7 million year-over-year. The statement describes this as broadly flat, which restates the same minimal change in other words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source says biologics and drug delivery revenue increased slightly to $4.8 million from $4.7 million year over year. The statement describes this as \"broadly flat,\" which restates the same minimal change in different words.",
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states \"Continued clinical trial and regulatory progress across more than 60 active biopharma partners.\" The statement rephrases this as the company progressing its clinical trial program covering more than 60 active biopharma partners, which is the same assertion in other words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states \"Continued clinical trial and regulatory progress across more than 60 active biopharma partners.\" The statement conveys the same claim in different words.",
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Notably, FDA clearance was received and first clinical procedures completed utilizing the company's Velocity Alpha MR High Speed Surgical Drill System.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source states FDA clearance and successful completion of the first clinical procedure (singular) utilizing the Velocity Alpha MR High Speed Surgical Drill System. The statement says first clinical procedures (plural) were completed.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states FDA clearance and successful completion of the first clinical procedure (singular) utilizing the Velocity Alpha MR High Speed Surgical Drill System. The statement says \"first clinical procedures\" (plural), but this is a minor phrasing difference that does not change the claim being made.",
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "Elsewhere, Health Canada issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology was completed in the Asia-Pacific region.",
+          "bucket": "none",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "",
+          "replacements": [],
+          "priorBucket": "none",
+          "priorNote": "",
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "The company provided updated revenue guidance of USD 52-56 million for 2026.",
+          "bucket": "beyond",
+          "sentenceState": "beyond",
+          "tier": "light",
+          "note": "The source states the company estimates 2026 revenue between $52.0 million and $56.0 million but does not describe this as \"updated\" guidance. The statement adds that characterization, which the source does not carry.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source states the company estimates 2026 revenue to be between $52.0 million and $56.0 million but does not characterize this as \"updated\" guidance. The statement adds that qualifier, which the source does not support.",
+          "notFound": []
+        }
+      ]
+    },
+    {
+      "doc": "ClearPoint",
+      "arm": "doctored",
+      "statements": [
+        {
+          "index": 0,
+          "text": "ClearPoint Neuro announced in April 2026 its financial results for the first quarter of 2026.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source states the results were announced via a press release dated May 13, 2026, not April 2026.",
+          "replacements": [
+            {
+              "index": 1,
+              "text": "May 13, 2026"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states the announcement was made on May 13, 2026, not in April 2026.",
+          "notFound": [
+            {
+              "index": 1,
+              "kind": "date",
+              "surface": "April 2026",
+              "named": "May 13, 2026",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "text": "The company delivered 43% year-on-year growth in revenue to USD 12.1 million, driven by an expansion of the activated installed base to more than 175 global centers and ongoing integration of the recently-acquired IRRAflow product portfolio.",
+          "bucket": "beyond",
+          "sentenceState": "beyond",
+          "tier": "light",
+          "note": "The source reports 43% overall growth and $12.1 million revenue, and separately mentions the 175+ installed base and IRRAflow integration as highlights. However, the source does not attribute the revenue growth to the installed base expansion; it cites IRRAflow sales and the 3.0 OR navigation software as drivers. The statement's causal framing goes beyond what the source states.",
+          "replacements": [],
+          "priorBucket": "beyond",
+          "priorNote": "The source reports 43% growth and $12.1 million revenue, and mentions the 175+ installed base and IRRAflow integration as separate highlights. It does not state that the installed base expansion and IRRAflow integration drove the revenue growth; the source attributes growth primarily to IRRAflow product sales and the 3.0 navigation software, not to installed base expansion.",
+          "notFound": []
+        },
+        {
+          "index": 2,
+          "text": "Organic growth amounted to -50% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+          "bucket": "conflicts",
+          "sentenceState": "not_in_source",
+          "tier": "demands",
+          "note": "The source states 16% year-over-year total organic growth, not -50%. The statement's -50% figure contradicts the source.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "16%"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states total organic growth was 16% year-over-year, not -50%. The 25% devices figure and 64% gross margin match the source.",
+          "notFound": [
+            {
+              "index": 0,
+              "kind": "figure",
+              "surface": "-50%",
+              "named": "16%",
+              "present": true
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "text": "Topline growth was driven by the neurosurgery navigation, therapy and access division, which contributed the vast majority of the company’s overall revenue and achieved 80% year-on-year growth, benefitting from contributions from the IRRAflow product line and the 3.0 operating room navigation software.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source reports neurosurgery navigation, therapy and access revenue of $5.9 million out of $12.1 million total — under half, not the \"vast majority\" of overall revenue. The 80% growth, IRRAflow contribution, and 3.0 software details match the source.",
+          "replacements": [],
+          "priorBucket": "conflicts",
+          "priorNote": "The statement claims the neurosurgery navigation, therapy and access division contributed the vast majority of overall revenue. The source reports that segment at $5.9 million out of $12.1 million total revenue, which is less than half, not the vast majority.",
+          "notFound": []
+        },
+        {
+          "index": 4,
+          "text": "Capital equipment and software revenue increased by 177% from a low base due to an increase in placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states capital equipment and software revenue increased 177% to $1.4 million from $0.5 million due to increased placements of ClearPoint navigation capital and software, IRRAflow control units, and Prism laser units. \"From a low base\" is a characterization of the $0.5 million prior-period figure, which does not change the claim.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states capital equipment and software revenue increased 177% to $1.4 million from $0.5 million due to increased placements of those products. \"From a low base\" is a restatement of the small prior figure the source gives.",
+          "notFound": []
+        },
+        {
+          "index": 5,
+          "text": "Meanwhile, biologics and drug delivery revenue was broadly flat compared with the prior year.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source says biologics and drug delivery revenue increased slightly to $4.8 million from $4.7 million year-over-year. The statement calls this \"broadly flat,\" which restates the same minimal change in other words.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states biologics and drug delivery revenue increased slightly to $4.8 million from $4.7 million year over year. The statement describes this as \"broadly flat,\" which restates the same minimal change in different words.",
+          "notFound": []
+        },
+        {
+          "index": 6,
+          "text": "Meanwhile, the company continues to progress its clinical trial program, which now covers more than 60 active biopharma partners.",
+          "bucket": "wording",
+          "sentenceState": "nothing_to_raise",
+          "tier": "quiet",
+          "note": "The source states \"Continued clinical trial and regulatory progress across more than 60 active biopharma partners.\" The statement conveys the same claim in paraphrased form.",
+          "replacements": [],
+          "priorBucket": "wording",
+          "priorNote": "The source states \"Continued clinical trial and regulatory progress across more than 60 active biopharma partners.\" The statement conveys the same claim in different words.",
+          "notFound": []
+        },
+        {
+          "index": 7,
+          "text": "Notably, a submission for FDA approval has been made for the company’s Velocity Alpha MR High Speed Surgical Drill System.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source states the Velocity Alpha MR High Speed Surgical Drill System received FDA clearance and completed its first clinical procedure, not that a submission for FDA approval has been made.",
+          "replacements": [],
+          "priorBucket": "conflicts",
+          "priorNote": "The source states the Velocity Alpha MR High Speed Surgical Drill System received FDA clearance and completed its first clinical procedure. The statement says a submission for FDA approval has been made, which contradicts the source's account of clearance already being granted.",
+          "notFound": []
+        },
+        {
+          "index": 8,
+          "text": "Elsewhere, the FDA issued a medical device license for the ClearPoint Neuro Navigation System, which covers both MRI-guidance and iCT guidance workflows, while the first commercial drug delivery case utilizing ClearPoint technology has been commenced in the Asia-Pacific region.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source states the Medical Device License (MDL) for the ClearPoint Neuro Navigation System was issued by Health Canada, not the FDA. The statement misattributes the license to the FDA.",
+          "replacements": [
+            {
+              "index": 0,
+              "text": "Health Canada"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source says the Medical Device License (MDL) for the ClearPoint Neuro Navigation System was issued by Health Canada, not the FDA. The statement attributes the license to the FDA.",
+          "notFound": []
+        },
+        {
+          "index": 9,
+          "text": "The company provided updated revenue guidance of USD 56 million for 2027.",
+          "bucket": "conflicts",
+          "sentenceState": "conflicts",
+          "tier": "demands",
+          "note": "The source states 2026 revenue guidance of between $52.0 million and $56.0 million. The statement claims guidance of $56 million for 2027, which changes both the year and presents a single figure rather than a range.",
+          "replacements": [
+            {
+              "index": 1,
+              "text": "between $52.0 million and $56.0 million"
+            },
+            {
+              "index": 2,
+              "text": "2026"
+            }
+          ],
+          "priorBucket": "conflicts",
+          "priorNote": "The source gives 2026 revenue guidance of $52.0 million to $56.0 million, not 2027 guidance of $56 million. The year and the figure framing both differ from what the source states.",
+          "notFound": []
+        }
+      ]
+    }
+  ]
+}

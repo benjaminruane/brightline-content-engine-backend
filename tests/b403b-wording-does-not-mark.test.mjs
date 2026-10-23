@@ -27,7 +27,7 @@ describe("B403B wording does not mark", () => {
     assert.notEqual(state, null);
   });
 
-  test("wording is counted on the header and not inside statements to look at", () => {
+  test("wording stays in the counts and is not on the header line", () => {
     const only = draftHeader([
       {
         facts: [fact("matched")],
@@ -36,7 +36,7 @@ describe("B403B wording does not mark", () => {
       },
     ]);
     assert.equal(only.line, WELL_SOURCED_LINE);
-    assert.equal(only.numbers, "1 of 1 facts matched · 0 to look at · 0 worth a glance · 1 wording note");
+    assert.equal(only.numbers, "1 of 1 facts matched · 0 to look at · 0 worth a glance");
     assert.equal(only.counts.wordingNotes, 1);
     assert.equal(only.counts.statements.nothing_to_raise, 1);
 
@@ -45,7 +45,7 @@ describe("B403B wording does not mark", () => {
       { facts: [fact("matched")], sentenceState: "conflicts", note: { bucket: "conflicts" } },
       { facts: [fact("matched")], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },
     ]);
-    assert.equal(mixed.numbers, "3 of 3 facts matched · 1 to look at · 0 worth a glance · 2 wording notes");
+    assert.equal(mixed.numbers, "3 of 3 facts matched · 1 to look at · 0 worth a glance");
     assert.match(mixed.line, /1 statement conflicts/);
   });
 
