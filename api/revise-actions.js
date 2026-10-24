@@ -61,6 +61,7 @@ export default async function handler(req, res) {
       draftText: typeof body?.draftText === "string" ? body.draftText : undefined,
       factMarks: Array.isArray(body?.factMarks) ? body.factMarks : [],
       sourceText: typeof body?.sourceText === "string" ? body.sourceText : undefined,
+      bannedWords: Array.isArray(body?.bannedWords) ? body.bannedWords : [],
       sourceRulings: body?.sourceRulings,
     });
     return res.status(200).json(result);

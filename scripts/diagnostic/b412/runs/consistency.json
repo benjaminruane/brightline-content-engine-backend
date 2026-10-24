@@ -1,0 +1,44 @@
+{
+  "spend": {
+    "calls": 12,
+    "inputTokens": 59379,
+    "outputTokens": 774,
+    "cachedInputTokens": 0,
+    "costUsd": 0.316245,
+    "listUsd": 0.316245
+  },
+  "repeats": [
+    {
+      "label": "HICL clean S1 HCIL",
+      "answers": [
+        "HCIL=HICL",
+        "HCIL=none",
+        "HCIL=HICL"
+      ]
+    },
+    {
+      "label": "HICL clean S2 budgets",
+      "answers": [
+        "budgets=none",
+        "budgets=expectations",
+        "budgets=none"
+      ]
+    },
+    {
+      "label": "HICL doctored S2 budgets",
+      "answers": [
+        "budgets=expectations",
+        "budgets=expectations",
+        "budgets=expectations"
+      ]
+    },
+    {
+      "label": "HICL doctored S1 HCIL",
+      "answers": [
+        "30%=none; HCIL=HICL",
+        "30%=none; HCIL=HICL",
+        "30%=none; HCIL=HICL"
+      ]
+    }
+  ]
+}

@@ -15,9 +15,10 @@ import {
 const SOURCE = "Affinity Water appointed Mark Garth as Chief Executive Officer. The UK government published a paper.";
 
 describe("B411 proposal verification", () => {
-  test("the flag defaults off", () => {
+  test("the flag stays off", () => {
     assert.equal(proposalsEnabled({}), false);
     assert.equal(proposalsEnabled({ QC_PROPOSALS: "1" }), true);
+    assert.equal(proposalsEnabled({ QC_PROPOSALS: "off" }), false);
   });
 
   test("CEO matches Chief Executive Officer by the abbreviation table", () => {
@@ -90,6 +91,20 @@ describe("B411 proposal verification", () => {
     assert.equal(entries[0].resultingSentence, "supporting HICL's dividend");
     assert.equal(entries[0].quotedPassage, "HICL paid the dividend.");
     assert.equal(verifiedProposalEntries({ enabled: false, statements: [], sourceText: "HICL" }).length, 0);
+    const blocked = verifiedProposalEntries({
+      enabled: true,
+      sourceText: "HICL paid the dividend.",
+      statements: [{
+        qcCard: {
+          index: 1,
+          statement,
+          primaryExcerpt: "The dividend was paid.",
+          readingNote: { replacements: [{ index: 0, text: "HICL" }] },
+          readingFacts: [{ kind: "name", status: "not_found", surface: "HCIL", start: 11, end: 15 }],
+        },
+      }],
+    });
+    assert.equal(blocked.length, 0);
   });
 
   test("the note prompt does not ask for a replacement", () => {

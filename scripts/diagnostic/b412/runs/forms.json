@@ -1,0 +1,213 @@
+[
+  {
+    "doc": "3i",
+    "arm": "doctored",
+    "index": 0,
+    "surface": "GBP 3.3 million",
+    "beforeForm": "£3,291 million",
+    "afterForm": "GBP 3,291 million",
+    "beforeSentence": "3i Group delivered a total return of £3,291 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+    "afterSentence": "3i Group delivered a total return of GBP 3,291 million for the six months to 30 June 2025, representing a 13% return on opening shareholders funds.",
+    "reasons": [],
+    "offered": true,
+    "passage": "3i Group delivered strong performance in the first half of FY2026\n• Total return of £3,291 million or 13% on opening shareholders’ funds (September 2024: £2,046 million, 10%)."
+  },
+  {
+    "doc": "3i",
+    "arm": "doctored",
+    "index": 5,
+    "surface": "30 June 2026",
+    "beforeForm": "28 September 2025",
+    "afterForm": "28 September 2025",
+    "beforeSentence": "Net sales for the six months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+    "afterSentence": "Net sales for the six months to 28 September 2025 amounted to EUR 11.2 billion, with like-for-like sales growth of 6.3%.",
+    "reasons": [],
+    "offered": true,
+    "passage": "In the nine reporting periods ending on 28 September 2025 (“P9”), Action generated net sales of €11,229 million\n(nine reporting periods ended P9 2024: €9,567 million), operating EBITDA of €1,563 million (nine reporting periods\nended P9 2024: €1,344 million) and like-for-like (“LFL”) sales growth of 6."
+  },
+  {
+    "doc": "3i",
+    "arm": "doctored",
+    "index": 9,
+    "surface": "AGIC",
+    "beforeForm": "GIC",
+    "afterForm": "GIC",
+    "beforeSentence": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+    "afterSentence": "A portion of these proceeds was redeployed to acquire a further 2.2% stake in the business, which together with an earlier 2.2% stake purchase from GIC, raised 3i’s stake in Action to 62.3%.",
+    "reasons": [
+      "excerpt"
+    ],
+    "offered": false,
+    "passage": "In October 2025, Action successfully completed two financing transactions. The first raised €1.6 billion of total\nincremental term loan debt. Su"
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 0,
+    "surface": "HCIL Infrastructure",
+    "beforeForm": "HICL Infrastructure PLC",
+    "afterForm": "HICL Infrastructure PLC",
+    "beforeSentence": "HICL Infrastructure PLC’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+    "afterSentence": "HICL Infrastructure PLC’s performance for the six months to 31 December 2025 was positive and largely in line with expectations.",
+    "reasons": [
+      "excerpt"
+    ],
+    "offered": false,
+    "passage": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth."
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 0,
+    "surface": "31 December 2025",
+    "beforeForm": "28 February 2026",
+    "afterForm": "28 February 2026",
+    "beforeSentence": "HCIL Infrastructure’s performance for the six months to 28 February 2026 was positive and largely in line with expectations.",
+    "afterSentence": "HCIL Infrastructure’s performance for the six months to 28 February 2026 was positive and largely in line with expectations.",
+    "reasons": [
+      "excerpt"
+    ],
+    "offered": false,
+    "passage": "Portfolio performance in line with expectations, with capex programmes across HICL's growth assets continuing to drive EBITDA growth."
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 1,
+    "surface": "HCIL",
+    "beforeForm": "HICL",
+    "afterForm": "HICL",
+    "beforeSentence": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HICL’s dividend program.",
+    "afterSentence": "Across the portfolio, operational performance was robust, with average 30% EBITDA growth driven by capital expenditure, and resilient cashflow generation supporting HICL’s dividend program.",
+    "reasons": [],
+    "offered": true,
+    "passage": "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover of 1.1x for the year."
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 3,
+    "surface": "Paris St. Germain High Speed",
+    "beforeForm": "London St. Pancras High Speed",
+    "afterForm": "London St. Pancras High Speed",
+    "beforeSentence": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+    "afterSentence": "Among the significant holdings, London St. Pancras High Speed performed well during the period, with international train path bookings slightly ahead of forecast.",
+    "reasons": [
+      "excerpt"
+    ],
+    "offered": false,
+    "passage": "... Pancras High Speed performed well in the period, with international train path bookings slightly ahead of forecast."
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 4,
+    "surface": "St. Germain",
+    "beforeForm": "St. Pancras",
+    "afterForm": "St. Pancras",
+    "beforeSentence": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+    "afterSentence": "On the commercial front, progress has been made on adding a second international operator on the route, while Virgin Trains recently announced its intentions for cross-Channel operations from St. Pancras.",
+    "reasons": [],
+    "offered": true,
+    "passage": "The period saw further progress in relation to a potential second international operator on the route, including announcements by Virgin Trains regarding its intentions for crossChannel operations from St. Pancras and approach to rolling stock procurement having been awarded depot capacity by the UK rail regulator."
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 5,
+    "surface": "TowerCo",
+    "beforeForm": "Fortysouth",
+    "afterForm": "Fortysouth",
+    "beforeSentence": "Elsewhere, Fortysouth delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+    "afterSentence": "Elsewhere, Fortysouth delivered 20 new towers during the past year and is actively progressing additional co-location opportunities, both of which are expected to support continued growth in EBITDA and valuation gains.",
+    "reasons": [],
+    "offered": true,
+    "passage": "Fortysouth delivered 16 new towers during the period and is actively progressing incremental co-location opportunities, both of which are expected to support continued growth in EBITDA in line with HICL's valuation assumption."
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 7,
+    "surface": "CFO",
+    "beforeForm": "Chief Executive Officer",
+    "afterForm": "CEO",
+    "beforeSentence": "Meanwhile, Affinity Water appointed a new Chief Executive Officer with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+    "afterSentence": "Meanwhile, Affinity Water appointed a new CEO with significant sector experience and stands to benefit from the French government’s recently published white paper on electricity sector reform.",
+    "reasons": [
+      "no_passage"
+    ],
+    "offered": false,
+    "passage": null
+  },
+  {
+    "doc": "HICL",
+    "arm": "doctored",
+    "index": 7,
+    "surface": "French",
+    "beforeForm": "UK",
+    "afterForm": "UK",
+    "beforeSentence": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the UK government’s recently published white paper on electricity sector reform.",
+    "afterSentence": "Meanwhile, Affinity Water appointed a new CFO with significant sector experience and stands to benefit from the UK government’s recently published white paper on electricity sector reform.",
+    "reasons": [
+      "no_passage"
+    ],
+    "offered": false,
+    "passage": null
+  },
+  {
+    "doc": "GPI",
+    "arm": "doctored",
+    "index": 1,
+    "surface": "15",
+    "beforeForm": "three",
+    "afterForm": "three",
+    "beforeSentence": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+    "afterSentence": "The company currently operates three facilities in Malaysia, two in Vietnam, and one in Thailand, alongside two other plants in the UK and one plant in China, which will now focus primarily on the European market.",
+    "reasons": [],
+    "offered": true,
+    "passage": "The Group currently operates three facilities in Malaysia, two in Vietnam, and one in\nThailand. It also has two other plants in the UK."
+  },
+  {
+    "doc": "GPI",
+    "arm": "doctored",
+    "index": 3,
+    "surface": "Silver Hill Technology",
+    "beforeForm": "Gold Peak Technology Group",
+    "afterForm": "Gold Peak Technology Group",
+    "beforeSentence": "Meanwhile, Gold Peak Technology Group (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+    "afterSentence": "Meanwhile, Gold Peak Technology Group (parent of GP Industries) is planning an investment program in Johor, Malaysia, to produce next-generation batteries to support data centres.",
+    "reasons": [],
+    "offered": true,
+    "passage": "GP Industries is owned 86.18% by Hong Kong-listed Gold Peak Technology Group, which\nis planning a multi-million-dollar investment in Johor to produce next-generation battery to\nsupport data centres."
+  },
+  {
+    "doc": "ClearPoint",
+    "arm": "doctored",
+    "index": 0,
+    "surface": "April 2026",
+    "beforeForm": "May 13, 2026",
+    "afterForm": "May 2026",
+    "beforeSentence": "ClearPoint Neuro announced in May 13, 2026 its financial results for the first quarter of 2026.",
+    "afterSentence": "ClearPoint Neuro announced in May 2026 its financial results for the first quarter of 2026.",
+    "reasons": [
+      "no_passage"
+    ],
+    "offered": false,
+    "passage": null
+  },
+  {
+    "doc": "ClearPoint",
+    "arm": "doctored",
+    "index": 2,
+    "surface": "-50%",
+    "beforeForm": "16%",
+    "afterForm": "16%",
+    "beforeSentence": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+    "afterSentence": "Organic growth amounted to 16% year on year (25% for devices), while the gross margin expanded to 64% over the period on account of lower allowances for excess and obsolete inventory.",
+    "reasons": [
+      "excerpt"
+    ],
+    "offered": false,
+    "passage": "Gross margin expanded to 64%; and\nReported cash and cash equivalents totaling $35.6 million as of March 31, 2026."
+  }
+]

@@ -86,7 +86,8 @@ Standing rules live in `docs/BACKLOG.md`. They bind here so a spec does not have
 - **P35.** A spec that claims to fix an observed symptom must name the log line that will prove it, before the fix is written. B285 named none and fixed a real bug that was not the reported symptom.
 - **P36.** A default that treats a missing answer as yes is a lie waiting to happen. Prefer `=== true` for any flag that answers "did this happen". B299.
 - **P37.** Any change to extraction, boilerplate, or excerpt selection re-runs the clean ledger in scripts/diagnostic/b403c/CLEAN-LEDGER.md on the text that change would store, and reports demands, light, quiet, and noise in demands before it commits. The bar is demands 3, light 5, quiet 30, noise in demands 0. A statement that moves is named.
-- **P38.** One excerpt per statement. The card's chosen passage is the only excerpt for that statement, everywhere it is shown. A source line that is not that passage may only be shown labelled "also appears at", and never as a second answer to the same question. A verified proposal quotes the card's passage, not a line of its own choosing.
+- **P38.** One excerpt per statement. The card's chosen passage is the only excerpt for that statement, everywhere it is shown. A source line that is not that passage may only be shown labelled "also appears at", and never as a second answer to the same question. A verified proposal quotes the card's passage, not a line of its own choosing. A card with no passage gets no proposal. There is no second line standing in for it.
+- **P39.** A proposal must satisfy the product's own writing rules. A sentence the product would flag is not a sentence it may offer. The offered form is the shortest one that fits the sentence and still passes the matcher's equivalence.
 
 Also keep:
 
