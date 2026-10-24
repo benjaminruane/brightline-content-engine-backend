@@ -32,3 +32,9 @@ The list is not extended. Outlook, estimate, plan, and assumption do not earn a 
 The clean counts above are unchanged. CFO and French are not in this ledger.
 
 HICL doctored S7 carries two planted errors, hicl-S7-a and hicl-S7-b. The draft says CFO and the French government. The source says Chief Executive Officer, and the UK government. Those two words are not correct.
+
+## Recount, B416
+
+Statement position changed. The stored statement text did not. Recounted from `scripts/diagnostic/b403c/runs/reading.json`. No model call.
+
+Clean: demands 3, light 5, quiet 30, noise in demands 0. No statement moved.
