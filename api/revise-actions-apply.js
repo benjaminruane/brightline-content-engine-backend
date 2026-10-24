@@ -45,8 +45,19 @@ export default async function handler(req, res) {
     entries: body.entries,
     decisions: body.decisions,
   });
+  const notices = Array.isArray(result.notices) ? result.notices : [];
   if (!result.ok) {
-    return res.status(400).json({ ok: false, error: result.error || "Apply failed." });
+    return res.status(400).json({
+      ok: false,
+      error: result.error || "These two sentences overlap in the draft, so neither change was applied.",
+      notices,
+      writtenStatementIds: [],
+    });
   }
-  return res.status(200).json({ ok: true, text: result.text });
+  return res.status(200).json({
+    ok: true,
+    text: result.text,
+    notices,
+    writtenStatementIds: Array.isArray(result.writtenStatementIds) ? result.writtenStatementIds : [],
+  });
 }
