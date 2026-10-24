@@ -22,7 +22,7 @@ import {
 const ON = { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true };
 
 const TODAY = [
-  ["supported_full", "Confirmed", "confirmed"],
+  ["supported_full", "Nothing raised", "confirmed"],
   ["supported_partial", "Partially confirmed", "partial"],
   ["conflict", "Conflicting", "conflicting"],
   ["not_supported", "No support", "notSupported"],

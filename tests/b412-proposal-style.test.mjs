@@ -60,7 +60,7 @@ describe("B412 proposal form and house rules", () => {
     assert.deepEqual(newEditorialFindings(original, resulting), ["sentence_length"]);
   });
 
-  test("a card with no passage does not emit a proposal", () => {
+  test("a card with no passage quotes the line the proposal came from", () => {
     const entries = verifiedProposalEntries({
       enabled: true,
       sourceText: HICL,
@@ -70,10 +70,13 @@ describe("B412 proposal form and house rules", () => {
           statement: "Affinity Water appointed a new CFO.",
           primaryExcerpt: null,
           readingNote: { replacements: [{ index: 0, text: "Chief Executive Officer" }] },
-          readingFacts: [{ kind: "name", status: "not_found", surface: "CFO", start: 32, end: 35 }],
+          readingFacts: [{ kind: "name", status: "not_found", surface: "CFO", start: 31, end: 34 }],
         },
       }],
     });
-    assert.equal(entries.length, 0);
+    assert.equal(entries.length, 1);
+    assert.equal(entries[0].passageLabel, "Line it came from");
+    assert.match(entries[0].quotedPassage, /Chief Executive Officer/);
+    assert.equal(entries[0].resultingSentence, "Affinity Water appointed a new CEO.");
   });
 });

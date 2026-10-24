@@ -116,7 +116,7 @@ describe("B245 corruptions", () => {
     const card0Slice = text.split(`"${payload.statements[0].qcCard.statement}"`)[1].slice(0, 400);
     assert.equal(card0Slice.includes("Verdict: Confirmed"), false);
     assert.equal(card0Slice.includes("Verdict: Unverifiable"), true);
-    assert.equal(text.includes("Verdict: Confirmed"), true);
+    assert.equal(text.includes("Verdict: Nothing raised"), true);
 
     const allUnknown = cloneFixture();
     for (const row of allUnknown.statements) {

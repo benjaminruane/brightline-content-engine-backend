@@ -184,9 +184,9 @@ describe("B322 evidence card with no excerpt", () => {
     assert.equal(card.excerptNotLocatable, false);
     assert.equal(card.evidenceNotReviewedReason, null);
     const view = screenView(card);
-    assert.equal(view.badgeText, "Confirmed");
-    assert.equal(view.evidenceRow, "Confirmed");
-    assert.equal(view.exportLine, "Verdict: Confirmed");
+    assert.equal(view.badgeText, "Nothing raised");
+    assert.equal(view.evidenceRow, "Nothing raised");
+    assert.equal(view.exportLine, "Verdict: Nothing raised");
     assert.equal(view.evidenceRow, view.exportLine.replace(/^Verdict: /, ""));
   });
 
@@ -211,9 +211,9 @@ describe("B322 evidence card with no excerpt", () => {
   test("the recorded d17 card through the live display path is the false green B322 closes", () => {
     const { recordedCard } = loadRecordedD17();
     const view = screenView(recordedCard);
-    assert.equal(view.badgeText, "Confirmed");
-    assert.equal(view.evidenceRow, "Confirmed");
+    assert.equal(view.badgeText, "Nothing raised");
+    assert.equal(view.evidenceRow, "Nothing raised");
     assert.equal(view.excerptSlot, EXCERPT_NOT_LOCATABLE_COPY);
-    assert.equal(view.exportLine, "Verdict: Confirmed");
+    assert.equal(view.exportLine, "Verdict: Nothing raised");
   });
 });

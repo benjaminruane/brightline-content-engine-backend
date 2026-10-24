@@ -18,7 +18,7 @@ describe("B232 export verdict label", () => {
   });
 
   test("supported_full still reads Confirmed after trim", () => {
-    assert.equal(normalizeExportVerdict(" supported_full "), "Confirmed");
+    assert.equal(normalizeExportVerdict(" supported_full "), "Nothing raised");
   });
 
   test("an allowlisted unverifiable slug is Unverifiable", () => {
@@ -29,6 +29,6 @@ describe("B232 export verdict label", () => {
     const card = { displayVerdict: "supported_full", factualBadge: false };
     assert.equal(normalizeExportVerdict(card.displayVerdict, card), null);
     assert.notEqual(normalizeExportVerdict(card.displayVerdict, card), "Unverifiable");
-    assert.equal(normalizeExportVerdict("supported_full"), "Confirmed");
+    assert.equal(normalizeExportVerdict("supported_full"), "Nothing raised");
   });
 });

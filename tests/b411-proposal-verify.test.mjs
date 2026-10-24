@@ -15,10 +15,11 @@ import {
 const SOURCE = "Affinity Water appointed Mark Garth as Chief Executive Officer. The UK government published a paper.";
 
 describe("B411 proposal verification", () => {
-  test("the flag stays off", () => {
-    assert.equal(proposalsEnabled({}), false);
+  test("the flag is on unless turned off", () => {
+    assert.equal(proposalsEnabled({}), true);
     assert.equal(proposalsEnabled({ QC_PROPOSALS: "1" }), true);
     assert.equal(proposalsEnabled({ QC_PROPOSALS: "off" }), false);
+    assert.equal(proposalsEnabled({ QC_PROPOSALS: "0" }), false);
   });
 
   test("CEO matches Chief Executive Officer by the abbreviation table", () => {
@@ -104,7 +105,8 @@ describe("B411 proposal verification", () => {
         },
       }],
     });
-    assert.equal(blocked.length, 0);
+    assert.equal(blocked.length, 1);
+    assert.equal(blocked[0].quotedPassage, "HICL paid the dividend.");
   });
 
   test("the note prompt does not ask for a replacement", () => {
@@ -134,7 +136,7 @@ describe("B411 proposal verification", () => {
       },
     });
     assert.equal(quiet.proposals[0].called, false);
-    const off = await runActionList([], { env: {}, sourceText: "HICL paid a dividend." });
+    const off = await runActionList([], { env: { QC_PROPOSALS: "off" }, sourceText: "HICL paid a dividend." });
     assert.equal(off.entries.length, 0);
   });
 

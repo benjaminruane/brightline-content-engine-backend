@@ -142,8 +142,8 @@ describe("B325 excerpt from source", () => {
     assert.equal(view.screenExcerpt, card.primaryExcerpt);
     assert.equal(view.exportExcerpt, card.primaryExcerpt);
     assert.equal(view.screenExcerpt, view.exportExcerpt);
-    assert.equal(view.evidenceRow, "Confirmed");
-    assert.equal(view.exportVerdict, "Confirmed");
+    assert.equal(view.evidenceRow, "Nothing raised");
+    assert.equal(view.exportVerdict, "Nothing raised");
   });
 
   test("figures guard: EUR 95m pointer against EUR 59m window is a miss", async () => {
