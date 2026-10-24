@@ -145,20 +145,12 @@ describe("B184 disagreement card", () => {
     assert.equal("disagreementPassages" in entry, false);
   });
 
-  test("T5 overreach_unsupported_causal evidence language is dropped", () => {
-    const dropped = suppressEvidenceLanguageConcerns([
-      {
-        concernCode: "overreach_unsupported_causal",
-        note: "implies a causal relationship that is not established in the draft without supporting evidence",
-        suggestedDirection: "Remove the causal claim.",
-      },
-    ]);
-    assert.equal(dropped.length, 0);
+  test("T5 overreach_unsupported_causal is evidence and is not dropped for naming the source", () => {
     const kept = suppressEvidenceLanguageConcerns([
       {
         concernCode: "overreach_unsupported_causal",
-        note: "The current statement asserts a causal link the surrounding draft does not establish.",
-        suggestedDirection: "State the two facts without the causal connective.",
+        note: "The source reports both events and does not link them.",
+        suggestedDirection: "Remove the causal claim.",
       },
     ]);
     assert.equal(kept.length, 1);
@@ -194,7 +186,7 @@ describe("B184 disagreement card", () => {
     assert.equal(out.length, 1);
     const causal = editorialRules.find((row) => row.id === "overreach_unsupported_causal");
     const hedge = editorialRules.find((row) => row.id === "underreach_hedging");
-    assert.match(causal.description, /Do not use the words evidence, source, supported, unsupported or substantiated/);
+    assert.match(causal.description, /whether the source carries the causal link/);
     assert.match(hedge.description, /Do not use the words evidence, source, supported, unsupported or substantiated/);
   });
 });

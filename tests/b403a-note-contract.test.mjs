@@ -25,20 +25,19 @@ function fact(status, surface = "HICL") {
 describe("B403A note contract", () => {
   test("sentenceState is never null when the note is refused", () => {
     const state = sentenceState([fact("matched")], { refused: true });
-    assert.equal(state, "note_withheld");
+    assert.equal(state, "nothing_raised");
     assert.notEqual(state, null);
-    assert.equal(STATE_LABELS[state], "Needs a look");
-    assert.equal(sentenceState([fact("matched")], null), "note_withheld");
+    assert.equal(STATE_LABELS[state], "Nothing raised");
+    assert.equal(sentenceState([fact("matched")], null), "nothing_raised");
   });
 
-  test("a withheld note does not become nothing to raise and does not win the positive line", () => {
+  test("a refused note does not set a state and the matched draft keeps the positive line", () => {
     const state = sentenceState([fact("matched")], { refused: true });
-    assert.notEqual(state, "nothing_to_raise");
+    assert.equal(state, "nothing_raised");
     const header = draftHeader([{ facts: [fact("matched")], sentenceState: state }]);
-    assert.equal(header.counts.statements.note_withheld, 1);
-    assert.equal(header.counts.statements.nothing_to_raise, 0);
-    assert.notEqual(header.line, WELL_SOURCED_LINE);
-    assert.equal(header.line, "1 statement needs a look.");
+    assert.equal(header.counts.statements.nothing_raised, 1);
+    assert.equal(header.counts.statements.note_withheld, 0);
+    assert.equal(header.line, WELL_SOURCED_LINE);
   });
 
   test("not_found still beats a withheld note", () => {
@@ -99,7 +98,7 @@ describe("B403A note contract", () => {
     assert.equal(empty.reason, "empty_note");
     const none = acceptNote({ bucket: "none", text: "", disputedIndices: [] }, facts);
     assert.equal(none.ok, true);
-    assert.equal(sentenceState(facts, { refused: true, reason: "empty_note" }), "note_withheld");
+    assert.equal(sentenceState(facts, { refused: true, reason: "empty_note" }), "nothing_raised");
   });
 
   test("the prompt does not offer a bucket string the model can copy", () => {

@@ -38,3 +38,11 @@ HICL doctored S7 carries two planted errors, hicl-S7-a and hicl-S7-b. The draft 
 Statement position changed. The stored statement text did not. Recounted from `scripts/diagnostic/b403c/runs/reading.json`. No model call.
 
 Clean: demands 3, light 5, quiet 30, noise in demands 0. No statement moved.
+
+## Recount, B420
+
+Verdict computation changed. The stored statement text did not. Recounted from `scripts/diagnostic/b403c/runs/reading.json` with `lib/qc/statement-verdict.mjs`. No model call for the recount.
+
+Clean: demands 3, light 5, quiet 30, noise in demands 0. No statement moved on the stored notes.
+
+The note step was re-run on the four clean drafts after the note contract changed. That pass is in `scripts/diagnostic/b420/runs/notes.json`. Four statements change tier if those notes replace the stored ones: 3i S5 quiet to conflicts, 3i S7 light to quiet, 3i S11 quiet to light, ClearPoint S4 quiet to light. 3i S5 is ledger-correct, so that demand is noise. The stored bar above is the stored reading. The re-run is named in `scripts/diagnostic/b420/VERDICT.md`.

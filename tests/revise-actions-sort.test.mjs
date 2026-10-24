@@ -45,11 +45,11 @@ describe("revise-actions sort (r10-review1)", () => {
     assert.equal(found.sort?.reasonCode, "partial_policy");
   });
 
-  test("S3 overreach is ACKNOWLEDGE policy_forbids", () => {
-    const found = row(entries, "3", "editorial", "overreach_unsupported_causal");
+  test("S3 overreach is evidence and stays ACKNOWLEDGE on a silent partial", () => {
+    const found = row(entries, "3", "evidence", "overreach_unsupported_causal");
     assert.ok(found, "S3 overreach finding must exist");
     assert.equal(found.disposition, "ACKNOWLEDGE");
-    assert.equal(found.sort?.reasonCode, "partial_policy");
+    assert.equal(found.sort?.reasonCode, "partial_no_edit");
   });
 
   test("S1 voice is ACTION", () => {

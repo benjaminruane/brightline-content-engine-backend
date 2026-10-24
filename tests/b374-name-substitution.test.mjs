@@ -93,11 +93,12 @@ describe("B374 name substitution", () => {
     assert.equal(s2.disposition, "ACKNOWLEDGE");
     assert.equal(s2.proposedChange, undefined);
 
-    const editorial = result.entries.filter((row) => row.kind === "editorial");
-    assert.equal(editorial.length, 1);
-    assert.equal(editorial[0].id, "S2:editorial:overreach_unsupported_causal:0");
-    assert.equal(editorial[0].disposition, "ACKNOWLEDGE");
-    assert.equal(editorial[0].proposedChange, undefined);
+    const causal = result.entries.find((row) => row.rule === "overreach_unsupported_causal");
+    assert.ok(causal);
+    assert.equal(causal.kind, "evidence");
+    assert.equal(causal.id, "S2:evidence:overreach_unsupported_causal:0");
+    assert.equal(causal.disposition, "ACKNOWLEDGE");
+    assert.equal(causal.proposedChange, undefined);
   });
 
   test("clean HICL still has exactly two acknowledge entries and no proposals", async () => {
@@ -107,7 +108,8 @@ describe("B374 name substitution", () => {
       result.entries.every((row) => row.disposition === "ACKNOWLEDGE" && !row.proposedChange),
       true
     );
-    assert.equal(result.entries[0].id, "S1:editorial:overreach_unsupported_causal:0");
+    assert.equal(result.entries[0].id, "S1:evidence:overreach_unsupported_causal:0");
+    assert.equal(result.entries[0].kind, "evidence");
     assert.equal(result.entries[1].id, "S6:evidence:partial:0");
   });
 

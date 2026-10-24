@@ -65,7 +65,7 @@ describe("B404 reading payload", () => {
     assert.equal(typeof attached.reading.header.footnote, "string");
     assert.ok(Array.isArray(after.readingFacts));
     assert.equal(after.readingNote.bucket, "none");
-    assert.equal(after.sentenceState, "nothing_to_raise");
+    assert.equal(after.sentenceState, "nothing_raised");
     assert.equal(after.tier, "quiet");
     assert.equal(attached.reading.writerFeedback, "The draft stays close to the source.");
     assert.equal(attached.reading.sentences[0].facts.length, after.readingFacts.length);

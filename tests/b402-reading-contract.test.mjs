@@ -78,8 +78,8 @@ describe("B402 reading contract", () => {
       { facts: [fact("not_found")], note: { bucket: "conflicts", disputedElements: ["HCIL"] }, state: "not_in_source" },
       { facts: [fact("matched")], note: { bucket: "conflicts", disputedElements: [] }, state: "conflicts" },
       { facts: [fact("matched")], note: { bucket: "beyond", disputedElements: [] }, state: "beyond" },
-      { facts: [fact("matched")], note: { bucket: "wording", disputedElements: [] }, state: "nothing_to_raise" },
-      { facts: [fact("matched")], note: { bucket: "none", disputedElements: [] }, state: "nothing_to_raise" },
+      { facts: [fact("matched")], note: { bucket: "wording", disputedElements: [] }, state: "nothing_raised" },
+      { facts: [fact("matched")], note: { bucket: "none", disputedElements: [] }, state: "nothing_raised" },
     ];
     for (const row of cases) {
       assert.equal(sentenceState(row.facts, row.note), row.state);
@@ -221,8 +221,8 @@ describe("B402 reading contract", () => {
     assert.equal(applied.displayVerdict, "conflict");
     assert.equal(applied.factualBadge, false);
     assert.equal(applied.statement, "HICL grew.");
-    assert.equal(applied.sentenceState, "nothing_to_raise");
-    assert.equal(applied.sentenceLabel, "Nothing to raise");
+    assert.equal(applied.sentenceState, "nothing_raised");
+    assert.equal(applied.sentenceLabel, "Nothing raised");
     assert.equal(other.readingFacts, undefined);
     assert.equal(other.sentenceState, undefined);
   });

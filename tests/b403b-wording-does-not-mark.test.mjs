@@ -22,7 +22,7 @@ function fact(status, surface = "HICL") {
 describe("B403B wording does not mark", () => {
   test("a wording note is nothing to raise and worth_a_look is gone", () => {
     const state = sentenceState([fact("matched")], { bucket: "wording", text: "Same point, other words." });
-    assert.equal(state, "nothing_to_raise");
+    assert.equal(state, "nothing_raised");
     assert.equal(STATE_LABELS.worth_a_look, undefined);
     assert.notEqual(state, null);
   });
@@ -58,7 +58,7 @@ describe("B403B wording does not mark", () => {
         sentenceState: "nothing_to_raise",
       }
     );
-    assert.equal(applied.sentenceState, "nothing_to_raise");
+    assert.equal(applied.sentenceState, "nothing_raised");
     assert.equal(applied.wordingLine, "1 wording note");
     assert.match(applied.readingNote.text, /grew/);
     assert.equal(applied.displayVerdict, "supported_full");
