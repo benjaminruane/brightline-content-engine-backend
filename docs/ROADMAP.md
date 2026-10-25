@@ -1181,6 +1181,8 @@ Tracked here for roadmap visibility; detail rows also live in `docs/BACKLOG.md`.
     - More structural — examine whether the assessment is doing real work beyond the Quality Review Summary bullets and card list, and either repurpose it (see next backlog item) or remove.
 
     UX-shaped, not calibration-shaped. Worth a small scoping pass when next addressing UI. Logged 2026-05-30.
+
+    **Update 2026-10-25 (B423).** The Reviewer Assessment prose has been removed from the product. It was the largest fixed-size contributor named above, and the third option listed here, examine whether it is doing real work and remove it, is the one taken: two model writers were describing the same draft and reaching opposite conclusions, with the assessment restating the cards. The craft note is now the only assessment prose. What remains of this item is the Quality Review Summary and the fixed-format cards. Re-measure the ratio on a short draft before doing anything further.
 24. ~~**Reviewer Assessment purpose reframe.**~~ **RESOLVED (B26, 2026-06-30)** — closed by **not** reframing Reviewer Assessment. **Constructive Feedback (B26 / B26.1)** is the separate on-demand author-facing surface (per-statement consolidated rationale, no revised text). Reviewer Assessment stays the short reviewer-facing overview (`api/synthesize-review.js` unchanged). See **Recently shipped → B26 / B26.1**. **Same work-stream:** **BACKLOG B26** (closed), **BACKLOG Pr8** (resolved).
 
 **Also tracked (below top 24):** Spring clean / refactor — defer until after R6; see Active Backlog → Spring Clean.
